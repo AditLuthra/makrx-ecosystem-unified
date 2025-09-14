@@ -165,9 +165,7 @@ async def list_service_jobs(
             query = query.filter(ServiceJob.job_type.in_(filters.job_type))
 
         if filters.material_type:
-            query = query.filter(
-                ServiceJob.material_type.in_(filters.material_type)
-            )
+            query = query.filter(ServiceJob.material_type.in_(filters.material_type))
 
         if filters.assigned_provider_id:
             query = query.filter(
@@ -176,8 +174,7 @@ async def list_service_jobs(
 
         if filters.assigned_makerspace_id:
             query = query.filter(
-                ServiceJob.assigned_makerspace_id
-                == filters.assigned_makerspace_id
+                ServiceJob.assigned_makerspace_id == filters.assigned_makerspace_id
             )
 
         if filters.customer_email:
@@ -186,22 +183,16 @@ async def list_service_jobs(
             )
 
         if filters.created_after:
-            query = query.filter(
-                ServiceJob.created_at >= filters.created_after
-            )
+            query = query.filter(ServiceJob.created_at >= filters.created_after)
 
         if filters.created_before:
-            query = query.filter(
-                ServiceJob.created_at <= filters.created_before
-            )
+            query = query.filter(ServiceJob.created_at <= filters.created_before)
 
         if filters.deadline_after:
             query = query.filter(ServiceJob.deadline >= filters.deadline_after)
 
         if filters.deadline_before:
-            query = query.filter(
-                ServiceJob.deadline <= filters.deadline_before
-            )
+            query = query.filter(ServiceJob.deadline <= filters.deadline_before)
 
         if filters.min_value:
             query = query.filter(
@@ -494,13 +485,9 @@ async def upload_job_file(
         # Add model analysis data if available
         if model_analysis:
             db_file.model_volume = model_analysis.get("volume_cubic_mm")
-            db_file.model_surface_area = model_analysis.get(
-                "surface_area_square_mm"
-            )
+            db_file.model_surface_area = model_analysis.get("surface_area_square_mm")
             db_file.model_bounding_box = model_analysis.get("bounding_box")
-            db_file.model_complexity_score = model_analysis.get(
-                "complexity_score"
-            )
+            db_file.model_complexity_score = model_analysis.get("complexity_score")
             db_file.requires_supports = model_analysis.get("requires_supports")
 
         # Add G-code analysis data if available
@@ -813,14 +800,10 @@ async def get_dashboard_stats(
             JobStatus.PRINTING,
             JobStatus.POST_PROCESSING,
         ]
-        active_jobs = base_query.filter(
-            ServiceJob.status.in_(active_statuses)
-        ).count()
+        active_jobs = base_query.filter(ServiceJob.status.in_(active_statuses)).count()
 
         # Pending jobs
-        pending_jobs = base_query.filter(
-            ServiceJob.status == JobStatus.PENDING
-        ).count()
+        pending_jobs = base_query.filter(ServiceJob.status == JobStatus.PENDING).count()
 
         # Completed today
         today = datetime.utcnow().date()
@@ -933,9 +916,7 @@ async def create_service_provider(
 
     # Check if user already has a provider profile
     existing_provider = (
-        db.query(ServiceProvider)
-        .filter(ServiceProvider.user_id == user_id)
-        .first()
+        db.query(ServiceProvider).filter(ServiceProvider.user_id == user_id).first()
     )
 
     if existing_provider:
@@ -1015,8 +996,7 @@ def analyze_gcode(gcode_content: str) -> Dict[str, Any]:
 
             # Look for time estimates in comments
             if "time" in line.lower() and any(
-                unit in line.lower()
-                for unit in ["h", "m", "s", "hour", "minute"]
+                unit in line.lower() for unit in ["h", "m", "s", "hour", "minute"]
             ):
                 # Simple time parsing - this could be enhanced
                 if "minute" in line.lower() or "m" in line.lower():
@@ -1041,18 +1021,14 @@ def analyze_gcode(gcode_content: str) -> Dict[str, Any]:
                     )
 
             # Look for temperatures
-            if line.startswith("M104") or line.startswith(
-                "M109"
-            ):  # Nozzle temperature
+            if line.startswith("M104") or line.startswith("M109"):  # Nozzle temperature
                 import re
 
                 temp_match = re.search(r"S(\d+)", line)
                 if temp_match:
                     metadata["nozzle_temperature"] = int(temp_match.group(1))
 
-            if line.startswith("M140") or line.startswith(
-                "M190"
-            ):  # Bed temperature
+            if line.startswith("M140") or line.startswith("M190"):  # Bed temperature
                 import re
 
                 temp_match = re.search(r"S(\d+)", line)

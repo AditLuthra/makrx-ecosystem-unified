@@ -101,11 +101,7 @@ async def get_project_details(
         )
 
     # Get tasks and milestones
-    tasks = (
-        db.query(ProjectTask)
-        .filter(ProjectTask.project_id == project_id)
-        .all()
-    )
+    tasks = db.query(ProjectTask).filter(ProjectTask.project_id == project_id).all()
     milestones = (
         db.query(ProjectMilestone)
         .filter(ProjectMilestone.project_id == project_id)
@@ -187,16 +183,12 @@ async def create_project(
             project_id=project_id,
             name=InputSanitizer.sanitize_text(project_data["name"]),
             description=(
-                InputSanitizer.sanitize_html(
-                    project_data.get("description", "")
-                )
+                InputSanitizer.sanitize_html(project_data.get("description", ""))
                 if project_data.get("description")
                 else None
             ),
             objectives=(
-                InputSanitizer.sanitize_text(
-                    project_data.get("objectives", "")
-                )
+                InputSanitizer.sanitize_text(project_data.get("objectives", ""))
                 if project_data.get("objectives")
                 else None
             ),
@@ -223,8 +215,7 @@ async def create_project(
             is_public=project_data.get("is_public", False),
             allow_collaboration=project_data.get("allow_collaboration", True),
             tags=[
-                InputSanitizer.sanitize_text(t)
-                for t in project_data.get("tags", [])
+                InputSanitizer.sanitize_text(t) for t in project_data.get("tags", [])
             ],
         )
 
@@ -278,18 +269,11 @@ async def update_project(
                 "creator_id",
                 "created_at",
             ]:
-                if (
-                    field in ["start_date", "due_date", "completion_date"]
-                    and value
-                ):
+                if field in ["start_date", "due_date", "completion_date"] and value:
                     value = datetime.fromisoformat(value)
                 elif field in ["status", "priority"]:
                     value = getattr(
-                        (
-                            ProjectStatus
-                            if field == "status"
-                            else ProjectPriority
-                        ),
+                        (ProjectStatus if field == "status" else ProjectPriority),
                         value.upper(),
                     )
                 elif field in ["name", "objectives", "category"] and value:

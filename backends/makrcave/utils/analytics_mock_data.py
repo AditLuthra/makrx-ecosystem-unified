@@ -92,7 +92,7 @@ class AnalyticsMockData:
         for i in range(5):
             top_items.append(
                 {
-                    "item_id": f"item_{i+1:03d}",
+                    "item_id": f"item_{i + 1:03d}",
                     "name": random.choice(self.inventory_items),
                     "total_consumed": round(random.uniform(5, 50), 2),
                     "cost_consumed": round(random.uniform(25, 250), 2),
@@ -109,9 +109,7 @@ class AnalyticsMockData:
             "low_stock_alerts": random.randint(3, 12),
             "reorder_suggestions": random.randint(5, 15),
             "cost_savings": round(random.uniform(150, 800), 2),
-            "consumption_trend": (
-                "increasing" if random.random() > 0.5 else "stable"
-            ),
+            "consumption_trend": ("increasing" if random.random() > 0.5 else "stable"),
         }
 
     def get_equipment_metrics(self) -> List[Dict[str, Any]]:
@@ -120,7 +118,7 @@ class AnalyticsMockData:
         for i in range(5):
             metrics.append(
                 {
-                    "equipment_id": f"eq_{i+1:03d}",
+                    "equipment_id": f"eq_{i + 1:03d}",
                     "name": random.choice(self.equipment_names),
                     "total_usage_hours": round(random.uniform(50, 200), 1),
                     "utilization_rate": round(random.uniform(45, 85), 1),
@@ -129,9 +127,7 @@ class AnalyticsMockData:
                     "avg_session_duration": round(random.uniform(45, 180), 1),
                     "revenue_generated": round(random.uniform(200, 1500), 2),
                     "user_count": random.randint(8, 25),
-                    "status": random.choice(
-                        ["operational", "maintenance", "reserved"]
-                    ),
+                    "status": random.choice(["operational", "maintenance", "reserved"]),
                     "next_maintenance": (
                         self.base_date + timedelta(days=random.randint(5, 30))
                     ).isoformat(),
@@ -219,8 +215,7 @@ class AnalyticsMockData:
                         ["authentication", "equipment", "inventory", "project"]
                     ),
                     "timestamp": (
-                        self.base_date
-                        - timedelta(hours=random.randint(1, 168))
+                        self.base_date - timedelta(hours=random.randint(1, 168))
                     ).isoformat(),
                     "metadata": {
                         "duration": random.randint(30, 240),
@@ -270,7 +265,7 @@ class AnalyticsMockData:
                         "title": "Top Consumed Items",
                         "data": [
                             {
-                                "label": f"Item {i+1}",
+                                "label": f"Item {i + 1}",
                                 "value": random.randint(10, 50),
                             }
                             for i in range(5)
@@ -278,9 +273,7 @@ class AnalyticsMockData:
                         "chart_type": "pie",
                     }
                 ],
-                "summary_stats": {
-                    "efficiency_score": round(random.uniform(75, 95), 1)
-                },
+                "summary_stats": {"efficiency_score": round(random.uniform(75, 95), 1)},
                 "last_updated": datetime.now().isoformat(),
             },
             {
@@ -329,9 +322,7 @@ def get_mock_dashboard_data():
         "overview": mock_data.get_analytics_overview(),
         "sections": mock_data.get_dashboard_sections(),
         "generated_at": datetime.now().isoformat(),
-        "cache_expires_at": (
-            datetime.now() + timedelta(minutes=15)
-        ).isoformat(),
+        "cache_expires_at": (datetime.now() + timedelta(minutes=15)).isoformat(),
     }
 
 

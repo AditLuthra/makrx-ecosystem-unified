@@ -73,9 +73,7 @@ def get_permission(db: Session, permission_id: str) -> Optional[Permission]:
     return db.query(Permission).filter(Permission.id == permission_id).first()
 
 
-def get_permission_by_codename(
-    db: Session, codename: str
-) -> Optional[Permission]:
+def get_permission_by_codename(db: Session, codename: str) -> Optional[Permission]:
     """Get permission by codename"""
     return db.query(Permission).filter(Permission.codename == codename).first()
 
@@ -113,14 +111,10 @@ def create_role(db: Session, role: RoleCreate, created_by: str) -> Role:
     """Create a new role"""
     # Get permissions by IDs
     permissions = (
-        db.query(Permission)
-        .filter(Permission.id.in_(role.permission_ids))
-        .all()
+        db.query(Permission).filter(Permission.id.in_(role.permission_ids)).all()
     )
 
-    db_role = Role(
-        **role.dict(exclude={"permission_ids"}), created_by=created_by
-    )
+    db_role = Role(**role.dict(exclude={"permission_ids"}), created_by=created_by)
     db_role.permissions = permissions
 
     db.add(db_role)
@@ -139,9 +133,7 @@ def get_roles(
     makerspace_id: Optional[str] = None,
 ) -> List[Role]:
     """Get roles with filtering"""
-    query = db.query(Role).options(
-        joinedload(Role.permissions), joinedload(Role.users)
-    )
+    query = db.query(Role).options(joinedload(Role.permissions), joinedload(Role.users))
 
     if role_type:
         query = query.filter(Role.role_type == role_type)
@@ -157,21 +149,14 @@ def get_roles(
             )
         )
 
-    return (
-        query.order_by(desc(Role.priority_level))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(Role.priority_level)).offset(skip).limit(limit).all()
 
 
 def get_role(
     db: Session, role_id: str, makerspace_id: Optional[str] = None
 ) -> Optional[Role]:
     """Get role by ID"""
-    query = db.query(Role).options(
-        joinedload(Role.permissions), joinedload(Role.users)
-    )
+    query = db.query(Role).options(joinedload(Role.permissions), joinedload(Role.users))
     query = query.filter(Role.id == role_id)
 
     if makerspace_id:
@@ -193,9 +178,7 @@ def update_role(
     if not db_role or db_role.is_system:
         return None
 
-    update_data = role_update.dict(
-        exclude_unset=True, exclude={"permission_ids"}
-    )
+    update_data = role_update.dict(exclude_unset=True, exclude={"permission_ids"})
     for field, value in update_data.items():
         setattr(db_role, field, value)
 
@@ -237,9 +220,7 @@ def assign_role_to_user(
     if not user or not role:
         raise ValueError("User or role not found")
 
-    if not role.can_assign_to_user(
-        assignment.user_id, str(user.makerspace_id)
-    ):
+    if not role.can_assign_to_user(assignment.user_id, str(user.makerspace_id)):
         raise ValueError("Role cannot be assigned to this user")
 
     # Check if already assigned
@@ -313,9 +294,7 @@ def revoke_role_from_user(
 
 
 # User session management
-def create_user_session(
-    db: Session, session: UserSessionCreate
-) -> UserSession:
+def create_user_session(db: Session, session: UserSessionCreate) -> UserSession:
     """Create a new user session"""
     db_session = UserSession(**session.dict())
     db.add(db_session)
@@ -339,12 +318,7 @@ def get_user_sessions(
     if active_only:
         query = query.filter(UserSession.is_active == True)
 
-    return (
-        query.order_by(desc(UserSession.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(UserSession.created_at)).offset(skip).limit(limit).all()
 
 
 def get_session(db: Session, session_id: str) -> Optional[UserSession]:
@@ -391,12 +365,7 @@ def get_audit_logs(
     if filters.date_to:
         query = query.filter(AccessLog.created_at <= filters.date_to)
 
-    return (
-        query.order_by(desc(AccessLog.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(AccessLog.created_at)).offset(skip).limit(limit).all()
 
 
 # Password policy management
@@ -495,9 +464,7 @@ def get_user_access_summary(db: Session, user_id: str) -> Optional[dict]:
     if not user:
         return None
 
-    active_sessions = [
-        s for s in user.sessions if s.is_active and not s.is_expired()
-    ]
+    active_sessions = [s for s in user.sessions if s.is_active and not s.is_expired()]
 
     return {
         "user_id": str(user.id),
@@ -536,9 +503,7 @@ def get_enhanced_members(
             query = query.filter(Member.is_active == filters.is_active)
         if filters.has_active_session is not None:
             if filters.has_active_session:
-                query = query.join(UserSession).filter(
-                    UserSession.is_active == True
-                )
+                query = query.join(UserSession).filter(UserSession.is_active == True)
             else:
                 query = query.outerjoin(UserSession).filter(
                     or_(
@@ -547,15 +512,11 @@ def get_enhanced_members(
                     )
                 )
 
-    return (
-        query.order_by(desc(Member.created_at)).offset(skip).limit(limit).all()
-    )
+    return query.order_by(desc(Member.created_at)).offset(skip).limit(limit).all()
 
 
 # Analytics and statistics
-def get_access_control_stats(
-    db: Session, makerspace_id: Optional[str] = None
-) -> dict:
+def get_access_control_stats(db: Session, makerspace_id: Optional[str] = None) -> dict:
     """Get access control statistics"""
     # Base queries
     user_query = db.query(Member)
@@ -581,9 +542,7 @@ def get_access_control_stats(
     users_requiring_password_change = user_query.filter(
         Member.requires_password_change == True
     ).count()
-    users_with_2fa = user_query.filter(
-        Member.two_factor_enabled == True
-    ).count()
+    users_with_2fa = user_query.filter(Member.two_factor_enabled == True).count()
 
     # Role statistics
     total_roles = role_query.count()
@@ -596,19 +555,13 @@ def get_access_control_stats(
     )
 
     # Session statistics
-    active_sessions = session_query.filter(
-        UserSession.is_active == True
-    ).count()
+    active_sessions = session_query.filter(UserSession.is_active == True).count()
 
     # Recent activity
     yesterday = datetime.utcnow() - timedelta(days=1)
     recent_login_attempts = (
         db.query(AccessLog)
-        .filter(
-            and_(
-                AccessLog.action == "login", AccessLog.created_at >= yesterday
-            )
-        )
+        .filter(and_(AccessLog.action == "login", AccessLog.created_at >= yesterday))
         .count()
     )
 
@@ -661,8 +614,7 @@ def get_security_alerts(
             and_(
                 AccessLog.action == "login",
                 AccessLog.success == False,
-                AccessLog.created_at
-                >= datetime.utcnow() - timedelta(hours=24),
+                AccessLog.created_at >= datetime.utcnow() - timedelta(hours=24),
             )
         )
         .group_by(AccessLog.ip_address)
@@ -689,9 +641,7 @@ def get_security_alerts(
 
 
 # System setup
-def setup_default_roles_and_permissions(
-    db: Session, makerspace_id: str
-) -> dict:
+def setup_default_roles_and_permissions(db: Session, makerspace_id: str) -> dict:
     """Setup default roles and permissions for a makerspace"""
     created_permissions = []
     created_roles = []
@@ -792,9 +742,7 @@ def export_roles(db: Session, export_config: RoleExport) -> dict:
     }
 
 
-def import_roles(
-    db: Session, import_data: RoleImport, imported_by: str
-) -> dict:
+def import_roles(db: Session, import_data: RoleImport, imported_by: str) -> dict:
     """Import roles from data"""
     results = {"created": [], "updated": [], "errors": []}
 

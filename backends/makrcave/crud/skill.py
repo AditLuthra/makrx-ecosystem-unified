@@ -97,9 +97,7 @@ def update_skill(
     if "prerequisite_ids" in update_data:
         prerequisite_ids = update_data.pop("prerequisite_ids")
         if prerequisite_ids is not None:
-            prerequisites = (
-                db.query(Skill).filter(Skill.id.in_(prerequisite_ids)).all()
-            )
+            prerequisites = db.query(Skill).filter(Skill.id.in_(prerequisite_ids)).all()
             db_skill.prerequisites = prerequisites
 
     # Update other fields
@@ -159,11 +157,7 @@ def create_user_skill(
     # Create audit log
     create_skill_audit_log(
         db,
-        action=(
-            "granted"
-            if user_skill.status == SkillStatus.CERTIFIED
-            else "pending"
-        ),
+        action=("granted" if user_skill.status == SkillStatus.CERTIFIED else "pending"),
         user_id=user_skill.user_id,
         skill_id=user_skill.skill_id,
         performed_by=certified_by,
@@ -199,9 +193,7 @@ def update_user_skill(
     user_skill_update: UserSkillUpdate,
     updated_by: Optional[str] = None,
 ) -> Optional[UserSkill]:
-    db_user_skill = (
-        db.query(UserSkill).filter(UserSkill.id == user_skill_id).first()
-    )
+    db_user_skill = db.query(UserSkill).filter(UserSkill.id == user_skill_id).first()
     if not db_user_skill:
         return None
 
@@ -241,9 +233,7 @@ def revoke_user_skill(
     reason: Optional[str] = None,
     revoked_by: Optional[str] = None,
 ) -> Optional[UserSkill]:
-    db_user_skill = (
-        db.query(UserSkill).filter(UserSkill.id == user_skill_id).first()
-    )
+    db_user_skill = db.query(UserSkill).filter(UserSkill.id == user_skill_id).first()
     if not db_user_skill:
         return None
 
@@ -331,12 +321,7 @@ def get_skill_requests(
     if user_id:
         query = query.filter(SkillRequest.user_id == user_id)
 
-    return (
-        query.order_by(desc(SkillRequest.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(SkillRequest.created_at)).offset(skip).limit(limit).all()
 
 
 def update_skill_request(
@@ -345,9 +330,7 @@ def update_skill_request(
     request_update: SkillRequestUpdate,
     reviewed_by: str,
 ) -> Optional[SkillRequest]:
-    db_request = (
-        db.query(SkillRequest).filter(SkillRequest.id == request_id).first()
-    )
+    db_request = db.query(SkillRequest).filter(SkillRequest.id == request_id).first()
     if not db_request:
         return None
 
@@ -431,9 +414,7 @@ def check_equipment_access(
     missing_skill_ids = required_skill_ids - user_skill_ids
 
     if missing_skill_ids:
-        missing_skills = (
-            db.query(Skill).filter(Skill.id.in_(missing_skill_ids)).all()
-        )
+        missing_skills = db.query(Skill).filter(Skill.id.in_(missing_skill_ids)).all()
         return EquipmentAccessCheck(
             equipment_id=equipment_id,
             equipment_name=equipment.name,
@@ -522,26 +503,17 @@ def get_skill_audit_logs(
     query = query.filter(SkillAuditLog.created_at >= cutoff_date)
 
     return (
-        query.order_by(desc(SkillAuditLog.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
+        query.order_by(desc(SkillAuditLog.created_at)).offset(skip).limit(limit).all()
     )
 
 
 # Analytics and Statistics
 def get_skill_analytics(db: Session, makerspace_id: str) -> Dict[str, Any]:
     # Get skill statistics
-    total_skills = (
-        db.query(Skill).filter(Skill.makerspace_id == makerspace_id).count()
-    )
+    total_skills = db.query(Skill).filter(Skill.makerspace_id == makerspace_id).count()
     active_skills = (
         db.query(Skill)
-        .filter(
-            and_(
-                Skill.makerspace_id == makerspace_id, Skill.status == "active"
-            )
-        )
+        .filter(and_(Skill.makerspace_id == makerspace_id, Skill.status == "active"))
         .count()
     )
 
@@ -584,8 +556,6 @@ def get_skill_analytics(db: Session, makerspace_id: str) -> Dict[str, Any]:
         "certified_user_skills": certified_user_skills,
         "pending_requests": pending_requests,
         "certification_rate": (
-            certified_user_skills / total_user_skills
-            if total_user_skills > 0
-            else 0
+            certified_user_skills / total_user_skills if total_user_skills > 0 else 0
         ),
     }

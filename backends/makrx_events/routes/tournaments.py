@@ -15,9 +15,7 @@ from backends.makrx_events.security import get_current_user, CurrentUser
 router = APIRouter()
 
 
-@router.get(
-    "/events/{event_id}/tournaments", response_model=List[TournamentRead]
-)
+@router.get("/events/{event_id}/tournaments", response_model=List[TournamentRead])
 def list_tournaments(event_id: str, db: Session = Depends(get_db)):
     return (
         db.query(Tournament)
@@ -58,9 +56,7 @@ def update_tournament(
 ):
     t = (
         db.query(Tournament)
-        .filter(
-            Tournament.id == tournament_id, Tournament.event_id == event_id
-        )
+        .filter(Tournament.id == tournament_id, Tournament.event_id == event_id)
         .first()
     )
     if not t:

@@ -61,9 +61,7 @@ def validate_csv_headers(headers: List[str]) -> Dict[str, Any]:
     ]
 
     missing_required = [h for h in required_headers if h not in headers]
-    extra_headers = [
-        h for h in headers if h not in required_headers + optional_headers
-    ]
+    extra_headers = [h for h in headers if h not in required_headers + optional_headers]
 
     return {
         "valid": len(missing_required) == 0,
@@ -111,15 +109,11 @@ def process_csv_row(row: Dict[str, str], row_number: int) -> Dict[str, Any]:
     # Validate status
     valid_statuses = ["active", "in_use", "damaged", "maintenance", "retired"]
     if row.get("status") and row["status"].lower() not in valid_statuses:
-        warnings.append(
-            f"Unknown status '{row['status']}', will default to 'active'"
-        )
+        warnings.append(f"Unknown status '{row['status']}', will default to 'active'")
 
     # MakrX specific validations
     if row.get("supplier_type") == "makrx" and not row.get("product_code"):
-        warnings.append(
-            "MakrX items should have a product code for reordering"
-        )
+        warnings.append("MakrX items should have a product code for reordering")
 
     return {
         "row_number": row_number,
@@ -142,9 +136,7 @@ def calculate_inventory_value(items: List[Dict[str, Any]]) -> Dict[str, float]:
         estimated_cost = estimate_item_cost(item)
 
         item_value = quantity * estimated_cost
-        category_values[category] = (
-            category_values.get(category, 0) + item_value
-        )
+        category_values[category] = category_values.get(category, 0) + item_value
         total_value += item_value
 
     return {"total_value": total_value, "category_breakdown": category_values}
@@ -192,16 +184,14 @@ def generate_low_stock_report(items: List[Dict[str, Any]]) -> Dict[str, Any]:
     for item in low_stock_items + critical_items:
         if item.get("supplier_type") == "makrx" and item.get("product_code"):
             suggested_quantity = max(
-                float(item.get("min_threshold", 10))
-                * 2,  # 2x minimum threshold
+                float(item.get("min_threshold", 10)) * 2,  # 2x minimum threshold
                 10,  # minimum order quantity
             )
             reorder_suggestions.append(
                 {
                     "item": item,
                     "suggested_quantity": suggested_quantity,
-                    "estimated_cost": suggested_quantity
-                    * estimate_item_cost(item),
+                    "estimated_cost": suggested_quantity * estimate_item_cost(item),
                 }
             )
 
@@ -294,12 +284,8 @@ def calculate_usage_analytics(
         "period_days": days,
         "total_activities": len(recent_logs),
         "actions_breakdown": actions,
-        "top_users": sorted(users.items(), key=lambda x: x[1], reverse=True)[
-            :10
-        ],
-        "most_used_items": sorted(
-            items.items(), key=lambda x: x[1], reverse=True
-        )[:10],
+        "top_users": sorted(users.items(), key=lambda x: x[1], reverse=True)[:10],
+        "most_used_items": sorted(items.items(), key=lambda x: x[1], reverse=True)[:10],
         "daily_activity": daily_activity,
     }
 

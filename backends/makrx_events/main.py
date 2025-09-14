@@ -62,9 +62,7 @@ try:
     if dsn:
         sentry_sdk.init(
             dsn=dsn,
-            traces_sample_rate=float(
-                os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")
-            ),
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
             environment=os.getenv("ENVIRONMENT", "development"),
         )
         logger.info("sentry_initialized")

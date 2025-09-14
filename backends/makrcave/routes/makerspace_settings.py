@@ -173,14 +173,10 @@ async def update_settings_section(
         return settings
 
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.patch(
-    "/toggle-feature/{feature}", response_model=MakerspaceSettingsResponse
-)
+@router.patch("/toggle-feature/{feature}", response_model=MakerspaceSettingsResponse)
 async def toggle_feature(
     feature: str,
     toggle_data: FeatureToggleRequest,
@@ -231,15 +227,11 @@ async def toggle_feature(
         return settings
 
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.get("/public/{makerspace_id}", response_model=MakerspaceSettingsPublic)
-async def get_public_settings(
-    makerspace_id: str, db: Session = Depends(get_db)
-):
+async def get_public_settings(makerspace_id: str, db: Session = Depends(get_db)):
     """
     Get public-facing settings for a makerspace.
     This endpoint is publicly accessible and returns only non-sensitive information.
@@ -330,9 +322,7 @@ async def import_settings(
         return settings
 
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 # Specific section update endpoints for better organization

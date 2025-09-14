@@ -61,9 +61,7 @@ class AnalyticsCRUD:
             query = query.filter(UsageEvent.user_id == filters.user_id)
         if filters.event_types:
             query = query.filter(
-                UsageEvent.event_type.in_(
-                    [et.value for et in filters.event_types]
-                )
+                UsageEvent.event_type.in_([et.value for et in filters.event_types])
             )
         if filters.equipment_id:
             query = query.filter(
@@ -74,10 +72,7 @@ class AnalyticsCRUD:
             )
 
         return (
-            query.order_by(desc(UsageEvent.timestamp))
-            .offset(skip)
-            .limit(limit)
-            .all()
+            query.order_by(desc(UsageEvent.timestamp)).offset(skip).limit(limit).all()
         )
 
     # Analytics Overview
@@ -252,8 +247,7 @@ class AnalyticsCRUD:
             self.db.query(func.sum(EquipmentUsageLog.duration_minutes))
             .filter(
                 and_(
-                    EquipmentUsageLog.makerspace_id
-                    == uuid.UUID(makerspace_id),
+                    EquipmentUsageLog.makerspace_id == uuid.UUID(makerspace_id),
                     EquipmentUsageLog.session_start >= start_date,
                 )
             )
@@ -280,9 +274,7 @@ class AnalyticsCRUD:
 
         peak_hour = "N/A"
         if hourly_activity:
-            peak_hour_data = max(
-                hourly_activity, key=lambda x: x.activity_count
-            )
+            peak_hour_data = max(hourly_activity, key=lambda x: x.activity_count)
             peak_hour = f"{int(peak_hour_data.hour):02d}:00"
 
         # Most active day
@@ -303,9 +295,7 @@ class AnalyticsCRUD:
 
         most_active_day = "N/A"
         if daily_activity:
-            most_active_day_data = max(
-                daily_activity, key=lambda x: x.activity_count
-            )
+            most_active_day_data = max(daily_activity, key=lambda x: x.activity_count)
             most_active_day = most_active_day_data.day.strftime("%Y-%m-%d")
 
         return {
@@ -324,16 +314,10 @@ class AnalyticsCRUD:
         top_consumed = (
             self.db.query(
                 InventoryAnalytics.inventory_item_id,
-                func.sum(InventoryAnalytics.consumed_quantity).label(
-                    "total_consumed"
-                ),
-                func.sum(InventoryAnalytics.total_cost_consumed).label(
-                    "total_cost"
-                ),
+                func.sum(InventoryAnalytics.consumed_quantity).label("total_consumed"),
+                func.sum(InventoryAnalytics.total_cost_consumed).label("total_cost"),
             )
-            .filter(
-                InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id)
-            )
+            .filter(InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id))
             .group_by(InventoryAnalytics.inventory_item_id)
             .order_by(desc("total_consumed"))
             .limit(10)
@@ -344,13 +328,9 @@ class AnalyticsCRUD:
         fastest_depleting = (
             self.db.query(
                 InventoryAnalytics.inventory_item_id,
-                func.avg(InventoryAnalytics.consumption_rate).label(
-                    "avg_rate"
-                ),
+                func.avg(InventoryAnalytics.consumption_rate).label("avg_rate"),
             )
-            .filter(
-                InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id)
-            )
+            .filter(InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id))
             .group_by(InventoryAnalytics.inventory_item_id)
             .order_by(desc("avg_rate"))
             .limit(10)
@@ -362,8 +342,7 @@ class AnalyticsCRUD:
             self.db.query(InventoryAnalytics)
             .filter(
                 and_(
-                    InventoryAnalytics.makerspace_id
-                    == uuid.UUID(makerspace_id),
+                    InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id),
                     InventoryAnalytics.reorder_triggered == True,
                     InventoryAnalytics.date
                     >= datetime.now().date() - timedelta(days=7),
@@ -401,24 +380,16 @@ class AnalyticsCRUD:
         }
 
     # Equipment Metrics
-    def get_equipment_metrics(
-        self, makerspace_id: str
-    ) -> List[Dict[str, Any]]:
+    def get_equipment_metrics(self, makerspace_id: str) -> List[Dict[str, Any]]:
         # Group by equipment and calculate metrics
         equipment_stats = (
             self.db.query(
                 EquipmentUsageLog.equipment_id,
-                func.sum(EquipmentUsageLog.duration_minutes).label(
-                    "total_minutes"
-                ),
+                func.sum(EquipmentUsageLog.duration_minutes).label("total_minutes"),
                 func.count(EquipmentUsageLog.id).label("usage_count"),
-                func.avg(EquipmentUsageLog.success_rate).label(
-                    "avg_success_rate"
-                ),
+                func.avg(EquipmentUsageLog.success_rate).label("avg_success_rate"),
             )
-            .filter(
-                EquipmentUsageLog.makerspace_id == uuid.UUID(makerspace_id)
-            )
+            .filter(EquipmentUsageLog.makerspace_id == uuid.UUID(makerspace_id))
             .group_by(EquipmentUsageLog.equipment_id)
             .all()
         )
@@ -457,9 +428,7 @@ class AnalyticsCRUD:
                     func.nullif(ProjectAnalytics.completion_rate == 100, False)
                 ).label("completed_projects"),
                 func.avg(ProjectAnalytics.total_cost).label("avg_cost"),
-                func.avg(ProjectAnalytics.bom_items_count).label(
-                    "avg_bom_size"
-                ),
+                func.avg(ProjectAnalytics.bom_items_count).label("avg_bom_size"),
             )
             .filter(ProjectAnalytics.makerspace_id == uuid.UUID(makerspace_id))
             .first()
@@ -574,8 +543,7 @@ class AnalyticsCRUD:
         return {
             "total_revenue": float(total_revenue),
             "revenue_by_source": {
-                source.revenue_type: float(source.total)
-                for source in revenue_by_source
+                source.revenue_type: float(source.total) for source in revenue_by_source
             },
             "monthly_trends": [
                 {

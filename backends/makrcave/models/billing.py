@@ -84,9 +84,7 @@ class Transaction(Base):
     # Service-specific details
     service_type = Column(String(50))  # 3d_print, laser_cut, workshop, etc.
     service_id = Column(String)  # Reference to specific service/job
-    service_log_metadata = Column(
-        JSON, default=dict
-    )  # Additional service data
+    service_log_metadata = Column(JSON, default=dict)  # Additional service data
 
     # Credit system
     credits_used = Column(Integer, default=0)
@@ -122,9 +120,7 @@ class Invoice(Base):
     transaction_id = Column(String, ForeignKey("transactions.id"))
 
     # Invoice details
-    status = Column(
-        Enum(InvoiceStatus), nullable=False, default=InvoiceStatus.DRAFT
-    )
+    status = Column(Enum(InvoiceStatus), nullable=False, default=InvoiceStatus.DRAFT)
     amount = Column(Float, nullable=False)
     tax_amount = Column(Float, default=0)
     total_amount = Column(Float, nullable=False)
@@ -193,9 +189,7 @@ class CreditWallet(Base):
 
     # Relationships
     member = relationship("Member")
-    credit_transactions = relationship(
-        "CreditTransaction", back_populates="wallet"
-    )
+    credit_transactions = relationship("CreditTransaction", back_populates="wallet")
 
 
 class CreditTransaction(Base):
@@ -209,9 +203,7 @@ class CreditTransaction(Base):
     type = Column(
         String(50), nullable=False
     )  # earned, spent, refund, manual_adjustment
-    amount = Column(
-        Integer, nullable=False
-    )  # Positive for earned, negative for spent
+    amount = Column(Integer, nullable=False)  # Positive for earned, negative for spent
     balance_after = Column(Integer, nullable=False)
 
     # Reference to related transaction/service
@@ -251,22 +243,16 @@ class Refund(Base):
     type = Column(String(50), default="full")  # full, partial
 
     # Processing details
-    status = Column(
-        String(50), default="pending"
-    )  # pending, processed, failed
+    status = Column(String(50), default="pending")  # pending, processed, failed
     gateway_refund_id = Column(String(100))
-    processed_by = Column(
-        String, nullable=False
-    )  # Admin who processed the refund
+    processed_by = Column(String, nullable=False)  # Admin who processed the refund
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     processed_at = Column(DateTime(timezone=True))
 
     # Relationships
-    original_transaction = relationship(
-        "Transaction", back_populates="refunds"
-    )
+    original_transaction = relationship("Transaction", back_populates="refunds")
 
 
 class PaymentMethod(Base):

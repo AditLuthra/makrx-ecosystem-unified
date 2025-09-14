@@ -7,9 +7,7 @@ class Settings(BaseSettings):
     """Configuration for MakrCave backend (unified)."""
 
     # Store integration
-    STORE_API_URL: str = Field(
-        "http://localhost:8000", description="Store backend URL"
-    )
+    STORE_API_URL: str = Field("http://localhost:8000", description="Store backend URL")
     STORE_API_KEY: str = Field(
         "cave-to-store-api-key", description="Service-to-service auth key"
     )

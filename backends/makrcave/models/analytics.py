@@ -69,7 +69,9 @@ class UsageEvent(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     def __repr__(self):
-        return f"<UsageEvent(id={self.id}, type={self.event_type}, user={self.user_id})>"
+        return (
+            f"<UsageEvent(id={self.id}, type={self.event_type}, user={self.user_id})>"
+        )
 
 
 class AnalyticsSnapshot(Base):
@@ -80,16 +82,12 @@ class AnalyticsSnapshot(Base):
         UUID(as_uuid=True), ForeignKey("makerspaces.id"), nullable=False
     )
     snapshot_type = Column(String(50), nullable=False)
-    time_period = Column(
-        String(20), nullable=False
-    )  # 'daily', 'weekly', 'monthly'
+    time_period = Column(String(20), nullable=False)  # 'daily', 'weekly', 'monthly'
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     data = Column(JSON, nullable=False)
     generated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     def __repr__(self):
         return f"<AnalyticsSnapshot(id={self.id}, type={self.snapshot_type}, period={self.time_period})>"
@@ -102,9 +100,7 @@ class ReportRequest(Base):
     makerspace_id = Column(
         UUID(as_uuid=True), ForeignKey("makerspaces.id"), nullable=False
     )
-    requested_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
+    requested_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     report_type = Column(
         String(50), nullable=False
     )  # 'inventory', 'usage', 'revenue', etc.
@@ -117,9 +113,7 @@ class ReportRequest(Base):
     error_message = Column(Text, nullable=True)
     requested_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     completed_at = Column(DateTime, nullable=True)
-    expires_at = Column(
-        DateTime, nullable=True
-    )  # When the report file expires
+    expires_at = Column(DateTime, nullable=True)  # When the report file expires
 
     def __repr__(self):
         return f"<ReportRequest(id={self.id}, type={self.report_type}, status={self.status})>"
@@ -135,9 +129,7 @@ class EquipmentUsageLog(Base):
     equipment_id = Column(
         UUID(as_uuid=True), ForeignKey("equipment.id"), nullable=False
     )
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     session_start = Column(DateTime, nullable=False)
     session_end = Column(DateTime, nullable=True)
     duration_minutes = Column(Integer, nullable=True)
@@ -190,21 +182,13 @@ class ProjectAnalytics(Base):
     makerspace_id = Column(
         UUID(as_uuid=True), ForeignKey("makerspaces.id"), nullable=False
     )
-    project_id = Column(
-        UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False
-    )
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     total_cost = Column(Float, nullable=True)
     bom_items_count = Column(Integer, default=0)
-    external_items_count = Column(
-        Integer, default=0
-    )  # Items not from MakrX.Store
+    external_items_count = Column(Integer, default=0)  # Items not from MakrX.Store
     print_time_hours = Column(Float, nullable=True)
-    material_efficiency = Column(
-        Float, nullable=True
-    )  # % of material actually used
+    material_efficiency = Column(Float, nullable=True)  # % of material actually used
     completion_rate = Column(Float, nullable=True)  # % of project completed
     equipment_hours_used = Column(Float, nullable=True)
     collaboration_count = Column(Integer, default=0)  # Number of collaborators
@@ -212,9 +196,7 @@ class ProjectAnalytics(Base):
         Float, nullable=True
     )  # Based on BOM size, equipment used, etc.
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f"<ProjectAnalytics(id={self.id}, project={self.project_id}, cost={self.total_cost})>"
@@ -234,9 +216,7 @@ class RevenueAnalytics(Base):
     amount = Column(Float, nullable=False)
     currency = Column(String(3), default="USD", nullable=False)
     transaction_count = Column(Integer, default=1)
-    payment_method = Column(
-        String(50), nullable=True
-    )  # 'razorpay', 'stripe', 'cash'
+    payment_method = Column(String(50), nullable=True)  # 'razorpay', 'stripe', 'cash'
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     reference_id = Column(
         UUID(as_uuid=True), nullable=True

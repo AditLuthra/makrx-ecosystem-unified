@@ -48,9 +48,7 @@ class TimestampMixin(BaseModel):
 
 # Coupon schemas
 class CouponBase(BaseModel):
-    code: str = Field(
-        ..., min_length=3, max_length=50, pattern=r"^[A-Z0-9_-]+$"
-    )
+    code: str = Field(..., min_length=3, max_length=50, pattern=r"^[A-Z0-9_-]+$")
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     type: CouponType
@@ -171,9 +169,7 @@ class AuditLogList(BaseModel):
 
 # System Configuration schemas
 class SystemConfigBase(BaseModel):
-    key: str = Field(
-        ..., min_length=1, max_length=100, pattern=r"^[a-z0-9_.-]+$"
-    )
+    key: str = Field(..., min_length=1, max_length=100, pattern=r"^[a-z0-9_.-]+$")
     value: Any
     description: Optional[str] = None
     category: Optional[str] = Field(None, max_length=50)

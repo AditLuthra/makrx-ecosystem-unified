@@ -244,22 +244,16 @@ async def list_bom_items(
 
         # Apply filters
         if filters.category:
-            query = query.filter(
-                EnhancedBOMItem.category.in_(filters.category)
-            )
+            query = query.filter(EnhancedBOMItem.category.in_(filters.category))
 
         if filters.procurement_status:
             query = query.filter(
-                EnhancedBOMItem.procurement_status.in_(
-                    filters.procurement_status
-                )
+                EnhancedBOMItem.procurement_status.in_(filters.procurement_status)
             )
 
         if filters.availability_status:
             query = query.filter(
-                EnhancedBOMItem.availability_status.in_(
-                    filters.availability_status
-                )
+                EnhancedBOMItem.availability_status.in_(filters.availability_status)
             )
 
         if filters.supplier_rating:
@@ -279,8 +273,7 @@ async def list_bom_items(
 
         if filters.auto_reorder_enabled is not None:
             query = query.filter(
-                EnhancedBOMItem.auto_reorder_enabled
-                == filters.auto_reorder_enabled
+                EnhancedBOMItem.auto_reorder_enabled == filters.auto_reorder_enabled
             )
 
         if filters.min_cost:
@@ -295,9 +288,7 @@ async def list_bom_items(
                 or_(
                     EnhancedBOMItem.item_name.ilike(search_term),
                     EnhancedBOMItem.part_code.ilike(search_term),
-                    EnhancedBOMItem.manufacturer_part_number.ilike(
-                        search_term
-                    ),
+                    EnhancedBOMItem.manufacturer_part_number.ilike(search_term),
                     EnhancedBOMItem.primary_supplier.ilike(search_term),
                 )
             )
@@ -343,9 +334,7 @@ async def get_bom_item(
     db: Session = Depends(get_db),
 ):
     """Get a specific BOM item by ID"""
-    item = (
-        db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id == item_id).first()
-    )
+    item = db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id == item_id).first()
 
     if not item:
         raise HTTPException(
@@ -363,9 +352,7 @@ async def update_bom_item(
     db: Session = Depends(get_db),
 ):
     """Update a BOM item"""
-    item = (
-        db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id == item_id).first()
-    )
+    item = db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id == item_id).first()
 
     if not item:
         raise HTTPException(
@@ -385,10 +372,7 @@ async def update_bom_item(
                 item.price_last_updated = datetime.utcnow()
 
         # Recalculate available quantity if stock levels changed
-        if (
-            "current_stock_level" in update_data
-            or "reserved_quantity" in update_data
-        ):
+        if "current_stock_level" in update_data or "reserved_quantity" in update_data:
             item.available_quantity = max(
                 0, item.current_stock_level - (item.reserved_quantity or 0)
             )
@@ -417,9 +401,7 @@ async def create_purchase_order(
     """Create a new purchase order for a BOM item"""
     # Verify BOM item exists
     bom_item = (
-        db.query(EnhancedBOMItem)
-        .filter(EnhancedBOMItem.id == po.bom_item_id)
-        .first()
+        db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id == po.bom_item_id).first()
     )
     if not bom_item:
         raise HTTPException(
@@ -468,9 +450,7 @@ async def create_purchase_order(
 
 
 # Inventory Transactions
-@router.post(
-    "/inventory-transactions", response_model=BOMInventoryTransactionResponse
-)
+@router.post("/inventory-transactions", response_model=BOMInventoryTransactionResponse)
 async def create_inventory_transaction(
     transaction: BOMInventoryTransactionCreate,
     current_user=Depends(get_current_user),
@@ -503,9 +483,7 @@ async def create_inventory_transaction(
 
         total_value = None
         if transaction.unit_cost:
-            total_value = (
-                abs(transaction.quantity_change) * transaction.unit_cost
-            )
+            total_value = abs(transaction.quantity_change) * transaction.unit_cost
 
         db_transaction = BOMInventoryTransaction(
             id=transaction_id,
@@ -701,9 +679,7 @@ async def get_bom_dashboard_stats(
         base_query = db.query(EnhancedBOMItem)
 
         if project_id:
-            base_query = base_query.filter(
-                EnhancedBOMItem.project_id == project_id
-            )
+            base_query = base_query.filter(EnhancedBOMItem.project_id == project_id)
 
         # Total items
         total_items = base_query.count()
@@ -740,9 +716,7 @@ async def get_bom_dashboard_stats(
         # Items by category
         category_counts = {}
         for category in ComponentCategory:
-            count = base_query.filter(
-                EnhancedBOMItem.category == category
-            ).count()
+            count = base_query.filter(EnhancedBOMItem.category == category).count()
             category_counts[category.value] = count
 
         # Critical path items
@@ -827,9 +801,7 @@ async def create_makrx_store_order(
         # Verify all BOM items exist
         bom_item_ids = [item.bom_item_id for item in order_request.items]
         bom_items = (
-            db.query(EnhancedBOMItem)
-            .filter(EnhancedBOMItem.id.in_(bom_item_ids))
-            .all()
+            db.query(EnhancedBOMItem).filter(EnhancedBOMItem.id.in_(bom_item_ids)).all()
         )
 
         if len(bom_items) != len(bom_item_ids):
@@ -852,9 +824,7 @@ async def create_makrx_store_order(
 
         for item_request in order_request.items:
             bom_item = next(
-                item
-                for item in bom_items
-                if item.id == item_request.bom_item_id
+                item for item in bom_items if item.id == item_request.bom_item_id
             )
 
             if not bom_item.makrx_product_code:
@@ -882,17 +852,13 @@ async def create_makrx_store_order(
             "order_id": f"MAKRX_{uuid.uuid4().hex[:8]}",
             "status": "pending",
             "total_value": total_value,
-            "estimated_delivery": (
-                datetime.utcnow() + timedelta(days=7)
-            ).isoformat(),
+            "estimated_delivery": (datetime.utcnow() + timedelta(days=7)).isoformat(),
         }
 
         # Create purchase orders for each item
         for item_request in order_request.items:
             bom_item = next(
-                item
-                for item in bom_items
-                if item.id == item_request.bom_item_id
+                item for item in bom_items if item.id == item_request.bom_item_id
             )
 
             po = BOMPurchaseOrder(
@@ -905,9 +871,7 @@ async def create_makrx_store_order(
                 total_amount=(bom_item.unit_cost or 0) * item_request.quantity,
                 currency="USD",
                 expected_delivery=datetime.fromisoformat(
-                    makrx_order_response["estimated_delivery"].replace(
-                        "Z", "+00:00"
-                    )
+                    makrx_order_response["estimated_delivery"].replace("Z", "+00:00")
                 ),
                 status="confirmed",
                 requested_by=current_user.get("user_id"),
@@ -948,9 +912,7 @@ async def get_cost_analysis(
         base_query = db.query(EnhancedBOMItem)
 
         if project_id:
-            base_query = base_query.filter(
-                EnhancedBOMItem.project_id == project_id
-            )
+            base_query = base_query.filter(EnhancedBOMItem.project_id == project_id)
 
         items = base_query.all()
 
@@ -960,12 +922,8 @@ async def get_cost_analysis(
         # Cost by category
         cost_by_category = {}
         for category in ComponentCategory:
-            category_items = [
-                item for item in items if item.category == category
-            ]
-            category_cost = sum(
-                item.total_cost or 0 for item in category_items
-            )
+            category_items = [item for item in items if item.category == category]
+            category_cost = sum(item.total_cost or 0 for item in category_items)
             if category_cost > 0:
                 cost_by_category[category.value] = category_cost
 
@@ -996,9 +954,7 @@ async def get_cost_analysis(
         suggestions = []
 
         # Check for items without suppliers
-        no_supplier_items = [
-            item for item in items if not item.primary_supplier
-        ]
+        no_supplier_items = [item for item in items if not item.primary_supplier]
         if no_supplier_items:
             suggestions.append(
                 f"Consider finding suppliers for {len(no_supplier_items)} items without suppliers"

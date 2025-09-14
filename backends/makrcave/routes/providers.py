@@ -203,8 +203,7 @@ async def register_provider(
                 for m in registration.available_materials
             ],
             quality_levels=[
-                InputSanitizer.sanitize_text(q)
-                for q in registration.quality_levels
+                InputSanitizer.sanitize_text(q) for q in registration.quality_levels
             ],
             hourly_rate=registration.hourly_rate,
             setup_fee=registration.setup_fee,
@@ -223,9 +222,7 @@ async def register_provider(
         # Store in database (mock storage for now)
         providers_db[provider_id] = provider
 
-        logger.info(
-            f"Registered new provider: {provider.name} ({provider_id})"
-        )
+        logger.info(f"Registered new provider: {provider.name} ({provider_id})")
 
         return {
             "success": True,
@@ -237,9 +234,7 @@ async def register_provider(
         raise
     except Exception as e:
         logger.error(f"Provider registration error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Provider registration failed"
-        )
+        raise HTTPException(status_code=500, detail="Provider registration failed")
 
 
 @router.get("/search", response_model=List[Dict[str, Any]])
@@ -254,9 +249,7 @@ async def search_providers(
     """Search for available providers based on requirements"""
     try:
         # Sanitize input and filter providers based on criteria
-        material = (
-            InputSanitizer.sanitize_text(material) if material else material
-        )
+        material = InputSanitizer.sanitize_text(material) if material else material
         quality = InputSanitizer.sanitize_text(quality) if quality else quality
         # Filter providers based on criteria
         matching_providers = []
@@ -292,9 +285,7 @@ async def search_providers(
                     "location": provider.location,
                     "rating": provider.rating,
                     "estimated_delivery": estimated_delivery,
-                    "capabilities": [
-                        cap.value for cap in provider.capabilities
-                    ],
+                    "capabilities": [cap.value for cap in provider.capabilities],
                     "queue_length": provider.queue_length,
                     "hourly_rate": provider.hourly_rate,
                     "setup_fee": provider.setup_fee,
@@ -304,9 +295,7 @@ async def search_providers(
             )
 
         # Sort by rating and queue length
-        matching_providers.sort(
-            key=lambda p: (-p["rating"], p["queue_length"])
-        )
+        matching_providers.sort(key=lambda p: (-p["rating"], p["queue_length"]))
 
         return matching_providers
 
@@ -378,13 +367,9 @@ async def dispatch_job(
         best_provider.updated_at = datetime.utcnow()
 
         # Schedule provider notification
-        background_tasks.add_task(
-            notify_provider_new_job, best_provider.id, job.id
-        )
+        background_tasks.add_task(notify_provider_new_job, best_provider.id, job.id)
 
-        logger.info(
-            f"Dispatched job {job.id} to provider {best_provider.name}"
-        )
+        logger.info(f"Dispatched job {job.id} to provider {best_provider.name}")
 
         return {
             "success": True,
@@ -445,9 +430,7 @@ async def get_job(job_id: str, db: AsyncSession = Depends(get_db)):
                 "assigned_at": (
                     job.assigned_at.isoformat() if job.assigned_at else None
                 ),
-                "started_at": (
-                    job.started_at.isoformat() if job.started_at else None
-                ),
+                "started_at": (job.started_at.isoformat() if job.started_at else None),
                 "completed_at": (
                     job.completed_at.isoformat() if job.completed_at else None
                 ),
@@ -530,20 +513,11 @@ async def update_job_status(
         job.updated_at = datetime.utcnow()
 
         # Update timestamps based on status
-        if (
-            update_request.status == JobStatus.ACCEPTED
-            and job.assigned_at is None
-        ):
+        if update_request.status == JobStatus.ACCEPTED and job.assigned_at is None:
             job.assigned_at = datetime.utcnow()
-        elif (
-            update_request.status == JobStatus.IN_PROGRESS
-            and job.started_at is None
-        ):
+        elif update_request.status == JobStatus.IN_PROGRESS and job.started_at is None:
             job.started_at = datetime.utcnow()
-        elif (
-            update_request.status == JobStatus.COMPLETED
-            and job.completed_at is None
-        ):
+        elif update_request.status == JobStatus.COMPLETED and job.completed_at is None:
             job.completed_at = datetime.utcnow()
 
             # Update provider queue
@@ -586,9 +560,7 @@ async def update_job_status(
         raise
     except Exception as e:
         logger.error(f"Job status update error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to update job status"
-        )
+        raise HTTPException(status_code=500, detail="Failed to update job status")
 
 
 @router.get("/providers/{provider_id}/jobs")
@@ -637,9 +609,7 @@ async def get_provider_jobs(
         raise
     except Exception as e:
         logger.error(f"Provider jobs retrieval error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve provider jobs"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve provider jobs")
 
 
 # Background Tasks
@@ -652,9 +622,7 @@ async def notify_provider_new_job(provider_id: str, job_id: str):
         job = jobs_db.get(job_id)
 
         if provider and job:
-            logger.info(
-                f"Notifying provider {provider.name} of new job {job_id}"
-            )
+            logger.info(f"Notifying provider {provider.name} of new job {job_id}")
 
             # TODO: Send email/webhook notification to provider
             # await email_service.send_new_job_notification(

@@ -11,9 +11,7 @@ CLIENT_SECRET = os.getenv("MAKRX_STORE_BACKEND_CLIENT_SECRET", "")
 
 @lru_cache()
 def _token_endpoint() -> str:
-    return (
-        f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
-    )
+    return f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
 
 
 async def get_service_token() -> str:

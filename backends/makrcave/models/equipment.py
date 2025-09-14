@@ -77,9 +77,7 @@ class Equipment(Base):
 
     # Access control
     requires_certification = Column(Boolean, default=False)
-    certification_required = Column(
-        String(100), nullable=True
-    )  # Skill/Badge ID
+    certification_required = Column(String(100), nullable=True)  # Skill/Badge ID
 
     # Maintenance tracking
     last_maintenance_date = Column(DateTime, nullable=True)
@@ -116,18 +114,12 @@ class Equipment(Base):
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_by = Column(String, nullable=False)
 
     # Relationships
-    reservations = relationship(
-        "EquipmentReservation", back_populates="equipment"
-    )
-    maintenance_logs = relationship(
-        "EquipmentMaintenance", back_populates="equipment"
-    )
+    reservations = relationship("EquipmentReservation", back_populates="equipment")
+    maintenance_logs = relationship("EquipmentMaintenance", back_populates="equipment")
 
 
 class EquipmentReservation(Base):
@@ -148,9 +140,7 @@ class EquipmentReservation(Base):
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     equipment = relationship("Equipment", back_populates="reservations")
@@ -217,12 +207,8 @@ class EquipmentRating(Base):
     admin_response = Column(Text, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     equipment = relationship("Equipment", backref="ratings")
-    reservation = relationship(
-        "EquipmentReservation", backref="rating", uselist=False
-    )
+    reservation = relationship("EquipmentReservation", backref="rating", uselist=False)

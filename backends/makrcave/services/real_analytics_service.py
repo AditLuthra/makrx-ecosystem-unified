@@ -34,9 +34,7 @@ class RealAnalyticsService:
 
             # Active members in period
             active_members = (
-                self.db.query(
-                    func.count(func.distinct(MemberActivityLog.member_id))
-                )
+                self.db.query(func.count(func.distinct(MemberActivityLog.member_id)))
                 .filter(
                     and_(
                         MemberActivityLog.makerspace_id == makerspace_id,
@@ -57,14 +55,11 @@ class RealAnalyticsService:
 
             active_equipment = (
                 self.db.query(
-                    func.count(
-                        func.distinct(EquipmentUtilizationMetrics.equipment_id)
-                    )
+                    func.count(func.distinct(EquipmentUtilizationMetrics.equipment_id))
                 )
                 .filter(
                     and_(
-                        EquipmentUtilizationMetrics.makerspace_id
-                        == makerspace_id,
+                        EquipmentUtilizationMetrics.makerspace_id == makerspace_id,
                         EquipmentUtilizationMetrics.start_time >= cutoff_time,
                         EquipmentUtilizationMetrics.end_time.is_(
                             None
@@ -112,9 +107,7 @@ class RealAnalyticsService:
                     and_(
                         SafetyIncident.makerspace_id == makerspace_id,
                         SafetyIncident.incident_date >= cutoff_time.date(),
-                        SafetyIncident.severity.in_(
-                            ["medium", "high", "critical"]
-                        ),
+                        SafetyIncident.severity.in_(["medium", "high", "critical"]),
                     )
                 )
                 .scalar()
@@ -131,9 +124,7 @@ class RealAnalyticsService:
                     "revenue": float(revenue),
                     "safety_incidents": safety_incidents,
                     "status": (
-                        "healthy"
-                        if safety_incidents == 0
-                        else "attention_needed"
+                        "healthy" if safety_incidents == 0 else "attention_needed"
                     ),
                 },
                 "alerts": self._get_current_alerts(makerspace_id),
@@ -146,9 +137,7 @@ class RealAnalyticsService:
                 "timestamp": datetime.utcnow().isoformat(),
             }
 
-    def get_usage_analytics(
-        self, makerspace_id: str, days: int = 30
-    ) -> Dict[str, Any]:
+    def get_usage_analytics(self, makerspace_id: str, days: int = 30) -> Dict[str, Any]:
         """Get detailed usage analytics"""
         try:
             start_date = datetime.utcnow() - timedelta(days=days)
@@ -157,9 +146,9 @@ class RealAnalyticsService:
             daily_usage = (
                 self.db.query(
                     func.date(MemberActivityLog.timestamp).label("date"),
-                    func.count(
-                        func.distinct(MemberActivityLog.member_id)
-                    ).label("unique_members"),
+                    func.count(func.distinct(MemberActivityLog.member_id)).label(
+                        "unique_members"
+                    ),
                     func.count(MemberActivityLog.id).label("total_activities"),
                 )
                 .filter(
@@ -194,9 +183,7 @@ class RealAnalyticsService:
                 self.db.query(
                     Equipment.name,
                     Equipment.category,
-                    func.count(EquipmentUtilizationMetrics.id).label(
-                        "usage_count"
-                    ),
+                    func.count(EquipmentUtilizationMetrics.id).label("usage_count"),
                     func.avg(
                         func.extract(
                             "epoch",
@@ -232,9 +219,9 @@ class RealAnalyticsService:
                         ],
                         else_="low",
                     ).label("engagement_level"),
-                    func.count(
-                        func.distinct(MemberActivityLog.member_id)
-                    ).label("member_count"),
+                    func.count(func.distinct(MemberActivityLog.member_id)).label(
+                        "member_count"
+                    ),
                 )
                 .filter(
                     and_(
@@ -284,8 +271,7 @@ class RealAnalyticsService:
                     for row in equipment_usage
                 ],
                 "member_engagement": {
-                    row.engagement_level: row.member_count
-                    for row in engagement_summary
+                    row.engagement_level: row.member_count for row in engagement_summary
                 },
             }
 
@@ -366,8 +352,7 @@ class RealAnalyticsService:
                     func.sum(
                         case(
                             (
-                                CreditTransaction.transaction_type
-                                == "purchase",
+                                CreditTransaction.transaction_type == "purchase",
                                 CreditTransaction.amount,
                             ),
                             else_=0,
@@ -382,9 +367,9 @@ class RealAnalyticsService:
                             else_=0,
                         )
                     ).label("credits_used"),
-                    func.count(
-                        func.distinct(CreditTransaction.member_id)
-                    ).label("active_credit_users"),
+                    func.count(func.distinct(CreditTransaction.member_id)).label(
+                        "active_credit_users"
+                    ),
                 )
                 .filter(
                     and_(
@@ -396,12 +381,8 @@ class RealAnalyticsService:
             )
 
             # Calculate totals and growth
-            total_revenue = sum(
-                float(row.revenue or 0) for row in daily_revenue
-            )
-            total_transactions = sum(
-                row.transaction_count for row in daily_revenue
-            )
+            total_revenue = sum(float(row.revenue or 0) for row in daily_revenue)
+            total_transactions = sum(row.transaction_count for row in daily_revenue)
 
             # Growth calculation (compare with previous period)
             prev_start = start_date - timedelta(days=days)
@@ -420,11 +401,7 @@ class RealAnalyticsService:
             )
 
             growth_rate = (
-                (
-                    (total_revenue - float(prev_revenue))
-                    / float(prev_revenue)
-                    * 100
-                )
+                ((total_revenue - float(prev_revenue)) / float(prev_revenue) * 100)
                 if prev_revenue > 0
                 else 0
             )
@@ -467,9 +444,7 @@ class RealAnalyticsService:
                     for row in top_members
                 ],
                 "credit_system": {
-                    "credits_purchased": float(
-                        credit_analytics.credits_purchased or 0
-                    ),
+                    "credits_purchased": float(credit_analytics.credits_purchased or 0),
                     "credits_used": float(credit_analytics.credits_used or 0),
                     "active_users": credit_analytics.active_credit_users or 0,
                 },
@@ -493,9 +468,7 @@ class RealAnalyticsService:
                     Equipment.name,
                     Equipment.category,
                     Equipment.status,
-                    func.count(EquipmentUtilizationMetrics.id).label(
-                        "usage_sessions"
-                    ),
+                    func.count(EquipmentUtilizationMetrics.id).label("usage_sessions"),
                     func.sum(
                         func.extract(
                             "epoch",
@@ -516,8 +489,7 @@ class RealAnalyticsService:
                 .outerjoin(
                     EquipmentUtilizationMetrics,
                     and_(
-                        EquipmentUtilizationMetrics.equipment_id
-                        == Equipment.id,
+                        EquipmentUtilizationMetrics.equipment_id == Equipment.id,
                         EquipmentUtilizationMetrics.start_time >= start_date,
                     ),
                 )
@@ -601,9 +573,7 @@ class RealAnalyticsService:
                         "status": eq.status,
                         "usage_sessions": eq.usage_sessions or 0,
                         "total_hours": round(float(eq.total_hours or 0), 2),
-                        "avg_session_hours": round(
-                            float(eq.avg_session_hours or 0), 2
-                        ),
+                        "avg_session_hours": round(float(eq.avg_session_hours or 0), 2),
                         "utilization_rate": round(utilization_rate, 1),
                     }
                 )
@@ -644,18 +614,12 @@ class RealAnalyticsService:
                 "summary": {
                     "total_equipment": len(equipment_list),
                     "active_equipment": len(
-                        [
-                            eq
-                            for eq in equipment_list
-                            if eq["status"] == "operational"
-                        ]
+                        [eq for eq in equipment_list if eq["status"] == "operational"]
                     ),
                     "maintenance_due": len(maintenance_due),
                     "average_utilization": (
                         round(
-                            sum(
-                                eq["utilization_rate"] for eq in equipment_list
-                            )
+                            sum(eq["utilization_rate"] for eq in equipment_list)
                             / len(equipment_list),
                             1,
                         )
@@ -685,9 +649,7 @@ class RealAnalyticsService:
                     Member.email,
                     Member.membership_type,
                     func.count(MemberActivityLog.id).label("activity_count"),
-                    func.max(MemberActivityLog.timestamp).label(
-                        "last_activity"
-                    ),
+                    func.max(MemberActivityLog.timestamp).label("last_activity"),
                 )
                 .outerjoin(
                     MemberActivityLog,
@@ -750,11 +712,7 @@ class RealAnalyticsService:
                 [m for m in member_activity if (m.activity_count or 0) >= 20]
             )
             medium_engagement = len(
-                [
-                    m
-                    for m in member_activity
-                    if 10 <= (m.activity_count or 0) < 20
-                ]
+                [m for m in member_activity if 10 <= (m.activity_count or 0) < 20]
             )
             low_engagement = len(
                 [m for m in member_activity if (m.activity_count or 0) < 10]
@@ -847,9 +805,7 @@ class RealAnalyticsService:
                         SafetyIncident.incident_date >= start_date.date(),
                     )
                 )
-                .group_by(
-                    SafetyIncident.incident_type, SafetyIncident.severity
-                )
+                .group_by(SafetyIncident.incident_type, SafetyIncident.severity)
                 .all()
             )
 
@@ -878,11 +834,7 @@ class RealAnalyticsService:
                         [i for i in incidents if i.severity == "critical"]
                     ),
                     "resolved_incidents": len(
-                        [
-                            i
-                            for i in incidents
-                            if i.resolution_status == "resolved"
-                        ]
+                        [i for i in incidents if i.resolution_status == "resolved"]
                     ),
                     "pending_incidents": len(
                         [i for i in incidents if i.resolution_status == "open"]
@@ -945,7 +897,10 @@ class RealAnalyticsService:
                     {
                         "type": "maintenance",
                         "severity": "high",
-                        "message": f"{overdue_maintenance} equipment items have overdue maintenance",
+                        "message": (
+                            f"{overdue_maintenance} equipment items have "
+                            "overdue maintenance"
+                        ),
                         "count": overdue_maintenance,
                     }
                 )
@@ -969,7 +924,10 @@ class RealAnalyticsService:
                     {
                         "type": "safety",
                         "severity": "critical",
-                        "message": f"{critical_incidents} critical safety incidents require attention",
+                        "message": (
+                            f"{critical_incidents} critical safety incidents "
+                            "require attention"
+                        ),
                         "count": critical_incidents,
                     }
                 )
@@ -992,7 +950,7 @@ class RealAnalyticsService:
                     {
                         "type": "equipment",
                         "severity": "medium",
-                        "message": f"{offline_equipment} equipment items are offline",
+                        "message": (f"{offline_equipment} equipment items are offline"),
                         "count": offline_equipment,
                     }
                 )

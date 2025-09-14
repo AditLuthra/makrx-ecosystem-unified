@@ -37,9 +37,7 @@ from schemas.project import (
 
 
 # Project CRUD operations
-def create_project(
-    db: Session, project: ProjectCreate, owner_id: str
-) -> Project:
+def create_project(db: Session, project: ProjectCreate, owner_id: str) -> Project:
     """Create a new project with initial milestones and collaborators"""
     db_project = Project(
         project_id=project.project_id,
@@ -133,9 +131,7 @@ def create_project(
     return db_project
 
 
-def get_project(
-    db: Session, project_id: str, user_id: str = None
-) -> Optional[Project]:
+def get_project(db: Session, project_id: str, user_id: str = None) -> Optional[Project]:
     """Get project by ID with access control"""
     query = (
         db.query(Project)
@@ -201,16 +197,12 @@ def get_projects(
         if filters.owner_id:
             query = query.filter(Project.owner_id == filters.owner_id)
         if filters.makerspace_id:
-            query = query.filter(
-                Project.makerspace_id == filters.makerspace_id
-            )
+            query = query.filter(Project.makerspace_id == filters.makerspace_id)
         if filters.is_featured is not None:
             query = query.filter(Project.is_featured == filters.is_featured)
         if filters.tags:
             # Search for projects that have any of the specified tags
-            tag_conditions = [
-                Project.tags.contains([tag]) for tag in filters.tags
-            ]
+            tag_conditions = [Project.tags.contains([tag]) for tag in filters.tags]
             query = query.filter(or_(*tag_conditions))
         if filters.search:
             search_term = f"%{filters.search}%"
@@ -240,9 +232,7 @@ def update_project(
     if not has_project_edit_access(db, project_id, user_id):
         return None
 
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         return None
 
@@ -275,9 +265,7 @@ def update_project(
 
 def delete_project(db: Session, project_id: str, user_id: str) -> bool:
     """Delete project with permission check"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         return False
 
@@ -406,9 +394,7 @@ def remove_collaborator(
         return False
 
     # Cannot remove project owner
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if project and project.owner_id == user_id:
         return False
 
@@ -482,9 +468,7 @@ def update_bom_item(
     db: Session, bom_item_id: int, bom_update: BOMItemUpdate, updated_by: str
 ) -> Optional[ProjectBOM]:
     """Update BOM item"""
-    bom_item = (
-        db.query(ProjectBOM).filter(ProjectBOM.id == bom_item_id).first()
-    )
+    bom_item = db.query(ProjectBOM).filter(ProjectBOM.id == bom_item_id).first()
     if not bom_item:
         return None
 
@@ -507,9 +491,7 @@ def update_bom_item(
 
 def remove_bom_item(db: Session, bom_item_id: int, removed_by: str) -> bool:
     """Remove BOM item"""
-    bom_item = (
-        db.query(ProjectBOM).filter(ProjectBOM.id == bom_item_id).first()
-    )
+    bom_item = db.query(ProjectBOM).filter(ProjectBOM.id == bom_item_id).first()
     if not bom_item:
         return False
 
@@ -621,9 +603,7 @@ def complete_milestone(
 ) -> Optional[ProjectMilestone]:
     """Mark milestone as completed"""
     milestone = (
-        db.query(ProjectMilestone)
-        .filter(ProjectMilestone.id == milestone_id)
-        .first()
+        db.query(ProjectMilestone).filter(ProjectMilestone.id == milestone_id).first()
     )
     if not milestone:
         return None
@@ -667,9 +647,7 @@ def has_project_access(db: Session, project_id: str, user_id: str) -> bool:
     return collaborator is not None
 
 
-def has_project_edit_access(
-    db: Session, project_id: str, user_id: str
-) -> bool:
+def has_project_edit_access(db: Session, project_id: str, user_id: str) -> bool:
     """Check if user has edit access to project"""
     collaborator = (
         db.query(ProjectCollaborator)
@@ -712,9 +690,7 @@ def get_user_projects_summary(db: Session, user_id: str) -> Dict[str, int]:
         .filter(
             and_(
                 ProjectCollaborator.user_id == user_id,
-                Project.status.in_(
-                    [ProjectStatus.DRAFT, ProjectStatus.IN_PROGRESS]
-                ),
+                Project.status.in_([ProjectStatus.DRAFT, ProjectStatus.IN_PROGRESS]),
             )
         )
         .count()
@@ -749,9 +725,7 @@ def connect_github_repo(
     user_id: str = None,
 ) -> Optional[Project]:
     """Connect a GitHub repository to a project"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         return None
 
@@ -770,9 +744,7 @@ def connect_github_repo(
     # Update project with GitHub information
     project.github_repo_url = repo_url
     project.github_repo_name = repo_info.full_name
-    project.github_access_token = (
-        access_token  # Should be encrypted in production
-    )
+    project.github_access_token = access_token  # Should be encrypted in production
     project.github_integration_enabled = True
     project.github_default_branch = repo_info.default_branch
 
@@ -803,9 +775,7 @@ def disconnect_github_repo(
     db: Session, project_id: str, user_id: str = None
 ) -> Optional[Project]:
     """Disconnect GitHub repository from a project"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         return None
 
@@ -840,9 +810,7 @@ def sync_github_activity(
     db: Session, project_id: str, limit: int = 50
 ) -> List[ProjectActivityLog]:
     """Sync recent GitHub activity for a project"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project or not project.github_integration_enabled:
         return []
 
@@ -866,8 +834,7 @@ def sync_github_activity(
                         ProjectActivityLog.project_id == project_id,
                         ProjectActivityLog.activity_type
                         == ActivityType.GITHUB_COMMIT_PUSHED,
-                        ProjectActivityLog.metadata["commit_sha"].astext
-                        == commit.sha,
+                        ProjectActivityLog.metadata["commit_sha"].astext == commit.sha,
                     )
                 )
                 .first()
@@ -989,37 +956,27 @@ def sync_github_activity(
         return []
 
 
-def get_github_files(
-    db: Session, project_id: str, path: str = "", branch: str = None
-):
+def get_github_files(db: Session, project_id: str, path: str = "", branch: str = None):
     """Get files from connected GitHub repository"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project or not project.github_integration_enabled:
         return []
 
     github_service = GitHubService(project.github_access_token)
     branch = branch or project.github_default_branch
 
-    return github_service.get_repository_files(
-        project.github_repo_url, path, branch
-    )
+    return github_service.get_repository_files(project.github_repo_url, path, branch)
 
 
 def get_github_file_content(
     db: Session, project_id: str, file_path: str, branch: str = None
 ):
     """Get content of a specific file from GitHub repository"""
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project or not project.github_integration_enabled:
         return None
 
     github_service = GitHubService(project.github_access_token)
     branch = branch or project.github_default_branch
 
-    return github_service.get_file_content(
-        project.github_repo_url, file_path, branch
-    )
+    return github_service.get_file_content(project.github_repo_url, file_path, branch)

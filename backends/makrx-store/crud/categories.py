@@ -18,9 +18,7 @@ logger = logging.getLogger(__name__)
 class CategoryCRUD:
     """CRUD operations for categories"""
 
-    async def create(
-        self, db: AsyncSession, category_data: CategoryCreate
-    ) -> Category:
+    async def create(self, db: AsyncSession, category_data: CategoryCreate) -> Category:
         """Create a new category"""
         try:
             category = Category(**category_data.dict())
@@ -33,9 +31,7 @@ class CategoryCRUD:
             logger.error(f"Failed to create category: {e}")
             raise
 
-    async def get_by_id(
-        self, db: AsyncSession, category_id: int
-    ) -> Optional[Category]:
+    async def get_by_id(self, db: AsyncSession, category_id: int) -> Optional[Category]:
         """Get category by ID with children"""
         try:
             query = (
@@ -53,9 +49,7 @@ class CategoryCRUD:
             logger.error(f"Failed to get category by ID {category_id}: {e}")
             return None
 
-    async def get_by_slug(
-        self, db: AsyncSession, slug: str
-    ) -> Optional[Category]:
+    async def get_by_slug(self, db: AsyncSession, slug: str) -> Optional[Category]:
         """Get category by slug with children"""
         try:
             query = (
@@ -73,9 +67,7 @@ class CategoryCRUD:
             logger.error(f"Failed to get category by slug {slug}: {e}")
             return None
 
-    async def get_by_path(
-        self, db: AsyncSession, path: str
-    ) -> Optional[Category]:
+    async def get_by_path(self, db: AsyncSession, path: str) -> Optional[Category]:
         """Get category by hierarchical path (e.g., 'electronics/arduino/boards')"""
         try:
             query = (
@@ -143,9 +135,7 @@ class CategoryCRUD:
             all_categories = list(result.scalars().all())
 
             # Build tree structure (return only root categories, children are loaded)
-            root_categories = [
-                cat for cat in all_categories if cat.parent_id is None
-            ]
+            root_categories = [cat for cat in all_categories if cat.parent_id is None]
             return root_categories
         except Exception as e:
             logger.error(f"Failed to get category tree: {e}")
@@ -195,9 +185,7 @@ class CategoryCRUD:
             logger.error(f"Failed to delete category {category_id}: {e}")
             return False
 
-    async def get_product_count(
-        self, db: AsyncSession, category_id: int
-    ) -> int:
+    async def get_product_count(self, db: AsyncSession, category_id: int) -> int:
         """Get count of active products in category"""
         try:
             query = select(func.count(Product.id)).where(
@@ -210,9 +198,7 @@ class CategoryCRUD:
             result = await db.execute(query)
             return result.scalar() or 0
         except Exception as e:
-            logger.error(
-                f"Failed to get product count for category {category_id}: {e}"
-            )
+            logger.error(f"Failed to get product count for category {category_id}: {e}")
             return 0
 
     async def get_category_stats(
@@ -235,15 +221,15 @@ class CategoryCRUD:
 
             # Get price range for products in category
             price_query = select(
-                func.min(
-                    func.coalesce(Product.sale_price, Product.price)
-                ).label("min_price"),
-                func.max(
-                    func.coalesce(Product.sale_price, Product.price)
-                ).label("max_price"),
-                func.avg(
-                    func.coalesce(Product.sale_price, Product.price)
-                ).label("avg_price"),
+                func.min(func.coalesce(Product.sale_price, Product.price)).label(
+                    "min_price"
+                ),
+                func.max(func.coalesce(Product.sale_price, Product.price)).label(
+                    "max_price"
+                ),
+                func.avg(func.coalesce(Product.sale_price, Product.price)).label(
+                    "avg_price"
+                ),
             ).where(
                 and_(
                     Product.category_id == category_id,
@@ -259,26 +245,18 @@ class CategoryCRUD:
                 "subcategory_count": subcategory_count,
                 "price_range": {
                     "min": (
-                        float(price_stats.min_price)
-                        if price_stats.min_price
-                        else None
+                        float(price_stats.min_price) if price_stats.min_price else None
                     ),
                     "max": (
-                        float(price_stats.max_price)
-                        if price_stats.max_price
-                        else None
+                        float(price_stats.max_price) if price_stats.max_price else None
                     ),
                     "avg": (
-                        float(price_stats.avg_price)
-                        if price_stats.avg_price
-                        else None
+                        float(price_stats.avg_price) if price_stats.avg_price else None
                     ),
                 },
             }
         except Exception as e:
-            logger.error(
-                f"Failed to get category stats for {category_id}: {e}"
-            )
+            logger.error(f"Failed to get category stats for {category_id}: {e}")
             return {
                 "product_count": 0,
                 "subcategory_count": 0,

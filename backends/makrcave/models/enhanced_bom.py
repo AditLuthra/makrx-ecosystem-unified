@@ -101,33 +101,23 @@ class EnhancedBOMItem(Base):
     __tablename__ = "enhanced_bom_items"
 
     id = Column(String(100), primary_key=True, index=True)
-    project_id = Column(
-        String(100), ForeignKey("projects.project_id"), nullable=True
-    )
-    template_id = Column(
-        String(100), ForeignKey("bom_templates.id"), nullable=True
-    )
+    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=True)
+    template_id = Column(String(100), ForeignKey("bom_templates.id"), nullable=True)
 
     # Core item information
     item_name = Column(String(200), nullable=False)
-    part_code = Column(
-        String(100), nullable=True, index=True
-    )  # Internal part number
+    part_code = Column(String(100), nullable=True, index=True)  # Internal part number
     manufacturer_part_number = Column(String(100), nullable=True, index=True)
     supplier_part_number = Column(String(100), nullable=True)
 
     # Categorization
     category = Column(Enum(ComponentCategory), nullable=False)
     subcategory = Column(String(100), nullable=True)
-    component_type = Column(
-        String(100), nullable=True
-    )  # resistor, capacitor, IC, etc.
+    component_type = Column(String(100), nullable=True)  # resistor, capacitor, IC, etc.
 
     # Quantity and units
     quantity = Column(Float, nullable=False, default=1.0)
-    unit_of_measure = Column(
-        String(20), default="each"
-    )  # each, meters, grams, etc.
+    unit_of_measure = Column(String(20), default="each")  # each, meters, grams, etc.
     quantity_per_assembly = Column(Float, default=1.0)  # For nested assemblies
 
     # Technical specifications
@@ -135,9 +125,7 @@ class EnhancedBOMItem(Base):
     tolerance = Column(String(50), nullable=True)  # ±5%, ±0.1mm, etc.
     material = Column(String(100), nullable=True)
     color = Column(String(50), nullable=True)
-    size_dimensions = Column(
-        JSON, nullable=True
-    )  # {length, width, height, diameter}
+    size_dimensions = Column(JSON, nullable=True)  # {length, width, height, diameter}
     weight = Column(Float, nullable=True)  # grams
 
     # MakrX Store integration
@@ -153,14 +141,10 @@ class EnhancedBOMItem(Base):
 
     # Supplier information
     primary_supplier = Column(String(200), nullable=True)
-    supplier_rating = Column(
-        Enum(SupplierRating), default=SupplierRating.UNKNOWN
-    )
+    supplier_rating = Column(Enum(SupplierRating), default=SupplierRating.UNKNOWN)
     supplier_lead_time_days = Column(Integer, nullable=True)
     minimum_order_quantity = Column(Integer, default=1)
-    alternative_suppliers = Column(
-        JSON, nullable=True
-    )  # List of backup suppliers
+    alternative_suppliers = Column(JSON, nullable=True)  # List of backup suppliers
 
     # Inventory tracking
     procurement_status = Column(
@@ -215,9 +199,7 @@ class EnhancedBOMItem(Base):
     # Relationships
     project = relationship("Project", foreign_keys=[project_id])
     template = relationship("BOMTemplate", back_populates="bom_items")
-    purchase_orders = relationship(
-        "BOMPurchaseOrder", back_populates="bom_item"
-    )
+    purchase_orders = relationship("BOMPurchaseOrder", back_populates="bom_item")
     usage_history = relationship("BOMUsageHistory", back_populates="bom_item")
     inventory_transactions = relationship(
         "BOMInventoryTransaction", back_populates="bom_item"
@@ -267,9 +249,7 @@ class BOMPurchaseOrder(Base):
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    bom_item = relationship(
-        "EnhancedBOMItem", back_populates="purchase_orders"
-    )
+    bom_item = relationship("EnhancedBOMItem", back_populates="purchase_orders")
 
 
 class BOMUsageHistory(Base):
@@ -331,9 +311,7 @@ class BOMInventoryTransaction(Base):
     quantity_after = Column(Float, nullable=False)
 
     # Reference information
-    reference_id = Column(
-        String(100), nullable=True
-    )  # PO number, project ID, etc.
+    reference_id = Column(String(100), nullable=True)  # PO number, project ID, etc.
     reference_type = Column(
         String(50), nullable=True
     )  # purchase_order, project_usage, etc.
@@ -347,14 +325,10 @@ class BOMInventoryTransaction(Base):
     notes = Column(Text, nullable=True)
     performed_by = Column(String(100), nullable=False)
     approved_by = Column(String(100), nullable=True)
-    transaction_date = Column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    transaction_date = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    bom_item = relationship(
-        "EnhancedBOMItem", back_populates="inventory_transactions"
-    )
+    bom_item = relationship("EnhancedBOMItem", back_populates="inventory_transactions")
 
 
 class BOMAnalytics(Base):
@@ -379,9 +353,7 @@ class BOMAnalytics(Base):
     # Lead time analysis
     average_lead_time_days = Column(Float, nullable=True)
     longest_lead_time_days = Column(Float, nullable=True)
-    estimated_procurement_completion = Column(
-        DateTime(timezone=True), nullable=True
-    )
+    estimated_procurement_completion = Column(DateTime(timezone=True), nullable=True)
 
     # Risk analysis
     single_source_items = Column(Integer, default=0)
@@ -410,9 +382,7 @@ class BOMCostHistory(Base):
     supplier = Column(String(200), nullable=True)
 
     # Context
-    cost_source = Column(
-        String(50), nullable=False
-    )  # quote, purchase, market_data
+    cost_source = Column(String(50), nullable=False)  # quote, purchase, market_data
     quote_id = Column(String(100), nullable=True)
     effective_date = Column(DateTime(timezone=True), nullable=False)
     expiry_date = Column(DateTime(timezone=True), nullable=True)
@@ -422,12 +392,8 @@ class BOMCostHistory(Base):
     break_quantities = Column(JSON, nullable=True)  # Volume break pricing
 
     # Market data
-    market_trend = Column(
-        String(20), nullable=True
-    )  # increasing, decreasing, stable
-    confidence_level = Column(
-        String(20), default="medium"
-    )  # low, medium, high
+    market_trend = Column(String(20), nullable=True)  # increasing, decreasing, stable
+    confidence_level = Column(String(20), default="medium")  # low, medium, high
 
     # Metadata
     recorded_by = Column(String(100), nullable=False)

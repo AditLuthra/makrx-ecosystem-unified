@@ -234,19 +234,15 @@ class EnhancedAuth:
             token_lifetime = exp - iat
 
             # Allow longer lifetime for refresh tokens and service tokens
-            if "refresh" not in payload.get(
-                "typ", ""
-            ) and "service" not in payload.get("sub", ""):
+            if "refresh" not in payload.get("typ", "") and "service" not in payload.get(
+                "sub", ""
+            ):
                 if token_lifetime > SecurityConfig.ACCESS_TOKEN_LIFETIME + 60:
-                    logger.warning(
-                        f"Token lifetime too long: {token_lifetime}s"
-                    )
+                    logger.warning(f"Token lifetime too long: {token_lifetime}s")
 
             # Security: Rate limit per user
             if context and context.user_id:
-                await self._check_rate_limit(
-                    context.user_id, context.ip_address
-                )
+                await self._check_rate_limit(context.user_id, context.ip_address)
 
             return payload
 
@@ -346,20 +342,14 @@ async def get_current_user_enhanced(
         request_id = request.headers.get("X-Request-ID")
 
         # Verify with Store client audience
-        payload = await enhanced_auth.verify_jwt(
-            token, settings.KEYCLOAK_CLIENT_ID
-        )
+        payload = await enhanced_auth.verify_jwt(token, settings.KEYCLOAK_CLIENT_ID)
 
         # Create security context
         user_context = SecurityContext(
             user_id=payload.get("sub"),
             keycloak_id=payload.get("sub"),
             roles=payload.get("realm_access", {}).get("roles", []),
-            scopes=(
-                payload.get("scope", "").split()
-                if payload.get("scope")
-                else []
-            ),
+            scopes=(payload.get("scope", "").split() if payload.get("scope") else []),
             request_id=request_id,
             ip_address=ip_address,
             user_agent=user_agent,
@@ -407,9 +397,7 @@ class EnhancedRoleChecker:
         self.required_scopes = required_scopes or []
         self.require_makerspace_context = require_makerspace_context
 
-    def __call__(
-        self, context: SecurityContext = Depends(get_current_user_enhanced)
-    ):
+    def __call__(self, context: SecurityContext = Depends(get_current_user_enhanced)):
         # Role checking
         if not any(role in context.roles for role in self.required_roles):
             logger.warning(
@@ -423,9 +411,7 @@ class EnhancedRoleChecker:
 
         # Scope checking
         if self.required_scopes:
-            if not any(
-                scope in context.scopes for scope in self.required_scopes
-            ):
+            if not any(scope in context.scopes for scope in self.required_scopes):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail=f"Insufficient scopes. Required: {self.required_scopes}",
@@ -442,19 +428,13 @@ class EnhancedRoleChecker:
 
 
 # Enhanced role checkers with contextual access
-require_store_admin = EnhancedRoleChecker(
-    [UserRole.STORE_ADMIN, UserRole.SUPERADMIN]
-)
+require_store_admin = EnhancedRoleChecker([UserRole.STORE_ADMIN, UserRole.SUPERADMIN])
 require_makerspace_admin = EnhancedRoleChecker(
     [UserRole.MAKERSPACE_ADMIN, UserRole.SUPERADMIN],
     require_makerspace_context=True,
 )
-require_provider = EnhancedRoleChecker(
-    [UserRole.PROVIDER, UserRole.SUPERADMIN]
-)
-require_admin = EnhancedRoleChecker(
-    [UserRole.STORE_ADMIN, UserRole.SUPERADMIN]
-)
+require_provider = EnhancedRoleChecker([UserRole.PROVIDER, UserRole.SUPERADMIN])
+require_admin = EnhancedRoleChecker([UserRole.STORE_ADMIN, UserRole.SUPERADMIN])
 
 # ==========================================
 # DPDP Act & Privacy Compliance
@@ -488,9 +468,7 @@ class DataProtectionService:
         # Store consent record (required by DPDP Act)
         if self.redis_client:
             try:
-                consent_key = (
-                    f"consent:{user_id}:{consent_record['consent_id']}"
-                )
+                consent_key = f"consent:{user_id}:{consent_record['consent_id']}"
                 await self.redis_client.setex(
                     consent_key,
                     SecurityConfig.REFRESH_TOKEN_LIFETIME,  # 30 days minimum retention
@@ -519,20 +497,16 @@ class DataProtectionService:
 
             # Get consent records
             if self.redis_client:
-                consent_keys = await self.redis_client.keys(
-                    f"consent:{user_id}:*"
-                )
+                consent_keys = await self.redis_client.keys(f"consent:{user_id}:*")
                 for key in consent_keys:
                     try:
                         consent_data = await self.redis_client.get(key)
                         if consent_data:
-                            user_data["data_categories"][
-                                "consent_records"
-                            ].append(json.loads(consent_data))
+                            user_data["data_categories"]["consent_records"].append(
+                                json.loads(consent_data)
+                            )
                     except Exception as e:
-                        logger.warning(
-                            f"Failed to retrieve consent record {key}: {e}"
-                        )
+                        logger.warning(f"Failed to retrieve consent record {key}: {e}")
 
             return user_data
 

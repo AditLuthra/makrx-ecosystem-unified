@@ -43,13 +43,9 @@ class SubEvent(Base):
     prizes_md = Column(Text)
     waitlist = Column(Boolean)
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(
-        DateTime, server_default=func.now(), onupdate=func.now()
-    )
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
     __table_args__ = (
-        UniqueConstraint(
-            "microsite_id", "slug", name="uq_sub_events_microsite_slug"
-        ),
+        UniqueConstraint("microsite_id", "slug", name="uq_sub_events_microsite_slug"),
         Index("ix_sub_events_status", "status"),
     )

@@ -75,9 +75,7 @@ async def dispatch_job_to_providers(
         raise HTTPException(status_code=404, detail="Service order not found")
 
     if service_order.status != JobStatus.CREATED:
-        raise HTTPException(
-            status_code=400, detail="Job has already been dispatched"
-        )
+        raise HTTPException(status_code=400, detail="Job has already been dispatched")
 
     # Find matching providers
     matching_providers = await find_matching_providers(
@@ -85,9 +83,7 @@ async def dispatch_job_to_providers(
     )
 
     if not matching_providers:
-        raise HTTPException(
-            status_code=404, detail="No available providers found"
-        )
+        raise HTTPException(status_code=404, detail="No available providers found")
 
     # Update service order status
     await db.execute(
@@ -124,9 +120,7 @@ async def dispatch_job_to_providers(
     return DispatchResponse(
         service_order_id=request.service_order_id,
         providers_notified=matching_providers,
-        expected_response_time=min(
-            p.response_time_minutes for p in matching_providers
-        ),
+        expected_response_time=min(p.response_time_minutes for p in matching_providers),
         dispatch_id=dispatch_id,
     )
 
@@ -153,8 +147,7 @@ async def find_matching_providers(
         .where(
             and_(
                 Provider.status == ProviderStatus.ACTIVE,
-                Provider.services[service_type.value].astext.cast(bool)
-                == True,
+                Provider.services[service_type.value].astext.cast(bool) == True,
             )
         )
         .options(selectinload(Provider.inventory_items))
@@ -235,9 +228,7 @@ async def get_provider_capacity(db: AsyncSession, provider_id: str) -> int:
         select(func.count(ServiceOrder.id)).where(
             and_(
                 ServiceOrder.provider_id == provider_id,
-                ServiceOrder.status.in_(
-                    [JobStatus.ACCEPTED, JobStatus.IN_PROGRESS]
-                ),
+                ServiceOrder.status.in_([JobStatus.ACCEPTED, JobStatus.IN_PROGRESS]),
             )
         )
     )
@@ -310,8 +301,7 @@ async def send_job_notification(
         "provider_id": provider_match.provider_id,
         "job_id": service_order.id,
         "service_type": service_order.quote.service_type,
-        "estimated_value": service_order.customer_price
-        * 0.7,  # Provider gets ~70%
+        "estimated_value": service_order.customer_price * 0.7,  # Provider gets ~70%
         "priority": "rush" if service_order.priority == 2 else "normal",
     }
 
@@ -336,23 +326,17 @@ async def accept_job(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Get service order
-    result = await db.execute(
-        select(ServiceOrder).where(ServiceOrder.id == job_id)
-    )
+    result = await db.execute(select(ServiceOrder).where(ServiceOrder.id == job_id))
     service_order = result.scalar_one_or_none()
 
     if not service_order:
         raise HTTPException(status_code=404, detail="Job not found")
 
     if service_order.status != JobStatus.DISPATCHED:
-        raise HTTPException(
-            status_code=400, detail="Job is no longer available"
-        )
+        raise HTTPException(status_code=400, detail="Job is no longer available")
 
     # Check if provider was notified
     dispatch_result = await db.execute(
@@ -418,8 +402,7 @@ async def reserve_materials(
             and_(
                 ProviderInventory.provider_id == provider_id,
                 ProviderInventory.material_type == required_material,
-                ProviderInventory.current_stock
-                - ProviderInventory.reserved_stock
+                ProviderInventory.current_stock - ProviderInventory.reserved_stock
                 >= material_needed,
             )
         )
@@ -431,9 +414,7 @@ async def reserve_materials(
         await db.execute(
             update(ProviderInventory)
             .where(ProviderInventory.id == inventory_item.id)
-            .values(
-                reserved_stock=inventory_item.reserved_stock + material_needed
-            )
+            .values(reserved_stock=inventory_item.reserved_stock + material_needed)
         )
 
 
@@ -454,9 +435,7 @@ async def get_available_jobs(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Get dispatched jobs for this provider
     query = (

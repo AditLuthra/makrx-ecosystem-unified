@@ -33,7 +33,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index(
-        "ix_store_products_status_category", table_name="store_products"
-    )
+    op.drop_index("ix_store_products_status_category", table_name="store_products")
     op.drop_index("ix_store_products_status", table_name="store_products")

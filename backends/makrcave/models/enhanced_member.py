@@ -59,9 +59,7 @@ class Member(Base):
     __tablename__ = "members"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    keycloak_user_id = Column(
-        String(100), unique=True, nullable=False, index=True
-    )
+    keycloak_user_id = Column(String(100), unique=True, nullable=False, index=True)
     email = Column(String(255), nullable=False, index=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
@@ -77,9 +75,7 @@ class Member(Base):
     start_date = Column(DateTime(timezone=True), nullable=False)
     end_date = Column(DateTime(timezone=True), nullable=False)
     is_active = Column(Boolean, default=True)
-    status = Column(
-        Enum(MemberStatus), nullable=False, default=MemberStatus.ACTIVE
-    )
+    status = Column(Enum(MemberStatus), nullable=False, default=MemberStatus.ACTIVE)
 
     # Profile information
     skills = Column(JSON, default=list)
@@ -106,13 +102,9 @@ class Member(Base):
     requires_password_change = Column(Boolean, default=False)
 
     # Two-factor authentication
-    two_factor_method = Column(
-        Enum(TwoFactorMethod), default=TwoFactorMethod.NONE
-    )
+    two_factor_method = Column(Enum(TwoFactorMethod), default=TwoFactorMethod.NONE)
     two_factor_enabled = Column(Boolean, default=False)
-    two_factor_secret = Column(
-        String(255), nullable=True
-    )  # Encrypted TOTP secret
+    two_factor_secret = Column(String(255), nullable=True)  # Encrypted TOTP secret
     two_factor_backup_codes = Column(
         ARRAY(String), nullable=True
     )  # Encrypted backup codes
@@ -120,9 +112,7 @@ class Member(Base):
 
     # Password history (for policy enforcement)
     password_history = Column(JSON, default=list)  # Last N password hashes
-    password_changed_at = Column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    password_changed_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Session management
     max_concurrent_sessions = Column(Integer, default=5)
@@ -131,9 +121,7 @@ class Member(Base):
     # Admin fields
     notes = Column(Text)
     suspension_reason = Column(Text)
-    suspended_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=True
-    )
+    suspended_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=True)
     suspended_at = Column(DateTime(timezone=True))
 
     # Terms and privacy
@@ -208,10 +196,7 @@ class Member(Base):
         if not self.account_locked:
             return False
 
-        if (
-            self.account_locked_until
-            and datetime.utcnow() > self.account_locked_until
-        ):
+        if self.account_locked_until and datetime.utcnow() > self.account_locked_until:
             # Lock has expired, unlock account
             self.account_locked = False
             self.account_locked_until = None
@@ -220,9 +205,7 @@ class Member(Base):
 
         return True
 
-    def increment_failed_login(
-        self, max_attempts: int = 5, lockout_minutes: int = 30
-    ):
+    def increment_failed_login(self, max_attempts: int = 5, lockout_minutes: int = 30):
         """Increment failed login attempts and lock if necessary"""
         self.failed_login_attempts += 1
         self.last_failed_login = datetime.utcnow()
@@ -250,9 +233,7 @@ class Member(Base):
 
     def get_active_sessions_count(self):
         """Get count of active sessions"""
-        return len(
-            [s for s in self.sessions if s.is_active and not s.is_expired()]
-        )
+        return len([s for s in self.sessions if s.is_active and not s.is_expired()])
 
     def can_create_new_session(self) -> bool:
         """Check if user can create a new session"""
@@ -276,9 +257,7 @@ class Member(Base):
             return False
         return datetime.utcnow() > self.password_expires_at
 
-    def add_password_to_history(
-        self, password_hash: str, max_history: int = 5
-    ):
+    def add_password_to_history(self, password_hash: str, max_history: int = 5):
         """Add password hash to history"""
         if not self.password_history:
             self.password_history = []
@@ -323,8 +302,7 @@ class Member(Base):
         codes = []
         for _ in range(count):
             code = "".join(
-                secrets.choice(string.ascii_uppercase + string.digits)
-                for _ in range(8)
+                secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8)
             )
             codes.append(code)
 
@@ -334,10 +312,7 @@ class Member(Base):
 
     def use_backup_code(self, code: str) -> bool:
         """Use a backup code for 2FA"""
-        if (
-            not self.two_factor_backup_codes
-            or code not in self.two_factor_backup_codes
-        ):
+        if not self.two_factor_backup_codes or code not in self.two_factor_backup_codes:
             return False
 
         # Remove used code
@@ -367,9 +342,7 @@ class Member(Base):
     def get_dashboard_config(self) -> dict:
         """Get merged dashboard configuration from roles"""
         config = {}
-        for role in sorted(
-            self.roles, key=lambda r: r.priority_level, reverse=True
-        ):
+        for role in sorted(self.roles, key=lambda r: r.priority_level, reverse=True):
             if role.dashboard_config:
                 config.update(role.dashboard_config)
         return config
@@ -390,9 +363,7 @@ class Member(Base):
 
         # Remove duplicates
         restrictions["hidden_items"] = list(set(restrictions["hidden_items"]))
-        restrictions["disabled_items"] = list(
-            set(restrictions["disabled_items"])
-        )
+        restrictions["disabled_items"] = list(set(restrictions["disabled_items"]))
         return restrictions
 
     def to_dict(self, include_sensitive: bool = False):
@@ -406,18 +377,14 @@ class Member(Base):
             "phone": self.phone,
             "role": self.role.value if self.role else None,
             "membership_plan_id": str(self.membership_plan_id),
-            "start_date": (
-                self.start_date.isoformat() if self.start_date else None
-            ),
+            "start_date": (self.start_date.isoformat() if self.start_date else None),
             "end_date": self.end_date.isoformat() if self.end_date else None,
             "is_active": self.is_active,
             "status": self.status.value if self.status else None,
             "skills": self.skills,
             "bio": self.bio,
             "profile_image_url": self.profile_image_url,
-            "last_login": (
-                self.last_login.isoformat() if self.last_login else None
-            ),
+            "last_login": (self.last_login.isoformat() if self.last_login else None),
             "login_count": self.login_count,
             "projects_count": self.projects_count,
             "reservations_count": self.reservations_count,
@@ -426,21 +393,13 @@ class Member(Base):
             "hours_used_this_month": self.hours_used_this_month,
             "notes": self.notes,
             "suspension_reason": self.suspension_reason,
-            "suspended_by": (
-                str(self.suspended_by) if self.suspended_by else None
-            ),
+            "suspended_by": (str(self.suspended_by) if self.suspended_by else None),
             "suspended_at": (
                 self.suspended_at.isoformat() if self.suspended_at else None
             ),
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
-            "join_date": (
-                self.join_date.isoformat() if self.join_date else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
+            "join_date": (self.join_date.isoformat() if self.join_date else None),
             "last_activity": (
                 self.last_activity.isoformat() if self.last_activity else None
             ),
@@ -451,9 +410,7 @@ class Member(Base):
             "account_locked": self.account_locked,
             "two_factor_enabled": self.two_factor_enabled,
             "two_factor_method": (
-                self.two_factor_method.value
-                if self.two_factor_method
-                else None
+                self.two_factor_method.value if self.two_factor_method else None
             ),
             "requires_password_change": self.requires_password_change,
             "membership_expired": self.is_membership_expired(),
@@ -508,9 +465,7 @@ class MemberActivityLog(Base):
     __tablename__ = "member_activity_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    member_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    member_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
 
     # Activity details
     activity_type = Column(String(100), nullable=False)
@@ -533,9 +488,7 @@ class MembershipTransaction(Base):
     __tablename__ = "membership_transactions"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    member_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    member_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
     membership_plan_id = Column(
         UUID(as_uuid=True), ForeignKey("membership_plans.id"), nullable=False
     )
@@ -555,9 +508,7 @@ class MembershipTransaction(Base):
     ends_at = Column(DateTime(timezone=True), nullable=False)
 
     # Admin fields
-    processed_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=True
-    )
+    processed_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=True)
     notes = Column(Text)
 
     # Timestamps

@@ -56,15 +56,11 @@ async def get_public_projects(
 
     # Apply filters
     if difficulty_level:
-        query = query.filter(
-            models.Project.difficulty_level == difficulty_level
-        )
+        query = query.filter(models.Project.difficulty_level == difficulty_level)
 
     if required_skills:
         for skill in required_skills:
-            query = query.filter(
-                models.Project.required_skills.contains([skill])
-            )
+            query = query.filter(models.Project.required_skills.contains([skill]))
 
     if required_equipment:
         for equipment in required_equipment:
@@ -305,9 +301,7 @@ async def like_project(
         )
 
     # Create like
-    like = models.ProjectLike(
-        project_id=project_id, user_id=current_user["user_id"]
-    )
+    like = models.ProjectLike(project_id=project_id, user_id=current_user["user_id"])
     db.add(like)
 
     # Update like count
@@ -340,9 +334,7 @@ async def unlike_project(
 
     # Remove like and update count
     project = (
-        db.query(models.Project)
-        .filter(models.Project.project_id == project_id)
-        .first()
+        db.query(models.Project).filter(models.Project.project_id == project_id).first()
     )
     if project:
         project.like_count = max(0, project.like_count - 1)
@@ -394,9 +386,7 @@ async def add_comment(
     return comment
 
 
-@router.get(
-    "/{project_id}/comments", response_model=List[ProjectCommentResponse]
-)
+@router.get("/{project_id}/comments", response_model=List[ProjectCommentResponse])
 async def get_comments(
     project_id: str,
     skip: int = Query(0, ge=0),
@@ -488,9 +478,7 @@ async def create_bom_order(
         try:
             # This would integrate with the actual MakrX Store API
             # For now, we'll simulate the order creation
-            order.makrx_order_id = (
-                f"MAKRX-{int(datetime.utcnow().timestamp())}"
-            )
+            order.makrx_order_id = f"MAKRX-{int(datetime.utcnow().timestamp())}"
             order.unit_price = bom_item.unit_cost
             order.total_price = (
                 bom_item.unit_cost * order_data.quantity_ordered

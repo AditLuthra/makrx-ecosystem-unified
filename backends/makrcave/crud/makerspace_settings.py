@@ -25,9 +25,7 @@ class MakerspaceSettingsCRUD:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_makerspace_id(
-        self, makerspace_id: str
-    ) -> Optional[MakerspaceSettings]:
+    def get_by_makerspace_id(self, makerspace_id: str) -> Optional[MakerspaceSettings]:
         """Get settings for a specific makerspace"""
         return (
             self.db.query(MakerspaceSettings)
@@ -51,10 +49,8 @@ class MakerspaceSettingsCRUD:
 
         # Handle operating_hours conversion
         if settings_dict.get("operating_hours"):
-            settings_dict["operating_hours"] = (
-                self._convert_operating_hours_to_json(
-                    settings_dict["operating_hours"]
-                )
+            settings_dict["operating_hours"] = self._convert_operating_hours_to_json(
+                settings_dict["operating_hours"]
             )
 
         # Handle allowed_print_technologies conversion
@@ -66,9 +62,7 @@ class MakerspaceSettingsCRUD:
 
         # Handle custom_theme_colors conversion
         if settings_dict.get("custom_theme_colors"):
-            settings_dict["custom_theme_colors"] = settings_dict[
-                "custom_theme_colors"
-            ]
+            settings_dict["custom_theme_colors"] = settings_dict["custom_theme_colors"]
 
         settings_dict["updated_by"] = created_by
 
@@ -108,10 +102,8 @@ class MakerspaceSettingsCRUD:
 
         # Handle operating_hours conversion
         if "operating_hours" in update_dict and update_dict["operating_hours"]:
-            update_dict["operating_hours"] = (
-                self._convert_operating_hours_to_json(
-                    update_dict["operating_hours"]
-                )
+            update_dict["operating_hours"] = self._convert_operating_hours_to_json(
+                update_dict["operating_hours"]
             )
 
         # Handle allowed_print_technologies conversion
@@ -127,9 +119,7 @@ class MakerspaceSettingsCRUD:
         # Handle theme_mode conversion
         if "theme_mode" in update_dict and update_dict["theme_mode"]:
             if isinstance(update_dict["theme_mode"], str):
-                update_dict["theme_mode"] = ThemeMode(
-                    update_dict["theme_mode"]
-                )
+                update_dict["theme_mode"] = ThemeMode(update_dict["theme_mode"])
 
         update_dict["updated_by"] = updated_by
 
@@ -158,25 +148,17 @@ class MakerspaceSettingsCRUD:
                 db_settings, section_data, updated_by
             )
         elif section == "access":
-            return self._update_access_control(
-                db_settings, section_data, updated_by
-            )
+            return self._update_access_control(db_settings, section_data, updated_by)
         elif section == "inventory":
             return self._update_inventory_settings(
                 db_settings, section_data, updated_by
             )
         elif section == "billing":
-            return self._update_billing_config(
-                db_settings, section_data, updated_by
-            )
+            return self._update_billing_config(db_settings, section_data, updated_by)
         elif section == "service":
-            return self._update_service_mode(
-                db_settings, section_data, updated_by
-            )
+            return self._update_service_mode(db_settings, section_data, updated_by)
         elif section == "appearance":
-            return self._update_appearance(
-                db_settings, section_data, updated_by
-            )
+            return self._update_appearance(db_settings, section_data, updated_by)
         else:
             raise ValueError(f"Unknown settings section: {section}")
 
@@ -278,9 +260,7 @@ class MakerspaceSettingsCRUD:
         self.db.refresh(db_settings)
         return db_settings
 
-    def get_public_settings(
-        self, makerspace_id: str
-    ) -> Optional[Dict[str, Any]]:
+    def get_public_settings(self, makerspace_id: str) -> Optional[Dict[str, Any]]:
         """Get public-facing settings (non-sensitive information only)"""
         db_settings = self.get_by_makerspace_id(makerspace_id)
         if not db_settings:
@@ -311,9 +291,7 @@ class MakerspaceSettingsCRUD:
         return {field: getattr(db_settings, field) for field in public_fields}
 
     # Private helper methods
-    def _convert_operating_hours_to_json(
-        self, operating_hours
-    ) -> Dict[str, Any]:
+    def _convert_operating_hours_to_json(self, operating_hours) -> Dict[str, Any]:
         """Convert operating hours to JSON format"""
         if hasattr(operating_hours, "dict"):
             return operating_hours.dict()
@@ -342,9 +320,7 @@ class MakerspaceSettingsCRUD:
         for field in general_fields:
             if field in data:
                 if field == "operating_hours" and data[field]:
-                    data[field] = self._convert_operating_hours_to_json(
-                        data[field]
-                    )
+                    data[field] = self._convert_operating_hours_to_json(data[field])
                 setattr(db_settings, field, data[field])
 
         db_settings.updated_by = updated_by

@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def verify_stripe_signature(
-    payload: bytes, signature: str, secret: str
-) -> bool:
+def verify_stripe_signature(payload: bytes, signature: str, secret: str) -> bool:
     """Verify Stripe webhook signature"""
     try:
         expected_sig = hmac.new(
@@ -33,9 +31,7 @@ def verify_stripe_signature(
         return False
 
 
-def verify_razorpay_signature(
-    payload: str, signature: str, secret: str
-) -> bool:
+def verify_razorpay_signature(payload: str, signature: str, secret: str) -> bool:
     """Verify Razorpay webhook signature"""
     try:
         expected_sig = hmac.new(
@@ -75,9 +71,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
             if order_id:
                 # Update order status
-                res = await db.execute(
-                    select(Order).where(Order.id == int(order_id))
-                )
+                res = await db.execute(select(Order).where(Order.id == int(order_id)))
                 order = res.scalar_one_or_none()
                 if order:
                     order.status = "paid"
@@ -88,12 +82,8 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                     order.meta.update(
                         {
                             "stripe_payment_intent": payment_intent["id"],
-                            "payment_method": payment_intent.get(
-                                "payment_method"
-                            ),
-                            "amount_paid": payment_intent.get(
-                                "amount_received", 0
-                            )
+                            "payment_method": payment_intent.get("payment_method"),
+                            "amount_paid": payment_intent.get("amount_received", 0)
                             / 100,
                         }
                     )
@@ -108,9 +98,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
             order_id = payment_intent.get("metadata", {}).get("order_id")
 
             if order_id:
-                res2 = await db.execute(
-                    select(Order).where(Order.id == int(order_id))
-                )
+                res2 = await db.execute(select(Order).where(Order.id == int(order_id)))
                 order = res2.scalar_one_or_none()
                 if order:
                     order.payment_status = "failed"
@@ -119,8 +107,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                     order.meta.update(
                         {
                             "payment_failure_reason": (
-                                payment_intent.get("last_payment_error", {})
-                                or {}
+                                payment_intent.get("last_payment_error", {}) or {}
                             ).get("message", "Unknown")
                         }
                     )
@@ -146,9 +133,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/razorpay", response_model=MessageResponse)
-async def razorpay_webhook(
-    request: Request, db: AsyncSession = Depends(get_db)
-):
+async def razorpay_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     """Handle Razorpay webhook events"""
     try:
         payload_bytes = await request.body()
@@ -177,9 +162,7 @@ async def razorpay_webhook(
 
             if order_id:
                 # Update order status
-                res = await db.execute(
-                    select(Order).where(Order.id == int(order_id))
-                )
+                res = await db.execute(select(Order).where(Order.id == int(order_id)))
                 order = res.scalar_one_or_none()
                 if order:
                     order.status = "paid"
@@ -205,9 +188,7 @@ async def razorpay_webhook(
             order_id = payment.get("notes", {}).get("order_id")
 
             if order_id:
-                res2 = await db.execute(
-                    select(Order).where(Order.id == int(order_id))
-                )
+                res2 = await db.execute(select(Order).where(Order.id == int(order_id)))
                 order = res2.scalar_one_or_none()
                 if order:
                     order.payment_status = "failed"

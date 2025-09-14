@@ -49,9 +49,7 @@ class Category(Base):
     slug = Column(String(255), nullable=False, index=True)
     description = Column(Text)
     image_url = Column(String(500))
-    parent_id = Column(
-        Integer, ForeignKey("store_categories.id"), nullable=True
-    )
+    parent_id = Column(Integer, ForeignKey("store_categories.id"), nullable=True)
 
     # Display
     is_active = Column(Boolean, default=True)
@@ -62,9 +60,7 @@ class Category(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    parent = relationship(
-        "Category", remote_side=[id], back_populates="children"
-    )
+    parent = relationship("Category", remote_side=[id], back_populates="children")
     children = relationship("Category", back_populates="parent")
     products = relationship("Product", back_populates="category")
 
@@ -93,9 +89,7 @@ class Product(Base):
     allow_backorder = Column(Boolean, default=False)
 
     # Category
-    category_id = Column(
-        Integer, ForeignKey("store_categories.id"), nullable=True
-    )
+    category_id = Column(Integer, ForeignKey("store_categories.id"), nullable=True)
 
     # Product data
     sku = Column(String(100), unique=True, index=True)
@@ -157,12 +151,8 @@ class ProductTag(Base):
     product_id = Column(
         Integer, ForeignKey("store_products.id"), nullable=False, index=True
     )
-    tag_id = Column(
-        Integer, ForeignKey("store_tags.id"), nullable=False, index=True
-    )
-    __table_args__ = (
-        UniqueConstraint("product_id", "tag_id", name="uq_product_tag"),
-    )
+    tag_id = Column(Integer, ForeignKey("store_tags.id"), nullable=False, index=True)
+    __table_args__ = (UniqueConstraint("product_id", "tag_id", name="uq_product_tag"),)
 
 
 class Collection(Base):
@@ -196,9 +186,7 @@ class CollectionProduct(Base):
     is_featured = Column(Boolean, default=False)
     sort_order = Column(Integer, default=0)
     __table_args__ = (
-        UniqueConstraint(
-            "collection_id", "product_id", name="uq_collection_product"
-        ),
+        UniqueConstraint("collection_id", "product_id", name="uq_collection_product"),
     )
 
 
@@ -207,14 +195,10 @@ class Cart(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String(255), nullable=False, index=True)  # From Keycloak
-    session_id = Column(
-        String(255), nullable=True, index=True
-    )  # For guest carts
+    session_id = Column(String(255), nullable=True, index=True)  # For guest carts
 
     # Status
-    status = Column(
-        String(20), default="active"
-    )  # active, abandoned, converted
+    status = Column(String(20), default="active")  # active, abandoned, converted
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -231,14 +215,10 @@ class CartItem(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     cart_id = Column(Integer, ForeignKey("store_carts.id"), nullable=False)
-    product_id = Column(
-        Integer, ForeignKey("store_products.id"), nullable=False
-    )
+    product_id = Column(Integer, ForeignKey("store_products.id"), nullable=False)
 
     quantity = Column(Integer, nullable=False, default=1)
-    price_at_time = Column(
-        Numeric(10, 2), nullable=False
-    )  # Price when added to cart
+    price_at_time = Column(Numeric(10, 2), nullable=False)  # Price when added to cart
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -298,9 +278,7 @@ class OrderItem(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("store_orders.id"), nullable=False)
-    product_id = Column(
-        Integer, ForeignKey("store_products.id"), nullable=True
-    )
+    product_id = Column(Integer, ForeignKey("store_products.id"), nullable=True)
 
     quantity = Column(Integer, nullable=False)
     price_at_time = Column(Numeric(10, 2), nullable=False)

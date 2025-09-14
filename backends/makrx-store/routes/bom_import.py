@@ -119,9 +119,7 @@ async def import_bom_from_makrcave(
         )
 
         if not bom_data:
-            raise HTTPException(
-                status_code=404, detail="BOM not found in MakrCave"
-            )
+            raise HTTPException(status_code=404, detail="BOM not found in MakrCave")
 
         # Create BOM integration record
         integration_id = uuid4()
@@ -185,9 +183,7 @@ async def import_bom_from_makrcave(
         # Update integration with results
         integration.imported_items = mapped_count
         integration.failed_items = unmapped_count
-        integration.import_status = (
-            "completed" if unmapped_count == 0 else "partial"
-        )
+        integration.import_status = "completed" if unmapped_count == 0 else "partial"
         integration.item_mappings = {
             result.bom_item_id: result.best_match.store_product_id
             for result in mapping_results
@@ -280,9 +276,7 @@ async def get_import_status(
             "total_items": integration.total_items,
             "imported_items": integration.imported_items,
             "failed_items": integration.failed_items,
-            "cart_id": (
-                str(integration.cart_id) if integration.cart_id else None
-            ),
+            "cart_id": (str(integration.cart_id) if integration.cart_id else None),
             "created_at": integration.created_at,
             "completed_at": integration.completed_at,
             "item_mappings": integration.item_mappings,
@@ -294,9 +288,7 @@ async def get_import_status(
         raise
     except Exception as e:
         logger.error(f"Get import status error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to get import status"
-        )
+        raise HTTPException(status_code=500, detail="Failed to get import status")
 
 
 @router.post("/manual-mapping")
@@ -363,9 +355,7 @@ async def apply_manual_mapping(
 
     except Exception as e:
         logger.error(f"Manual mapping error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to apply manual mapping"
-        )
+        raise HTTPException(status_code=500, detail="Failed to apply manual mapping")
 
 
 @router.get("/project/{project_id}/preview")
@@ -406,9 +396,7 @@ async def preview_bom_import(
             "mappable_items": mappable_items,
             "unmappable_items": len(bom_data.items) - mappable_items,
             "estimated_total": total_estimated_cost,
-            "mapping_preview": preview_results[
-                :10
-            ],  # Show first 10 for preview
+            "mapping_preview": preview_results[:10],  # Show first 10 for preview
             "bom_updated_at": bom_data.updated_at,
         }
 
@@ -496,9 +484,7 @@ async def delete_import(
 # Helper Functions
 
 
-async def fetch_bom_from_makrcave(
-    project_id: str, user_id: str
-) -> Optional[BOMData]:
+async def fetch_bom_from_makrcave(project_id: str, user_id: str) -> Optional[BOMData]:
     """Fetch BOM data from MakrCave API"""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -536,8 +522,7 @@ async def map_bom_item_to_products(
             and_(
                 Product.is_active == True,
                 or_(
-                    Product.attributes["part_number"].astext
-                    == bom_item.part_number,
+                    Product.attributes["part_number"].astext == bom_item.part_number,
                     Product.attributes["sku"].astext == bom_item.part_number,
                 ),
             )
@@ -552,9 +537,7 @@ async def map_bom_item_to_products(
                     store_product_id=product.id,
                     store_product_name=product.name,
                     store_product_brand=product.brand,
-                    store_product_price=float(
-                        product.sale_price or product.price
-                    ),
+                    store_product_price=float(product.sale_price or product.price),
                     quantity_available=product.stock_qty,
                     match_reasons=["Exact part number match"],
                 )
@@ -582,9 +565,7 @@ async def map_bom_item_to_products(
                         store_product_id=product.id,
                         store_product_name=product.name,
                         store_product_brand=product.brand,
-                        store_product_price=float(
-                            product.sale_price or product.price
-                        ),
+                        store_product_price=float(product.sale_price or product.price),
                         quantity_available=product.stock_qty,
                         match_reasons=["Brand and name similarity"],
                     )
@@ -617,9 +598,7 @@ async def map_bom_item_to_products(
                         store_product_id=product.id,
                         store_product_name=product.name,
                         store_product_brand=product.brand,
-                        store_product_price=float(
-                            product.sale_price or product.price
-                        ),
+                        store_product_price=float(product.sale_price or product.price),
                         quantity_available=product.stock_qty,
                         match_reasons=["Name similarity"],
                     )
@@ -707,9 +686,7 @@ async def add_item_to_cart(
     """Add item to cart or update quantity if exists"""
     ei = await db.execute(
         select(CartItem).where(
-            and_(
-                CartItem.cart_id == cart_id, CartItem.product_id == product_id
-            )
+            and_(CartItem.cart_id == cart_id, CartItem.product_id == product_id)
         )
     )
     existing_item = ei.scalars().first()
@@ -738,9 +715,7 @@ async def add_item_to_cart(
 # Background Tasks
 
 
-async def create_quick_reorder_from_bom(
-    user_id: str, integration_id: str, name: str
-):
+async def create_quick_reorder_from_bom(user_id: str, integration_id: str, name: str):
     """Create a quick reorder template from successfully mapped BOM items"""
     try:
         # This would create a quick reorder using the mapped items

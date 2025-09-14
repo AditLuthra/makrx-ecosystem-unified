@@ -79,9 +79,7 @@ async def create_usage_metrics(
         )
 
 
-@router.get(
-    "/usage-metrics/", response_model=List[EnhancedUsageMetricsResponse]
-)
+@router.get("/usage-metrics/", response_model=List[EnhancedUsageMetricsResponse])
 async def get_usage_metrics(
     period: Optional[AggregationPeriod] = None,
     start_date: Optional[date] = Query(None),
@@ -200,9 +198,7 @@ async def get_equipment_utilization_summary(
         )
 
     makerspace_id = _get_user_makerspace_id(current_user)
-    summary = crud_analytics.get_equipment_utilization_summary(
-        db, makerspace_id
-    )
+    summary = crud_analytics.get_equipment_utilization_summary(db, makerspace_id)
     return summary
 
 
@@ -494,9 +490,7 @@ async def get_performance_benchmarks(
 
 
 # Comprehensive Dashboard Route
-@router.get(
-    "/dashboard/comprehensive", response_model=ComprehensiveDashboardResponse
-)
+@router.get("/dashboard/comprehensive", response_model=ComprehensiveDashboardResponse)
 async def get_comprehensive_dashboard(
     refresh_cache: bool = Query(False),
     current_user=Depends(get_current_user),
@@ -563,9 +557,7 @@ async def generate_forecast(
 
     try:
         makerspace_id = _get_user_makerspace_id(current_user)
-        forecast = crud_analytics.generate_forecast(
-            db, makerspace_id, forecast_request
-        )
+        forecast = crud_analytics.generate_forecast(db, makerspace_id, forecast_request)
         return forecast
     except Exception as e:
         raise HTTPException(
@@ -724,9 +716,7 @@ async def create_analytics_configuration(
 
     try:
         makerspace_id = _get_user_makerspace_id(current_user)
-        db_config = crud_analytics.create_configuration(
-            db, config, makerspace_id
-        )
+        db_config = crud_analytics.create_configuration(db, config, makerspace_id)
         return db_config
     except Exception as e:
         raise HTTPException(
@@ -735,9 +725,7 @@ async def create_analytics_configuration(
         )
 
 
-@router.get(
-    "/configuration/", response_model=List[AnalyticsConfigurationResponse]
-)
+@router.get("/configuration/", response_model=List[AnalyticsConfigurationResponse])
 async def get_analytics_configurations(
     config_type: Optional[str] = Query(None),
     current_user=Depends(get_current_user),

@@ -11,9 +11,7 @@ from backends.makrx_events.security import CurrentUser, get_current_user
 
 
 def _fake_user():
-    return CurrentUser(
-        user_id="test-user", email="test@example.com", roles=["tester"]
-    )
+    return CurrentUser(user_id="test-user", email="test@example.com", roles=["tester"])
 
 
 def setup_function(_):
@@ -39,9 +37,7 @@ def test_404_error_envelope_for_missing_microsite():
 
 def test_422_error_envelope_for_sub_event_missing_title():
     # Ensure a microsite exists
-    r0 = client.post(
-        "/api/microsites", json={"title": "SiteV", "slug": "sitev"}
-    )
+    r0 = client.post("/api/microsites", json={"title": "SiteV", "slug": "sitev"})
     assert r0.status_code in (200, 201)
 
     # Missing required title triggers validation 422
@@ -50,9 +46,7 @@ def test_422_error_envelope_for_sub_event_missing_title():
     body = r.json()
     assert body["error"]["code"] == "VALIDATION_ERROR"
     # Pydantic location is body.title
-    assert any(
-        "title" in k for k in body["error"].get("field_errors", {}).keys()
-    )
+    assert any("title" in k for k in body["error"].get("field_errors", {}).keys())
 
 
 def test_500_error_envelope_unhandled_exception():

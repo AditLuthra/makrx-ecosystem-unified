@@ -281,9 +281,7 @@ async def reorder_from_makrx(
         raise HTTPException(status_code=404, detail="Item not found")
 
     if existing_item.supplier_type != "makrx":
-        raise HTTPException(
-            status_code=400, detail="Item is not from MakrX Store"
-        )
+        raise HTTPException(status_code=400, detail="Item is not from MakrX Store")
 
     if not existing_item.product_code:
         raise HTTPException(

@@ -71,9 +71,7 @@ async def create_access_rule(
         )
 
     # Verify equipment and skill exist
-    equipment = (
-        db.query(Equipment).filter(Equipment.id == rule.equipment_id).first()
-    )
+    equipment = db.query(Equipment).filter(Equipment.id == rule.equipment_id).first()
     if not equipment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
@@ -135,9 +133,7 @@ async def list_access_rules(
     db: Session = Depends(get_db),
 ):
     """List machine access rules"""
-    query = db.query(MachineAccessRule).filter(
-        MachineAccessRule.is_active == is_active
-    )
+    query = db.query(MachineAccessRule).filter(MachineAccessRule.is_active == is_active)
 
     if equipment_id:
         query = query.filter(MachineAccessRule.equipment_id == equipment_id)
@@ -249,9 +245,7 @@ async def request_machine_access(
 
     # Get equipment
     equipment = (
-        db.query(Equipment)
-        .filter(Equipment.id == access_request.equipment_id)
-        .first()
+        db.query(Equipment).filter(Equipment.id == access_request.equipment_id).first()
     )
     if not equipment:
         raise HTTPException(
@@ -344,10 +338,7 @@ async def request_machine_access(
             )
 
         # Check certification level
-        if (
-            certification.certification_level.value
-            < rule.minimum_skill_level.value
-        ):
+        if certification.certification_level.value < rule.minimum_skill_level.value:
             attempt_id = f"attempt_{uuid.uuid4().hex[:12]}"
             access_attempt = MachineAccessAttempt(
                 id=attempt_id,
@@ -369,10 +360,7 @@ async def request_machine_access(
             )
 
         # Check expiry
-        if (
-            certification.expires_at
-            and certification.expires_at < datetime.utcnow()
-        ):
+        if certification.expires_at and certification.expires_at < datetime.utcnow():
             attempt_id = f"attempt_{uuid.uuid4().hex[:12]}"
             access_attempt = MachineAccessAttempt(
                 id=attempt_id,
@@ -396,11 +384,7 @@ async def request_machine_access(
         # Check time restrictions
         if rule.allowed_hours_start and rule.allowed_hours_end:
             current_time = datetime.utcnow().time().strftime("%H:%M")
-            if not (
-                rule.allowed_hours_start
-                <= current_time
-                <= rule.allowed_hours_end
-            ):
+            if not (rule.allowed_hours_start <= current_time <= rule.allowed_hours_end):
                 return MachineAccessResponse(
                     success=False,
                     result=AccessAttemptResult.DENIED_TIME_LIMIT,
@@ -689,9 +673,7 @@ async def get_user_badges(
     user_badges = (
         db.query(UserBadge)
         .options(selectinload(UserBadge.badge))
-        .filter(
-            and_(UserBadge.user_id == user_id, UserBadge.is_public == True)
-        )
+        .filter(and_(UserBadge.user_id == user_id, UserBadge.is_public == True))
         .order_by(desc(UserBadge.awarded_at))
         .all()
     )
@@ -751,9 +733,7 @@ async def get_user_access_profile(
 
     # Get certifications
     certifications = (
-        db.query(UserCertification)
-        .filter(UserCertification.user_id == user_id)
-        .all()
+        db.query(UserCertification).filter(UserCertification.user_id == user_id).all()
     )
 
     # Get badges
@@ -778,16 +758,12 @@ async def get_user_access_profile(
 
     # Safety record
     safety_incidents = (
-        db.query(SafetyIncident)
-        .filter(SafetyIncident.user_id == user_id)
-        .count()
+        db.query(SafetyIncident).filter(SafetyIncident.user_id == user_id).count()
     )
 
     safety_record = {
         "total_incidents": safety_incidents,
-        "safety_score": max(
-            0, 100 - (safety_incidents * 10)
-        ),  # Simplified scoring
+        "safety_score": max(0, 100 - (safety_incidents * 10)),  # Simplified scoring
         "last_incident": None,  # Could be enhanced with actual date
     }
 
@@ -841,20 +817,14 @@ async def get_equipment_access_stats(
 
     # Calculate average session duration
     session_durations = [
-        a.session_duration_minutes
-        for a in attempts
-        if a.session_duration_minutes
+        a.session_duration_minutes for a in attempts if a.session_duration_minutes
     ]
     avg_duration = (
-        sum(session_durations) / len(session_durations)
-        if session_durations
-        else 0
+        sum(session_durations) / len(session_durations) if session_durations else 0
     )
 
     # Total usage hours
-    total_hours = (
-        sum([d for d in session_durations]) / 60 if session_durations else 0
-    )
+    total_hours = sum([d for d in session_durations]) / 60 if session_durations else 0
 
     # Unique users
     unique_users = len(set([a.user_id for a in attempts]))
@@ -924,8 +894,7 @@ async def get_makerspace_access_dashboard(
         .filter(
             and_(
                 UserCertification.status == CertificationStatus.ACTIVE,
-                UserCertification.expires_at
-                <= datetime.utcnow() + timedelta(days=30),
+                UserCertification.expires_at <= datetime.utcnow() + timedelta(days=30),
             )
         )
         .count()
@@ -942,9 +911,7 @@ async def get_makerspace_access_dashboard(
         .all()
     )
 
-    badge_distribution = {
-        badge_type.value: count for badge_type, count in badge_counts
-    }
+    badge_distribution = {badge_type.value: count for badge_type, count in badge_counts}
 
     # Safety metrics
     total_incidents = db.query(SafetyIncident).count()
@@ -961,15 +928,11 @@ async def get_makerspace_access_dashboard(
     # Certification success rate (simplified)
     total_assessments = db.query(SkillAssessment).count()
     passed_assessments = (
-        db.query(SkillAssessment)
-        .filter(SkillAssessment.passed == True)
-        .count()
+        db.query(SkillAssessment).filter(SkillAssessment.passed == True).count()
     )
 
     success_rate = (
-        (passed_assessments / total_assessments * 100)
-        if total_assessments > 0
-        else 0
+        (passed_assessments / total_assessments * 100) if total_assessments > 0 else 0
     )
 
     return MakerspaceAccessDashboard(

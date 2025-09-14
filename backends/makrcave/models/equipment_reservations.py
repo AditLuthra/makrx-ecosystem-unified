@@ -69,9 +69,7 @@ class EnhancedEquipmentReservation(Base):
     user_id = Column(String, nullable=False, index=True)
     user_name = Column(String(255), nullable=False)
     user_email = Column(String(255), nullable=True)
-    user_membership_tier = Column(
-        String(50), nullable=True
-    )  # For tier-based pricing
+    user_membership_tier = Column(String(50), nullable=True)  # For tier-based pricing
 
     # Reservation timing
     requested_start = Column(DateTime(timezone=True), nullable=False)
@@ -104,17 +102,13 @@ class EnhancedEquipmentReservation(Base):
 
     # Cost calculation and billing
     base_cost = Column(Float, nullable=True)
-    additional_fees = Column(
-        JSON, nullable=True
-    )  # List of additional fee objects
+    additional_fees = Column(JSON, nullable=True)  # List of additional fee objects
     discounts = Column(JSON, nullable=True)  # List of discount objects
     total_cost = Column(Float, nullable=True)
     estimated_cost = Column(Float, nullable=True)  # Shown during booking
 
     # Payment processing
-    payment_status = Column(
-        Enum(PaymentStatus), default=PaymentStatus.NOT_REQUIRED
-    )
+    payment_status = Column(Enum(PaymentStatus), default=PaymentStatus.NOT_REQUIRED)
     payment_method = Column(String(50), nullable=True)
     payment_transaction_id = Column(String(100), nullable=True)
     deposit_amount = Column(Float, nullable=True)
@@ -144,9 +138,7 @@ class EnhancedEquipmentReservation(Base):
 
     # Recurring reservations
     is_recurring = Column(Boolean, default=False)
-    recurring_pattern = Column(
-        JSON, nullable=True
-    )  # weekly, monthly, custom pattern
+    recurring_pattern = Column(JSON, nullable=True)  # weekly, monthly, custom pattern
     parent_reservation_id = Column(
         String, ForeignKey("enhanced_equipment_reservations.id"), nullable=True
     )
@@ -171,9 +163,7 @@ class EnhancedEquipmentReservation(Base):
     cancellation_reason = Column(String(500), nullable=True)
 
     # Relationships
-    equipment = relationship(
-        "Equipment", back_populates="enhanced_reservations"
-    )
+    equipment = relationship("Equipment", back_populates="enhanced_reservations")
     parent_reservation = relationship(
         "EnhancedEquipmentReservation",
         remote_side=[id],
@@ -214,9 +204,7 @@ class EquipmentCostRule(Base):
     tier_config = Column(JSON, nullable=True)  # {tier_name: rate} mapping
 
     # Time-based rules
-    time_conditions = Column(
-        JSON, nullable=True
-    )  # Day of week, time of day conditions
+    time_conditions = Column(JSON, nullable=True)  # Day of week, time of day conditions
 
     # Membership discounts
     membership_discounts = Column(
@@ -224,9 +212,7 @@ class EquipmentCostRule(Base):
     )  # {membership_tier: discount_percentage}
 
     # Skill premiums (higher cost for advanced equipment)
-    skill_premiums = Column(
-        JSON, nullable=True
-    )  # {skill_level: premium_percentage}
+    skill_premiums = Column(JSON, nullable=True)  # {skill_level: premium_percentage}
 
     # Rule activation
     is_active = Column(Boolean, default=True)
@@ -237,16 +223,10 @@ class EquipmentCostRule(Base):
     priority = Column(Integer, default=0)
 
     # Application conditions
-    applies_to_users = Column(
-        JSON, nullable=True
-    )  # List of user IDs or groups
+    applies_to_users = Column(JSON, nullable=True)  # List of user IDs or groups
     applies_to_projects = Column(JSON, nullable=True)  # List of project types
-    minimum_duration = Column(
-        Float, nullable=True
-    )  # Minimum hours for rule to apply
-    maximum_duration = Column(
-        Float, nullable=True
-    )  # Maximum hours for rule to apply
+    minimum_duration = Column(Float, nullable=True)  # Minimum hours for rule to apply
+    maximum_duration = Column(Float, nullable=True)  # Maximum hours for rule to apply
 
     # Record keeping
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -273,9 +253,7 @@ class EquipmentSkillGate(Base):
     description = Column(Text, nullable=True)
 
     # Skill requirements
-    required_skill_id = Column(
-        String, nullable=True
-    )  # Reference to skill system
+    required_skill_id = Column(String, nullable=True)  # Reference to skill system
     required_skill_level = Column(
         String(50), nullable=True
     )  # beginner, intermediate, advanced, expert
@@ -291,9 +269,7 @@ class EquipmentSkillGate(Base):
     # Supervisor requirements
     requires_supervisor = Column(Boolean, default=False)
     supervisor_skill_level = Column(String(50), nullable=True)
-    supervisor_roles = Column(
-        JSON, nullable=True
-    )  # List of roles that can supervise
+    supervisor_roles = Column(JSON, nullable=True)  # List of roles that can supervise
 
     # Time restrictions
     allowed_hours = Column(
@@ -311,15 +287,11 @@ class EquipmentSkillGate(Base):
     emergency_bypass_allowed = Column(Boolean, default=False)
 
     # Automatic verification
-    auto_verify_from_system = Column(
-        Boolean, default=True
-    )  # Auto-check user skills
+    auto_verify_from_system = Column(Boolean, default=True)  # Auto-check user skills
     manual_verification_required = Column(Boolean, default=False)
 
     # Enforcement level
-    enforcement_level = Column(
-        String(20), default="block"
-    )  # block, warn, log_only
+    enforcement_level = Column(String(20), default="block")  # block, warn, log_only
     warning_message = Column(Text, nullable=True)
 
     # Gate activation
@@ -355,17 +327,13 @@ class ReservationCostBreakdown(Base):
         String(50), nullable=False
     )  # base_rate, deposit, premium, discount, tax
     description = Column(String(200), nullable=False)
-    rule_applied = Column(
-        String(200), nullable=True
-    )  # Which cost rule generated this
+    rule_applied = Column(String(200), nullable=True)  # Which cost rule generated this
 
     # Calculation details
     base_amount = Column(Float, nullable=False)
     quantity = Column(Float, default=1.0)
     rate = Column(Float, nullable=True)
-    percentage = Column(
-        Float, nullable=True
-    )  # For percentage-based fees/discounts
+    percentage = Column(Float, nullable=True)  # For percentage-based fees/discounts
     calculated_amount = Column(Float, nullable=False)
 
     # Timing
@@ -400,9 +368,7 @@ class ReservationSkillVerification(Base):
 
     # Verification details
     skill_verified = Column(Boolean, default=False)
-    verification_method = Column(
-        String(50), nullable=True
-    )  # auto, manual, override
+    verification_method = Column(String(50), nullable=True)  # auto, manual, override
     verified_by = Column(String(255), nullable=True)
     verified_at = Column(DateTime(timezone=True), nullable=True)
 
@@ -413,9 +379,7 @@ class ReservationSkillVerification(Base):
 
     # Notes and documentation
     verification_notes = Column(Text, nullable=True)
-    documentation_urls = Column(
-        JSON, nullable=True
-    )  # Links to certificates, etc.
+    documentation_urls = Column(JSON, nullable=True)  # Links to certificates, etc.
 
     # Override handling
     is_override = Column(Boolean, default=False)
@@ -454,12 +418,8 @@ class EquipmentAvailabilitySlot(Base):
     maximum_slot_duration = Column(Integer, default=480)  # Minutes (8 hours)
 
     # Access control
-    restricted_to_members = Column(
-        JSON, nullable=True
-    )  # List of membership tiers
-    restricted_to_skills = Column(
-        JSON, nullable=True
-    )  # List of required skills
+    restricted_to_members = Column(JSON, nullable=True)  # List of membership tiers
+    restricted_to_skills = Column(JSON, nullable=True)  # List of required skills
 
     # Pricing override
     override_hourly_rate = Column(Float, nullable=True)
@@ -504,9 +464,7 @@ class ReservationConflictLog(Base):
 
     # Conflict description
     conflict_description = Column(Text, nullable=False)
-    severity = Column(
-        String(20), default="medium"
-    )  # low, medium, high, critical
+    severity = Column(String(20), default="medium")  # low, medium, high, critical
 
     # Resolution
     resolution_action = Column(

@@ -35,9 +35,7 @@ async def get_usage_by_category(
     data = [
         {
             "name": (
-                service_type.replace("_", " ").title()
-                if service_type
-                else "Other"
+                service_type.replace("_", " ").title() if service_type else "Other"
             ),
             "value": float(value),
             "color": color_map.get(service_type, "#cccccc"),
@@ -173,18 +171,14 @@ async def get_transactions(
     return transactions
 
 
-@router.get(
-    "/transactions/{transaction_id}", response_model=TransactionResponse
-)
+@router.get("/transactions/{transaction_id}", response_model=TransactionResponse)
 async def get_transaction(
     transaction_id: str,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Get transaction by ID"""
-    transaction = crud_billing.get_transaction(
-        db, transaction_id, current_user.user_id
-    )
+    transaction = crud_billing.get_transaction(db, transaction_id, current_user.user_id)
     if not transaction:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -193,9 +187,7 @@ async def get_transaction(
     return transaction
 
 
-@router.put(
-    "/transactions/{transaction_id}", response_model=TransactionResponse
-)
+@router.put("/transactions/{transaction_id}", response_model=TransactionResponse)
 async def update_transaction(
     transaction_id: str,
     transaction_update: TransactionUpdate,
@@ -261,15 +253,13 @@ async def create_checkout_session(
         db_transaction = crud_billing.create_transaction(db, transaction_data)
 
         # Create payment gateway session
-        gateway_order_id, checkout_data = (
-            payment_service.create_checkout_session(
-                gateway="razorpay",
-                amount=total_amount,
-                currency=checkout_request.currency,
-                transaction_id=db_transaction.id,
-                user_id=checkout_request.user_id,
-                metadata=checkout_request.service_metadata,
-            )
+        gateway_order_id, checkout_data = payment_service.create_checkout_session(
+            gateway="razorpay",
+            amount=total_amount,
+            currency=checkout_request.currency,
+            transaction_id=db_transaction.id,
+            user_id=checkout_request.user_id,
+            metadata=checkout_request.service_metadata,
         )
 
         # Update transaction with gateway order ID
@@ -355,9 +345,7 @@ async def delete_payment_method(
     db: Session = Depends(get_db),
 ):
     """Deactivate a payment method for the current user"""
-    success = crud_billing.delete_payment_method(
-        db, current_user.user_id, method_id
-    )
+    success = crud_billing.delete_payment_method(db, current_user.user_id, method_id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -458,9 +446,7 @@ async def update_credit_wallet(
         db, current_user["user_id"], makerspace_id
     )
 
-    updated_wallet = crud_billing.update_credit_wallet(
-        db, wallet.id, wallet_update
-    )
+    updated_wallet = crud_billing.update_credit_wallet(db, wallet.id, wallet_update)
     if not updated_wallet:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Wallet not found"
@@ -468,9 +454,7 @@ async def update_credit_wallet(
     return updated_wallet
 
 
-@router.get(
-    "/wallet/transactions/", response_model=List[CreditTransactionResponse]
-)
+@router.get("/wallet/transactions/", response_model=List[CreditTransactionResponse])
 async def get_credit_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=200),
@@ -483,9 +467,7 @@ async def get_credit_transactions(
         db, current_user["user_id"], makerspace_id
     )
 
-    transactions = crud_billing.get_credit_transactions(
-        db, wallet.id, skip, limit
-    )
+    transactions = crud_billing.get_credit_transactions(db, wallet.id, skip, limit)
     return transactions
 
 
@@ -547,9 +529,7 @@ async def adjust_credits(
         )
         return credit_transaction
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 # Invoice routes
@@ -562,11 +542,7 @@ async def get_invoices(
     db: Session = Depends(get_db),
 ):
     """Get user's invoices"""
-    user_id = (
-        current_user.user_id
-        if not _can_view_all_invoices(current_user)
-        else None
-    )
+    user_id = current_user.user_id if not _can_view_all_invoices(current_user) else None
     makerspace_id = _get_user_makerspace_id(current_user)
 
     invoices = crud_billing.get_invoices(
@@ -582,11 +558,7 @@ async def get_invoice(
     db: Session = Depends(get_db),
 ):
     """Get invoice by ID"""
-    user_id = (
-        current_user.user_id
-        if not _can_view_all_invoices(current_user)
-        else None
-    )
+    user_id = current_user.user_id if not _can_view_all_invoices(current_user) else None
     invoice = crud_billing.get_invoice(db, invoice_id, user_id)
 
     if not invoice:
@@ -604,9 +576,7 @@ async def download_invoice(
 ):
     """Download invoice PDF"""
     user_id = (
-        current_user["user_id"]
-        if not _can_view_all_invoices(current_user)
-        else None
+        current_user["user_id"] if not _can_view_all_invoices(current_user) else None
     )
     invoice = crud_billing.get_invoice(db, invoice_id, user_id)
 
@@ -741,15 +711,13 @@ async def charge_for_service(
         db_transaction = crud_billing.create_transaction(db, transaction_data)
 
         # Create checkout session
-        gateway_order_id, checkout_data = (
-            payment_service.create_checkout_session(
-                gateway="razorpay",
-                amount=service_billing.amount,
-                currency=service_billing.currency,
-                transaction_id=db_transaction.id,
-                user_id=service_billing.user_id,
-                metadata=service_billing.metadata,
-            )
+        gateway_order_id, checkout_data = payment_service.create_checkout_session(
+            gateway="razorpay",
+            amount=service_billing.amount,
+            currency=service_billing.currency,
+            transaction_id=db_transaction.id,
+            user_id=service_billing.user_id,
+            metadata=service_billing.metadata,
         )
 
         return ServiceBillingResponse(
@@ -790,10 +758,7 @@ async def create_refund(
         original_transaction = crud_billing.get_transaction(
             db, refund.original_transaction_id
         )
-        if (
-            original_transaction
-            and original_transaction.gateway_transaction_id
-        ):
+        if original_transaction and original_transaction.gateway_transaction_id:
             try:
                 gateway_refund = payment_service.create_refund(
                     original_transaction.gateway.value,
@@ -802,17 +767,13 @@ async def create_refund(
                     refund.reason,
                 )
 
-                crud_billing.process_refund(
-                    db, db_refund.id, gateway_refund.get("id")
-                )
+                crud_billing.process_refund(db, db_refund.id, gateway_refund.get("id"))
             except Exception as e:
                 logger.warning(f"Gateway refund failed: {str(e)}")
 
         return db_refund
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 # Analytics routes
@@ -847,9 +808,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
         signature = request.headers.get("X-Razorpay-Signature", "")
 
         # Verify webhook signature
-        if not payment_service.verify_webhook(
-            "razorpay", payload.decode(), signature
-        ):
+        if not payment_service.verify_webhook("razorpay", payload.decode(), signature):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid webhook signature",
@@ -862,18 +821,14 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
         if event_type == "payment.captured":
             # Handle successful payment
             payment_data = (
-                webhook_data.get("payload", {})
-                .get("payment", {})
-                .get("entity", {})
+                webhook_data.get("payload", {}).get("payment", {}).get("entity", {})
             )
             order_id = payment_data.get("order_id")
 
             if order_id:
                 transaction = (
                     db.query(crud_billing.Transaction)
-                    .filter(
-                        crud_billing.Transaction.gateway_order_id == order_id
-                    )
+                    .filter(crud_billing.Transaction.gateway_order_id == order_id)
                     .first()
                 )
 
@@ -885,18 +840,14 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
         elif event_type == "payment.failed":
             # Handle failed payment
             payment_data = (
-                webhook_data.get("payload", {})
-                .get("payment", {})
-                .get("entity", {})
+                webhook_data.get("payload", {}).get("payment", {}).get("entity", {})
             )
             order_id = payment_data.get("order_id")
 
             if order_id:
                 transaction = (
                     db.query(crud_billing.Transaction)
-                    .filter(
-                        crud_billing.Transaction.gateway_order_id == order_id
-                    )
+                    .filter(crud_billing.Transaction.gateway_order_id == order_id)
                     .first()
                 )
 
@@ -904,9 +855,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     crud_billing.fail_transaction(
                         db,
                         transaction.id,
-                        payment_data.get(
-                            "error_description", "Payment failed"
-                        ),
+                        payment_data.get("error_description", "Payment failed"),
                     )
 
         return {"status": "success"}

@@ -22,9 +22,7 @@ from ..database import Base
 role_permissions = Table(
     "role_permissions",
     Base.metadata,
-    Column(
-        "role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True
-    ),
+    Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
     Column(
         "permission_id",
         UUID(as_uuid=True),
@@ -42,17 +40,13 @@ user_roles = Table(
         ForeignKey("members.id"),
         primary_key=True,
     ),
-    Column(
-        "role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True
-    ),
+    Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
 )
 
 role_makerspace_access = Table(
     "role_makerspace_access",
     Base.metadata,
-    Column(
-        "role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True
-    ),
+    Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
     Column("makerspace_id", UUID(as_uuid=True), primary_key=True),
 )
 
@@ -145,21 +139,15 @@ class Permission(Base):
     access_scope = Column(SQLEnum(AccessScope), default=AccessScope.MAKERSPACE)
 
     # Permission settings
-    is_system = Column(
-        Boolean, default=False
-    )  # System permissions cannot be deleted
+    is_system = Column(Boolean, default=False)  # System permissions cannot be deleted
     is_active = Column(Boolean, default=True)
-    requires_two_factor = Column(
-        Boolean, default=False
-    )  # For sensitive operations
+    requires_two_factor = Column(Boolean, default=False)  # For sensitive operations
 
     # Resource constraints
     resource_types = Column(
         JSON, nullable=True
     )  # Which resource types this permission applies to
-    field_restrictions = Column(
-        JSON, nullable=True
-    )  # Which fields can be accessed
+    field_restrictions = Column(JSON, nullable=True)  # Which fields can be accessed
 
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -190,32 +178,22 @@ class Role(Base):
     role_type = Column(SQLEnum(RoleType), default=RoleType.CUSTOM)
 
     # Role settings
-    is_system = Column(
-        Boolean, default=False
-    )  # System roles cannot be deleted
+    is_system = Column(Boolean, default=False)  # System roles cannot be deleted
     is_active = Column(Boolean, default=True)
-    is_assignable = Column(
-        Boolean, default=True
-    )  # Can this role be assigned to users
+    is_assignable = Column(Boolean, default=True)  # Can this role be assigned to users
     max_assignments = Column(
         Integer, nullable=True
     )  # Maximum number of users that can have this role
 
     # Makerspace scope
-    makerspace_id = Column(
-        UUID(as_uuid=True), nullable=True
-    )  # Null for global roles
+    makerspace_id = Column(UUID(as_uuid=True), nullable=True)  # Null for global roles
     is_default = Column(
         Boolean, default=False
     )  # Default role for new members in this makerspace
 
     # Priority and hierarchy
-    priority_level = Column(
-        Integer, default=0
-    )  # Higher number = higher priority
-    parent_role_id = Column(
-        UUID(as_uuid=True), ForeignKey("roles.id"), nullable=True
-    )
+    priority_level = Column(Integer, default=0)  # Higher number = higher priority
+    parent_role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"), nullable=True)
 
     # Access constraints
     session_timeout_minutes = Column(Integer, default=480)  # 8 hours default
@@ -225,20 +203,12 @@ class Role(Base):
 
     # Feature access
     feature_flags = Column(JSON, nullable=True)  # Additional feature toggles
-    dashboard_config = Column(
-        JSON, nullable=True
-    )  # Custom dashboard configuration
-    menu_restrictions = Column(
-        JSON, nullable=True
-    )  # Which menu items to hide/show
+    dashboard_config = Column(JSON, nullable=True)  # Custom dashboard configuration
+    menu_restrictions = Column(JSON, nullable=True)  # Which menu items to hide/show
 
     # Membership plan integration
-    required_membership_plans = Column(
-        ARRAY(UUID(as_uuid=True)), nullable=True
-    )
-    excluded_membership_plans = Column(
-        ARRAY(UUID(as_uuid=True)), nullable=True
-    )
+    required_membership_plans = Column(ARRAY(UUID(as_uuid=True)), nullable=True)
+    excluded_membership_plans = Column(ARRAY(UUID(as_uuid=True)), nullable=True)
 
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -252,12 +222,8 @@ class Role(Base):
     permissions = relationship(
         "Permission", secondary=role_permissions, back_populates="roles"
     )
-    users = relationship(
-        "Member", secondary=user_roles, back_populates="roles"
-    )
-    parent_role = relationship(
-        "Role", remote_side=[id], back_populates="child_roles"
-    )
+    users = relationship("Member", secondary=user_roles, back_populates="roles")
+    parent_role = relationship("Role", remote_side=[id], back_populates="child_roles")
     child_roles = relationship("Role", back_populates="parent_role")
     access_logs = relationship("RoleAccessLog", back_populates="role")
 
@@ -301,9 +267,7 @@ class Role(Base):
             "is_active": self.is_active,
             "is_assignable": self.is_assignable,
             "max_assignments": self.max_assignments,
-            "makerspace_id": (
-                str(self.makerspace_id) if self.makerspace_id else None
-            ),
+            "makerspace_id": (str(self.makerspace_id) if self.makerspace_id else None),
             "is_default": self.is_default,
             "priority_level": self.priority_level,
             "parent_role_id": (
@@ -325,12 +289,8 @@ class Role(Base):
                 if self.excluded_membership_plans
                 else []
             ),
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
             "permissions": [perm.codename for perm in self.permissions],
             "user_count": len(self.users) if self.users else 0,
         }
@@ -342,9 +302,7 @@ class UserSession(Base):
     __tablename__ = "user_sessions"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
 
     # Session details
     session_token = Column(String(255), unique=True, nullable=False)
@@ -359,17 +317,13 @@ class UserSession(Base):
 
     # Security
     two_factor_verified = Column(Boolean, default=False)
-    login_method = Column(
-        String(50), nullable=True
-    )  # password, sso, api_key, etc.
+    login_method = Column(String(50), nullable=True)  # password, sso, api_key, etc.
     device_fingerprint = Column(String(255), nullable=True)
 
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     ended_at = Column(DateTime(timezone=True), nullable=True)
-    end_reason = Column(
-        String(50), nullable=True
-    )  # logout, timeout, forced, etc.
+    end_reason = Column(String(50), nullable=True)  # logout, timeout, forced, etc.
 
     # Relationships
     user = relationship("Member", back_populates="sessions")
@@ -395,9 +349,7 @@ class AccessLog(Base):
     __tablename__ = "access_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
     session_id = Column(
         UUID(as_uuid=True), ForeignKey("user_sessions.id"), nullable=True
     )
@@ -424,9 +376,7 @@ class AccessLog(Base):
     # Security
     success = Column(Boolean, default=True)
     failure_reason = Column(String(255), nullable=True)
-    security_flags = Column(
-        JSON, nullable=True
-    )  # suspicious activity indicators
+    security_flags = Column(JSON, nullable=True)  # suspicious activity indicators
 
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -442,15 +392,9 @@ class RoleAccessLog(Base):
     __tablename__ = "role_access_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    role_id = Column(
-        UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False
-    )
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
-    modified_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
+    modified_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
 
     # Change details
     action = Column(String(50), nullable=False)  # assigned, revoked, modified
@@ -475,9 +419,7 @@ class PasswordPolicy(Base):
     __tablename__ = "password_policies"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    makerspace_id = Column(
-        UUID(as_uuid=True), nullable=True
-    )  # Null for global policy
+    makerspace_id = Column(UUID(as_uuid=True), nullable=True)  # Null for global policy
 
     # Password requirements
     min_length = Column(Integer, default=8)
@@ -486,17 +428,13 @@ class PasswordPolicy(Base):
     require_lowercase = Column(Boolean, default=True)
     require_numbers = Column(Boolean, default=True)
     require_special_chars = Column(Boolean, default=True)
-    allowed_special_chars = Column(
-        String(100), default="!@#$%^&*()_+-=[]{}|;:,.<>?"
-    )
+    allowed_special_chars = Column(String(100), default="!@#$%^&*()_+-=[]{}|;:,.<>?")
 
     # History and reuse
     prevent_reuse_count = Column(
         Integer, default=5
     )  # Last N passwords cannot be reused
-    max_age_days = Column(
-        Integer, default=90
-    )  # Force password change after N days
+    max_age_days = Column(Integer, default=90)  # Force password change after N days
     warn_before_expiry_days = Column(Integer, default=7)
 
     # Lockout policy
@@ -509,9 +447,7 @@ class PasswordPolicy(Base):
     # Two-factor authentication
     require_2fa = Column(Boolean, default=False)
     require_2fa_for_roles = Column(ARRAY(UUID(as_uuid=True)), nullable=True)
-    allowed_2fa_methods = Column(
-        ARRAY(String), default=["totp", "sms", "email"]
-    )
+    allowed_2fa_methods = Column(ARRAY(String), default=["totp", "sms", "email"])
 
     # Session management
     session_timeout_minutes = Column(Integer, default=480)  # 8 hours
@@ -542,14 +478,10 @@ class PasswordPolicy(Base):
             )
 
         if self.require_uppercase and not any(c.isupper() for c in password):
-            errors.append(
-                "Password must contain at least one uppercase letter"
-            )
+            errors.append("Password must contain at least one uppercase letter")
 
         if self.require_lowercase and not any(c.islower() for c in password):
-            errors.append(
-                "Password must contain at least one lowercase letter"
-            )
+            errors.append("Password must contain at least one lowercase letter")
 
         if self.require_numbers and not any(c.isdigit() for c in password):
             errors.append("Password must contain at least one number")

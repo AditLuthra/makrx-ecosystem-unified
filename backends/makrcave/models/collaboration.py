@@ -25,14 +25,10 @@ class CollaborationMessage(Base):
     )
     user_id = Column(String, nullable=False, index=True)
     message = Column(Text, nullable=False)
-    message_type = Column(
-        String, default="message"
-    )  # message, system, annotation
+    message_type = Column(String, default="message")  # message, system, annotation
     log_metadata = Column(JSON, default=dict)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     project = relationship("Project", back_populates="collaboration_messages")
@@ -65,9 +61,7 @@ class WhiteboardAction(Base):
         String, ForeignKey("projects.project_id"), nullable=False, index=True
     )
     user_id = Column(String, nullable=False, index=True)
-    action_type = Column(
-        String, nullable=False
-    )  # draw, erase, shape, text, note
+    action_type = Column(String, nullable=False)  # draw, erase, shape, text, note
     action_data = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
 
@@ -92,9 +86,7 @@ class UserPresence(Base):
     cursor_position = Column(JSON)  # {x: number, y: number, element?: string}
     last_seen = Column(DateTime, default=datetime.utcnow, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     project = relationship("Project")
@@ -146,9 +138,7 @@ class ProjectComment(Base):
     project_id = Column(
         String, ForeignKey("projects.project_id"), nullable=False, index=True
     )
-    parent_id = Column(
-        String, ForeignKey("project_comments.id")
-    )  # For nested comments
+    parent_id = Column(String, ForeignKey("project_comments.id"))  # For nested comments
     user_id = Column(String, nullable=False, index=True)
     user_name = Column(String, nullable=False)
     comment = Column(Text, nullable=False)
@@ -159,16 +149,12 @@ class ProjectComment(Base):
     resolved_by = Column(String)
     resolved_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     project = relationship("Project")
     parent_comment = relationship("ProjectComment", remote_side=[id])
-    child_comments = relationship(
-        "ProjectComment", back_populates="parent_comment"
-    )
+    child_comments = relationship("ProjectComment", back_populates="parent_comment")
 
 
 class RealTimeEdit(Base):
@@ -181,9 +167,7 @@ class RealTimeEdit(Base):
     element_id = Column(
         String, nullable=False, index=True
     )  # ID of element being edited
-    element_type = Column(
-        String, nullable=False
-    )  # bom, milestone, document, etc.
+    element_type = Column(String, nullable=False)  # bom, milestone, document, etc.
     user_id = Column(String, nullable=False, index=True)
     user_name = Column(String, nullable=False)
     edit_type = Column(String, nullable=False)  # focus, blur, change
@@ -210,9 +194,7 @@ class SharedFile(Base):
     description = Column(Text)
 
     # Collaboration features
-    is_collaborative = Column(
-        Boolean, default=False
-    )  # Can be edited collaboratively
+    is_collaborative = Column(Boolean, default=False)  # Can be edited collaboratively
     current_editor = Column(String)  # User currently editing
     edit_session_id = Column(String)  # Session ID for collaborative editing
     last_edited_at = Column(DateTime)
@@ -229,9 +211,7 @@ class SharedFile(Base):
     uploaded_by = Column(String, nullable=False)
     uploaded_by_name = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     project = relationship("Project")
@@ -259,9 +239,7 @@ def add_collaboration_relationships():
         )
 
     if not hasattr(Project, "user_presence"):
-        Project.user_presence = relationship(
-            "UserPresence", back_populates="project"
-        )
+        Project.user_presence = relationship("UserPresence", back_populates="project")
 
     if not hasattr(Project, "collaboration_sessions"):
         Project.collaboration_sessions = relationship(

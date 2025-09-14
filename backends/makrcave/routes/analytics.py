@@ -39,14 +39,10 @@ async def get_analytics_overview(
         )
 
         # Get usage analytics (last 30 days)
-        usage_data = analytics_service.get_usage_analytics(
-            makerspace.id, days=30
-        )
+        usage_data = analytics_service.get_usage_analytics(makerspace.id, days=30)
 
         # Get revenue analytics (last 30 days)
-        revenue_data = analytics_service.get_revenue_analytics(
-            makerspace.id, days=30
-        )
+        revenue_data = analytics_service.get_revenue_analytics(makerspace.id, days=30)
 
         # Combine into overview format
         overview = {
@@ -58,9 +54,7 @@ async def get_analytics_overview(
                 "total_revenue": revenue_data.get("summary", {}).get(
                     "total_revenue", 0
                 ),
-                "revenue_growth": revenue_data.get("summary", {}).get(
-                    "growth_rate", 0
-                ),
+                "revenue_growth": revenue_data.get("summary", {}).get("growth_rate", 0),
                 "active_members": real_time_data.get("metrics", {}).get(
                     "active_members", 0
                 ),
@@ -95,9 +89,7 @@ async def get_analytics_overview(
 @router.get("/usage")
 async def get_usage_analytics(
     period: str = Query("daily", description="Period: daily, weekly, monthly"),
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
     makerspace=Depends(get_current_makerspace),
@@ -106,9 +98,7 @@ async def get_usage_analytics(
     """Get detailed usage analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        usage_data = analytics_service.get_usage_analytics(
-            makerspace.id, days=days
-        )
+        usage_data = analytics_service.get_usage_analytics(makerspace.id, days=days)
 
         return {
             "success": True,
@@ -128,9 +118,7 @@ async def get_usage_analytics(
 
 @router.get("/revenue")
 async def get_revenue_analytics(
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
     makerspace=Depends(get_current_makerspace),
@@ -139,9 +127,7 @@ async def get_revenue_analytics(
     """Get revenue and financial analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        revenue_data = analytics_service.get_revenue_analytics(
-            makerspace.id, days=days
-        )
+        revenue_data = analytics_service.get_revenue_analytics(makerspace.id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": revenue_data}
 
@@ -156,9 +142,7 @@ async def get_revenue_analytics(
 
 @router.get("/equipment")
 async def get_equipment_analytics(
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
     makerspace=Depends(get_current_makerspace),
@@ -184,9 +168,7 @@ async def get_equipment_analytics(
 
 @router.get("/members")
 async def get_member_analytics(
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
     makerspace=Depends(get_current_makerspace),
@@ -195,9 +177,7 @@ async def get_member_analytics(
     """Get member engagement and skill analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        member_data = analytics_service.get_member_analytics(
-            makerspace.id, days=days
-        )
+        member_data = analytics_service.get_member_analytics(makerspace.id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": member_data}
 
@@ -212,9 +192,7 @@ async def get_member_analytics(
 
 @router.get("/safety")
 async def get_safety_analytics(
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
     makerspace=Depends(get_current_makerspace),
@@ -223,9 +201,7 @@ async def get_safety_analytics(
     """Get safety and incident analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        safety_data = analytics_service.get_safety_analytics(
-            makerspace.id, days=days
-        )
+        safety_data = analytics_service.get_safety_analytics(makerspace.id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": safety_data}
 
@@ -285,19 +261,13 @@ async def get_trend_analysis(
         analytics_service = get_real_analytics_service(db)
 
         if metric == "revenue":
-            data = analytics_service.get_revenue_analytics(
-                makerspace.id, days=days
-            )
+            data = analytics_service.get_revenue_analytics(makerspace.id, days=days)
             trend_data = data.get("daily_trends", [])
         elif metric == "usage":
-            data = analytics_service.get_usage_analytics(
-                makerspace.id, days=days
-            )
+            data = analytics_service.get_usage_analytics(makerspace.id, days=days)
             trend_data = data.get("daily_trends", [])
         elif metric == "members":
-            data = analytics_service.get_member_analytics(
-                makerspace.id, days=days
-            )
+            data = analytics_service.get_member_analytics(makerspace.id, days=days)
             trend_data = data.get("daily_trends", [])
         else:
             raise HTTPException(status_code=400, detail="Invalid metric")
@@ -320,9 +290,7 @@ async def get_trend_analysis(
             )
             trend_direction = "up" if recent_avg > older_avg else "down"
             trend_percentage = (
-                ((recent_avg - older_avg) / older_avg * 100)
-                if older_avg > 0
-                else 0
+                ((recent_avg - older_avg) / older_avg * 100) if older_avg > 0 else 0
             )
         else:
             trend_direction = "stable"
@@ -378,10 +346,8 @@ async def export_analytics(
             )
 
         if metrics == "all" or "equipment" in metrics:
-            export_data["equipment"] = (
-                analytics_service.get_equipment_analytics(
-                    makerspace.id, days=days
-                )
+            export_data["equipment"] = analytics_service.get_equipment_analytics(
+                makerspace.id, days=days
             )
 
         if metrics == "all" or "members" in metrics:

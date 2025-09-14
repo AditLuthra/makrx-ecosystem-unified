@@ -35,7 +35,12 @@ except Exception:
     pass
 
 from backends.makrcave.database import init_db, get_db_session  # type: ignore
-from backends.makrcave.models.inventory import Makerspace, InventoryItem, ItemStatus, SupplierType  # type: ignore
+from backends.makrcave.models.inventory import (
+    Makerspace,
+    InventoryItem,
+    ItemStatus,
+    SupplierType,
+)  # type: ignore
 from backends.makrcave.models.membership_plans import (  # type: ignore
     MembershipPlan,
     PlanType,
@@ -71,9 +76,7 @@ def get_or_create_makerspace(session) -> Makerspace:
     return ms
 
 
-def get_or_create_plan(
-    session, makerspace_uuid: uuid.UUID
-) -> MembershipPlan | None:
+def get_or_create_plan(session, makerspace_uuid: uuid.UUID) -> MembershipPlan | None:
     try:
         plan = (
             session.query(MembershipPlan)
@@ -111,11 +114,7 @@ def get_or_create_plan(
 def get_or_create_admin(
     session, makerspace_uuid: uuid.UUID, plan: MembershipPlan | None
 ) -> Member:
-    admin = (
-        session.query(Member)
-        .filter(Member.email == "admin@example.com")
-        .first()
-    )
+    admin = session.query(Member).filter(Member.email == "admin@example.com").first()
     if admin:
         return admin
     admin = Member(
@@ -179,8 +178,7 @@ def get_or_create_notification_template(
     tpl = (
         session.query(NotificationTemplate)
         .filter(
-            NotificationTemplate.template_name
-            == "inventory_low_stock_default",
+            NotificationTemplate.template_name == "inventory_low_stock_default",
             NotificationTemplate.notification_type
             == NotificationType.INVENTORY_LOW_STOCK,
         )
@@ -215,9 +213,7 @@ def get_or_create_notification_template(
 
 def main() -> None:
     # Safety guard: avoid seeding in production unless explicitly allowed
-    if os.getenv(
-        "ENVIRONMENT", "development"
-    ).lower() == "production" and os.getenv(
+    if os.getenv("ENVIRONMENT", "development").lower() == "production" and os.getenv(
         "SEED_ALLOW_PROD", "false"
     ).lower() not in (
         "1",
@@ -235,9 +231,7 @@ def main() -> None:
         ms = get_or_create_makerspace(session)
         # enhanced_member.Member expects UUID for makerspace_id; convert
         makerspace_uuid = (
-            uuid.UUID(str(ms.id))
-            if not isinstance(ms.id, uuid.UUID)
-            else ms.id
+            uuid.UUID(str(ms.id)) if not isinstance(ms.id, uuid.UUID) else ms.id
         )
         plan = get_or_create_plan(session, makerspace_uuid)
         admin = get_or_create_admin(session, makerspace_uuid, plan)

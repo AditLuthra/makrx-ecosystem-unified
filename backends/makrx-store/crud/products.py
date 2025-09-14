@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 class ProductCRUD:
     """CRUD operations for products"""
 
-    async def create(
-        self, db: AsyncSession, product_data: ProductCreate
-    ) -> Product:
+    async def create(self, db: AsyncSession, product_data: ProductCreate) -> Product:
         """Create a new product"""
         try:
             product = Product(**product_data.dict())
@@ -39,9 +37,7 @@ class ProductCRUD:
             logger.error(f"Failed to create product: {e}")
             raise
 
-    async def get_by_id(
-        self, db: AsyncSession, product_id: int
-    ) -> Optional[Product]:
+    async def get_by_id(self, db: AsyncSession, product_id: int) -> Optional[Product]:
         """Get product by ID with category"""
         try:
             query = (
@@ -56,9 +52,7 @@ class ProductCRUD:
             logger.error(f"Failed to get product by ID {product_id}: {e}")
             return None
 
-    async def get_by_slug(
-        self, db: AsyncSession, slug: str
-    ) -> Optional[Product]:
+    async def get_by_slug(self, db: AsyncSession, slug: str) -> Optional[Product]:
         """Get product by slug with category"""
         try:
             query = (
@@ -132,18 +126,14 @@ class ProductCRUD:
 
                 # Category filter
                 if filters.category_id:
-                    query = query.where(
-                        Product.category_id == filters.category_id
-                    )
+                    query = query.where(Product.category_id == filters.category_id)
                     count_query = count_query.where(
                         Product.category_id == filters.category_id
                     )
 
                 # Brand filter
                 if filters.brand:
-                    query = query.where(
-                        Product.brand.ilike(f"%{filters.brand}%")
-                    )
+                    query = query.where(Product.brand.ilike(f"%{filters.brand}%"))
                     count_query = count_query.where(
                         Product.brand.ilike(f"%{filters.brand}%")
                     )
@@ -236,9 +226,7 @@ class ProductCRUD:
 
                 # Featured filter
                 if filters.is_featured is not None:
-                    query = query.where(
-                        Product.is_featured == filters.is_featured
-                    )
+                    query = query.where(Product.is_featured == filters.is_featured)
                     count_query = count_query.where(
                         Product.is_featured == filters.is_featured
                     )
@@ -247,9 +235,7 @@ class ProductCRUD:
                 if filters.tags:
                     for tag in filters.tags:
                         query = query.where(Product.tags.contains([tag]))
-                        count_query = count_query.where(
-                            Product.tags.contains([tag])
-                        )
+                        count_query = count_query.where(Product.tags.contains([tag]))
 
             # Apply search query
             if search.q:
@@ -309,11 +295,7 @@ class ProductCRUD:
             query = (
                 select(Product)
                 .options(selectinload(Product.category))
-                .where(
-                    and_(
-                        Product.is_active == True, Product.is_featured == True
-                    )
-                )
+                .where(and_(Product.is_active == True, Product.is_featured == True))
                 .order_by(desc(Product.created_at))
                 .limit(limit)
             )
@@ -397,16 +379,10 @@ class ProductCRUD:
             brand_result = await db.execute(brand_query)
 
             suggestions = []
-            suggestions.extend(
-                [name for name in name_result.scalars() if name]
-            )
-            suggestions.extend(
-                [brand for brand in brand_result.scalars() if brand]
-            )
+            suggestions.extend([name for name in name_result.scalars() if name])
+            suggestions.extend([brand for brand in brand_result.scalars() if brand])
 
-            return list(set(suggestions))[
-                :limit
-            ]  # Remove duplicates and limit
+            return list(set(suggestions))[:limit]  # Remove duplicates and limit
 
         except Exception as e:
             logger.error(f"Failed to get search suggestions: {e}")
@@ -417,9 +393,7 @@ class ProductCRUD:
         try:
             query = (
                 select(Product.brand)
-                .where(
-                    and_(Product.is_active == True, Product.brand.isnot(None))
-                )
+                .where(and_(Product.is_active == True, Product.brand.isnot(None)))
                 .distinct()
                 .order_by(Product.brand)
             )

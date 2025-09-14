@@ -120,9 +120,7 @@ class MakerspaceSettings(Base):
     updated_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    updated_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
     makerspace = relationship("Makerspace", back_populates="settings")
@@ -168,9 +166,7 @@ class MakerspaceSettings(Base):
             "delivery_radius_km": self.delivery_radius_km,
             "default_service_fee_percent": self.default_service_fee_percent,
             "auto_job_assignment": self.auto_job_assignment,
-            "theme_mode": (
-                self.theme_mode.value if self.theme_mode else "light"
-            ),
+            "theme_mode": (self.theme_mode.value if self.theme_mode else "light"),
             "custom_theme_colors": self.custom_theme_colors,
             "landing_page_cta": self.landing_page_cta,
             "welcome_message": self.welcome_message,
@@ -186,19 +182,13 @@ class MakerspaceSettings(Base):
             "enable_iot_monitoring": self.enable_iot_monitoring,
             "enable_rfid_access": self.enable_rfid_access,
             "enable_camera_monitoring": self.enable_camera_monitoring,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
             "updated_by": str(self.updated_by) if self.updated_by else None,
         }
 
     @classmethod
-    def get_default_settings(
-        cls, makerspace_id: str, makerspace_name: str = None
-    ):
+    def get_default_settings(cls, makerspace_id: str, makerspace_name: str = None):
         """Get default settings for a new makerspace"""
         return {
             "makerspace_id": makerspace_id,

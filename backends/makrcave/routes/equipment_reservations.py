@@ -36,9 +36,7 @@ from schemas.equipment_reservations import (
     EquipmentReservationSummary,
 )
 
-router = APIRouter(
-    prefix="/equipment-reservations", tags=["equipment-reservations"]
-)
+router = APIRouter(prefix="/equipment-reservations", tags=["equipment-reservations"])
 
 
 # Enhanced Reservation Management
@@ -165,9 +163,7 @@ async def create_enhanced_reservation(
         if total_cost > 0:
             db_reservation.payment_status = models.PaymentStatus.PENDING
             if cost_breakdown.get("deposit_required"):
-                db_reservation.deposit_amount = cost_breakdown.get(
-                    "deposit_amount", 0
-                )
+                db_reservation.deposit_amount = cost_breakdown.get("deposit_amount", 0)
         else:
             db_reservation.payment_status = models.PaymentStatus.NOT_REQUIRED
 
@@ -179,18 +175,14 @@ async def create_enhanced_reservation(
                 skill_verified=gate_result["passed"],
                 verification_method="auto",
                 verified_by="system",
-                verified_at=(
-                    datetime.utcnow() if gate_result["passed"] else None
-                ),
+                verified_at=(datetime.utcnow() if gate_result["passed"] else None),
                 verification_notes=gate_result.get("notes"),
             )
             db.add(verification)
 
         # Determine if supervisor is required
         supervisor_gates = [
-            gate
-            for gate in skill_gate_results
-            if gate.get("requires_supervisor")
+            gate for gate in skill_gate_results if gate.get("requires_supervisor")
         ]
         if supervisor_gates:
             db_reservation.supervisor_required = True
@@ -257,14 +249,10 @@ async def list_reservations(
         )
 
     if user_id and current_user["role"] in ["super_admin", "makerspace_admin"]:
-        query = query.filter(
-            models.EnhancedEquipmentReservation.user_id == user_id
-        )
+        query = query.filter(models.EnhancedEquipmentReservation.user_id == user_id)
 
     if status:
-        query = query.filter(
-            models.EnhancedEquipmentReservation.status == status
-        )
+        query = query.filter(models.EnhancedEquipmentReservation.status == status)
 
     if start_date:
         query = query.filter(
@@ -277,14 +265,10 @@ async def list_reservations(
         )
 
     if not include_recurring:
-        query = query.filter(
-            models.EnhancedEquipmentReservation.is_recurring == False
-        )
+        query = query.filter(models.EnhancedEquipmentReservation.is_recurring == False)
 
     # Order by creation date (newest first)
-    query = query.order_by(
-        models.EnhancedEquipmentReservation.created_at.desc()
-    )
+    query = query.order_by(models.EnhancedEquipmentReservation.created_at.desc())
 
     reservations = query.offset(skip).limit(limit).all()
     return reservations
@@ -363,10 +347,7 @@ async def update_reservation(
         setattr(reservation, field, value)
 
     # Recalculate cost if timing changed
-    if any(
-        field in update_fields
-        for field in ["requested_start", "requested_end"]
-    ):
+    if any(field in update_fields for field in ["requested_start", "requested_end"]):
         duration = (
             reservation.requested_end - reservation.requested_start
         ).total_seconds() / 3600
@@ -513,9 +494,7 @@ async def list_cost_rules(
     query = db.query(models.EquipmentCostRule)
 
     if equipment_id:
-        query = query.filter(
-            models.EquipmentCostRule.equipment_id == equipment_id
-        )
+        query = query.filter(models.EquipmentCostRule.equipment_id == equipment_id)
 
     if active_only:
         query = query.filter(models.EquipmentCostRule.is_active == True)
@@ -603,9 +582,7 @@ async def list_skill_gates(
     query = db.query(models.EquipmentSkillGate)
 
     if equipment_id:
-        query = query.filter(
-            models.EquipmentSkillGate.equipment_id == equipment_id
-        )
+        query = query.filter(models.EquipmentSkillGate.equipment_id == equipment_id)
 
     if active_only:
         query = query.filter(models.EquipmentSkillGate.is_active == True)
@@ -730,9 +707,7 @@ async def check_availability(
     current_time = availability_request.start_date
 
     while current_time < availability_request.end_date:
-        slot_end = min(
-            current_time + timedelta(hours=1), availability_request.end_date
-        )
+        slot_end = min(current_time + timedelta(hours=1), availability_request.end_date)
 
         # Check for conflicts
         has_conflict = any(
@@ -745,11 +720,9 @@ async def check_availability(
                 {
                     "start_time": current_time,
                     "end_time": slot_end,
-                    "duration_hours": (slot_end - current_time).total_seconds()
-                    / 3600,
+                    "duration_hours": (slot_end - current_time).total_seconds() / 3600,
                     "is_available": True,
-                    "requires_skill_verification": len(skill_gate_blocking)
-                    > 0,
+                    "requires_skill_verification": len(skill_gate_blocking) > 0,
                     "skill_gates_blocking": skill_gate_blocking,
                 }
             )
@@ -878,8 +851,7 @@ async def calculate_reservation_cost(
         elif rule.rule_type == models.CostRuleType.MEMBERSHIP_DISCOUNT:
             if (
                 rule.membership_discounts
-                and user_data.get("membership_tier")
-                in rule.membership_discounts
+                and user_data.get("membership_tier") in rule.membership_discounts
             ):
                 discount_percent = rule.membership_discounts[
                     user_data["membership_tier"]
@@ -900,18 +872,14 @@ async def calculate_reservation_cost(
         base_cost = equipment.hourly_rate * reservation.duration_hours
 
     # Calculate total
-    total_additional = sum(
-        fee.get("calculated_amount", 0) for fee in additional_fees
-    )
+    total_additional = sum(fee.get("calculated_amount", 0) for fee in additional_fees)
     total_discounts = sum(
         discount.get("calculated_amount", 0) for discount in discounts
     )
     total_cost = base_cost + total_additional + total_discounts
 
     # Determine if deposit required
-    deposit_required = (
-        equipment.deposit_required and equipment.deposit_required > 0
-    )
+    deposit_required = equipment.deposit_required and equipment.deposit_required > 0
     deposit_amount = equipment.deposit_required if deposit_required else None
 
     return {

@@ -29,7 +29,6 @@ from schemas.equipment import (
 
 
 class EquipmentCRUD:
-
     def get_equipment_list(
         self,
         db: Session,
@@ -42,9 +41,7 @@ class EquipmentCRUD:
 
         # Makerspace filtering (unless super admin)
         if user_role != "super_admin":
-            query = query.filter(
-                Equipment.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(Equipment.linked_makerspace_id == makerspace_id)
 
         # Apply filters
         if filters.category:
@@ -54,9 +51,7 @@ class EquipmentCRUD:
             query = query.filter(Equipment.status == filters.status)
 
         if filters.location:
-            query = query.filter(
-                Equipment.location.ilike(f"%{filters.location}%")
-            )
+            query = query.filter(Equipment.location.ilike(f"%{filters.location}%"))
 
         if filters.makerspace_id and user_role == "super_admin":
             query = query.filter(
@@ -65,8 +60,7 @@ class EquipmentCRUD:
 
         if filters.requires_certification is not None:
             query = query.filter(
-                Equipment.requires_certification
-                == filters.requires_certification
+                Equipment.requires_certification == filters.requires_certification
             )
 
         if filters.available_only:
@@ -108,9 +102,7 @@ class EquipmentCRUD:
     ) -> Optional[Equipment]:
         """Get equipment by equipment_id"""
         return (
-            db.query(Equipment)
-            .filter(Equipment.equipment_id == equipment_id)
-            .first()
+            db.query(Equipment).filter(Equipment.equipment_id == equipment_id).first()
         )
 
     def create_equipment(
@@ -123,9 +115,7 @@ class EquipmentCRUD:
         """Create new equipment"""
 
         # Check for duplicate equipment_id
-        existing = self.get_equipment_by_equipment_id(
-            db, equipment_data.equipment_id
-        )
+        existing = self.get_equipment_by_equipment_id(db, equipment_data.equipment_id)
         if existing:
             raise ValueError(
                 f"Equipment with ID {equipment_data.equipment_id} already exists"
@@ -218,9 +208,7 @@ class EquipmentCRUD:
         )
 
         if active_reservations > 0:
-            raise ValueError(
-                "Cannot delete equipment with active reservations"
-            )
+            raise ValueError("Cannot delete equipment with active reservations")
 
         db.delete(db_equipment)
         db.commit()
@@ -243,17 +231,14 @@ class EquipmentCRUD:
             raise ValueError("Equipment not found")
 
         if equipment.status not in [EquipmentStatus.AVAILABLE]:
-            raise ValueError(
-                f"Equipment is not available (status: {equipment.status})"
-            )
+            raise ValueError(f"Equipment is not available (status: {equipment.status})")
 
         # Check for conflicting reservations
         conflicts = (
             db.query(EquipmentReservation)
             .filter(
                 and_(
-                    EquipmentReservation.equipment_id
-                    == reservation_data.equipment_id,
+                    EquipmentReservation.equipment_id == reservation_data.equipment_id,
                     EquipmentReservation.status.in_(
                         [ReservationStatus.APPROVED, ReservationStatus.ACTIVE]
                     ),
@@ -261,20 +246,16 @@ class EquipmentCRUD:
                         and_(
                             EquipmentReservation.start_time
                             <= reservation_data.start_time,
-                            EquipmentReservation.end_time
-                            > reservation_data.start_time,
+                            EquipmentReservation.end_time > reservation_data.start_time,
                         ),
                         and_(
-                            EquipmentReservation.start_time
-                            < reservation_data.end_time,
-                            EquipmentReservation.end_time
-                            >= reservation_data.end_time,
+                            EquipmentReservation.start_time < reservation_data.end_time,
+                            EquipmentReservation.end_time >= reservation_data.end_time,
                         ),
                         and_(
                             EquipmentReservation.start_time
                             >= reservation_data.start_time,
-                            EquipmentReservation.end_time
-                            <= reservation_data.end_time,
+                            EquipmentReservation.end_time <= reservation_data.end_time,
                         ),
                     ),
                 )
@@ -292,10 +273,7 @@ class EquipmentCRUD:
 
         # Check certification requirement
         certification_verified = True
-        if (
-            equipment.requires_certification
-            and equipment.certification_required
-        ):
+        if equipment.requires_certification and equipment.certification_required:
             # In a real implementation, check against user's certifications
             # For now, assume verification is required
             certification_verified = False
@@ -347,9 +325,7 @@ class EquipmentCRUD:
 
         # Recalculate duration if times changed
         if "start_time" in update_data or "end_time" in update_data:
-            start_time = update_data.get(
-                "start_time", db_reservation.start_time
-            )
+            start_time = update_data.get("start_time", db_reservation.start_time)
             end_time = update_data.get("end_time", db_reservation.end_time)
             duration = (end_time - start_time).total_seconds() / 3600
             update_data["duration_hours"] = duration
@@ -401,9 +377,7 @@ class EquipmentCRUD:
         query = db.query(EquipmentReservation)
 
         if equipment_id:
-            query = query.filter(
-                EquipmentReservation.equipment_id == equipment_id
-            )
+            query = query.filter(EquipmentReservation.equipment_id == equipment_id)
 
         if user_id:
             query = query.filter(EquipmentReservation.user_id == user_id)
@@ -469,9 +443,7 @@ class EquipmentCRUD:
         if db_maintenance.completed_at:
             equipment.last_maintenance_date = db_maintenance.completed_at
             if maintenance_data.next_maintenance_due:
-                equipment.next_maintenance_date = (
-                    maintenance_data.next_maintenance_due
-                )
+                equipment.next_maintenance_date = maintenance_data.next_maintenance_due
 
         db.commit()
         db.refresh(db_maintenance)
@@ -497,12 +469,8 @@ class EquipmentCRUD:
 
         # Recalculate total cost if needed
         if "labor_cost" in update_data or "parts_cost" in update_data:
-            labor_cost = (
-                update_data.get("labor_cost", db_maintenance.labor_cost) or 0
-            )
-            parts_cost = (
-                update_data.get("parts_cost", db_maintenance.parts_cost) or 0
-            )
+            labor_cost = update_data.get("labor_cost", db_maintenance.labor_cost) or 0
+            parts_cost = update_data.get("parts_cost", db_maintenance.parts_cost) or 0
             update_data["total_cost"] = labor_cost + parts_cost
 
         for field, value in update_data.items():
@@ -597,9 +565,7 @@ class EquipmentCRUD:
         query = db.query(Equipment)
 
         if makerspace_id:
-            query = query.filter(
-                Equipment.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(Equipment.linked_makerspace_id == makerspace_id)
 
         total_equipment = query.count()
         available_equipment = query.filter(
@@ -625,9 +591,7 @@ class EquipmentCRUD:
 
         # Utilization rate (simplified calculation)
         utilization_rate = (
-            (in_use_equipment / total_equipment * 100)
-            if total_equipment > 0
-            else 0
+            (in_use_equipment / total_equipment * 100) if total_equipment > 0 else 0
         )
 
         # Average rating

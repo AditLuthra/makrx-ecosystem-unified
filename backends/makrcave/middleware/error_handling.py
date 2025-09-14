@@ -87,9 +87,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             return response
 
         except Exception as exc:
-            return await self.handle_exception(
-                request, exc, request_id, start_time
-            )
+            return await self.handle_exception(request, exc, request_id, start_time)
 
     async def handle_exception(
         self,
@@ -107,9 +105,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
         user_agent = request.headers.get("User-Agent", "Unknown")
 
         if isinstance(exc, APIError):
-            return await self._handle_api_error(
-                exc, request_id, request, process_time
-            )
+            return await self._handle_api_error(exc, request_id, request, process_time)
 
         elif isinstance(exc, RequestValidationError):
             return await self._handle_validation_error(
@@ -223,9 +219,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             429: ErrorCode.RATE_LIMITED,
         }
 
-        error_code = error_code_map.get(
-            exc.status_code, ErrorCode.INTERNAL_ERROR
-        )
+        error_code = error_code_map.get(exc.status_code, ErrorCode.INTERNAL_ERROR)
 
         logger.warning(
             f"HTTP Exception: {exc.detail} | "
@@ -318,23 +312,17 @@ def raise_not_found(resource: str, identifier: str = None):
     if identifier:
         message += f": {identifier}"
 
-    raise APIError(
-        message=message, error_code=ErrorCode.NOT_FOUND, status_code=404
-    )
+    raise APIError(message=message, error_code=ErrorCode.NOT_FOUND, status_code=404)
 
 
 def raise_unauthorized(message: str = "Authentication required"):
     """Raise a standardized unauthorized error"""
-    raise APIError(
-        message=message, error_code=ErrorCode.UNAUTHORIZED, status_code=401
-    )
+    raise APIError(message=message, error_code=ErrorCode.UNAUTHORIZED, status_code=401)
 
 
 def raise_forbidden(message: str = "Access denied"):
     """Raise a standardized forbidden error"""
-    raise APIError(
-        message=message, error_code=ErrorCode.FORBIDDEN, status_code=403
-    )
+    raise APIError(message=message, error_code=ErrorCode.FORBIDDEN, status_code=403)
 
 
 def raise_conflict(resource: str, reason: str = None):
@@ -343,9 +331,7 @@ def raise_conflict(resource: str, reason: str = None):
     if reason:
         message += f": {reason}"
 
-    raise APIError(
-        message=message, error_code=ErrorCode.CONFLICT, status_code=409
-    )
+    raise APIError(message=message, error_code=ErrorCode.CONFLICT, status_code=409)
 
 
 def raise_internal_error(
@@ -361,9 +347,7 @@ def raise_internal_error(
 
 
 # Input validation decorators
-def validate_required_fields(
-    data: dict, required_fields: list
-) -> Dict[str, str]:
+def validate_required_fields(data: dict, required_fields: list) -> Dict[str, str]:
     """Validate that required fields are present and not empty"""
     errors = {}
 
@@ -415,9 +399,7 @@ def sanitize_string_input(value: str, max_length: int = 1000) -> str:
         return ""
 
     # Remove null bytes and control characters
-    sanitized = "".join(
-        char for char in value if ord(char) >= 32 or char in "\t\n\r"
-    )
+    sanitized = "".join(char for char in value if ord(char) >= 32 or char in "\t\n\r")
 
     # Trim whitespace and limit length
     sanitized = sanitized.strip()[:max_length]

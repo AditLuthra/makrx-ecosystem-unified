@@ -128,18 +128,14 @@ class AcknowledgmentRequest(BaseModel):
 
 @router.get("/", response_model=List[AnnouncementResponse])
 async def get_announcements(
-    active_only: bool = Query(
-        True, description="Only return active announcements"
-    ),
+    active_only: bool = Query(True, description="Only return active announcements"),
     published_only: bool = Query(
         True, description="Only return published announcements"
     ),
     announcement_type: Optional[AnnouncementType] = Query(
         None, description="Filter by announcement type"
     ),
-    priority: Optional[Priority] = Query(
-        None, description="Filter by priority"
-    ),
+    priority: Optional[Priority] = Query(None, description="Filter by priority"),
     dashboard_only: bool = Query(
         False, description="Only return announcements shown on dashboard"
     ),
@@ -149,9 +145,7 @@ async def get_announcements(
         le=100,
         description="Maximum number of announcements to return",
     ),
-    offset: int = Query(
-        0, ge=0, description="Number of announcements to skip"
-    ),
+    offset: int = Query(0, ge=0, description="Number of announcements to skip"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
@@ -165,17 +159,13 @@ async def get_announcements(
             detail="No makerspace associated with current user",
         )
 
-    query = db.query(Announcement).filter(
-        Announcement.makerspace_id == makerspace_id
-    )
+    query = db.query(Announcement).filter(Announcement.makerspace_id == makerspace_id)
 
     if published_only:
         query = query.filter(Announcement.is_published == True)
 
     if announcement_type:
-        query = query.filter(
-            Announcement.announcement_type == announcement_type
-        )
+        query = query.filter(Announcement.announcement_type == announcement_type)
 
     if priority:
         query = query.filter(Announcement.priority == priority)
@@ -200,9 +190,7 @@ async def get_announcements(
         )
 
     # Order by pinned first, then by created date (newest first)
-    query = query.order_by(
-        desc(Announcement.is_pinned), desc(Announcement.created_at)
-    )
+    query = query.order_by(desc(Announcement.is_pinned), desc(Announcement.created_at))
 
     # Apply pagination
     announcements = query.offset(offset).limit(limit).all()
@@ -273,9 +261,7 @@ async def get_member_announcements(
         acknowledged_ids = [str(ack[0]) for ack in acknowledged_ids]
 
         targeted_announcements = [
-            ann
-            for ann in targeted_announcements
-            if str(ann.id) not in acknowledged_ids
+            ann for ann in targeted_announcements if str(ann.id) not in acknowledged_ids
         ]
 
     # Sort by priority and pinned status
@@ -319,9 +305,7 @@ async def get_announcement(
     """Get specific announcement details"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -378,8 +362,7 @@ async def get_announcement(
             db.query(AnnouncementAcknowledgment)
             .filter(
                 and_(
-                    AnnouncementAcknowledgment.announcement_id
-                    == announcement_id,
+                    AnnouncementAcknowledgment.announcement_id == announcement_id,
                     AnnouncementAcknowledgment.member_id == member.id,
                 )
             )
@@ -387,9 +370,7 @@ async def get_announcement(
         )
         announcement_dict["is_acknowledged"] = acknowledgment is not None
         announcement_dict["acknowledged_at"] = (
-            acknowledgment.acknowledged_at.isoformat()
-            if acknowledgment
-            else None
+            acknowledgment.acknowledged_at.isoformat() if acknowledgment else None
         )
 
     return announcement_dict
@@ -415,16 +396,12 @@ async def create_announcement(
         )
 
     # Sanitize inputs
-    announcement_data.title = InputSanitizer.sanitize_text(
-        announcement_data.title
-    )
+    announcement_data.title = InputSanitizer.sanitize_text(announcement_data.title)
     if announcement_data.summary:
         announcement_data.summary = InputSanitizer.sanitize_text(
             announcement_data.summary
         )
-    announcement_data.content = InputSanitizer.sanitize_html(
-        announcement_data.content
-    )
+    announcement_data.content = InputSanitizer.sanitize_html(announcement_data.content)
     if announcement_data.action_button_text:
         announcement_data.action_button_text = InputSanitizer.sanitize_text(
             announcement_data.action_button_text
@@ -465,7 +442,7 @@ async def create_announcement(
             if isinstance(current_user, dict)
             else getattr(current_user, "id", None)
         ),
-        **announcement_data.dict()
+        **announcement_data.dict(),
     )
 
     # Set published_at if being published immediately
@@ -494,9 +471,7 @@ async def update_announcement(
     """Update an existing announcement"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -517,9 +492,7 @@ async def update_announcement(
         )
 
     # Validate type-specific fields if type is being changed
-    new_type = (
-        announcement_data.announcement_type or announcement.announcement_type
-    )
+    new_type = announcement_data.announcement_type or announcement.announcement_type
 
     if new_type == AnnouncementType.EVENT:
         event_date = (
@@ -553,21 +526,12 @@ async def update_announcement(
     # Sanitize update fields
     update_data = announcement_data.dict(exclude_unset=True)
     if "title" in update_data and update_data["title"]:
-        update_data["title"] = InputSanitizer.sanitize_text(
-            update_data["title"]
-        )
+        update_data["title"] = InputSanitizer.sanitize_text(update_data["title"])
     if "summary" in update_data and update_data["summary"]:
-        update_data["summary"] = InputSanitizer.sanitize_text(
-            update_data["summary"]
-        )
+        update_data["summary"] = InputSanitizer.sanitize_text(update_data["summary"])
     if "content" in update_data and update_data["content"]:
-        update_data["content"] = InputSanitizer.sanitize_html(
-            update_data["content"]
-        )
-    if (
-        "action_button_text" in update_data
-        and update_data["action_button_text"]
-    ):
+        update_data["content"] = InputSanitizer.sanitize_html(update_data["content"])
+    if "action_button_text" in update_data and update_data["action_button_text"]:
         update_data["action_button_text"] = InputSanitizer.sanitize_text(
             update_data["action_button_text"]
         )
@@ -615,9 +579,7 @@ async def delete_announcement(
     """Delete an announcement"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -662,9 +624,7 @@ async def acknowledge_announcement(
     """Acknowledge an announcement (member endpoint)"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -732,9 +692,7 @@ async def record_announcement_click(
     """Record a click on announcement action button"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -757,9 +715,7 @@ async def get_announcement_stats(
     """Get detailed statistics for an announcement"""
 
     announcement = (
-        db.query(Announcement)
-        .filter(Announcement.id == announcement_id)
-        .first()
+        db.query(Announcement).filter(Announcement.id == announcement_id).first()
     )
     if not announcement:
         raise HTTPException(
@@ -822,9 +778,7 @@ async def get_announcement_stats(
 
     # Calculate rates
     view_rate = (
-        (unique_viewers / target_members_count * 100)
-        if target_members_count > 0
-        else 0
+        (unique_viewers / target_members_count * 100) if target_members_count > 0 else 0
     )
     acknowledgment_rate = (
         (total_acknowledgments / target_members_count * 100)
@@ -832,9 +786,7 @@ async def get_announcement_stats(
         else 0
     )
     click_through_rate = (
-        (announcement.click_count / total_views * 100)
-        if total_views > 0
-        else 0
+        (announcement.click_count / total_views * 100) if total_views > 0 else 0
     )
 
     return {
@@ -850,8 +802,6 @@ async def get_announcement_stats(
         "click_through_rate": round(click_through_rate, 2),
         "created_at": announcement.created_at.isoformat(),
         "published_at": (
-            announcement.published_at.isoformat()
-            if announcement.published_at
-            else None
+            announcement.published_at.isoformat() if announcement.published_at else None
         ),
     }

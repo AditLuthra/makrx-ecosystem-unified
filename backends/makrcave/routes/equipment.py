@@ -63,9 +63,7 @@ async def get_equipment_details(
     db: Session = Depends(get_db),
 ):
     """Get detailed equipment information"""
-    equipment = (
-        db.query(Equipment).filter(Equipment.id == equipment_id).first()
-    )
+    equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
 
     if not equipment:
         raise HTTPException(
@@ -115,9 +113,7 @@ async def create_equipment(
             linked_makerspace_id=equipment_data["makerspace_id"],
             description=equipment_data.get("description"),
             hourly_rate=equipment_data.get("hourly_rate"),
-            requires_certification=equipment_data.get(
-                "requires_certification", False
-            ),
+            requires_certification=equipment_data.get("requires_certification", False),
             created_by=current_user.user_id,
         )
 
@@ -147,9 +143,7 @@ async def reserve_equipment(
     """Reserve equipment"""
     try:
         # Check if equipment exists and is available
-        equipment = (
-            db.query(Equipment).filter(Equipment.id == equipment_id).first()
-        )
+        equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
         if not equipment:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -215,18 +209,14 @@ async def get_equipment_reservations(
 
 
 # Ratings endpoints used by frontend
-@router.get(
-    "/{equipment_id}/ratings", response_model=List[EquipmentRatingResponse]
-)
+@router.get("/{equipment_id}/ratings", response_model=List[EquipmentRatingResponse])
 async def list_equipment_ratings(
     equipment_id: str,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """List ratings for a specific equipment item"""
-    equipment = (
-        db.query(Equipment).filter(Equipment.id == equipment_id).first()
-    )
+    equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
     if not equipment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
@@ -265,9 +255,7 @@ async def create_equipment_rating(
         )
         return new_rating
     except ValueError as ve:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(ve)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ve))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

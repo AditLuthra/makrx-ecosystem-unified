@@ -69,9 +69,7 @@ async def get_user_orders(
                 "items": [
                     {
                         "product_name": (
-                            item.product.name
-                            if item.product
-                            else "Unknown Product"
+                            item.product.name if item.product else "Unknown Product"
                         ),
                         "quantity": item.quantity,
                         "price": float(item.price_at_time),
@@ -123,12 +121,8 @@ async def get_order_details(
             "shipping_address": order.shipping_address,
             "billing_address": order.billing_address,
             "notes": order.notes,
-            "created_at": (
-                order.created_at.isoformat() if order.created_at else None
-            ),
-            "updated_at": (
-                order.updated_at.isoformat() if order.updated_at else None
-            ),
+            "created_at": (order.created_at.isoformat() if order.created_at else None),
+            "updated_at": (order.updated_at.isoformat() if order.updated_at else None),
             "items": [
                 {
                     "id": item.id,
@@ -146,9 +140,7 @@ async def get_order_details(
                     "price_at_time": float(item.price_at_time),
                     "total_price": float(item.total_price),
                     "created_at": (
-                        item.created_at.isoformat()
-                        if item.created_at
-                        else None
+                        item.created_at.isoformat() if item.created_at else None
                     ),
                 }
                 for item in order.items
@@ -182,18 +174,16 @@ async def checkout(
             raise HTTPException(status_code=400, detail="Cart is empty")
 
         # Calculate totals
-        subtotal = sum(
-            float(item.price_at_time) * item.quantity for item in cart.items
-        )
+        subtotal = sum(float(item.price_at_time) * item.quantity for item in cart.items)
         tax_rate = 0.08  # 8% tax (configurable)
         tax_amount = subtotal * tax_rate
-        shipping_amount = (
-            10.00 if subtotal < 100 else 0.00
-        )  # Free shipping over $100
+        shipping_amount = 10.00 if subtotal < 100 else 0.00  # Free shipping over $100
         total_amount = subtotal + tax_amount + shipping_amount
 
         # Generate order number
-        order_number = f"MX-{datetime.utcnow().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
+        order_number = (
+            f"MX-{datetime.utcnow().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
+        )
 
         # Create order
         new_order = Order(
@@ -203,11 +193,9 @@ async def checkout(
             tax_amount=tax_amount,
             shipping_amount=shipping_amount,
             total_amount=total_amount,
-            customer_email=user_id
-            + "@demo.com",  # Would come from user profile
+            customer_email=user_id + "@demo.com",  # Would come from user profile
             shipping_address=request.shipping_address,
-            billing_address=request.billing_address
-            or request.shipping_address,
+            billing_address=request.billing_address or request.shipping_address,
             notes=request.notes,
             status="pending",
             payment_status="pending",
@@ -243,9 +231,7 @@ async def checkout(
 
     except Exception as e:
         await db.rollback()
-        raise HTTPException(
-            status_code=500, detail=f"Checkout failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Checkout failed: {str(e)}")
 
 
 @router.put("/api/orders/{order_id}/status")
@@ -306,9 +292,7 @@ async def get_order_tracking(
         {
             "status": "order_placed",
             "description": "Order placed successfully",
-            "timestamp": (
-                order.created_at.isoformat() if order.created_at else None
-            ),
+            "timestamp": (order.created_at.isoformat() if order.created_at else None),
             "location": "Online Store",
         }
     ]

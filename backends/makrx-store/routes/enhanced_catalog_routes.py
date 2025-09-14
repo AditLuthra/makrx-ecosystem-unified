@@ -77,9 +77,7 @@ async def get_brands(
     include_products: bool = Query(
         False, description="Include featured products for each brand"
     ),
-    featured_only: bool = Query(
-        False, description="Only return featured brands"
-    ),
+    featured_only: bool = Query(False, description="Only return featured brands"),
     db: AsyncSession = Depends(get_db),
 ):
     """Get all brands with optional product information"""
@@ -145,9 +143,7 @@ async def get_brands(
                         .order_by(Product.created_at.desc())
                         .limit(4)
                     )
-                    featured_products = (
-                        (await db.execute(fp_fallback)).scalars().all()
-                    )
+                    featured_products = (await db.execute(fp_fallback)).scalars().all()
 
                 brand_data["featured_products"] = [
                     {
@@ -166,9 +162,7 @@ async def get_brands(
 
     except Exception as e:
         logger.error(f"Failed to get brands: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve brands"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve brands")
 
 
 @router.get("/brands/{slug}", response_model=BrandResponse)
@@ -215,9 +209,7 @@ async def get_brand_by_slug(
 # Collection endpoints
 @router.get("/collections", response_model=Dict[str, Any])
 async def get_collections(
-    featured_only: bool = Query(
-        False, description="Only return featured collections"
-    ),
+    featured_only: bool = Query(False, description="Only return featured collections"),
     db: AsyncSession = Depends(get_db),
 ):
     """Get all collections"""
@@ -231,9 +223,9 @@ async def get_collections(
 
         for collection in collections:
             # Count products in collection
-            count_stmt = select(
-                func.count(CollectionProduct.product_id)
-            ).where(CollectionProduct.collection_id == collection.id)
+            count_stmt = select(func.count(CollectionProduct.product_id)).where(
+                CollectionProduct.collection_id == collection.id
+            )
             product_count = (await db.execute(count_stmt)).scalar_one()
 
             collection_list.append(
@@ -263,9 +255,7 @@ async def get_collections(
 
     except Exception as e:
         logger.error(f"Failed to get collections: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve collections"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve collections")
 
 
 @router.get("/collections/{slug}", response_model=CollectionResponse)
@@ -297,8 +287,7 @@ async def get_collection_by_slug(
             )
             categories = (await db.execute(cats_stmt)).scalars().all()
             featured_categories = [
-                {"id": c.id, "name": c.name, "slug": c.slug}
-                for c in categories
+                {"id": c.id, "name": c.name, "slug": c.slug} for c in categories
             ]
 
         return CollectionResponse(
@@ -313,14 +302,10 @@ async def get_collection_by_slug(
             featured_categories=featured_categories,
             product_count=product_count,
             created_at=(
-                collection.created_at.isoformat()
-                if collection.created_at
-                else ""
+                collection.created_at.isoformat() if collection.created_at else ""
             ),
             updated_at=(
-                collection.updated_at.isoformat()
-                if collection.updated_at
-                else ""
+                collection.updated_at.isoformat() if collection.updated_at else ""
             ),
             is_featured=collection.is_featured,
         )
@@ -329,9 +314,7 @@ async def get_collection_by_slug(
         raise
     except Exception as e:
         logger.error(f"Failed to get collection {slug}: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve collection"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve collection")
 
 
 @router.get("/collections/{slug}/products", response_model=Dict[str, Any])
@@ -358,9 +341,7 @@ async def get_collection_products(
         # Build query for collection products
         base_stmt = (
             select(Product)
-            .join(
-                CollectionProduct, Product.id == CollectionProduct.product_id
-            )
+            .join(CollectionProduct, Product.id == CollectionProduct.product_id)
             .where(
                 and_(
                     CollectionProduct.collection_id == collection.id,
@@ -391,9 +372,7 @@ async def get_collection_products(
         # Get total count
         count_stmt = select(func.count()).select_from(
             select(Product.id)
-            .join(
-                CollectionProduct, Product.id == CollectionProduct.product_id
-            )
+            .join(CollectionProduct, Product.id == CollectionProduct.product_id)
             .where(
                 and_(
                     CollectionProduct.collection_id == collection.id,
@@ -420,9 +399,7 @@ async def get_collection_products(
                     "brand": product.brand,
                     "price": float(product.price),
                     "sale_price": (
-                        float(product.sale_price)
-                        if product.sale_price
-                        else None
+                        float(product.sale_price) if product.sale_price else None
                     ),
                     "images": product.images or [],
                     "in_stock": product.stock_qty > 0,
@@ -450,9 +427,7 @@ async def get_collection_products(
 # Tag endpoints
 @router.get("/tags/popular", response_model=Dict[str, Any])
 async def get_popular_tags(
-    limit: int = Query(
-        20, ge=1, le=100, description="Number of tags to return"
-    ),
+    limit: int = Query(20, ge=1, le=100, description="Number of tags to return"),
     db: AsyncSession = Depends(get_db),
 ):
     """Get popular tags by usage count"""
@@ -469,9 +444,7 @@ async def get_popular_tags(
 
     except Exception as e:
         logger.error(f"Failed to get popular tags: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve popular tags"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve popular tags")
 
 
 @router.get("/tags/{tag_name}", response_model=TagResponse)
@@ -481,9 +454,7 @@ async def get_tag_info(
 ):
     """Get tag information and related data"""
     try:
-        tag_stmt = select(Tag).where(
-            and_(Tag.name == tag_name, Tag.is_active == True)
-        )
+        tag_stmt = select(Tag).where(and_(Tag.name == tag_name, Tag.is_active == True))
         tag = (await db.execute(tag_stmt)).scalars().first()
 
         if not tag:
@@ -539,8 +510,7 @@ async def get_tag_info(
             product_count=tag.usage_count,
             related_tags=[t.name for t in related_tags],
             category_distribution=[
-                {"category": dist.name, "count": dist.count}
-                for dist in category_dist
+                {"category": dist.name, "count": dist.count} for dist in category_dist
             ],
         )
 
@@ -554,12 +524,8 @@ async def get_tag_info(
 # Enhanced category endpoints
 @router.get("/categories/tree", response_model=CategoryTreeResponse)
 async def get_category_tree(
-    include_product_counts: bool = Query(
-        False, description="Include product counts"
-    ),
-    max_depth: Optional[int] = Query(
-        None, description="Maximum depth to return"
-    ),
+    include_product_counts: bool = Query(False, description="Include product counts"),
+    max_depth: Optional[int] = Query(None, description="Maximum depth to return"),
     db: AsyncSession = Depends(get_db),
 ):
     """Get complete category tree with optional product counts"""
@@ -598,9 +564,7 @@ async def get_category_tree(
             category_dict[category.id] = category_data
 
             if category.parent_id and category.parent_id in category_dict:
-                category_dict[category.parent_id]["children"].append(
-                    category_data
-                )
+                category_dict[category.parent_id]["children"].append(category_data)
             else:
                 root_categories.append(category_data)
 
@@ -610,6 +574,4 @@ async def get_category_tree(
 
     except Exception as e:
         logger.error(f"Failed to get category tree: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve category tree"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve category tree")

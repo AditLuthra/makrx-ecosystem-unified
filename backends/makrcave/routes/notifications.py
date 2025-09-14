@@ -178,9 +178,7 @@ async def get_unread_summary(
 ):
     """Get unread notifications summary"""
     try:
-        summary = crud_notifications.get_unread_summary(
-            db, current_user.user_id
-        )
+        summary = crud_notifications.get_unread_summary(db, current_user.user_id)
         return summary
     except Exception as e:
         raise HTTPException(
@@ -383,9 +381,7 @@ async def get_notification_templates(
     return templates
 
 
-@router.put(
-    "/templates/{template_id}", response_model=NotificationTemplateResponse
-)
+@router.put("/templates/{template_id}", response_model=NotificationTemplateResponse)
 async def update_notification_template(
     template_id: str,
     template_update: NotificationTemplateUpdate,
@@ -399,9 +395,7 @@ async def update_notification_template(
             detail="Insufficient permissions to update templates",
         )
 
-    template = crud_notifications.update_template(
-        db, template_id, template_update
-    )
+    template = crud_notifications.update_template(db, template_id, template_update)
     if not template:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Template not found"
@@ -409,9 +403,7 @@ async def update_notification_template(
     return template
 
 
-@router.post(
-    "/templates/{template_id}/render", response_model=TemplateRenderResponse
-)
+@router.post("/templates/{template_id}/render", response_model=TemplateRenderResponse)
 async def render_template(
     template_id: str,
     render_request: TemplateRenderRequest,
@@ -446,9 +438,7 @@ async def get_notification_preferences(
     current_user=Depends(get_current_user), db: Session = Depends(get_db)
 ):
     """Get notification preferences for current user"""
-    preferences = crud_notifications.get_user_preferences(
-        db, current_user.user_id
-    )
+    preferences = crud_notifications.get_user_preferences(db, current_user.user_id)
     if not preferences:
         # Create default preferences
         default_prefs = NotificationPreferenceCreate()
@@ -487,9 +477,7 @@ async def register_push_token(
 ):
     """Register push notification token"""
     try:
-        crud_notifications.register_push_token(
-            db, current_user.user_id, token_data
-        )
+        crud_notifications.register_push_token(db, current_user.user_id, token_data)
         return {"message": "Push token registered successfully"}
     except Exception as e:
         raise HTTPException(
@@ -682,9 +670,7 @@ async def export_notifications(
             current_user.user_id,
         )
 
-        background_tasks.add_task(
-            crud_notifications.process_export, db, export_id
-        )
+        background_tasks.add_task(crud_notifications.process_export, db, export_id)
 
         return {"export_id": export_id, "message": "Export request created"}
     except Exception as e:

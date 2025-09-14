@@ -26,9 +26,7 @@ class MemberInvite(Base):
     membership_plan_id = Column(
         UUID(as_uuid=True), ForeignKey("membership_plans.id"), nullable=False
     )
-    invited_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    invited_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
     makerspace_id = Column(UUID(as_uuid=True), nullable=False, index=True)
 
     invite_token = Column(String(128), unique=True, nullable=False, index=True)

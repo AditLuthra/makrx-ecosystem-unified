@@ -19,9 +19,7 @@ depends_on = None
 def upgrade() -> None:
     with op.batch_alter_table("store_products") as batch_op:
         batch_op.add_column(
-            sa.Column(
-                "short_description", sa.String(length=500), nullable=True
-            )
+            sa.Column("short_description", sa.String(length=500), nullable=True)
         )
 
 

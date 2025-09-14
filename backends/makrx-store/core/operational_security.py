@@ -166,9 +166,7 @@ class SecretsManager:
                 "access_level": access_level.value,
                 "created_at": datetime.utcnow().isoformat(),
                 "last_rotated": None,
-                "rotation_frequency": OpSecConfig.ROTATION_SCHEDULES[
-                    secret_type
-                ].value,
+                "rotation_frequency": OpSecConfig.ROTATION_SCHEDULES[secret_type].value,
                 "description": description,
             }
 
@@ -226,9 +224,7 @@ class SecretsManager:
             )
             return None
 
-    async def rotate_secret(
-        self, secret_name: str, rotator_id: str
-    ) -> Dict[str, Any]:
+    async def rotate_secret(self, secret_name: str, rotator_id: str) -> Dict[str, Any]:
         """Rotate secret value"""
         try:
             if secret_name not in self.secret_metadata:
@@ -251,9 +247,9 @@ class SecretsManager:
             )
 
             # Update rotation timestamp
-            self.secret_metadata[secret_name][
-                "last_rotated"
-            ] = datetime.utcnow().isoformat()
+            self.secret_metadata[secret_name]["last_rotated"] = (
+                datetime.utcnow().isoformat()
+            )
 
             # Audit rotation
             await self._audit_secret_operation(
@@ -266,9 +262,7 @@ class SecretsManager:
 
             return {
                 "secret_name": secret_name,
-                "rotated_at": self.secret_metadata[secret_name][
-                    "last_rotated"
-                ],
+                "rotated_at": self.secret_metadata[secret_name]["last_rotated"],
                 "rotator_id": rotator_id,
             }
 
@@ -292,9 +286,7 @@ class SecretsManager:
             if last_rotated:
                 last_rotation_date = datetime.fromisoformat(last_rotated)
             else:
-                last_rotation_date = datetime.fromisoformat(
-                    metadata["created_at"]
-                )
+                last_rotation_date = datetime.fromisoformat(metadata["created_at"])
 
             if frequency == RotationFrequency.MONTHLY:
                 next_rotation = last_rotation_date + timedelta(days=30)
@@ -490,9 +482,7 @@ class MFAManager:
                 secret = self.user_secrets[user_id]
                 totp = pyotp.TOTP(secret)
 
-                if totp.verify(
-                    token, valid_window=1
-                ):  # Allow 1 time step window
+                if totp.verify(token, valid_window=1):  # Allow 1 time step window
                     await self._audit_mfa_operation(
                         "mfa_success", user_id, {"method": "totp"}
                     )
@@ -516,9 +506,7 @@ class MFAManager:
 
         except Exception as e:
             logger.error(f"MFA verification failed for user {user_id}: {e}")
-            await self._audit_mfa_operation(
-                "mfa_error", user_id, {"error": str(e)}
-            )
+            await self._audit_mfa_operation("mfa_error", user_id, {"error": str(e)})
             return False
 
     async def is_mfa_enabled(self, user_id: str) -> bool:
@@ -565,9 +553,7 @@ class MFAManager:
         )
         return device_id
 
-    async def is_trusted_device(
-        self, user_id: str, device_fingerprint: str
-    ) -> bool:
+    async def is_trusted_device(self, user_id: str, device_fingerprint: str) -> bool:
         """Check if device is trusted for user"""
         if user_id not in self.trusted_devices:
             return False
@@ -706,9 +692,7 @@ class AccessControlManager:
                 session["role"],
             )
 
-    async def add_ip_to_allowlist(
-        self, role: str, ip_address: str, admin_user_id: str
-    ):
+    async def add_ip_to_allowlist(self, role: str, ip_address: str, admin_user_id: str):
         """Add IP to role allowlist"""
         if role not in self.ip_allowlists:
             self.ip_allowlists[role] = set()

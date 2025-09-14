@@ -42,9 +42,7 @@ class CollaborationManager:
         self.active_connections: Dict[str, List[WebSocket]] = defaultdict(list)
         self.user_presence: Dict[str, Dict] = {}  # user_id -> presence_data
 
-    async def connect(
-        self, websocket: WebSocket, project_id: str, user_id: str
-    ):
+    async def connect(self, websocket: WebSocket, project_id: str, user_id: str):
         await websocket.accept()
         self.active_connections[project_id].append(websocket)
 
@@ -128,9 +126,7 @@ collaboration_manager = CollaborationManager()
 
 
 @router.websocket("/ws/{project_id}/{user_id}")
-async def websocket_endpoint(
-    websocket: WebSocket, project_id: str, user_id: str
-):
+async def websocket_endpoint(websocket: WebSocket, project_id: str, user_id: str):
     """WebSocket endpoint for real-time collaboration"""
     await collaboration_manager.connect(websocket, project_id, user_id)
 
@@ -205,11 +201,7 @@ async def send_message(
     """Send a collaboration message"""
 
     # Verify user has access to project
-    project = (
-        db.query(Project)
-        .filter(Project.project_id == message.project_id)
-        .first()
-    )
+    project = db.query(Project).filter(Project.project_id == message.project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -264,9 +256,7 @@ async def get_messages(
     """Get collaboration messages for a project"""
 
     # Verify user has access to project
-    project = (
-        db.query(Project).filter(Project.project_id == project_id).first()
-    )
+    project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -447,18 +437,14 @@ async def broadcast_viewing_status(
 
 # Active users endpoint
 @router.get("/active-users/{project_id}")
-async def get_active_users(
-    project_id: str, current_user=Depends(get_current_user)
-):
+async def get_active_users(project_id: str, current_user=Depends(get_current_user)):
     """Get list of currently active users in project"""
 
     active_users = []
     for user_id, presence in collaboration_manager.user_presence.items():
         if presence["project_id"] == project_id:
             # Check if user is still active (within last 30 seconds)
-            if datetime.utcnow() - presence["last_seen"] < timedelta(
-                seconds=30
-            ):
+            if datetime.utcnow() - presence["last_seen"] < timedelta(seconds=30):
                 active_users.append(
                     {
                         "user_id": user_id,

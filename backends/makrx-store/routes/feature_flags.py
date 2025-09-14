@@ -54,9 +54,7 @@ class FeatureFlagRule(BaseModel):
 
 
 class CreateFeatureFlagRequest(BaseModel):
-    key: str = Field(
-        ..., min_length=1, max_length=100, pattern="^[a-zA-Z0-9_-]+$"
-    )
+    key: str = Field(..., min_length=1, max_length=100, pattern="^[a-zA-Z0-9_-]+$")
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     flag_type: FeatureFlagType = FeatureFlagType.BOOLEAN
@@ -231,9 +229,7 @@ feature_flags_store: Dict[str, Dict[str, Any]] = {
         "default_value": {"international": False, "express": True},
         "is_active": True,
         "status": "active",
-        "rules": [
-            {"target_type": "region", "target_value": "IN", "enabled": True}
-        ],
+        "rules": [{"target_type": "region", "target_value": "IN", "enabled": True}],
         "tags": ["shipping", "regional"],
         "created_at": datetime.utcnow(),
         "usage_count": 0,
@@ -323,9 +319,7 @@ async def list_feature_flags(
 
     except Exception as e:
         logger.error(f"List feature flags error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to list feature flags"
-        )
+        raise HTTPException(status_code=500, detail="Failed to list feature flags")
 
 
 @router.post("/", response_model=FeatureFlagResponse)
@@ -337,9 +331,7 @@ async def create_feature_flag(
     """
     try:
         if request.key in feature_flags_store:
-            raise HTTPException(
-                status_code=409, detail="Feature flag already exists"
-            )
+            raise HTTPException(status_code=409, detail="Feature flag already exists")
 
         # Validate value type
         if not validate_flag_value(request.default_value, request.flag_type):
@@ -388,23 +380,17 @@ async def create_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Create feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to create feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to create feature flag")
 
 
 @router.get("/{flag_key}", response_model=FeatureFlagResponse)
-async def get_feature_flag(
-    flag_key: str, admin_user: str = Depends(require_admin)
-):
+async def get_feature_flag(flag_key: str, admin_user: str = Depends(require_admin)):
     """
     Get specific feature flag (admin only)
     """
     try:
         if flag_key not in feature_flags_store:
-            raise HTTPException(
-                status_code=404, detail="Feature flag not found"
-            )
+            raise HTTPException(status_code=404, detail="Feature flag not found")
 
         flag_data = feature_flags_store[flag_key]
         status = determine_flag_status(flag_data)
@@ -417,9 +403,7 @@ async def get_feature_flag(
             default_value=flag_data["default_value"],
             is_active=flag_data["is_active"],
             status=status,
-            rules=[
-                FeatureFlagRule(**rule) for rule in flag_data.get("rules", [])
-            ],
+            rules=[FeatureFlagRule(**rule) for rule in flag_data.get("rules", [])],
             valid_from=flag_data.get("valid_from"),
             valid_until=flag_data.get("valid_until"),
             tags=flag_data.get("tags", []),
@@ -432,9 +416,7 @@ async def get_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Get feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to get feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to get feature flag")
 
 
 @router.put("/{flag_key}", response_model=FeatureFlagResponse)
@@ -448,9 +430,7 @@ async def update_feature_flag(
     """
     try:
         if flag_key not in feature_flags_store:
-            raise HTTPException(
-                status_code=404, detail="Feature flag not found"
-            )
+            raise HTTPException(status_code=404, detail="Feature flag not found")
 
         flag_data = feature_flags_store[flag_key]
 
@@ -460,9 +440,7 @@ async def update_feature_flag(
         if request.description is not None:
             flag_data["description"] = request.description
         if request.default_value is not None:
-            if not validate_flag_value(
-                request.default_value, flag_data["flag_type"]
-            ):
+            if not validate_flag_value(request.default_value, flag_data["flag_type"]):
                 raise HTTPException(
                     status_code=400,
                     detail="Invalid default value for flag type",
@@ -491,9 +469,7 @@ async def update_feature_flag(
             default_value=flag_data["default_value"],
             is_active=flag_data["is_active"],
             status=status,
-            rules=[
-                FeatureFlagRule(**rule) for rule in flag_data.get("rules", [])
-            ],
+            rules=[FeatureFlagRule(**rule) for rule in flag_data.get("rules", [])],
             valid_from=flag_data.get("valid_from"),
             valid_until=flag_data.get("valid_until"),
             tags=flag_data.get("tags", []),
@@ -506,23 +482,17 @@ async def update_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Update feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to update feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to update feature flag")
 
 
 @router.delete("/{flag_key}")
-async def delete_feature_flag(
-    flag_key: str, admin_user: str = Depends(require_admin)
-):
+async def delete_feature_flag(flag_key: str, admin_user: str = Depends(require_admin)):
     """
     Delete feature flag (admin only)
     """
     try:
         if flag_key not in feature_flags_store:
-            raise HTTPException(
-                status_code=404, detail="Feature flag not found"
-            )
+            raise HTTPException(status_code=404, detail="Feature flag not found")
 
         del feature_flags_store[flag_key]
 
@@ -532,9 +502,7 @@ async def delete_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Delete feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to delete feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to delete feature flag")
 
 
 @router.post("/evaluate", response_model=FeatureFlagEvaluationResponse)
@@ -569,15 +537,11 @@ async def evaluate_feature_flags(
             evaluated_flags[flag_key] = value
             metadata[flag_key] = flag_metadata
 
-        return FeatureFlagEvaluationResponse(
-            flags=evaluated_flags, metadata=metadata
-        )
+        return FeatureFlagEvaluationResponse(flags=evaluated_flags, metadata=metadata)
 
     except Exception as e:
         logger.error(f"Evaluate feature flags error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to evaluate feature flags"
-        )
+        raise HTTPException(status_code=500, detail="Failed to evaluate feature flags")
 
 
 @router.get("/evaluate/{flag_key}")
@@ -594,9 +558,7 @@ async def evaluate_single_feature_flag(
     """
     try:
         if flag_key not in feature_flags_store:
-            raise HTTPException(
-                status_code=404, detail="Feature flag not found"
-            )
+            raise HTTPException(status_code=404, detail="Feature flag not found")
 
         flag_data = feature_flags_store[flag_key]
 
@@ -619,23 +581,17 @@ async def evaluate_single_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Evaluate single feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to evaluate feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to evaluate feature flag")
 
 
 @router.post("/{flag_key}/toggle")
-async def toggle_feature_flag(
-    flag_key: str, admin_user: str = Depends(require_admin)
-):
+async def toggle_feature_flag(flag_key: str, admin_user: str = Depends(require_admin)):
     """
     Quick toggle feature flag active status (admin only)
     """
     try:
         if flag_key not in feature_flags_store:
-            raise HTTPException(
-                status_code=404, detail="Feature flag not found"
-            )
+            raise HTTPException(status_code=404, detail="Feature flag not found")
 
         flag_data = feature_flags_store[flag_key]
         flag_data["is_active"] = not flag_data["is_active"]
@@ -651,9 +607,7 @@ async def toggle_feature_flag(
         raise
     except Exception as e:
         logger.error(f"Toggle feature flag error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to toggle feature flag"
-        )
+        raise HTTPException(status_code=500, detail="Failed to toggle feature flag")
 
 
 @router.get("/analytics/usage")
@@ -668,9 +622,7 @@ async def get_feature_flag_analytics(admin_user: str = Depends(require_admin)):
                 1 for flag in feature_flags_store.values() if flag["is_active"]
             ),
             "inactive_flags": sum(
-                1
-                for flag in feature_flags_store.values()
-                if not flag["is_active"]
+                1 for flag in feature_flags_store.values() if not flag["is_active"]
             ),
             "usage_stats": [],
             "flag_types": {},
@@ -703,9 +655,7 @@ async def get_feature_flag_analytics(admin_user: str = Depends(require_admin)):
                 )
 
         # Sort usage stats by usage count
-        analytics["usage_stats"].sort(
-            key=lambda x: x["usage_count"], reverse=True
-        )
+        analytics["usage_stats"].sort(key=lambda x: x["usage_count"], reverse=True)
 
         return analytics
 
@@ -795,9 +745,7 @@ def evaluate_single_flag(
     return flag_data["default_value"], metadata
 
 
-def evaluate_rule(
-    rule: Dict[str, Any], context: FeatureFlagEvaluationRequest
-) -> bool:
+def evaluate_rule(rule: Dict[str, Any], context: FeatureFlagEvaluationRequest) -> bool:
     """Evaluate if a rule matches the given context"""
     target_type = rule["target_type"]
     target_value = rule["target_value"]
@@ -817,9 +765,7 @@ def evaluate_rule(
         import hashlib
 
         if context.user_id:
-            hash_value = int(
-                hashlib.md5(context.user_id.encode()).hexdigest(), 16
-            )
+            hash_value = int(hashlib.md5(context.user_id.encode()).hexdigest(), 16)
             return (hash_value % 100) < int(target_value)
 
     return False

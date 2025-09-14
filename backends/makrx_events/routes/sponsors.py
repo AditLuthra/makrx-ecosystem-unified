@@ -25,9 +25,7 @@ def list_sponsors(event_id: str, db: Session = Depends(get_db)):
     )
 
 
-@router.post(
-    "/events/{event_id}/sponsors", response_model=SponsorRead, status_code=201
-)
+@router.post("/events/{event_id}/sponsors", response_model=SponsorRead, status_code=201)
 def create_sponsor(
     event_id: str,
     payload: SponsorCreate,
@@ -46,9 +44,7 @@ def create_sponsor(
     return s
 
 
-@router.patch(
-    "/events/{event_id}/sponsors/{sponsor_id}", response_model=SponsorRead
-)
+@router.patch("/events/{event_id}/sponsors/{sponsor_id}", response_model=SponsorRead)
 def update_sponsor(
     event_id: str,
     sponsor_id: str,

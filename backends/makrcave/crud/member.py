@@ -32,9 +32,7 @@ from schemas.member import (
 
 
 # Member CRUD operations
-def get_member(
-    db: Session, member_id: str, user_id: str = None
-) -> Optional[Member]:
+def get_member(db: Session, member_id: str, user_id: str = None) -> Optional[Member]:
     """Get a member by ID"""
     query = db.query(Member).options(joinedload(Member.membership_plan))
 
@@ -60,9 +58,7 @@ def get_member_by_email(
     return query.filter(Member.email == email).first()
 
 
-def get_member_by_keycloak_id(
-    db: Session, keycloak_user_id: str
-) -> Optional[Member]:
+def get_member_by_keycloak_id(db: Session, keycloak_user_id: str) -> Optional[Member]:
     """Get a member by Keycloak user ID"""
     return (
         db.query(Member)
@@ -131,9 +127,7 @@ def get_members(
     return query.offset(skip).limit(limit).all()
 
 
-def create_member(
-    db: Session, member: MemberCreate, created_by: str
-) -> Member:
+def create_member(db: Session, member: MemberCreate, created_by: str) -> Member:
     """Create a new member"""
     # Set start and end dates if not provided
     start_date = member.start_date or datetime.utcnow()
@@ -143,9 +137,7 @@ def create_member(
     if not plan:
         raise ValueError("Invalid membership plan")
 
-    end_date = member.end_date or (
-        start_date + timedelta(days=plan.duration_days)
-    )
+    end_date = member.end_date or (start_date + timedelta(days=plan.duration_days))
 
     db_member = Member(
         keycloak_user_id=member.keycloak_user_id,
@@ -195,9 +187,7 @@ def update_member(
         if plan:
             # Extend from current end date or now, whichever is later
             start_from = max(datetime.utcnow(), db_member.end_date)
-            update_data["end_date"] = start_from + timedelta(
-                days=plan.duration_days
-            )
+            update_data["end_date"] = start_from + timedelta(days=plan.duration_days)
 
     for field, value in update_data.items():
         setattr(db_member, field, value)
@@ -309,9 +299,7 @@ def delete_member(db: Session, member_id: str, deleted_by: str) -> bool:
 # Membership Plan CRUD operations
 def get_membership_plan(db: Session, plan_id: str) -> Optional[MembershipPlan]:
     """Get a membership plan by ID"""
-    return (
-        db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
-    )
+    return db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
 
 
 def get_membership_plans(
@@ -328,9 +316,7 @@ def get_membership_plans(
     return query.order_by(MembershipPlan.price).all()
 
 
-def create_membership_plan(
-    db: Session, plan: MembershipPlanCreate
-) -> MembershipPlan:
+def create_membership_plan(db: Session, plan: MembershipPlanCreate) -> MembershipPlan:
     """Create a new membership plan"""
     db_plan = MembershipPlan(**plan.dict())
     db.add(db_plan)
@@ -364,9 +350,7 @@ def delete_membership_plan(db: Session, plan_id: str) -> bool:
         return False
 
     # Check if any members are using this plan
-    member_count = (
-        db.query(Member).filter(Member.membership_plan_id == plan_id).count()
-    )
+    member_count = db.query(Member).filter(Member.membership_plan_id == plan_id).count()
     if member_count > 0:
         return False  # Cannot delete plan with active members
 
@@ -414,9 +398,7 @@ def get_member_invites(
     return query.order_by(desc(MemberInvite.created_at)).all()
 
 
-def create_member_invite(
-    db: Session, invite: MemberInviteCreate
-) -> MemberInvite:
+def create_member_invite(db: Session, invite: MemberInviteCreate) -> MemberInvite:
     """Create a new member invite"""
     # Generate unique invite token
     invite_token = secrets.token_urlsafe(32)
@@ -475,9 +457,7 @@ def accept_member_invite(
         return None
 
     # Check if member already exists
-    existing_member = get_member_by_email(
-        db, db_invite.email, db_invite.makerspace_id
-    )
+    existing_member = get_member_by_email(db, db_invite.email, db_invite.makerspace_id)
     if existing_member:
         return None
 
@@ -708,9 +688,7 @@ def check_expired_memberships(db: Session) -> List[Member]:
     now = datetime.utcnow()
     expired_members = (
         db.query(Member)
-        .filter(
-            and_(Member.end_date < now, Member.status == MemberStatus.ACTIVE)
-        )
+        .filter(and_(Member.end_date < now, Member.status == MemberStatus.ACTIVE))
         .all()
     )
 

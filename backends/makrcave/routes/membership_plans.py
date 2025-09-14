@@ -19,9 +19,7 @@ from models.membership_plans import (
 )
 from security.events import SecurityEventType, log_security_event
 
-router = APIRouter(
-    prefix="/api/v1/membership-plans", tags=["Membership Plans"]
-)
+router = APIRouter(prefix="/api/v1/membership-plans", tags=["Membership Plans"])
 
 
 class MembershipPlanCreate(BaseModel):
@@ -137,9 +135,7 @@ class MembershipPlanResponse(BaseModel):
 
 @router.get("/", response_model=List[MembershipPlanResponse])
 async def get_membership_plans(
-    include_inactive: bool = Query(
-        False, description="Include inactive plans"
-    ),
+    include_inactive: bool = Query(False, description="Include inactive plans"),
     public_only: bool = Query(False, description="Only return public plans"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
@@ -168,9 +164,7 @@ async def get_membership_plans(
     if public_only:
         query = query.filter(MembershipPlan.is_public == True)
 
-    plans = query.order_by(
-        MembershipPlan.display_order, MembershipPlan.price
-    ).all()
+    plans = query.order_by(MembershipPlan.display_order, MembershipPlan.price).all()
 
     # Calculate effective prices and format response
     response_plans = []
@@ -191,9 +185,7 @@ async def get_membership_plan(
 ):
     """Get specific membership plan details"""
 
-    plan = (
-        db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
-    )
+    plan = db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -285,9 +277,7 @@ async def update_membership_plan(
 ):
     """Update an existing membership plan"""
 
-    plan = (
-        db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
-    )
+    plan = db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -357,17 +347,13 @@ async def update_membership_plan(
 @router.delete("/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_membership_plan(
     plan_id: str,
-    force: bool = Query(
-        False, description="Force delete even if members are assigned"
-    ),
+    force: bool = Query(False, description="Force delete even if members are assigned"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_admin_user),
 ):
     """Delete a membership plan"""
 
-    plan = (
-        db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
-    )
+    plan = db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -383,9 +369,7 @@ async def delete_membership_plan(
         )
 
     # Check if plan has active members
-    member_count = (
-        db.query(Member).filter(Member.membership_plan_id == plan_id).count()
-    )
+    member_count = db.query(Member).filter(Member.membership_plan_id == plan_id).count()
     if member_count > 0 and not force:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -542,9 +526,7 @@ async def get_plan_members(
 ):
     """Get members assigned to a specific membership plan"""
 
-    plan = (
-        db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
-    )
+    plan = db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

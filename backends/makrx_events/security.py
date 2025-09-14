@@ -11,9 +11,7 @@ security = HTTPBearer()
 KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://localhost:8081")
 KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "makrx")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "makrx-events-api")
-KEYCLOAK_VERIFY_AUD = (
-    os.getenv("KEYCLOAK_VERIFY_AUD", "true").lower() == "true"
-)
+KEYCLOAK_VERIFY_AUD = os.getenv("KEYCLOAK_VERIFY_AUD", "true").lower() == "true"
 KEYCLOAK_ISSUER = os.getenv(
     "KEYCLOAK_ISSUER", f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}"
 )
@@ -29,9 +27,7 @@ _jwks_ts = 0.0
 
 
 def _pem_from_x5c(x5c_entry: str) -> str:
-    return (
-        f"-----BEGIN CERTIFICATE-----\n{x5c_entry}\n-----END CERTIFICATE-----"
-    )
+    return f"-----BEGIN CERTIFICATE-----\n{x5c_entry}\n-----END CERTIFICATE-----"
 
 
 async def get_jwks_pem(kid: str) -> Optional[str]:
@@ -43,9 +39,7 @@ async def get_jwks_pem(kid: str) -> Optional[str]:
         and kid in _jwks_cache
     ):
         return _jwks_cache.get(kid)
-    url = (
-        f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/certs"
-    )
+    url = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/certs"
     try:
         async with httpx.AsyncClient(timeout=5) as client:
             resp = await client.get(url)

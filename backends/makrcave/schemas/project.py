@@ -413,9 +413,7 @@ class UserProjectStatistics(BaseModel):
 
 # GitHub Integration Schemas
 class GitHubRepoConnect(BaseModel):
-    repo_url: str = Field(
-        ..., regex=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$"
-    )
+    repo_url: str = Field(..., regex=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$")
     access_token: Optional[str] = None  # For private repos
     default_branch: str = "main"
 

@@ -42,15 +42,9 @@ class Settings(BaseSettings):
         description="PostgreSQL database URL",
     )
     DB_ECHO: bool = Field(False, description="Enable SQLAlchemy query logging")
-    DB_POOL_SIZE: int = Field(
-        10, description="SQLAlchemy connection pool size"
-    )
-    DB_MAX_OVERFLOW: int = Field(
-        20, description="SQLAlchemy pool max overflow"
-    )
-    DB_POOL_TIMEOUT: int = Field(
-        30, description="Pool checkout timeout (seconds)"
-    )
+    DB_POOL_SIZE: int = Field(10, description="SQLAlchemy connection pool size")
+    DB_MAX_OVERFLOW: int = Field(20, description="SQLAlchemy pool max overflow")
+    DB_POOL_TIMEOUT: int = Field(30, description="Pool checkout timeout (seconds)")
     DB_POOL_RECYCLE: int = Field(
         1800, description="Recycle connections after N seconds"
     )
@@ -62,9 +56,7 @@ class Settings(BaseSettings):
     )
 
     # Authentication (Keycloak)
-    KEYCLOAK_URL: str = Field(
-        "http://localhost:8081", description="Keycloak base URL"
-    )
+    KEYCLOAK_URL: str = Field("http://localhost:8081", description="Keycloak base URL")
     KEYCLOAK_ISSUER: str = Field(
         "https://auth.makrx.org/realms/makrx",
         description="Keycloak realm issuer URL",
@@ -97,20 +89,14 @@ class Settings(BaseSettings):
     S3_USE_SSL: bool = Field(True, description="Use SSL for S3 connections")
 
     # Payments
-    STRIPE_SECRET_KEY: Optional[str] = Field(
-        None, description="Stripe secret key"
-    )
+    STRIPE_SECRET_KEY: Optional[str] = Field(None, description="Stripe secret key")
     STRIPE_WEBHOOK_SECRET: Optional[str] = Field(
         None, description="Stripe webhook secret"
     )
-    STRIPE_PUBLIC_KEY: Optional[str] = Field(
-        None, description="Stripe publishable key"
-    )
+    STRIPE_PUBLIC_KEY: Optional[str] = Field(None, description="Stripe publishable key")
 
     RAZORPAY_KEY_ID: Optional[str] = Field(None, description="Razorpay key ID")
-    RAZORPAY_KEY_SECRET: Optional[str] = Field(
-        None, description="Razorpay key secret"
-    )
+    RAZORPAY_KEY_SECRET: Optional[str] = Field(None, description="Razorpay key secret")
     RAZORPAY_WEBHOOK_SECRET: Optional[str] = Field(
         None, description="Razorpay webhook secret"
     )
@@ -134,21 +120,11 @@ class Settings(BaseSettings):
     )
 
     # Pricing Configuration
-    PRICE_SETUP_FEE: float = Field(
-        50.0, description="Base setup fee for services"
-    )
-    RATE_PLA_PER_CM3: float = Field(
-        0.15, description="PLA material rate per cm³"
-    )
-    RATE_ABS_PER_CM3: float = Field(
-        0.18, description="ABS material rate per cm³"
-    )
-    RATE_PETG_PER_CM3: float = Field(
-        0.20, description="PETG material rate per cm³"
-    )
-    RATE_RESIN_PER_CM3: float = Field(
-        0.35, description="Resin material rate per cm³"
-    )
+    PRICE_SETUP_FEE: float = Field(50.0, description="Base setup fee for services")
+    RATE_PLA_PER_CM3: float = Field(0.15, description="PLA material rate per cm³")
+    RATE_ABS_PER_CM3: float = Field(0.18, description="ABS material rate per cm³")
+    RATE_PETG_PER_CM3: float = Field(0.20, description="PETG material rate per cm³")
+    RATE_RESIN_PER_CM3: float = Field(0.35, description="Resin material rate per cm³")
 
     # File Upload Limits
     MAX_UPLOAD_SIZE: int = Field(
@@ -164,9 +140,7 @@ class Settings(BaseSettings):
 
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = Field(100, description="Requests per window")
-    RATE_LIMIT_WINDOW: int = Field(
-        3600, description="Rate limit window in seconds"
-    )
+    RATE_LIMIT_WINDOW: int = Field(3600, description="Rate limit window in seconds")
 
     # Email Configuration (for notifications)
     SMTP_HOST: Optional[str] = Field(None, description="SMTP server host")
@@ -176,9 +150,7 @@ class Settings(BaseSettings):
     SMTP_USE_TLS: bool = Field(True, description="Use TLS for SMTP")
 
     # Logging
-    LOG_LEVEL: str = Field(
-        "INFO", pattern="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$"
-    )
+    LOG_LEVEL: str = Field("INFO", pattern="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$")
 
     # Metrics protection
     METRICS_TOKEN: Optional[str] = Field(
@@ -203,9 +175,7 @@ class Settings(BaseSettings):
     def model_post_init(self, __context: dict) -> None:  # pydantic v2 hook
         # Derive issuer from URL + realm if not explicitly set via env
         if "KEYCLOAK_ISSUER" not in os.environ or not self.KEYCLOAK_ISSUER:
-            self.KEYCLOAK_ISSUER = (
-                f"{self.KEYCLOAK_URL}/realms/{self.KEYCLOAK_REALM}"
-            )
+            self.KEYCLOAK_ISSUER = f"{self.KEYCLOAK_URL}/realms/{self.KEYCLOAK_REALM}"
 
 
 # Global settings instance

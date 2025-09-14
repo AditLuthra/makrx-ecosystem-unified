@@ -126,12 +126,8 @@ class Announcement(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     published_at = Column(DateTime(timezone=True), nullable=True)
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
-    updated_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
     makerspace = relationship("Makerspace", back_populates="announcements")
@@ -153,9 +149,7 @@ class Announcement(Base):
             "content": self.content,
             "summary": self.summary,
             "announcement_type": (
-                self.announcement_type.value
-                if self.announcement_type
-                else None
+                self.announcement_type.value if self.announcement_type else None
             ),
             "priority": self.priority.value if self.priority else None,
             "target_audience": (
@@ -164,12 +158,8 @@ class Announcement(Base):
             "target_membership_plans": self.target_membership_plans,
             "target_skills": self.target_skills,
             "target_members": self.target_members,
-            "publish_at": (
-                self.publish_at.isoformat() if self.publish_at else None
-            ),
-            "expires_at": (
-                self.expires_at.isoformat() if self.expires_at else None
-            ),
+            "publish_at": (self.publish_at.isoformat() if self.publish_at else None),
+            "expires_at": (self.expires_at.isoformat() if self.expires_at else None),
             "is_published": self.is_published,
             "is_pinned": self.is_pinned,
             "show_on_dashboard": self.show_on_dashboard,
@@ -183,33 +173,23 @@ class Announcement(Base):
             "background_color": self.background_color,
             "text_color": self.text_color,
             "icon": self.icon,
-            "event_date": (
-                self.event_date.isoformat() if self.event_date else None
-            ),
+            "event_date": (self.event_date.isoformat() if self.event_date else None),
             "event_location": self.event_location,
             "event_capacity": self.event_capacity,
             "registration_required": self.registration_required,
             "registration_url": self.registration_url,
             "maintenance_start": (
-                self.maintenance_start.isoformat()
-                if self.maintenance_start
-                else None
+                self.maintenance_start.isoformat() if self.maintenance_start else None
             ),
             "maintenance_end": (
-                self.maintenance_end.isoformat()
-                if self.maintenance_end
-                else None
+                self.maintenance_end.isoformat() if self.maintenance_end else None
             ),
             "affected_equipment": self.affected_equipment,
             "view_count": self.view_count,
             "acknowledgment_count": self.acknowledgment_count,
             "click_count": self.click_count,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
             "published_at": (
                 self.published_at.isoformat() if self.published_at else None
             ),
@@ -248,19 +228,13 @@ class Announcement(Base):
 
         if self.target_audience == TargetAudience.SPECIFIC_PLANS:
             if self.target_membership_plans and member.membership_plan_id:
-                return (
-                    str(member.membership_plan_id)
-                    in self.target_membership_plans
-                )
+                return str(member.membership_plan_id) in self.target_membership_plans
             return False
 
         if self.target_audience == TargetAudience.SPECIFIC_SKILLS:
             if self.target_skills and hasattr(member, "skills"):
                 member_skills = [str(skill.id) for skill in member.skills]
-                return any(
-                    skill_id in member_skills
-                    for skill_id in self.target_skills
-                )
+                return any(skill_id in member_skills for skill_id in self.target_skills)
             return False
 
         if self.target_audience == TargetAudience.SPECIFIC_MEMBERS:
@@ -280,9 +254,7 @@ class Announcement(Base):
             from datetime import datetime, timedelta
 
             if hasattr(member, "created_at"):
-                return member.created_at > (
-                    datetime.utcnow() - timedelta(days=30)
-                )
+                return member.created_at > (datetime.utcnow() - timedelta(days=30))
             return False
 
         return False
@@ -329,20 +301,14 @@ class AnnouncementAcknowledgment(Base):
     announcement_id = Column(
         UUID(as_uuid=True), ForeignKey("announcements.id"), nullable=False
     )
-    member_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    member_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
 
-    acknowledged_at = Column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    acknowledged_at = Column(DateTime(timezone=True), server_default=func.now())
     ip_address = Column(String(45), nullable=True)  # For tracking
     user_agent = Column(String(500), nullable=True)  # For tracking
 
     # Relationships
-    announcement = relationship(
-        "Announcement", back_populates="acknowledgments"
-    )
+    announcement = relationship("Announcement", back_populates="acknowledgments")
     member = relationship("Member")
 
     def __repr__(self):
@@ -354,9 +320,7 @@ class AnnouncementAcknowledgment(Base):
             "announcement_id": str(self.announcement_id),
             "member_id": str(self.member_id),
             "acknowledged_at": (
-                self.acknowledged_at.isoformat()
-                if self.acknowledged_at
-                else None
+                self.acknowledged_at.isoformat() if self.acknowledged_at else None
             ),
         }
 

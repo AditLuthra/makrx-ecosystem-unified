@@ -65,12 +65,8 @@ class EnhancedUsageMetrics(Base):
     )
 
     # Time tracking
-    timestamp = Column(
-        DateTime(timezone=True), server_default=func.now(), index=True
-    )
-    period = Column(
-        String(20), nullable=False
-    )  # hourly, daily, weekly, monthly
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    period = Column(String(20), nullable=False)  # hourly, daily, weekly, monthly
 
     # User metrics
     total_active_users = Column(Integer, default=0)
@@ -150,18 +146,12 @@ class EquipmentUtilizationMetrics(Base):
     maintenance_hours = Column(Float, default=0.0)
 
     # Performance metrics
-    utilization_rate = Column(
-        Float, default=0.0
-    )  # used_hours / available_hours * 100
-    booking_efficiency = Column(
-        Float, default=0.0
-    )  # used_hours / booked_hours * 100
+    utilization_rate = Column(Float, default=0.0)  # used_hours / available_hours * 100
+    booking_efficiency = Column(Float, default=0.0)  # used_hours / booked_hours * 100
     uptime_percentage = Column(Float, default=0.0)
 
     # Usage patterns
-    peak_usage_hours = Column(
-        JSON, nullable=True
-    )  # [{"hour": 14, "usage": 85}, ...]
+    peak_usage_hours = Column(JSON, nullable=True)  # [{"hour": 14, "usage": 85}, ...]
     usage_frequency = Column(Integer, default=0)  # number of sessions
     average_session_duration = Column(Float, default=0.0)  # minutes
     unique_users = Column(Integer, default=0)
@@ -198,12 +188,8 @@ class RevenueAnalyticsEnhanced(Base):
     )
 
     # Time tracking
-    transaction_date = Column(
-        DateTime(timezone=True), nullable=False, index=True
-    )
-    reporting_period = Column(
-        String(20), nullable=False
-    )  # daily, weekly, monthly
+    transaction_date = Column(DateTime(timezone=True), nullable=False, index=True)
+    reporting_period = Column(String(20), nullable=False)  # daily, weekly, monthly
 
     # Revenue categories
     membership_revenue = Column(Float, default=0.0)
@@ -242,9 +228,7 @@ class RevenueAnalyticsEnhanced(Base):
     net_revenue = Column(Float, default=0.0)
 
     # Growth metrics
-    revenue_growth_rate = Column(
-        Float, default=0.0
-    )  # compared to previous period
+    revenue_growth_rate = Column(Float, default=0.0)  # compared to previous period
     quarterly_growth_rate = Column(Float, default=0.0)
     yearly_growth_rate = Column(Float, default=0.0)
 
@@ -270,15 +254,11 @@ class MemberEngagementMetrics(Base):
     makerspace_id = Column(
         UUID(as_uuid=True), ForeignKey("makerspaces.id"), nullable=False
     )
-    member_id = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    member_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
 
     # Time period
     analysis_date = Column(DateTime(timezone=True), nullable=False, index=True)
-    period_type = Column(
-        String(20), nullable=False
-    )  # weekly, monthly, quarterly
+    period_type = Column(String(20), nullable=False)  # weekly, monthly, quarterly
 
     # Activity metrics
     login_frequency = Column(Integer, default=0)
@@ -353,12 +333,8 @@ class AnalyticsAlert(Base):
     )
 
     # Alert details
-    alert_type = Column(
-        String(50), nullable=False
-    )  # threshold, anomaly, trend, etc.
-    severity = Column(
-        String(20), nullable=False
-    )  # low, medium, high, critical
+    alert_type = Column(String(50), nullable=False)  # threshold, anomaly, trend, etc.
+    severity = Column(String(20), nullable=False)  # low, medium, high, critical
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=False)
 
@@ -451,9 +427,7 @@ class AnalyticsReport(Base):
     description = Column(Text, nullable=True)
 
     # Generation details
-    generated_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
-    )
+    generated_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
     generation_parameters = Column(JSON, nullable=True)
     data_sources = Column(JSON, nullable=True)
     filters_applied = Column(JSON, nullable=True)
@@ -500,15 +474,11 @@ class AnalyticsConfiguration(Base):
 
     # Configuration details
     config_name = Column(String(100), nullable=False)
-    config_type = Column(
-        String(50), nullable=False
-    )  # collection, processing, alerting
+    config_type = Column(String(50), nullable=False)  # collection, processing, alerting
     is_enabled = Column(Boolean, default=True)
 
     # Settings
-    collection_frequency = Column(
-        String(20), nullable=True
-    )  # realtime, hourly, daily
+    collection_frequency = Column(String(20), nullable=True)  # realtime, hourly, daily
     aggregation_periods = Column(ARRAY(String), nullable=True)
     retention_days = Column(Integer, default=365)
 

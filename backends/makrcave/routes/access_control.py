@@ -149,9 +149,7 @@ async def update_permission(
     return permission
 
 
-@router.delete(
-    "/permissions/{permission_id}", status_code=status.HTTP_204_NO_CONTENT
-)
+@router.delete("/permissions/{permission_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_permission(
     permission_id: str,
     current_user=Depends(get_current_user),
@@ -193,9 +191,7 @@ async def create_role(
         role.makerspace_id = _get_user_makerspace_id(current_user)
 
     try:
-        db_role = crud_access_control.create_role(
-            db, role, current_user.user_id
-        )
+        db_role = crud_access_control.create_role(db, role, current_user.user_id)
         return db_role
     except Exception as e:
         raise HTTPException(
@@ -465,9 +461,7 @@ async def get_enhanced_members(
     if not _is_super_admin(current_user):
         filters.makerspace_id = _get_user_makerspace_id(current_user)
 
-    members = crud_access_control.get_enhanced_members(
-        db, skip, limit, filters
-    )
+    members = crud_access_control.get_enhanced_members(db, skip, limit, filters)
     return members
 
 
@@ -501,9 +495,7 @@ async def get_user_sessions(
     return sessions
 
 
-@router.delete(
-    "/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT
-)
+@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def terminate_session(
     session_id: str,
     current_user=Depends(get_current_user),
@@ -525,9 +517,7 @@ async def terminate_session(
             detail="Insufficient permissions to terminate session",
         )
 
-    success = crud_access_control.terminate_session(
-        db, session_id, "admin_terminated"
-    )
+    success = crud_access_control.terminate_session(db, session_id, "admin_terminated")
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -590,18 +580,15 @@ async def get_password_policies(
     return policies
 
 
-@router.post(
-    "/password-policies/validate", response_model=PasswordValidationResponse
-)
+@router.post("/password-policies/validate", response_model=PasswordValidationResponse)
 async def validate_password(
     validation_request: PasswordValidationRequest,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Validate password against policy"""
-    makerspace_id = (
-        validation_request.makerspace_id
-        or _get_user_makerspace_id(current_user)
+    makerspace_id = validation_request.makerspace_id or _get_user_makerspace_id(
+        current_user
     )
 
     result = crud_access_control.validate_password(
@@ -713,9 +700,7 @@ async def import_roles(
             detail="Insufficient permissions to import roles",
         )
 
-    results = crud_access_control.import_roles(
-        db, import_data, current_user.user_id
-    )
+    results = crud_access_control.import_roles(db, import_data, current_user.user_id)
     return results
 
 

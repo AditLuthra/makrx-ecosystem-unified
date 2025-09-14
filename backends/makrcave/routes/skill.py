@@ -111,9 +111,7 @@ async def update_skill(
     current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
 ):
     """Update a skill (Admin only)"""
-    skill = skill_crud.update_skill(
-        db=db, skill_id=skill_id, skill_update=skill_update
-    )
+    skill = skill_crud.update_skill(db=db, skill_id=skill_id, skill_update=skill_update)
     if not skill:
         raise HTTPException(status_code=404, detail="Skill not found")
     return skill
@@ -185,12 +183,8 @@ async def get_user_skills(
         us_dict["skill_category"] = skill.category if skill else "Unknown"
         us_dict["skill_level"] = skill.level if skill else "beginner"
         us_dict["user_name"] = "User Name"  # Would get from user service
-        us_dict["user_email"] = (
-            "user@example.com"  # Would get from user service
-        )
-        us_dict["certifier_name"] = (
-            "Certifier Name" if us.certified_by else None
-        )
+        us_dict["user_email"] = "user@example.com"  # Would get from user service
+        us_dict["certifier_name"] = "Certifier Name" if us.certified_by else None
 
         result.append(UserSkillWithDetails(**us_dict))
 
@@ -262,10 +256,7 @@ async def get_skill_requests(
 ):
     """Get skill requests with optional filtering"""
     # If not admin and no user_id specified, show only current user's requests
-    if (
-        current_user.role not in ["super_admin", "makerspace_admin"]
-        and not user_id
-    ):
+    if current_user.role not in ["super_admin", "makerspace_admin"] and not user_id:
         user_id = current_user.id
 
     requests = skill_crud.get_skill_requests(
@@ -287,12 +278,8 @@ async def get_skill_requests(
         req_dict["skill_category"] = skill.category if skill else "Unknown"
         req_dict["skill_level"] = skill.level if skill else "beginner"
         req_dict["user_name"] = "User Name"  # Would get from user service
-        req_dict["user_email"] = (
-            "user@example.com"  # Would get from user service
-        )
-        req_dict["reviewer_name"] = (
-            "Reviewer Name" if req.reviewed_by else None
-        )
+        req_dict["user_email"] = "user@example.com"  # Would get from user service
+        req_dict["reviewer_name"] = "Reviewer Name" if req.reviewed_by else None
 
         result.append(SkillRequestWithDetails(**req_dict))
 
@@ -321,9 +308,7 @@ async def update_skill_request(
 # Equipment Access Control Routes
 
 
-@router.get(
-    "/access/equipment/{equipment_id}", response_model=EquipmentAccessCheck
-)
+@router.get("/access/equipment/{equipment_id}", response_model=EquipmentAccessCheck)
 async def check_equipment_access(
     equipment_id: str,
     user_id: Optional[str] = Query(None),
@@ -379,17 +364,13 @@ async def check_bulk_equipment_access(
             "total_equipment": len(equipment_list),
             "accessible_equipment": accessible_count,
             "access_percentage": (
-                (accessible_count / len(equipment_list) * 100)
-                if equipment_list
-                else 0
+                (accessible_count / len(equipment_list) * 100) if equipment_list else 0
             ),
         },
     )
 
 
-@router.get(
-    "/equipment-requirements", response_model=List[EquipmentSkillRequirements]
-)
+@router.get("/equipment-requirements", response_model=List[EquipmentSkillRequirements])
 async def get_equipment_skill_requirements(
     makerspace_id: Optional[str] = Query(None),
     db: Session = Depends(get_db),
@@ -450,12 +431,8 @@ async def get_user_skill_summary(
     certified_skills = len(
         [us for us in user_skills if us.status == SkillStatus.CERTIFIED]
     )
-    pending_skills = len(
-        [us for us in user_skills if us.status == SkillStatus.PENDING]
-    )
-    expired_skills = len(
-        [us for us in user_skills if us.status == SkillStatus.EXPIRED]
-    )
+    pending_skills = len([us for us in user_skills if us.status == SkillStatus.PENDING])
+    expired_skills = len([us for us in user_skills if us.status == SkillStatus.EXPIRED])
 
     # Get accessible equipment count
     accessible_equipment = skill_crud.get_user_accessible_equipment(
@@ -472,9 +449,7 @@ async def get_user_skill_summary(
         us_dict["skill_level"] = skill.level if skill else "beginner"
         us_dict["user_name"] = "User Name"
         us_dict["user_email"] = "user@example.com"
-        us_dict["certifier_name"] = (
-            "Certifier Name" if us.certified_by else None
-        )
+        us_dict["certifier_name"] = "Certifier Name" if us.certified_by else None
         detailed_skills.append(UserSkillWithDetails(**us_dict))
 
     return UserSkillSummary(
@@ -503,14 +478,10 @@ async def get_makerspace_skill_analytics(
     current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
 ):
     """Get skill analytics for a makerspace (Admin only)"""
-    analytics = skill_crud.get_skill_analytics(
-        db=db, makerspace_id=makerspace_id
-    )
+    analytics = skill_crud.get_skill_analytics(db=db, makerspace_id=makerspace_id)
 
     # Get skill distribution by category and level
-    skills = skill_crud.get_skills(
-        db=db, makerspace_id=makerspace_id, limit=1000
-    )
+    skills = skill_crud.get_skills(db=db, makerspace_id=makerspace_id, limit=1000)
 
     skill_distribution = {}
     level_distribution = {}
@@ -543,9 +514,7 @@ async def get_makerspace_skill_analytics(
         )
 
         success_rate = (
-            (approved_requests / total_requests * 100)
-            if total_requests > 0
-            else 0
+            (approved_requests / total_requests * 100) if total_requests > 0 else 0
         )
 
         skill_analytics.append(

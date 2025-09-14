@@ -133,9 +133,7 @@ class StorageClient:
     async def get_file_info(self, file_key: str) -> Dict[str, Any]:
         """Get file metadata"""
         try:
-            response = self.client.head_object(
-                Bucket=self.bucket, Key=file_key
-            )
+            response = self.client.head_object(Bucket=self.bucket, Key=file_key)
 
             return {
                 "exists": True,
@@ -173,9 +171,7 @@ class StorageClient:
             return True
 
         except ClientError as e:
-            logger.error(
-                f"Failed to copy file {source_key} to {dest_key}: {e}"
-            )
+            logger.error(f"Failed to copy file {source_key} to {dest_key}: {e}")
             return False
 
     async def upload_file_directly(
@@ -226,9 +222,7 @@ async def upload_file_to_storage(
         raise Exception("Storage not configured")
     ext = os.path.splitext(filename)[1]
     file_key = generate_file_key(None, ext, prefix)
-    await storage.upload_file_directly(
-        file_obj, file_key, get_content_type(filename)
-    )
+    await storage.upload_file_directly(file_obj, file_key, get_content_type(filename))
     base = settings.S3_ENDPOINT.rstrip("/") if settings.S3_ENDPOINT else ""
     return f"{base}/{storage.bucket}/{file_key}" if base else file_key
 

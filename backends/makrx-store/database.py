@@ -16,9 +16,7 @@ DATABASE_URL = os.getenv(
 )
 
 # Convert to async URL for SQLAlchemy async support
-ASYNC_DATABASE_URL = DATABASE_URL.replace(
-    "postgresql://", "postgresql+asyncpg://"
-)
+ASYNC_DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
 # Create async engine
 engine = create_async_engine(
@@ -32,9 +30,7 @@ engine = create_async_engine(
 )
 
 # Create async session maker
-async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
+async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def create_tables():

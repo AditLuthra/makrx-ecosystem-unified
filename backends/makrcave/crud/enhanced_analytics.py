@@ -47,9 +47,7 @@ def create_usage_metrics(
     db: Session, metrics: EnhancedUsageMetricsCreate, makerspace_id: str
 ) -> EnhancedUsageMetrics:
     """Create enhanced usage metrics entry"""
-    db_metrics = EnhancedUsageMetrics(
-        **metrics.dict(), makerspace_id=makerspace_id
-    )
+    db_metrics = EnhancedUsageMetrics(**metrics.dict(), makerspace_id=makerspace_id)
     db.add(db_metrics)
     db.commit()
     db.refresh(db_metrics)
@@ -103,27 +101,21 @@ def get_usage_summary(
     # Get aggregated data
     result = (
         db.query(
-            func.avg(EnhancedUsageMetrics.total_active_users).label(
-                "avg_active_users"
-            ),
+            func.avg(EnhancedUsageMetrics.total_active_users).label("avg_active_users"),
             func.sum(EnhancedUsageMetrics.new_registrations).label(
                 "total_new_registrations"
             ),
             func.avg(EnhancedUsageMetrics.user_retention_rate).label(
                 "avg_retention_rate"
             ),
-            func.sum(EnhancedUsageMetrics.project_creations).label(
-                "total_projects"
-            ),
+            func.sum(EnhancedUsageMetrics.project_creations).label("total_projects"),
             func.sum(EnhancedUsageMetrics.equipment_hours_used).label(
                 "total_equipment_hours"
             ),
             func.avg(EnhancedUsageMetrics.overall_engagement_score).label(
                 "avg_engagement_score"
             ),
-            func.sum(EnhancedUsageMetrics.revenue_generated).label(
-                "total_revenue"
-            ),
+            func.sum(EnhancedUsageMetrics.revenue_generated).label("total_revenue"),
         )
         .filter(
             and_(
@@ -146,31 +138,19 @@ def get_usage_summary(
             float(result.avg_active_users) if result.avg_active_users else 0
         ),
         "total_new_registrations": (
-            int(result.total_new_registrations)
-            if result.total_new_registrations
-            else 0
+            int(result.total_new_registrations) if result.total_new_registrations else 0
         ),
         "avg_retention_rate": (
-            float(result.avg_retention_rate)
-            if result.avg_retention_rate
-            else 0
+            float(result.avg_retention_rate) if result.avg_retention_rate else 0
         ),
-        "total_projects": (
-            int(result.total_projects) if result.total_projects else 0
-        ),
+        "total_projects": (int(result.total_projects) if result.total_projects else 0),
         "total_equipment_hours": (
-            float(result.total_equipment_hours)
-            if result.total_equipment_hours
-            else 0
+            float(result.total_equipment_hours) if result.total_equipment_hours else 0
         ),
         "avg_engagement_score": (
-            float(result.avg_engagement_score)
-            if result.avg_engagement_score
-            else 0
+            float(result.avg_engagement_score) if result.avg_engagement_score else 0
         ),
-        "total_revenue": (
-            float(result.total_revenue) if result.total_revenue else 0
-        ),
+        "total_revenue": (float(result.total_revenue) if result.total_revenue else 0),
     }
 
 
@@ -206,9 +186,7 @@ def get_equipment_utilization(
     )
 
     if equipment_id:
-        query = query.filter(
-            EquipmentUtilizationMetrics.equipment_id == equipment_id
-        )
+        query = query.filter(EquipmentUtilizationMetrics.equipment_id == equipment_id)
     if period_type:
         query = query.filter(
             EquipmentUtilizationMetrics.period_type == period_type.value
@@ -238,15 +216,11 @@ def get_equipment_utilization_summary(
             func.avg(EquipmentUtilizationMetrics.utilization_rate).label(
                 "avg_utilization"
             ),
-            func.avg(EquipmentUtilizationMetrics.uptime_percentage).label(
-                "avg_uptime"
+            func.avg(EquipmentUtilizationMetrics.uptime_percentage).label("avg_uptime"),
+            func.sum(EquipmentUtilizationMetrics.total_used_hours).label("total_hours"),
+            func.count(func.distinct(EquipmentUtilizationMetrics.equipment_id)).label(
+                "equipment_count"
             ),
-            func.sum(EquipmentUtilizationMetrics.total_used_hours).label(
-                "total_hours"
-            ),
-            func.count(
-                func.distinct(EquipmentUtilizationMetrics.equipment_id)
-            ).label("equipment_count"),
             func.avg(EquipmentUtilizationMetrics.success_rate).label(
                 "avg_success_rate"
             ),
@@ -287,21 +261,15 @@ def get_equipment_utilization_summary(
         "avg_utilization_rate": (
             float(result.avg_utilization) if result.avg_utilization else 0
         ),
-        "avg_uptime_percentage": (
-            float(result.avg_uptime) if result.avg_uptime else 0
-        ),
-        "total_usage_hours": (
-            float(result.total_hours) if result.total_hours else 0
-        ),
+        "avg_uptime_percentage": (float(result.avg_uptime) if result.avg_uptime else 0),
+        "total_usage_hours": (float(result.total_hours) if result.total_hours else 0),
         "equipment_count": (
             int(result.equipment_count) if result.equipment_count else 0
         ),
         "avg_success_rate": (
             float(result.avg_success_rate) if result.avg_success_rate else 0
         ),
-        "total_revenue": (
-            float(result.total_revenue) if result.total_revenue else 0
-        ),
+        "total_revenue": (float(result.total_revenue) if result.total_revenue else 0),
         "top_equipment": [
             {
                 "equipment_id": str(eq.equipment_id),
@@ -317,9 +285,7 @@ def create_revenue_analytics(
     db: Session, revenue: RevenueAnalyticsEnhancedCreate, makerspace_id: str
 ) -> RevenueAnalyticsEnhanced:
     """Create enhanced revenue analytics"""
-    db_revenue = RevenueAnalyticsEnhanced(
-        **revenue.dict(), makerspace_id=makerspace_id
-    )
+    db_revenue = RevenueAnalyticsEnhanced(**revenue.dict(), makerspace_id=makerspace_id)
     db.add(db_revenue)
     db.commit()
     db.refresh(db_revenue)
@@ -345,13 +311,9 @@ def get_revenue_analytics(
             RevenueAnalyticsEnhanced.reporting_period == reporting_period.value
         )
     if start_date:
-        query = query.filter(
-            RevenueAnalyticsEnhanced.transaction_date >= start_date
-        )
+        query = query.filter(RevenueAnalyticsEnhanced.transaction_date >= start_date)
     if end_date:
-        query = query.filter(
-            RevenueAnalyticsEnhanced.transaction_date <= end_date
-        )
+        query = query.filter(RevenueAnalyticsEnhanced.transaction_date <= end_date)
 
     return (
         query.order_by(desc(RevenueAnalyticsEnhanced.transaction_date))
@@ -378,21 +340,15 @@ def get_revenue_summary(
             func.sum(RevenueAnalyticsEnhanced.gross_revenue).label(
                 "total_gross_revenue"
             ),
-            func.sum(RevenueAnalyticsEnhanced.net_revenue).label(
-                "total_net_revenue"
-            ),
+            func.sum(RevenueAnalyticsEnhanced.net_revenue).label("total_net_revenue"),
             func.sum(RevenueAnalyticsEnhanced.membership_revenue).label(
                 "membership_revenue"
             ),
             func.sum(RevenueAnalyticsEnhanced.equipment_rental_revenue).label(
                 "equipment_revenue"
             ),
-            func.sum(RevenueAnalyticsEnhanced.store_revenue).label(
-                "store_revenue"
-            ),
-            func.sum(RevenueAnalyticsEnhanced.service_revenue).label(
-                "service_revenue"
-            ),
+            func.sum(RevenueAnalyticsEnhanced.store_revenue).label("store_revenue"),
+            func.sum(RevenueAnalyticsEnhanced.service_revenue).label("service_revenue"),
             func.avg(RevenueAnalyticsEnhanced.average_transaction_value).label(
                 "avg_transaction_value"
             ),
@@ -413,34 +369,26 @@ def get_revenue_summary(
     # Calculate revenue breakdown
     revenue_breakdown = {
         "membership": (
-            float(result.membership_revenue)
-            if result.membership_revenue
-            else 0
+            float(result.membership_revenue) if result.membership_revenue else 0
         ),
         "equipment": (
             float(result.equipment_revenue) if result.equipment_revenue else 0
         ),
         "store": float(result.store_revenue) if result.store_revenue else 0,
-        "service": (
-            float(result.service_revenue) if result.service_revenue else 0
-        ),
+        "service": (float(result.service_revenue) if result.service_revenue else 0),
     }
 
     return {
         "period": period.value,
         "total_gross_revenue": (
-            float(result.total_gross_revenue)
-            if result.total_gross_revenue
-            else 0
+            float(result.total_gross_revenue) if result.total_gross_revenue else 0
         ),
         "total_net_revenue": (
             float(result.total_net_revenue) if result.total_net_revenue else 0
         ),
         "revenue_breakdown": revenue_breakdown,
         "avg_transaction_value": (
-            float(result.avg_transaction_value)
-            if result.avg_transaction_value
-            else 0
+            float(result.avg_transaction_value) if result.avg_transaction_value else 0
         ),
         "total_transactions": (
             int(result.total_transactions) if result.total_transactions else 0
@@ -480,13 +428,9 @@ def get_engagement_metrics(
     if member_id:
         query = query.filter(MemberEngagementMetrics.member_id == member_id)
     if period_type:
-        query = query.filter(
-            MemberEngagementMetrics.period_type == period_type.value
-        )
+        query = query.filter(MemberEngagementMetrics.period_type == period_type.value)
     if start_date:
-        query = query.filter(
-            MemberEngagementMetrics.analysis_date >= start_date
-        )
+        query = query.filter(MemberEngagementMetrics.analysis_date >= start_date)
     if end_date:
         query = query.filter(MemberEngagementMetrics.analysis_date <= end_date)
 
@@ -507,18 +451,14 @@ def get_engagement_summary(db: Session, makerspace_id: str) -> Dict[str, Any]:
             func.avg(MemberEngagementMetrics.overall_engagement_score).label(
                 "avg_engagement"
             ),
-            func.avg(MemberEngagementMetrics.churn_risk_score).label(
-                "avg_churn_risk"
-            ),
+            func.avg(MemberEngagementMetrics.churn_risk_score).label("avg_churn_risk"),
             func.count(func.distinct(MemberEngagementMetrics.member_id)).label(
                 "active_members"
             ),
             func.avg(MemberEngagementMetrics.retention_probability).label(
                 "avg_retention"
             ),
-            func.sum(MemberEngagementMetrics.projects_created).label(
-                "total_projects"
-            ),
+            func.sum(MemberEngagementMetrics.projects_created).label("total_projects"),
             func.sum(MemberEngagementMetrics.total_equipment_hours).label(
                 "total_hours"
             ),
@@ -559,9 +499,7 @@ def get_engagement_summary(db: Session, makerspace_id: str) -> Dict[str, Any]:
         "avg_churn_risk": (
             float(result.avg_churn_risk) if result.avg_churn_risk else 0
         ),
-        "active_members": (
-            int(result.active_members) if result.active_members else 0
-        ),
+        "active_members": (int(result.active_members) if result.active_members else 0),
         "avg_retention_probability": (
             float(result.avg_retention) if result.avg_retention else 0
         ),
@@ -615,10 +553,7 @@ def get_alerts(
         query = query.filter(AnalyticsAlert.alert_type == alert_type)
 
     return (
-        query.order_by(desc(AnalyticsAlert.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
+        query.order_by(desc(AnalyticsAlert.created_at)).offset(skip).limit(limit).all()
     )
 
 
@@ -629,9 +564,7 @@ def update_alert(
     updated_by: str,
 ) -> Optional[AnalyticsAlert]:
     """Update analytics alert"""
-    alert = (
-        db.query(AnalyticsAlert).filter(AnalyticsAlert.id == alert_id).first()
-    )
+    alert = db.query(AnalyticsAlert).filter(AnalyticsAlert.id == alert_id).first()
     if not alert:
         return None
 
@@ -710,9 +643,7 @@ def get_benchmarks(
     )
 
     if benchmark_type:
-        query = query.filter(
-            PerformanceBenchmark.benchmark_type == benchmark_type
-        )
+        query = query.filter(PerformanceBenchmark.benchmark_type == benchmark_type)
     if category:
         query = query.filter(PerformanceBenchmark.category == category)
 
@@ -851,9 +782,7 @@ def _get_usage_section(db: Session, makerspace_id: str) -> DashboardSection:
     )
 
 
-def _get_equipment_section(
-    db: Session, makerspace_id: str
-) -> DashboardSection:
+def _get_equipment_section(db: Session, makerspace_id: str) -> DashboardSection:
     """Get equipment utilization section"""
     chart_data = [
         ChartDataPoint(label="3D Printers", value=85.2),
@@ -915,9 +844,7 @@ def _get_revenue_section(db: Session, makerspace_id: str) -> DashboardSection:
     )
 
 
-def _get_engagement_section(
-    db: Session, makerspace_id: str
-) -> DashboardSection:
+def _get_engagement_section(db: Session, makerspace_id: str) -> DashboardSection:
     """Get member engagement section"""
     chart_data = [
         ChartDataPoint(label="Week 1", value=78.5),
@@ -956,9 +883,7 @@ def _calculate_performance_score(db: Session, makerspace_id: str) -> float:
     return 85.7
 
 
-def _get_data_freshness(
-    db: Session, makerspace_id: str
-) -> Dict[str, datetime]:
+def _get_data_freshness(db: Session, makerspace_id: str) -> Dict[str, datetime]:
     """Get data freshness timestamps"""
     return {
         "usage_metrics": datetime.utcnow() - timedelta(minutes=5),
@@ -992,7 +917,7 @@ def generate_forecast(
     # Implementation would use time series forecasting models
     # Simplified implementation
     forecast_data = [
-        ChartDataPoint(label=f"Day {i+1}", value=100 + i * 2.5)
+        ChartDataPoint(label=f"Day {i + 1}", value=100 + i * 2.5)
         for i in range(forecast_request.periods)
     ]
 
@@ -1000,8 +925,7 @@ def generate_forecast(
         metric=forecast_request.metric,
         forecast_data=forecast_data,
         confidence_intervals=[
-            {"upper": 110.0, "lower": 90.0}
-            for _ in range(forecast_request.periods)
+            {"upper": 110.0, "lower": 90.0} for _ in range(forecast_request.periods)
         ],
         model_accuracy=0.85,
         model_type="ARIMA",
@@ -1049,16 +973,11 @@ def get_reports(
         query = query.filter(AnalyticsReport.report_type == report_type)
 
     return (
-        query.order_by(desc(AnalyticsReport.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
+        query.order_by(desc(AnalyticsReport.created_at)).offset(skip).limit(limit).all()
     )
 
 
-def get_report(
-    db: Session, report_id: str, user_id: str
-) -> Optional[AnalyticsReport]:
+def get_report(db: Session, report_id: str, user_id: str) -> Optional[AnalyticsReport]:
     """Get specific analytics report"""
     return (
         db.query(AnalyticsReport)
@@ -1079,9 +998,7 @@ def create_configuration(
     db: Session, config: AnalyticsConfigurationCreate, makerspace_id: str
 ) -> AnalyticsConfiguration:
     """Create analytics configuration"""
-    db_config = AnalyticsConfiguration(
-        **config.dict(), makerspace_id=makerspace_id
-    )
+    db_config = AnalyticsConfiguration(**config.dict(), makerspace_id=makerspace_id)
     db.add(db_config)
     db.commit()
     db.refresh(db_config)

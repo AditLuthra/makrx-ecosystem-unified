@@ -300,17 +300,13 @@ class FeatureFlagEngine:
             "reason": "unknown_type",
         }
 
-    def _evaluate_targeting(
-        self, flag: FlagDefinition, context: FlagContext
-    ) -> bool:
+    def _evaluate_targeting(self, flag: FlagDefinition, context: FlagContext) -> bool:
         """Evaluate targeting rules"""
         if flag.scope == "global":
             return True
 
         if flag.scope == "role" and flag.enabled_for_roles:
-            return any(
-                role in flag.enabled_for_roles for role in context.roles
-            )
+            return any(role in flag.enabled_for_roles for role in context.roles)
 
         if flag.scope == "user" and flag.enabled_for_users:
             return context.user_id in flag.enabled_for_users
@@ -335,17 +331,13 @@ class FeatureFlagEngine:
 
         return False
 
-    def _evaluate_percentage(
-        self, flag: FlagDefinition, context: FlagContext
-    ) -> bool:
+    def _evaluate_percentage(self, flag: FlagDefinition, context: FlagContext) -> bool:
         """Evaluate percentage rollout"""
         if not flag.percentage_rollout:
             return False
 
         identifier = context.user_id or context.session_id or "anonymous"
-        hash_val = int(
-            hashlib.md5(f"{flag.key}:{identifier}".encode()).hexdigest(), 16
-        )
+        hash_val = int(hashlib.md5(f"{flag.key}:{identifier}".encode()).hexdigest(), 16)
         percentage = hash_val % 100
 
         return percentage < flag.percentage_rollout
@@ -459,9 +451,7 @@ def require_flag(
     return decorator
 
 
-def check_flag(
-    flag_key: str, context: FlagContext, default_value: Any = False
-) -> bool:
+def check_flag(flag_key: str, context: FlagContext, default_value: Any = False) -> bool:
     """Simple flag check function"""
     result = flag_engine.evaluate(flag_key, context, default_value)
     return result["enabled"] and bool(result["value"])
@@ -555,9 +545,7 @@ def require_space_flag(flag_key: str, makerspace_id: str):
                     break
 
             if not request:
-                raise HTTPException(
-                    status_code=500, detail="Request not found"
-                )
+                raise HTTPException(status_code=500, detail="Request not found")
 
             context = build_flag_context(request)
             context.makerspace_id = makerspace_id
@@ -579,9 +567,7 @@ def require_space_flag(flag_key: str, makerspace_id: str):
 # ==========================================
 
 
-def log_flag_evaluation(
-    flag_key: str, result: Dict[str, Any], context: FlagContext
-):
+def log_flag_evaluation(flag_key: str, result: Dict[str, Any], context: FlagContext):
     """Log flag evaluation for analytics"""
     log_data = {
         "flag_key": flag_key,
@@ -600,9 +586,7 @@ def log_flag_evaluation(
 # ==========================================
 
 
-def get_config_flag(
-    flag_key: str, context: FlagContext, default_value: Any
-) -> Any:
+def get_config_flag(flag_key: str, context: FlagContext, default_value: Any) -> Any:
     """Get configuration flag value"""
     return get_flag_value(flag_key, context, default_value)
 

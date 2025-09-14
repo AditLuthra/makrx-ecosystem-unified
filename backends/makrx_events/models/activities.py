@@ -13,9 +13,7 @@ class UserActivity(Base):
         index=True,
         nullable=False,
     )
-    event_id = Column(
-        String, ForeignKey("events.id", ondelete="SET NULL"), index=True
-    )
+    event_id = Column(String, ForeignKey("events.id", ondelete="SET NULL"), index=True)
     activity = Column(String, nullable=False)
     timestamp = Column(DateTime, server_default=func.now())
     meta = Column(Text)

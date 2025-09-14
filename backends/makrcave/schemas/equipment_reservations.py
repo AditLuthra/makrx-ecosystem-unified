@@ -308,9 +308,7 @@ class SkillGateUpdate(BaseModel):
     emergency_bypass_allowed: Optional[bool] = None
     auto_verify_from_system: Optional[bool] = None
     manual_verification_required: Optional[bool] = None
-    enforcement_level: Optional[str] = Field(
-        None, regex="^(block|warn|log_only)$"
-    )
+    enforcement_level: Optional[str] = Field(None, regex="^(block|warn|log_only)$")
     warning_message: Optional[str] = None
     is_active: Optional[bool] = None
     effective_from: Optional[datetime] = None

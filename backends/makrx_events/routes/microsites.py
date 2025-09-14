@@ -42,18 +42,14 @@ def create_microsite(
     title = payload.title
     slug = payload.slug
     if not slug and not title:
-        raise HTTPException(
-            status_code=400, detail="title or slug is required"
-        )
+        raise HTTPException(status_code=400, detail="title or slug is required")
     if not slug:
         import re
 
         slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
     existing = db.query(Microsite).filter(Microsite.slug == slug).first()
     if existing:
-        raise HTTPException(
-            status_code=409, detail="Microsite slug already exists"
-        )
+        raise HTTPException(status_code=409, detail="Microsite slug already exists")
     m = Microsite(id=str(uuid4()), slug=slug, title=title)
     db.add(m)
     db.commit()
@@ -75,13 +71,9 @@ def update_microsite(
         m.title = payload.title
     if payload.slug and payload.slug != slug:
         # ensure unique
-        exists = (
-            db.query(Microsite).filter(Microsite.slug == payload.slug).first()
-        )
+        exists = db.query(Microsite).filter(Microsite.slug == payload.slug).first()
         if exists:
-            raise HTTPException(
-                status_code=409, detail="Microsite slug already exists"
-            )
+            raise HTTPException(status_code=409, detail="Microsite slug already exists")
         m.slug = payload.slug
     db.add(m)
     db.commit()
@@ -95,9 +87,7 @@ def microsite_analytics(slug: str, db: Session = Depends(get_db)):
     if not m:
         raise HTTPException(status_code=404, detail="Microsite not found")
     events_count = (
-        db.query(func.count(SubEvent.id))
-        .filter(SubEvent.microsite_id == m.id)
-        .scalar()
+        db.query(func.count(SubEvent.id)).filter(SubEvent.microsite_id == m.id).scalar()
         or 0
     )
     regs_count = (

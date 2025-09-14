@@ -23,13 +23,9 @@ class Event(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(
-        DateTime, server_default=func.now(), onupdate=func.now()
-    )
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    __table_args__ = (
-        Index("ix_events_status_created", "status", "created_at"),
-    )
+    __table_args__ = (Index("ix_events_status_created", "status", "created_at"),)
 
 
 class EventFeatures(Base):
@@ -41,6 +37,4 @@ class EventFeatures(Base):
     enable_teams = Column(Boolean, default=False)
     enable_sponsors = Column(Boolean, default=False)
     enable_tournaments = Column(Boolean, default=False)
-    updated_at = Column(
-        DateTime, server_default=func.now(), onupdate=func.now()
-    )
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

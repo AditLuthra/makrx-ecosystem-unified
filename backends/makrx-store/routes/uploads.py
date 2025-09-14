@@ -83,9 +83,7 @@ class S3Service:
         self, file_key: str, content_type: str, expires_in: int = 3600
     ) -> Dict[str, Any]:
         if not self.storage:
-            raise HTTPException(
-                status_code=500, detail="Storage not configured"
-            )
+            raise HTTPException(status_code=500, detail="Storage not configured")
         return await self.storage.generate_presigned_upload_url(
             file_key, content_type, expires_in
         )
@@ -101,9 +99,7 @@ class FileProcessor:
     """3D file analysis and processing"""
 
     @staticmethod
-    def validate_file(
-        filename: str, content_type: str, file_size: int
-    ) -> List[str]:
+    def validate_file(filename: str, content_type: str, file_size: int) -> List[str]:
         """Validate file before upload"""
         errors = []
 
@@ -212,17 +208,13 @@ class FileProcessor:
                 "quality": {
                     "is_watertight": bool(is_watertight),
                     "is_winding_consistent": bool(is_winding_consistent),
-                    "has_unreferenced_vertices": bool(
-                        has_unreferenced_vertices
-                    ),
+                    "has_unreferenced_vertices": bool(has_unreferenced_vertices),
                     "complexity_score": float(complexity_score),
                 },
                 "features": {
                     "overhangs_detected": overhangs_detected,
                     "thin_walls_detected": thin_walls_detected,
-                    "estimated_print_time_hours": float(
-                        estimated_print_time_hours
-                    ),
+                    "estimated_print_time_hours": float(estimated_print_time_hours),
                 },
                 "processing_time_ms": processing_time_ms,
             }
@@ -230,25 +222,19 @@ class FileProcessor:
             # Generate warnings
             warnings = []
             if not is_watertight:
-                warnings.append(
-                    "Mesh is not watertight - may cause printing issues"
-                )
+                warnings.append("Mesh is not watertight - may cause printing issues")
             if not is_winding_consistent:
                 warnings.append("Inconsistent face winding detected")
             if has_unreferenced_vertices:
                 warnings.append("Mesh contains unreferenced vertices")
             if overhangs_detected:
-                warnings.append(
-                    "Overhangs detected - supports may be required"
-                )
+                warnings.append("Overhangs detected - supports may be required")
             if thin_walls_detected:
                 warnings.append("Thin walls detected - may not print reliably")
             if volume_mm3 < 1000:
                 warnings.append("Very small object - consider scaling up")
             if any(d > 200 for d in dimensions):
-                warnings.append(
-                    "Large object - may not fit on standard printers"
-                )
+                warnings.append("Large object - may not fit on standard printers")
 
             analysis["warnings"] = warnings
 
@@ -330,9 +316,7 @@ async def create_upload_url(
         )
 
         if validation_errors:
-            raise HTTPException(
-                status_code=400, detail={"errors": validation_errors}
-            )
+            raise HTTPException(status_code=400, detail={"errors": validation_errors})
 
         # Generate upload ID
         upload_id = str(uuid.uuid4())
@@ -361,8 +345,7 @@ async def create_upload_url(
             file_size=request.file_size,
             status="uploaded",
             created_at=datetime.utcnow(),
-            expires_at=datetime.utcnow()
-            + timedelta(hours=UPLOAD_EXPIRY_HOURS),
+            expires_at=datetime.utcnow() + timedelta(hours=UPLOAD_EXPIRY_HOURS),
         )
 
         db.add(upload_record)
@@ -394,17 +377,13 @@ async def complete_upload(
     """Complete file upload and trigger processing"""
     try:
         # Find upload record
-        res = await db.execute(
-            select(Upload).where(Upload.id == request.upload_id)
-        )
+        res = await db.execute(select(Upload).where(Upload.id == request.upload_id))
         upload = res.scalar_one_or_none()
         if not upload:
             raise HTTPException(status_code=404, detail="Upload not found")
 
         if upload.status != "pending":
-            raise HTTPException(
-                status_code=400, detail="Upload already processed"
-            )
+            raise HTTPException(status_code=400, detail="Upload already processed")
 
         # Check expiry
         if datetime.utcnow() > upload.expires_at:
@@ -465,9 +444,7 @@ async def complete_upload(
                         "supports_recommended": True,
                         "brim_recommended": False,
                         "issues": [],
-                        "warnings": [
-                            "Overhangs detected - supports may be required"
-                        ],
+                        "warnings": ["Overhangs detected - supports may be required"],
                     },
                     "cost_analysis": {
                         "material_analysis": {
@@ -627,9 +604,7 @@ async def delete_upload(
         await db.delete(upload)
         await db.commit()
 
-        return MessageResponse(
-            message=f"Upload {upload_id} deleted successfully"
-        )
+        return MessageResponse(message=f"Upload {upload_id} deleted successfully")
 
     except HTTPException:
         raise
@@ -654,9 +629,7 @@ async def list_uploads(
             stmt = stmt.where(Upload.user_id == current_user.id)
         if status:
             stmt = stmt.where(Upload.status == status)
-        total_res = await db.execute(
-            select(func.count()).select_from(stmt.subquery())
-        )
+        total_res = await db.execute(select(func.count()).select_from(stmt.subquery()))
         total = int(total_res.scalar() or 0)
         res = await db.execute(stmt.offset(skip).limit(limit))
         uploads = res.scalars().all()
@@ -678,6 +651,4 @@ async def list_uploads(
         }
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to list uploads: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to list uploads: {str(e)}")

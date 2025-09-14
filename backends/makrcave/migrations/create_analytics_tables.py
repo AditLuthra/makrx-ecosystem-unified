@@ -259,9 +259,7 @@ def main():
     if success:
         print("🎉 Analytics migration completed successfully!")
         print("\n📚 Analytics API Endpoints Available:")
-        print(
-            "  GET  /api/v1/analytics/dashboard     # Complete dashboard data"
-        )
+        print("  GET  /api/v1/analytics/dashboard     # Complete dashboard data")
         print("  GET  /api/v1/analytics/overview      # Analytics overview")
         print("  GET  /api/v1/analytics/usage         # Usage statistics")
         print("  GET  /api/v1/analytics/inventory     # Inventory insights")

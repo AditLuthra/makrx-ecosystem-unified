@@ -12,9 +12,7 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column(
-        "store_products", sa.Column("stock", sa.Integer(), nullable=True)
-    )
+    op.add_column("store_products", sa.Column("stock", sa.Integer(), nullable=True))
 
 
 def downgrade():

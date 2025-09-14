@@ -111,9 +111,7 @@ class PaymentProcessor:
     ) -> Optional[Dict[str, Any]]:
         """Verify and parse Stripe webhook"""
         try:
-            event = stripe.Webhook.construct_event(
-                payload, signature, webhook_secret
-            )
+            event = stripe.Webhook.construct_event(payload, signature, webhook_secret)
             return event
 
         except ValueError:
@@ -351,9 +349,7 @@ async def _process_stripe_webhook(event_type: str, event_data: Dict[str, Any]):
         logger.warning(f"Stripe dispute created: {dispute['id']}")
 
 
-async def _process_razorpay_webhook(
-    event_type: str, event_data: Dict[str, Any]
-):
+async def _process_razorpay_webhook(event_type: str, event_data: Dict[str, Any]):
     """Process Razorpay webhook events"""
 
     if event_type == "payment.captured":

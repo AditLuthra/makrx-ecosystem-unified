@@ -102,14 +102,10 @@ class Notification(Base):
         nullable=False,
         index=True,
     )
-    recipient_type = Column(
-        String(50), default="member"
-    )  # member, admin, group
+    recipient_type = Column(String(50), default="member")  # member, admin, group
 
     # Notification content
-    notification_type = Column(
-        SQLEnum(NotificationType), nullable=False, index=True
-    )
+    notification_type = Column(SQLEnum(NotificationType), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     message = Column(Text, nullable=False)
     action_url = Column(String(500), nullable=True)
@@ -119,9 +115,7 @@ class Notification(Base):
     priority = Column(
         SQLEnum(NotificationPriority), default=NotificationPriority.NORMAL
     )
-    channels = Column(
-        ARRAY(String), nullable=False
-    )  # Which channels to send through
+    channels = Column(ARRAY(String), nullable=False)  # Which channels to send through
 
     # Related resources
     related_resource_type = Column(
@@ -183,10 +177,7 @@ class Notification(Base):
         return (
             self.status == NotificationStatus.FAILED
             and self.retry_count < self.max_retries
-            and (
-                not self.next_retry_at
-                or datetime.utcnow() >= self.next_retry_at
-            )
+            and (not self.next_retry_at or datetime.utcnow() >= self.next_retry_at)
         )
 
 
@@ -207,15 +198,11 @@ class NotificationDeliveryLog(Base):
     )  # email, phone, webhook URL, etc.
 
     # Status tracking
-    status = Column(
-        SQLEnum(NotificationStatus), default=NotificationStatus.PENDING
-    )
+    status = Column(SQLEnum(NotificationStatus), default=NotificationStatus.PENDING)
     attempt_count = Column(Integer, default=0)
 
     # Response tracking
-    external_id = Column(
-        String(255), nullable=True
-    )  # ID from external service
+    external_id = Column(String(255), nullable=True)  # ID from external service
     response_code = Column(String(10), nullable=True)
     response_message = Column(Text, nullable=True)
     response_log_metadata = Column(JSON, nullable=True)
@@ -277,9 +264,7 @@ class NotificationTemplate(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=True)
 
 
 class NotificationPreference(Base):
@@ -316,17 +301,13 @@ class NotificationPreference(Base):
     sms_number = Column(String(20), nullable=True)
 
     push_enabled = Column(Boolean, default=True)
-    push_tokens = Column(
-        JSON, nullable=True
-    )  # Device tokens for push notifications
+    push_tokens = Column(JSON, nullable=True)  # Device tokens for push notifications
 
     in_app_enabled = Column(Boolean, default=True)
     in_app_sound = Column(Boolean, default=True)
 
     # Notification type preferences
-    notification_type_preferences = Column(
-        JSON, nullable=True
-    )  # Per-type settings
+    notification_type_preferences = Column(JSON, nullable=True)  # Per-type settings
 
     # Digest preferences
     daily_digest_enabled = Column(Boolean, default=False)
@@ -360,9 +341,7 @@ class NotificationRule(Base):
     trigger_event = Column(
         String(100), nullable=False
     )  # inventory_below_threshold, job_completed, etc.
-    trigger_conditions = Column(
-        JSON, nullable=False
-    )  # Conditions that must be met
+    trigger_conditions = Column(JSON, nullable=False)  # Conditions that must be met
 
     # Rule settings
     is_active = Column(Boolean, default=True)
@@ -406,9 +385,7 @@ class NotificationRule(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("members.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=True)
 
     # Relationships
     template = relationship("NotificationTemplate")
@@ -432,9 +409,7 @@ class NotificationQueue(Base):
     status = Column(
         String(20), default="pending"
     )  # pending, processing, completed, failed
-    processor_id = Column(
-        String(100), nullable=True
-    )  # ID of worker processing this
+    processor_id = Column(String(100), nullable=True)  # ID of worker processing this
 
     # Timing
     queued_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -464,9 +439,7 @@ class NotificationAnalytics(Base):
 
     # Time period
     date = Column(DateTime(timezone=True), nullable=False, index=True)
-    period_type = Column(
-        String(20), nullable=False
-    )  # hourly, daily, weekly, monthly
+    period_type = Column(String(20), nullable=False)  # hourly, daily, weekly, monthly
 
     # Metrics by type
     notifications_sent = Column(Integer, default=0)

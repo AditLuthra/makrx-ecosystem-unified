@@ -108,9 +108,7 @@ class InventoryItemBase(BaseModel):
             "consumables",
         ]
         if v not in valid_categories:
-            raise ValueError(
-                f'Category must be one of: {", ".join(valid_categories)}'
-            )
+            raise ValueError(f"Category must be one of: {', '.join(valid_categories)}")
         return v
 
 
@@ -160,9 +158,7 @@ class BulkUpdateRequest(BaseModel):
 
 
 class BulkIssueRequest(BaseModel):
-    items: List[
-        Dict[str, Any]
-    ]  # [{item_id: str, quantity: float, reason: str}]
+    items: List[Dict[str, Any]]  # [{item_id: str, quantity: float, reason: str}]
     user_id: str
     user_name: str
     reason: Optional[str] = None
@@ -267,9 +263,7 @@ class LowStockAlert(BaseModel):
 
 # MakrX Store integration schemas
 class ReorderRequest(BaseModel):
-    items: List[
-        Dict[str, Any]
-    ]  # [{item_id: str, quantity: int, product_code: str}]
+    items: List[Dict[str, Any]]  # [{item_id: str, quantity: int, product_code: str}]
     makerspace_id: str
     requested_by: str
 

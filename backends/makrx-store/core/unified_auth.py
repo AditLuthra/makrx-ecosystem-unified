@@ -193,9 +193,9 @@ async def verify_service_jwt(
         )
 
         # Verify this is a service token (not user token)
-        if payload.get(
-            "typ"
-        ) != "Bearer" or "service-account" not in payload.get("sub", ""):
+        if payload.get("typ") != "Bearer" or "service-account" not in payload.get(
+            "sub", ""
+        ):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=AuthError(
@@ -386,9 +386,7 @@ class RoleChecker:
 # Convenience role checkers
 require_admin = RoleChecker(["admin", "superadmin"])
 require_provider = RoleChecker(["provider", "admin", "superadmin"])
-require_makerspace_admin = RoleChecker(
-    ["makerspace_admin", "admin", "superadmin"]
-)
+require_makerspace_admin = RoleChecker(["makerspace_admin", "admin", "superadmin"])
 
 # ==========================================
 # Idempotency Key Handler
@@ -396,7 +394,7 @@ require_makerspace_admin = RoleChecker(
 
 
 async def get_idempotency_key(
-    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key")
+    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
 ) -> Optional[str]:
     """
     Idempotency: All create/finalize endpoints accept Idempotency-Key
@@ -425,9 +423,7 @@ class IdempotencyChecker:
             "timestamp": datetime.utcnow().isoformat(),
         }
 
-    async def get_cached_result(
-        self, key: str, operation: str
-    ) -> Optional[Any]:
+    async def get_cached_result(self, key: str, operation: str) -> Optional[Any]:
         """Get cached result for duplicate request"""
         cache_key = f"{operation}:{key}"
         cached = self.cache.get(cache_key)

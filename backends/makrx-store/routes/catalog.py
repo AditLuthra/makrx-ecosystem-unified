@@ -24,18 +24,14 @@ def _serialize_product(product: Product) -> dict:
         "description": product.description,
         "short_description": product.short_description,
         "price": float(product.price) if product.price else 0,
-        "sale_price": (
-            float(product.sale_price) if product.sale_price else None
-        ),
+        "sale_price": (float(product.sale_price) if product.sale_price else None),
         "in_stock": product.in_stock,
         # normalized key
         "stock_qty": getattr(
             product, "stock_qty", getattr(product, "stock_quantity", None)
         ),
         "sku": product.sku,
-        "weight": (
-            float(product.weight) if getattr(product, "weight", None) else None
-        ),
+        "weight": (float(product.weight) if getattr(product, "weight", None) else None),
         "dimensions": product.dimensions,
         "featured_image": getattr(product, "featured_image", None),
         "gallery_images": getattr(product, "gallery_images", None),
@@ -115,9 +111,7 @@ async def get_products(
 
 
 @router.get("/api/products/{product_id}", response_model=ProductOut)
-async def get_product_by_id(
-    product_id: int, db: AsyncSession = Depends(get_db)
-):
+async def get_product_by_id(product_id: int, db: AsyncSession = Depends(get_db)):
     """Get single product by ID (raw object)"""
     query = (
         select(Product)

@@ -109,9 +109,7 @@ async def process_upload(request: Request):
     slicer_enabled = check_flag("store.quote.slicer_v1", context)
 
     processing_method = (
-        "slicer"
-        if slicer_enabled
-        else "heuristic" if heuristic_enabled else "basic"
+        "slicer" if slicer_enabled else "heuristic" if heuristic_enabled else "basic"
     )
 
     return {
@@ -153,9 +151,7 @@ async def create_checkout(request: Request):
 
 
 @router.get("/checkout/options")
-async def get_checkout_options(
-    request: Request, pincode: Optional[str] = None
-):
+async def get_checkout_options(request: Request, pincode: Optional[str] = None):
     """Get available checkout options based on location"""
     context = build_flag_context(request)
     if pincode:
@@ -166,9 +162,7 @@ async def get_checkout_options(
 
     return {
         "payment_methods": {"card": True, "upi": True, "cod": cod_enabled},
-        "shipping_options": (
-            ["standard", "express"] if cod_enabled else ["standard"]
-        ),
+        "shipping_options": (["standard", "express"] if cod_enabled else ["standard"]),
     }
 
 
@@ -184,9 +178,7 @@ async def create_service_order(request: Request):
     context = build_flag_context(request)
 
     # Check if we can publish to Cave
-    publish_enabled = check_flag(
-        "store.service_orders.publish_to_cave", context
-    )
+    publish_enabled = check_flag("store.service_orders.publish_to_cave", context)
     cave_publish_enabled = check_flag("cave.jobs.publish_enabled", context)
 
     can_publish = publish_enabled and cave_publish_enabled
@@ -300,9 +292,7 @@ async def search_results(request: Request, q: str):
     context = build_flag_context(request)
 
     # Get experiment variant
-    layout_variant = get_flag_value(
-        "store.search.results_layout", context, "grid"
-    )
+    layout_variant = get_flag_value("store.search.results_layout", context, "grid")
     typeahead_enabled = check_flag("store.search.typeahead_entities", context)
 
     results = [
@@ -418,9 +408,7 @@ async def publish_job_to_cave(request: Request):
     context = build_flag_context(request)
 
     # Check both local and remote flags
-    local_publish_enabled = check_flag(
-        "store.service_orders.publish_to_cave", context
-    )
+    local_publish_enabled = check_flag("store.service_orders.publish_to_cave", context)
     cave_receive_enabled = check_flag("cave.jobs.publish_enabled", context)
 
     if not local_publish_enabled:

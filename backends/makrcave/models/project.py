@@ -88,9 +88,7 @@ class Project(Base):
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     tasks = relationship(
@@ -107,9 +105,7 @@ class Project(Base):
 class ProjectLike(Base):
     __tablename__ = "project_likes"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    project_id = Column(
-        String, ForeignKey("projects.id"), nullable=False, index=True
-    )
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False, index=True)
     user_id = Column(String, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -117,9 +113,7 @@ class ProjectLike(Base):
 class ProjectBookmark(Base):
     __tablename__ = "project_bookmarks"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    project_id = Column(
-        String, ForeignKey("projects.id"), nullable=False, index=True
-    )
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False, index=True)
     user_id = Column(String, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -127,9 +121,7 @@ class ProjectBookmark(Base):
 class ProjectFollow(Base):
     __tablename__ = "project_follows"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    owner_id = Column(
-        String, nullable=False, index=True
-    )  # The project owner's user_id
+    owner_id = Column(String, nullable=False, index=True)  # The project owner's user_id
     follower_id = Column(String, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -143,9 +135,7 @@ class ProjectTask(Base):
     # Task details
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(
-        String(50), default="pending"
-    )  # pending, in_progress, completed
+    status = Column(String(50), default="pending")  # pending, in_progress, completed
     priority = Column(Enum(ProjectPriority), default=ProjectPriority.MEDIUM)
 
     # Assignment
@@ -164,9 +154,7 @@ class ProjectTask(Base):
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_by = Column(String, nullable=False)
 
     # Relationships
@@ -192,9 +180,7 @@ class ProjectMilestone(Base):
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_by = Column(String, nullable=False)
 
     # Relationships

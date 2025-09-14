@@ -131,9 +131,7 @@ class Product(ProductBase, TimestampMixin):
 
     @model_validator(mode="after")
     def compute_derived_fields(self):
-        self.effective_price = (
-            self.sale_price if self.sale_price else self.price
-        )
+        self.effective_price = self.sale_price if self.sale_price else self.price
         if not self.track_inventory or self.allow_backorder:
             self.in_stock = True
         else:
@@ -232,9 +230,7 @@ class Cart(CartBase, TimestampMixin):
     @model_validator(mode="after")
     def compute_totals(self):
         items = self.items or []
-        self.subtotal = sum(
-            (item.total_price for item in items), start=Decimal("0.00")
-        )
+        self.subtotal = sum((item.total_price for item in items), start=Decimal("0.00"))
         self.item_count = sum((item.quantity for item in items), start=0)
         return self
 

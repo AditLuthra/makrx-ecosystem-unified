@@ -33,9 +33,7 @@ async def readyz():
         async with httpx.AsyncClient(timeout=5) as client:
             r = await client.get(well_known)
             report["checks"]["keycloak"] = (
-                "ok"
-                if r.status_code == 200
-                else f"fail: status {r.status_code}"
+                "ok" if r.status_code == 200 else f"fail: status {r.status_code}"
             )
             if r.status_code != 200:
                 report["status"] = "fail"

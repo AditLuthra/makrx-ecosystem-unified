@@ -77,11 +77,7 @@ def downgrade() -> None:
     op.drop_constraint("ck_tournaments_status", "tournaments", type_="check")
     op.drop_constraint("ck_sponsors_status", "sponsors", type_="check")
     op.drop_constraint("ck_sub_events_status", "sub_events", type_="check")
-    op.drop_constraint(
-        "ck_sub_events_slug_pattern", "sub_events", type_="check"
-    )
-    op.drop_constraint(
-        "ck_microsites_slug_pattern", "microsites", type_="check"
-    )
+    op.drop_constraint("ck_sub_events_slug_pattern", "sub_events", type_="check")
+    op.drop_constraint("ck_microsites_slug_pattern", "microsites", type_="check")
     op.drop_constraint("ck_events_status", "events", type_="check")
     op.drop_constraint("ck_events_slug_pattern", "events", type_="check")

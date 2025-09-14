@@ -69,13 +69,9 @@ async def notify_store_api(
     async with httpx.AsyncClient() as client:
         try:
             if method.upper() == "POST":
-                response = await client.post(
-                    url, json=data, headers=default_headers
-                )
+                response = await client.post(url, json=data, headers=default_headers)
             elif method.upper() == "PATCH":
-                response = await client.patch(
-                    url, json=data, headers=default_headers
-                )
+                response = await client.patch(url, json=data, headers=default_headers)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
 
@@ -155,9 +151,7 @@ async def receive_job_from_store(
         )
 
 
-async def auto_assign_provider(
-    job: Job, db: Session
-) -> Optional[Dict[str, Any]]:
+async def auto_assign_provider(job: Job, db: Session) -> Optional[Dict[str, Any]]:
     """Auto-assign job to best available provider"""
     try:
         # TODO: Implement sophisticated provider matching
@@ -235,9 +229,7 @@ async def update_job_status(
 
         db.commit()
 
-        logger.info(
-            f"Updated job {job_id} status from {old_status} to {job.status}"
-        )
+        logger.info(f"Updated job {job_id} status from {old_status} to {job.status}")
 
         # Notify Store of status change
         await notify_store_status_update(job, job.status.value, db)
@@ -281,9 +273,7 @@ async def notify_store_status_update(job: Job, status: str, db: Session):
         )
 
         if "error" not in response:
-            logger.info(
-                f"Successfully notified Store of job {job.id} status: {status}"
-            )
+            logger.info(f"Successfully notified Store of job {job.id} status: {status}")
         else:
             logger.warning(
                 f"Failed to notify Store of status update: {response['error']}"

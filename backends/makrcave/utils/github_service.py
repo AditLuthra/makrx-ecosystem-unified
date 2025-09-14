@@ -196,18 +196,12 @@ class GitHubService:
                             committer_name=commit["committer"]["name"],
                             committer_email=commit["committer"]["email"],
                             committer_date=datetime.fromisoformat(
-                                commit["committer"]["date"].replace(
-                                    "Z", "+00:00"
-                                )
+                                commit["committer"]["date"].replace("Z", "+00:00")
                             ),
                             url=commit_data["html_url"],
                             added_files=commit_detail.get("added_files", []),
-                            modified_files=commit_detail.get(
-                                "modified_files", []
-                            ),
-                            removed_files=commit_detail.get(
-                                "removed_files", []
-                            ),
+                            modified_files=commit_detail.get("modified_files", []),
+                            removed_files=commit_detail.get("removed_files", []),
                         )
                     )
 
@@ -353,8 +347,7 @@ class GitHubService:
                             metadata={
                                 "number": issue["number"],
                                 "labels": [
-                                    label["name"]
-                                    for label in issue.get("labels", [])
+                                    label["name"] for label in issue.get("labels", [])
                                 ],
                                 "assignees": [
                                     assignee["login"]
@@ -371,9 +364,7 @@ class GitHubService:
             print(f"Error fetching issues: {e}")
             return []
 
-    def get_releases(
-        self, repo_url: str, per_page: int = 10
-    ) -> List[GitHubActivity]:
+    def get_releases(self, repo_url: str, per_page: int = 10) -> List[GitHubActivity]:
         """Get releases from repository"""
         try:
             repo_info = self.parse_repo_url(repo_url)
@@ -440,9 +431,7 @@ class GitHubService:
 
             url = f"{self.base_url}/repos/{repo_info['full_name']}/contents/{file_path}"
 
-            encoded_content = base64.b64encode(content.encode("utf-8")).decode(
-                "utf-8"
-            )
+            encoded_content = base64.b64encode(content.encode("utf-8")).decode("utf-8")
 
             data = {
                 "message": message,
@@ -473,9 +462,7 @@ class GitHubService:
 
             url = f"{self.base_url}/repos/{repo_info['full_name']}/contents/{file_path}"
 
-            encoded_content = base64.b64encode(content.encode("utf-8")).decode(
-                "utf-8"
-            )
+            encoded_content = base64.b64encode(content.encode("utf-8")).decode("utf-8")
 
             data = {
                 "message": message,

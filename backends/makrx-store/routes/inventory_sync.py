@@ -25,9 +25,7 @@ class InventoryUpdate(BaseModel):
     material_id: str
     quantity_used: float
     job_id: str
-    update_type: str = Field(
-        ..., description="'consumed', 'reserved', 'released'"
-    )
+    update_type: str = Field(..., description="'consumed', 'reserved', 'released'")
 
 
 class MaterialReorder(BaseModel):
@@ -62,9 +60,7 @@ async def update_inventory(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Get inventory item
     inventory_result = await db.execute(
@@ -83,12 +79,8 @@ async def update_inventory(
     # Apply update based on type
     if update.update_type == "consumed":
         # Deduct from current stock and reserved stock
-        new_current = max(
-            0, inventory_item.current_stock - update.quantity_used
-        )
-        new_reserved = max(
-            0, inventory_item.reserved_stock - update.quantity_used
-        )
+        new_current = max(0, inventory_item.current_stock - update.quantity_used)
+        new_reserved = max(0, inventory_item.reserved_stock - update.quantity_used)
 
         await db.execute(
             update(ProviderInventory)
@@ -114,9 +106,7 @@ async def update_inventory(
 
     elif update.update_type == "released":
         # Remove from reserved stock
-        new_reserved = max(
-            0, inventory_item.reserved_stock - update.quantity_used
-        )
+        new_reserved = max(0, inventory_item.reserved_stock - update.quantity_used)
 
         await db.execute(
             update(ProviderInventory)
@@ -128,16 +118,12 @@ async def update_inventory(
 
     # Check for low stock alerts
     updated_inventory = await db.execute(
-        select(ProviderInventory).where(
-            ProviderInventory.id == update.material_id
-        )
+        select(ProviderInventory).where(ProviderInventory.id == update.material_id)
     )
     updated_item = updated_inventory.scalar_one()
 
     # Schedule alerts and reorder recommendations
-    background_tasks.add_task(
-        check_inventory_alerts, provider.id, updated_item, db
-    )
+    background_tasks.add_task(check_inventory_alerts, provider.id, updated_item, db)
 
     return {
         "message": "Inventory updated successfully",
@@ -160,9 +146,7 @@ async def get_low_stock_items(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Get low stock items
     result = await db.execute(
@@ -170,8 +154,7 @@ async def get_low_stock_items(
         .where(
             and_(
                 ProviderInventory.provider_id == provider.id,
-                ProviderInventory.current_stock
-                <= ProviderInventory.minimum_stock,
+                ProviderInventory.current_stock <= ProviderInventory.minimum_stock,
             )
         )
         .options(selectinload(ProviderInventory.provider))
@@ -206,11 +189,7 @@ async def get_low_stock_items(
                 "minimum_stock": item.minimum_stock,
                 "recommended_quantity": recommended_qty,
                 "estimated_cost": recommended_qty
-                * (
-                    catalog_item.base_cost
-                    if catalog_item
-                    else item.cost_per_unit
-                ),
+                * (catalog_item.base_cost if catalog_item else item.cost_per_unit),
                 "reorder_url": item.supplier_url
                 or (catalog_item.reorder_url if catalog_item else None),
                 "supplier_name": item.supplier_name or "MakrX Store",
@@ -230,9 +209,7 @@ async def get_low_stock_items(
         "low_stock_items": reorder_recommendations,
         "total_items": len(reorder_recommendations),
         "critical_count": sum(
-            1
-            for item in reorder_recommendations
-            if item["urgency"] == "critical"
+            1 for item in reorder_recommendations if item["urgency"] == "critical"
         ),
     }
 
@@ -254,9 +231,7 @@ async def create_reorder_request(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     inventory_result = await db.execute(
         select(ProviderInventory).where(
@@ -322,9 +297,7 @@ async def get_usage_analytics(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Calculate date range
     end_date = datetime.utcnow()
@@ -367,26 +340,18 @@ async def get_usage_analytics(
         material_usage[material]["revenue"] += job.customer_price * 0.7
 
         # Estimate material consumption based on job type
-        if (
-            job.quote.service_type == "printing"
-            and job.quote.estimated_weight_g
-        ):
+        if job.quote.service_type == "printing" and job.quote.estimated_weight_g:
             material_usage[material]["estimated_material_used"] += (
                 job.quote.estimated_weight_g / 1000
             )  # kg
-        elif (
-            job.quote.service_type == "engraving"
-            and job.quote.estimated_area_cm2
-        ):
+        elif job.quote.service_type == "engraving" and job.quote.estimated_area_cm2:
             material_usage[material]["estimated_material_used"] += (
                 job.quote.estimated_area_cm2 / 10000
             )  # m²
 
     # Get current inventory levels
     inventory_result = await db.execute(
-        select(ProviderInventory).where(
-            ProviderInventory.provider_id == provider.id
-        )
+        select(ProviderInventory).where(ProviderInventory.provider_id == provider.id)
     )
     current_inventory = inventory_result.scalars().all()
 
@@ -490,9 +455,7 @@ async def check_inventory_alerts(
                 current_stock=inventory_item.current_stock,
                 minimum_stock=inventory_item.minimum_stock,
                 alert_type=(
-                    "low_stock"
-                    if inventory_item.current_stock > 0
-                    else "out_of_stock"
+                    "low_stock" if inventory_item.current_stock > 0 else "out_of_stock"
                 ),
             )
         )
@@ -517,9 +480,7 @@ async def check_inventory_alerts(
 async def send_inventory_alert(alert: InventoryAlert):
     """Send inventory alert to provider"""
     # This would integrate with your notification system
-    print(
-        f"Inventory Alert: {alert.alert_type} for provider {alert.provider_id}"
-    )
+    print(f"Inventory Alert: {alert.alert_type} for provider {alert.provider_id}")
 
 
 async def log_reorder_activity(
@@ -548,9 +509,7 @@ async def sync_inventory_with_marketplace(
     provider = provider_result.scalar_one_or_none()
 
     if not provider:
-        raise HTTPException(
-            status_code=403, detail="Provider account required"
-        )
+        raise HTTPException(status_code=403, detail="Provider account required")
 
     # Get latest material catalog from marketplace
     catalog_result = await db.execute(
@@ -567,8 +526,7 @@ async def sync_inventory_with_marketplace(
             select(ProviderInventory).where(
                 and_(
                     ProviderInventory.provider_id == provider.id,
-                    ProviderInventory.material_type
-                    == catalog_item.material_id,
+                    ProviderInventory.material_type == catalog_item.material_id,
                 )
             )
         )

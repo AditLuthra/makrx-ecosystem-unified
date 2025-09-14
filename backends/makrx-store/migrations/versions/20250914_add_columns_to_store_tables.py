@@ -25,9 +25,7 @@ def upgrade() -> None:
         )
 
     with op.batch_alter_table("store_products") as batch_op:
-        batch_op.add_column(
-            sa.Column("brand", sa.String(length=100), nullable=True)
-        )
+        batch_op.add_column(sa.Column("brand", sa.String(length=100), nullable=True))
         batch_op.add_column(sa.Column("brand_id", sa.Integer(), nullable=True))
         batch_op.add_column(
             sa.Column(
@@ -89,9 +87,7 @@ def upgrade() -> None:
             )
         )
         batch_op.add_column(
-            sa.Column(
-                "tags", postgresql.JSONB(astext_type=sa.Text()), nullable=True
-            )
+            sa.Column("tags", postgresql.JSONB(astext_type=sa.Text()), nullable=True)
         )
         batch_op.create_foreign_key(
             "fk_products_brand", "store_brands", ["brand_id"], ["id"]

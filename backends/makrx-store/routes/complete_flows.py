@@ -64,9 +64,7 @@ async def get_presigned_upload_url(
     try:
         # Validate file type and size
         allowed_types = [".stl", ".3mf", ".obj"]
-        if not any(
-            request.filename.lower().endswith(ext) for ext in allowed_types
-        ):
+        if not any(request.filename.lower().endswith(ext) for ext in allowed_types):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Only .stl, .3mf, .obj files allowed",
@@ -94,7 +92,9 @@ async def get_presigned_upload_url(
 
         # Generate presigned URL (mock for now)
         # In production: use boto3.client('s3').generate_presigned_url()
-        presigned_url = f"https://s3.makrx.org/{file_key}?upload_id={upload.id}&expires=3600"
+        presigned_url = (
+            f"https://s3.makrx.org/{file_key}?upload_id={upload.id}&expires=3600"
+        )
 
         return PresignedURLResponse(
             upload_url=presigned_url,
@@ -242,9 +242,7 @@ async def generate_quote(
 
         # Get file info for pricing calculation
         file_info = upload.file_info or {}
-        volume_mm3 = file_info.get(
-            "volume_mm3", 10000
-        )  # Default if not analyzed
+        volume_mm3 = file_info.get("volume_mm3", 10000)  # Default if not analyzed
 
         # Calculate pricing using exact engine from architecture
         pricing_result = calculate_3d_print_pricing(
@@ -329,20 +327,14 @@ def calculate_3d_print_pricing(
     quality_mult = quality_multipliers.get(quality, 1.0)
 
     # Calculate components
-    material_cost = (
-        volume_cm3 * base_rate * (infill_percentage / 100) * quantity
-    )
+    material_cost = volume_cm3 * base_rate * (infill_percentage / 100) * quantity
 
     # Time estimation (minutes)
     base_time_per_cm3 = 45  # minutes per cm³
     time_factor = quality_multipliers.get(quality, 1.0)
     supports_factor = 1.3 if supports else 1.0
     estimated_time = (
-        volume_cm3
-        * base_time_per_cm3
-        * time_factor
-        * supports_factor
-        * quantity
+        volume_cm3 * base_time_per_cm3 * time_factor * supports_factor * quantity
     )
 
     # Machine cost (₹0.50 per minute)
@@ -434,9 +426,7 @@ async def create_service_order_from_quote(
             )
 
         # Get upload info for Cave routing
-        ures = await db.execute(
-            select(Upload).where(Upload.id == quote.upload_id)
-        )
+        ures = await db.execute(select(Upload).where(Upload.id == quote.upload_id))
         upload = ures.scalars().first()
         if not upload:
             raise HTTPException(
@@ -523,9 +513,7 @@ async def publish_service_order_to_cave(
             )
 
         # Get quote and upload
-        qres = await db.execute(
-            select(Quote).where(Quote.id == service_order.quote_id)
-        )
+        qres = await db.execute(select(Quote).where(Quote.id == service_order.quote_id))
         quote = qres.scalars().first()
         ures = await db.execute(
             select(Upload).where(Upload.id == service_order.upload_id)
@@ -644,9 +632,7 @@ async def get_service_order_status(
             "cave_job_id": getattr(service_order, "cave_job_id", None),
             "estimated_delivery": service_order.estimated_delivery,
             "timeline": timeline,
-            "provider_accept_url": getattr(
-                service_order, "provider_accept_url", None
-            ),
+            "provider_accept_url": getattr(service_order, "provider_accept_url", None),
             "tracking_available": len(timeline) > 0,
         }
 

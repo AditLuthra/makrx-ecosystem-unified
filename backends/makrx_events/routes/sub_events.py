@@ -15,9 +15,7 @@ from backends.makrx_events.security import get_current_user, CurrentUser
 router = APIRouter()
 
 
-@router.get(
-    "/microsites/{slug}/events/{sub_slug}", response_model=SubEventRead
-)
+@router.get("/microsites/{slug}/events/{sub_slug}", response_model=SubEventRead)
 def get_sub_event(slug: str, sub_slug: str, db: Session = Depends(get_db)):
     m = db.query(Microsite).filter(Microsite.slug == slug).first()
     if not m:
@@ -32,9 +30,7 @@ def get_sub_event(slug: str, sub_slug: str, db: Session = Depends(get_db)):
     return se
 
 
-@router.patch(
-    "/microsites/{slug}/events/{sub_slug}", response_model=SubEventRead
-)
+@router.patch("/microsites/{slug}/events/{sub_slug}", response_model=SubEventRead)
 def update_sub_event(
     slug: str,
     sub_slug: str,
@@ -83,9 +79,7 @@ def delete_sub_event(
     return {"message": "Sub-event deleted successfully"}
 
 
-@router.post(
-    "/microsites/{slug}/events", response_model=SubEventRead, status_code=201
-)
+@router.post("/microsites/{slug}/events", response_model=SubEventRead, status_code=201)
 def create_sub_event(
     slug: str,
     payload: SubEventCreate,

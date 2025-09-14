@@ -31,9 +31,7 @@ router = APIRouter(prefix="/api/v1/projects", tags=["BOM Export"])
 class BOMExportRequest(BaseModel):
     project_id: UUID
     selected_items: Optional[List[UUID]] = None  # If None, export all items
-    target_portal: str = Field(
-        default="store", description="Target portal for export"
-    )
+    target_portal: str = Field(default="store", description="Target portal for export")
     user_email: str = Field(..., description="User email for cart association")
 
 
@@ -102,9 +100,7 @@ async def export_bom_to_cart(
         bom_query = select(BOMItem).where(BOMItem.project_id == project_id)
 
         if export_request.selected_items:
-            bom_query = bom_query.where(
-                BOMItem.id.in_(export_request.selected_items)
-            )
+            bom_query = bom_query.where(BOMItem.id.in_(export_request.selected_items))
 
         bom_result = await db.execute(bom_query)
         bom_items = bom_result.scalars().all()
@@ -297,9 +293,7 @@ async def add_items_to_store_cart(
         )
 
         async with get_store_client() as client:
-            response = await client.post(
-                "/cart/bulk-add", json=bulk_request.dict()
-            )
+            response = await client.post("/cart/bulk-add", json=bulk_request.dict())
 
             if response.status_code in [200, 201]:
                 logger.info(
@@ -336,9 +330,7 @@ async def notify_export_completion(
 
 
 @router.get("/{project_id}/bom/export/preview")
-async def preview_bom_export(
-    project_id: UUID, db: AsyncSession = Depends(get_db)
-):
+async def preview_bom_export(project_id: UUID, db: AsyncSession = Depends(get_db)):
     """
     Preview what would be exported from BOM to Store cart
     """
@@ -403,6 +395,4 @@ async def preview_bom_export(
         raise
     except Exception as e:
         logger.error(f"BOM export preview error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to generate preview"
-        )
+        raise HTTPException(status_code=500, detail="Failed to generate preview")

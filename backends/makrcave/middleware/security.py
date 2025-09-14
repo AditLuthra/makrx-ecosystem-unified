@@ -67,9 +67,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     parts = [p.strip() for p in fwd.split(";")]
                     for part in parts:
                         if part.lower().startswith("for="):
-                            client_ip = (
-                                part.split("=", 1)[1].strip().strip('"')
-                            )
+                            client_ip = part.split("=", 1)[1].strip().strip('"')
                             break
         endpoint_category = self.get_endpoint_category(request.url.path)
 
@@ -121,9 +119,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     headers={"Retry-After": str(period)},
                 )
             self.clients[client_ip][endpoint_category].append(now)
-            remaining = calls_limit - len(
-                self.clients[client_ip][endpoint_category]
-            )
+            remaining = calls_limit - len(self.clients[client_ip][endpoint_category])
 
         # Add rate limit headers
         response = await call_next(request)
@@ -191,9 +187,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self.sample_rate = float(
-            os.environ.get("REQUEST_LOG_SAMPLE_RATE", "1.0")
-        )
+        self.sample_rate = float(os.environ.get("REQUEST_LOG_SAMPLE_RATE", "1.0"))
 
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()

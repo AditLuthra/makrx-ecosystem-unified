@@ -172,9 +172,7 @@ class ServiceJobFileUpload(BaseModel):
     gcode_metadata: Optional[Dict[str, Any]] = None
     layer_count: Optional[int] = Field(None, ge=1)
     estimated_print_time_gcode: Optional[int] = Field(None, ge=1)  # minutes
-    estimated_material_usage_gcode: Optional[float] = Field(
-        None, ge=0
-    )  # grams
+    estimated_material_usage_gcode: Optional[float] = Field(None, ge=0)  # grams
 
     # 3D model analysis
     model_volume: Optional[float] = Field(None, ge=0)  # cubic mm
@@ -494,9 +492,7 @@ class JobAnalytics(BaseModel):
     total_jobs_completed: int
     average_job_value: float
     top_materials: List[Dict[str, Any]]  # material usage statistics
-    equipment_utilization: Dict[
-        str, float
-    ]  # equipment_id: utilization_percentage
+    equipment_utilization: Dict[str, float]  # equipment_id: utilization_percentage
     customer_satisfaction: float  # average rating
     on_time_delivery_rate: float  # percentage
 
@@ -516,9 +512,7 @@ class JobSearchFilters(BaseModel):
     deadline_before: Optional[datetime] = None
     min_value: Optional[float] = Field(None, ge=0)
     max_value: Optional[float] = Field(None, ge=0)
-    search_query: Optional[str] = (
-        None  # Search in title, description, customer name
-    )
+    search_query: Optional[str] = None  # Search in title, description, customer name
 
 
 class JobListResponse(BaseModel):

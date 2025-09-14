@@ -57,9 +57,7 @@ class InventoryItem(Base):
     unit = Column(String, nullable=False)
     min_threshold = Column(Integer, nullable=False)
     location = Column(String, nullable=False, index=True)
-    status = Column(
-        Enum(ItemStatus), nullable=False, default=ItemStatus.ACTIVE
-    )
+    status = Column(Enum(ItemStatus), nullable=False, default=ItemStatus.ACTIVE)
     supplier_type = Column(
         Enum(SupplierType), nullable=False, default=SupplierType.EXTERNAL
     )
@@ -71,12 +69,8 @@ class InventoryItem(Base):
     # Optional fields
     image_url = Column(String)
     notes = Column(Text)
-    owner_user_id = Column(
-        String, ForeignKey("users.id")
-    )  # For personal tools
-    restricted_access_level = Column(
-        Enum(AccessLevel), default=AccessLevel.BASIC
-    )
+    owner_user_id = Column(String, ForeignKey("users.id"))  # For personal tools
+    restricted_access_level = Column(Enum(AccessLevel), default=AccessLevel.BASIC)
     price = Column(Float)
     supplier = Column(String)
     description = Column(Text)
@@ -84,9 +78,7 @@ class InventoryItem(Base):
 
     # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_by = Column(String, ForeignKey("users.id"))
     updated_by = Column(String, ForeignKey("users.id"))
 
@@ -106,9 +98,7 @@ class InventoryUsageLog(Base):
     __tablename__ = "inventory_usage_logs"
 
     id = Column(String, primary_key=True, index=True)
-    inventory_item_id = Column(
-        String, ForeignKey("inventory_items.id"), nullable=False
-    )
+    inventory_item_id = Column(String, ForeignKey("inventory_items.id"), nullable=False)
     timestamp = Column(DateTime, nullable=False, default=datetime.utcnow)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
     user_name = Column(String, nullable=False)  # Denormalized for performance
@@ -133,9 +123,7 @@ class InventoryAlert(Base):
     __tablename__ = "inventory_alerts"
 
     id = Column(String, primary_key=True, index=True)
-    inventory_item_id = Column(
-        String, ForeignKey("inventory_items.id"), nullable=False
-    )
+    inventory_item_id = Column(String, ForeignKey("inventory_items.id"), nullable=False)
     alert_type = Column(
         String, nullable=False
     )  # "low_stock", "out_of_stock", "expiry_warning"
@@ -162,9 +150,7 @@ class BulkImportJob(Base):
     processed_rows = Column(Integer, default=0)
     successful_rows = Column(Integer, default=0)
     failed_rows = Column(Integer, default=0)
-    status = Column(
-        String, default="processing"
-    )  # "processing", "completed", "failed"
+    status = Column(String, default="processing")  # "processing", "completed", "failed"
     error_log = Column(JSON)  # Store validation errors
 
     # Metadata
@@ -192,9 +178,7 @@ class Makerspace(Base):
     settings = Column(JSON)  # Store makerspace-specific settings
 
     # Relationships
-    inventory_items = relationship(
-        "InventoryItem", back_populates="makerspace"
-    )
+    inventory_items = relationship("InventoryItem", back_populates="makerspace")
 
 
 class User(Base):

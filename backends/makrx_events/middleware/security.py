@@ -34,17 +34,15 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         # Only limit authenticated-modifying calls by default; allow toggling via env
-        methods = os.getenv(
-            "RATE_LIMIT_METHODS", "POST,PUT,PATCH,DELETE"
-        ).split(",")
+        methods = os.getenv("RATE_LIMIT_METHODS", "POST,PUT,PATCH,DELETE").split(",")
         if request.method.upper() not in [
             m.strip().upper() for m in methods if m.strip()
         ]:
             return await call_next(request)
 
-        ip = request.headers.get("X-Forwarded-For", "").split(",")[
-            0
-        ].strip() or (request.client.host if request.client else "unknown")
+        ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or (
+            request.client.host if request.client else "unknown"
+        )
         key_raw = f"rl:{ip}:{int(time.time() // self.window) * self.window}"
         key = hashlib.sha256(key_raw.encode()).hexdigest()
 

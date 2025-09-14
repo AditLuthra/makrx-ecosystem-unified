@@ -274,9 +274,7 @@ class RealTimeSecurityMonitor:
     def __init__(self):
         self.event_history = defaultdict(deque)  # Recent events by type
         self.alert_cooldowns = {}  # Prevent alert spam
-        self.performance_metrics = deque(
-            maxlen=1000
-        )  # Recent performance data
+        self.performance_metrics = deque(maxlen=1000)  # Recent performance data
         self.threat_patterns = []  # Active threat patterns
         self._lock = threading.Lock()
 
@@ -309,10 +307,7 @@ class RealTimeSecurityMonitor:
     def _cleanup_old_events(self, cutoff_time: datetime):
         """Remove old events from monitoring window"""
         for event_type, events in self.event_history.items():
-            while (
-                events
-                and datetime.fromisoformat(events[0].timestamp) < cutoff_time
-            ):
+            while events and datetime.fromisoformat(events[0].timestamp) < cutoff_time:
                 events.popleft()
 
     async def _detect_threat_patterns(self, event: SecurityEvent):
@@ -669,9 +664,7 @@ class PerformanceMonitor:
 
         # Calculate SLO compliance
         total_requests = len(recent_metrics)
-        successful_requests = sum(
-            1 for m in recent_metrics if m.status_code < 500
-        )
+        successful_requests = sum(1 for m in recent_metrics if m.status_code < 500)
         fast_requests = sum(
             1
             for m in recent_metrics
@@ -692,8 +685,7 @@ class PerformanceMonitor:
             "latency_slo": {
                 "target_ms": MonitoringConfig.API_LATENCY_SLO,
                 "actual_percent_compliant": latency_slo,
-                "compliant": latency_slo
-                >= 95,  # 95% of requests should be fast
+                "compliant": latency_slo >= 95,  # 95% of requests should be fast
             },
             "generated_at": datetime.utcnow().isoformat(),
         }
@@ -762,9 +754,7 @@ class AuditTrailManager:
         record_copy = record.copy()
         record_copy.pop("checksum", None)
 
-        canonical = json.dumps(
-            record_copy, sort_keys=True, separators=(",", ":")
-        )
+        canonical = json.dumps(record_copy, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode()).hexdigest()
 
     async def verify_audit_integrity(self, audit_id: str) -> bool:

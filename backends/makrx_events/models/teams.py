@@ -43,7 +43,5 @@ class TeamMember(Base):
     role = Column(String, default="member")
 
     __table_args__ = (
-        UniqueConstraint(
-            "team_id", "user_id", name="uq_team_members_team_user"
-        ),
+        UniqueConstraint("team_id", "user_id", name="uq_team_members_team_user"),
     )

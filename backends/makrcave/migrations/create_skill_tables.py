@@ -178,9 +178,7 @@ def upgrade():
                 )
 
             conn.commit()
-            logger.info(
-                "Successfully inserted default skills and relationships"
-            )
+            logger.info("Successfully inserted default skills and relationships")
 
     except Exception as e:
         logger.error(f"Error creating skill tables: {e}")

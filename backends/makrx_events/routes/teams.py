@@ -27,9 +27,7 @@ def list_teams(event_id: str, db: Session = Depends(get_db)):
     )
 
 
-@router.post(
-    "/events/{event_id}/teams", response_model=TeamRead, status_code=201
-)
+@router.post("/events/{event_id}/teams", response_model=TeamRead, status_code=201)
 def create_team(
     event_id: str,
     payload: TeamCreate,
@@ -51,11 +49,7 @@ def update_team(
     _user: CurrentUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    team = (
-        db.query(Team)
-        .filter(Team.id == team_id, Team.event_id == event_id)
-        .first()
-    )
+    team = db.query(Team).filter(Team.id == team_id, Team.event_id == event_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     data = payload.model_dump(exclude_unset=True)
@@ -71,15 +65,9 @@ def update_team(
     "/events/{event_id}/teams/{team_id}/members",
     response_model=List[TeamMemberRead],
 )
-def list_team_members(
-    event_id: str, team_id: str, db: Session = Depends(get_db)
-):
+def list_team_members(event_id: str, team_id: str, db: Session = Depends(get_db)):
     # Event ID is not stored directly in team_members, but team is event-scoped
-    team = (
-        db.query(Team)
-        .filter(Team.id == team_id, Team.event_id == event_id)
-        .first()
-    )
+    team = db.query(Team).filter(Team.id == team_id, Team.event_id == event_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     return db.query(TeamMember).filter(TeamMember.team_id == team_id).all()
@@ -97,11 +85,7 @@ def add_team_member(
     _user: CurrentUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    team = (
-        db.query(Team)
-        .filter(Team.id == team_id, Team.event_id == event_id)
-        .first()
-    )
+    team = db.query(Team).filter(Team.id == team_id, Team.event_id == event_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     member = TeamMember(

@@ -171,9 +171,7 @@ class StripeService:
             if response.status_code == 200:
                 return response.json()
             else:
-                error_msg = (
-                    f"Stripe payment intent creation failed: {response.text}"
-                )
+                error_msg = f"Stripe payment intent creation failed: {response.text}"
                 logger.error(error_msg)
                 raise PaymentGatewayError(error_msg)
 
@@ -185,9 +183,7 @@ class StripeService:
     def confirm_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
         """Confirm a Stripe payment intent"""
         try:
-            url = (
-                f"{self.base_url}/payment_intents/{payment_intent_id}/confirm"
-            )
+            url = f"{self.base_url}/payment_intents/{payment_intent_id}/confirm"
 
             response = requests.post(
                 url,
@@ -200,9 +196,7 @@ class StripeService:
             if response.status_code == 200:
                 return response.json()
             else:
-                error_msg = (
-                    f"Stripe payment confirmation failed: {response.text}"
-                )
+                error_msg = f"Stripe payment confirmation failed: {response.text}"
                 logger.error(error_msg)
                 raise PaymentGatewayError(error_msg)
 
@@ -281,14 +275,10 @@ class StripeService:
                 hashlib.sha256,
             ).hexdigest()
 
-            return hmac.compare_digest(
-                expected_signature, signature_dict["v1"]
-            )
+            return hmac.compare_digest(expected_signature, signature_dict["v1"])
 
         except Exception as e:
-            logger.error(
-                f"Stripe webhook signature verification failed: {str(e)}"
-            )
+            logger.error(f"Stripe webhook signature verification failed: {str(e)}")
             return False
 
 
@@ -352,9 +342,7 @@ class PaymentService:
             }
 
         else:
-            raise PaymentGatewayError(
-                f"Unsupported payment gateway: {gateway}"
-            )
+            raise PaymentGatewayError(f"Unsupported payment gateway: {gateway}")
 
     def verify_payment(
         self, gateway: str, payment_data: Dict[str, Any]
@@ -375,8 +363,7 @@ class PaymentService:
                 return True, {
                     "gateway_transaction_id": payment_details["id"],
                     "gateway_order_id": payment_details["order_id"],
-                    "amount": payment_details["amount"]
-                    / 100,  # Convert from paise
+                    "amount": payment_details["amount"] / 100,  # Convert from paise
                     "currency": payment_details["currency"],
                     "status": payment_details["status"],
                     "method": payment_details.get("method"),
@@ -429,9 +416,7 @@ class PaymentService:
             )
 
         else:
-            raise PaymentGatewayError(
-                f"Unsupported payment gateway: {gateway}"
-            )
+            raise PaymentGatewayError(f"Unsupported payment gateway: {gateway}")
 
     def verify_webhook(
         self, gateway: str, payload: str, signature: str, timestamp: str = None
@@ -442,9 +427,7 @@ class PaymentService:
             return self.razorpay.verify_webhook_signature(payload, signature)
 
         elif gateway.lower() == "stripe":
-            return self.stripe.verify_webhook_signature(
-                payload, signature, timestamp
-            )
+            return self.stripe.verify_webhook_signature(payload, signature, timestamp)
 
         else:
             return False
@@ -478,9 +461,9 @@ def calculate_service_charge(
     gateway_fee = 0
     if gateway in gateway_charges:
         gateway_config = gateway_charges[gateway]
-        gateway_fee = (
-            amount * gateway_config["percentage"] / 100
-        ) + gateway_config["fixed"]
+        gateway_fee = (amount * gateway_config["percentage"] / 100) + gateway_config[
+            "fixed"
+        ]
 
     service_fee = service_charges.get(service_type, 0)
 

@@ -66,23 +66,13 @@ class MembershipPlan(Base):
 
     # Access Control
     access_type = Column(SQLEnum(AccessType), default=AccessType.UNLIMITED)
-    max_hours_per_cycle = Column(
-        Integer, nullable=True
-    )  # For time_limited plans
-    allowed_time_slots = Column(
-        JSON, nullable=True
-    )  # For specific_hours plans
+    max_hours_per_cycle = Column(Integer, nullable=True)  # For time_limited plans
+    allowed_time_slots = Column(JSON, nullable=True)  # For specific_hours plans
 
     # Equipment Access
-    included_equipment = Column(
-        JSON, nullable=True
-    )  # List of equipment IDs included
-    equipment_hourly_rates = Column(
-        JSON, nullable=True
-    )  # Custom rates for equipment
-    skill_requirements = Column(
-        JSON, nullable=True
-    )  # Required skills for this plan
+    included_equipment = Column(JSON, nullable=True)  # List of equipment IDs included
+    equipment_hourly_rates = Column(JSON, nullable=True)  # Custom rates for equipment
+    skill_requirements = Column(JSON, nullable=True)  # Required skills for this plan
 
     # Benefits and Features
     features = Column(JSON, nullable=True)  # List of plan features
@@ -98,17 +88,13 @@ class MembershipPlan(Base):
 
     # Plan Settings
     is_active = Column(Boolean, default=True)
-    is_public = Column(
-        Boolean, default=True
-    )  # Visible to members for self-signup
+    is_public = Column(Boolean, default=True)  # Visible to members for self-signup
     requires_approval = Column(Boolean, default=False)
     auto_renew = Column(Boolean, default=True)
     grace_period_days = Column(Integer, default=3)
 
     # Limits
-    max_members = Column(
-        Integer, nullable=True
-    )  # Maximum members for this plan
+    max_members = Column(Integer, nullable=True)  # Maximum members for this plan
     current_members = Column(Integer, default=0)
 
     # Trial Settings
@@ -124,12 +110,8 @@ class MembershipPlan(Base):
     # Display Settings
     display_order = Column(Integer, default=0)
     highlight_plan = Column(Boolean, default=False)  # Feature this plan
-    badge_text = Column(
-        String(50), nullable=True
-    )  # "Most Popular", "Best Value", etc.
-    custom_color = Column(
-        String(7), nullable=True
-    )  # Hex color for plan display
+    badge_text = Column(String(50), nullable=True)  # "Most Popular", "Best Value", etc.
+    custom_color = Column(String(7), nullable=True)  # Hex color for plan display
 
     # Terms and Conditions
     terms_text = Column(Text, nullable=True)
@@ -141,12 +123,8 @@ class MembershipPlan(Base):
     updated_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
-    updated_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
     makerspace = relationship("Makerspace", back_populates="membership_plans")
@@ -167,13 +145,9 @@ class MembershipPlan(Base):
             "plan_type": self.plan_type.value if self.plan_type else None,
             "price": self.price,
             "currency": self.currency,
-            "billing_cycle": (
-                self.billing_cycle.value if self.billing_cycle else None
-            ),
+            "billing_cycle": (self.billing_cycle.value if self.billing_cycle else None),
             "setup_fee": self.setup_fee,
-            "access_type": (
-                self.access_type.value if self.access_type else None
-            ),
+            "access_type": (self.access_type.value if self.access_type else None),
             "max_hours_per_cycle": self.max_hours_per_cycle,
             "allowed_time_slots": self.allowed_time_slots,
             "included_equipment": self.included_equipment,
@@ -203,9 +177,7 @@ class MembershipPlan(Base):
                 else None
             ),
             "discount_end_date": (
-                self.discount_end_date.isoformat()
-                if self.discount_end_date
-                else None
+                self.discount_end_date.isoformat() if self.discount_end_date else None
             ),
             "promo_code": self.promo_code,
             "display_order": self.display_order,
@@ -215,12 +187,8 @@ class MembershipPlan(Base):
             "terms_text": self.terms_text,
             "contract_length_months": self.contract_length_months,
             "early_termination_fee": self.early_termination_fee,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
             "created_by": str(self.created_by) if self.created_by else None,
             "updated_by": str(self.updated_by) if self.updated_by else None,
         }
@@ -242,11 +210,9 @@ class MembershipPlan(Base):
                 or current_date >= self.discount_start_date
             )
             and (
-                self.discount_end_date is None
-                or current_date <= self.discount_end_date
+                self.discount_end_date is None or current_date <= self.discount_end_date
             )
         ):
-
             # Verify promo code if required
             if self.promo_code and promo_code != self.promo_code:
                 return base_price
@@ -271,10 +237,7 @@ class MembershipPlan(Base):
 
         if self.access_type == AccessType.UNLIMITED:
             auto_features.append("Unlimited access during operating hours")
-        elif (
-            self.access_type == AccessType.TIME_LIMITED
-            and self.max_hours_per_cycle
-        ):
+        elif self.access_type == AccessType.TIME_LIMITED and self.max_hours_per_cycle:
             auto_features.append(
                 f"{self.max_hours_per_cycle} hours per {self.billing_cycle.value}"
             )

@@ -53,18 +53,12 @@ class InventoryCRUD:
         self, item_id: str, makerspace_id: Optional[str] = None
     ) -> Optional[InventoryItem]:
         """Get a single inventory item by ID"""
-        query = self.db.query(InventoryItem).filter(
-            InventoryItem.id == item_id
-        )
+        query = self.db.query(InventoryItem).filter(InventoryItem.id == item_id)
         if makerspace_id:
-            query = query.filter(
-                InventoryItem.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(InventoryItem.linked_makerspace_id == makerspace_id)
         return query.first()
 
-    def get_items(
-        self, filters: InventoryFilter
-    ) -> tuple[List[InventoryItem], int]:
+    def get_items(self, filters: InventoryFilter) -> tuple[List[InventoryItem], int]:
         """Get inventory items with filtering, pagination, and sorting"""
         query = self.db.query(InventoryItem)
 
@@ -76,14 +70,10 @@ class InventoryCRUD:
             query = query.filter(InventoryItem.status == filters.status)
 
         if filters.supplier_type:
-            query = query.filter(
-                InventoryItem.supplier_type == filters.supplier_type
-            )
+            query = query.filter(InventoryItem.supplier_type == filters.supplier_type)
 
         if filters.location:
-            query = query.filter(
-                InventoryItem.location.ilike(f"%{filters.location}%")
-            )
+            query = query.filter(InventoryItem.location.ilike(f"%{filters.location}%"))
 
         if filters.makerspace_id:
             query = query.filter(
@@ -91,14 +81,10 @@ class InventoryCRUD:
             )
 
         if filters.owner_user_id:
-            query = query.filter(
-                InventoryItem.owner_user_id == filters.owner_user_id
-            )
+            query = query.filter(InventoryItem.owner_user_id == filters.owner_user_id)
 
         if filters.low_stock_only:
-            query = query.filter(
-                InventoryItem.quantity <= InventoryItem.min_threshold
-            )
+            query = query.filter(InventoryItem.quantity <= InventoryItem.min_threshold)
 
         if filters.search:
             search_term = f"%{filters.search}%"
@@ -121,9 +107,7 @@ class InventoryCRUD:
             order_func = asc
 
         if hasattr(InventoryItem, filters.sort_by):
-            query = query.order_by(
-                order_func(getattr(InventoryItem, filters.sort_by))
-            )
+            query = query.order_by(order_func(getattr(InventoryItem, filters.sort_by)))
         else:
             query = query.order_by(desc(InventoryItem.updated_at))
 
@@ -140,13 +124,9 @@ class InventoryCRUD:
         makerspace_id: Optional[str] = None,
     ) -> Optional[InventoryItem]:
         """Update an inventory item"""
-        query = self.db.query(InventoryItem).filter(
-            InventoryItem.id == item_id
-        )
+        query = self.db.query(InventoryItem).filter(InventoryItem.id == item_id)
         if makerspace_id:
-            query = query.filter(
-                InventoryItem.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(InventoryItem.linked_makerspace_id == makerspace_id)
 
         db_item = query.first()
         if not db_item:
@@ -188,13 +168,9 @@ class InventoryCRUD:
         makerspace_id: Optional[str] = None,
     ) -> bool:
         """Delete an inventory item"""
-        query = self.db.query(InventoryItem).filter(
-            InventoryItem.id == item_id
-        )
+        query = self.db.query(InventoryItem).filter(InventoryItem.id == item_id)
         if makerspace_id:
-            query = query.filter(
-                InventoryItem.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(InventoryItem.linked_makerspace_id == makerspace_id)
 
         db_item = query.first()
         if not db_item:
@@ -340,9 +316,7 @@ class InventoryCRUD:
                     "success": result is not None,
                     "new_quantity": result.quantity if result else None,
                     "error": (
-                        None
-                        if result
-                        else "Insufficient stock or item not found"
+                        None if result else "Insufficient stock or item not found"
                     ),
                 }
             )
@@ -356,9 +330,7 @@ class InventoryCRUD:
         """Get inventory statistics"""
         query = self.db.query(InventoryItem)
         if makerspace_id:
-            query = query.filter(
-                InventoryItem.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(InventoryItem.linked_makerspace_id == makerspace_id)
 
         total_items = query.count()
         low_stock_items = query.filter(
@@ -423,9 +395,7 @@ class InventoryCRUD:
         )
 
         if makerspace_id:
-            query = query.filter(
-                InventoryItem.linked_makerspace_id == makerspace_id
-            )
+            query = query.filter(InventoryItem.linked_makerspace_id == makerspace_id)
 
         low_stock_items = query.all()
 
@@ -488,9 +458,7 @@ class InventoryCRUD:
             if log.action == UsageAction.RESTOCK
         )
 
-        usage_frequency = len(
-            [log for log in logs if log.action == UsageAction.ISSUE]
-        )
+        usage_frequency = len([log for log in logs if log.action == UsageAction.ISSUE])
 
         last_used = None
         issue_logs = [log for log in logs if log.action == UsageAction.ISSUE]
@@ -499,9 +467,7 @@ class InventoryCRUD:
 
         # Most common reason
         reasons = [
-            log.reason
-            for log in logs
-            if log.reason and log.action == UsageAction.ISSUE
+            log.reason for log in logs if log.reason and log.action == UsageAction.ISSUE
         ]
         most_common_reason = None
         if reasons:
@@ -548,11 +514,7 @@ class InventoryCRUD:
         errors: Optional[List[Dict]] = None,
     ):
         """Update import job progress"""
-        job = (
-            self.db.query(BulkImportJob)
-            .filter(BulkImportJob.id == job_id)
-            .first()
-        )
+        job = self.db.query(BulkImportJob).filter(BulkImportJob.id == job_id).first()
         if job:
             job.processed_rows = processed
             job.successful_rows = successful
@@ -561,9 +523,7 @@ class InventoryCRUD:
                 job.error_log = errors
 
             if processed >= job.total_rows:
-                job.status = (
-                    "completed" if failed == 0 else "completed_with_errors"
-                )
+                job.status = "completed" if failed == 0 else "completed_with_errors"
 
             self.db.commit()
 

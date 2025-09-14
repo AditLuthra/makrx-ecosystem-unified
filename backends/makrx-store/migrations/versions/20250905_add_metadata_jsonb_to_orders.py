@@ -20,12 +20,8 @@ depends_on = None
 
 def upgrade() -> None:
     # Add JSONB 'metadata' columns if not exists (idempotent)
-    op.execute(
-        "ALTER TABLE store_orders ADD COLUMN IF NOT EXISTS metadata JSONB"
-    )
-    op.execute(
-        "ALTER TABLE store_order_items ADD COLUMN IF NOT EXISTS metadata JSONB"
-    )
+    op.execute("ALTER TABLE store_orders ADD COLUMN IF NOT EXISTS metadata JSONB")
+    op.execute("ALTER TABLE store_order_items ADD COLUMN IF NOT EXISTS metadata JSONB")
 
 
 def downgrade() -> None:

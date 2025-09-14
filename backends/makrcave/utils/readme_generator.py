@@ -9,16 +9,16 @@ def generate_project_readme(project: Project) -> str:
 
     readme_content = f"""# {project.name}
 
-{project.description or 'A MakrCave project for collaborative making and innovation.'}
+{project.description or "A MakrCave project for collaborative making and innovation."}
 
 ## 📋 Project Overview
 
 - **Project ID**: `{project.project_id}`
-- **Status**: {project.status.replace('_', ' ').title()}
-- **Visibility**: {project.visibility.replace('_', ' ').title()}
+- **Status**: {project.status.replace("_", " ").title()}
+- **Visibility**: {project.visibility.replace("_", " ").title()}
 - **Owner**: {project.owner_id}
-- **Created**: {project.created_at.strftime('%B %d, %Y')}
-- **Last Updated**: {project.updated_at.strftime('%B %d, %Y')}
+- **Created**: {project.created_at.strftime("%B %d, %Y")}
+- **Last Updated**: {project.updated_at.strftime("%B %d, %Y")}
 
 """
 
@@ -26,9 +26,13 @@ def generate_project_readme(project: Project) -> str:
     if project.start_date or project.end_date:
         readme_content += "## 📅 Timeline\n\n"
         if project.start_date:
-            readme_content += f"- **Start Date**: {project.start_date.strftime('%B %d, %Y')}\n"
+            readme_content += (
+                f"- **Start Date**: {project.start_date.strftime('%B %d, %Y')}\n"
+            )
         if project.end_date:
-            readme_content += f"- **Target Completion**: {project.end_date.strftime('%B %d, %Y')}\n"
+            readme_content += (
+                f"- **Target Completion**: {project.end_date.strftime('%B %d, %Y')}\n"
+            )
         readme_content += "\n"
 
     # Add tags if available
@@ -45,9 +49,7 @@ def generate_project_readme(project: Project) -> str:
 
         for collaborator in project.collaborators:
             join_date = collaborator.accepted_at or collaborator.invited_at
-            join_date_str = (
-                join_date.strftime("%B %d, %Y") if join_date else "Pending"
-            )
+            join_date_str = join_date.strftime("%B %d, %Y") if join_date else "Pending"
             readme_content += f"| {collaborator.user_id} | {collaborator.role.title()} | {join_date_str} |\n"
         readme_content += "\n"
 
@@ -55,12 +57,8 @@ def generate_project_readme(project: Project) -> str:
     if project.milestones:
         readme_content += "## 🎯 Milestones\n\n"
 
-        completed_milestones = [
-            m for m in project.milestones if m.is_completed
-        ]
-        pending_milestones = [
-            m for m in project.milestones if not m.is_completed
-        ]
+        completed_milestones = [m for m in project.milestones if m.is_completed]
+        pending_milestones = [m for m in project.milestones if not m.is_completed]
 
         if completed_milestones:
             readme_content += "### ✅ Completed\n\n"
@@ -70,7 +68,9 @@ def generate_project_readme(project: Project) -> str:
                     if milestone.completion_date
                     else "Unknown"
                 )
-                readme_content += f"- **{milestone.title}** - Completed on {completion_date}\n"
+                readme_content += (
+                    f"- **{milestone.title}** - Completed on {completion_date}\n"
+                )
                 if milestone.description:
                     readme_content += f"  - {milestone.description}\n"
             readme_content += "\n"
@@ -115,9 +115,7 @@ def generate_project_readme(project: Project) -> str:
         # Add cost summary if available
         total_cost = sum([item.total_cost or 0 for item in project.bom_items])
         if total_cost > 0:
-            readme_content += (
-                f"\n**Total Estimated Cost**: ${total_cost:.2f}\n\n"
-            )
+            readme_content += f"\n**Total Estimated Cost**: ${total_cost:.2f}\n\n"
         else:
             readme_content += "\n"
 
@@ -156,13 +154,9 @@ def generate_project_readme(project: Project) -> str:
         readme_content += "├── README.md          # This file\n"
         readme_content += "├── docs/              # Project documentation\n"
         readme_content += "├── src/               # Source code\n"
-        readme_content += (
-            "├── hardware/          # Hardware designs, CAD files\n"
-        )
+        readme_content += "├── hardware/          # Hardware designs, CAD files\n"
         readme_content += "├── software/          # Software components\n"
-        readme_content += (
-            "├── assets/            # Images, videos, resources\n"
-        )
+        readme_content += "├── assets/            # Images, videos, resources\n"
         readme_content += "└── LICENSE            # Project license\n"
         readme_content += "```\n\n"
 
@@ -179,12 +173,12 @@ def generate_project_readme(project: Project) -> str:
             file_types[file_type].append(file)
 
         for file_type, files in file_types.items():
-            readme_content += (
-                f"### {file_type.replace('_', ' ').title()} Files\n\n"
-            )
+            readme_content += f"### {file_type.replace('_', ' ').title()} Files\n\n"
             for file in files:
                 visibility = "🌐" if file.is_public else "🔒"
-                readme_content += f"- {visibility} **{file.original_filename}** (v{file.version})\n"
+                readme_content += (
+                    f"- {visibility} **{file.original_filename}** (v{file.version})\n"
+                )
                 if file.description:
                     readme_content += f"  - {file.description}\n"
             readme_content += "\n"
@@ -241,9 +235,9 @@ For technical support or questions about this project, contact the project owner
 
 ---
 
-*This README was automatically generated by the MakrCave Project Management System on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}.*
+*This README was automatically generated by the MakrCave Project Management System on {datetime.now().strftime("%B %d, %Y at %I:%M %p")}.*
 
-**Project Status**: {project.status.replace('_', ' ').title()} | **Visibility**: {project.visibility.replace('_', ' ').title()}
+**Project Status**: {project.status.replace("_", " ").title()} | **Visibility**: {project.visibility.replace("_", " ").title()}
 """
 
     return readme_content

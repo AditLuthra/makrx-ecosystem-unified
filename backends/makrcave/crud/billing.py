@@ -70,9 +70,7 @@ def get_transactions(
             query = query.filter(Transaction.member_id == filters.member_id)
 
         if filters.makerspace_id:
-            query = query.filter(
-                Transaction.makerspace_id == filters.makerspace_id
-            )
+            query = query.filter(Transaction.makerspace_id == filters.makerspace_id)
 
         if filters.status:
             query = query.filter(Transaction.status.in_(filters.status))
@@ -96,9 +94,7 @@ def get_transactions(
             query = query.filter(Transaction.created_at <= filters.end_date)
 
         if filters.service_type:
-            query = query.filter(
-                Transaction.service_type == filters.service_type
-            )
+            query = query.filter(Transaction.service_type == filters.service_type)
 
     # Apply sorting
     if sort:
@@ -113,9 +109,7 @@ def get_transactions(
     return query.offset(skip).limit(limit).all()
 
 
-def create_transaction(
-    db: Session, transaction: TransactionCreate
-) -> Transaction:
+def create_transaction(db: Session, transaction: TransactionCreate) -> Transaction:
     """Create a new transaction"""
     db_transaction = Transaction(
         user_id=transaction.user_id,
@@ -208,9 +202,7 @@ def fail_transaction(
 
 
 # Invoice CRUD operations
-def get_invoice(
-    db: Session, invoice_id: str, user_id: str = None
-) -> Optional[Invoice]:
+def get_invoice(db: Session, invoice_id: str, user_id: str = None) -> Optional[Invoice]:
     """Get an invoice by ID"""
     query = db.query(Invoice)
 
@@ -220,15 +212,9 @@ def get_invoice(
     return query.filter(Invoice.id == invoice_id).first()
 
 
-def get_invoice_by_number(
-    db: Session, invoice_number: str
-) -> Optional[Invoice]:
+def get_invoice_by_number(db: Session, invoice_number: str) -> Optional[Invoice]:
     """Get an invoice by invoice number"""
-    return (
-        db.query(Invoice)
-        .filter(Invoice.invoice_number == invoice_number)
-        .first()
-    )
+    return db.query(Invoice).filter(Invoice.invoice_number == invoice_number).first()
 
 
 def get_invoices(
@@ -251,12 +237,7 @@ def get_invoices(
     if status:
         query = query.filter(Invoice.status == status)
 
-    return (
-        query.order_by(desc(Invoice.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(Invoice.created_at)).offset(skip).limit(limit).all()
 
 
 def create_invoice(db: Session, invoice: InvoiceCreate) -> Invoice:
@@ -366,9 +347,7 @@ def update_credit_wallet(
     db: Session, wallet_id: str, update: CreditWalletUpdate
 ) -> Optional[CreditWallet]:
     """Update credit wallet settings"""
-    wallet = (
-        db.query(CreditWallet).filter(CreditWallet.id == wallet_id).first()
-    )
+    wallet = db.query(CreditWallet).filter(CreditWallet.id == wallet_id).first()
     if not wallet:
         return None
 
@@ -430,9 +409,7 @@ def create_credit_transaction(
     return db_credit_transaction
 
 
-def update_credit_wallet_from_transaction(
-    db: Session, transaction: Transaction
-):
+def update_credit_wallet_from_transaction(db: Session, transaction: Transaction):
     """Update credit wallet based on transaction"""
     if not transaction.user_id:
         return
@@ -548,9 +525,7 @@ def get_payment_methods(db: Session, user_id: str) -> List[PaymentMethod]:
                 PaymentMethod.is_active == True,
             )
         )
-        .order_by(
-            desc(PaymentMethod.is_default), desc(PaymentMethod.last_used_at)
-        )
+        .order_by(desc(PaymentMethod.is_default), desc(PaymentMethod.last_used_at))
         .all()
     )
 
@@ -581,9 +556,7 @@ def set_default_payment_method(
     """Set a payment method as default"""
     # Unset all default methods for user
     db.query(PaymentMethod).filter(
-        and_(
-            PaymentMethod.user_id == user_id, PaymentMethod.is_default == True
-        )
+        and_(PaymentMethod.user_id == user_id, PaymentMethod.is_default == True)
     ).update({"is_default": False})
 
     # Set new default
@@ -602,9 +575,7 @@ def set_default_payment_method(
     return result > 0
 
 
-def delete_payment_method(
-    db: Session, user_id: str, payment_method_id: str
-) -> bool:
+def delete_payment_method(db: Session, user_id: str, payment_method_id: str) -> bool:
     """Delete (deactivate) a payment method"""
     result = (
         db.query(PaymentMethod)
@@ -645,9 +616,7 @@ def get_billing_analytics(
     )
 
     # Total revenue
-    total_revenue = (
-        base_query.with_entities(func.sum(Transaction.amount)).scalar() or 0
-    )
+    total_revenue = base_query.with_entities(func.sum(Transaction.amount)).scalar() or 0
 
     # Current month revenue
     current_month_start = datetime.now().replace(
@@ -725,17 +694,13 @@ def get_billing_analytics(
 
     # Average transaction value
     average_transaction_value = (
-        total_revenue / successful_transactions
-        if successful_transactions > 0
-        else 0
+        total_revenue / successful_transactions if successful_transactions > 0 else 0
     )
 
     # Revenue by type
     revenue_by_type = {}
     type_revenue = (
-        base_query.with_entities(
-            Transaction.type, func.sum(Transaction.amount)
-        )
+        base_query.with_entities(Transaction.type, func.sum(Transaction.amount))
         .group_by(Transaction.type)
         .all()
     )
@@ -746,12 +711,12 @@ def get_billing_analytics(
     # Revenue by month (last 12 months)
     revenue_by_month = []
     for i in range(12):
-        month_start = (
-            datetime.now().replace(day=1) - timedelta(days=30 * i)
-        ).replace(hour=0, minute=0, second=0, microsecond=0)
-        month_end = (month_start + timedelta(days=31)).replace(
-            day=1
-        ) - timedelta(microseconds=1)
+        month_start = (datetime.now().replace(day=1) - timedelta(days=30 * i)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(
+            microseconds=1
+        )
 
         month_revenue = (
             base_query.filter(
@@ -796,9 +761,7 @@ def get_billing_analytics(
     # Payment method distribution
     payment_method_distribution = {}
     gateway_counts = (
-        base_query.with_entities(
-            Transaction.gateway, func.count(Transaction.id)
-        )
+        base_query.with_entities(Transaction.gateway, func.count(Transaction.id))
         .group_by(Transaction.gateway)
         .all()
     )
@@ -825,9 +788,7 @@ def get_billing_analytics(
 
 
 # Helper functions
-def can_use_credits(
-    db: Session, user_id: str, makerspace_id: str, amount: int
-) -> bool:
+def can_use_credits(db: Session, user_id: str, makerspace_id: str, amount: int) -> bool:
     """Check if user has enough credits"""
     wallet = get_or_create_credit_wallet(db, user_id, makerspace_id)
     return wallet.balance >= amount

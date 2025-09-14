@@ -147,9 +147,7 @@ class ReportRequestCreate(BaseModel):
             "members",
         ]
         if v not in allowed_types:
-            raise ValueError(
-                f'Report type must be one of: {", ".join(allowed_types)}'
-            )
+            raise ValueError(f"Report type must be one of: {', '.join(allowed_types)}")
         return v
 
 
@@ -248,9 +246,7 @@ class ProjectAnalyticsCreate(BaseModel):
 
 class RevenueAnalyticsCreate(BaseModel):
     date: date
-    revenue_type: str = Field(
-        ..., description="membership, credits, store, service"
-    )
+    revenue_type: str = Field(..., description="membership, credits, store, service")
     amount: float = Field(..., gt=0)
     currency: str = Field(default="USD", max_length=3)
     payment_method: Optional[str] = None
@@ -270,9 +266,7 @@ class RevenueAnalyticsCreate(BaseModel):
             "training",
         ]
         if v not in allowed_types:
-            raise ValueError(
-                f'Revenue type must be one of: {", ".join(allowed_types)}'
-            )
+            raise ValueError(f"Revenue type must be one of: {', '.join(allowed_types)}")
         return v
 
 

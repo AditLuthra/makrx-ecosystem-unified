@@ -194,15 +194,11 @@ class ConsentManager:
             )
 
             # Store consent record
-            storage_key = (
-                f"{user_id}:{consent_type.value}:{consent_record.consent_id}"
-            )
+            storage_key = f"{user_id}:{consent_type.value}:{consent_record.consent_id}"
             self.consent_storage[storage_key] = consent_record
 
             # Log for audit
-            logger.info(
-                f"CONSENT_RECORDED: {json.dumps(asdict(consent_record))}"
-            )
+            logger.info(f"CONSENT_RECORDED: {json.dumps(asdict(consent_record))}")
 
             return consent_record
 
@@ -242,9 +238,7 @@ class ConsentManager:
                 consent.granted = False
 
                 # Update storage
-                storage_key = (
-                    f"{user_id}:{consent_type.value}:{consent.consent_id}"
-                )
+                storage_key = f"{user_id}:{consent_type.value}:{consent.consent_id}"
                 self.consent_storage[storage_key] = consent
 
                 withdrawn_consents.append(consent.consent_id)
@@ -287,9 +281,7 @@ class ConsentManager:
             if consent.user_id == user_id:
                 if consent_type and consent.consent_type != consent_type:
                     continue
-                if active_only and (
-                    not consent.granted or consent.withdrawn_at
-                ):
+                if active_only and (not consent.granted or consent.withdrawn_at):
                     continue
                 consents.append(consent)
 
@@ -367,14 +359,10 @@ class DataRetentionManager:
             }
 
             for category, policy in self.retention_policies.items():
-                result = await self._enforce_category_retention(
-                    category, policy
-                )
+                result = await self._enforce_category_retention(category, policy)
                 enforcement_results["actions_taken"].extend(result)
 
-            logger.info(
-                f"RETENTION_ENFORCEMENT: {json.dumps(enforcement_results)}"
-            )
+            logger.info(f"RETENTION_ENFORCEMENT: {json.dumps(enforcement_results)}")
             return enforcement_results
 
         except Exception as e:
@@ -386,9 +374,7 @@ class DataRetentionManager:
     ) -> List[Dict[str, Any]]:
         """Enforce retention policy for specific data category"""
         actions = []
-        cutoff_date = datetime.utcnow() - timedelta(
-            days=policy.retention_period_days
-        )
+        cutoff_date = datetime.utcnow() - timedelta(days=policy.retention_period_days)
 
         # Find expired data (implementation depends on your data structure)
         expired_data = await self._find_expired_data(category, cutoff_date)
@@ -418,9 +404,7 @@ class DataRetentionManager:
                 )
 
             except Exception as e:
-                logger.error(
-                    f"Failed to process expired data {data_item}: {e}"
-                )
+                logger.error(f"Failed to process expired data {data_item}: {e}")
                 actions.append(
                     {
                         "action": "failed",
@@ -440,9 +424,7 @@ class DataRetentionManager:
         # This is a placeholder that would query your actual data stores
         return []
 
-    async def _archive_data(
-        self, data_item: Dict[str, Any], category: DataCategory
-    ):
+    async def _archive_data(self, data_item: Dict[str, Any], category: DataCategory):
         """Archive data before deletion"""
         archive_record = {
             "original_id": data_item.get("id"),
@@ -456,17 +438,13 @@ class DataRetentionManager:
             f"ARCHIVED_DATA: {json.dumps({k: v for k, v in archive_record.items() if k != 'data'})}"
         )
 
-    async def _delete_data(
-        self, data_item: Dict[str, Any], category: DataCategory
-    ):
+    async def _delete_data(self, data_item: Dict[str, Any], category: DataCategory):
         """Delete data permanently"""
         logger.info(
             f"DELETED_DATA: category={category.value}, id={data_item.get('id')}"
         )
 
-    async def _anonymize_data(
-        self, data_item: Dict[str, Any], category: DataCategory
-    ):
+    async def _anonymize_data(self, data_item: Dict[str, Any], category: DataCategory):
         """Anonymize data instead of deletion"""
         logger.info(
             f"ANONYMIZED_DATA: category={category.value}, id={data_item.get('id')}"
@@ -532,16 +510,12 @@ class UserRightsManager:
                 "export_id": export_id,
                 "user_id": user_id,
                 "export_timestamp": export_timestamp,
-                "requested_categories": [
-                    cat.value for cat in requested_categories
-                ],
+                "requested_categories": [cat.value for cat in requested_categories],
                 "data": {},
             }
 
             for category in requested_categories:
-                category_data = await self._collect_category_data(
-                    user_id, category
-                )
+                category_data = await self._collect_category_data(user_id, category)
                 exported_data["data"][category.value] = category_data
 
             # Include consent records
@@ -583,9 +557,7 @@ class UserRightsManager:
             # Default to all categories except legally required
             if not categories:
                 categories = [
-                    cat
-                    for cat in DataCategory
-                    if cat not in [DataCategory.FINANCIAL]
+                    cat for cat in DataCategory if cat not in [DataCategory.FINANCIAL]
                 ]  # Keep financial for compliance
 
             deletion_results = []
@@ -593,9 +565,7 @@ class UserRightsManager:
             for category in categories:
                 try:
                     # Check if deletion is allowed
-                    policy = DataProtectionConfig.RETENTION_POLICIES.get(
-                        category
-                    )
+                    policy = DataProtectionConfig.RETENTION_POLICIES.get(category)
                     if policy and policy.legal_basis == "legal_obligation":
                         deletion_results.append(
                             {
@@ -628,9 +598,7 @@ class UserRightsManager:
                         user_id, consent_type, "account_deletion"
                     )
                 except Exception as e:
-                    logger.warning(
-                        f"Failed to withdraw consent {consent_type}: {e}"
-                    )
+                    logger.warning(f"Failed to withdraw consent {consent_type}: {e}")
 
             # Log deletion request
             deletion_record = {
@@ -642,9 +610,7 @@ class UserRightsManager:
                 "timestamp": deletion_timestamp,
             }
 
-            logger.info(
-                f"DATA_DELETION_REQUEST: {json.dumps(deletion_record)}"
-            )
+            logger.info(f"DATA_DELETION_REQUEST: {json.dumps(deletion_record)}")
 
             return {
                 "deletion_id": deletion_id,
@@ -693,9 +659,7 @@ class UserRightsManager:
         # Placeholder - implement actual data source queries
         return []
 
-    async def _delete_category_data(
-        self, user_id: str, category: DataCategory
-    ):
+    async def _delete_category_data(self, user_id: str, category: DataCategory):
         """Delete all user data for specific category"""
         logger.info(f"Deleting {category.value} data for user {user_id}")
         # Implementation: delete from relevant databases/services
@@ -746,9 +710,7 @@ class DataBreachManager:
             breach_record["impact_assessment"] = impact
 
             # Determine affected users
-            affected_users = await self._identify_affected_users(
-                breach_details
-            )
+            affected_users = await self._identify_affected_users(breach_details)
             breach_record["affected_users"] = affected_users
 
             # Immediate containment
@@ -811,9 +773,7 @@ class DataBreachManager:
 
         return containment_actions
 
-    async def _schedule_breach_notifications(
-        self, breach_record: Dict[str, Any]
-    ):
+    async def _schedule_breach_notifications(self, breach_record: Dict[str, Any]):
         """Schedule breach notifications per DPDP Act timeframes"""
         # In production, schedule actual notifications
         logger.info(
@@ -867,9 +827,7 @@ class PrivacyImpactAssessment:
         pia_record["risk_assessment"] = {
             "risk_score": risk_score,
             "risk_level": (
-                "high"
-                if risk_score >= 4
-                else "medium" if risk_score >= 2 else "low"
+                "high" if risk_score >= 4 else "medium" if risk_score >= 2 else "low"
             ),
         }
 

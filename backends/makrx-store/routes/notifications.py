@@ -90,16 +90,11 @@ async def list_notifications(
     if read is not None:
         # Filter by meta->>'read' JSON flag
         base = base.where(
-            (
-                NotificationModel.meta["read"].astext
-                == ("true" if read else "false")
-            )
+            (NotificationModel.meta["read"].astext == ("true" if read else "false"))
         )
 
     # Count
-    count_stmt = base.with_only_columns(
-        func.count(NotificationModel.id)
-    ).order_by(None)
+    count_stmt = base.with_only_columns(func.count(NotificationModel.id)).order_by(None)
     total = (await db.execute(count_stmt)).scalar_one()
 
     # Page
@@ -173,19 +168,14 @@ async def admin_list_notifications(
         base = base.where(NotificationModel.status == status)
     if read is not None:
         base = base.where(
-            (
-                NotificationModel.meta["read"].astext
-                == ("true" if read else "false")
-            )
+            (NotificationModel.meta["read"].astext == ("true" if read else "false"))
         )
     if date_from:
         base = base.where(NotificationModel.created_at >= date_from)
     if date_to:
         base = base.where(NotificationModel.created_at <= date_to)
 
-    count_stmt = base.with_only_columns(
-        func.count(NotificationModel.id)
-    ).order_by(None)
+    count_stmt = base.with_only_columns(func.count(NotificationModel.id)).order_by(None)
     total = (await db.execute(count_stmt)).scalar_one()
 
     offset = (page - 1) * per_page
@@ -258,8 +248,8 @@ async def seed_notifications(
             user_id=target_user,
             type=types[i % len(types)],
             template="seed-notification",
-            subject=f"Seed Notification {i+1}",
-            message=f"This is a seeded notification #{i+1}",
+            subject=f"Seed Notification {i + 1}",
+            message=f"This is a seeded notification #{i + 1}",
             status=statuses[i % len(statuses)],
             meta={"read": i % 3 == 0},
             provider="internal",

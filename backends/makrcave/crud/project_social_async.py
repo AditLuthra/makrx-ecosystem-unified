@@ -30,9 +30,7 @@ async def add_project_like(
     return like
 
 
-async def remove_project_like(
-    db: AsyncSession, project_id: str, user_id: str
-) -> bool:
+async def remove_project_like(db: AsyncSession, project_id: str, user_id: str) -> bool:
     like = await get_project_like(db, project_id, user_id)
     if like:
         await db.delete(like)

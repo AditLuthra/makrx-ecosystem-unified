@@ -41,9 +41,7 @@ security = HTTPBearer()
 
 
 # Member management routes
-@router.post(
-    "/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED
-)
+@router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
 async def create_member(
     member: MemberCreate,
     current_user=Depends(get_current_user),
@@ -144,9 +142,7 @@ async def get_members(
                 role=member.role,
                 status=member.status,
                 membership_plan_name=(
-                    member.membership_plan.name
-                    if member.membership_plan
-                    else None
+                    member.membership_plan.name if member.membership_plan else None
                 ),
                 last_login=member.last_login,
                 join_date=member.join_date,
@@ -286,9 +282,7 @@ async def delete_member(
         )
 
 
-@router.get(
-    "/{member_id}/activities", response_model=List[MemberActivityLogResponse]
-)
+@router.get("/{member_id}/activities", response_model=List[MemberActivityLogResponse])
 async def get_member_activities(
     member_id: str,
     limit: int = Query(50, ge=1, le=200),
@@ -449,11 +443,7 @@ async def create_member_invite(
             send_member_invite_email,
             db_invite.email,
             db_invite.invite_token,
-            (
-                db_invite.membership_plan.name
-                if db_invite.membership_plan
-                else "Basic"
-            ),
+            (db_invite.membership_plan.name if db_invite.membership_plan else "Basic"),
             invite.invite_message,
         )
 
@@ -554,9 +544,7 @@ async def accept_member_invite(
     invite_token: str, keycloak_user_id: str, db: Session = Depends(get_db)
 ):
     """Accept member invite (public endpoint)"""
-    member = crud_member.accept_member_invite(
-        db, invite_token, keycloak_user_id
-    )
+    member = crud_member.accept_member_invite(db, invite_token, keycloak_user_id)
     if not member:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -608,9 +596,7 @@ async def bulk_member_operations(
                     reason=operation.data.get("reason", "Bulk suspension"),
                     suspended_by=current_user.user_id,
                 )
-                result = crud_member.suspend_member(
-                    db, member_id, suspend_data
-                )
+                result = crud_member.suspend_member(db, member_id, suspend_data)
             elif operation.operation == "reactivate":
                 result = crud_member.reactivate_member(
                     db, member_id, current_user.user_id
@@ -627,9 +613,7 @@ async def bulk_member_operations(
 
             results.append({"member_id": member_id, "success": True})
         except Exception as e:
-            results.append(
-                {"member_id": member_id, "success": False, "error": str(e)}
-            )
+            results.append({"member_id": member_id, "success": False, "error": str(e)})
 
     return {"results": results}
 
@@ -660,9 +644,7 @@ def _get_user_makerspace_id(user: dict) -> str:
 async def send_welcome_email(email: str, first_name: str, plan_name: str):
     """Send welcome email to new member"""
     # Implementation would send actual email
-    print(
-        f"Sending welcome email to {email} ({first_name}) for plan {plan_name}"
-    )
+    print(f"Sending welcome email to {email} ({first_name}) for plan {plan_name}")
 
 
 async def send_member_invite_email(

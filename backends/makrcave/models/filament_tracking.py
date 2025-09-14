@@ -79,16 +79,12 @@ class FilamentRoll(Base):
     material = Column(SQLEnum(FilamentMaterial), nullable=False)
     color_name = Column(String(100), nullable=False)
     color_hex = Column(String(7), nullable=True)  # Hex color code
-    diameter = Column(
-        Float, nullable=False, default=1.75
-    )  # 1.75mm or 3.0mm typically
+    diameter = Column(Float, nullable=False, default=1.75)  # 1.75mm or 3.0mm typically
 
     # Weight and Usage Tracking
     original_weight_g = Column(Float, nullable=False)
     current_weight_g = Column(Float, nullable=False)
-    spool_weight_g = Column(
-        Float, nullable=True, default=200.0
-    )  # Empty spool weight
+    spool_weight_g = Column(Float, nullable=True, default=200.0)  # Empty spool weight
     used_weight_g = Column(Float, nullable=False, default=0.0)
     remaining_weight_g = Column(Float, nullable=False)  # Calculated field
 
@@ -100,29 +96,19 @@ class FilamentRoll(Base):
     # Cost and Store Integration
     cost_per_kg = Column(Float, nullable=True)
     total_cost = Column(Float, nullable=True)
-    makrx_product_code = Column(
-        String(100), nullable=True
-    )  # Link to MakrX Store
+    makrx_product_code = Column(String(100), nullable=True)  # Link to MakrX Store
     makrx_product_url = Column(String(500), nullable=True)
     purchase_date = Column(DateTime(timezone=True), nullable=True)
     supplier = Column(String(255), nullable=True)
 
     # Physical Properties
-    density_g_cm3 = Column(
-        Float, nullable=True, default=1.24
-    )  # Material density
-    print_temperature_range = Column(
-        JSON, nullable=True
-    )  # {"min": 190, "max": 220}
-    bed_temperature_range = Column(
-        JSON, nullable=True
-    )  # {"min": 50, "max": 70}
+    density_g_cm3 = Column(Float, nullable=True, default=1.24)  # Material density
+    print_temperature_range = Column(JSON, nullable=True)  # {"min": 190, "max": 220}
+    bed_temperature_range = Column(JSON, nullable=True)  # {"min": 50, "max": 70}
     print_speed_range = Column(JSON, nullable=True)  # {"min": 30, "max": 80}
 
     # Status and Location
-    status = Column(
-        SQLEnum(FilamentRollStatus), default=FilamentRollStatus.NEW
-    )
+    status = Column(SQLEnum(FilamentRollStatus), default=FilamentRollStatus.NEW)
     location = Column(String(255), nullable=False)
     storage_conditions = Column(
         JSON, nullable=True
@@ -138,9 +124,7 @@ class FilamentRoll(Base):
     deduction_method = Column(
         SQLEnum(DeductionMethod), default=DeductionMethod.SLICER_ESTIMATE
     )
-    safety_buffer_percentage = Column(
-        Float, default=5.0
-    )  # Reserve 5% for safety
+    safety_buffer_percentage = Column(Float, default=5.0)  # Reserve 5% for safety
 
     # Alerts and Thresholds
     low_weight_threshold_g = Column(Float, nullable=False, default=100.0)
@@ -149,15 +133,11 @@ class FilamentRoll(Base):
     reorder_quantity = Column(Integer, default=1)
 
     # Assignment and Access
-    assigned_printer_id = Column(
-        String, ForeignKey("equipment.id"), nullable=True
-    )
+    assigned_printer_id = Column(String, ForeignKey("equipment.id"), nullable=True)
     assigned_project_id = Column(
         UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True
     )
-    assigned_user_id = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    assigned_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     reserved_until = Column(DateTime(timezone=True), nullable=True)
 
     # Metadata
@@ -172,12 +152,8 @@ class FilamentRoll(Base):
     updated_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    created_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
-    updated_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
-    )
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
     makerspace = relationship("Makerspace", back_populates="filament_rolls")
@@ -186,12 +162,8 @@ class FilamentRoll(Base):
         back_populates="filament_roll",
         cascade="all, delete-orphan",
     )
-    assigned_printer = relationship(
-        "Equipment", foreign_keys=[assigned_printer_id]
-    )
-    assigned_project = relationship(
-        "Project", foreign_keys=[assigned_project_id]
-    )
+    assigned_printer = relationship("Equipment", foreign_keys=[assigned_printer_id])
+    assigned_project = relationship("Project", foreign_keys=[assigned_project_id])
     assigned_user = relationship("User", foreign_keys=[assigned_user_id])
     created_by_user = relationship("User", foreign_keys=[created_by])
     updated_by_user = relationship("User", foreign_keys=[updated_by])
@@ -234,9 +206,7 @@ class FilamentRoll(Base):
             "storage_conditions": self.storage_conditions,
             "moisture_level": self.moisture_level,
             "last_dried_date": (
-                self.last_dried_date.isoformat()
-                if self.last_dried_date
-                else None
+                self.last_dried_date.isoformat() if self.last_dried_date else None
             ),
             "quality_notes": self.quality_notes,
             "auto_deduction_enabled": self.auto_deduction_enabled,
@@ -250,31 +220,21 @@ class FilamentRoll(Base):
             "reorder_quantity": self.reorder_quantity,
             "assigned_printer_id": self.assigned_printer_id,
             "assigned_project_id": (
-                str(self.assigned_project_id)
-                if self.assigned_project_id
-                else None
+                str(self.assigned_project_id) if self.assigned_project_id else None
             ),
             "assigned_user_id": (
                 str(self.assigned_user_id) if self.assigned_user_id else None
             ),
             "reserved_until": (
-                self.reserved_until.isoformat()
-                if self.reserved_until
-                else None
+                self.reserved_until.isoformat() if self.reserved_until else None
             ),
             "qr_code": self.qr_code,
             "barcode": self.barcode,
             "batch_number": self.batch_number,
             "lot_number": self.lot_number,
-            "expiry_date": (
-                self.expiry_date.isoformat() if self.expiry_date else None
-            ),
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "expiry_date": (self.expiry_date.isoformat() if self.expiry_date else None),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
             "created_by": str(self.created_by) if self.created_by else None,
             "updated_by": str(self.updated_by) if self.updated_by else None,
         }
@@ -339,15 +299,11 @@ class FilamentUsageLog(Base):
 
     # Deduction Information
     deduction_method = Column(SQLEnum(DeductionMethod), nullable=False)
-    confidence_level = Column(
-        Float, nullable=True
-    )  # 0-100% confidence in measurement
+    confidence_level = Column(Float, nullable=True)  # 0-100% confidence in measurement
 
     # Job/Print Information
     job_id = Column(UUID(as_uuid=True), ForeignKey("jobs.id"), nullable=True)
-    project_id = Column(
-        UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True
-    )
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True)
     print_name = Column(String(255), nullable=True)
     gcode_filename = Column(String(255), nullable=True)
     estimated_print_time_minutes = Column(Integer, nullable=True)
@@ -355,15 +311,11 @@ class FilamentUsageLog(Base):
 
     # Machine and User
     printer_id = Column(String, ForeignKey("equipment.id"), nullable=True)
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     user_name = Column(String(255), nullable=False)
 
     # Print Settings Used
-    print_settings = Column(
-        JSON, nullable=True
-    )  # Store print settings for analysis
+    print_settings = Column(JSON, nullable=True)  # Store print settings for analysis
 
     # Quality and Notes
     print_quality = Column(
@@ -374,9 +326,7 @@ class FilamentUsageLog(Base):
     notes = Column(Text, nullable=True)
 
     # File Analysis Data
-    gcode_analysis = Column(
-        JSON, nullable=True
-    )  # Detailed G-code analysis results
+    gcode_analysis = Column(JSON, nullable=True)  # Detailed G-code analysis results
     slicer_estimates = Column(JSON, nullable=True)  # Original slicer estimates
 
     # Manual Override
@@ -397,9 +347,7 @@ class FilamentUsageLog(Base):
         return {
             "id": str(self.id),
             "filament_roll_id": str(self.filament_roll_id),
-            "timestamp": (
-                self.timestamp.isoformat() if self.timestamp else None
-            ),
+            "timestamp": (self.timestamp.isoformat() if self.timestamp else None),
             "weight_used_g": self.weight_used_g,
             "length_used_m": self.length_used_m,
             "weight_before_g": self.weight_before_g,
@@ -442,9 +390,7 @@ class FilamentReorderRequest(Base):
 
     # Request Details
     requested_at = Column(DateTime(timezone=True), server_default=func.now())
-    requested_by = Column(
-        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
-    )
+    requested_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     quantity = Column(Integer, nullable=False, default=1)
     urgent = Column(Boolean, default=False)
 
@@ -493,9 +439,7 @@ class FilamentReorderRequest(Base):
             "requested_at": (
                 self.requested_at.isoformat() if self.requested_at else None
             ),
-            "requested_by": (
-                str(self.requested_by) if self.requested_by else None
-            ),
+            "requested_by": (str(self.requested_by) if self.requested_by else None),
             "quantity": self.quantity,
             "urgent": self.urgent,
             "is_auto_generated": self.is_auto_generated,
@@ -511,9 +455,7 @@ class FilamentReorderRequest(Base):
             "status": self.status,
             "order_reference": self.order_reference,
             "tracking_number": self.tracking_number,
-            "ordered_at": (
-                self.ordered_at.isoformat() if self.ordered_at else None
-            ),
+            "ordered_at": (self.ordered_at.isoformat() if self.ordered_at else None),
             "delivered_at": (
                 self.delivered_at.isoformat() if self.delivered_at else None
             ),
@@ -568,10 +510,6 @@ class FilamentCompatibility(Base):
             "recommended_settings": self.recommended_settings,
             "compatibility_notes": self.compatibility_notes,
             "safety_warnings": self.safety_warnings,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
-            "updated_at": (
-                self.updated_at.isoformat() if self.updated_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
         }

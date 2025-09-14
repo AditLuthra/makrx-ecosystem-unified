@@ -87,7 +87,9 @@ def send_member_invite_email(
 ) -> bool:
     """Send member invitation email"""
 
-    invite_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/invite/{invite_token}"
+    invite_url = (
+        f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/invite/{invite_token}"
+    )
 
     subject = f"You're invited to join {makerspace_name}!"
 
@@ -120,7 +122,7 @@ def send_member_invite_email(
                 
                 <p>You've been invited to join <strong>{makerspace_name}</strong>, our innovative makerspace community where creativity meets technology.</p>
                 
-                {f'<p style="font-style: italic; background-color: #fffbeb; padding: 15px; border-radius: 6px; border-left: 4px solid #f59e0b;">"{custom_message}"</p>' if custom_message else ''}
+                {f'<p style="font-style: italic; background-color: #fffbeb; padding: 15px; border-radius: 6px; border-left: 4px solid #f59e0b;">"{custom_message}"</p>' if custom_message else ""}
                 
                 <div class="plan-info">
                     <h3 style="margin-top: 0; color: #2563eb;">Your Membership Plan</h3>
@@ -161,7 +163,7 @@ Hello!
 
 You've been invited to join {makerspace_name}, our innovative makerspace community where creativity meets technology.
 
-{f'Personal message: "{custom_message}"' if custom_message else ''}
+{f'Personal message: "{custom_message}"' if custom_message else ""}
 
 Your Membership Plan: {plan_name}
 This plan gives you access to our state-of-the-art equipment, collaborative workspace, and vibrant maker community.
@@ -319,7 +321,9 @@ def send_membership_expiry_reminder(
         urgency_text = "has expired"
         action_text = "Renew now to restore your access"
     elif days_until_expiry <= 7:
-        subject = f"Your {makerspace_name} membership expires in {days_until_expiry} days"
+        subject = (
+            f"Your {makerspace_name} membership expires in {days_until_expiry} days"
+        )
         urgency_text = f"expires in {days_until_expiry} days"
         action_text = "Renew now to avoid interruption"
     else:
@@ -372,7 +376,7 @@ def send_membership_expiry_reminder(
                 </ul>
                 
                 <div style="text-align: center;">
-                    <a href="{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/billing/renew" class="cta-button">Renew Membership</a>
+                    <a href="{os.getenv("FRONTEND_URL", "http://localhost:3000")}/billing/renew" class="cta-button">Renew Membership</a>
                 </div>
                 
                 <p>If you have any questions about your membership or need assistance with renewal, please don't hesitate to contact us. We're here to help!</p>
@@ -400,9 +404,7 @@ def send_membership_suspended_email(
 ) -> bool:
     """Send membership suspension notification email"""
 
-    subject = (
-        f"Important: Your {makerspace_name} membership has been suspended"
-    )
+    subject = f"Important: Your {makerspace_name} membership has been suspended"
 
     html_body = f"""
     <!DOCTYPE html>
@@ -448,7 +450,7 @@ def send_membership_suspended_email(
                 
                 <p>To discuss your membership status or appeal this decision, please contact us at:</p>
                 <ul>
-                    <li>Email: support@{makerspace_name.lower().replace(' ', '')}.com</li>
+                    <li>Email: support@{makerspace_name.lower().replace(" ", "")}.com</li>
                     <li>Phone: [Contact Number]</li>
                     <li>In person during business hours</li>
                 </ul>

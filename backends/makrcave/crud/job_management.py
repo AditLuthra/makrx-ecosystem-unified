@@ -72,9 +72,7 @@ def get_service_jobs(
             query = query.filter(ServiceJob.job_type.in_(filters.job_type))
 
         if filters.material_type:
-            query = query.filter(
-                ServiceJob.material_type.in_(filters.material_type)
-            )
+            query = query.filter(ServiceJob.material_type.in_(filters.material_type))
 
         if filters.assigned_provider_id:
             query = query.filter(
@@ -83,8 +81,7 @@ def get_service_jobs(
 
         if filters.assigned_makerspace_id:
             query = query.filter(
-                ServiceJob.assigned_makerspace_id
-                == filters.assigned_makerspace_id
+                ServiceJob.assigned_makerspace_id == filters.assigned_makerspace_id
             )
 
         if filters.customer_email:
@@ -93,22 +90,16 @@ def get_service_jobs(
             )
 
         if filters.created_after:
-            query = query.filter(
-                ServiceJob.created_at >= filters.created_after
-            )
+            query = query.filter(ServiceJob.created_at >= filters.created_after)
 
         if filters.created_before:
-            query = query.filter(
-                ServiceJob.created_at <= filters.created_before
-            )
+            query = query.filter(ServiceJob.created_at <= filters.created_before)
 
         if filters.deadline_after:
             query = query.filter(ServiceJob.deadline >= filters.deadline_after)
 
         if filters.deadline_before:
-            query = query.filter(
-                ServiceJob.deadline <= filters.deadline_before
-            )
+            query = query.filter(ServiceJob.deadline <= filters.deadline_before)
 
         if filters.min_value:
             query = query.filter(
@@ -136,12 +127,7 @@ def get_service_jobs(
                 )
             )
 
-    return (
-        query.order_by(desc(ServiceJob.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(ServiceJob.created_at)).offset(skip).limit(limit).all()
 
 
 def create_service_job(
@@ -396,9 +382,7 @@ def create_material_usage(
 
 
 # Service Provider CRUD
-def get_service_provider(
-    db: Session, provider_id: str
-) -> Optional[ServiceProvider]:
+def get_service_provider(db: Session, provider_id: str) -> Optional[ServiceProvider]:
     """Get a service provider by ID"""
     return (
         db.query(ServiceProvider)
@@ -411,11 +395,7 @@ def get_service_provider_by_user(
     db: Session, user_id: str
 ) -> Optional[ServiceProvider]:
     """Get a service provider by user ID"""
-    return (
-        db.query(ServiceProvider)
-        .filter(ServiceProvider.user_id == user_id)
-        .first()
-    )
+    return db.query(ServiceProvider).filter(ServiceProvider.user_id == user_id).first()
 
 
 def create_service_provider(
@@ -478,9 +458,7 @@ def update_service_provider(
 
 
 # Provider Equipment CRUD
-def get_provider_equipment(
-    db: Session, provider_id: str
-) -> List[ProviderEquipment]:
+def get_provider_equipment(db: Session, provider_id: str) -> List[ProviderEquipment]:
     """Get all equipment for a provider"""
     return (
         db.query(ProviderEquipment)
@@ -561,14 +539,10 @@ def get_job_dashboard_stats(
         JobStatus.PRINTING,
         JobStatus.POST_PROCESSING,
     ]
-    active_jobs = base_query.filter(
-        ServiceJob.status.in_(active_statuses)
-    ).count()
+    active_jobs = base_query.filter(ServiceJob.status.in_(active_statuses)).count()
 
     # Pending jobs
-    pending_jobs = base_query.filter(
-        ServiceJob.status == JobStatus.PENDING
-    ).count()
+    pending_jobs = base_query.filter(ServiceJob.status == JobStatus.PENDING).count()
 
     # Completed today
     today = datetime.utcnow().date()
@@ -674,14 +648,10 @@ def get_provider_stats(db: Session, provider_id: str) -> Dict[str, Any]:
         JobStatus.PRINTING,
         JobStatus.POST_PROCESSING,
     ]
-    active_jobs = provider_query.filter(
-        ServiceJob.status.in_(active_statuses)
-    ).count()
+    active_jobs = provider_query.filter(ServiceJob.status.in_(active_statuses)).count()
 
     # Pending jobs
-    pending_jobs = provider_query.filter(
-        ServiceJob.status == JobStatus.PENDING
-    ).count()
+    pending_jobs = provider_query.filter(ServiceJob.status == JobStatus.PENDING).count()
 
     # Completed this month
     month_start = datetime.utcnow().replace(
@@ -718,17 +688,15 @@ def get_provider_stats(db: Session, provider_id: str) -> Dict[str, Any]:
         average_job_value = total_value / len(completed_jobs)
 
     # Equipment utilization (simplified)
-    utilization_rate = min(
-        75.0 + (active_jobs * 5), 100.0
-    )  # Simplified calculation
+    utilization_rate = min(75.0 + (active_jobs * 5), 100.0)  # Simplified calculation
 
     # Customer satisfaction (from completed jobs with ratings)
     jobs_with_ratings = [job for job in completed_jobs if job.quality_rating]
     customer_satisfaction = 0.8  # Default
     if jobs_with_ratings:
-        avg_rating = sum(
-            [job.quality_rating for job in jobs_with_ratings]
-        ) / len(jobs_with_ratings)
+        avg_rating = sum([job.quality_rating for job in jobs_with_ratings]) / len(
+            jobs_with_ratings
+        )
         customer_satisfaction = avg_rating / 5.0  # Convert to 0-1 scale
 
     # On-time delivery rate

@@ -9,9 +9,7 @@ from backends.makrx_events.security import CurrentUser, get_current_user
 
 
 def _fake_user():
-    return CurrentUser(
-        user_id="test-user", email="test@example.com", roles=["tester"]
-    )
+    return CurrentUser(user_id="test-user", email="test@example.com", roles=["tester"])
 
 
 def setup_function(_):
@@ -27,9 +25,7 @@ client = TestClient(app)
 
 def test_create_update_delete_sub_event():
     # Create microsite
-    r = client.post(
-        "/api/microsites", json={"title": "Site A", "slug": "site-a"}
-    )
+    r = client.post("/api/microsites", json={"title": "Site A", "slug": "site-a"})
     assert r.status_code == 201
 
     # Create sub-event

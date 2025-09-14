@@ -32,19 +32,13 @@ router = APIRouter(prefix="/api/v1/projects", tags=["project-showcase"])
 @router.get("/showcase", response_model=List[ShowcaseProjectResponse])
 async def get_showcase_projects(
     category: Optional[str] = Query(None, description="Filter by category"),
-    difficulty: Optional[str] = Query(
-        None, description="Filter by difficulty level"
-    ),
-    tags: Optional[str] = Query(
-        None, description="Filter by tags (comma-separated)"
-    ),
+    difficulty: Optional[str] = Query(None, description="Filter by difficulty level"),
+    tags: Optional[str] = Query(None, description="Filter by tags (comma-separated)"),
     sort_by: str = Query(
         "trending",
         description="Sort by: trending, newest, popular, most_liked, most_forked",
     ),
-    limit: int = Query(
-        50, ge=1, le=100, description="Number of projects to return"
-    ),
+    limit: int = Query(50, ge=1, le=100, description="Number of projects to return"),
     offset: int = Query(0, ge=0, description="Number of projects to skip"),
     current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -77,9 +71,7 @@ async def get_showcase_projects(
         stmt = stmt.order_by(Project.updated_at.desc())
     else:  # trending
         stmt = stmt.order_by(
-            (
-                Project.like_count + Project.view_count + Project.fork_count
-            ).desc(),
+            (Project.like_count + Project.view_count + Project.fork_count).desc(),
             Project.updated_at.desc(),
         )
     # Apply pagination
@@ -93,9 +85,7 @@ async def get_showcase_projects(
                 select(Member).where(Member.id == project.owner_id)
             )
             owner = (
-                owner_result.scalars().first()
-                if hasattr(project, "owner_id")
-                else None
+                owner_result.scalars().first() if hasattr(project, "owner_id") else None
             )
             # Get collaborator count
             collab_result = await db.execute(
@@ -111,24 +101,18 @@ async def get_showcase_projects(
             # Generate mock BOM data
             bom_items = [
                 {
-                    "name": f"Component {i+1}",
+                    "name": f"Component {i + 1}",
                     "quantity": i + 1,
                     "estimated_cost": (i + 1) * 5,
-                    "supplier": (
-                        "MakrX Store" if i % 2 == 0 else "Local Supplier"
-                    ),
+                    "supplier": ("MakrX Store" if i % 2 == 0 else "Local Supplier"),
                 }
-                for i in range(
-                    min(5, getattr(project, "bom_items_count", 0) or 0)
-                )
+                for i in range(min(5, getattr(project, "bom_items_count", 0) or 0))
             ]
             skills_required = (
                 getattr(project, "required_skills", None)
                 or ["3D Printing", "Electronics", "Programming"][:3]
             )
-            equipment_used = ["3D Printer", "Soldering Station", "Multimeter"][
-                :3
-            ]
+            equipment_used = ["3D Printer", "Soldering Station", "Multimeter"][:3]
             awards = []
             if getattr(project, "is_featured", False):
                 awards.append(
@@ -147,15 +131,11 @@ async def get_showcase_projects(
                 await get_project_like(db, project.id, current_user["user_id"])
             )
             is_bookmarked = bool(
-                await get_project_bookmark(
-                    db, project.id, current_user["user_id"]
-                )
+                await get_project_bookmark(db, project.id, current_user["user_id"])
             )
             is_following_owner = bool(
                 owner
-                and await get_project_follow(
-                    db, str(owner.id), current_user["user_id"]
-                )
+                and await get_project_follow(db, str(owner.id), current_user["user_id"])
             )
             showcase_project = ShowcaseProjectResponse(
                 project_id=project.project_id,
@@ -168,17 +148,13 @@ async def get_showcase_projects(
                     else "Unknown Maker"
                 ),
                 owner_avatar=(
-                    getattr(owner, "profile_image_url", None)
-                    if owner
-                    else None
+                    getattr(owner, "profile_image_url", None) if owner else None
                 ),
                 makerspace_name=None,
                 makerspace_id=project.makerspace_id,
                 visibility="public",
                 status=project.status,
-                difficulty_level=getattr(
-                    project, "difficulty_level", "intermediate"
-                ),
+                difficulty_level=getattr(project, "difficulty_level", "intermediate"),
                 estimated_time=getattr(project, "estimated_time", "2-4 hours"),
                 category=getattr(project, "category", "Electronics"),
                 subcategories=getattr(project, "subcategories", []),
@@ -194,12 +170,9 @@ async def get_showcase_projects(
                 thumbnail_url=getattr(project, "thumbnail_url", None),
                 gallery_images=getattr(project, "gallery_images", []),
                 demo_video_url=getattr(project, "demo_video_url", None),
-                bill_of_materials=[
-                    ShowcaseBOMItem(**item) for item in bom_items
-                ],
+                bill_of_materials=[ShowcaseBOMItem(**item) for item in bom_items],
                 total_estimated_cost=sum(
-                    item["estimated_cost"] * item["quantity"]
-                    for item in bom_items
+                    item["estimated_cost"] * item["quantity"] for item in bom_items
                 ),
                 is_featured=getattr(project, "is_featured", False),
                 is_staff_pick=getattr(project, "is_staff_pick", False),
@@ -328,31 +301,21 @@ async def get_featured_projects(
         owner_result = await db.execute(
             select(Member).where(Member.id == project.owner_id)
         )
-        owner = (
-            owner_result.scalars().first()
-            if hasattr(project, "owner_id")
-            else None
-        )
+        owner = owner_result.scalars().first() if hasattr(project, "owner_id") else None
         showcase_project = ShowcaseProjectResponse(
             project_id=project.project_id,
             name=project.name,
             description=project.description,
             owner_id=project.owner_id,
             owner_name=(
-                f"{owner.first_name} {owner.last_name}"
-                if owner
-                else "Unknown Maker"
+                f"{owner.first_name} {owner.last_name}" if owner else "Unknown Maker"
             ),
-            owner_avatar=(
-                getattr(owner, "profile_image_url", None) if owner else None
-            ),
+            owner_avatar=(getattr(owner, "profile_image_url", None) if owner else None),
             makerspace_name=None,
             makerspace_id=project.makerspace_id,
             visibility="public",
             status=project.status,
-            difficulty_level=getattr(
-                project, "difficulty_level", "intermediate"
-            ),
+            difficulty_level=getattr(project, "difficulty_level", "intermediate"),
             estimated_time=getattr(project, "estimated_time", "2-4 hours"),
             category=getattr(project, "category", "Electronics"),
             subcategories=getattr(project, "subcategories", []),
@@ -420,11 +383,7 @@ async def get_trending_projects(
             Project.updated_at >= recent_date,
             Project.is_approved,
         )
-        .order_by(
-            (
-                Project.like_count + Project.view_count + Project.fork_count
-            ).desc()
-        )
+        .order_by((Project.like_count + Project.view_count + Project.fork_count).desc())
         .limit(limit)
     )
     result = await db.execute(stmt)
@@ -436,31 +395,21 @@ async def get_trending_projects(
         owner_result = await db.execute(
             select(Member).where(Member.id == project.owner_id)
         )
-        owner = (
-            owner_result.scalars().first()
-            if hasattr(project, "owner_id")
-            else None
-        )
+        owner = owner_result.scalars().first() if hasattr(project, "owner_id") else None
         showcase_project = ShowcaseProjectResponse(
             project_id=project.project_id,
             name=project.name,
             description=project.description,
             owner_id=project.owner_id,
             owner_name=(
-                f"{owner.first_name} {owner.last_name}"
-                if owner
-                else "Unknown Maker"
+                f"{owner.first_name} {owner.last_name}" if owner else "Unknown Maker"
             ),
-            owner_avatar=(
-                getattr(owner, "profile_image_url", None) if owner else None
-            ),
+            owner_avatar=(getattr(owner, "profile_image_url", None) if owner else None),
             makerspace_name=None,
             makerspace_id=project.makerspace_id,
             visibility="public",
             status=project.status,
-            difficulty_level=getattr(
-                project, "difficulty_level", "intermediate"
-            ),
+            difficulty_level=getattr(project, "difficulty_level", "intermediate"),
             estimated_time=getattr(project, "estimated_time", "2-4 hours"),
             category=getattr(project, "category", "Electronics"),
             subcategories=getattr(project, "subcategories", []),
@@ -512,9 +461,7 @@ async def get_project_stats(db: AsyncSession = Depends(get_db)):
     total_projects_stmt = select(func.count(Project.id)).where(
         Project.visibility == ProjectVisibility.PUBLIC, Project.is_approved
     )
-    total_projects = (
-        await db.execute(total_projects_stmt)
-    ).scalar_one_or_none() or 0
+    total_projects = (await db.execute(total_projects_stmt)).scalar_one_or_none() or 0
 
     featured_projects_stmt = select(func.count(Project.id)).where(
         Project.visibility == ProjectVisibility.PUBLIC,
@@ -535,23 +482,17 @@ async def get_project_stats(db: AsyncSession = Depends(get_db)):
     ).scalar_one_or_none() or 0
 
     total_makers_stmt = select(func.count(Member.id))
-    total_makers = (
-        await db.execute(total_makers_stmt)
-    ).scalar_one_or_none() or 0
+    total_makers = (await db.execute(total_makers_stmt)).scalar_one_or_none() or 0
 
     total_likes_stmt = select(func.sum(Project.like_count)).where(
         Project.visibility == ProjectVisibility.PUBLIC, Project.is_approved
     )
-    total_likes = (
-        await db.execute(total_likes_stmt)
-    ).scalar_one_or_none() or 0
+    total_likes = (await db.execute(total_likes_stmt)).scalar_one_or_none() or 0
 
     total_views_stmt = select(func.sum(Project.view_count)).where(
         Project.visibility == ProjectVisibility.PUBLIC, Project.is_approved
     )
-    total_views = (
-        await db.execute(total_views_stmt)
-    ).scalar_one_or_none() or 0
+    total_views = (await db.execute(total_views_stmt)).scalar_one_or_none() or 0
 
     return ProjectStatsResponse(
         total_projects=total_projects,

@@ -129,22 +129,14 @@ class InvoiceGenerator:
 
         # Logo and company info
         company_info = [
-            Paragraph(
-                f"<b>{self.company_info['name']}</b>", self.heading_style
-            ),
+            Paragraph(f"<b>{self.company_info['name']}</b>", self.heading_style),
             Paragraph(
                 self.company_info["address"].replace("\n", "<br/>"),
                 self.normal_style,
             ),
-            Paragraph(
-                f"Phone: {self.company_info['phone']}", self.small_style
-            ),
-            Paragraph(
-                f"Email: {self.company_info['email']}", self.small_style
-            ),
-            Paragraph(
-                f"Website: {self.company_info['website']}", self.small_style
-            ),
+            Paragraph(f"Phone: {self.company_info['phone']}", self.small_style),
+            Paragraph(f"Email: {self.company_info['email']}", self.small_style),
+            Paragraph(f"Website: {self.company_info['website']}", self.small_style),
         ]
 
         # Invoice title and number
@@ -223,14 +215,10 @@ class InvoiceGenerator:
             bill_to_data.append([invoice_data["bill_to_address"], ""])
 
         if invoice_data.get("bill_to_phone"):
-            bill_to_data.append(
-                [f"Phone: {invoice_data['bill_to_phone']}", ""]
-            )
+            bill_to_data.append([f"Phone: {invoice_data['bill_to_phone']}", ""])
 
         if invoice_data.get("bill_to_tax_id"):
-            bill_to_data.append(
-                [f"Tax ID: {invoice_data['bill_to_tax_id']}", ""]
-            )
+            bill_to_data.append([f"Tax ID: {invoice_data['bill_to_tax_id']}", ""])
 
         # Company tax information
         bill_to_data.extend(
@@ -367,16 +355,12 @@ class InvoiceGenerator:
 
         # Subtotal
         subtotal = invoice_data.get("amount", 0)
-        totals_data.append(
-            ["Subtotal:", self._format_currency(subtotal, currency)]
-        )
+        totals_data.append(["Subtotal:", self._format_currency(subtotal, currency)])
 
         # Tax
         tax_amount = invoice_data.get("tax_amount", 0)
         if tax_amount > 0:
-            totals_data.append(
-                ["Tax:", self._format_currency(tax_amount, currency)]
-            )
+            totals_data.append(["Tax:", self._format_currency(tax_amount, currency)])
 
         # Total
         total_amount = invoice_data.get("total_amount", subtotal + tax_amount)
@@ -435,7 +419,9 @@ class InvoiceGenerator:
             if due_date < datetime.now(due_date.tzinfo):
                 payment_info = f"<b><font color='red'>Payment Overdue</font></b> - Due: {self._format_date(invoice_data['due_date'])}"
             else:
-                payment_info = f"<b>Payment Due:</b> {self._format_date(invoice_data['due_date'])}"
+                payment_info = (
+                    f"<b>Payment Due:</b> {self._format_date(invoice_data['due_date'])}"
+                )
             elements.append(Paragraph(payment_info, self.normal_style))
 
         # Payment methods
@@ -460,9 +446,7 @@ class InvoiceGenerator:
 
         # Terms and conditions
         elements.append(
-            HRFlowable(
-                width="100%", thickness=1, color=colors.HexColor("#e5e7eb")
-            )
+            HRFlowable(width="100%", thickness=1, color=colors.HexColor("#e5e7eb"))
         )
         elements.append(Spacer(1, 10))
 
@@ -480,7 +464,9 @@ class InvoiceGenerator:
         elements.append(Spacer(1, 20))
 
         # Generated timestamp
-        generated_text = f"Invoice generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}"
+        generated_text = (
+            f"Invoice generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}"
+        )
         elements.append(Paragraph(generated_text, self.small_style))
 
         return elements
@@ -493,9 +479,7 @@ class InvoiceGenerator:
         try:
             if isinstance(date_value, str):
                 # Handle ISO format strings
-                date_obj = datetime.fromisoformat(
-                    date_value.replace("Z", "+00:00")
-                )
+                date_obj = datetime.fromisoformat(date_value.replace("Z", "+00:00"))
             else:
                 date_obj = date_value
 
@@ -560,9 +544,7 @@ def save_invoice_to_file(invoice_data: Dict[str, Any], file_path: str) -> str:
         raise
 
 
-def generate_invoice_filename(
-    invoice_number: str, makerspace_id: str = None
-) -> str:
+def generate_invoice_filename(invoice_number: str, makerspace_id: str = None) -> str:
     """Generate standardized invoice filename"""
     # Create directory structure: /invoices/YYYY/MM/
     now = datetime.now()

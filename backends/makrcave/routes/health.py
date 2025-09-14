@@ -96,9 +96,9 @@ async def detailed_health_check(db: Session = Depends(get_db)):
         if response.status_code == 200:
             health_status["checks"]["keycloak"] = "healthy"
         else:
-            health_status["checks"][
-                "keycloak"
-            ] = f"unhealthy: status {response.status_code}"
+            health_status["checks"]["keycloak"] = (
+                f"unhealthy: status {response.status_code}"
+            )
             health_status["status"] = "unhealthy"
     except Exception as e:
         health_status["checks"]["keycloak"] = f"unhealthy: {str(e)}"

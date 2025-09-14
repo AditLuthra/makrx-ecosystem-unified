@@ -68,9 +68,7 @@ class ReportGenerator:
                     "Date": event.timestamp.strftime("%Y-%m-%d"),
                     "Time": event.timestamp.strftime("%H:%M:%S"),
                     "Event Type": event.event_type,
-                    "User ID": (
-                        str(event.user_id) if event.user_id else "System"
-                    ),
+                    "User ID": (str(event.user_id) if event.user_id else "System"),
                     "Resource Type": event.resource_type or "N/A",
                     "Resource ID": (
                         str(event.resource_id) if event.resource_id else "N/A"
@@ -105,9 +103,7 @@ class ReportGenerator:
 
         with open(filepath, "w") as f:
             f.write("# USAGE ANALYTICS REPORT\n")
-            f.write(
-                f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-            )
+            f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"# Makerspace ID: {makerspace_id}\n")
             f.write(f"# Period: {start_date} to {end_date}\n")
             f.write("\n# SUMMARY\n")
@@ -148,9 +144,7 @@ class ReportGenerator:
                     "Average Daily Consumption",
                 ],
                 "Value": [
-                    len(
-                        set(item.inventory_item_id for item in inventory_data)
-                    ),
+                    len(set(item.inventory_item_id for item in inventory_data)),
                     sum(item.consumed_quantity for item in inventory_data),
                     f"${sum(item.total_cost_consumed or 0 for item in inventory_data):.2f}",
                     f"{sum(item.consumed_quantity for item in inventory_data) / max(len(set(item.date for item in inventory_data)), 1):.2f}",
@@ -189,12 +183,8 @@ class ReportGenerator:
                 item_id = str(item.inventory_item_id)
                 if item_id not in consumption_by_item:
                     consumption_by_item[item_id] = {"consumed": 0, "cost": 0}
-                consumption_by_item[item_id][
-                    "consumed"
-                ] += item.consumed_quantity
-                consumption_by_item[item_id]["cost"] += (
-                    item.total_cost_consumed or 0
-                )
+                consumption_by_item[item_id]["consumed"] += item.consumed_quantity
+                consumption_by_item[item_id]["cost"] += item.total_cost_consumed or 0
 
             top_consumers = sorted(
                 consumption_by_item.items(),
@@ -329,18 +319,14 @@ class ReportGenerator:
         elements.append(Spacer(1, 30))
 
         # Revenue by type breakdown
-        breakdown_title = Paragraph(
-            "Revenue Breakdown by Type", self.subtitle_style
-        )
+        breakdown_title = Paragraph("Revenue Breakdown by Type", self.subtitle_style)
         elements.append(breakdown_title)
 
         breakdown_data = [["Revenue Type", "Amount", "Percentage"]]
         for revenue_type, amount in sorted(
             revenue_by_type.items(), key=lambda x: x[1], reverse=True
         ):
-            percentage = (
-                (amount / total_revenue * 100) if total_revenue > 0 else 0
-            )
+            percentage = (amount / total_revenue * 100) if total_revenue > 0 else 0
             breakdown_data.append(
                 [revenue_type.title(), f"${amount:.2f}", f"{percentage:.1f}%"]
             )
@@ -369,14 +355,10 @@ class ReportGenerator:
         monthly_revenue = {}
         for item in revenue_data:
             month_key = item.date.strftime("%Y-%m")
-            monthly_revenue[month_key] = (
-                monthly_revenue.get(month_key, 0) + item.amount
-            )
+            monthly_revenue[month_key] = monthly_revenue.get(month_key, 0) + item.amount
 
         if len(monthly_revenue) > 1:
-            trend_title = Paragraph(
-                "Monthly Revenue Trend", self.subtitle_style
-            )
+            trend_title = Paragraph("Monthly Revenue Trend", self.subtitle_style)
             elements.append(trend_title)
 
             trend_data = [["Month", "Revenue"]]
@@ -437,9 +419,7 @@ class ReportGenerator:
                     }
 
                 equipment_summary[eq_id]["total_sessions"] += 1
-                equipment_summary[eq_id]["total_minutes"] += (
-                    log.duration_minutes or 0
-                )
+                equipment_summary[eq_id]["total_minutes"] += log.duration_minutes or 0
                 equipment_summary[eq_id]["total_power"] += (
                     log.power_consumption_kwh or 0
                 )
@@ -453,8 +433,7 @@ class ReportGenerator:
             summary_data = []
             for eq_id, data in equipment_summary.items():
                 avg_success = (
-                    sum(data["avg_success_rate"])
-                    / len(data["avg_success_rate"])
+                    sum(data["avg_success_rate"]) / len(data["avg_success_rate"])
                     if data["avg_success_rate"]
                     else 0
                 )
@@ -485,9 +464,7 @@ class ReportGenerator:
                         "Duration (minutes)": log.duration_minutes,
                         "Job ID": str(log.job_id) if log.job_id else "N/A",
                         "Success Rate": (
-                            f"{log.success_rate:.1f}%"
-                            if log.success_rate
-                            else "N/A"
+                            f"{log.success_rate:.1f}%" if log.success_rate else "N/A"
                         ),
                         "Power Consumption (kWh)": log.power_consumption_kwh,
                         "Maintenance Required": log.maintenance_required,
@@ -527,8 +504,7 @@ class ReportGenerator:
                     "BOM Items Count": project.bom_items_count,
                     "External Items Count": project.external_items_count,
                     "Print Time (hours)": project.print_time_hours or 0,
-                    "Material Efficiency (%)": project.material_efficiency
-                    or 0,
+                    "Material Efficiency (%)": project.material_efficiency or 0,
                     "Completion Rate (%)": project.completion_rate or 0,
                     "Equipment Hours Used": project.equipment_hours_used or 0,
                     "Collaboration Count": project.collaboration_count,
@@ -546,16 +522,12 @@ class ReportGenerator:
         # Add summary header
         with open(filepath, "w") as f:
             f.write("# PROJECT ANALYTICS REPORT\n")
-            f.write(
-                f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-            )
+            f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"# Period: {start_date} to {end_date}\n")
             f.write(f"# Total Projects: {len(df)}\n")
             if not df.empty:
                 f.write(f"# Average Cost: ${df['Total Cost'].mean():.2f}\n")
-                f.write(
-                    f"# Average BOM Size: {df['BOM Items Count'].mean():.1f}\n"
-                )
+                f.write(f"# Average BOM Size: {df['BOM Items Count'].mean():.1f}\n")
                 f.write(
                     f"# Average Completion: {df['Completion Rate (%)'].mean():.1f}%\n"
                 )

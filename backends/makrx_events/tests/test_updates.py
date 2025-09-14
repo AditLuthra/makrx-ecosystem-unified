@@ -9,9 +9,7 @@ from backends.makrx_events.security import CurrentUser, get_current_user
 
 
 def _fake_user():
-    return CurrentUser(
-        user_id="test-user", email="test@example.com", roles=["tester"]
-    )
+    return CurrentUser(user_id="test-user", email="test@example.com", roles=["tester"])
 
 
 def setup_function(_):
@@ -75,9 +73,7 @@ def test_event_team_sponsor_tournament_updates():
     assert sp2.get("tier") == "gold"
 
     # Create tournament
-    r7 = client.post(
-        f"/api/events/{event_id}/tournaments", json={"name": "Tourney"}
-    )
+    r7 = client.post(f"/api/events/{event_id}/tournaments", json={"name": "Tourney"})
     assert r7.status_code == 201, r7.text
     t = r7.json()
 

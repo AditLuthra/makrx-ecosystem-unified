@@ -9,9 +9,7 @@ from backends.makrx_events.security import CurrentUser, get_current_user
 
 
 def _fake_user():
-    return CurrentUser(
-        user_id="test-user", email="test@example.com", roles=["tester"]
-    )
+    return CurrentUser(user_id="test-user", email="test@example.com", roles=["tester"])
 
 
 def setup_function(_):
@@ -36,9 +34,7 @@ def test_tournament_patch_not_found_envelope():
 
 
 def test_sponsor_patch_not_found_envelope():
-    r = client.patch(
-        "/api/events/evt-000/sponsors/s-404", json={"status": "inactive"}
-    )
+    r = client.patch("/api/events/evt-000/sponsors/s-404", json={"status": "inactive"})
     assert r.status_code == 404
     body = r.json()
     assert body.get("error", {}).get("code") == "NOT_FOUND"
@@ -46,14 +42,11 @@ def test_sponsor_patch_not_found_envelope():
 
 
 def test_slug_validation_rejected_for_microsite():
-    r = client.post(
-        "/api/microsites", json={"title": "Bad", "slug": "Invalid Slug"}
-    )
+    r = client.post("/api/microsites", json={"title": "Bad", "slug": "Invalid Slug"})
     assert r.status_code == 422, r.text
     body = r.json()
     assert body.get("error", {}).get("code") == "VALIDATION_ERROR"
     # field path includes body.slug
     assert any(
-        "slug" in k
-        for k in body.get("error", {}).get("field_errors", {}).keys()
+        "slug" in k for k in body.get("error", {}).get("field_errors", {}).keys()
     )

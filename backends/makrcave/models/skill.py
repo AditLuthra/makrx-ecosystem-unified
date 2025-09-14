@@ -39,9 +39,7 @@ skill_prerequisites = Table(
     "skill_prerequisites",
     Base.metadata,
     Column("skill_id", String, ForeignKey("skills.id"), primary_key=True),
-    Column(
-        "prerequisite_id", String, ForeignKey("skills.id"), primary_key=True
-    ),
+    Column("prerequisite_id", String, ForeignKey("skills.id"), primary_key=True),
 )
 
 # Association table for skill-equipment relationships
@@ -49,9 +47,7 @@ skill_equipment = Table(
     "skill_equipment",
     Base.metadata,
     Column("skill_id", String, ForeignKey("skills.id"), primary_key=True),
-    Column(
-        "equipment_id", String, ForeignKey("equipment.id"), primary_key=True
-    ),
+    Column("equipment_id", String, ForeignKey("equipment.id"), primary_key=True),
 )
 
 
@@ -66,9 +62,7 @@ class Skill(Base):
     status = Column(String(20), default="active")  # active, disabled
 
     # Makerspace relationship
-    makerspace_id = Column(
-        String, ForeignKey("makerspaces.id"), nullable=False
-    )
+    makerspace_id = Column(String, ForeignKey("makerspaces.id"), nullable=False)
     makerspace = relationship("Makerspace", back_populates="skills")
 
     # Self-referential relationship for prerequisites
@@ -120,9 +114,7 @@ class UserSkill(Base):
     skill = relationship("Skill", back_populates="user_skills")
 
     # Certification details
-    status = Column(
-        Enum(SkillStatus), nullable=False, default=SkillStatus.PENDING
-    )
+    status = Column(Enum(SkillStatus), nullable=False, default=SkillStatus.PENDING)
     certified_at = Column(DateTime(timezone=True))
     expires_at = Column(DateTime(timezone=True))
 
@@ -153,9 +145,7 @@ class SkillRequest(Base):
     skill = relationship("Skill", back_populates="skill_requests")
 
     # Request details
-    status = Column(
-        Enum(RequestStatus), nullable=False, default=RequestStatus.PENDING
-    )
+    status = Column(Enum(RequestStatus), nullable=False, default=RequestStatus.PENDING)
     reason = Column(Text)  # Why they want this skill
     notes = Column(Text)  # User notes or admin feedback
 
@@ -175,9 +165,7 @@ class SkillAuditLog(Base):
     id = Column(String, primary_key=True, index=True)
 
     # What happened
-    action = Column(
-        String(50), nullable=False
-    )  # granted, revoked, expired, requested
+    action = Column(String(50), nullable=False)  # granted, revoked, expired, requested
 
     # Who was affected
     user_id = Column(String, ForeignKey("users.id"), nullable=False)

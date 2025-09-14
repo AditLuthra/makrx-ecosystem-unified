@@ -291,9 +291,7 @@ class UsageSessionBase(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(
-        None, regex="^(excellent|good|fair|poor)$"
-    )
+    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
     issues_encountered: Optional[str] = None
     notes: Optional[str] = None
 
@@ -309,9 +307,7 @@ class UsageSessionUpdate(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(
-        None, regex="^(excellent|good|fair|poor)$"
-    )
+    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
     issues_encountered: Optional[str] = None
     power_consumed_kwh: Optional[float] = Field(None, ge=0)
     material_consumed: Optional[List[Dict[str, Any]]] = None

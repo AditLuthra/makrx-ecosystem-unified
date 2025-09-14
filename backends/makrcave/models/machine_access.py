@@ -66,14 +66,10 @@ class MachineAccessRule(Base):
     __tablename__ = "machine_access_rules"
 
     id = Column(String(100), primary_key=True, index=True)
-    equipment_id = Column(
-        String(100), ForeignKey("equipment.id"), nullable=False
-    )
+    equipment_id = Column(String(100), ForeignKey("equipment.id"), nullable=False)
 
     # Access requirements
-    required_skill_id = Column(
-        String(100), ForeignKey("skills.id"), nullable=False
-    )
+    required_skill_id = Column(String(100), ForeignKey("skills.id"), nullable=False)
     minimum_skill_level = Column(
         Enum(AccessLevel), nullable=False, default=AccessLevel.BASIC
     )
@@ -81,9 +77,7 @@ class MachineAccessRule(Base):
     # Additional requirements
     requires_supervisor = Column(Boolean, default=False)
     supervisor_skill_level = Column(Enum(AccessLevel), nullable=True)
-    max_session_hours = Column(
-        Float, nullable=True
-    )  # Maximum continuous usage
+    max_session_hours = Column(Float, nullable=True)  # Maximum continuous usage
     cooldown_hours = Column(Float, nullable=True)  # Hours between sessions
 
     # Safety requirements
@@ -125,9 +119,7 @@ class UserCertification(Base):
     id = Column(String(100), primary_key=True, index=True)
     user_id = Column(String(100), nullable=False, index=True)
     skill_id = Column(String(100), ForeignKey("skills.id"), nullable=False)
-    equipment_id = Column(
-        String(100), ForeignKey("equipment.id"), nullable=True
-    )
+    equipment_id = Column(String(100), ForeignKey("equipment.id"), nullable=True)
 
     # Certification details
     certification_level = Column(Enum(AccessLevel), nullable=False)
@@ -187,9 +179,7 @@ class Badge(Base):
 
     # Badge classification
     badge_type = Column(Enum(BadgeType), nullable=False)
-    rarity = Column(
-        Enum(BadgeRarity), nullable=False, default=BadgeRarity.COMMON
-    )
+    rarity = Column(Enum(BadgeRarity), nullable=False, default=BadgeRarity.COMMON)
     category = Column(
         String(100), nullable=False
     )  # "3d_printing", "safety", "collaboration"
@@ -199,38 +189,24 @@ class Badge(Base):
     color_hex = Column(String(7), default="#4F46E5")  # Default indigo
 
     # Achievement criteria
-    criteria = Column(
-        JSON, nullable=False
-    )  # Structured criteria for earning badge
-    points_value = Column(
-        Integer, default=10
-    )  # Points awarded for earning this badge
+    criteria = Column(JSON, nullable=False)  # Structured criteria for earning badge
+    points_value = Column(Integer, default=10)  # Points awarded for earning this badge
 
     # Requirements
     skill_requirements = Column(JSON, nullable=True)  # Required skills to earn
-    prerequisite_badges = Column(
-        JSON, nullable=True
-    )  # Required badges to earn
-    equipment_usage_required = Column(
-        Integer, default=0
-    )  # Hours of equipment usage
+    prerequisite_badges = Column(JSON, nullable=True)  # Required badges to earn
+    equipment_usage_required = Column(Integer, default=0)  # Hours of equipment usage
     project_completions_required = Column(Integer, default=0)
 
     # Achievement tracking
     total_awarded = Column(Integer, default=0)
-    auto_award = Column(
-        Boolean, default=False
-    )  # Automatically award when criteria met
+    auto_award = Column(Boolean, default=False)  # Automatically award when criteria met
 
     # Metadata
     is_active = Column(Boolean, default=True)
-    is_public = Column(
-        Boolean, default=True
-    )  # Visible in public badge gallery
+    is_public = Column(Boolean, default=True)  # Visible in public badge gallery
     created_by = Column(String(100), nullable=False)
-    makerspace_id = Column(
-        String(100), nullable=True
-    )  # Makerspace-specific badge
+    makerspace_id = Column(String(100), nullable=True)  # Makerspace-specific badge
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -265,9 +241,7 @@ class UserBadge(Base):
     achievement_notes = Column(Text, nullable=True)
 
     # Progress tracking (for progressive badges)
-    progress_value = Column(
-        Float, default=100.0
-    )  # Percentage of badge completion
+    progress_value = Column(Float, default=100.0)  # Percentage of badge completion
     progress_data = Column(JSON, nullable=True)  # Additional progress metadata
 
     # Display preferences
@@ -283,9 +257,7 @@ class MachineAccessAttempt(Base):
 
     id = Column(String(100), primary_key=True, index=True)
     user_id = Column(String(100), nullable=False, index=True)
-    equipment_id = Column(
-        String(100), ForeignKey("equipment.id"), nullable=False
-    )
+    equipment_id = Column(String(100), ForeignKey("equipment.id"), nullable=False)
     certification_id = Column(
         String(100), ForeignKey("user_certifications.id"), nullable=True
     )
@@ -298,23 +270,17 @@ class MachineAccessAttempt(Base):
     access_method = Column(
         String(50), default="rfid_card"
     )  # rfid_card, mobile_app, admin_override
-    session_id = Column(
-        String(100), nullable=True
-    )  # For tracking ongoing sessions
+    session_id = Column(String(100), nullable=True)  # For tracking ongoing sessions
 
     # Location and device info
-    access_point_id = Column(
-        String(100), nullable=True
-    )  # RFID reader, terminal ID
+    access_point_id = Column(String(100), nullable=True)  # RFID reader, terminal ID
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
 
     # Additional data
     denial_reason = Column(Text, nullable=True)  # Detailed reason for denial
     override_reason = Column(Text, nullable=True)  # Reason for admin override
-    supervisor_id = Column(
-        String(100), nullable=True
-    )  # Supervising user if required
+    supervisor_id = Column(String(100), nullable=True)  # Supervising user if required
 
     # Session tracking
     session_start = Column(DateTime(timezone=True), nullable=True)
@@ -323,9 +289,7 @@ class MachineAccessAttempt(Base):
 
     # Relationships
     equipment = relationship("Equipment", back_populates="access_attempts")
-    certification = relationship(
-        "UserCertification", back_populates="access_attempts"
-    )
+    certification = relationship("UserCertification", back_populates="access_attempts")
 
 
 class SafetyIncident(Base):
@@ -333,18 +297,14 @@ class SafetyIncident(Base):
 
     id = Column(String(100), primary_key=True, index=True)
     user_id = Column(String(100), nullable=False, index=True)
-    equipment_id = Column(
-        String(100), ForeignKey("equipment.id"), nullable=True
-    )
+    equipment_id = Column(String(100), ForeignKey("equipment.id"), nullable=True)
     session_id = Column(String(100), nullable=True)
 
     # Incident details
     incident_type = Column(
         String(100), nullable=False
     )  # "injury", "near_miss", "equipment_damage", "policy_violation"
-    severity = Column(
-        String(50), nullable=False
-    )  # "low", "medium", "high", "critical"
+    severity = Column(String(50), nullable=False)  # "low", "medium", "high", "critical"
 
     # Description
     title = Column(String(300), nullable=False)
@@ -395,9 +355,7 @@ class SkillAssessment(Base):
     id = Column(String(100), primary_key=True, index=True)
     user_id = Column(String(100), nullable=False, index=True)
     skill_id = Column(String(100), ForeignKey("skills.id"), nullable=False)
-    equipment_id = Column(
-        String(100), ForeignKey("equipment.id"), nullable=True
-    )
+    equipment_id = Column(String(100), ForeignKey("equipment.id"), nullable=True)
 
     # Assessment details
     assessment_type = Column(

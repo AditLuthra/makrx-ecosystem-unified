@@ -9,15 +9,11 @@ def get_project_like(
     db: Session, project_id: str, user_id: str
 ) -> Optional[ProjectLike]:
     return (
-        db.query(ProjectLike)
-        .filter_by(project_id=project_id, user_id=user_id)
-        .first()
+        db.query(ProjectLike).filter_by(project_id=project_id, user_id=user_id).first()
     )
 
 
-def add_project_like(
-    db: Session, project_id: str, user_id: str
-) -> ProjectLike:
+def add_project_like(db: Session, project_id: str, user_id: str) -> ProjectLike:
     like = ProjectLike(
         project_id=project_id, user_id=user_id, created_at=datetime.utcnow()
     )
@@ -47,9 +43,7 @@ def get_project_bookmark(
     )
 
 
-def add_project_bookmark(
-    db: Session, project_id: str, user_id: str
-) -> ProjectBookmark:
+def add_project_bookmark(db: Session, project_id: str, user_id: str) -> ProjectBookmark:
     bookmark = ProjectBookmark(
         project_id=project_id, user_id=user_id, created_at=datetime.utcnow()
     )
@@ -59,9 +53,7 @@ def add_project_bookmark(
     return bookmark
 
 
-def remove_project_bookmark(
-    db: Session, project_id: str, user_id: str
-) -> bool:
+def remove_project_bookmark(db: Session, project_id: str, user_id: str) -> bool:
     bookmark = get_project_bookmark(db, project_id, user_id)
     if bookmark:
         db.delete(bookmark)
@@ -81,9 +73,7 @@ def get_project_follow(
     )
 
 
-def add_project_follow(
-    db: Session, owner_id: str, follower_id: str
-) -> ProjectFollow:
+def add_project_follow(db: Session, owner_id: str, follower_id: str) -> ProjectFollow:
     follow = ProjectFollow(
         owner_id=owner_id,
         follower_id=follower_id,
@@ -95,9 +85,7 @@ def add_project_follow(
     return follow
 
 
-def remove_project_follow(
-    db: Session, owner_id: str, follower_id: str
-) -> bool:
+def remove_project_follow(db: Session, owner_id: str, follower_id: str) -> bool:
     follow = get_project_follow(db, owner_id, follower_id)
     if follow:
         db.delete(follow)

@@ -243,9 +243,7 @@ class MakerspaceSettingsPublic(BaseModel):
 
 class FeatureToggleRequest(BaseModel):
     feature: str = Field(..., description="Feature name to toggle")
-    enabled: bool = Field(
-        ..., description="Whether to enable or disable the feature"
-    )
+    enabled: bool = Field(..., description="Whether to enable or disable the feature")
 
 
 class SettingsExportResponse(BaseModel):

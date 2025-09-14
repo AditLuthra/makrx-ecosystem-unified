@@ -139,22 +139,14 @@ class FilamentCompatibilityCreate(BaseModel):
 
 @router.get("/rolls", response_model=List[Dict[str, Any]])
 async def get_filament_rolls(
-    status: Optional[FilamentRollStatus] = Query(
-        None, description="Filter by status"
-    ),
+    status: Optional[FilamentRollStatus] = Query(None, description="Filter by status"),
     material: Optional[FilamentMaterial] = Query(
         None, description="Filter by material"
     ),
-    brand: Optional[FilamentBrand] = Query(
-        None, description="Filter by brand"
-    ),
+    brand: Optional[FilamentBrand] = Query(None, description="Filter by brand"),
     location: Optional[str] = Query(None, description="Filter by location"),
-    low_stock_only: bool = Query(
-        False, description="Show only low stock items"
-    ),
-    available_only: bool = Query(
-        False, description="Show only available rolls"
-    ),
+    low_stock_only: bool = Query(False, description="Show only low stock items"),
+    available_only: bool = Query(False, description="Show only available rolls"),
     assigned_printer: Optional[str] = Query(
         None, description="Filter by assigned printer"
     ),
@@ -176,9 +168,7 @@ async def get_filament_rolls(
             detail="No makerspace associated with current user",
         )
 
-    query = db.query(FilamentRoll).filter(
-        FilamentRoll.makerspace_id == makerspace_id
-    )
+    query = db.query(FilamentRoll).filter(FilamentRoll.makerspace_id == makerspace_id)
 
     if status:
         query = query.filter(FilamentRoll.status == status)
@@ -194,8 +184,7 @@ async def get_filament_rolls(
 
     if low_stock_only:
         query = query.filter(
-            FilamentRoll.remaining_weight_g
-            <= FilamentRoll.low_weight_threshold_g
+            FilamentRoll.remaining_weight_g <= FilamentRoll.low_weight_threshold_g
         )
 
     if available_only:
@@ -210,14 +199,10 @@ async def get_filament_rolls(
         )
 
     if assigned_printer:
-        query = query.filter(
-            FilamentRoll.assigned_printer_id == assigned_printer
-        )
+        query = query.filter(FilamentRoll.assigned_printer_id == assigned_printer)
 
     # Order by status (new first), then by remaining weight (low stock first)
-    query = query.order_by(
-        FilamentRoll.status, FilamentRoll.remaining_weight_g
-    )
+    query = query.order_by(FilamentRoll.status, FilamentRoll.remaining_weight_g)
 
     rolls = query.offset(offset).limit(limit).all()
 
@@ -229,9 +214,7 @@ async def get_filament_rolls(
         roll_dict["is_low_stock"] = roll.is_low_stock()
         roll_dict["needs_reorder"] = roll.needs_reorder()
         roll_dict["usage_percentage"] = roll.calculate_usage_percentage()
-        roll_dict["estimated_remaining_prints"] = (
-            roll.estimate_remaining_prints()
-        )
+        roll_dict["estimated_remaining_prints"] = roll.estimate_remaining_prints()
         response_rolls.append(roll_dict)
 
     return response_rolls
@@ -240,9 +223,7 @@ async def get_filament_rolls(
 @router.get("/rolls/{roll_id}", response_model=Dict[str, Any])
 async def get_filament_roll(
     roll_id: str,
-    include_usage_history: bool = Query(
-        False, description="Include usage history"
-    ),
+    include_usage_history: bool = Query(False, description="Include usage history"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
@@ -435,9 +416,7 @@ async def record_filament_usage(
 
     # Check if auto-reorder should be triggered
     if roll.auto_reorder_enabled and roll.needs_reorder():
-        background_tasks.add_task(
-            trigger_auto_reorder, db, roll.id, current_user.id
-        )
+        background_tasks.add_task(trigger_auto_reorder, db, roll.id, current_user.id)
 
     return {
         "message": "Filament usage recorded successfully",
@@ -485,9 +464,7 @@ async def analyze_gcode_for_filament_usage(
         )
 
         # Check if roll can fulfill this print
-        can_fulfill = roll.can_fulfill_print(
-            analysis_result["estimated_weight_g"]
-        )
+        can_fulfill = roll.can_fulfill_print(analysis_result["estimated_weight_g"])
 
         return {
             "filament_roll_id": gcode_request.filament_roll_id,
@@ -496,8 +473,7 @@ async def analyze_gcode_for_filament_usage(
             "can_fulfill_print": can_fulfill,
             "remaining_after_print": max(
                 0,
-                roll.remaining_weight_g
-                - analysis_result["estimated_weight_g"],
+                roll.remaining_weight_g - analysis_result["estimated_weight_g"],
             ),
             "confidence_level": analysis_result.get("confidence_level", 85.0),
         }
@@ -557,12 +533,8 @@ async def create_reorder_request(
 
 @router.get("/usage/logs", response_model=List[Dict[str, Any]])
 async def get_filament_usage_logs(
-    roll_id: Optional[str] = Query(
-        None, description="Filter by specific roll"
-    ),
-    start_date: Optional[datetime] = Query(
-        None, description="Filter from date"
-    ),
+    roll_id: Optional[str] = Query(None, description="Filter by specific roll"),
+    start_date: Optional[datetime] = Query(None, description="Filter from date"),
     end_date: Optional[datetime] = Query(None, description="Filter to date"),
     user_id: Optional[str] = Query(None, description="Filter by user"),
     printer_id: Optional[str] = Query(None, description="Filter by printer"),
@@ -611,9 +583,7 @@ async def get_filament_usage_logs(
 
 @router.get("/stats", response_model=Dict[str, Any])
 async def get_filament_statistics(
-    days: int = Query(
-        30, ge=1, le=365, description="Number of days for statistics"
-    ),
+    days: int = Query(30, ge=1, le=365, description="Number of days for statistics"),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
@@ -630,9 +600,7 @@ async def get_filament_statistics(
 
     # Get all rolls for the makerspace
     rolls = (
-        db.query(FilamentRoll)
-        .filter(FilamentRoll.makerspace_id == makerspace_id)
-        .all()
+        db.query(FilamentRoll).filter(FilamentRoll.makerspace_id == makerspace_id).all()
     )
 
     # Get usage logs for the period
@@ -655,28 +623,21 @@ async def get_filament_statistics(
             [
                 r
                 for r in rolls
-                if r.status
-                in [FilamentRollStatus.NEW, FilamentRollStatus.IN_USE]
+                if r.status in [FilamentRollStatus.NEW, FilamentRollStatus.IN_USE]
             ]
         ),
         "low_stock_rolls": len([r for r in rolls if r.is_low_stock()]),
-        "empty_rolls": len(
-            [r for r in rolls if r.status == FilamentRollStatus.EMPTY]
-        ),
+        "empty_rolls": len([r for r in rolls if r.status == FilamentRollStatus.EMPTY]),
         "total_weight_remaining_g": sum(r.remaining_weight_g for r in rolls),
         "total_usage_period_g": sum(log.weight_used_g for log in usage_logs),
         "average_daily_usage_g": (
-            sum(log.weight_used_g for log in usage_logs) / days
-            if usage_logs
-            else 0
+            sum(log.weight_used_g for log in usage_logs) / days if usage_logs else 0
         ),
         "total_prints": len([log for log in usage_logs if log.print_name]),
         "successful_prints": len(
             [log for log in usage_logs if log.print_success is True]
         ),
-        "failed_prints": len(
-            [log for log in usage_logs if log.print_success is False]
-        ),
+        "failed_prints": len([log for log in usage_logs if log.print_success is False]),
         "material_breakdown": {},
         "brand_breakdown": {},
         "usage_by_day": [],
@@ -693,16 +654,14 @@ async def get_filament_statistics(
                 "total_weight_g": 0,
             }
         stats["material_breakdown"][material]["count"] += 1
-        stats["material_breakdown"][material][
-            "total_weight_g"
-        ] += roll.remaining_weight_g
+        stats["material_breakdown"][material]["total_weight_g"] += (
+            roll.remaining_weight_g
+        )
 
         if brand not in stats["brand_breakdown"]:
             stats["brand_breakdown"][brand] = {"count": 0, "total_weight_g": 0}
         stats["brand_breakdown"][brand]["count"] += 1
-        stats["brand_breakdown"][brand][
-            "total_weight_g"
-        ] += roll.remaining_weight_g
+        stats["brand_breakdown"][brand]["total_weight_g"] += roll.remaining_weight_g
 
     return stats
 
@@ -736,16 +695,11 @@ def analyze_gcode_content(
 
         elif "; filament used [g]" in line.lower():
             try:
-                estimated_weight_g = float(
-                    line.split("=")[-1].strip().replace("g", "")
-                )
+                estimated_weight_g = float(line.split("=")[-1].strip().replace("g", ""))
             except (ValueError, IndexError):
                 pass
 
-        elif (
-            "; layer count:" in line.lower()
-            or "; total layers:" in line.lower()
-        ):
+        elif "; layer count:" in line.lower() or "; total layers:" in line.lower():
             try:
                 layer_count = int(line.split(":")[-1].strip())
             except (ValueError, IndexError):
@@ -769,9 +723,7 @@ def analyze_gcode_content(
         extrusion_commands = len(
             [line for line in lines if line.startswith("G1") and "E" in line]
         )
-        estimated_weight_g = max(
-            10, extrusion_commands * 0.1
-        )  # Very rough estimate
+        estimated_weight_g = max(10, extrusion_commands * 0.1)  # Very rough estimate
 
     return {
         "estimated_weight_g": round(estimated_weight_g, 2),
@@ -791,8 +743,10 @@ def generate_makrx_order_url(roll: FilamentRoll) -> str:
         return f"https://store.makrx.org/product/{roll.makrx_product_code}?utm_source=makrcave&utm_medium=reorder"
     else:
         # Search URL based on material and brand
-        search_query = f"{roll.brand.value}+{roll.material.value}+{roll.color_name}".replace(
-            " ", "+"
+        search_query = (
+            f"{roll.brand.value}+{roll.material.value}+{roll.color_name}".replace(
+                " ", "+"
+            )
         )
         return f"https://store.makrx.org/search?q={search_query}&utm_source=makrcave&utm_medium=reorder"
 
@@ -820,9 +774,7 @@ def calculate_estimated_cost(roll: FilamentRoll, quantity: int) -> float:
 async def trigger_auto_reorder(db: Session, roll_id: str, user_id: str):
     """Background task to trigger auto-reorder"""
     try:
-        roll = (
-            db.query(FilamentRoll).filter(FilamentRoll.id == roll_id).first()
-        )
+        roll = db.query(FilamentRoll).filter(FilamentRoll.id == roll_id).first()
         if not roll:
             return
 
@@ -853,9 +805,7 @@ async def trigger_auto_reorder(db: Session, roll_id: str, user_id: str):
             trigger_weight_g=roll.remaining_weight_g,
             makrx_product_code=roll.makrx_product_code,
             makrx_order_url=generate_makrx_order_url(roll),
-            estimated_cost=calculate_estimated_cost(
-                roll, roll.reorder_quantity
-            ),
+            estimated_cost=calculate_estimated_cost(roll, roll.reorder_quantity),
             notes="Auto-generated reorder due to low stock",
         )
 

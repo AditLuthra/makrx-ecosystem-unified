@@ -84,7 +84,7 @@ class UploadRequest(BaseModel):
         allowed_extensions = [".stl", ".obj", ".3mf", ".step", ".stp"]
         if not any(v.lower().endswith(ext) for ext in allowed_extensions):
             raise ValueError(
-                f'File type not supported. Allowed: {", ".join(allowed_extensions)}'
+                f"File type not supported. Allowed: {', '.join(allowed_extensions)}"
             )
         return v
 
@@ -130,9 +130,7 @@ class QuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(
-        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
-    )
+    layer_height: Decimal = Field(Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8"))
     supports: bool = False
     quantity: int = Field(1, ge=1, le=100)
     rush_order: bool = False
@@ -353,9 +351,7 @@ class BatchQuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(
-        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
-    )
+    layer_height: Decimal = Field(Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8"))
     supports: bool = False
     rush_order: bool = False
 

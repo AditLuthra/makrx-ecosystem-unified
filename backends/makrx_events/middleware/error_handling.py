@@ -73,9 +73,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             return response
         except Exception as exc:
-            return await self.handle_exception(
-                request, exc, request_id, start_time
-            )
+            return await self.handle_exception(request, exc, request_id, start_time)
 
     async def handle_exception(
         self,
@@ -87,9 +85,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
         process_time = (time.time() - start_time) * 1000
 
         if isinstance(exc, APIError):
-            return await self._handle_api_error(
-                exc, request_id, request, process_time
-            )
+            return await self._handle_api_error(exc, request_id, request, process_time)
         elif isinstance(exc, RequestValidationError):
             return await self._handle_validation_error(
                 exc, request_id, request, process_time
@@ -181,9 +177,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             409: ErrorCode.CONFLICT,
             429: ErrorCode.RATE_LIMITED,
         }
-        error_code = error_code_map.get(
-            exc.status_code, ErrorCode.INTERNAL_ERROR
-        )
+        error_code = error_code_map.get(exc.status_code, ErrorCode.INTERNAL_ERROR)
         logger.warning(
             f"HTTP Exception: {exc.detail} | Status: {exc.status_code} | Request: {request.method} {request.url.path} | RequestID: {request_id}"
         )
@@ -290,9 +284,7 @@ async def validation_exception_handler(
             "error": {
                 "message": "Request validation failed",
                 "code": (
-                    ErrorCode.VALATION_ERROR
-                    if False
-                    else ErrorCode.VALIDATION_ERROR
+                    ErrorCode.VALATION_ERROR if False else ErrorCode.VALIDATION_ERROR
                 ),
                 "field_errors": field_errors,
                 "request_id": request_id,

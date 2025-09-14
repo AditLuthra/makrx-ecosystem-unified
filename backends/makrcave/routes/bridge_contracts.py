@@ -146,9 +146,7 @@ class JobStatusCallback(BaseModel):
     """Exact shape for Cave → Store status updates"""
 
     service_order_id: int
-    status: (
-        str  # PUBLISHED|ACCEPTED|PRINTING|READY|SHIPPED|COMPLETED|CANCELLED
-    )
+    status: str  # PUBLISHED|ACCEPTED|PRINTING|READY|SHIPPED|COMPLETED|CANCELLED
     milestone: Dict[str, Any]  # {"at": timestamp, "note": "message"}
 
 
@@ -354,9 +352,7 @@ async def provide_inventory_for_store_sync(
         inventory_items = (
             db.query(InventoryItem)
             .filter(
-                InventoryItem.sku.isnot(
-                    None
-                )  # Only items with Store SKU mapping
+                InventoryItem.sku.isnot(None)  # Only items with Store SKU mapping
             )
             .all()
         )

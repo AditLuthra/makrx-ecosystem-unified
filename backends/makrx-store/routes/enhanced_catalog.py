@@ -42,9 +42,7 @@ class AdvancedProductFilter(BaseModel):
     # Maker-specific filters
     material_types: Optional[List[str]] = None  # PLA, ABS, PETG, etc.
     printer_compatibility: Optional[List[str]] = None  # Ender 3, Prusa, etc.
-    application_types: Optional[List[str]] = (
-        None  # Prototyping, Production, etc.
-    )
+    application_types: Optional[List[str]] = None  # Prototyping, Production, etc.
     diameter: Optional[List[str]] = None  # 1.75mm, 2.85mm
 
     # Advanced filters
@@ -68,9 +66,7 @@ class AdvancedSearchRequest(BaseModel):
     )
     page: int = Field(1, ge=1)
     per_page: int = Field(20, ge=1, le=100)
-    include_suggestions: bool = Field(
-        True, description="Include search suggestions"
-    )
+    include_suggestions: bool = Field(True, description="Include search suggestions")
     include_facets: bool = Field(True, description="Include filter facets")
 
 
@@ -168,16 +164,12 @@ async def advanced_product_search(
                     base_stmt = base_stmt.where(Product.stock_qty <= 0)
 
             if filters.is_featured is not None:
-                base_stmt = base_stmt.where(
-                    Product.is_featured == filters.is_featured
-                )
+                base_stmt = base_stmt.where(Product.is_featured == filters.is_featured)
 
             # Maker-specific filters
             if filters.material_types:
                 material_conditions = [
-                    Product.attributes["material"].astext.ilike(
-                        f"%{material}%"
-                    )
+                    Product.attributes["material"].astext.ilike(f"%{material}%")
                     for material in filters.material_types
                 ]
                 base_stmt = base_stmt.where(or_(*material_conditions))
@@ -198,9 +190,7 @@ async def advanced_product_search(
 
             # Advanced filters
             if filters.new_arrivals_days:
-                cutoff_date = datetime.now() - timedelta(
-                    days=filters.new_arrivals_days
-                )
+                cutoff_date = datetime.now() - timedelta(days=filters.new_arrivals_days)
                 base_stmt = base_stmt.where(Product.created_at >= cutoff_date)
 
             if filters.sale_items_only:
@@ -229,13 +219,9 @@ async def advanced_product_search(
                 )
 
                 if filters.has_reviews:
-                    base_stmt = base_stmt.where(
-                        Product.id.in_(review_subquery)
-                    )
+                    base_stmt = base_stmt.where(Product.id.in_(review_subquery))
                 else:
-                    base_stmt = base_stmt.where(
-                        ~Product.id.in_(review_subquery)
-                    )
+                    base_stmt = base_stmt.where(~Product.id.in_(review_subquery))
 
         # Get total count before pagination
         count_stmt = select(func.count()).select_from(base_stmt.subquery())
@@ -312,9 +298,7 @@ async def advanced_product_search(
                 "compatibility": product.compatibility or [],
                 "tags": product.tags or [],
                 "created_at": (
-                    product.created_at.isoformat()
-                    if product.created_at
-                    else None
+                    product.created_at.isoformat() if product.created_at else None
                 ),
             }
 
@@ -342,16 +326,13 @@ async def advanced_product_search(
             total_count=total_count,
             page=request.page,
             per_page=request.per_page,
-            total_pages=(total_count + request.per_page - 1)
-            // request.per_page,
+            total_pages=(total_count + request.per_page - 1) // request.per_page,
             search_time_ms=round(search_time, 2),
         )
 
         # Add suggestions if requested
         if request.include_suggestions and request.query:
-            background_tasks.add_task(
-                log_search_query, request.query, total_count
-            )
+            background_tasks.add_task(log_search_query, request.query, total_count)
             suggestions = await get_search_suggestions(db, request.query)
             response.suggestions = suggestions
 
@@ -383,10 +364,7 @@ async def get_product_recommendations(
                 db, request.product_id, request.limit
             )
 
-        elif (
-            request.recommendation_type == "complementary"
-            and request.product_id
-        ):
+        elif request.recommendation_type == "complementary" and request.product_id:
             recommendations = await get_complementary_products(
                 db, request.product_id, request.limit
             )
@@ -411,9 +389,7 @@ async def get_product_recommendations(
 
     except Exception as e:
         logger.error(f"Recommendations error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to get recommendations"
-        )
+        raise HTTPException(status_code=500, detail="Failed to get recommendations")
 
 
 @router.get("/compatibility/{product_id}")
@@ -444,9 +420,7 @@ async def get_product_compatibility(
         # Add recommended print settings if it's a filament
         if "material" in product.attributes:
             material = product.attributes["material"].lower()
-            compatibility_data["recommended_settings"] = get_material_settings(
-                material
-            )
+            compatibility_data["recommended_settings"] = get_material_settings(material)
 
         # Find compatible accessories
         compatible_products = await find_compatible_products(db, product)
@@ -458,9 +432,7 @@ async def get_product_compatibility(
         raise
     except Exception as e:
         logger.error(f"Compatibility check error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to get compatibility info"
-        )
+        raise HTTPException(status_code=500, detail="Failed to get compatibility info")
 
 
 @router.post("/bulk-search")
@@ -479,9 +451,7 @@ async def bulk_product_search(
             product = None
 
             # 1. Search by SKU in attributes
-            stmt1 = select(Product).where(
-                Product.attributes["sku"].astext == code
-            )
+            stmt1 = select(Product).where(Product.attributes["sku"].astext == code)
             product = (await db.execute(stmt1)).scalars().first()
 
             # 2. Search by name exact match
@@ -565,11 +535,7 @@ async def get_category_tree(
     try:
         # Get all categories
         categories = (
-            (
-                await db.execute(
-                    select(Category).where(Category.is_active == True)
-                )
-            )
+            (await db.execute(select(Category).where(Category.is_active == True)))
             .scalars()
             .all()
         )
@@ -603,9 +569,7 @@ async def get_category_tree(
 
             if category.parent_id:
                 if category.parent_id in category_dict:
-                    category_dict[category.parent_id]["children"].append(
-                        category_data
-                    )
+                    category_dict[category.parent_id]["children"].append(category_data)
             else:
                 root_categories.append(category_data)
 
@@ -624,9 +588,7 @@ async def get_category_tree(
 
     except Exception as e:
         logger.error(f"Category tree error: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to get category tree"
-        )
+        raise HTTPException(status_code=500, detail="Failed to get category tree")
 
 
 # Helper Functions
@@ -671,9 +633,7 @@ async def build_search_facets(
 
     # Category facet
     cats_stmt = (
-        select(
-            Category.id, Category.name, func.count(Product.id).label("count")
-        )
+        select(Category.id, Category.name, func.count(Product.id).label("count"))
         .join(Product, Category.id == Product.category_id)
         .where(Product.is_active == True)
         .group_by(Category.id, Category.name)
@@ -684,10 +644,7 @@ async def build_search_facets(
         SearchFacet(
             name="categories",
             type="checkbox",
-            values=[
-                {"id": c.id, "name": c.name, "count": c.count}
-                for c in categories
-            ],
+            values=[{"id": c.id, "name": c.name, "count": c.count} for c in categories],
         )
     )
 
@@ -709,12 +666,8 @@ async def build_search_facets(
 
     # Price range facet
     price_stats_stmt = select(
-        func.min(func.coalesce(Product.sale_price, Product.price)).label(
-            "min_price"
-        ),
-        func.max(func.coalesce(Product.sale_price, Product.price)).label(
-            "max_price"
-        ),
+        func.min(func.coalesce(Product.sale_price, Product.price)).label("min_price"),
+        func.max(func.coalesce(Product.sale_price, Product.price)).label("max_price"),
     ).where(Product.is_active == True)
     price_stats = (await db.execute(price_stats_stmt)).first()
 
@@ -761,9 +714,7 @@ async def get_similar_products(
     )
     similar = (await db.execute(similar_stmt)).scalars().all()
 
-    return [
-        {"id": p.id, "name": p.name, "price": float(p.price)} for p in similar
-    ]
+    return [{"id": p.id, "name": p.name, "price": float(p.price)} for p in similar]
 
 
 async def get_complementary_products(
@@ -788,8 +739,7 @@ async def get_complementary_products(
     complementary = (await db.execute(comp_stmt)).scalars().all()
 
     return [
-        {"id": p.id, "name": p.name, "price": float(p.price)}
-        for p in complementary
+        {"id": p.id, "name": p.name, "price": float(p.price)} for p in complementary
     ]
 
 
@@ -804,18 +754,12 @@ async def get_trending_products(
 
     # Order by recent creation date for trending effect
     trending = (
-        (
-            await db.execute(
-                stmt.order_by(Product.created_at.desc()).limit(limit)
-            )
-        )
+        (await db.execute(stmt.order_by(Product.created_at.desc()).limit(limit)))
         .scalars()
         .all()
     )
 
-    return [
-        {"id": p.id, "name": p.name, "price": float(p.price)} for p in trending
-    ]
+    return [{"id": p.id, "name": p.name, "price": float(p.price)} for p in trending]
 
 
 async def get_personalized_recommendations(
@@ -895,16 +839,12 @@ async def find_compatible_products(
     if "material" in (product.attributes or {}):
         tools_stmt = (
             select(Product)
-            .where(
-                and_(Product.name.ilike("%tool%"), Product.is_active == True)
-            )
+            .where(and_(Product.name.ilike("%tool%"), Product.is_active == True))
             .limit(5)
         )
         tools = (await db.execute(tools_stmt)).scalars().all()
 
-        compatible.extend(
-            [{"id": t.id, "name": t.name, "type": "tool"} for t in tools]
-        )
+        compatible.extend([{"id": t.id, "name": t.name, "type": "tool"} for t in tools])
 
     return compatible
 

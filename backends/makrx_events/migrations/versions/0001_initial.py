@@ -73,9 +73,7 @@ def upgrade() -> None:
     )
     op.create_index("ix_events_slug", "events", ["slug"])
     op.create_index("ix_events_status", "events", ["status"])
-    op.create_index(
-        "ix_events_status_created", "events", ["status", "created_at"]
-    )
+    op.create_index("ix_events_status_created", "events", ["status", "created_at"])
 
     # event_features
     op.create_table(
@@ -86,15 +84,9 @@ def upgrade() -> None:
             sa.ForeignKey("events.id", ondelete="CASCADE"),
             primary_key=True,
         ),
-        sa.Column(
-            "enable_teams", sa.Boolean(), server_default=sa.text("false")
-        ),
-        sa.Column(
-            "enable_sponsors", sa.Boolean(), server_default=sa.text("false")
-        ),
-        sa.Column(
-            "enable_tournaments", sa.Boolean(), server_default=sa.text("false")
-        ),
+        sa.Column("enable_teams", sa.Boolean(), server_default=sa.text("false")),
+        sa.Column("enable_sponsors", sa.Boolean(), server_default=sa.text("false")),
+        sa.Column("enable_tournaments", sa.Boolean(), server_default=sa.text("false")),
         sa.Column(
             "updated_at",
             sa.DateTime(),
@@ -159,9 +151,7 @@ def upgrade() -> None:
             "microsite_id", "slug", name="uq_sub_events_microsite_slug"
         ),
     )
-    op.create_index(
-        "ix_sub_events_microsite_id", "sub_events", ["microsite_id"]
-    )
+    op.create_index("ix_sub_events_microsite_id", "sub_events", ["microsite_id"])
     op.create_index("ix_sub_events_slug", "sub_events", ["slug"])
     op.create_index("ix_sub_events_status", "sub_events", ["status"])
 
@@ -201,9 +191,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("role", sa.String(), server_default="member"),
-        sa.UniqueConstraint(
-            "team_id", "user_id", name="uq_team_members_team_user"
-        ),
+        sa.UniqueConstraint("team_id", "user_id", name="uq_team_members_team_user"),
     )
     op.create_index("ix_team_members_team_id", "team_members", ["team_id"])
     op.create_index("ix_team_members_user_id", "team_members", ["user_id"])
@@ -318,9 +306,7 @@ def upgrade() -> None:
     op.create_index(
         "ix_event_registrations_user_id", "event_registrations", ["user_id"]
     )
-    op.create_index(
-        "ix_event_registrations_status", "event_registrations", ["status"]
-    )
+    op.create_index("ix_event_registrations_status", "event_registrations", ["status"])
 
     # user_activities
     op.create_table(
@@ -350,12 +336,8 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    op.create_index(
-        "ix_user_activities_user_id", "user_activities", ["user_id"]
-    )
-    op.create_index(
-        "ix_user_activities_event_id", "user_activities", ["event_id"]
-    )
+    op.create_index("ix_user_activities_user_id", "user_activities", ["user_id"])
+    op.create_index("ix_user_activities_event_id", "user_activities", ["event_id"])
 
 
 def downgrade() -> None:
@@ -363,15 +345,9 @@ def downgrade() -> None:
     op.drop_index("ix_user_activities_user_id", table_name="user_activities")
     op.drop_table("user_activities")
 
-    op.drop_index(
-        "ix_event_registrations_status", table_name="event_registrations"
-    )
-    op.drop_index(
-        "ix_event_registrations_user_id", table_name="event_registrations"
-    )
-    op.drop_index(
-        "ix_event_registrations_event_id", table_name="event_registrations"
-    )
+    op.drop_index("ix_event_registrations_status", table_name="event_registrations")
+    op.drop_index("ix_event_registrations_user_id", table_name="event_registrations")
+    op.drop_index("ix_event_registrations_event_id", table_name="event_registrations")
     op.drop_table("event_registrations")
 
     op.drop_index("ix_sponsors_event_id", table_name="sponsors")
