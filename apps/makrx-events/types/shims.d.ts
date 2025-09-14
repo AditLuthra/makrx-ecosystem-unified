@@ -1,0 +1,10 @@
+declare module 'qrcode';
+declare module '@upstash/ratelimit';
+declare module '@upstash/redis';
+declare module 'ws';
+declare module 'passport';
+declare module 'passport-openidconnect';
+declare module 'express-session';
+declare module 'memoizee';
+declare module 'connect-pg-simple';
+

@@ -1,0 +1,89 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: makrx-production
+  namespace: makrx-ecosystem-production
+
+bases:
+  - ../base
+
+namePrefix: prod-
+
+commonLabels:
+  environment: production
+  app.kubernetes.io/instance: makrx-production
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /metadata/namespace
+        value: makrx-ecosystem-production
+    target:
+      kind: Namespace
+      name: makrx-ecosystem
+
+  - patch: |-
+      - op: add
+        path: /data/NODE_ENV
+        value: production
+      - op: add
+        path: /data/LOG_LEVEL
+        value: warn
+    target:
+      kind: ConfigMap
+      name: makrx-config
+
+  # Scale up for production
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/component=frontend
+
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/component=backend
+
+  # Increase resource limits for production
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/component=database
+
+images:
+  - name: makrx/gateway-frontend
+    newTag: latest
+  - name: makrx/gateway-frontend-hacker
+    newTag: latest
+  - name: makrx/makrcave
+    newTag: latest
+  - name: makrx/makrx-store
+    newTag: latest
+  - name: makrx/makrx-events
+    newTag: latest
+  - name: makrx/makrcave-backend
+    newTag: latest
+  - name: makrx/makrx-events-backend
+    newTag: latest
+  - name: makrx/makrx-store-backend
+    newTag: latest
+
+resources:
+  - namespace-production.yaml
+  - ingress.yaml

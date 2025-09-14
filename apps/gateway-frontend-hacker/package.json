@@ -1,0 +1,34 @@
+{
+  "name": "@makrx/gateway-frontend-hacker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "eslint . --ext ts,tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@makrx/auth": "file:../../packages/auth",
+    "@makrx/shared": "^0.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "keycloak-js": "^25.0.0",
+    "lucide-react": "^0.462.0",
+    "next": "14.2.32",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "three": "^0.180.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.180.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.56.0"
+  }
+}

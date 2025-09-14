@@ -1,0 +1,323 @@
+version: '3.8'
+
+services:
+  # Database Services
+  postgres:
+    image: postgres:15-alpine
+    container_name: makrx-postgres-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-makrx_ecosystem}
+      POSTGRES_USER: ${POSTGRES_USER:-makrx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-makrx_prod_password}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./services/postgres/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-makrx} -d ${POSTGRES_DB:-makrx_ecosystem}']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: makrx-redis-prod
+    volumes:
+      - redis_prod_data:/data
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Authentication Service
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: makrx-keycloak-prod
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      KC_DB_USERNAME: ${POSTGRES_USER:-makrx}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-auth.makrx.org}
+      KC_HOSTNAME_STRICT_HTTPS: "true"
+      KC_PROXY: edge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - makrx-network-prod
+    volumes:
+      - ./services/keycloak/realm-config:/opt/keycloak/data/import
+    restart: unless-stopped
+    command: ['start', '--import-realm']
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health/ready']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: makrx-minio-prod
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BROWSER_REDIRECT_URL: https://storage-console.makrx.org
+    volumes:
+      - minio_prod_data:/data
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Application Services
+  gateway-frontend:
+    build:
+      context: .
+      dockerfile: apps/gateway-frontend/Dockerfile
+      target: runner
+    container_name: makrx-gateway-frontend-prod
+    environment:
+      NODE_ENV: production
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      REDIS_URL: redis://redis:6379/0
+      NEXTAUTH_URL: https://makrx.org
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  gateway-frontend-hacker:
+    build:
+      context: .
+      dockerfile: apps/gateway-frontend-hacker/Dockerfile
+      target: runner
+    container_name: makrx-gateway-frontend-hacker-prod
+    environment:
+      NODE_ENV: production
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      REDIS_URL: redis://redis:6379/1
+      NEXTAUTH_URL: https://hacker.makrx.org
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  makrcave:
+    build:
+      context: .
+      dockerfile: apps/makrcave/Dockerfile
+      target: runner
+    container_name: makrx-makrcave-prod
+    environment:
+      NODE_ENV: production
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      REDIS_URL: redis://redis:6379/2
+      NEXTAUTH_URL: https://makrcave.com
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3002/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  makrx-store:
+    build:
+      context: .
+      dockerfile: apps/makrx-store/Dockerfile
+      target: runner
+    container_name: makrx-store-prod
+    environment:
+      NODE_ENV: production
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      REDIS_URL: redis://redis:6379/3
+      NEXTAUTH_URL: https://makrx.store
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+      - minio
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3003/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  makrx-events:
+    build:
+      context: .
+      dockerfile: apps/makrx-events/Dockerfile
+      target: runner
+    container_name: makrx-events-prod
+    environment:
+      NODE_ENV: production
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      REDIS_URL: redis://redis:6379/4
+      NEXTAUTH_URL: https://makrx.events
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3004/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  makrx-events-backend:
+    build:
+      context: backends/makrx_events
+      dockerfile: Dockerfile
+    container_name: makrx-events-backend-prod
+    ports:
+      - '${MAKRX_EVENTS_BACKEND_PORT:-8002}:5000'
+    environment:
+      ENVIRONMENT: production
+      LOG_LEVEL: INFO
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: makrx
+      KEYCLOAK_CLIENT_ID: makrx-events-api
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
+      PORT: 5000
+      RUN_DB_MIGRATIONS: 'true'
+    depends_on:
+      - keycloak
+      - postgres
+    networks:
+      - makrx-network-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Reverse Proxy with SSL
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile.prod
+    container_name: makrx-nginx-prod
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - gateway-frontend
+      - gateway-frontend-hacker
+      - makrcave
+      - makrx-store
+      - makrx-events
+      - keycloak
+    networks:
+      - makrx-network-prod
+    volumes:
+      - ./services/nginx/conf.d:/etc/nginx/conf.d
+      - ./services/nginx/ssl:/etc/nginx/ssl
+      - nginx_prod_logs:/var/log/nginx
+      - letsencrypt_certs:/etc/letsencrypt
+      - letsencrypt_www:/var/www/certbot
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # SSL Certificate Management
+  certbot:
+    image: certbot/certbot:latest
+    container_name: makrx-certbot
+    volumes:
+      - letsencrypt_certs:/etc/letsencrypt
+      - letsencrypt_www:/var/www/certbot
+    depends_on:
+      - nginx
+    networks:
+      - makrx-network-prod
+    profiles:
+      - ssl
+    command: >
+      sh -c "
+        while :; do
+          certbot renew --webroot --webroot-path /var/www/certbot
+          sleep 12h
+        done
+      "
+
+# Networks
+networks:
+  makrx-network-prod:
+    driver: bridge
+
+# Volumes
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_prod_data:
+    driver: local
+  minio_prod_data:
+    driver: local
+  nginx_prod_logs:
+    driver: local
+  letsencrypt_certs:
+    driver: local
+  letsencrypt_www:
+    driver: local

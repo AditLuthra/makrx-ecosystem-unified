@@ -1,0 +1,252 @@
+{
+  "realm": "makrx",
+  "displayName": "MakrX Ecosystem",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 30,
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Standard user role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "makerspace_owner",
+        "description": "Makerspace owner role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "event_organizer",
+        "description": "Event organizer role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "store_manager",
+        "description": "Store manager role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "makrx-gateway-frontend",
+      "name": "MakrX Gateway Frontend",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "gateway-frontend-secret-12345",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "https://makrx.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "https://makrx.org"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "makrx-gateway-frontend-hacker",
+      "name": "MakrX Gateway Frontend Hacker",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "gateway-hacker-secret-12345",
+      "redirectUris": [
+        "http://localhost:3001/*",
+        "https://hacker.makrx.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3001",
+        "https://hacker.makrx.org"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "makrx-makrcave",
+      "name": "MakrCave",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "makrcave-secret-12345",
+      "redirectUris": [
+        "http://localhost:3002/*",
+        "https://makrcave.com/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3002",
+        "https://makrcave.com"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "aud: makrcave-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "makrcave-api",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "makrx-store",
+      "name": "MakrX Store",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "makrx-store-secret-12345",
+      "redirectUris": [
+        "http://localhost:3003/*",
+        "https://makrx.store/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3003",
+        "https://makrx.store"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "aud: makrx-store-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "makrx-store-api",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "makrx-events",
+      "name": "MakrX Events",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "makrx-events-secret-12345",
+      "redirectUris": [
+        "http://localhost:3004/*",
+        "https://makrx.events/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3004",
+        "https://makrx.events"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "aud: makrx-events-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "makrx-events-api",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "makrcave-api",
+      "name": "MakrCave API",
+      "enabled": true,
+      "bearerOnly": true,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "makrx-store-api",
+      "name": "MakrX Store API",
+      "enabled": true,
+      "bearerOnly": true,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "makrx-events-api",
+      "name": "MakrX Events API",
+      "enabled": true,
+      "bearerOnly": true,
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "firstName": "System",
+      "lastName": "Administrator",
+      "email": "admin@makrx.org",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin", "user"],
+      "attributes": {
+        "organization": ["MakrX"],
+        "department": ["IT"]
+      }
+    }
+  ],
+  "smtpServer": {},
+  "loginTheme": "keycloak",
+  "accountTheme": "keycloak.v2",
+  "adminTheme": "keycloak",
+  "emailTheme": "keycloak",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "es", "fr", "de"],
+  "defaultLocale": "en"
+}

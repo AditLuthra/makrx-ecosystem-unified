@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .services-card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow;
+  }
+  
+  .services-button-primary {
+    @apply bg-makrx-teal text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all;
+  }
+  
+  .services-button-secondary {
+    @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all;
+  }
+  
+  .services-status-pending {
+    @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .services-status-dispatched {
+    @apply bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .services-status-accepted {
+    @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .services-status-in-progress {
+    @apply bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .services-status-completed {
+    @apply bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .services-status-delivered {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium;
+  }
+}
+
+/* 3D Viewer Styles */
+.stl-viewer-container {
+  @apply relative w-full h-96 bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden;
+}
+
+.stl-viewer-controls {
+  @apply absolute top-4 right-4 z-10 space-y-2;
+}
+
+.stl-viewer-info {
+  @apply absolute bottom-4 left-4 z-10 bg-black bg-opacity-75 text-white px-3 py-2 rounded text-sm;
+}
+
+/* File Upload Styles */
+.file-upload-area {
+  @apply border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-makrx-teal transition-colors;
+}
+
+.file-upload-area.dragging {
+  @apply border-makrx-teal bg-makrx-teal bg-opacity-10;
+}
+
+/* Provider Dashboard Styles */
+.provider-metric-card {
+  @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+}
+
+.provider-job-card {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow;
+}
+
+.inventory-item {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4;
+}
+
+.inventory-low-stock {
+  @apply border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900 bg-opacity-50;
+}
+
+/* Order Timeline Styles */
+.order-timeline {
+  @apply relative;
+}
+
+.order-timeline::before {
+  @apply absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300 content-[''];
+}
+
+.timeline-item {
+  @apply relative pl-10 pb-8;
+}
+
+.timeline-item::before {
+  @apply absolute left-2.5 w-3 h-3 bg-white border-2 border-gray-300 rounded-full content-[''];
+}
+
+.timeline-item.completed::before {
+  @apply border-green-500 bg-green-500;
+}
+
+.timeline-item.active::before {
+  @apply border-blue-500 bg-blue-500;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

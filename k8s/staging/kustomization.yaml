@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: makrx-staging
+  namespace: makrx-ecosystem-staging
+
+bases:
+  - ../base
+
+namePrefix: staging-
+
+commonLabels:
+  environment: staging
+  app.kubernetes.io/instance: makrx-staging
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /metadata/namespace
+        value: makrx-ecosystem-staging
+    target:
+      kind: Namespace
+      name: makrx-ecosystem
+
+  - patch: |-
+      - op: add
+        path: /data/NODE_ENV
+        value: staging
+      - op: add
+        path: /data/LOG_LEVEL
+        value: debug
+    target:
+      kind: ConfigMap
+      name: makrx-config
+
+images:
+  - name: makrx/gateway-frontend
+    newTag: develop
+  - name: makrx/gateway-frontend-hacker
+    newTag: develop
+  - name: makrx/makrcave
+    newTag: develop
+  - name: makrx/makrx-store
+    newTag: develop
+  - name: makrx/makrx-events
+    newTag: develop
+  - name: makrx/makrcave-backend
+    newTag: develop
+  - name: makrx/makrx-events-backend
+    newTag: develop
+  - name: makrx/makrx-store-backend
+    newTag: develop
+
+replicas:
+  - name: postgres
+    count: 1
+  - name: redis
+    count: 1
+
+resources:
+  - namespace-staging.yaml

@@ -1,0 +1,1 @@
+# Schemas package for MakrCave backend

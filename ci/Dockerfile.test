@@ -1,0 +1,111 @@
+# Multi-stage build for comprehensive testing
+FROM node:20-alpine AS node-base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3.12 \
+    py3-pip \
+    make \
+    gcc \
+    g++ \
+    libc-dev \
+    postgresql-client \
+    redis \
+    curl \
+    git
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files for better caching
+COPY package*.json ./
+COPY apps/*/package*.json ./apps/
+COPY packages/*/package*.json ./packages/
+COPY backends/*/package*.json ./backends/ || true
+
+# Install Node.js dependencies
+RUN npm ci --legacy-peer-deps --only=production=false
+
+# Python stage for backend testing
+FROM python:3.11-alpine AS python-base
+
+# Install system dependencies for Python
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    postgresql-dev \
+    redis \
+    curl \
+    git
+
+# Install global Python testing tools
+RUN pip install --no-cache-dir \
+    pytest \
+    pytest-asyncio \
+    pytest-cov \
+    black \
+    flake8 \
+    mypy \
+    safety \
+    bandit
+
+# Final test runner image
+FROM node:20-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3.12 \
+    py3-pip \
+    make \
+    gcc \
+    g++ \
+    libc-dev \
+    postgresql-client \
+    redis \
+    curl \
+    git \
+    bash \
+    chromium \
+    chromium-chromedriver
+
+# Install Python testing dependencies
+RUN pip3 install --no-cache-dir \
+    pytest \
+    pytest-asyncio \
+    pytest-cov \
+    requests \
+    psycopg2-binary \
+    redis \
+    black \
+    flake8 \
+    mypy \
+    safety \
+    bandit \
+    playwright
+
+# Set Chrome path for Playwright
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+# Copy Node.js dependencies from node-base stage
+COPY --from=node-base /app/node_modules ./node_modules
+COPY --from=node-base /app/package*.json ./
+
+# Copy application code
+COPY . .
+
+# Create directories for test outputs
+RUN mkdir -p /app/test-results /app/coverage /app/logs
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps chromium || true
+
+# Set up test environment
+ENV NODE_ENV=test
+ENV CI=true
+ENV FORCE_COLOR=1
+
+# Default command runs all tests
+CMD ["./ci/run-all-tests.sh"]

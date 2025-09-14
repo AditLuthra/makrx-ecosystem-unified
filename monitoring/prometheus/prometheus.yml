@@ -1,0 +1,77 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'makrx-ecosystem'
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter for system metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # cAdvisor for container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # Redis metrics
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # PostgreSQL metrics
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Application metrics (if implemented)
+  - job_name: 'makrx-backends'
+    static_configs:
+      - targets: 
+        - 'makrcave-backend:8000'
+        - 'makrx-events-backend:8002'
+        - 'makrx-store-backend:8003'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Frontend applications (if metrics endpoints exist)
+  - job_name: 'makrx-frontends'
+    static_configs:
+      - targets:
+        - 'gateway-frontend:3000'
+        - 'gateway-frontend-hacker:3001'
+        - 'makrcave:3002'
+        - 'makrx-store:3003'
+        - 'makrx-events:3004'
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Keycloak metrics (if available)
+  - job_name: 'keycloak'
+    static_configs:
+      - targets: ['keycloak:8080']
+    metrics_path: '/auth/realms/master/metrics'
+    scrape_interval: 30s
+
+  # MinIO metrics
+  - job_name: 'minio'
+    static_configs:
+      - targets: ['minio:9000']
+    metrics_path: '/minio/v2/metrics/cluster'
+    scrape_interval: 30s

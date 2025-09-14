@@ -1,0 +1,55 @@
+# Documentation generation Dockerfile
+FROM node:20-alpine AS docs-builder
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3.12 \
+    py3-pip \
+    make \
+    gcc \
+    g++ \
+    libc-dev \
+    git
+
+WORKDIR /app
+
+# Install documentation tools
+RUN npm install -g @microsoft/api-documenter @microsoft/api-extractor
+RUN pip3 install mkdocs mkdocs-material mkdocs-mermaid2-plugin
+
+# Copy source code
+COPY . .
+
+# Install dependencies
+RUN npm ci --legacy-peer-deps
+
+# Generate API documentation
+RUN npm run build:docs --workspaces --if-present || echo "No docs build script found"
+
+# Generate TypeScript API docs
+RUN npx typedoc --out docs/api apps/*/src packages/*/src || echo "TypeDoc generation failed"
+
+# Generate Python API docs
+RUN for backend in backends/*; do \
+    if [ -d "$backend" ] && [ -f "$backend/requirements.txt" ]; then \
+        cd "$backend" && \
+        pip3 install -r requirements.txt && \
+        pip3 install sphinx sphinx-rtd-theme && \
+        sphinx-quickstart -q -p "MakrX $(basename "$backend")" -a "MakrX Team" -v "1.0" --ext-autodoc --makefile --no-batchfile . && \
+        sphinx-build -b html . "../docs/$(basename "$backend")" || echo "Sphinx build failed for $backend" && \
+        cd ..; \
+    fi; \
+done
+
+# Build MkDocs site if config exists
+RUN if [ -f "mkdocs.yml" ]; then mkdocs build; fi
+
+# Create final documentation structure
+RUN mkdir -p docs/final && \
+    cp -r docs/* docs/final/ 2>/dev/null || true && \
+    echo "Documentation build complete"
+
+# Expose port for serving docs
+EXPOSE 8080
+
+CMD ["sh", "-c", "cd docs && python3.12 -m http.server 8080"]

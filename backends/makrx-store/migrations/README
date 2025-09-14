@@ -1,0 +1,4 @@
+Alembic migrations for makrx-store backend.
+
+Use `alembic -c alembic.ini` from this directory's parent to manage migrations.
+

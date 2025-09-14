@@ -1,0 +1,6 @@
+Alembic migration scripts for MakrX Events backend.
+
+Use with:
+
+alembic -c backends/makrx_events/alembic.ini revision --autogenerate -m "init"
+alembic -c backends/makrx_events/alembic.ini upgrade head

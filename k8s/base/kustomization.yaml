@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: makrx-base
+  namespace: makrx-ecosystem
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - postgres.yaml
+  - redis.yaml
+
+commonLabels:
+  app.kubernetes.io/name: makrx
+  app.kubernetes.io/part-of: makrx-ecosystem
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: postgres
+    newTag: 15-alpine
+  - name: redis
+    newTag: 7-alpine

@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "ES2020",
+    "sourceMap": true
+  },
+  "include": [
+    "src/index.ts",
+    "src/react-hooks.tsx",
+    "src/types.ts",
+    "src/utils.ts",
+    "src/keycloak-class.ts",
+    "src/nextauth.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

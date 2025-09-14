@@ -1,0 +1,213 @@
+# Docker Compose for CI/CD environments
+version: '3.8'
+
+services:
+  # Test database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: makrx-postgres-test
+    environment:
+      POSTGRES_DB: makrx_test
+      POSTGRES_USER: makrx
+      POSTGRES_PASSWORD: makrx_test_password
+    ports:
+      - '5434:5432'
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./services/postgres/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - makrx-test-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U makrx -d makrx_test']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Test Redis
+  redis-test:
+    image: redis:7-alpine
+    container_name: makrx-redis-test
+    ports:
+      - '6381:6379'
+    networks:
+      - makrx-test-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Test Keycloak
+  keycloak-test:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: makrx-keycloak-test
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-test:5432/makrx_test
+      KC_DB_USERNAME: makrx
+      KC_DB_PASSWORD: makrx_test_password
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    ports:
+      - '8082:8080'
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - makrx-test-network
+    volumes:
+      - ./services/keycloak/realm-config:/opt/keycloak/data/import
+    command: ['start-dev', '--import-realm']
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health/ready']
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # Test MinIO
+  minio-test:
+    image: minio/minio:latest
+    container_name: makrx-minio-test
+    ports:
+      - '9004:9000'
+      - '9005:9001'
+    environment:
+      MINIO_ROOT_USER: testuser
+      MINIO_ROOT_PASSWORD: testpassword123
+    volumes:
+      - minio_test_data:/data
+    networks:
+      - makrx-test-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # CI/CD specific services
+  
+  # Test runner service
+  test-runner:
+    build:
+      context: .
+      dockerfile: ci/Dockerfile.test
+    container_name: makrx-test-runner
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://makrx:makrx_test_password@postgres-test:5432/makrx_test
+      REDIS_URL: redis://redis-test:6379
+      KEYCLOAK_URL: http://keycloak-test:8080
+      MINIO_ENDPOINT: http://minio-test:9000
+      MINIO_ACCESS_KEY: testuser
+      MINIO_SECRET_KEY: testpassword123
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+      keycloak-test:
+        condition: service_healthy
+      minio-test:
+        condition: service_healthy
+    networks:
+      - makrx-test-network
+    volumes:
+      - .:/app
+      - test_results:/app/test-results
+      - coverage_reports:/app/coverage
+    profiles:
+      - test
+
+  # Load testing service
+  load-tester:
+    image: grafana/k6:latest
+    container_name: makrx-load-tester
+    volumes:
+      - ./tests/load:/scripts
+      - load_test_results:/results
+    networks:
+      - makrx-test-network
+    profiles:
+      - performance
+
+  # Code quality scanner
+  sonarqube:
+    image: sonarqube:community
+    container_name: makrx-sonarqube
+    ports:
+      - '9000:9000'
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://postgres-test:5432/sonar
+      SONAR_JDBC_USERNAME: makrx
+      SONAR_JDBC_PASSWORD: makrx_test_password
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - makrx-test-network
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    profiles:
+      - analysis
+
+  # Security scanning
+  trivy:
+    image: aquasec/trivy:latest
+    container_name: makrx-trivy
+    volumes:
+      - .:/app
+      - trivy_cache:/root/.cache/trivy
+      - security_reports:/reports
+    networks:
+      - makrx-test-network
+    profiles:
+      - security
+
+  # Documentation generator
+  docs-generator:
+    build:
+      context: .
+      dockerfile: ci/Dockerfile.docs
+    container_name: makrx-docs
+    volumes:
+      - .:/app
+      - docs_output:/app/docs/build
+    networks:
+      - makrx-test-network
+    profiles:
+      - docs
+
+networks:
+  makrx-test-network:
+    driver: bridge
+
+volumes:
+  postgres_test_data:
+    driver: local
+  minio_test_data:
+    driver: local
+  test_results:
+    driver: local
+  coverage_reports:
+    driver: local
+  load_test_results:
+    driver: local
+  sonarqube_data:
+    driver: local
+  sonarqube_logs:
+    driver: local
+  sonarqube_extensions:
+    driver: local
+  trivy_cache:
+    driver: local
+  security_reports:
+    driver: local
+  docs_output:
+    driver: local
