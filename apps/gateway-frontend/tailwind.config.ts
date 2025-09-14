@@ -109,7 +109,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        'display': [
+        display: [
           'Inter',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -118,9 +118,9 @@ const config: Config = {
           'Oxygen',
           'Ubuntu',
           'Cantarell',
-          'sans-serif'
+          'sans-serif',
         ],
-        'body': [
+        body: [
           'Inter',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -129,23 +129,16 @@ const config: Config = {
           'Oxygen',
           'Ubuntu',
           'Cantarell',
-          'sans-serif'
+          'sans-serif',
         ],
-        'mono': [
-          'JetBrains Mono',
-          'Fira Code',
-          'Monaco',
-          'Cascadia Code',
-          'Consolas',
-          'monospace'
-        ],
+        mono: ['JetBrains Mono', 'Fira Code', 'Monaco', 'Cascadia Code', 'Consolas', 'monospace'],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.025em' }],
-        'sm': ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.025em' }],
-        'base': ['1rem', { lineHeight: '1.5rem', letterSpacing: '0rem' }],
-        'lg': ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
-        'xl': ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
+        xs: ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.025em' }],
+        sm: ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.025em' }],
+        base: ['1rem', { lineHeight: '1.5rem', letterSpacing: '0rem' }],
+        lg: ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
+        xl: ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
         '2xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '-0.025em' }],
         '3xl': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.025em' }],
         '4xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.025em' }],
@@ -177,16 +170,19 @@ const config: Config = {
       },
       boxShadow: {
         'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-        'colored': '0 10px 15px -3px rgba(30, 64, 175, 0.1), 0 4px 6px -2px rgba(30, 64, 175, 0.05)',
-        'colored-lg': '0 20px 25px -5px rgba(30, 64, 175, 0.1), 0 10px 10px -5px rgba(30, 64, 175, 0.04)',
-        'glow': '0 0 20px rgba(251, 191, 36, 0.3)',
+        colored: '0 10px 15px -3px rgba(30, 64, 175, 0.1), 0 4px 6px -2px rgba(30, 64, 175, 0.05)',
+        'colored-lg':
+          '0 20px 25px -5px rgba(30, 64, 175, 0.1), 0 10px 10px -5px rgba(30, 64, 175, 0.04)',
+        glow: '0 0 20px rgba(251, 191, 36, 0.3)',
         'glow-lg': '0 0 40px rgba(251, 191, 36, 0.4)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'hero-pattern': "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%239C92AC\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
-        'circuit-pattern': "url('data:image/svg+xml,%3Csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.05\"%3E%3Cpath d=\"M20 20h10v10h-10v-10zm-10-10h10v10h-10v-10z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
+        'hero-pattern':
+          'url(\'data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\')',
+        'circuit-pattern':
+          'url(\'data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M20 20h10v10h-10v-10zm-10-10h10v10h-10v-10z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\')',
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
@@ -199,11 +195,11 @@ const config: Config = {
         'bounce-gentle': 'bounceGentle 2s infinite',
         'pulse-slow': 'pulse 3s infinite',
         'spin-slow': 'spin 3s linear infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'shimmer': 'shimmer 2s linear infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
-        'type': 'type 3s steps(20) infinite',
-        'slideRight': 'slideRight 3s ease-in-out infinite',
+        float: 'float 3s ease-in-out infinite',
+        shimmer: 'shimmer 2s linear infinite',
+        glow: 'glow 2s ease-in-out infinite alternate',
+        type: 'type 3s steps(20) infinite',
+        slideRight: 'slideRight 3s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -262,14 +258,14 @@ const config: Config = {
         },
       },
       screens: {
-        'xs': '475px',
+        xs: '475px',
         '3xl': '1680px',
         '4xl': '2560px',
         // Accessibility-focused breakpoints
-        'print': { 'raw': 'print' },
-        'reduced-motion': { 'raw': '(prefers-reduced-motion: reduce)' },
-        'high-contrast': { 'raw': '(prefers-contrast: high)' },
-        'dark': { 'raw': '(prefers-color-scheme: dark)' },
+        print: { raw: 'print' },
+        'reduced-motion': { raw: '(prefers-reduced-motion: reduce)' },
+        'high-contrast': { raw: '(prefers-contrast: high)' },
+        dark: { raw: '(prefers-color-scheme: dark)' },
       },
       container: {
         center: true,
@@ -327,7 +323,7 @@ const config: Config = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
     // Custom plugin for accessibility utilities
-    function({ addUtilities, theme }: any) {
+    function ({ addUtilities, theme }: any) {
       const newUtilities = {
         '.focus-ring': {
           '&:focus': {
@@ -386,7 +382,7 @@ const config: Config = {
       addUtilities(newUtilities);
     },
     // Custom plugin for performance utilities
-    function({ addUtilities }: any) {
+    function ({ addUtilities }: any) {
       const performanceUtilities = {
         '.gpu-layer': {
           transform: 'translateZ(0)',

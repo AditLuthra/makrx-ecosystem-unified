@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Upload,
   Cog,
@@ -13,7 +13,7 @@ import {
   Phone,
   Mail,
   MessageSquare,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface ServiceCategory {
   name: string;
@@ -34,149 +34,116 @@ interface ProjectStep {
 
 const serviceCategories: ServiceCategory[] = [
   {
-    name: "Injection Molding",
-    description: "High-volume plastic parts with excellent surface finish",
+    name: 'Injection Molding',
+    description: 'High-volume plastic parts with excellent surface finish',
     icon: Factory,
     capabilities: [
-      "Thermoplastic materials",
-      "Multi-cavity molds",
-      "Insert molding",
-      "Overmolding",
+      'Thermoplastic materials',
+      'Multi-cavity molds',
+      'Insert molding',
+      'Overmolding',
     ],
     applications: [
-      "Consumer products",
-      "Automotive parts",
-      "Medical devices",
-      "Electronics housings",
+      'Consumer products',
+      'Automotive parts',
+      'Medical devices',
+      'Electronics housings',
     ],
-    leadTime: "4-8 weeks",
-    minOrder: "1,000 pcs",
+    leadTime: '4-8 weeks',
+    minOrder: '1,000 pcs',
   },
   {
-    name: "Die Casting",
-    description: "Precision metal parts with tight tolerances",
+    name: 'Die Casting',
+    description: 'Precision metal parts with tight tolerances',
     icon: Cog,
     capabilities: [
-      "Aluminum, zinc, magnesium",
-      "Thin wall sections",
-      "Complex geometries",
-      "Secondary machining",
+      'Aluminum, zinc, magnesium',
+      'Thin wall sections',
+      'Complex geometries',
+      'Secondary machining',
     ],
-    applications: [
-      "Automotive components",
-      "Aerospace parts",
-      "Electronic enclosures",
-      "Hardware",
-    ],
-    leadTime: "6-12 weeks",
-    minOrder: "500 pcs",
+    applications: ['Automotive components', 'Aerospace parts', 'Electronic enclosures', 'Hardware'],
+    leadTime: '6-12 weeks',
+    minOrder: '500 pcs',
   },
   {
-    name: "Sheet Metal Fabrication",
-    description: "Custom metal enclosures and structural components",
+    name: 'Sheet Metal Fabrication',
+    description: 'Custom metal enclosures and structural components',
     icon: Shield,
-    capabilities: [
-      "Laser cutting",
-      "CNC punching",
-      "Forming/bending",
-      "Welding assembly",
-    ],
-    applications: [
-      "Enclosures",
-      "Brackets",
-      "Chassis",
-      "Architectural elements",
-    ],
-    leadTime: "2-4 weeks",
-    minOrder: "50 pcs",
+    capabilities: ['Laser cutting', 'CNC punching', 'Forming/bending', 'Welding assembly'],
+    applications: ['Enclosures', 'Brackets', 'Chassis', 'Architectural elements'],
+    leadTime: '2-4 weeks',
+    minOrder: '50 pcs',
   },
   {
-    name: "Composite Manufacturing",
-    description:
-      "Carbon fiber and fiberglass parts for high-performance applications",
+    name: 'Composite Manufacturing',
+    description: 'Carbon fiber and fiberglass parts for high-performance applications',
     icon: Zap,
-    capabilities: [
-      "Carbon fiber",
-      "Fiberglass",
-      "Prepreg materials",
-      "Vacuum infusion",
-    ],
-    applications: [
-      "Aerospace",
-      "Automotive racing",
-      "Sports equipment",
-      "Drones",
-    ],
-    leadTime: "3-6 weeks",
-    minOrder: "25 pcs",
+    capabilities: ['Carbon fiber', 'Fiberglass', 'Prepreg materials', 'Vacuum infusion'],
+    applications: ['Aerospace', 'Automotive racing', 'Sports equipment', 'Drones'],
+    leadTime: '3-6 weeks',
+    minOrder: '25 pcs',
   },
 ];
 
 const projectSteps: ProjectStep[] = [
   {
     step: 1,
-    title: "Project Consultation",
-    description:
-      "Discuss your requirements, timeline, and budget with our engineering team",
-    duration: "1-2 days",
+    title: 'Project Consultation',
+    description: 'Discuss your requirements, timeline, and budget with our engineering team',
+    duration: '1-2 days',
   },
   {
     step: 2,
-    title: "Design for Manufacturing",
-    description:
-      "Optimize your design for production efficiency and cost-effectiveness",
-    duration: "3-5 days",
+    title: 'Design for Manufacturing',
+    description: 'Optimize your design for production efficiency and cost-effectiveness',
+    duration: '3-5 days',
   },
   {
     step: 3,
-    title: "Prototype & Testing",
-    description:
-      "Create functional prototypes to validate design and manufacturing process",
-    duration: "1-3 weeks",
+    title: 'Prototype & Testing',
+    description: 'Create functional prototypes to validate design and manufacturing process',
+    duration: '1-3 weeks',
   },
   {
     step: 4,
-    title: "Tooling & Setup",
-    description:
-      "Design and manufacture necessary tooling, fixtures, and production setup",
-    duration: "2-8 weeks",
+    title: 'Tooling & Setup',
+    description: 'Design and manufacture necessary tooling, fixtures, and production setup',
+    duration: '2-8 weeks',
   },
   {
     step: 5,
-    title: "Production & Quality",
-    description:
-      "Full-scale production with comprehensive quality control and testing",
-    duration: "Varies",
+    title: 'Production & Quality',
+    description: 'Full-scale production with comprehensive quality control and testing',
+    duration: 'Varies',
   },
   {
     step: 6,
-    title: "Delivery & Support",
-    description:
-      "Packaging, shipping, and ongoing production support as needed",
-    duration: "1-2 weeks",
+    title: 'Delivery & Support',
+    description: 'Packaging, shipping, and ongoing production support as needed',
+    duration: '1-2 weeks',
   },
 ];
 
 export default function CustomManufacturingPage() {
-  const [selectedCategory, setSelectedCategory] =
-    useState<ServiceCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
   const [projectDetails, setProjectDetails] = useState({
-    name: "",
-    company: "",
-    email: "",
-    phone: "",
-    description: "",
-    quantity: "",
-    timeline: "",
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    description: '',
+    quantity: '',
+    timeline: '',
   });
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -187,12 +154,12 @@ export default function CustomManufacturingPage() {
     setDragActive(false);
 
     const files = Array.from(e.dataTransfer.files);
-    console.log("Files dropped:", files);
+    console.log('Files dropped:', files);
   };
 
   const handleSubmitRFQ = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("RFQ submitted:", { projectDetails, selectedCategory });
+    console.log('RFQ submitted:', { projectDetails, selectedCategory });
     // Handle form submission
   };
 
@@ -211,9 +178,8 @@ export default function CustomManufacturingPage() {
               Custom Manufacturing Services
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              From concept to production, we partner with manufacturers
-              worldwide to bring your custom products to life. Injection
-              molding, die casting, and specialized processes.
+              From concept to production, we partner with manufacturers worldwide to bring your
+              custom products to life. Injection molding, die casting, and specialized processes.
             </p>
           </div>
         </div>
@@ -233,8 +199,8 @@ export default function CustomManufacturingPage() {
                   key={category.name}
                   className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer transition-all hover:scale-105 ${
                     selectedCategory?.name === category.name
-                      ? "ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/20"
-                      : ""
+                      ? 'ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                      : ''
                   }`}
                   onClick={() => setSelectedCategory(category)}
                 >
@@ -257,10 +223,7 @@ export default function CustomManufacturingPage() {
                           </h4>
                           <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                             {category.capabilities.map((capability) => (
-                              <li
-                                key={capability}
-                                className="flex items-center gap-2"
-                              >
+                              <li key={capability} className="flex items-center gap-2">
                                 <CheckCircle className="w-3 h-3 text-green-500" />
                                 {capability}
                               </li>
@@ -273,10 +236,7 @@ export default function CustomManufacturingPage() {
                           </h4>
                           <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                             {category.applications.map((application) => (
-                              <li
-                                key={application}
-                                className="flex items-center gap-2"
-                              >
+                              <li key={application} className="flex items-center gap-2">
                                 <div className="w-2 h-2 bg-purple-500 rounded-full" />
                                 {application}
                               </li>
@@ -287,17 +247,13 @@ export default function CustomManufacturingPage() {
 
                       <div className="flex items-center justify-between mt-4 pt-4 border-t dark:border-gray-600">
                         <div className="text-sm">
-                          <span className="text-gray-500 dark:text-gray-400">
-                            Lead time:{" "}
-                          </span>
+                          <span className="text-gray-500 dark:text-gray-400">Lead time: </span>
                           <span className="font-medium text-gray-900 dark:text-white">
                             {category.leadTime}
                           </span>
                         </div>
                         <div className="text-sm">
-                          <span className="text-gray-500 dark:text-gray-400">
-                            Min order:{" "}
-                          </span>
+                          <span className="text-gray-500 dark:text-gray-400">Min order: </span>
                           <span className="font-medium text-gray-900 dark:text-white">
                             {category.minOrder}
                           </span>
@@ -318,10 +274,7 @@ export default function CustomManufacturingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projectSteps.map((step) => (
-              <div
-                key={step.step}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
-              >
+              <div key={step.step} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
                     {step.step}
@@ -330,9 +283,7 @@ export default function CustomManufacturingPage() {
                     {step.title}
                   </h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">
-                  {step.description}
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-3">{step.description}</p>
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                   <Clock className="w-4 h-4" />
                   <span>{step.duration}</span>
@@ -476,12 +427,8 @@ export default function CustomManufacturingPage() {
                   >
                     <option value="">Select timeline</option>
                     <option value="Rush (2-4 weeks)">Rush (2-4 weeks)</option>
-                    <option value="Standard (4-8 weeks)">
-                      Standard (4-8 weeks)
-                    </option>
-                    <option value="Extended (8+ weeks)">
-                      Extended (8+ weeks)
-                    </option>
+                    <option value="Standard (4-8 weeks)">Standard (4-8 weeks)</option>
+                    <option value="Extended (8+ weeks)">Extended (8+ weeks)</option>
                     <option value="Flexible">Flexible</option>
                   </select>
                 </div>
@@ -514,8 +461,8 @@ export default function CustomManufacturingPage() {
               <div
                 className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                   dragActive
-                    ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
-                    : "border-gray-300 dark:border-gray-600"
+                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                    : 'border-gray-300 dark:border-gray-600'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -544,12 +491,8 @@ export default function CustomManufacturingPage() {
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      +1 (555) 123-4567
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Mon-Fri 8AM-6PM PST
-                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Mon-Fri 8AM-6PM PST</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -566,9 +509,7 @@ export default function CustomManufacturingPage() {
                 <div className="flex items-center gap-3">
                   <MessageSquare className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      Live Chat
-                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">Live Chat</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Available during business hours
                     </p>

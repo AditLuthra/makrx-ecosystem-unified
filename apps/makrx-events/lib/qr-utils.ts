@@ -16,25 +16,26 @@ interface QRData {
 export function generateQRPayload(registrationId: string, eventId: string, userId: string): string {
   const timestamp = Date.now();
   const data = `${registrationId}:${eventId}:${userId}:${timestamp}`;
-  
-  const signature = crypto
-    .createHmac('sha256', QR_SECRET)
-    .update(data)
-    .digest('hex');
+
+  const signature = crypto.createHmac('sha256', QR_SECRET).update(data).digest('hex');
 
   const qrData: QRData = {
     registrationId,
     eventId,
     userId,
     timestamp,
-    signature
+    signature,
   };
 
   return JSON.stringify(qrData);
 }
 
 // Verify QR code payload
-export function verifyQRPayload(payload: string): { valid: boolean; data?: QRData; error?: string } {
+export function verifyQRPayload(payload: string): {
+  valid: boolean;
+  data?: QRData;
+  error?: string;
+} {
   try {
     const qrData: QRData = JSON.parse(payload);
     const { registrationId, eventId, userId, timestamp, signature } = qrData;
@@ -43,17 +44,14 @@ export function verifyQRPayload(payload: string): { valid: boolean; data?: QRDat
     const now = Date.now();
     const age = now - timestamp;
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    
+
     if (age > maxAge) {
       return { valid: false, error: 'QR code expired' };
     }
 
     // Verify signature
     const data = `${registrationId}:${eventId}:${userId}:${timestamp}`;
-    const expectedSignature = crypto
-      .createHmac('sha256', QR_SECRET)
-      .update(data)
-      .digest('hex');
+    const expectedSignature = crypto.createHmac('sha256', QR_SECRET).update(data).digest('hex');
 
     if (signature !== expectedSignature) {
       return { valid: false, error: 'Invalid QR code signature' };
@@ -73,8 +71,8 @@ export async function generateQRCodeImage(payload: string): Promise<string> {
       margin: 2,
       color: {
         dark: '#000000',
-        light: '#FFFFFF'
-      }
+        light: '#FFFFFF',
+      },
     });
     return qrCodeDataURL;
   } catch (error) {
@@ -83,7 +81,11 @@ export async function generateQRCodeImage(payload: string): Promise<string> {
 }
 
 // Generate QR code URL for registration
-export function generateRegistrationQRUrl(registrationId: string, eventId: string, userId: string): string {
+export function generateRegistrationQRUrl(
+  registrationId: string,
+  eventId: string,
+  userId: string,
+): string {
   const payload = generateQRPayload(registrationId, eventId, userId);
   const encodedPayload = encodeURIComponent(payload);
   return `${process.env.APP_BASE_URL || 'http://localhost:3000'}/qr/check-in?data=${encodedPayload}`;

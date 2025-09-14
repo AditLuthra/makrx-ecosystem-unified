@@ -11,25 +11,23 @@ const webhookSchema = z.object({
       amount: z.number(),
       currency: z.string(),
       status: z.string(),
-      metadata: z.record(z.string()).optional()
-    })
+      metadata: z.record(z.string()).optional(),
+    }),
   }),
-  created: z.number()
+  created: z.number(),
 });
 
 // POST /api/payments/webhook - Handle payment gateway webhooks
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
-    const signature = request.headers.get('stripe-signature') || 
-                     request.headers.get('x-razorpay-signature') ||
-                     request.headers.get('authorization');
+    const signature =
+      request.headers.get('stripe-signature') ||
+      request.headers.get('x-razorpay-signature') ||
+      request.headers.get('authorization');
 
     if (!signature) {
-      return NextResponse.json(
-        { error: 'Missing webhook signature' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing webhook signature' }, { status: 401 });
     }
 
     // TODO: Verify webhook signature with gateway
@@ -50,29 +48,25 @@ export async function POST(request: NextRequest) {
       case 'payment.captured':
         await handlePaymentSuccess(paymentObject);
         break;
-        
+
       case 'payment_intent.payment_failed':
       case 'payment.failed':
         await handlePaymentFailure(paymentObject);
         break;
-        
+
       case 'payment_intent.canceled':
       case 'payment.cancelled':
         await handlePaymentCancellation(paymentObject);
         break;
-        
+
       default:
         console.log(`Unhandled webhook type: ${type}`);
     }
 
     return NextResponse.json({ received: true });
-
   } catch (error) {
     console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 400 });
   }
 }
 
@@ -80,7 +74,7 @@ async function handlePaymentSuccess(paymentObject: any) {
   try {
     // Extract registration ID from metadata
     const registrationId = paymentObject.metadata?.registrationId;
-    
+
     if (!registrationId) {
       console.error('No registrationId in payment metadata');
       return;
@@ -96,7 +90,7 @@ async function handlePaymentSuccess(paymentObject: any) {
       gatewayPaymentId: paymentObject.id,
       amount: paymentObject.amount / 100, // Convert from cents
       currency: paymentObject.currency.toUpperCase(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // 2. Update registration status and generate QR code
@@ -106,7 +100,7 @@ async function handlePaymentSuccess(paymentObject: any) {
       status: 'confirmed',
       qrCode,
       confirmedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // 3. Update event registration count
@@ -120,9 +114,8 @@ async function handlePaymentSuccess(paymentObject: any) {
 
     console.log('Payment processed successfully:', {
       payment: updatedPayment,
-      registration: updatedRegistration
+      registration: updatedRegistration,
     });
-
   } catch (error) {
     console.error('Error handling payment success:', error);
   }
@@ -131,7 +124,7 @@ async function handlePaymentSuccess(paymentObject: any) {
 async function handlePaymentFailure(paymentObject: any) {
   try {
     const registrationId = paymentObject.metadata?.registrationId;
-    
+
     if (!registrationId) {
       console.error('No registrationId in payment metadata');
       return;
@@ -144,13 +137,13 @@ async function handlePaymentFailure(paymentObject: any) {
       id: paymentObject.id,
       status: 'failed',
       gatewayPaymentId: paymentObject.id,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const updatedRegistration = {
       id: registrationId,
       status: 'payment_failed',
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // TODO: Send payment failure notification
@@ -158,9 +151,8 @@ async function handlePaymentFailure(paymentObject: any) {
 
     console.log('Payment failure processed:', {
       payment: updatedPayment,
-      registration: updatedRegistration
+      registration: updatedRegistration,
     });
-
   } catch (error) {
     console.error('Error handling payment failure:', error);
   }
@@ -169,7 +161,7 @@ async function handlePaymentFailure(paymentObject: any) {
 async function handlePaymentCancellation(paymentObject: any) {
   try {
     const registrationId = paymentObject.metadata?.registrationId;
-    
+
     if (!registrationId) {
       console.error('No registrationId in payment metadata');
       return;
@@ -182,13 +174,13 @@ async function handlePaymentCancellation(paymentObject: any) {
       id: paymentObject.id,
       status: 'cancelled',
       gatewayPaymentId: paymentObject.id,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const updatedRegistration = {
       id: registrationId,
       status: 'cancelled',
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // TODO: Release held inventory/capacity
@@ -196,9 +188,8 @@ async function handlePaymentCancellation(paymentObject: any) {
 
     console.log('Payment cancellation processed:', {
       payment: updatedPayment,
-      registration: updatedRegistration
+      registration: updatedRegistration,
     });
-
   } catch (error) {
     console.error('Error handling payment cancellation:', error);
   }

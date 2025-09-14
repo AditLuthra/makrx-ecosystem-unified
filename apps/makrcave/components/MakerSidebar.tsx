@@ -14,7 +14,7 @@ import {
   Heart,
   LogOut,
   CreditCard,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 
 export default function MakerSidebar() {
@@ -28,44 +28,44 @@ export default function MakerSidebar() {
       name: 'My Dashboard',
       href: '/portal/dashboard',
       icon: LayoutDashboard,
-      active: isActive('/portal/dashboard')
+      active: isActive('/portal/dashboard'),
     },
     {
       name: 'My Projects',
       href: '/portal/projects',
       icon: FolderOpen,
-      active: isActive('/portal/projects')
+      active: isActive('/portal/projects'),
     },
     {
       name: 'Project Showcase',
       href: '/portal/showcase',
       icon: Sparkles,
-      active: isActive('/portal/showcase')
+      active: isActive('/portal/showcase'),
     },
     {
       name: 'Reservations',
       href: '/portal/reservations',
       icon: Calendar,
-      active: isActive('/portal/reservations')
+      active: isActive('/portal/reservations'),
     },
     {
       name: 'Equipment',
       href: '/portal/equipment',
       icon: Wrench,
-      active: isActive('/portal/equipment')
+      active: isActive('/portal/equipment'),
     },
     {
       name: 'Available Materials',
       href: '/portal/materials',
       icon: Package,
-      active: isActive('/portal/materials')
+      active: isActive('/portal/materials'),
     },
     {
       name: 'Billing & Payments',
       href: '/portal/billing',
       icon: CreditCard,
-      active: isActive('/portal/billing')
-    }
+      active: isActive('/portal/billing'),
+    },
   ];
 
   const communityNavigation = [
@@ -73,26 +73,26 @@ export default function MakerSidebar() {
       name: 'My Profile',
       href: '/portal/profile',
       icon: User,
-      active: isActive('/portal/profile')
+      active: isActive('/portal/profile'),
     },
     {
       name: 'Learning Hub',
       href: '/portal/learning',
       icon: BookOpen,
-      active: isActive('/portal/learning')
+      active: isActive('/portal/learning'),
     },
     {
       name: 'Achievements',
       href: '/portal/achievements',
       icon: Award,
-      active: isActive('/portal/achievements')
+      active: isActive('/portal/achievements'),
     },
     {
       name: 'Community',
       href: '/portal/community',
       icon: MessageSquare,
-      active: isActive('/portal/community')
-    }
+      active: isActive('/portal/community'),
+    },
   ];
 
   return (

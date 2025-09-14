@@ -61,6 +61,7 @@ The GitHub integration for the MakrCave Project Management System has been succe
 ## 🔧 Key Benefits
 
 ### For Users
+
 - **Reduced Server Load**: Files managed through GitHub instead of local storage
 - **Version Control**: Full Git history and branching support
 - **Collaboration**: Native GitHub collaboration features
@@ -68,6 +69,7 @@ The GitHub integration for the MakrCave Project Management System has been succe
 - **Documentation**: Auto-generated README files
 
 ### For Developers
+
 - **Scalable Architecture**: External file storage reduces server costs
 - **GitHub Ecosystem**: Integration with existing developer workflows
 - **Real-time Sync**: Up-to-date project activity from GitHub
@@ -76,23 +78,27 @@ The GitHub integration for the MakrCave Project Management System has been succe
 ## 🛠 Technical Implementation
 
 ### Authentication
+
 - Support for both public and private repositories
 - GitHub Personal Access Token management
 - Secure token storage and validation
 
 ### File Management
+
 - Directory navigation and file browsing
 - File content preview and download
 - Support for all GitHub file types
 - Branch-aware file operations
 
 ### Activity Synchronization
+
 - Automatic commit tracking
 - Pull request monitoring
 - Issue activity integration
 - Real-time activity updates
 
 ### Error Handling
+
 - Comprehensive error management
 - Network failure recovery
 - Invalid repository handling
@@ -115,24 +121,26 @@ The GitHub integration for the MakrCave Project Management System has been succe
 ## 🎯 Usage Examples
 
 ### Connecting a Repository
+
 ```javascript
 // Frontend connection
 const connectData = {
   repo_url: "https://github.com/username/repository",
-  access_token: "ghp_xxxxxxxxxxxx" // Optional for private repos
+  access_token: "ghp_xxxxxxxxxxxx", // Optional for private repos
 };
 
 await fetch(`/api/v1/projects/${projectId}/github/connect`, {
-  method: 'POST',
-  body: JSON.stringify(connectData)
+  method: "POST",
+  body: JSON.stringify(connectData),
 });
 ```
 
 ### Generating README
+
 ```javascript
 // Auto-generate project README
 await fetch(`/api/v1/projects/${projectId}/github/readme/generate`, {
-  method: 'POST'
+  method: "POST",
 });
 ```
 

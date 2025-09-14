@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Progress } from '../ui/progress';
-import { 
+import {
   Users,
   Star,
   Clock,
@@ -38,7 +38,7 @@ import {
   Globe,
   Github,
   Linkedin,
-  Twitter
+  Twitter,
 } from 'lucide-react';
 
 interface Mentor {
@@ -110,10 +110,7 @@ interface MentorshipHubProps {
   onJoinExchange?: (exchangeId: string) => void;
 }
 
-const MentorshipHub: React.FC<MentorshipHubProps> = ({
-  onRequestMentorship,
-  onJoinExchange
-}) => {
+const MentorshipHub: React.FC<MentorshipHubProps> = ({ onRequestMentorship, onJoinExchange }) => {
   const [activeTab, setActiveTab] = useState('mentors');
   const [searchTerm, setSearchTerm] = useState('');
   const [skillFilter, setSkillFilter] = useState('all');
@@ -145,8 +142,8 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       socialLinks: {
         website: 'https://sarahchen.dev',
         linkedin: 'sarah-chen-materials',
-        github: 'sarahchen'
-      }
+        github: 'sarahchen',
+      },
     },
     {
       id: 'mentor-002',
@@ -170,8 +167,8 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       timezone: 'CST (UTC-6)',
       nextAvailable: 'Tomorrow at 10:00 AM',
       socialLinks: {
-        linkedin: 'marcus-johnson-cnc'
-      }
+        linkedin: 'marcus-johnson-cnc',
+      },
     },
     {
       id: 'mentor-003',
@@ -197,9 +194,9 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       socialLinks: {
         website: 'https://alexkim.dev',
         github: 'alexkim-iot',
-        twitter: 'alexcodes'
-      }
-    }
+        twitter: 'alexcodes',
+      },
+    },
   ];
 
   // Mock mentorship requests
@@ -211,13 +208,14 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       studentName: 'John Doe',
       studentAvatar: '/api/placeholder/50/50',
       skill: '3D Printing',
-      description: 'Need help with multi-material printing techniques for a medical device prototype.',
+      description:
+        'Need help with multi-material printing techniques for a medical device prototype.',
       preferredTime: 'Weekends, 2-4 PM',
       sessionType: 'project-based',
       budget: '$75/hour',
       status: 'pending',
       createdAt: '2024-12-18',
-      urgency: 'medium'
+      urgency: 'medium',
     },
     {
       id: 'req-002',
@@ -226,14 +224,15 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       studentName: 'Emma Wilson',
       studentAvatar: '/api/placeholder/50/50',
       skill: 'CNC Programming',
-      description: 'Learning CAM programming for aluminum parts. Need guidance on speeds and feeds.',
+      description:
+        'Learning CAM programming for aluminum parts. Need guidance on speeds and feeds.',
       preferredTime: 'Evenings after 6 PM',
       sessionType: 'ongoing',
       budget: '$60/hour',
       status: 'accepted',
       createdAt: '2024-12-17',
-      urgency: 'low'
-    }
+      urgency: 'low',
+    },
   ];
 
   // Mock skill exchanges
@@ -241,7 +240,8 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
     {
       id: 'exchange-001',
       title: 'CAD Design ↔ Electronics Knowledge',
-      description: 'I can teach advanced CAD techniques (Fusion 360, SolidWorks) in exchange for learning Arduino programming and circuit design.',
+      description:
+        'I can teach advanced CAD techniques (Fusion 360, SolidWorks) in exchange for learning Arduino programming and circuit design.',
       offeredSkill: 'CAD Design',
       wantedSkill: 'Arduino Programming',
       author: 'Mike Chen',
@@ -254,12 +254,13 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       maxParticipants: 4,
       tags: ['CAD', 'Electronics', 'Arduino', 'Design'],
       createdAt: '2024-12-15',
-      isActive: true
+      isActive: true,
     },
     {
       id: 'exchange-002',
       title: 'Woodworking Study Group',
-      description: 'Group learning traditional woodworking techniques and hand tool usage. Beginners welcome!',
+      description:
+        'Group learning traditional woodworking techniques and hand tool usage. Beginners welcome!',
       offeredSkill: 'Woodworking',
       wantedSkill: 'Group Learning',
       author: 'Sarah Johnson',
@@ -272,12 +273,13 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       maxParticipants: 10,
       tags: ['Woodworking', 'Hand Tools', 'Traditional', 'Group'],
       createdAt: '2024-12-14',
-      isActive: true
+      isActive: true,
     },
     {
       id: 'exchange-003',
       title: 'Laser Cutting ↔ 3D Modeling',
-      description: 'Experienced with laser cutting and file preparation. Looking to improve 3D modeling skills for product design.',
+      description:
+        'Experienced with laser cutting and file preparation. Looking to improve 3D modeling skills for product design.',
       offeredSkill: 'Laser Cutting',
       wantedSkill: '3D Modeling',
       author: 'David Park',
@@ -290,44 +292,59 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       maxParticipants: 2,
       tags: ['Laser Cutting', '3D Modeling', 'Product Design'],
       createdAt: '2024-12-13',
-      isActive: true
-    }
+      isActive: true,
+    },
   ];
 
   const getAvailabilityColor = (availability: string) => {
     switch (availability) {
-      case 'available': return 'bg-green-100 text-green-800 border-green-200';
-      case 'busy': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'unavailable': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'available':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'busy':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'unavailable':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'accepted': return 'bg-green-100 text-green-800 border-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-      case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'accepted':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'rejected':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const filteredMentors = mentors.filter(mentor => {
-    const matchesSearch = mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         mentor.expertise.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredMentors = mentors.filter((mentor) => {
+    const matchesSearch =
+      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.expertise.some((skill) => skill.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesSkill = skillFilter === 'all' || mentor.expertise.includes(skillFilter);
-    const matchesAvailability = availabilityFilter === 'all' || mentor.availability === availabilityFilter;
-    
+    const matchesAvailability =
+      availabilityFilter === 'all' || mentor.availability === availabilityFilter;
+
     return matchesSearch && matchesSkill && matchesAvailability;
   });
 
@@ -337,7 +354,9 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Mentorship Hub</h2>
-          <p className="text-gray-600">Learn from experts and share your knowledge with the community</p>
+          <p className="text-gray-600">
+            Learn from experts and share your knowledge with the community
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <Button variant="outline">
@@ -417,7 +436,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
             { id: 'mentors', label: 'Find Mentors', icon: Users },
             { id: 'requests', label: 'My Requests', icon: MessageSquare },
             { id: 'exchanges', label: 'Skill Exchange', icon: Handshake },
-            { id: 'sessions', label: 'My Sessions', icon: Calendar }
+            { id: 'sessions', label: 'My Sessions', icon: Calendar },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -469,7 +488,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                   <SelectItem value="CAD Design">CAD Design</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={availabilityFilter} onValueChange={setAvailabilityFilter}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Availability" />
@@ -490,11 +509,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
               <Card key={mentor.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4 mb-4">
-                    <img 
-                      src={mentor.avatar}
-                      alt={mentor.name}
-                      className="w-16 h-16 rounded-full"
-                    />
+                    <img src={mentor.avatar} alt={mentor.name} className="w-16 h-16 rounded-full" />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <div>
@@ -506,11 +521,13 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                           {mentor.availability}
                         </Badge>
                       </div>
-                      
+
                       <div className="flex items-center space-x-4 text-sm text-gray-600">
                         <div className="flex items-center">
                           <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                          <span>{mentor.rating} ({mentor.reviewCount} reviews)</span>
+                          <span>
+                            {mentor.rating} ({mentor.reviewCount} reviews)
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <MapPin className="h-4 w-4 mr-1" />
@@ -593,10 +610,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
-                    <Button 
-                      className="flex-1"
-                      onClick={() => onRequestMentorship?.(mentor.id)}
-                    >
+                    <Button className="flex-1" onClick={() => onRequestMentorship?.(mentor.id)}>
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Request Mentorship
                     </Button>
@@ -624,21 +638,21 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="font-semibold">Mentorship Request - {request.skill}</h3>
-                      <Badge className={getStatusColor(request.status)}>
-                        {request.status}
-                      </Badge>
+                      <Badge className={getStatusColor(request.status)}>{request.status}</Badge>
                       <Badge className={getUrgencyColor(request.urgency)} variant="outline">
                         {request.urgency} priority
                       </Badge>
                     </div>
-                    
+
                     <p className="text-gray-600 text-sm mb-3">To: {request.mentorName}</p>
                     <p className="text-gray-700 mb-4">{request.description}</p>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Session Type:</span>
-                        <div className="font-medium capitalize">{request.sessionType.replace('_', ' ')}</div>
+                        <div className="font-medium capitalize">
+                          {request.sessionType.replace('_', ' ')}
+                        </div>
                       </div>
                       <div>
                         <span className="text-gray-500">Preferred Time:</span>
@@ -654,7 +668,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <Button size="sm" variant="outline">
                       <Edit className="h-4 w-4" />
@@ -686,7 +700,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
               <Card key={exchange.id} className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4 mb-4">
-                    <img 
+                    <img
                       src={exchange.authorAvatar}
                       alt={exchange.author}
                       className="w-12 h-12 rounded-full"
@@ -699,11 +713,15 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                         {exchange.location}
                       </div>
                     </div>
-                    <Badge className={`capitalize ${
-                      exchange.level === 'beginner' ? 'bg-green-100 text-green-800' :
-                      exchange.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <Badge
+                      className={`capitalize ${
+                        exchange.level === 'beginner'
+                          ? 'bg-green-100 text-green-800'
+                          : exchange.level === 'intermediate'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}
+                    >
                       {exchange.level}
                     </Badge>
                   </div>
@@ -712,15 +730,11 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
 
                   {/* Skills Exchange Visual */}
                   <div className="flex items-center justify-center space-x-3 mb-4 p-3 bg-gray-50 rounded-lg">
-                    <Badge className="bg-blue-100 text-blue-800">
-                      {exchange.offeredSkill}
-                    </Badge>
+                    <Badge className="bg-blue-100 text-blue-800">{exchange.offeredSkill}</Badge>
                     <div className="flex items-center text-gray-400">
                       <Handshake className="h-4 w-4" />
                     </div>
-                    <Badge className="bg-green-100 text-green-800">
-                      {exchange.wantedSkill}
-                    </Badge>
+                    <Badge className="bg-green-100 text-green-800">{exchange.wantedSkill}</Badge>
                   </div>
 
                   {/* Details */}
@@ -731,7 +745,9 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                     </div>
                     <div>
                       <span className="text-gray-500">Type:</span>
-                      <div className="font-medium capitalize">{exchange.type.replace('_', ' ')}</div>
+                      <div className="font-medium capitalize">
+                        {exchange.type.replace('_', ' ')}
+                      </div>
                     </div>
                   </div>
 
@@ -739,9 +755,14 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span>Participants</span>
-                      <span className="font-medium">{exchange.participants}/{exchange.maxParticipants}</span>
+                      <span className="font-medium">
+                        {exchange.participants}/{exchange.maxParticipants}
+                      </span>
                     </div>
-                    <Progress value={(exchange.participants / exchange.maxParticipants) * 100} className="h-2" />
+                    <Progress
+                      value={(exchange.participants / exchange.maxParticipants) * 100}
+                      className="h-2"
+                    />
                   </div>
 
                   {/* Tags */}
@@ -754,7 +775,7 @@ const MentorshipHub: React.FC<MentorshipHubProps> = ({
                   </div>
 
                   {/* Action Button */}
-                  <Button 
+                  <Button
                     className="w-full"
                     onClick={() => onJoinExchange?.(exchange.id)}
                     disabled={exchange.participants >= exchange.maxParticipants}

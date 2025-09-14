@@ -9,15 +9,15 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { 
-  Plus, 
-  Wrench, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  Plus,
+  Wrench,
+  Calendar as CalendarIcon,
+  Clock,
+  CheckCircle,
+  AlertCircle,
   XCircle,
-  Edit, 
+  Edit,
   Trash2,
   MoreHorizontal,
   Filter,
@@ -26,9 +26,15 @@ import {
   Shield,
   Settings,
   Eye,
-  MapPin
+  MapPin,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 import { Input } from './ui/input';
 import { format, addHours, isBefore, isAfter } from 'date-fns';
 
@@ -67,7 +73,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
   projectId,
   reservations,
   canEdit,
-  onUpdate
+  onUpdate,
 }) => {
   const getHeaders = useAuthHeaders();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -103,36 +109,50 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'requested': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'in_use': return 'bg-green-100 text-green-800 border-green-200';
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'requested':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'in_use':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'completed':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'requested': return <Clock className="h-3 w-3" />;
-      case 'confirmed': return <CheckCircle className="h-3 w-3" />;
-      case 'in_use': return <Zap className="h-3 w-3" />;
-      case 'completed': return <CheckCircle className="h-3 w-3" />;
-      case 'cancelled': return <XCircle className="h-3 w-3" />;
-      default: return <AlertCircle className="h-3 w-3" />;
+      case 'requested':
+        return <Clock className="h-3 w-3" />;
+      case 'confirmed':
+        return <CheckCircle className="h-3 w-3" />;
+      case 'in_use':
+        return <Zap className="h-3 w-3" />;
+      case 'completed':
+        return <CheckCircle className="h-3 w-3" />;
+      case 'cancelled':
+        return <XCircle className="h-3 w-3" />;
+      default:
+        return <AlertCircle className="h-3 w-3" />;
     }
   };
 
   const getEquipmentInfo = (equipmentId: string) => {
-    return equipment.find(e => e.id === equipmentId) || {
-      id: equipmentId,
-      name: 'Unknown Equipment',
-      category: 'Unknown',
-      status: 'unknown',
-      location: 'Unknown',
-      requires_certification: false,
-      is_available: false
-    };
+    return (
+      equipment.find((e) => e.id === equipmentId) || {
+        id: equipmentId,
+        name: 'Unknown Equipment',
+        category: 'Unknown',
+        status: 'unknown',
+        location: 'Unknown',
+        requires_certification: false,
+        is_available: false,
+      }
+    );
   };
 
   const handleAddReservation = async () => {
@@ -257,13 +277,13 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
     return reservation.status === 'in_use' || (isAfter(now, start) && isBefore(now, end));
   };
 
-  const filteredReservations = filterStatus === 'all' 
-    ? reservations 
-    : reservations.filter(r => r.status === filterStatus);
+  const filteredReservations =
+    filterStatus === 'all' ? reservations : reservations.filter((r) => r.status === filterStatus);
 
-  const filteredEquipment = equipment.filter(e => 
-    e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredEquipment = equipment.filter(
+    (e) =>
+      e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -272,9 +292,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Equipment Reservations</h3>
-          <p className="text-sm text-gray-600">
-            Manage equipment bookings for this project
-          </p>
+          <p className="text-sm text-gray-600">Manage equipment bookings for this project</p>
         </div>
         {canEdit && (
           <Button onClick={() => setShowAddModal(true)}>
@@ -302,7 +320,9 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4 text-yellow-600" />
               <div>
-                <p className="text-2xl font-bold">{reservations.filter(r => r.status === 'requested').length}</p>
+                <p className="text-2xl font-bold">
+                  {reservations.filter((r) => r.status === 'requested').length}
+                </p>
                 <p className="text-xs text-gray-600">Pending</p>
               </div>
             </div>
@@ -313,7 +333,9 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-2xl font-bold">{reservations.filter(r => r.status === 'confirmed').length}</p>
+                <p className="text-2xl font-bold">
+                  {reservations.filter((r) => r.status === 'confirmed').length}
+                </p>
                 <p className="text-xs text-gray-600">Confirmed</p>
               </div>
             </div>
@@ -324,7 +346,9 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
             <div className="flex items-center space-x-2">
               <Zap className="h-4 w-4 text-green-600" />
               <div>
-                <p className="text-2xl font-bold">{reservations.filter(r => isReservationActive(r)).length}</p>
+                <p className="text-2xl font-bold">
+                  {reservations.filter((r) => isReservationActive(r)).length}
+                </p>
                 <p className="text-xs text-gray-600">Active</p>
               </div>
             </div>
@@ -335,7 +359,9 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-4 w-4 text-gray-600" />
               <div>
-                <p className="text-2xl font-bold">{reservations.filter(r => r.status === 'completed').length}</p>
+                <p className="text-2xl font-bold">
+                  {reservations.filter((r) => r.status === 'completed').length}
+                </p>
                 <p className="text-xs text-gray-600">Completed</p>
               </div>
             </div>
@@ -414,15 +440,21 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                           <div>
                             <span className="text-gray-600">Start:</span>
-                            <div className="font-medium">{formatDateTime(reservation.requested_start)}</div>
+                            <div className="font-medium">
+                              {formatDateTime(reservation.requested_start)}
+                            </div>
                           </div>
                           <div>
                             <span className="text-gray-600">End:</span>
-                            <div className="font-medium">{formatDateTime(reservation.requested_end)}</div>
+                            <div className="font-medium">
+                              {formatDateTime(reservation.requested_end)}
+                            </div>
                           </div>
                           <div>
                             <span className="text-gray-600">Duration:</span>
-                            <div className="font-medium">{getDuration(reservation.requested_start, reservation.requested_end)}</div>
+                            <div className="font-medium">
+                              {getDuration(reservation.requested_start, reservation.requested_end)}
+                            </div>
                           </div>
                         </div>
 
@@ -432,7 +464,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                             {getStatusIcon(reservation.status)}
                             {reservation.status.replace('_', ' ')}
                           </Badge>
-                          
+
                           {reservation.usage_notes && (
                             <div className="text-sm max-w-md">
                               <span className="text-gray-600">Notes:</span>
@@ -443,7 +475,8 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
 
                         {/* Requested Info */}
                         <div className="text-xs text-gray-500">
-                          Requested by {reservation.requested_by} • {formatDateTime(reservation.requested_at)}
+                          Requested by {reservation.requested_by} •{' '}
+                          {formatDateTime(reservation.requested_at)}
                         </div>
                       </div>
 
@@ -453,7 +486,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Button>
-                        
+
                         {canEdit && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -463,25 +496,31 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               {reservation.status === 'requested' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(reservation.id, 'confirmed')}>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateStatus(reservation.id, 'confirmed')}
+                                >
                                   <CheckCircle className="h-4 w-4 mr-2" />
                                   Confirm Reservation
                                 </DropdownMenuItem>
                               )}
                               {reservation.status === 'confirmed' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(reservation.id, 'in_use')}>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateStatus(reservation.id, 'in_use')}
+                                >
                                   <Zap className="h-4 w-4 mr-2" />
                                   Start Usage
                                 </DropdownMenuItem>
                               )}
                               {reservation.status === 'in_use' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(reservation.id, 'completed')}>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateStatus(reservation.id, 'completed')}
+                                >
                                   <CheckCircle className="h-4 w-4 mr-2" />
                                   Complete Usage
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => handleDeleteReservation(reservation.id)}
                                 className="text-red-600"
                               >
@@ -507,7 +546,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
           <DialogHeader>
             <DialogTitle>Reserve Equipment</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -536,8 +575,8 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                 <div
                   key={eq.id}
                   className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    selectedEquipment?.id === eq.id 
-                      ? 'border-blue-500 bg-blue-50' 
+                    selectedEquipment?.id === eq.id
+                      ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setSelectedEquipment(eq)}
@@ -557,7 +596,11 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                         </div>
                       </div>
                     </div>
-                    <Badge className={eq.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                    <Badge
+                      className={
+                        eq.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }
+                    >
                       {eq.is_available ? 'Available' : 'Unavailable'}
                     </Badge>
                   </div>
@@ -573,7 +616,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left mt-1">
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {startDate ? format(startDate, "PPP p") : <span>Pick a date</span>}
+                      {startDate ? format(startDate, 'PPP p') : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -589,14 +632,14 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                   </PopoverContent>
                 </Popover>
               </div>
-              
+
               <div>
                 <Label>End Date & Time</Label>
                 <Popover open={showEndCalendar} onOpenChange={setShowEndCalendar}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left mt-1">
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {endDate ? format(endDate, "PPP p") : <span>Pick a date</span>}
+                      {endDate ? format(endDate, 'PPP p') : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -608,7 +651,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
                         setShowEndCalendar(false);
                       }}
                       initialFocus
-                      disabled={(date) => startDate ? date < startDate : false}
+                      disabled={(date) => (startDate ? date < startDate : false)}
                     />
                   </PopoverContent>
                 </Popover>
@@ -651,10 +694,7 @@ const EquipmentReservations: React.FC<EquipmentReservationsProps> = ({
               <Button variant="outline" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
-              <Button 
-                onClick={handleAddReservation} 
-                disabled={isLoading || !selectedEquipment}
-              >
+              <Button onClick={handleAddReservation} disabled={isLoading || !selectedEquipment}>
                 {isLoading ? (
                   <>
                     <Clock className="h-4 w-4 mr-2 animate-spin" />

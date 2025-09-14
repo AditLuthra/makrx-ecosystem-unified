@@ -1,12 +1,14 @@
 # 🚀 Deployment Options
 
 ## Current Status
+
 ✅ **CI/CD Pipeline**: 57/62 checks (92% success) - EXCELLENT!  
 ❌ **kubectl**: Not installed (needed for Kubernetes deployment)
 
 ## Option 1: Install kubectl for Kubernetes Deployment
 
 ### Quick kubectl Installation:
+
 ```bash
 # For Ubuntu/Debian
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -17,6 +19,7 @@ kubectl version --client
 ```
 
 ### Alternative installation methods:
+
 ```bash
 # Using snap
 sudo snap install kubectl --classic
@@ -30,6 +33,7 @@ sudo apt-get update && sudo apt-get install -y kubectl
 I'll create a Docker-based deployment that simulates staging without Kubernetes:
 
 ### 🎯 **Quick Docker Staging Test:**
+
 ```bash
 ./deploy-docker-staging.sh
 ```
@@ -39,6 +43,7 @@ I'll create a Docker-based deployment that simulates staging without Kubernetes:
 You can test other CI/CD features:
 
 ### **Start Monitoring Stack:**
+
 ```bash
 cd monitoring
 docker-compose -f docker-compose.monitoring.yml up -d
@@ -50,12 +55,14 @@ docker-compose -f docker-compose.monitoring.yml up -d
 ```
 
 ### **Test Docker Builds:**
+
 ```bash
 # Test building Docker images
 docker build -t makrx/gateway-frontend:test -f apps/gateway-frontend/Dockerfile .
 ```
 
 ### **Run Performance Tests:**
+
 ```bash
 # If k6 is installed
 k6 run tests/performance/load-test.js

@@ -5,7 +5,14 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Label } from './ui/label';
@@ -13,10 +20,32 @@ import { Switch } from './ui/switch';
 import { useToast } from '../hooks/use-toast';
 import { useAuthHeaders } from '@makrx/auth';
 import {
-  Package, ShoppingCart, Truck, DollarSign, AlertTriangle, CheckCircle,
-  Plus, Search, Filter, Eye, Edit3, Trash2, Upload, Download,
-  TrendingUp, BarChart3, Factory, Users, Clock, Target,
-  ArrowUp, ArrowDown, RefreshCw, ExternalLink, Zap, Award
+  Package,
+  ShoppingCart,
+  Truck,
+  DollarSign,
+  AlertTriangle,
+  CheckCircle,
+  Plus,
+  Search,
+  Filter,
+  Eye,
+  Edit3,
+  Trash2,
+  Upload,
+  Download,
+  TrendingUp,
+  BarChart3,
+  Factory,
+  Users,
+  Clock,
+  Target,
+  ArrowUp,
+  ArrowDown,
+  RefreshCw,
+  ExternalLink,
+  Zap,
+  Award,
 } from 'lucide-react';
 
 // Types
@@ -86,8 +115,8 @@ interface DashboardStats {
   items_needing_procurement: number;
   auto_reorder_items: number;
   average_lead_time?: number;
-  top_suppliers: Array<{name: string; orders: number; value: number}>;
-  recent_orders: Array<{po_number: string; supplier: string; value: number; date: string}>;
+  top_suppliers: Array<{ name: string; orders: number; value: number }>;
+  recent_orders: Array<{ po_number: string; supplier: string; value: number; date: string }>;
 }
 
 const EnhancedBOMManagement: React.FC = () => {
@@ -122,7 +151,7 @@ const EnhancedBOMManagement: React.FC = () => {
     reorder_point: 5,
     is_critical_path: false,
     auto_reorder_enabled: false,
-    usage_notes: ''
+    usage_notes: '',
   });
 
   // Constants
@@ -134,7 +163,7 @@ const EnhancedBOMManagement: React.FC = () => {
     { value: 'connectors', label: 'Connectors', icon: Target },
     { value: 'sensors', label: 'Sensors', icon: Target },
     { value: 'tools', label: 'Tools', icon: Target },
-    { value: 'consumables', label: 'Consumables', icon: Package }
+    { value: 'consumables', label: 'Consumables', icon: Package },
   ];
 
   const procurementStatuses = [
@@ -144,7 +173,7 @@ const EnhancedBOMManagement: React.FC = () => {
     { value: 'approved', label: 'Approved', color: 'green' },
     { value: 'ordered', label: 'Ordered', color: 'purple' },
     { value: 'received', label: 'Received', color: 'green' },
-    { value: 'allocated', label: 'Allocated', color: 'orange' }
+    { value: 'allocated', label: 'Allocated', color: 'orange' },
   ];
 
   const availabilityStatuses = [
@@ -152,7 +181,7 @@ const EnhancedBOMManagement: React.FC = () => {
     { value: 'low_stock', label: 'Low Stock', color: 'yellow' },
     { value: 'out_of_stock', label: 'Out of Stock', color: 'red' },
     { value: 'backordered', label: 'Backordered', color: 'orange' },
-    { value: 'unknown', label: 'Unknown', color: 'gray' }
+    { value: 'unknown', label: 'Unknown', color: 'gray' },
   ];
 
   // Fetch BOM items
@@ -167,7 +196,7 @@ const EnhancedBOMManagement: React.FC = () => {
 
       const headers = await getHeaders();
       const response = await fetch(`/api/v1/enhanced-bom/items?${params}`, { headers });
-      
+
       if (response.ok) {
         const data = await response.json();
         setBomItems(data.items);
@@ -185,7 +214,7 @@ const EnhancedBOMManagement: React.FC = () => {
 
       const headers = await getHeaders();
       const response = await fetch(`/api/v1/enhanced-bom/dashboard/stats?${params}`, { headers });
-      
+
       if (response.ok) {
         const stats = await response.json();
         setDashboardStats(stats);
@@ -208,16 +237,16 @@ const EnhancedBOMManagement: React.FC = () => {
           quantity: parseFloat(itemForm.quantity.toString()) || 1,
           unit_cost: itemForm.unit_cost ? parseFloat(itemForm.unit_cost) : undefined,
           current_stock_level: parseInt(itemForm.current_stock_level.toString()) || 0,
-          reorder_point: parseInt(itemForm.reorder_point.toString()) || 5
-        })
+          reorder_point: parseInt(itemForm.reorder_point.toString()) || 5,
+        }),
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "BOM item created successfully"
+          title: 'Success',
+          description: 'BOM item created successfully',
         });
-        
+
         setShowAddItem(false);
         setItemForm({
           item_name: '',
@@ -233,7 +262,7 @@ const EnhancedBOMManagement: React.FC = () => {
           reorder_point: 5,
           is_critical_path: false,
           auto_reorder_enabled: false,
-          usage_notes: ''
+          usage_notes: '',
         });
         await fetchBOMItems();
         await fetchDashboardStats();
@@ -243,9 +272,9 @@ const EnhancedBOMManagement: React.FC = () => {
     } catch (error) {
       console.error('Failed to create BOM item:', error);
       toast({
-        title: "Error",
-        description: "Failed to create BOM item. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to create BOM item. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -253,11 +282,11 @@ const EnhancedBOMManagement: React.FC = () => {
   // Create MakrX Store order
   const createMakrXOrder = async () => {
     try {
-      const selectedBOMItems = bomItems.filter(item => selectedItems.includes(item.id));
-      const items = selectedBOMItems.map(item => ({
+      const selectedBOMItems = bomItems.filter((item) => selectedItems.includes(item.id));
+      const items = selectedBOMItems.map((item) => ({
         bom_item_id: item.id,
         makrx_product_code: item.makrx_product_code,
-        quantity: item.quantity
+        quantity: item.quantity,
       }));
 
       const response = await fetch('/api/v1/enhanced-bom/makrx-store/order', {
@@ -266,17 +295,17 @@ const EnhancedBOMManagement: React.FC = () => {
         body: JSON.stringify({
           items,
           project_id: selectedProject,
-          priority: 'normal'
-        })
+          priority: 'normal',
+        }),
       });
 
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: "Success",
+          title: 'Success',
           description: `MakrX Store order created: ${result.makrx_order_id}`,
         });
-        
+
         setShowMakrXOrder(false);
         setSelectedItems([]);
         await fetchBOMItems();
@@ -286,9 +315,9 @@ const EnhancedBOMManagement: React.FC = () => {
     } catch (error) {
       console.error('Failed to create MakrX Store order:', error);
       toast({
-        title: "Error",
-        description: "Failed to create MakrX Store order. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to create MakrX Store order. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -297,10 +326,7 @@ const EnhancedBOMManagement: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([
-        fetchBOMItems(),
-        fetchDashboardStats()
-      ]);
+      await Promise.all([fetchBOMItems(), fetchDashboardStats()]);
       setLoading(false);
     };
 
@@ -310,13 +336,13 @@ const EnhancedBOMManagement: React.FC = () => {
   // Get status color
   const getStatusColor = (status: string, type: 'procurement' | 'availability') => {
     const statuses = type === 'procurement' ? procurementStatuses : availabilityStatuses;
-    const statusInfo = statuses.find(s => s.value === status);
+    const statusInfo = statuses.find((s) => s.value === status);
     return statusInfo?.color || 'gray';
   };
 
   // Get category info
   const getCategoryInfo = (category: string) => {
-    return componentCategories.find(c => c.value === category) || componentCategories[0];
+    return componentCategories.find((c) => c.value === category) || componentCategories[0];
   };
 
   // Format currency
@@ -324,7 +350,7 @@ const EnhancedBOMManagement: React.FC = () => {
     if (!amount) return '-';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'USD',
     }).format(amount);
   };
 
@@ -345,10 +371,16 @@ const EnhancedBOMManagement: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">BOM Management</h1>
-          <p className="text-muted-foreground">Bill of Materials with store integration and inventory tracking</p>
+          <p className="text-muted-foreground">
+            Bill of Materials with store integration and inventory tracking
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowMakrXOrder(true)} disabled={selectedItems.length === 0}>
+          <Button
+            variant="outline"
+            onClick={() => setShowMakrXOrder(true)}
+            disabled={selectedItems.length === 0}
+          >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Order from MakrX Store ({selectedItems.length})
           </Button>
@@ -457,14 +489,14 @@ const EnhancedBOMManagement: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {componentCategories.map(category => (
+                    {componentCategories.map((category) => (
                       <SelectItem key={category.value} value={category.value}>
                         {category.label}
                       </SelectItem>
@@ -478,7 +510,7 @@ const EnhancedBOMManagement: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
-                    {procurementStatuses.map(status => (
+                    {procurementStatuses.map((status) => (
                       <SelectItem key={status.value} value={status.value}>
                         {status.label}
                       </SelectItem>
@@ -486,11 +518,14 @@ const EnhancedBOMManagement: React.FC = () => {
                   </SelectContent>
                 </Select>
 
-                <Button variant="outline" onClick={() => {
-                  setSearchQuery('');
-                  setCategoryFilter('all');
-                  setStatusFilter('all');
-                }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setCategoryFilter('all');
+                    setStatusFilter('all');
+                  }}
+                >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Reset
                 </Button>
@@ -510,9 +545,12 @@ const EnhancedBOMManagement: React.FC = () => {
                   const categoryInfo = getCategoryInfo(item.category);
                   const CategoryIcon = categoryInfo.icon;
                   const isSelected = selectedItems.includes(item.id);
-                  
+
                   return (
-                    <Card key={item.id} className={`${isSelected ? 'ring-2 ring-blue-500' : ''} hover:shadow-md transition-shadow`}>
+                    <Card
+                      key={item.id}
+                      className={`${isSelected ? 'ring-2 ring-blue-500' : ''} hover:shadow-md transition-shadow`}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start gap-4 flex-1">
@@ -521,36 +559,40 @@ const EnhancedBOMManagement: React.FC = () => {
                               checked={isSelected}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  setSelectedItems(prev => [...prev, item.id]);
+                                  setSelectedItems((prev) => [...prev, item.id]);
                                 } else {
-                                  setSelectedItems(prev => prev.filter(id => id !== item.id));
+                                  setSelectedItems((prev) => prev.filter((id) => id !== item.id));
                                 }
                               }}
                               className="mt-1"
                             />
-                            
+
                             <div className="flex items-center gap-3">
                               <CategoryIcon className="h-6 w-6 text-blue-500" />
                               <div>
                                 <h3 className="font-medium">{item.item_name}</h3>
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                   {item.part_code && <span>P/N: {item.part_code}</span>}
-                                  {item.manufacturer_part_number && <span>MPN: {item.manufacturer_part_number}</span>}
+                                  {item.manufacturer_part_number && (
+                                    <span>MPN: {item.manufacturer_part_number}</span>
+                                  )}
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                               <div>
                                 <span className="text-muted-foreground">Quantity:</span>
-                                <p className="font-medium">{item.quantity} {item.unit_of_measure}</p>
+                                <p className="font-medium">
+                                  {item.quantity} {item.unit_of_measure}
+                                </p>
                               </div>
-                              
+
                               <div>
                                 <span className="text-muted-foreground">Unit Cost:</span>
                                 <p className="font-medium">{formatCurrency(item.unit_cost)}</p>
                               </div>
-                              
+
                               <div>
                                 <span className="text-muted-foreground">Stock:</span>
                                 <p className="font-medium">
@@ -560,34 +602,44 @@ const EnhancedBOMManagement: React.FC = () => {
                                   )}
                                 </p>
                               </div>
-                              
+
                               <div>
                                 <span className="text-muted-foreground">Supplier:</span>
-                                <p className="font-medium">{item.primary_supplier || 'Not specified'}</p>
+                                <p className="font-medium">
+                                  {item.primary_supplier || 'Not specified'}
+                                </p>
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 ml-4">
                             <div className="flex flex-col gap-1">
-                              <Badge variant="secondary" className={`bg-${getStatusColor(item.procurement_status, 'procurement')}-100 text-${getStatusColor(item.procurement_status, 'procurement')}-800`}>
-                                {procurementStatuses.find(s => s.value === item.procurement_status)?.label || item.procurement_status}
+                              <Badge
+                                variant="secondary"
+                                className={`bg-${getStatusColor(item.procurement_status, 'procurement')}-100 text-${getStatusColor(item.procurement_status, 'procurement')}-800`}
+                              >
+                                {procurementStatuses.find(
+                                  (s) => s.value === item.procurement_status,
+                                )?.label || item.procurement_status}
                               </Badge>
-                              <Badge variant="outline" className={`bg-${getStatusColor(item.availability_status, 'availability')}-100 text-${getStatusColor(item.availability_status, 'availability')}-800`}>
-                                {availabilityStatuses.find(s => s.value === item.availability_status)?.label || item.availability_status}
+                              <Badge
+                                variant="outline"
+                                className={`bg-${getStatusColor(item.availability_status, 'availability')}-100 text-${getStatusColor(item.availability_status, 'availability')}-800`}
+                              >
+                                {availabilityStatuses.find(
+                                  (s) => s.value === item.availability_status,
+                                )?.label || item.availability_status}
                               </Badge>
                             </div>
-                            
-                            {item.is_critical_path && (
-                              <Badge variant="destructive">Critical</Badge>
-                            )}
-                            
+
+                            {item.is_critical_path && <Badge variant="destructive">Critical</Badge>}
+
                             {item.makrx_product_code && (
                               <Badge variant="default" className="bg-blue-100 text-blue-800">
                                 MakrX
                               </Badge>
                             )}
-                            
+
                             <div className="flex gap-1">
                               <Button variant="outline" size="sm">
                                 <Eye className="h-3 w-3" />
@@ -596,14 +648,18 @@ const EnhancedBOMManagement: React.FC = () => {
                                 <Edit3 className="h-3 w-3" />
                               </Button>
                               {item.makrx_store_url && (
-                                <Button variant="outline" size="sm" onClick={() => window.open(item.makrx_store_url, '_blank')}>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.open(item.makrx_store_url, '_blank')}
+                                >
                                   <ExternalLink className="h-3 w-3" />
                                 </Button>
                               )}
                             </div>
                           </div>
                         </div>
-                        
+
                         {(item.is_long_lead_item || item.auto_reorder_enabled) && (
                           <div className="flex items-center gap-4 mt-3 pt-3 border-t">
                             {item.is_long_lead_item && (
@@ -624,16 +680,15 @@ const EnhancedBOMManagement: React.FC = () => {
                     </Card>
                   );
                 })}
-                
+
                 {bomItems.length === 0 && (
                   <div className="text-center py-8">
                     <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                     <h3 className="text-lg font-medium mb-2">No BOM items found</h3>
                     <p className="text-muted-foreground mb-4">
-                      {searchQuery || categoryFilter !== 'all' || statusFilter !== 'all' 
+                      {searchQuery || categoryFilter !== 'all' || statusFilter !== 'all'
                         ? 'Try adjusting your filters'
-                        : 'Start by adding your first BOM item'
-                      }
+                        : 'Start by adding your first BOM item'}
                     </p>
                     <Button onClick={() => setShowAddItem(true)}>
                       <Plus className="h-4 w-4 mr-2" />
@@ -698,17 +753,17 @@ const EnhancedBOMManagement: React.FC = () => {
                     {Object.entries(dashboardStats.items_by_category).map(([category, count]) => {
                       const categoryInfo = getCategoryInfo(category);
                       const percentage = (count / dashboardStats.total_items) * 100;
-                      
+
                       return (
                         <div key={category} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary">
-                              {categoryInfo.label}
-                            </Badge>
+                            <Badge variant="secondary">{categoryInfo.label}</Badge>
                           </div>
                           <div className="text-right">
                             <span className="font-medium">{count}</span>
-                            <span className="text-sm text-muted-foreground ml-2">({percentage.toFixed(1)}%)</span>
+                            <span className="text-sm text-muted-foreground ml-2">
+                              ({percentage.toFixed(1)}%)
+                            </span>
                           </div>
                         </div>
                       );
@@ -725,19 +780,24 @@ const EnhancedBOMManagement: React.FC = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {Object.entries(dashboardStats.items_by_status).map(([status, count]) => {
-                      const statusInfo = procurementStatuses.find(s => s.value === status);
+                      const statusInfo = procurementStatuses.find((s) => s.value === status);
                       const percentage = (count / dashboardStats.total_items) * 100;
-                      
+
                       return (
                         <div key={status} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className={`bg-${statusInfo?.color || 'gray'}-100 text-${statusInfo?.color || 'gray'}-800`}>
+                            <Badge
+                              variant="secondary"
+                              className={`bg-${statusInfo?.color || 'gray'}-100 text-${statusInfo?.color || 'gray'}-800`}
+                            >
                               {statusInfo?.label || status}
                             </Badge>
                           </div>
                           <div className="text-right">
                             <span className="font-medium">{count}</span>
-                            <span className="text-sm text-muted-foreground ml-2">({percentage.toFixed(1)}%)</span>
+                            <span className="text-sm text-muted-foreground ml-2">
+                              ({percentage.toFixed(1)}%)
+                            </span>
                           </div>
                         </div>
                       );
@@ -782,11 +842,9 @@ const EnhancedBOMManagement: React.FC = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Add BOM Item</DialogTitle>
-            <DialogDescription>
-              Add a new component to the bill of materials
-            </DialogDescription>
+            <DialogDescription>Add a new component to the bill of materials</DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -794,7 +852,7 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Input
                   id="item_name"
                   value={itemForm.item_name}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, item_name: e.target.value }))}
+                  onChange={(e) => setItemForm((prev) => ({ ...prev, item_name: e.target.value }))}
                   placeholder="Enter item name"
                 />
               </div>
@@ -803,13 +861,13 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Label htmlFor="category">Category *</Label>
                 <Select
                   value={itemForm.category}
-                  onValueChange={(value) => setItemForm(prev => ({ ...prev, category: value }))}
+                  onValueChange={(value) => setItemForm((prev) => ({ ...prev, category: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {componentCategories.map(category => (
+                    {componentCategories.map((category) => (
                       <SelectItem key={category.value} value={category.value}>
                         {category.label}
                       </SelectItem>
@@ -825,7 +883,7 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Input
                   id="part_code"
                   value={itemForm.part_code}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, part_code: e.target.value }))}
+                  onChange={(e) => setItemForm((prev) => ({ ...prev, part_code: e.target.value }))}
                   placeholder="Internal part number"
                 />
               </div>
@@ -835,7 +893,9 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Input
                   id="mpn"
                   value={itemForm.manufacturer_part_number}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, manufacturer_part_number: e.target.value }))}
+                  onChange={(e) =>
+                    setItemForm((prev) => ({ ...prev, manufacturer_part_number: e.target.value }))
+                  }
                   placeholder="Manufacturer part number"
                 />
               </div>
@@ -845,7 +905,9 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Input
                   id="makrx_code"
                   value={itemForm.makrx_product_code}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, makrx_product_code: e.target.value }))}
+                  onChange={(e) =>
+                    setItemForm((prev) => ({ ...prev, makrx_product_code: e.target.value }))
+                  }
                   placeholder="MakrX Store product code"
                 />
               </div>
@@ -858,7 +920,9 @@ const EnhancedBOMManagement: React.FC = () => {
                   id="quantity"
                   type="number"
                   value={itemForm.quantity}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, quantity: parseFloat(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    setItemForm((prev) => ({ ...prev, quantity: parseFloat(e.target.value) || 1 }))
+                  }
                   min="0.01"
                   step="0.01"
                 />
@@ -868,7 +932,9 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Label htmlFor="unit_measure">Unit of Measure</Label>
                 <Select
                   value={itemForm.unit_of_measure}
-                  onValueChange={(value) => setItemForm(prev => ({ ...prev, unit_of_measure: value }))}
+                  onValueChange={(value) =>
+                    setItemForm((prev) => ({ ...prev, unit_of_measure: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -889,7 +955,7 @@ const EnhancedBOMManagement: React.FC = () => {
                   id="unit_cost"
                   type="number"
                   value={itemForm.unit_cost}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, unit_cost: e.target.value }))}
+                  onChange={(e) => setItemForm((prev) => ({ ...prev, unit_cost: e.target.value }))}
                   min="0"
                   step="0.01"
                   placeholder="0.00"
@@ -903,7 +969,9 @@ const EnhancedBOMManagement: React.FC = () => {
                 <Input
                   id="supplier"
                   value={itemForm.primary_supplier}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, primary_supplier: e.target.value }))}
+                  onChange={(e) =>
+                    setItemForm((prev) => ({ ...prev, primary_supplier: e.target.value }))
+                  }
                   placeholder="Supplier name"
                 />
               </div>
@@ -914,7 +982,12 @@ const EnhancedBOMManagement: React.FC = () => {
                   id="stock_level"
                   type="number"
                   value={itemForm.current_stock_level}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, current_stock_level: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setItemForm((prev) => ({
+                      ...prev,
+                      current_stock_level: parseInt(e.target.value) || 0,
+                    }))
+                  }
                   min="0"
                 />
               </div>
@@ -925,7 +998,7 @@ const EnhancedBOMManagement: React.FC = () => {
               <Textarea
                 id="usage_notes"
                 value={itemForm.usage_notes}
-                onChange={(e) => setItemForm(prev => ({ ...prev, usage_notes: e.target.value }))}
+                onChange={(e) => setItemForm((prev) => ({ ...prev, usage_notes: e.target.value }))}
                 placeholder="Special instructions, compatibility notes, etc."
                 rows={3}
               />
@@ -937,16 +1010,20 @@ const EnhancedBOMManagement: React.FC = () => {
                   <Switch
                     id="critical_path"
                     checked={itemForm.is_critical_path}
-                    onCheckedChange={(checked) => setItemForm(prev => ({ ...prev, is_critical_path: checked }))}
+                    onCheckedChange={(checked) =>
+                      setItemForm((prev) => ({ ...prev, is_critical_path: checked }))
+                    }
                   />
                   <Label htmlFor="critical_path">Critical Path</Label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="auto_reorder"
                     checked={itemForm.auto_reorder_enabled}
-                    onCheckedChange={(checked) => setItemForm(prev => ({ ...prev, auto_reorder_enabled: checked }))}
+                    onCheckedChange={(checked) =>
+                      setItemForm((prev) => ({ ...prev, auto_reorder_enabled: checked }))
+                    }
                   />
                   <Label htmlFor="auto_reorder">Auto Reorder</Label>
                 </div>
@@ -974,38 +1051,51 @@ const EnhancedBOMManagement: React.FC = () => {
               Create an order for selected items that have MakrX Store product codes
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="max-h-60 overflow-y-auto">
-              {bomItems.filter(item => selectedItems.includes(item.id)).map(item => (
-                <div key={item.id} className="flex items-center justify-between p-3 border rounded">
-                  <div>
-                    <p className="font-medium">{item.item_name}</p>
-                    <p className="text-sm text-muted-foreground">Qty: {item.quantity} × {formatCurrency(item.unit_cost)}</p>
-                    {item.makrx_product_code ? (
-                      <Badge variant="default" className="bg-blue-100 text-blue-800 mt-1">
-                        {item.makrx_product_code}
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive" className="mt-1">
-                        No MakrX Code
-                      </Badge>
-                    )}
+              {bomItems
+                .filter((item) => selectedItems.includes(item.id))
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
+                    <div>
+                      <p className="font-medium">{item.item_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Qty: {item.quantity} × {formatCurrency(item.unit_cost)}
+                      </p>
+                      {item.makrx_product_code ? (
+                        <Badge variant="default" className="bg-blue-100 text-blue-800 mt-1">
+                          {item.makrx_product_code}
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="mt-1">
+                          No MakrX Code
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">
+                        {formatCurrency((item.unit_cost || 0) * item.quantity)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">{formatCurrency((item.unit_cost || 0) * item.quantity)}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={() => setShowMakrXOrder(false)}>
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={createMakrXOrder}
-                disabled={!bomItems.filter(item => selectedItems.includes(item.id)).every(item => item.makrx_product_code)}
+                disabled={
+                  !bomItems
+                    .filter((item) => selectedItems.includes(item.id))
+                    .every((item) => item.makrx_product_code)
+                }
               >
                 Create Order
               </Button>

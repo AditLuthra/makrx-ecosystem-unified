@@ -3,10 +3,7 @@ import { z } from 'zod';
 import { insertPageSectionSchema } from '@shared/schema';
 
 // GET /api/microsites/[slug]/sections - Get all sections for a microsite
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
 
@@ -27,10 +24,10 @@ export async function GET(
           ctaUrl: `/m/${slug}/register`,
           startDate: '2024-03-15',
           endDate: '2024-03-17',
-          location: 'Moscone Center, San Francisco'
+          location: 'Moscone Center, San Francisco',
         },
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
+        updatedAt: '2024-02-01T15:30:00Z',
       },
       {
         id: '2',
@@ -44,16 +41,16 @@ export async function GET(
           features: [
             '50+ Interactive Workshops',
             '3 Major Competitions',
-            '100+ Vendor Marketplace'
+            '100+ Vendor Marketplace',
           ],
           stats: [
             { label: 'Expected Attendees', value: '2,000+' },
             { label: 'Workshop Sessions', value: '50+' },
-            { label: 'Competition Categories', value: '12' }
-          ]
+            { label: 'Competition Categories', value: '12' },
+          ],
         },
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
+        updatedAt: '2024-02-01T15:30:00Z',
       },
       {
         id: '3',
@@ -65,17 +62,13 @@ export async function GET(
           title: 'Our Partners',
           tiers: ['Gold', 'Silver', 'Bronze'],
           sponsors: {
-            Gold: [
-              { name: 'TechCorp', logoUrl: null, websiteUrl: 'https://techcorp.com' }
-            ],
-            Silver: [
-              { name: 'InnovateNow', logoUrl: null, websiteUrl: 'https://innovatenow.com' }
-            ]
-          }
+            Gold: [{ name: 'TechCorp', logoUrl: null, websiteUrl: 'https://techcorp.com' }],
+            Silver: [{ name: 'InnovateNow', logoUrl: null, websiteUrl: 'https://innovatenow.com' }],
+          },
         },
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
-      }
+        updatedAt: '2024-02-01T15:30:00Z',
+      },
     ];
 
     // Sort by order
@@ -83,22 +76,16 @@ export async function GET(
 
     return NextResponse.json({
       data: sortedSections,
-      count: sortedSections.length
+      count: sortedSections.length,
     });
   } catch (error) {
     console.error('Error fetching sections:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch sections' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch sections' }, { status: 500 });
   }
 }
 
 // POST /api/microsites/[slug]/sections - Create a new section
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
     const body = await request.json();
@@ -121,25 +108,22 @@ export async function POST(
       isVisible: validatedData.isVisible ?? true,
       contentJson: validatedData.contentJson || {},
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(newSection, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error creating section:', error);
-    return NextResponse.json(
-      { error: 'Failed to create section' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create section' }, { status: 500 });
   }
 }

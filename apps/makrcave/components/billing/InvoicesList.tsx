@@ -23,9 +23,15 @@ import {
   RefreshCw,
   CreditCard,
   DollarSign,
-  ArrowUpRight
+  ArrowUpRight,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '../ui/dropdown-menu';
 
 interface Invoice {
   id: string;
@@ -80,7 +86,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
   onDownloadInvoice,
   onSendInvoice,
   onMarkAsPaid,
-  onCancelInvoice
+  onCancelInvoice,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -98,7 +104,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
       description: 'Monthly subscription for Pro Maker plan',
       amount: 99.99,
       total_amount: 117.99,
-      tax_amount: 18.00,
+      tax_amount: 18.0,
       currency: 'INR',
       status: 'paid',
       issue_date: '2024-01-20T00:00:00Z',
@@ -115,19 +121,19 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           description: 'Pro Maker Membership - Monthly',
           quantity: 1,
           unit_price: 99.99,
-          total_price: 99.99
-        }
+          total_price: 99.99,
+        },
       ],
-      metadata: { plan_id: 'pro_monthly' }
+      metadata: { plan_id: 'pro_monthly' },
     },
     {
       id: 'inv_002',
       invoice_number: 'INV-2024-01-00125',
       title: 'Credit Purchase',
       description: 'Purchase of 150 credits for services',
-      amount: 150.00,
-      total_amount: 177.00,
-      tax_amount: 27.00,
+      amount: 150.0,
+      total_amount: 177.0,
+      tax_amount: 27.0,
       currency: 'INR',
       status: 'paid',
       issue_date: '2024-01-18T00:00:00Z',
@@ -142,19 +148,19 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           id: 'li_002',
           description: 'Credits Purchase - 150 Credits',
           quantity: 150,
-          unit_price: 1.00,
-          total_price: 150.00
-        }
-      ]
+          unit_price: 1.0,
+          total_price: 150.0,
+        },
+      ],
     },
     {
       id: 'inv_003',
       invoice_number: 'INV-2024-01-00126',
       title: 'Arduino Workshop Registration',
       description: 'Registration fee for Arduino basics workshop',
-      amount: 200.00,
-      total_amount: 236.00,
-      tax_amount: 36.00,
+      amount: 200.0,
+      total_amount: 236.0,
+      tax_amount: 36.0,
       currency: 'INR',
       status: 'overdue',
       issue_date: '2024-01-15T00:00:00Z',
@@ -166,17 +172,17 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           id: 'li_003',
           description: 'Arduino Workshop - Beginner Level',
           quantity: 1,
-          unit_price: 200.00,
-          total_price: 200.00
-        }
+          unit_price: 200.0,
+          total_price: 200.0,
+        },
       ],
-      metadata: { workshop_id: 'ws_arduino_101' }
+      metadata: { workshop_id: 'ws_arduino_101' },
     },
     {
       id: 'inv_004',
       invoice_number: 'INV-2024-01-00127',
       title: '3D Printing Service',
-      amount: 125.50,
+      amount: 125.5,
       total_amount: 148.09,
       tax_amount: 22.59,
       currency: 'INR',
@@ -190,17 +196,17 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           id: 'li_004',
           description: '3D Print Job #PRT002 - Custom Prototype',
           quantity: 1,
-          unit_price: 125.50,
-          total_price: 125.50
-        }
-      ]
+          unit_price: 125.5,
+          total_price: 125.5,
+        },
+      ],
     },
     {
       id: 'inv_005',
       invoice_number: 'INV-2024-01-00128',
       title: 'Laser Cutting Service',
       amount: 75.25,
-      total_amount: 88.80,
+      total_amount: 88.8,
       tax_amount: 13.55,
       currency: 'INR',
       status: 'draft',
@@ -213,10 +219,10 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           description: 'Laser Cut Acrylic Parts - Custom Design',
           quantity: 5,
           unit_price: 15.05,
-          total_price: 75.25
-        }
-      ]
-    }
+          total_price: 75.25,
+        },
+      ],
+    },
   ];
 
   const data = invoices.length > 0 ? invoices : mockInvoices;
@@ -249,9 +255,12 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
       cancelled: 'bg-gray-100 text-gray-800',
       refunded: 'bg-purple-100 text-purple-800',
     };
-    
+
     return (
-      <Badge variant="outline" className={variants[status as keyof typeof variants] || 'bg-yellow-100 text-yellow-800'}>
+      <Badge
+        variant="outline"
+        className={variants[status as keyof typeof variants] || 'bg-yellow-100 text-yellow-800'}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -267,7 +276,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return 'Invalid date';
@@ -282,20 +291,21 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
     return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   };
 
-  const filteredInvoices = data.filter(invoice => {
-    const matchesSearch = invoice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         invoice.invoice_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         invoice.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         invoice.customer_email.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredInvoices = data.filter((invoice) => {
+    const matchesSearch =
+      invoice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.invoice_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.customer_email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
-    
+
     // Date filter logic
     let matchesDate = true;
     if (dateFilter !== 'all') {
       const invoiceDate = new Date(invoice.issue_date);
       const now = new Date();
       const daysDiff = Math.floor((now.getTime() - invoiceDate.getTime()) / (1000 * 3600 * 24));
-      
+
       switch (dateFilter) {
         case 'today':
           matchesDate = daysDiff === 0;
@@ -311,13 +321,13 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           break;
       }
     }
-    
+
     return matchesSearch && matchesStatus && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredInvoices.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
-  const paginatedInvoices = showPagination 
+  const paginatedInvoices = showPagination
     ? filteredInvoices.slice(startIndex, startIndex + pageSize)
     : filteredInvoices;
 
@@ -344,7 +354,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           {/* Search and Filters */}
           {(showSearch || showFilters) && (
@@ -360,7 +370,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                   />
                 </div>
               )}
-              
+
               {showFilters && (
                 <div className="flex flex-wrap gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -377,7 +387,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                       <SelectItem value="refunded">Refunded</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={dateFilter} onValueChange={setDateFilter}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Date" />
@@ -405,12 +415,16 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           ) : (
             <div className="space-y-4">
               {paginatedInvoices.map((invoice) => {
-                const daysOverdue = invoice.status === 'overdue' && invoice.due_date 
-                  ? getDaysOverdue(invoice.due_date) 
-                  : 0;
-                
+                const daysOverdue =
+                  invoice.status === 'overdue' && invoice.due_date
+                    ? getDaysOverdue(invoice.due_date)
+                    : 0;
+
                 return (
-                  <div key={invoice.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div
+                    key={invoice.id}
+                    className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <Receipt className="h-8 w-8 text-blue-600" />
@@ -444,16 +458,20 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="font-medium text-lg">{formatCurrency(invoice.total_amount, invoice.currency)}</p>
+                          <p className="font-medium text-lg">
+                            {formatCurrency(invoice.total_amount, invoice.currency)}
+                          </p>
                           <div className="flex items-center gap-1">
                             {getStatusIcon(invoice.status)}
-                            <span className="text-xs text-gray-500 capitalize">{invoice.status}</span>
+                            <span className="text-xs text-gray-500 capitalize">
+                              {invoice.status}
+                            </span>
                           </div>
                         </div>
-                        
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
@@ -485,7 +503,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                             )}
                             <DropdownMenuSeparator />
                             {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => onCancelInvoice?.(invoice.id)}
                                 className="text-red-600"
                               >
@@ -507,13 +525,15 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           {showPagination && totalPages > 1 && (
             <div className="flex items-center justify-between mt-6">
               <p className="text-sm text-gray-600">
-                Showing {startIndex + 1} to {Math.min(startIndex + pageSize, filteredInvoices.length)} of {filteredInvoices.length} invoices
+                Showing {startIndex + 1} to{' '}
+                {Math.min(startIndex + pageSize, filteredInvoices.length)} of{' '}
+                {filteredInvoices.length} invoices
               </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -524,7 +544,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -544,7 +564,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
               Invoice Details - {selectedInvoice?.invoice_number}
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedInvoice && (
             <div className="space-y-6">
               {/* Invoice Header */}
@@ -578,7 +598,7 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                     )}
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Customer Information</h3>
                   <div className="space-y-2 text-sm">
@@ -593,7 +613,9 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                     {selectedInvoice.payment_method && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Payment Method:</span>
-                        <span className="capitalize">{selectedInvoice.payment_method.replace('_', ' ')}</span>
+                        <span className="capitalize">
+                          {selectedInvoice.payment_method.replace('_', ' ')}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -607,10 +629,18 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Description</th>
-                        <th className="px-4 py-2 text-center text-sm font-medium text-gray-600">Qty</th>
-                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-600">Unit Price</th>
-                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-600">Total</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                          Description
+                        </th>
+                        <th className="px-4 py-2 text-center text-sm font-medium text-gray-600">
+                          Qty
+                        </th>
+                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-600">
+                          Unit Price
+                        </th>
+                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-600">
+                          Total
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -618,8 +648,12 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                         <tr key={item.id} className="border-t">
                           <td className="px-4 py-2 text-sm">{item.description}</td>
                           <td className="px-4 py-2 text-sm text-center">{item.quantity}</td>
-                          <td className="px-4 py-2 text-sm text-right">{formatCurrency(item.unit_price, selectedInvoice.currency)}</td>
-                          <td className="px-4 py-2 text-sm text-right font-medium">{formatCurrency(item.total_price, selectedInvoice.currency)}</td>
+                          <td className="px-4 py-2 text-sm text-right">
+                            {formatCurrency(item.unit_price, selectedInvoice.currency)}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-right font-medium">
+                            {formatCurrency(item.total_price, selectedInvoice.currency)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -637,12 +671,16 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
                   {selectedInvoice.tax_amount && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax:</span>
-                      <span>{formatCurrency(selectedInvoice.tax_amount, selectedInvoice.currency)}</span>
+                      <span>
+                        {formatCurrency(selectedInvoice.tax_amount, selectedInvoice.currency)}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between font-medium text-lg border-t pt-2">
                     <span>Total:</span>
-                    <span>{formatCurrency(selectedInvoice.total_amount, selectedInvoice.currency)}</span>
+                    <span>
+                      {formatCurrency(selectedInvoice.total_amount, selectedInvoice.currency)}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -4,12 +4,34 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription } from '../ui/alert';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area, ComposedChart
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  ComposedChart,
 } from 'recharts';
 import {
-  DollarSign, TrendingUp, CreditCard, Users, Store, Wallet,
-  RefreshCw, Calendar, Target, ArrowUpRight, ArrowDownRight
+  DollarSign,
+  TrendingUp,
+  CreditCard,
+  Users,
+  Store,
+  Wallet,
+  RefreshCw,
+  Calendar,
+  Target,
+  ArrowUpRight,
+  ArrowDownRight,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -46,7 +68,7 @@ const RevenueCharts: React.FC = () => {
     try {
       const response = await fetch('/api/analytics/revenue', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -57,17 +79,17 @@ const RevenueCharts: React.FC = () => {
         processChartData(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load revenue analytics",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load revenue analytics',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching revenue analytics:', error);
       toast({
-        title: "Error",
-        description: "Failed to load revenue analytics",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load revenue analytics',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -76,42 +98,59 @@ const RevenueCharts: React.FC = () => {
 
   const processChartData = (data: RevenueAnalytics) => {
     // Monthly trend data
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
-    const trendChart = data.monthly_trends.map(trend => ({
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const trendChart = data.monthly_trends.map((trend) => ({
       month: `${monthNames[trend.month - 1]} ${trend.year}`,
       revenue: trend.total,
       year: trend.year,
-      monthNum: trend.month
+      monthNum: trend.month,
     }));
     setTrendData(trendChart);
 
     // Revenue by source
-    const sourceChart = Object.entries(data.revenue_by_source).map(([source, amount]) => ({
-      name: source.charAt(0).toUpperCase() + source.slice(1),
-      value: amount,
-      color: getSourceColor(source)
-    })).filter(item => item.value > 0);
+    const sourceChart = Object.entries(data.revenue_by_source)
+      .map(([source, amount]) => ({
+        name: source.charAt(0).toUpperCase() + source.slice(1),
+        value: amount,
+        color: getSourceColor(source),
+      }))
+      .filter((item) => item.value > 0);
     setSourceData(sourceChart);
 
     // Payment methods
-    const paymentChart = Object.entries(data.payment_methods).map(([method, amount]) => ({
-      name: method ? method.charAt(0).toUpperCase() + method.slice(1) : 'Unknown',
-      value: amount,
-      color: getPaymentColor(method)
-    })).filter(item => item.value > 0);
+    const paymentChart = Object.entries(data.payment_methods)
+      .map(([method, amount]) => ({
+        name: method ? method.charAt(0).toUpperCase() + method.slice(1) : 'Unknown',
+        value: amount,
+        color: getPaymentColor(method),
+      }))
+      .filter((item) => item.value > 0);
     setPaymentData(paymentChart);
 
     // Growth calculation
     const growthChart = trendChart.map((item, index) => {
       const previousRevenue = index > 0 ? trendChart[index - 1].revenue : item.revenue;
-      const growth = previousRevenue > 0 ? ((item.revenue - previousRevenue) / previousRevenue) * 100 : 0;
-      
+      const growth =
+        previousRevenue > 0 ? ((item.revenue - previousRevenue) / previousRevenue) * 100 : 0;
+
       return {
         ...item,
         growth: growth,
-        cumulative: trendChart.slice(0, index + 1).reduce((sum, t) => sum + t.revenue, 0)
+        cumulative: trendChart.slice(0, index + 1).reduce((sum, t) => sum + t.revenue, 0),
       };
     });
     setGrowthData(growthChart);
@@ -124,7 +163,7 @@ const RevenueCharts: React.FC = () => {
       store: '#F59E0B',
       service: '#8B5CF6',
       equipment_rental: '#EF4444',
-      training: '#06B6D4'
+      training: '#06B6D4',
     };
     return colors[source as keyof typeof colors] || '#6B7280';
   };
@@ -134,7 +173,7 @@ const RevenueCharts: React.FC = () => {
       razorpay: '#528DD4',
       stripe: '#635BFF',
       cash: '#10B981',
-      bank: '#F59E0B'
+      bank: '#F59E0B',
     };
     return colors[method as keyof typeof colors] || '#6B7280';
   };
@@ -194,10 +233,7 @@ const RevenueCharts: React.FC = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Revenue Analytics</h2>
         <div className="flex items-center gap-2">
-          <Badge 
-            variant={isPositiveGrowth ? "default" : "destructive"} 
-            className="text-sm"
-          >
+          <Badge variant={isPositiveGrowth ? 'default' : 'destructive'} className="text-sm">
             {isPositiveGrowth ? (
               <ArrowUpRight className="h-3 w-3 mr-1" />
             ) : (
@@ -268,10 +304,12 @@ const RevenueCharts: React.FC = () => {
       </div>
 
       {/* Performance Insights */}
-      <Alert className={`${isPositiveGrowth ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+      <Alert
+        className={`${isPositiveGrowth ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
+      >
         <TrendingUp className={`h-4 w-4 ${isPositiveGrowth ? 'text-green-600' : 'text-red-600'}`} />
         <AlertDescription className={isPositiveGrowth ? 'text-green-800' : 'text-red-800'}>
-          <span className="font-medium">Revenue Trend:</span> 
+          <span className="font-medium">Revenue Trend:</span>
           {` ${Math.abs(growthRate).toFixed(1)}% ${isPositiveGrowth ? 'increase' : 'decrease'} from last month. `}
           Current month revenue: {formatCurrency(getCurrentMonthRevenue())}
         </AlertDescription>
@@ -304,10 +342,12 @@ const RevenueCharts: React.FC = () => {
                 <XAxis dataKey="month" />
                 <YAxis yAxisId="left" />
                 <YAxis yAxisId="right" orientation="right" />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => [
-                    name === 'revenue' ? formatCurrency(Number(value)) : `${Number(value).toFixed(1)}%`,
-                    name === 'revenue' ? 'Revenue' : 'Growth %'
+                    name === 'revenue'
+                      ? formatCurrency(Number(value))
+                      : `${Number(value).toFixed(1)}%`,
+                    name === 'revenue' ? 'Revenue' : 'Growth %',
                   ]}
                 />
                 <Area
@@ -351,7 +391,7 @@ const RevenueCharts: React.FC = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => 
+                    label={({ name, percent }) =>
                       percent > 5 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''
                     }
                   >
@@ -403,9 +443,12 @@ const RevenueCharts: React.FC = () => {
               {sourceData.map((source, index) => {
                 const percentage = (source.value / analytics.total_revenue) * 100;
                 return (
-                  <div key={source.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={source.name}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
-                      <div 
+                      <div
                         className="w-4 h-4 rounded-full"
                         style={{ backgroundColor: source.color }}
                       />
@@ -431,36 +474,57 @@ const RevenueCharts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {analytics.monthly_trends.slice(-6).reverse().map((month, index) => {
-                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const monthName = `${monthNames[month.month - 1]} ${month.year}`;
-                const isCurrentMonth = index === 0;
-                
-                return (
-                  <div key={`${month.year}-${month.month}`} 
-                       className={`flex items-center justify-between p-3 rounded-lg ${
-                         isCurrentMonth ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-                       }`}>
-                    <div className="flex items-center gap-3">
-                      <Calendar className={`h-5 w-5 ${isCurrentMonth ? 'text-blue-600' : 'text-gray-600'}`} />
-                      <div>
-                        <p className={`font-medium ${isCurrentMonth ? 'text-blue-900' : 'text-gray-900'}`}>
-                          {monthName}
+              {analytics.monthly_trends
+                .slice(-6)
+                .reverse()
+                .map((month, index) => {
+                  const monthNames = [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec',
+                  ];
+                  const monthName = `${monthNames[month.month - 1]} ${month.year}`;
+                  const isCurrentMonth = index === 0;
+
+                  return (
+                    <div
+                      key={`${month.year}-${month.month}`}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        isCurrentMonth ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Calendar
+                          className={`h-5 w-5 ${isCurrentMonth ? 'text-blue-600' : 'text-gray-600'}`}
+                        />
+                        <div>
+                          <p
+                            className={`font-medium ${isCurrentMonth ? 'text-blue-900' : 'text-gray-900'}`}
+                          >
+                            {monthName}
+                          </p>
+                          {isCurrentMonth && <p className="text-sm text-blue-600">Current month</p>}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p
+                          className={`font-medium ${isCurrentMonth ? 'text-blue-900' : 'text-gray-900'}`}
+                        >
+                          {formatCurrency(month.total)}
                         </p>
-                        {isCurrentMonth && (
-                          <p className="text-sm text-blue-600">Current month</p>
-                        )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className={`font-medium ${isCurrentMonth ? 'text-blue-900' : 'text-gray-900'}`}>
-                        {formatCurrency(month.total)}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </CardContent>
         </Card>
@@ -479,7 +543,8 @@ const RevenueCharts: React.FC = () => {
                 <h4 className="font-medium text-green-900">Optimize Sources</h4>
               </div>
               <p className="text-sm text-green-800">
-                Focus on high-margin revenue streams like subscriptions and credit sales for sustainable growth.
+                Focus on high-margin revenue streams like subscriptions and credit sales for
+                sustainable growth.
               </p>
             </div>
 
@@ -499,10 +564,9 @@ const RevenueCharts: React.FC = () => {
                 <h4 className="font-medium text-purple-900">Growth Strategy</h4>
               </div>
               <p className="text-sm text-purple-800">
-                {isPositiveGrowth ? 
-                  'Maintain current growth trajectory and identify scalable revenue opportunities.' :
-                  'Review pricing strategy and explore new revenue streams to reverse the decline.'
-                }
+                {isPositiveGrowth
+                  ? 'Maintain current growth trajectory and identify scalable revenue opportunities.'
+                  : 'Review pricing strategy and explore new revenue streams to reverse the decline.'}
               </p>
             </div>
           </div>

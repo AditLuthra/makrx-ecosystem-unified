@@ -17,7 +17,7 @@ import {
   Package,
   Zap,
   Settings,
-  BookOpen
+  BookOpen,
 } from 'lucide-react';
 import { useSkills } from '../contexts/SkillContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -43,7 +43,7 @@ const EquipmentSkillRequirements: React.FC = () => {
   const { user } = useAuth();
   const { userSkills, hasSkill, canAccessEquipment } = useSkills();
   const { toast } = useToast();
-  
+
   const [skillRequirements, setSkillRequirements] = useState<EquipmentSkillRequirement[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,17 +67,17 @@ const EquipmentSkillRequirements: React.FC = () => {
         setSkillRequirements(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load equipment skill requirements",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load equipment skill requirements',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching skill requirements:', error);
       toast({
-        title: "Error",
-        description: "Failed to load equipment skill requirements",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load equipment skill requirements',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -86,31 +86,31 @@ const EquipmentSkillRequirements: React.FC = () => {
 
   const getSkillLevelBadge = (level: string, isUserLevel: boolean = false) => {
     const levelConfig = {
-      beginner: { 
-        color: isUserLevel ? 'bg-blue-100 text-blue-800' : 'bg-blue-50 text-blue-700', 
+      beginner: {
+        color: isUserLevel ? 'bg-blue-100 text-blue-800' : 'bg-blue-50 text-blue-700',
         stars: '★',
-        icon: BookOpen
+        icon: BookOpen,
       },
-      intermediate: { 
-        color: isUserLevel ? 'bg-yellow-100 text-yellow-800' : 'bg-yellow-50 text-yellow-700', 
+      intermediate: {
+        color: isUserLevel ? 'bg-yellow-100 text-yellow-800' : 'bg-yellow-50 text-yellow-700',
         stars: '★★',
-        icon: Settings
+        icon: Settings,
       },
-      advanced: { 
-        color: isUserLevel ? 'bg-orange-100 text-orange-800' : 'bg-orange-50 text-orange-700', 
+      advanced: {
+        color: isUserLevel ? 'bg-orange-100 text-orange-800' : 'bg-orange-50 text-orange-700',
         stars: '★★★',
-        icon: Wrench
+        icon: Wrench,
       },
-      expert: { 
-        color: isUserLevel ? 'bg-red-100 text-red-800' : 'bg-red-50 text-red-700', 
+      expert: {
+        color: isUserLevel ? 'bg-red-100 text-red-800' : 'bg-red-50 text-red-700',
         stars: '★★★★',
-        icon: GraduationCap
-      }
+        icon: GraduationCap,
+      },
     };
-    
+
     const config = levelConfig[level as keyof typeof levelConfig] || levelConfig.beginner;
     const Icon = config.icon;
-    
+
     return (
       <Badge variant="outline" className={`${config.color} border-current`}>
         <Icon className="h-3 w-3 mr-1" />
@@ -137,7 +137,7 @@ const EquipmentSkillRequirements: React.FC = () => {
   };
 
   const getUserSkillStatus = (skillId: string) => {
-    const userSkill = userSkills.find(us => us.skillId === skillId && us.status === 'certified');
+    const userSkill = userSkills.find((us) => us.skillId === skillId && us.status === 'certified');
     if (userSkill) {
       return { hasSkill: true, level: userSkill.level };
     }
@@ -148,35 +148,49 @@ const EquipmentSkillRequirements: React.FC = () => {
     const accessCheck = canAccessEquipment(equipmentId);
     return {
       canAccess: accessCheck.canAccess,
-      missingSkills: accessCheck.missingSkills
+      missingSkills: accessCheck.missingSkills,
     };
   };
 
-  const filteredRequirements = skillRequirements.filter(equipment => {
-    const matchesSearch = equipment.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         equipment.required_skills.some(skill => 
-                           skill.skill_name.toLowerCase().includes(searchTerm.toLowerCase())
-                         );
-    
-    const matchesCategory = selectedCategory === 'all' || 
-                           equipment.required_skills.some(skill => skill.category === selectedCategory);
-    
-    const matchesSkillLevel = selectedSkillLevel === 'all' ||
-                             equipment.required_skills.some(skill => skill.required_level === selectedSkillLevel);
-    
-    const matchesAccessibility = !showOnlyAccessible || getAccessStatus(equipment.equipment_id).canAccess;
-    
+  const filteredRequirements = skillRequirements.filter((equipment) => {
+    const matchesSearch =
+      equipment.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipment.required_skills.some((skill) =>
+        skill.skill_name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      equipment.required_skills.some((skill) => skill.category === selectedCategory);
+
+    const matchesSkillLevel =
+      selectedSkillLevel === 'all' ||
+      equipment.required_skills.some((skill) => skill.required_level === selectedSkillLevel);
+
+    const matchesAccessibility =
+      !showOnlyAccessible || getAccessStatus(equipment.equipment_id).canAccess;
+
     return matchesSearch && matchesCategory && matchesSkillLevel && matchesAccessibility;
   });
 
-  const allCategories = [...new Set(skillRequirements.flatMap(eq => eq.required_skills.map(skill => skill.category)))];
+  const allCategories = [
+    ...new Set(
+      skillRequirements.flatMap((eq) => eq.required_skills.map((skill) => skill.category)),
+    ),
+  ];
   const allLevels = ['beginner', 'intermediate', 'advanced', 'expert'];
 
   const stats = {
     totalEquipment: skillRequirements.length,
-    accessibleEquipment: skillRequirements.filter(eq => getAccessStatus(eq.equipment_id).canAccess).length,
-    totalSkills: [...new Set(skillRequirements.flatMap(eq => eq.required_skills.map(skill => skill.skill_id)))].length,
-    userCertifiedSkills: userSkills.filter(us => us.status === 'certified').length
+    accessibleEquipment: skillRequirements.filter(
+      (eq) => getAccessStatus(eq.equipment_id).canAccess,
+    ).length,
+    totalSkills: [
+      ...new Set(
+        skillRequirements.flatMap((eq) => eq.required_skills.map((skill) => skill.skill_id)),
+      ),
+    ].length,
+    userCertifiedSkills: userSkills.filter((us) => us.status === 'certified').length,
   };
 
   if (loading) {
@@ -265,29 +279,33 @@ const EquipmentSkillRequirements: React.FC = () => {
             className="pl-10"
           />
         </div>
-        
+
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="px-3 py-2 border rounded-md"
         >
           <option value="all">All Categories</option>
-          {allCategories.map(category => (
-            <option key={category} value={category}>{category}</option>
+          {allCategories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
           ))}
         </select>
-        
+
         <select
           value={selectedSkillLevel}
           onChange={(e) => setSelectedSkillLevel(e.target.value)}
           className="px-3 py-2 border rounded-md"
         >
           <option value="all">All Levels</option>
-          {allLevels.map(level => (
-            <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
+          {allLevels.map((level) => (
+            <option key={level} value={level}>
+              {level.charAt(0).toUpperCase() + level.slice(1)}
+            </option>
           ))}
         </select>
-        
+
         <label className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-md">
           <input
             type="checkbox"
@@ -312,9 +330,12 @@ const EquipmentSkillRequirements: React.FC = () => {
         ) : (
           filteredRequirements.map((equipment) => {
             const accessStatus = getAccessStatus(equipment.equipment_id);
-            
+
             return (
-              <Card key={equipment.equipment_id} className={`${accessStatus.canAccess ? 'border-green-200' : 'border-red-200'}`}>
+              <Card
+                key={equipment.equipment_id}
+                className={`${accessStatus.canAccess ? 'border-green-200' : 'border-red-200'}`}
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-3">
@@ -323,7 +344,10 @@ const EquipmentSkillRequirements: React.FC = () => {
                     </CardTitle>
                     <div className="flex items-center gap-2">
                       {accessStatus.canAccess ? (
-                        <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-100 text-green-800 border-green-300"
+                        >
                           <CheckCircle className="h-3 w-3 mr-1" />
                           Accessible
                         </Badge>
@@ -343,11 +367,16 @@ const EquipmentSkillRequirements: React.FC = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {equipment.required_skills.map((skill) => {
                           const userSkillStatus = getUserSkillStatus(skill.skill_id);
-                          
+
                           return (
-                            <div key={skill.skill_id} className={`border rounded-lg p-4 ${
-                              userSkillStatus.hasSkill ? 'border-green-200 bg-green-50' : 'border-gray-200'
-                            }`}>
+                            <div
+                              key={skill.skill_id}
+                              className={`border rounded-lg p-4 ${
+                                userSkillStatus.hasSkill
+                                  ? 'border-green-200 bg-green-50'
+                                  : 'border-gray-200'
+                              }`}
+                            >
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                   {getCategoryIcon(skill.category)}
@@ -364,20 +393,20 @@ const EquipmentSkillRequirements: React.FC = () => {
                                   <XCircle className="h-5 w-5 text-red-500" />
                                 )}
                               </div>
-                              
+
                               <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                   <span className="text-sm text-gray-600">Required Level:</span>
                                   {getSkillLevelBadge(skill.required_level)}
                                 </div>
-                                
+
                                 {userSkillStatus.hasSkill && (
                                   <div className="flex items-center justify-between">
                                     <span className="text-sm text-gray-600">Your Level:</span>
                                     {getSkillLevelBadge(userSkillStatus.level!, true)}
                                   </div>
                                 )}
-                                
+
                                 <div className="flex items-center justify-between">
                                   <span className="text-sm text-gray-600">Category:</span>
                                   <Badge variant="outline" className="text-xs">
@@ -385,7 +414,7 @@ const EquipmentSkillRequirements: React.FC = () => {
                                   </Badge>
                                 </div>
                               </div>
-                              
+
                               {!userSkillStatus.hasSkill && (
                                 <div className="mt-3 pt-3 border-t">
                                   <Button size="sm" variant="outline" className="w-full">
@@ -398,7 +427,7 @@ const EquipmentSkillRequirements: React.FC = () => {
                         })}
                       </div>
                     </div>
-                    
+
                     {!accessStatus.canAccess && accessStatus.missingSkills.length > 0 && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <div className="flex items-start gap-3">

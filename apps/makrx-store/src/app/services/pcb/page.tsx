@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Upload,
   Cpu,
@@ -11,7 +11,7 @@ import {
   DollarSign,
   Truck,
   FileText,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface PCBSpec {
   layers: number;
@@ -31,66 +31,56 @@ interface AssemblyOption {
 const pcbSpecs: PCBSpec[] = [
   {
     layers: 2,
-    thickness: "1.6mm",
-    material: "FR4",
-    finishOptions: ["HASL", "ENIG", "OSP"],
+    thickness: '1.6mm',
+    material: 'FR4',
+    finishOptions: ['HASL', 'ENIG', 'OSP'],
     priceMultiplier: 1.0,
   },
   {
     layers: 4,
-    thickness: "1.6mm",
-    material: "FR4",
-    finishOptions: ["HASL", "ENIG", "OSP", "Hard Gold"],
+    thickness: '1.6mm',
+    material: 'FR4',
+    finishOptions: ['HASL', 'ENIG', 'OSP', 'Hard Gold'],
     priceMultiplier: 1.8,
   },
   {
     layers: 6,
-    thickness: "1.6mm",
-    material: "FR4",
-    finishOptions: ["ENIG", "OSP", "Hard Gold"],
+    thickness: '1.6mm',
+    material: 'FR4',
+    finishOptions: ['ENIG', 'OSP', 'Hard Gold'],
     priceMultiplier: 2.5,
   },
   {
     layers: 8,
-    thickness: "2.0mm",
-    material: "FR4",
-    finishOptions: ["ENIG", "Hard Gold"],
+    thickness: '2.0mm',
+    material: 'FR4',
+    finishOptions: ['ENIG', 'Hard Gold'],
     priceMultiplier: 3.2,
   },
 ];
 
 const assemblyOptions: AssemblyOption[] = [
   {
-    name: "SMT Assembly",
-    description: "Surface mount technology for compact designs",
+    name: 'SMT Assembly',
+    description: 'Surface mount technology for compact designs',
     capabilities: [
-      "0201 package size",
-      "BGA, QFN, LGA",
-      "Fine pitch connectors",
-      "Double-sided assembly",
+      '0201 package size',
+      'BGA, QFN, LGA',
+      'Fine pitch connectors',
+      'Double-sided assembly',
     ],
     pricePerComponent: 0.15,
   },
   {
-    name: "Through-Hole Assembly",
-    description: "Traditional through-hole component insertion",
-    capabilities: [
-      "Wave soldering",
-      "Selective soldering",
-      "Hand soldering",
-      "Mixed technology",
-    ],
+    name: 'Through-Hole Assembly',
+    description: 'Traditional through-hole component insertion',
+    capabilities: ['Wave soldering', 'Selective soldering', 'Hand soldering', 'Mixed technology'],
     pricePerComponent: 0.25,
   },
   {
-    name: "Mixed Assembly",
-    description: "Combination of SMT and through-hole",
-    capabilities: [
-      "Complex boards",
-      "High reliability",
-      "Automotive grade",
-      "Medical compliance",
-    ],
+    name: 'Mixed Assembly',
+    description: 'Combination of SMT and through-hole',
+    capabilities: ['Complex boards', 'High reliability', 'Automotive grade', 'Medical compliance'],
     pricePerComponent: 0.2,
   },
 ];
@@ -103,17 +93,16 @@ export default function PCBAssemblyPage() {
   const [dragActive, setDragActive] = useState(false);
 
   const basePCBPrice = 12;
-  const assemblyPrice =
-    componentCount * selectedAssembly.pricePerComponent * quantity;
+  const assemblyPrice = componentCount * selectedAssembly.pricePerComponent * quantity;
   const pcbPrice = basePCBPrice * selectedSpec.priceMultiplier * quantity;
   const totalPrice = Math.round(pcbPrice + assemblyPrice);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -124,7 +113,7 @@ export default function PCBAssemblyPage() {
     setDragActive(false);
 
     const files = Array.from(e.dataTransfer.files);
-    console.log("Files dropped:", files);
+    console.log('Files dropped:', files);
   };
 
   return (
@@ -142,9 +131,8 @@ export default function PCBAssemblyPage() {
               PCB Manufacturing & Assembly
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Professional PCB fabrication and assembly services. From
-              prototypes to production runs, we deliver high-quality circuit
-              boards with full testing and certification.
+              Professional PCB fabrication and assembly services. From prototypes to production
+              runs, we deliver high-quality circuit boards with full testing and certification.
             </p>
           </div>
         </div>
@@ -162,8 +150,8 @@ export default function PCBAssemblyPage() {
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragActive
-                    ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                    : "border-gray-300 dark:border-gray-600"
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                    : 'border-gray-300 dark:border-gray-600'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -175,8 +163,7 @@ export default function PCBAssemblyPage() {
                   Drop your Gerber files and BOM here
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  Required: Gerber files, Drill files, Pick & Place, BOM
-                  (Excel/CSV)
+                  Required: Gerber files, Drill files, Pick & Place, BOM (Excel/CSV)
                 </p>
                 <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
                   Choose Files
@@ -226,8 +213,8 @@ export default function PCBAssemblyPage() {
                     key={spec.layers}
                     className={`border rounded-lg p-4 cursor-pointer transition-all ${
                       selectedSpec.layers === spec.layers
-                        ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => setSelectedSpec(spec)}
                   >
@@ -236,9 +223,7 @@ export default function PCBAssemblyPage() {
                         {spec.layers} Layer PCB
                       </h3>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {spec.priceMultiplier === 1.0
-                          ? "Base price"
-                          : `${spec.priceMultiplier}x`}
+                        {spec.priceMultiplier === 1.0 ? 'Base price' : `${spec.priceMultiplier}x`}
                       </span>
                     </div>
                     <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
@@ -271,8 +256,8 @@ export default function PCBAssemblyPage() {
                     key={option.name}
                     className={`border rounded-lg p-4 cursor-pointer transition-all ${
                       selectedAssembly.name === option.name
-                        ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => setSelectedAssembly(option)}
                   >
@@ -336,34 +321,26 @@ export default function PCBAssemblyPage() {
                     min="0"
                     max="500"
                     value={componentCount}
-                    onChange={(e) =>
-                      setComponentCount(parseInt(e.target.value) || 0)
-                    }
+                    onChange={(e) => setComponentCount(parseInt(e.target.value) || 0)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
                 <div className="border-t dark:border-gray-600 pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      PCB Type:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">PCB Type:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {selectedSpec.layers} Layer
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Assembly:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Assembly:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {selectedAssembly.name}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Quantity:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Quantity:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {quantity} pcs
                     </span>
@@ -372,17 +349,13 @@ export default function PCBAssemblyPage() {
 
                 <div className="border-t dark:border-gray-600 pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      PCB Fabrication:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">PCB Fabrication:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       ${Math.round(pcbPrice)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Assembly:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Assembly:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       ${Math.round(assemblyPrice)}
                     </span>
@@ -437,8 +410,8 @@ export default function PCBAssemblyPage() {
                 Advanced SMT Lines
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                State-of-the-art SMT assembly lines capable of 0201 components,
-                BGA packages, and complex multi-layer boards.
+                State-of-the-art SMT assembly lines capable of 0201 components, BGA packages, and
+                complex multi-layer boards.
               </p>
             </div>
             <div className="text-center">
@@ -449,8 +422,8 @@ export default function PCBAssemblyPage() {
                 Quality Assurance
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Comprehensive testing including AOI, ICT, functional testing,
-                and compliance with IPC standards and certifications.
+                Comprehensive testing including AOI, ICT, functional testing, and compliance with
+                IPC standards and certifications.
               </p>
             </div>
             <div className="text-center">
@@ -461,8 +434,8 @@ export default function PCBAssemblyPage() {
                 Component Sourcing
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Global component sourcing network with authorized distributors,
-                ensuring genuine parts and competitive pricing.
+                Global component sourcing network with authorized distributors, ensuring genuine
+                parts and competitive pricing.
               </p>
             </div>
           </div>

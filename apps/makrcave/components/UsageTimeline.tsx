@@ -1,4 +1,14 @@
-import { Clock, User, Package, AlertTriangle, RotateCcw, Plus, Minus, Edit, ArrowRight } from 'lucide-react';
+import {
+  Clock,
+  User,
+  Package,
+  AlertTriangle,
+  RotateCcw,
+  Plus,
+  Minus,
+  Edit,
+  ArrowRight,
+} from 'lucide-react';
 
 interface InventoryUsageLog {
   id: string;
@@ -21,12 +31,12 @@ interface UsageTimelineProps {
   showFilters?: boolean;
 }
 
-export default function UsageTimeline({ 
-  logs, 
-  itemName, 
-  unit, 
+export default function UsageTimeline({
+  logs,
+  itemName,
+  unit,
   maxItems = 10,
-  showFilters = false 
+  showFilters = false,
 }: UsageTimelineProps) {
   const getActionIcon = (action: string) => {
     switch (action) {
@@ -115,8 +125,8 @@ export default function UsageTimeline({
     }
   };
 
-  const sortedLogs = [...logs].sort((a, b) => 
-    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  const sortedLogs = [...logs].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
   );
 
   const displayLogs = maxItems ? sortedLogs.slice(0, maxItems) : sortedLogs;
@@ -168,9 +178,7 @@ export default function UsageTimeline({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="font-medium text-sm">{getActionText(log.action)}</h4>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDate(log.timestamp)}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{formatDate(log.timestamp)}</span>
                 </div>
 
                 <div className="flex items-center gap-2 mb-2">
@@ -187,9 +195,11 @@ export default function UsageTimeline({
                     <span className="font-medium">
                       {log.quantityAfter} {unit}
                     </span>
-                    <span className={`font-medium ${
-                      log.quantityAfter > log.quantityBefore ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <span
+                      className={`font-medium ${
+                        log.quantityAfter > log.quantityBefore ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
                       ({formatQuantityChange(log)})
                     </span>
                   </div>

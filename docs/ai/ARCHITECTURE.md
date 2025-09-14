@@ -6,38 +6,40 @@ This document provides a quick reference for how the ecosystem fits together so 
 
 ## System Map
 
-| Component | Role |
-|-----------|------|
-| **Gateway** | Public entry point and profile hub that links to sub‑apps |
-| **MakrCave Frontend** | Makerspace management UI |
-| **MakrCave Backend** | Inventory, jobs and reservations API |
-| **Store Frontend** | E‑commerce and quoting UI |
-| **Store Backend** | Quote calculation and order management; publishes jobs to MakrCave |
-| **Keycloak** | Central identity provider issuing JWTs |
-| **PostgreSQL** | Primary relational datastore for all services |
-| **Reverse Proxy (Nginx)** | Routes traffic to frontends/backends and terminates TLS |
-| **Storage/CDN** | Object storage (MinIO/S3) for uploads served through a CDN |
+| Component                 | Role                                                               |
+| ------------------------- | ------------------------------------------------------------------ |
+| **Gateway**               | Public entry point and profile hub that links to sub‑apps          |
+| **MakrCave Frontend**     | Makerspace management UI                                           |
+| **MakrCave Backend**      | Inventory, jobs and reservations API                               |
+| **Store Frontend**        | E‑commerce and quoting UI                                          |
+| **Store Backend**         | Quote calculation and order management; publishes jobs to MakrCave |
+| **Keycloak**              | Central identity provider issuing JWTs                             |
+| **PostgreSQL**            | Primary relational datastore for all services                      |
+| **Reverse Proxy (Nginx)** | Routes traffic to frontends/backends and terminates TLS            |
+| **Storage/CDN**           | Object storage (MinIO/S3) for uploads served through a CDN         |
 
 ## Runtime Environments
 
 ### Development
+
 Docker Compose starts the stack with optional helpers. Common ports:
 
-| Service | Port |
-|---------|------|
-| Postgres | 5432 |
-| Keycloak | 8080 |
-| MakrCave API | 8002 |
-| Store API | 8003 |
-| Gateway UI | 3000 |
-| MakrCave UI | 3001 |
-| Store UI | 3002 |
-| Reverse proxy | 80/443 |
-| Optional MinIO | 9000 |
+| Service        | Port   |
+| -------------- | ------ |
+| Postgres       | 5432   |
+| Keycloak       | 8080   |
+| MakrCave API   | 8002   |
+| Store API      | 8003   |
+| Gateway UI     | 3000   |
+| MakrCave UI    | 3001   |
+| Store UI       | 3002   |
+| Reverse proxy  | 80/443 |
+| Optional MinIO | 9000   |
 
 Additional services like Redis or mail can be added as needed.
 
 ### Production
+
 Frontends build to static assets served via CDN behind Nginx. Backends run behind the proxy with managed Postgres, Keycloak, Redis and S3‑compatible storage.
 
 ## What's Supported in Production
@@ -84,15 +86,15 @@ Each service builds its Docker image from its own folder. The files sent to `doc
 
 ## Data Contracts (MVP)
 
-| Entity | Key Fields | Reference |
-|--------|------------|-----------|
-| **UserProfile** | `id`, `email`, `name`, `roles`, `makerspaces[]` | [API docs](docs/API.md) |
-| **Makerspace** | `id`, `name`, `description`, `location`, `member_count` | [API docs](docs/API.md#makerspaces) |
-| **InventoryItem** | `id`, `name`, `category`, `quantity`, `location`, `status` | MakrCave API inventory |
-| **FilamentRoll** | `id`, `makerspace_id`, `material`, `color`, `current_weight_g`, `status` | MakrCave filament tracking |
-| **Quote** | `quote_id`, `file_info`, `options[]`, `total_price`, `expires_at` | Store API quotes |
-| **Job** | `job_id`, `external_order_id`, `status`, `requirements`, `provider_id` | MakrCave jobs API |
-| **EquipmentReservation** | `id`, `equipment_id`, `user_id`, `requested_start`, `requested_end`, `status` | MakrCave reservations API |
+| Entity                   | Key Fields                                                                    | Reference                           |
+| ------------------------ | ----------------------------------------------------------------------------- | ----------------------------------- |
+| **UserProfile**          | `id`, `email`, `name`, `roles`, `makerspaces[]`                               | [API docs](docs/API.md)             |
+| **Makerspace**           | `id`, `name`, `description`, `location`, `member_count`                       | [API docs](docs/API.md#makerspaces) |
+| **InventoryItem**        | `id`, `name`, `category`, `quantity`, `location`, `status`                    | MakrCave API inventory              |
+| **FilamentRoll**         | `id`, `makerspace_id`, `material`, `color`, `current_weight_g`, `status`      | MakrCave filament tracking          |
+| **Quote**                | `quote_id`, `file_info`, `options[]`, `total_price`, `expires_at`             | Store API quotes                    |
+| **Job**                  | `job_id`, `external_order_id`, `status`, `requirements`, `provider_id`        | MakrCave jobs API                   |
+| **EquipmentReservation** | `id`, `equipment_id`, `user_id`, `requested_start`, `requested_end`, `status` | MakrCave reservations API           |
 
 ## Cross‑Cutting Concerns
 
@@ -108,4 +110,5 @@ Each service builds its Docker image from its own folder. The files sent to `doc
 - Decision history is tracked in the [ADR directory](docs/adr/README.md), where files are named `YYYYMMDD-short-title.md`.
 
 ---
+
 A typical request flows `Gateway → Keycloak → service API → Postgres`. To add features, extend routes under `backends/makrx-store/app/routes/*` or `backends/makrcave/routes/*` and update the corresponding frontend in `apps/`.

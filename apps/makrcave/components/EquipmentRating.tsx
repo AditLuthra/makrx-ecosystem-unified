@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react';
-import { 
-  Star, ThumbsUp, ThumbsDown, Send, User, Calendar,
-  CheckCircle, AlertTriangle, MessageSquare, Filter,
-  TrendingUp, Award, BarChart3
+import {
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  Send,
+  User,
+  Calendar,
+  CheckCircle,
+  AlertTriangle,
+  MessageSquare,
+  Filter,
+  TrendingUp,
+  Award,
+  BarChart3,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthHeaders } from '@makrx/auth';
@@ -57,7 +67,7 @@ export default function EquipmentRating({
   averageRating,
   totalRatings,
   canRate,
-  onRatingSubmit
+  onRatingSubmit,
 }: EquipmentRatingProps) {
   const { user } = useAuth();
   const getHeaders = useAuthHeaders();
@@ -79,7 +89,7 @@ export default function EquipmentRating({
     suggestions: '',
     issues_encountered: '',
     would_recommend: null,
-    difficulty_level: ''
+    difficulty_level: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -112,9 +122,9 @@ export default function EquipmentRating({
 
   const checkUserRating = async () => {
     if (!user) return;
-    
+
     // Check if current user has already rated this equipment
-    const userRating = ratings.find(rating => rating.user_id === user.id);
+    const userRating = ratings.find((rating) => rating.user_id === user.id);
     setHasUserRated(!!userRating);
   };
 
@@ -127,7 +137,8 @@ export default function EquipmentRating({
       reliability_rating: 5,
       ease_of_use_rating: 4,
       condition_rating: 5,
-      feedback_text: 'Excellent 3D printer! Very reliable and produces high-quality prints. The interface is intuitive and the print bed adhesion is great.',
+      feedback_text:
+        'Excellent 3D printer! Very reliable and produces high-quality prints. The interface is intuitive and the print bed adhesion is great.',
       pros: 'Great print quality, reliable, easy to use interface',
       cons: 'Could use better ventilation, filament loading could be easier',
       suggestions: 'Add an enclosure for better temperature control',
@@ -135,7 +146,7 @@ export default function EquipmentRating({
       difficulty_level: 'intermediate',
       created_at: '2024-01-20T10:30:00Z',
       is_approved: true,
-      is_featured: true
+      is_featured: true,
     },
     {
       id: 'rating-2',
@@ -145,7 +156,8 @@ export default function EquipmentRating({
       reliability_rating: 4,
       ease_of_use_rating: 5,
       condition_rating: 3,
-      feedback_text: 'Good printer overall. Had some issues with bed leveling but once set up properly, it works well.',
+      feedback_text:
+        'Good printer overall. Had some issues with bed leveling but once set up properly, it works well.',
       pros: 'User-friendly software, good support community',
       cons: 'Bed leveling can be tricky, nozzle gets clogged sometimes',
       issues_encountered: 'Had to clean the nozzle twice during my project',
@@ -153,8 +165,8 @@ export default function EquipmentRating({
       difficulty_level: 'beginner',
       created_at: '2024-01-18T14:20:00Z',
       is_approved: true,
-      is_featured: false
-    }
+      is_featured: false,
+    },
   ];
 
   const filteredAndSortedRatings = () => {
@@ -163,22 +175,24 @@ export default function EquipmentRating({
     // Apply filters
     switch (filterBy) {
       case 'featured':
-        filtered = filtered.filter(rating => rating.is_featured);
+        filtered = filtered.filter((rating) => rating.is_featured);
         break;
       case 'recent':
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        filtered = filtered.filter(rating => new Date(rating.created_at) >= oneWeekAgo);
+        filtered = filtered.filter((rating) => new Date(rating.created_at) >= oneWeekAgo);
         break;
       default:
         // Show all approved ratings
-        filtered = filtered.filter(rating => rating.is_approved);
+        filtered = filtered.filter((rating) => rating.is_approved);
     }
 
     // Apply sorting
     switch (sortBy) {
       case 'oldest':
-        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        filtered.sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        );
         break;
       case 'highest':
         filtered.sort((a, b) => b.overall_rating - a.overall_rating);
@@ -187,7 +201,9 @@ export default function EquipmentRating({
         filtered.sort((a, b) => a.overall_rating - b.overall_rating);
         break;
       default: // newest
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        filtered.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
     }
 
     return filtered;
@@ -214,7 +230,7 @@ export default function EquipmentRating({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
@@ -223,16 +239,16 @@ export default function EquipmentRating({
         headers: await getHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           ...formData,
-          equipment_id: equipmentId
-        })
+          equipment_id: equipmentId,
+        }),
       });
 
       if (response.ok) {
         const newRating = await response.json();
-        setRatings(prev => [newRating, ...prev]);
+        setRatings((prev) => [newRating, ...prev]);
         setHasUserRated(true);
         setShowRatingForm(false);
-        
+
         // Reset form
         setFormData({
           overall_rating: 0,
@@ -245,7 +261,7 @@ export default function EquipmentRating({
           suggestions: '',
           issues_encountered: '',
           would_recommend: null,
-          difficulty_level: ''
+          difficulty_level: '',
         });
 
         onRatingSubmit?.(newRating);
@@ -258,7 +274,12 @@ export default function EquipmentRating({
     }
   };
 
-  const renderStars = (rating?: number, size: 'sm' | 'lg' = 'sm', interactive = false, onClick?: (rating: number) => void) => {
+  const renderStars = (
+    rating?: number,
+    size: 'sm' | 'lg' = 'sm',
+    interactive = false,
+    onClick?: (rating: number) => void,
+  ) => {
     const starSize = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4';
     const safeRating = rating || 0;
 
@@ -268,9 +289,7 @@ export default function EquipmentRating({
         type={interactive ? 'button' : undefined}
         onClick={interactive ? () => onClick?.(i + 1) : undefined}
         className={`${starSize} ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''} ${
-          i < Math.floor(safeRating)
-            ? 'text-yellow-400 fill-current'
-            : 'text-gray-300'
+          i < Math.floor(safeRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
         }`}
         disabled={!interactive}
       >
@@ -294,7 +313,7 @@ export default function EquipmentRating({
 
   const calculateRatingBreakdown = () => {
     const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    ratings.forEach(rating => {
+    ratings.forEach((rating) => {
       if (rating.is_approved) {
         breakdown[rating.overall_rating as keyof typeof breakdown]++;
       }
@@ -311,23 +330,27 @@ export default function EquipmentRating({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Overall Rating */}
           <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-2">{(averageRating || 0).toFixed(1)}</div>
+            <div className="text-4xl font-bold text-gray-900 mb-2">
+              {(averageRating || 0).toFixed(1)}
+            </div>
             <div className="flex items-center justify-center mb-2">
               {renderStars(averageRating || 0, 'lg')}
             </div>
-            <p className="text-sm text-gray-600">{totalRatings || 0} rating{(totalRatings || 0) !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-gray-600">
+              {totalRatings || 0} rating{(totalRatings || 0) !== 1 ? 's' : ''}
+            </p>
           </div>
 
           {/* Rating Breakdown */}
           <div className="space-y-2">
-            {[5, 4, 3, 2, 1].map(stars => (
+            {[5, 4, 3, 2, 1].map((stars) => (
               <div key={stars} className="flex items-center space-x-2">
                 <span className="text-sm w-8">{stars}★</span>
                 <div className="flex-1 bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-yellow-400 h-2 rounded-full"
                     style={{
-                      width: `${totalRatings > 0 ? (ratingBreakdown[stars as keyof typeof ratingBreakdown] / totalRatings) * 100 : 0}%`
+                      width: `${totalRatings > 0 ? (ratingBreakdown[stars as keyof typeof ratingBreakdown] / totalRatings) * 100 : 0}%`,
                     }}
                   ></div>
                 </div>
@@ -380,7 +403,7 @@ export default function EquipmentRating({
       {showRatingForm && (
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Rate {equipmentName}</h3>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Overall Rating */}
             <div>
@@ -388,8 +411,8 @@ export default function EquipmentRating({
                 Overall Rating <span className="text-red-500">*</span>
               </label>
               <div className="flex items-center space-x-1">
-                {renderStars(formData.overall_rating, 'lg', true, (rating) => 
-                  setFormData(prev => ({ ...prev, overall_rating: rating }))
+                {renderStars(formData.overall_rating, 'lg', true, (rating) =>
+                  setFormData((prev) => ({ ...prev, overall_rating: rating })),
                 )}
               </div>
               {errors.overall_rating && (
@@ -402,8 +425,8 @@ export default function EquipmentRating({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Reliability</label>
                 <div className="flex items-center space-x-1">
-                  {renderStars(formData.reliability_rating, 'sm', true, (rating) => 
-                    setFormData(prev => ({ ...prev, reliability_rating: rating }))
+                  {renderStars(formData.reliability_rating, 'sm', true, (rating) =>
+                    setFormData((prev) => ({ ...prev, reliability_rating: rating })),
                   )}
                 </div>
               </div>
@@ -411,8 +434,8 @@ export default function EquipmentRating({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Ease of Use</label>
                 <div className="flex items-center space-x-1">
-                  {renderStars(formData.ease_of_use_rating, 'sm', true, (rating) => 
-                    setFormData(prev => ({ ...prev, ease_of_use_rating: rating }))
+                  {renderStars(formData.ease_of_use_rating, 'sm', true, (rating) =>
+                    setFormData((prev) => ({ ...prev, ease_of_use_rating: rating })),
                   )}
                 </div>
               </div>
@@ -420,8 +443,8 @@ export default function EquipmentRating({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
                 <div className="flex items-center space-x-1">
-                  {renderStars(formData.condition_rating, 'sm', true, (rating) => 
-                    setFormData(prev => ({ ...prev, condition_rating: rating }))
+                  {renderStars(formData.condition_rating, 'sm', true, (rating) =>
+                    setFormData((prev) => ({ ...prev, condition_rating: rating })),
                   )}
                 </div>
               </div>
@@ -434,7 +457,9 @@ export default function EquipmentRating({
               </label>
               <textarea
                 value={formData.feedback_text}
-                onChange={(e) => setFormData(prev => ({ ...prev, feedback_text: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, feedback_text: e.target.value }))
+                }
                 placeholder="Share your experience with this equipment..."
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -450,7 +475,7 @@ export default function EquipmentRating({
                 <label className="block text-sm font-medium text-gray-700 mb-1">Pros</label>
                 <textarea
                   value={formData.pros}
-                  onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, pros: e.target.value }))}
                   placeholder="What did you like about this equipment?"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -461,7 +486,7 @@ export default function EquipmentRating({
                 <label className="block text-sm font-medium text-gray-700 mb-1">Cons</label>
                 <textarea
                   value={formData.cons}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, cons: e.target.value }))}
                   placeholder="What could be improved?"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -472,10 +497,14 @@ export default function EquipmentRating({
             {/* Additional Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty Level</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Difficulty Level
+                </label>
                 <select
                   value={formData.difficulty_level}
-                  onChange={(e) => setFormData(prev => ({ ...prev, difficulty_level: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, difficulty_level: e.target.value }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
                 >
                   <option value="">Select difficulty</option>
@@ -495,7 +524,7 @@ export default function EquipmentRating({
                       type="radio"
                       name="recommend"
                       checked={formData.would_recommend === true}
-                      onChange={() => setFormData(prev => ({ ...prev, would_recommend: true }))}
+                      onChange={() => setFormData((prev) => ({ ...prev, would_recommend: true }))}
                       className="mr-2"
                     />
                     <ThumbsUp className="w-4 h-4 mr-1 text-green-600" />
@@ -506,7 +535,7 @@ export default function EquipmentRating({
                       type="radio"
                       name="recommend"
                       checked={formData.would_recommend === false}
-                      onChange={() => setFormData(prev => ({ ...prev, would_recommend: false }))}
+                      onChange={() => setFormData((prev) => ({ ...prev, would_recommend: false }))}
                       className="mr-2"
                     />
                     <ThumbsDown className="w-4 h-4 mr-1 text-red-600" />
@@ -521,10 +550,14 @@ export default function EquipmentRating({
 
             {/* Issues Encountered */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Issues Encountered</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Issues Encountered
+              </label>
               <textarea
                 value={formData.issues_encountered}
-                onChange={(e) => setFormData(prev => ({ ...prev, issues_encountered: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, issues_encountered: e.target.value }))
+                }
                 placeholder="Describe any problems or issues you encountered..."
                 rows={2}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -584,14 +617,16 @@ export default function EquipmentRating({
                         {new Date(rating.created_at).toLocaleDateString()}
                       </span>
                       {rating.difficulty_level && (
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getDifficultyColor(rating.difficulty_level)}`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getDifficultyColor(rating.difficulty_level)}`}
+                        >
                           {rating.difficulty_level}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
-                
+
                 {rating.would_recommend !== undefined && (
                   <div className="flex items-center">
                     {rating.would_recommend ? (
@@ -605,12 +640,12 @@ export default function EquipmentRating({
 
               {/* Review Content */}
               <div className="space-y-3">
-                {rating.feedback_text && (
-                  <p className="text-gray-800">{rating.feedback_text}</p>
-                )}
+                {rating.feedback_text && <p className="text-gray-800">{rating.feedback_text}</p>}
 
                 {/* Detailed Ratings */}
-                {(rating.reliability_rating || rating.ease_of_use_rating || rating.condition_rating) && (
+                {(rating.reliability_rating ||
+                  rating.ease_of_use_rating ||
+                  rating.condition_rating) && (
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     {rating.reliability_rating && (
                       <div>
@@ -690,10 +725,9 @@ export default function EquipmentRating({
             <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No reviews yet</h3>
             <p className="text-gray-600">
-              {canRate && !hasUserRated 
+              {canRate && !hasUserRated
                 ? 'Be the first to review this equipment!'
-                : 'Reviews will appear here once submitted.'
-              }
+                : 'Reviews will appear here once submitted.'}
             </p>
           </div>
         )}

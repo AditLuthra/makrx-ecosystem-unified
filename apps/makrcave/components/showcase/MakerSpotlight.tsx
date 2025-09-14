@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { 
+import {
   Star,
   MapPin,
   Award,
@@ -18,7 +18,7 @@ import {
   ChevronRight,
   Trophy,
   Zap,
-  Crown
+  Crown,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -30,14 +30,14 @@ interface FeaturedMaker {
   bio?: string;
   location?: string;
   makerspace_name?: string;
-  
+
   // Stats
   project_count: number;
   total_likes: number;
   total_views: number;
   total_forks: number;
   follower_count: number;
-  
+
   // Featured project
   featured_project: {
     project_id: string;
@@ -46,7 +46,7 @@ interface FeaturedMaker {
     like_count: number;
     view_count: number;
   };
-  
+
   // Skills and badges
   top_skills: string[];
   achievements: Array<{
@@ -55,7 +55,7 @@ interface FeaturedMaker {
     icon: string;
     description: string;
   }>;
-  
+
   // Social
   is_verified: boolean;
   is_staff_pick: boolean;
@@ -111,7 +111,7 @@ const MakerSpotlight: React.FC = () => {
       name: 'Smart Garden Monitor',
       thumbnail_url: '/projects/garden-monitor.jpg',
       like_count: 142,
-      view_count: 2340
+      view_count: 2340,
     },
     top_skills: ['Arduino', 'IoT', 'PCB Design', '3D Printing', 'Sustainability'],
     achievements: [
@@ -119,24 +119,24 @@ const MakerSpotlight: React.FC = () => {
         type: 'featured',
         name: 'Featured Maker',
         icon: '⭐',
-        description: 'Selected as featured maker of the month'
+        description: 'Selected as featured maker of the month',
       },
       {
         type: 'innovator',
         name: 'Innovation Award',
         icon: '💡',
-        description: 'Recognized for innovative IoT solutions'
+        description: 'Recognized for innovative IoT solutions',
       },
       {
         type: 'mentor',
         name: 'Community Mentor',
         icon: '🏆',
-        description: 'Mentored 50+ new makers'
-      }
+        description: 'Mentored 50+ new makers',
+      },
     ],
     is_verified: true,
     is_staff_pick: true,
-    member_since: '2023-01-15T00:00:00Z'
+    member_since: '2023-01-15T00:00:00Z',
   });
 
   if (loading) {
@@ -197,9 +197,7 @@ const MakerSpotlight: React.FC = () => {
             <span>Maker Spotlight</span>
           </div>
           <div className="flex items-center space-x-1">
-            {featuredMaker.is_staff_pick && (
-              <Crown className="h-4 w-4" />
-            )}
+            {featuredMaker.is_staff_pick && <Crown className="h-4 w-4" />}
             {featuredMaker.is_verified && (
               <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
                 <Star className="h-2 w-2 fill-current" />
@@ -208,7 +206,7 @@ const MakerSpotlight: React.FC = () => {
           </div>
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="p-6">
         {/* Maker Profile */}
         <div className="space-y-4">
@@ -224,7 +222,7 @@ const MakerSpotlight: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
                 <span>{featuredMaker.name}</span>
@@ -253,7 +251,9 @@ const MakerSpotlight: React.FC = () => {
                 )}
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-3 w-3" />
-                  <span>{formatDistanceToNow(new Date(featuredMaker.member_since), { addSuffix: true })}</span>
+                  <span>
+                    {formatDistanceToNow(new Date(featuredMaker.member_since), { addSuffix: true })}
+                  </span>
                 </div>
               </div>
             </div>
@@ -271,15 +271,21 @@ const MakerSpotlight: React.FC = () => {
               <div className="text-xs text-blue-600">Projects</div>
             </div>
             <div className="text-center p-3 bg-red-50 rounded-lg">
-              <div className="text-lg font-bold text-red-900">{featuredMaker.total_likes.toLocaleString()}</div>
+              <div className="text-lg font-bold text-red-900">
+                {featuredMaker.total_likes.toLocaleString()}
+              </div>
               <div className="text-xs text-red-600">Likes</div>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-lg font-bold text-green-900">{featuredMaker.total_views.toLocaleString()}</div>
+              <div className="text-lg font-bold text-green-900">
+                {featuredMaker.total_views.toLocaleString()}
+              </div>
               <div className="text-xs text-green-600">Views</div>
             </div>
             <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-lg font-bold text-purple-900">{featuredMaker.follower_count}</div>
+              <div className="text-lg font-bold text-purple-900">
+                {featuredMaker.follower_count}
+              </div>
               <div className="text-xs text-purple-600">Followers</div>
             </div>
           </div>
@@ -288,7 +294,7 @@ const MakerSpotlight: React.FC = () => {
           <div>
             <h4 className="text-sm font-medium text-gray-700 mb-2">Top Skills</h4>
             <div className="flex flex-wrap gap-1">
-              {featuredMaker.top_skills.slice(0, 4).map(skill => (
+              {featuredMaker.top_skills.slice(0, 4).map((skill) => (
                 <Badge key={skill} variant="secondary" className="text-xs">
                   {skill}
                 </Badge>
@@ -320,15 +326,17 @@ const MakerSpotlight: React.FC = () => {
           {/* Featured Project */}
           <div>
             <h4 className="text-sm font-medium text-gray-700 mb-2">Featured Project</h4>
-            <div 
+            <div
               className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
-              onClick={() => window.location.href = `/portal/projects/${featuredMaker.featured_project.project_id}`}
+              onClick={() =>
+                (window.location.href = `/portal/projects/${featuredMaker.featured_project.project_id}`)
+              }
             >
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg overflow-hidden flex-shrink-0">
                   {featuredMaker.featured_project.thumbnail_url ? (
-                    <img 
-                      src={featuredMaker.featured_project.thumbnail_url} 
+                    <img
+                      src={featuredMaker.featured_project.thumbnail_url}
                       alt={featuredMaker.featured_project.name}
                       className="w-full h-full object-cover"
                     />
@@ -338,7 +346,7 @@ const MakerSpotlight: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <h5 className="font-medium text-sm text-gray-900 group-hover:text-blue-600 transition-colors truncate">
                     {featuredMaker.featured_project.name}
@@ -354,7 +362,7 @@ const MakerSpotlight: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
               </div>
             </div>
@@ -362,18 +370,20 @@ const MakerSpotlight: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex space-x-2 pt-4 border-t">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex-1"
-              onClick={() => window.location.href = `/portal/makers/${featuredMaker.user_id}`}
+              onClick={() => (window.location.href = `/portal/makers/${featuredMaker.user_id}`)}
             >
               View Profile
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              onClick={() => window.location.href = `/portal/makers/${featuredMaker.user_id}/projects`}
+              onClick={() =>
+                (window.location.href = `/portal/makers/${featuredMaker.user_id}/projects`)
+              }
             >
               <ExternalLink className="h-4 w-4" />
             </Button>

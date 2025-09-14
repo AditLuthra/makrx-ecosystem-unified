@@ -1,6 +1,6 @@
 export type SystemService = {
   service: string; // legacy name used by UI
-  status: 'healthy'|'degraded'|'unhealthy';
+  status: 'healthy' | 'degraded' | 'unhealthy';
   responseTime?: number;
   timestamp?: number;
   details?: string;
@@ -9,7 +9,7 @@ export type SystemService = {
 };
 
 export interface SystemHealthStatus {
-  overall: 'healthy'|'degraded'|'unhealthy'|'unknown';
+  overall: 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
   environment?: string;
   lastUpdated?: number;
   services: SystemService[];
@@ -24,7 +24,10 @@ export async function checkDependencies() {
 }
 
 const healthCheckService = {
-  async getQuickStatus(): Promise<{ status: 'healthy'|'degraded'|'unhealthy'; message: string }> {
+  async getQuickStatus(): Promise<{
+    status: 'healthy' | 'degraded' | 'unhealthy';
+    message: string;
+  }> {
     return { status: 'healthy', message: 'All systems operational' };
   },
   async runAllChecks(): Promise<SystemHealthStatus> {
@@ -33,9 +36,16 @@ const healthCheckService = {
       { service: 'api', status: 'healthy', responseTime: 120, timestamp: now, details: 'OK' },
       { service: 'db', status: 'healthy', responseTime: 80, timestamp: now, details: 'OK' },
     ];
-    return { overall: 'healthy', environment: process.env.NODE_ENV || 'development', lastUpdated: now, services };
+    return {
+      overall: 'healthy',
+      environment: process.env.NODE_ENV || 'development',
+      lastUpdated: now,
+      services,
+    };
   },
-  clearCache() {/* no-op for stub */},
+  clearCache() {
+    /* no-op for stub */
+  },
 };
 
 export default healthCheckService;

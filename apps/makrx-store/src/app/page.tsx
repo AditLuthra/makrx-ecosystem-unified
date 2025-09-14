@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Star, Users, Package, Truck, Clock, QrCode } from "lucide-react";
-import { api, type Product, type Category, formatPrice } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight, Star, Users, Package, Truck, Clock, QrCode } from 'lucide-react';
+import { api, type Product, type Category, formatPrice } from '@/lib/api';
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -23,10 +23,10 @@ export default function HomePage() {
         setCategories(Array.isArray(categoriesData) ? categoriesData : []);
       } catch (error) {
         // Silently handle errors in development when using mock data
-        if (process.env.NODE_ENV === "development") {
-          console.warn("Using fallback data due to backend unavailability");
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Using fallback data due to backend unavailability');
         } else {
-          console.error("Failed to load homepage data:", error);
+          console.error('Failed to load homepage data:', error);
         }
 
         // Set empty arrays as fallback
@@ -59,13 +59,15 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Development Mode Notice */}
-      {process.env.NODE_ENV === "development" && typeof window !== "undefined" && sessionStorage.getItem("mock-data-notice-shown") && (
-        <div className="bg-yellow-100 dark:bg-yellow-900 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2">
-          <p className="text-center text-yellow-800 dark:text-yellow-200 text-sm">
-            🔧 Development Mode: Using demo data - Backend service not connected
-          </p>
-        </div>
-      )}
+      {process.env.NODE_ENV === 'development' &&
+        typeof window !== 'undefined' &&
+        sessionStorage.getItem('mock-data-notice-shown') && (
+          <div className="bg-yellow-100 dark:bg-yellow-900 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2">
+            <p className="text-center text-yellow-800 dark:text-yellow-200 text-sm">
+              🔧 Development Mode: Using demo data - Backend service not connected
+            </p>
+          </div>
+        )}
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white">
@@ -77,7 +79,8 @@ export default function HomePage() {
               <span className="block text-white">Tools, Materials & Fabrication</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-blue-100">
-              The e-commerce hub of the MakrX ecosystem: seamlessly integrated with MakrCave for instant BOM ordering, material procurement, and professional fabrication services.
+              The e-commerce hub of the MakrX ecosystem: seamlessly integrated with MakrCave for
+              instant BOM ordering, material procurement, and professional fabrication services.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -105,7 +108,8 @@ export default function HomePage() {
               <span className="text-blue-600">Maker-First</span> Categories
             </h2>
             <p className="text-lg text-muted-foreground">
-              Tools, materials, and equipment optimized for the global maker community — with direct integration to MakrCave BOMs and project workflows
+              Tools, materials, and equipment optimized for the global maker community — with direct
+              integration to MakrCave BOMs and project workflows
             </p>
           </div>
 
@@ -127,12 +131,8 @@ export default function HomePage() {
                     />
                   </div>
                 )}
-                <h3 className="font-semibold text-card-foreground mb-2">
-                  {category.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {category.description}
-                </p>
+                <h3 className="font-semibold text-card-foreground mb-2">{category.name}</h3>
+                <p className="text-sm text-muted-foreground">{category.description}</p>
               </div>
             ))}
           </div>
@@ -153,9 +153,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
             <div>
-              <h2 className="text-3xl font-bold text-foreground mb-4">
-                Featured Products
-              </h2>
+              <h2 className="text-3xl font-bold text-foreground mb-4">Featured Products</h2>
               <p className="text-lg text-muted-foreground">
                 Our most popular and highly-rated products
               </p>
@@ -210,16 +208,12 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center">
                       <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-muted-foreground ml-1">
-                        4.8
-                      </span>
+                      <span className="text-sm text-muted-foreground ml-1">4.8</span>
                     </div>
                   </div>
                   {!product.in_stock && (
                     <div className="mt-2">
-                      <span className="text-xs text-red-600 font-medium">
-                        Out of Stock
-                      </span>
+                      <span className="text-xs text-red-600 font-medium">Out of Stock</span>
                     </div>
                   )}
                 </div>
@@ -237,7 +231,8 @@ export default function HomePage() {
               <span className="text-blue-600">Connected</span> Fabrication Services
             </h2>
             <p className="text-lg text-muted-foreground">
-              Professional manufacturing integrated with the MakrX ecosystem — orders flow directly to network makerspaces and service providers
+              Professional manufacturing integrated with the MakrX ecosystem — orders flow directly
+              to network makerspaces and service providers
             </p>
           </div>
 
@@ -250,7 +245,8 @@ export default function HomePage() {
                 Instant Fabrication Quotes
               </h3>
               <p className="text-muted-foreground mb-6">
-                Upload your files and get instant quotes from MakrX network fabricators. Orders integrate directly with MakrCave project management.
+                Upload your files and get instant quotes from MakrX network fabricators. Orders
+                integrate directly with MakrCave project management.
               </p>
               <Link
                 href="/upload"
@@ -268,7 +264,8 @@ export default function HomePage() {
                 Network-Powered Speed
               </h3>
               <p className="text-muted-foreground mb-6">
-                Leveraging our global MakrX makerspace network for rapid production. Jobs automatically routed to the best available facility.
+                Leveraging our global MakrX makerspace network for rapid production. Jobs
+                automatically routed to the best available facility.
               </p>
               <Link
                 href="/3d-printing"
@@ -286,7 +283,8 @@ export default function HomePage() {
                 Ecosystem Quality Standards
               </h3>
               <p className="text-muted-foreground mb-6">
-                All MakrX network providers meet rigorous quality standards. Skill-verified operators and tracked material usage ensure consistent results.
+                All MakrX network providers meet rigorous quality standards. Skill-verified
+                operators and tracked material usage ensure consistent results.
               </p>
               <Link
                 href="/sample-projects"
@@ -305,27 +303,19 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold mb-2">10k+</div>
-              <div className="text-blue-200 dark:text-blue-300">
-                Makers Connected
-              </div>
+              <div className="text-blue-200 dark:text-blue-300">Makers Connected</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">50k+</div>
-              <div className="text-blue-200 dark:text-blue-300">
-                Projects Fabricated
-              </div>
+              <div className="text-blue-200 dark:text-blue-300">Projects Fabricated</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">150+</div>
-              <div className="text-blue-200 dark:text-blue-300">
-                Network Makerspaces
-              </div>
+              <div className="text-blue-200 dark:text-blue-300">Network Makerspaces</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">99%</div>
-              <div className="text-blue-200 dark:text-blue-300">
-                Ecosystem Integration
-              </div>
+              <div className="text-blue-200 dark:text-blue-300">Ecosystem Integration</div>
             </div>
           </div>
         </div>
@@ -338,7 +328,8 @@ export default function HomePage() {
             Ready to Join the <span className="text-blue-600">MakrX</span> Ecosystem?
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            From materials and tools to professional fabrication — everything you need is connected through the unified MakrX platform. Start building with the global maker community.
+            From materials and tools to professional fabrication — everything you need is connected
+            through the unified MakrX platform. Start building with the global maker community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -368,14 +359,17 @@ export default function HomePage() {
               QR Code Integration Demo
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-              Experience our revolutionary QR code system for warehouse management, billing automation, and makerspace inventory integration.
+              Experience our revolutionary QR code system for warehouse management, billing
+              automation, and makerspace inventory integration.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <div className="text-center">
                 <div className="bg-blue-100 dark:bg-blue-800 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <Package className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Warehouse Automation</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  Warehouse Automation
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Scan QR codes to automatically bill components in/out of warehouse
                 </p>
@@ -384,7 +378,9 @@ export default function HomePage() {
                 <div className="bg-green-100 dark:bg-green-800 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <Truck className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Shipping Integration</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  Shipping Integration
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Streamline shipping processes with automated data capture
                 </p>
@@ -393,7 +389,9 @@ export default function HomePage() {
                 <div className="bg-purple-100 dark:bg-purple-800 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Makerspace Inventory</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  Makerspace Inventory
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Allow makerspace managers to add items by scanning QR codes
                 </p>

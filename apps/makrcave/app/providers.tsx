@@ -23,9 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <MakerspaceProvider>
             <FeatureFlagProvider>
               <SkillProvider>
-                <NotificationProvider>
-                  {children}
-                </NotificationProvider>
+                <NotificationProvider>{children}</NotificationProvider>
               </SkillProvider>
             </FeatureFlagProvider>
           </MakerspaceProvider>

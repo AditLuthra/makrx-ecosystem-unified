@@ -17,6 +17,7 @@ FastAPI backend for MakrCave, integrated into the MakrX unified monorepo with Ke
 ## Keycloak Settings
 
 Set env vars:
+
 - `KEYCLOAK_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`
   - Optional: `KEYCLOAK_VERIFY_AUD`, `KEYCLOAK_ISSUER`, `KEYCLOAK_PK_TTL_SECONDS`, `KEYCLOAK_USE_JWKS`
   - JWKS is used by default; token header `kid` selects the correct key; falls back to realm public key
@@ -48,14 +49,15 @@ alembic -c backends/makrcave/alembic.ini upgrade head
 ```
 
 Notes:
+
 - After consolidating models, legacy `backends/makrcave/models/member.py` was removed in favor of `enhanced_member.py`.
 - `migrations/env.py` enables `compare_type` and `compare_server_default` for more accurate diffs.
-- After establishing a full baseline, reconcile any legacy “create_*” helper calls in `migrations/versions/*` that overlap with the canonical schema (keep as no-ops or remove).
+- After establishing a full baseline, reconcile any legacy “create\__” helper calls in `migrations/versions/_` that overlap with the canonical schema (keep as no-ops or remove).
 
 ## Rate Limiting (Redis)
 
 - Set `REDIS_URL` to enable distributed rate limiting; falls back to in‑memory.
- - If behind a reverse proxy, set `TRUST_PROXY=true` to use `X-Forwarded-For` for client IP detection.
+- If behind a reverse proxy, set `TRUST_PROXY=true` to use `X-Forwarded-For` for client IP detection.
 
 ## Readiness
 

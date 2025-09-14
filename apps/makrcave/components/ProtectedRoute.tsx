@@ -20,7 +20,12 @@ interface ProtectedRouteProps {
   };
   requiredRole?: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
   allowedRoles?: ('super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user')[];
-  adminFeature?: 'systemLogs' | 'featureFlags' | 'healthMonitoring' | 'userRoleManagement' | 'globalDashboard';
+  adminFeature?:
+    | 'systemLogs'
+    | 'featureFlags'
+    | 'healthMonitoring'
+    | 'userRoleManagement'
+    | 'globalDashboard';
   fallbackPath?: string;
   showAccessDenied?: boolean;
 }
@@ -32,7 +37,7 @@ export default function ProtectedRoute({
   allowedRoles,
   adminFeature,
   fallbackPath = '/dashboard',
-  showAccessDenied = true
+  showAccessDenied = true,
 }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading, hasRole } = useKeycloak();
   const router = useRouter();
@@ -89,7 +94,7 @@ export default function ProtectedRoute({
     reason = `Required role: ${requiredRole}`;
   }
 
-  if (allowedRoles && !allowedRoles.some(r => hasRole(r))) {
+  if (allowedRoles && !allowedRoles.some((r) => hasRole(r))) {
     hasAccess = false;
     const userRoles = user.roles || [];
     reason = `Allowed roles: ${allowedRoles.join(', ')}, current roles: ${userRoles.join(', ')}`;
@@ -99,7 +104,7 @@ export default function ProtectedRoute({
     const permission = hasPermission(
       user.role || 'user',
       requiredPermission.area,
-      requiredPermission.action
+      requiredPermission.action,
     );
     if (!permission) {
       hasAccess = false;
@@ -125,7 +130,7 @@ export default function ProtectedRoute({
       requiredRole,
       allowedRoles,
       adminFeature,
-      requiredPermission
+      requiredPermission,
     });
   } else {
     const userRoles = user.roles || [];
@@ -137,7 +142,7 @@ export default function ProtectedRoute({
       requiredRole,
       allowedRoles,
       adminFeature,
-      requiredPermission
+      requiredPermission,
     });
 
     // legacy alias not available; already logged above
@@ -167,21 +172,29 @@ export default function ProtectedRoute({
               <AlertTriangle className="w-4 h-4" />
               <span className="text-sm">Insufficient Permissions</span>
             </div>
-            
+
             <p className="text-muted-foreground">
               You don't have the required permissions to access this page.
             </p>
-            
+
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Your role: <span className="font-medium">{(user.roles || []).join(', ')}</span></div>
+              <div>
+                Your role: <span className="font-medium">{(user.roles || []).join(', ')}</span>
+              </div>
               {requiredRole && (
-                <div>Required role: <span className="font-medium">{requiredRole}</span></div>
+                <div>
+                  Required role: <span className="font-medium">{requiredRole}</span>
+                </div>
               )}
               {allowedRoles && (
-                <div>Allowed roles: <span className="font-medium">{allowedRoles.join(', ')}</span></div>
+                <div>
+                  Allowed roles: <span className="font-medium">{allowedRoles.join(', ')}</span>
+                </div>
               )}
               {adminFeature && (
-                <div>Required feature: <span className="font-medium">{adminFeature}</span></div>
+                <div>
+                  Required feature: <span className="font-medium">{adminFeature}</span>
+                </div>
               )}
             </div>
 
@@ -204,17 +217,17 @@ export default function ProtectedRoute({
 }
 
 // Helper component for admin-only features
-export function AdminOnly({ 
-  children, 
-  feature, 
-  fallback = null 
-}: { 
-  children: ReactNode; 
+export function AdminOnly({
+  children,
+  feature,
+  fallback = null,
+}: {
+  children: ReactNode;
   feature?: 'systemLogs' | 'featureFlags' | 'healthMonitoring' | 'userRoleManagement';
   fallback?: ReactNode;
 }) {
   const { user } = useAuth();
-  
+
   if (!user) return <>{fallback}</>;
 
   if (feature) {
@@ -222,7 +235,7 @@ export function AdminOnly({
     if (!hasAccess) return <>{fallback}</>;
   } else {
     // Check if user is admin-level
-    if (!user.roles.some(r => ['super_admin', 'admin'].includes(r))) {
+    if (!user.roles.some((r) => ['super_admin', 'admin'].includes(r))) {
       return <>{fallback}</>;
     }
   }
@@ -231,11 +244,11 @@ export function AdminOnly({
 }
 
 // Helper component for super admin only features
-export function SuperAdminOnly({ 
-  children, 
-  fallback = null 
-}: { 
-  children: ReactNode; 
+export function SuperAdminOnly({
+  children,
+  fallback = null,
+}: {
+  children: ReactNode;
   fallback?: ReactNode;
 }) {
   const { user } = useAuth();

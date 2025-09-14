@@ -1,5 +1,5 @@
-import Keycloak from 'keycloak-js';
-import { AuthConfig, MakrXUser, TokenPayload } from './types';
+import Keycloak from "keycloak-js";
+import { AuthConfig, MakrXUser, TokenPayload } from "./types";
 
 export class MakrXKeycloak {
   private keycloak: Keycloak;
@@ -17,10 +17,11 @@ export class MakrXKeycloak {
   async init(): Promise<boolean> {
     try {
       const authenticated = await this.keycloak.init({
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+        onLoad: "check-sso",
+        silentCheckSsoRedirectUri:
+          window.location.origin + "/silent-check-sso.html",
         checkLoginIframe: false,
-        pkceMethod: 'S256'
+        pkceMethod: "S256",
       });
 
       if (authenticated) {
@@ -29,7 +30,7 @@ export class MakrXKeycloak {
 
       return authenticated;
     } catch (error) {
-      console.error('Failed to initialize Keycloak', error);
+      console.error("Failed to initialize Keycloak", error);
       return false;
     }
   }
@@ -65,10 +66,13 @@ export class MakrXKeycloak {
 
       // Get roles from token
       const realmRoles = tokenPayload.realm_access?.roles || [];
-      const clientRoles = tokenPayload.resource_access?.[this.config.clientId]?.roles || [];
+      const clientRoles =
+        tokenPayload.resource_access?.[this.config.clientId]?.roles || [];
       const roles = [...realmRoles, ...clientRoles];
 
-      const avatarUrl: string | undefined = Array.isArray((userInfo as any)?.attributes?.avatar_url)
+      const avatarUrl: string | undefined = Array.isArray(
+        (userInfo as any)?.attributes?.avatar_url,
+      )
         ? (userInfo as any).attributes.avatar_url[0]
         : undefined;
 
@@ -80,10 +84,10 @@ export class MakrXKeycloak {
         lastName: userInfo.lastName || tokenPayload.family_name,
         avatarUrl,
         roles,
-        organizations: [] // Will be populated from API
+        organizations: [], // Will be populated from API
       };
     } catch (error) {
-      console.error('Failed to get user info', error);
+      console.error("Failed to get user info", error);
       return null;
     }
   }
@@ -92,13 +96,16 @@ export class MakrXKeycloak {
     try {
       return await this.keycloak.updateToken(minValidity);
     } catch (error) {
-      console.error('Failed to refresh token', error);
+      console.error("Failed to refresh token", error);
       return false;
     }
   }
 
   hasRole(role: string): boolean {
-    return this.keycloak.hasRealmRole(role) || this.keycloak.hasResourceRole(role, this.config.clientId);
+    return (
+      this.keycloak.hasRealmRole(role) ||
+      this.keycloak.hasResourceRole(role, this.config.clientId)
+    );
   }
 
   private setupTokenRefresh(): void {
@@ -107,10 +114,10 @@ export class MakrXKeycloak {
       try {
         const refreshed = await this.updateToken(70);
         if (refreshed) {
-          console.log('Token refreshed');
+          console.log("Token refreshed");
         }
       } catch (error) {
-        console.error('Failed to refresh token', error);
+        console.error("Failed to refresh token", error);
         // Token refresh failed, redirect to login
         await this.login();
       }

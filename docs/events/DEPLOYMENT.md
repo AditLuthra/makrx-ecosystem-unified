@@ -2,77 +2,16 @@
 
 This guide covers deployment options for MakrX.events across different platforms.
 
-## 🚀 Replit Deployment (Recommended)
-
-### Prerequisites
-- Replit account
-- PostgreSQL database (Neon recommended)
-- Domain name (optional)
-
-### Step 1: Replit Setup
-1. **Import to Replit**
-   ```bash
-   # In Replit, import from GitHub or upload project files
-   ```
-
-2. **Configure Environment Variables**
-   Add the following secrets in Replit:
-   ```
-   DATABASE_URL=postgresql://...
-   SESSION_SECRET=your-random-secret
-   REPL_ID=your-repl-id
-   REPLIT_DOMAINS=your-repl-url.replit.dev
-   ```
-
-3. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Database Migration**
-   ```bash
-   npm run db:push --force
-   ```
-
-5. **Start Application**
-   ```bash
-   npm run dev
-   ```
-
-### Step 2: Configure Authentication
-1. **Replit Auth Setup**
-   - Auth is automatically configured for Replit environment
-   - REPL_ID and REPLIT_DOMAINS are set automatically
-   
-2. **Custom Domain (Optional)**
-   ```bash
-   # Add custom domain in Replit settings
-   # Update REPLIT_DOMAINS environment variable
-   ```
-
-### Step 3: Enable Features
-1. **Payment Integration**
-   ```bash
-   # Add to Replit secrets
-   VITE_RAZORPAY_KEY_ID=rzp_test_...
-   RAZORPAY_KEY_SECRET=your-secret
-   ```
-
-2. **Email Service**
-   ```bash
-   # Add to Replit secrets  
-   SENDGRID_API_KEY=SG.your-key
-   SMTP_FROM=noreply@yourdomain.com
-   ```
-
 ## 🌐 Vercel Deployment
 
 ### Prerequisites
+
 - Vercel account
 - GitHub repository
 - PostgreSQL database (Neon/Supabase)
 
 ### Step 1: Prepare Repository
+
 ```bash
 # Ensure package.json has correct build scripts
 {
@@ -84,23 +23,25 @@ This guide covers deployment options for MakrX.events across different platforms
 ```
 
 ### Step 2: Deploy to Vercel
+
 1. **Connect Repository**
    - Go to [Vercel Dashboard](https://vercel.com/dashboard)
    - Click "New Project"
    - Import your GitHub repository
 
 2. **Configure Environment Variables**
+
    ```bash
    # In Vercel project settings, add:
    DATABASE_URL=postgresql://...
    SESSION_SECRET=your-random-secret
    NEXTAUTH_URL=https://your-domain.vercel.app
    NEXTAUTH_SECRET=your-nextauth-secret
-   
+
    # Payment processing
    VITE_RAZORPAY_KEY_ID=rzp_live_...
    RAZORPAY_KEY_SECRET=your-secret
-   
+
    # Email service
    SENDGRID_API_KEY=SG.your-key
    SMTP_FROM=noreply@yourdomain.com
@@ -113,6 +54,7 @@ This guide covers deployment options for MakrX.events across different platforms
    ```
 
 ### Step 3: Database Migration
+
 ```bash
 # Run locally to push schema
 npm run db:push
@@ -125,6 +67,7 @@ npm run db:push --force
 ## 🐳 Docker Deployment
 
 ### Step 1: Create Dockerfile
+
 ```dockerfile
 FROM node:18-alpine
 
@@ -146,8 +89,9 @@ CMD ["npm", "start"]
 ```
 
 ### Step 2: Docker Compose
+
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -176,6 +120,7 @@ volumes:
 ```
 
 ### Step 3: Deploy
+
 ```bash
 # Build and run
 docker-compose up -d
@@ -193,6 +138,7 @@ docker-compose exec app npm run db:push
    - Connect your GitHub repository
 
 2. **Build Settings**
+
    ```yaml
    version: 1
    applications:
@@ -207,7 +153,7 @@ docker-compose exec app npm run db:push
          artifacts:
            baseDirectory: .next
            files:
-             - '**/*'
+             - "**/*"
          cache:
            paths:
              - node_modules/**/*
@@ -231,6 +177,7 @@ docker-compose exec app npm run db:push
 ## 🔧 Production Configuration
 
 ### Environment Variables
+
 ```bash
 # Production environment
 NODE_ENV=production
@@ -250,6 +197,7 @@ SENTRY_DSN=https://your-sentry-dsn (optional)
 ```
 
 ### Database Optimization
+
 ```sql
 -- Create indexes for better performance
 CREATE INDEX CONCURRENTLY idx_events_start_date ON events(start_date);
@@ -272,6 +220,7 @@ CREATE INDEX CONCURRENTLY idx_leaderboard_entries_event_id ON leaderboard_entrie
 ### Performance Optimization
 
 1. **Database Connection Pooling**
+
    ```typescript
    // In lib/db.ts
    export const pool = new Pool({
@@ -283,6 +232,7 @@ CREATE INDEX CONCURRENTLY idx_leaderboard_entries_event_id ON leaderboard_entrie
    ```
 
 2. **Caching Strategy**
+
    ```typescript
    // Use Next.js ISR for event pages
    export const revalidate = 60; // Revalidate every 60 seconds
@@ -291,12 +241,13 @@ CREATE INDEX CONCURRENTLY idx_leaderboard_entries_event_id ON leaderboard_entrie
 3. **Image Optimization**
    ```typescript
    // Use Next.js Image component
-   import Image from 'next/image';
+   import Image from "next/image";
    ```
 
 ## 📊 Monitoring & Analytics
 
 ### Application Monitoring
+
 ```bash
 # Add error tracking
 npm install @sentry/nextjs
@@ -306,24 +257,26 @@ npm install @vercel/analytics
 ```
 
 ### Database Monitoring
+
 ```sql
 -- Monitor slow queries
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
 ### Health Checks
+
 ```typescript
 // Add health check endpoint
 // app/api/health/route.ts
 export async function GET() {
   try {
     await db.select().from(users).limit(1);
-    return Response.json({ status: 'healthy' });
+    return Response.json({ status: "healthy" });
   } catch (error) {
-    return Response.json({ status: 'unhealthy' }, { status: 500 });
+    return Response.json({ status: "unhealthy" }, { status: 500 });
   }
 }
 ```
@@ -331,6 +284,7 @@ export async function GET() {
 ## 🔄 CI/CD Pipeline
 
 ### GitHub Actions Example
+
 ```yaml
 name: Deploy to Production
 
@@ -341,32 +295,32 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-      
+          node-version: "18"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Build application
         run: npm run build
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ## 🆘 Troubleshooting
@@ -374,12 +328,14 @@ jobs:
 ### Common Issues
 
 1. **Database Connection Fails**
+
    ```bash
    # Check connection string format
    postgresql://username:password@host:port/database?sslmode=require
    ```
 
 2. **Authentication Errors**
+
    ```bash
    # Verify environment variables
    echo $SESSION_SECRET
@@ -387,6 +343,7 @@ jobs:
    ```
 
 3. **Build Failures**
+
    ```bash
    # Clear cache and rebuild
    rm -rf .next node_modules
@@ -401,12 +358,14 @@ jobs:
    ```
 
 ### Performance Issues
+
 - Check database connection pool settings
 - Monitor memory usage and optimize queries
 - Enable compression and caching
 - Use CDN for static assets
 
 ### Security Issues
+
 - Rotate secrets regularly
 - Update dependencies
 - Monitor for vulnerabilities
@@ -415,6 +374,7 @@ jobs:
 ## 📞 Support
 
 For deployment support:
+
 - 📧 Email: devops@makrx.events
 - 💬 Discord: [MakrX DevOps](https://discord.gg/makrx-devops)
 - 📚 Docs: [docs.makrx.events/deployment](https://docs.makrx.events/deployment)

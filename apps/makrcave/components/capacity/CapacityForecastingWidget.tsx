@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { 
+import {
   TrendingUp,
   Calendar,
   BarChart3,
@@ -20,7 +20,7 @@ import {
   Brain,
   Eye,
   Download,
-  Settings
+  Settings,
 } from 'lucide-react';
 
 interface ForecastData {
@@ -43,49 +43,58 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
 
   // Generate forecast data based on current metrics and trends
   const generateForecastData = (): ForecastData[] => {
-    const periods = forecastPeriod === 'week' ? 7 : 
-                   forecastPeriod === 'month' ? 30 : 90;
-    
+    const periods = forecastPeriod === 'week' ? 7 : forecastPeriod === 'month' ? 30 : 90;
+
     return Array.from({ length: periods }, (_, index) => {
       const baseOccupancy = metrics.current_occupancy;
       const growthRate = metrics.trends.monthly_growth / 100;
       const seasonalFactor = Math.sin((index / periods) * Math.PI * 2) * 0.2 + 1;
       const randomVariation = (Math.random() - 0.5) * 0.3;
-      
-      const predictedOccupancy = Math.max(0, Math.min(metrics.max_capacity,
-        baseOccupancy * (1 + growthRate * (index / 30)) * seasonalFactor * (1 + randomVariation)
-      ));
-      
+
+      const predictedOccupancy = Math.max(
+        0,
+        Math.min(
+          metrics.max_capacity,
+          baseOccupancy * (1 + growthRate * (index / 30)) * seasonalFactor * (1 + randomVariation),
+        ),
+      );
+
       const utilization = (predictedOccupancy / metrics.max_capacity) * 100;
-      const confidence = Math.max(60, 95 - (index * 2)); // Confidence decreases over time
-      
+      const confidence = Math.max(60, 95 - index * 2); // Confidence decreases over time
+
       return {
-        period: forecastPeriod === 'week' ? 
-          ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] || `Day ${index + 1}` :
-          forecastPeriod === 'month' ?
-          `Day ${index + 1}` :
-          `Week ${Math.floor(index / 7) + 1}`,
+        period:
+          forecastPeriod === 'week'
+            ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] || `Day ${index + 1}`
+            : forecastPeriod === 'month'
+              ? `Day ${index + 1}`
+              : `Week ${Math.floor(index / 7) + 1}`,
         predicted_occupancy: Math.round(predictedOccupancy),
         confidence_level: Math.round(confidence),
         capacity_utilization: Math.round(utilization),
         peak_times: ['10:00', '14:00', '16:00'].slice(0, Math.floor(Math.random() * 3) + 1),
-        bottlenecks: ['3D Printers', 'Electronics Lab', 'Laser Cutter'].slice(0, Math.floor(Math.random() * 2) + 1),
+        bottlenecks: ['3D Printers', 'Electronics Lab', 'Laser Cutter'].slice(
+          0,
+          Math.floor(Math.random() * 2) + 1,
+        ),
         recommendations: [
           'Consider extended hours',
           'Add equipment in high-demand areas',
-          'Implement dynamic pricing'
-        ].slice(0, Math.floor(Math.random() * 2) + 1)
+          'Implement dynamic pricing',
+        ].slice(0, Math.floor(Math.random() * 2) + 1),
       };
     });
   };
 
   const forecastData = generateForecastData();
-  
+
   // Calculate forecast insights
-  const averageUtilization = forecastData.reduce((sum, day) => sum + day.capacity_utilization, 0) / forecastData.length;
-  const peakUtilization = Math.max(...forecastData.map(day => day.capacity_utilization));
-  const averageConfidence = forecastData.reduce((sum, day) => sum + day.confidence_level, 0) / forecastData.length;
-  const criticalDays = forecastData.filter(day => day.capacity_utilization > 85).length;
+  const averageUtilization =
+    forecastData.reduce((sum, day) => sum + day.capacity_utilization, 0) / forecastData.length;
+  const peakUtilization = Math.max(...forecastData.map((day) => day.capacity_utilization));
+  const averageConfidence =
+    forecastData.reduce((sum, day) => sum + day.confidence_level, 0) / forecastData.length;
+  const criticalDays = forecastData.filter((day) => day.capacity_utilization > 85).length;
 
   const getUtilizationColor = (utilization: number) => {
     if (utilization >= 90) return 'text-red-600';
@@ -111,9 +120,23 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
   };
 
   const getAlertLevel = (utilization: number) => {
-    if (utilization >= 90) return { level: 'critical', color: 'bg-red-100 border-red-200 text-red-800', icon: AlertTriangle };
-    if (utilization >= 75) return { level: 'warning', color: 'bg-yellow-100 border-yellow-200 text-yellow-800', icon: AlertTriangle };
-    return { level: 'normal', color: 'bg-green-100 border-green-200 text-green-800', icon: CheckCircle2 };
+    if (utilization >= 90)
+      return {
+        level: 'critical',
+        color: 'bg-red-100 border-red-200 text-red-800',
+        icon: AlertTriangle,
+      };
+    if (utilization >= 75)
+      return {
+        level: 'warning',
+        color: 'bg-yellow-100 border-yellow-200 text-yellow-800',
+        icon: AlertTriangle,
+      };
+    return {
+      level: 'normal',
+      color: 'bg-green-100 border-green-200 text-green-800',
+      icon: CheckCircle2,
+    };
   };
 
   return (
@@ -241,33 +264,38 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
               {forecastData.slice(0, 14).map((day, index) => {
                 const height = `${Math.max(10, (day.capacity_utilization / 100) * 200)}px`;
                 const alert = getAlertLevel(day.capacity_utilization);
-                
+
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center group">
-                    <div 
+                    <div
                       className={`w-full rounded-t-md transition-all duration-300 hover:opacity-80 ${
-                        day.capacity_utilization >= 90 ? 'bg-red-500' :
-                        day.capacity_utilization >= 75 ? 'bg-orange-500' :
-                        day.capacity_utilization >= 50 ? 'bg-green-500' :
-                        'bg-blue-500'
+                        day.capacity_utilization >= 90
+                          ? 'bg-red-500'
+                          : day.capacity_utilization >= 75
+                            ? 'bg-orange-500'
+                            : day.capacity_utilization >= 50
+                              ? 'bg-green-500'
+                              : 'bg-blue-500'
                       }`}
                       style={{ height }}
                       title={`${day.period}: ${day.capacity_utilization}% utilization (${day.confidence_level}% confidence)`}
                     />
-                    <div className="text-xs text-gray-600 mt-1 text-center">
-                      {day.period}
-                    </div>
+                    <div className="text-xs text-gray-600 mt-1 text-center">{day.period}</div>
                     {/* Confidence indicator */}
-                    <div className={`w-2 h-1 mt-1 rounded ${
-                      day.confidence_level >= 80 ? 'bg-green-400' :
-                      day.confidence_level >= 60 ? 'bg-yellow-400' :
-                      'bg-red-400'
-                    }`} />
+                    <div
+                      className={`w-2 h-1 mt-1 rounded ${
+                        day.confidence_level >= 80
+                          ? 'bg-green-400'
+                          : day.confidence_level >= 60
+                            ? 'bg-yellow-400'
+                            : 'bg-red-400'
+                      }`}
+                    />
                   </div>
                 );
               })}
             </div>
-            
+
             {/* Chart legend */}
             <div className="flex items-center justify-center space-x-6 text-sm">
               <div className="flex items-center space-x-2">
@@ -317,17 +345,21 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
                 {forecastData.slice(0, 10).map((day, index) => {
                   const alert = getAlertLevel(day.capacity_utilization);
                   const AlertIcon = alert.icon;
-                  
+
                   return (
                     <tr key={index} className="border-b hover:bg-gray-50">
                       <td className="py-3 font-medium">{day.period}</td>
                       <td className="text-center py-3">
                         {day.predicted_occupancy}/{metrics.max_capacity}
                       </td>
-                      <td className={`text-center py-3 font-medium ${getUtilizationColor(day.capacity_utilization)}`}>
+                      <td
+                        className={`text-center py-3 font-medium ${getUtilizationColor(day.capacity_utilization)}`}
+                      >
                         {day.capacity_utilization}%
                       </td>
-                      <td className={`text-center py-3 ${getConfidenceColor(day.confidence_level)}`}>
+                      <td
+                        className={`text-center py-3 ${getConfidenceColor(day.confidence_level)}`}
+                      >
                         {day.confidence_level}%
                       </td>
                       <td className="py-3">
@@ -349,11 +381,15 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
                         </div>
                       </td>
                       <td className="text-center py-3">
-                        <AlertIcon className={`h-4 w-4 mx-auto ${
-                          alert.level === 'critical' ? 'text-red-500' :
-                          alert.level === 'warning' ? 'text-yellow-500' :
-                          'text-green-500'
-                        }`} />
+                        <AlertIcon
+                          className={`h-4 w-4 mx-auto ${
+                            alert.level === 'critical'
+                              ? 'text-red-500'
+                              : alert.level === 'warning'
+                                ? 'text-yellow-500'
+                                : 'text-green-500'
+                          }`}
+                        />
                       </td>
                     </tr>
                   );
@@ -378,25 +414,29 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-1">Capacity Trend</h4>
                 <p className="text-sm text-blue-800">
-                  Expected {averageUtilization > metrics.utilization_rate ? 'increase' : 'decrease'} in average utilization 
-                  of {Math.abs(averageUtilization - metrics.utilization_rate).toFixed(1)}% 
-                  compared to current levels.
+                  Expected {averageUtilization > metrics.utilization_rate ? 'increase' : 'decrease'}{' '}
+                  in average utilization of{' '}
+                  {Math.abs(averageUtilization - metrics.utilization_rate).toFixed(1)}% compared to
+                  current levels.
                 </p>
               </div>
-              
+
               <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <h4 className="font-medium text-orange-900 mb-1">Peak Demand</h4>
                 <p className="text-sm text-orange-800">
-                  Peak utilization of {peakUtilization.toFixed(1)}% expected. 
-                  {peakUtilization > 85 ? 'Consider capacity expansion or load balancing.' : 'Within acceptable limits.'}
+                  Peak utilization of {peakUtilization.toFixed(1)}% expected.
+                  {peakUtilization > 85
+                    ? 'Consider capacity expansion or load balancing.'
+                    : 'Within acceptable limits.'}
                 </p>
               </div>
-              
+
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                 <h4 className="font-medium text-green-900 mb-1">Forecast Accuracy</h4>
                 <p className="text-sm text-green-800">
-                  Average confidence of {averageConfidence.toFixed(1)}% indicates 
-                  {averageConfidence > 80 ? 'high reliability' : 'moderate reliability'} in predictions.
+                  Average confidence of {averageConfidence.toFixed(1)}% indicates
+                  {averageConfidence > 80 ? 'high reliability' : 'moderate reliability'} in
+                  predictions.
                 </p>
               </div>
             </div>
@@ -430,7 +470,7 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
                   </div>
                 </div>
               )}
-              
+
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-start space-x-2">
                   <Users className="h-4 w-4 text-blue-600 mt-0.5" />
@@ -442,7 +482,7 @@ const CapacityForecastingWidget: React.FC<CapacityForecastingWidgetProps> = ({ m
                   </div>
                 </div>
               </div>
-              
+
               <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
                 <div className="flex items-start space-x-2">
                   <Activity className="h-4 w-4 text-purple-600 mt-0.5" />

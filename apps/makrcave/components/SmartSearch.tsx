@@ -18,7 +18,7 @@ import {
   MapPin,
   Hash,
   AlignLeft,
-  Zap
+  Zap,
 } from 'lucide-react';
 
 interface SearchSuggestion {
@@ -51,13 +51,13 @@ interface SmartSearchProps {
 }
 
 const SmartSearch: React.FC<SmartSearchProps> = ({
-  placeholder = "Search anything...",
+  placeholder = 'Search anything...',
   onSearch,
   onFilterChange,
-  className = "",
+  className = '',
   showFilters = true,
   categories = ['all'],
-  recentSearches = []
+  recentSearches = [],
 }) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -71,29 +71,165 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   // Sample data for demonstration
   const sampleSuggestions: SearchSuggestion[] = [
     // Keywords
-    { id: 'k1', type: 'keyword', value: 'maintenance', label: 'Maintenance', icon: Wrench, category: 'operations', description: 'Equipment maintenance and repairs' },
-    { id: 'k2', type: 'keyword', value: 'inventory', label: 'Inventory', icon: Package, category: 'operations', description: 'Stock and supplies management' },
-    { id: 'k3', type: 'keyword', value: 'reservations', label: 'Reservations', icon: Calendar, category: 'bookings', description: 'Equipment bookings and schedules' },
-    { id: 'k4', type: 'keyword', value: 'members', label: 'Members', icon: User, category: 'people', description: 'Member management and profiles' },
-    { id: 'k5', type: 'keyword', value: 'billing', label: 'Billing', icon: DollarSign, category: 'financial', description: 'Invoices and payments' },
-    
+    {
+      id: 'k1',
+      type: 'keyword',
+      value: 'maintenance',
+      label: 'Maintenance',
+      icon: Wrench,
+      category: 'operations',
+      description: 'Equipment maintenance and repairs',
+    },
+    {
+      id: 'k2',
+      type: 'keyword',
+      value: 'inventory',
+      label: 'Inventory',
+      icon: Package,
+      category: 'operations',
+      description: 'Stock and supplies management',
+    },
+    {
+      id: 'k3',
+      type: 'keyword',
+      value: 'reservations',
+      label: 'Reservations',
+      icon: Calendar,
+      category: 'bookings',
+      description: 'Equipment bookings and schedules',
+    },
+    {
+      id: 'k4',
+      type: 'keyword',
+      value: 'members',
+      label: 'Members',
+      icon: User,
+      category: 'people',
+      description: 'Member management and profiles',
+    },
+    {
+      id: 'k5',
+      type: 'keyword',
+      value: 'billing',
+      label: 'Billing',
+      icon: DollarSign,
+      category: 'financial',
+      description: 'Invoices and payments',
+    },
+
     // Entities
-    { id: 'e1', type: 'entity', value: 'prusa i3', label: 'Prusa i3 MK3S', icon: Wrench, category: 'equipment', description: '3D Printer' },
-    { id: 'e2', type: 'entity', value: 'laser cutter', label: 'Epilog Helix', icon: Wrench, category: 'equipment', description: 'CO2 Laser Cutter' },
-    { id: 'e3', type: 'entity', value: 'john smith', label: 'John Smith', icon: User, category: 'members', description: 'Active member' },
-    { id: 'e4', type: 'entity', value: 'arduino', label: 'Arduino Uno', icon: Package, category: 'inventory', description: 'Development board' },
-    
+    {
+      id: 'e1',
+      type: 'entity',
+      value: 'prusa i3',
+      label: 'Prusa i3 MK3S',
+      icon: Wrench,
+      category: 'equipment',
+      description: '3D Printer',
+    },
+    {
+      id: 'e2',
+      type: 'entity',
+      value: 'laser cutter',
+      label: 'Epilog Helix',
+      icon: Wrench,
+      category: 'equipment',
+      description: 'CO2 Laser Cutter',
+    },
+    {
+      id: 'e3',
+      type: 'entity',
+      value: 'john smith',
+      label: 'John Smith',
+      icon: User,
+      category: 'members',
+      description: 'Active member',
+    },
+    {
+      id: 'e4',
+      type: 'entity',
+      value: 'arduino',
+      label: 'Arduino Uno',
+      icon: Package,
+      category: 'inventory',
+      description: 'Development board',
+    },
+
     // Actions
-    { id: 'a1', type: 'action', value: 'create reservation', label: 'Create Reservation', icon: Calendar, category: 'actions', description: 'Book equipment' },
-    { id: 'a2', type: 'action', value: 'add inventory', label: 'Add Inventory', icon: Package, category: 'actions', description: 'Add new items' },
-    { id: 'a3', type: 'action', value: 'schedule maintenance', label: 'Schedule Maintenance', icon: Wrench, category: 'actions', description: 'Plan maintenance' },
-    { id: 'a4', type: 'action', value: 'generate report', label: 'Generate Report', icon: TrendingUp, category: 'actions', description: 'Create analytics report' },
-    
+    {
+      id: 'a1',
+      type: 'action',
+      value: 'create reservation',
+      label: 'Create Reservation',
+      icon: Calendar,
+      category: 'actions',
+      description: 'Book equipment',
+    },
+    {
+      id: 'a2',
+      type: 'action',
+      value: 'add inventory',
+      label: 'Add Inventory',
+      icon: Package,
+      category: 'actions',
+      description: 'Add new items',
+    },
+    {
+      id: 'a3',
+      type: 'action',
+      value: 'schedule maintenance',
+      label: 'Schedule Maintenance',
+      icon: Wrench,
+      category: 'actions',
+      description: 'Plan maintenance',
+    },
+    {
+      id: 'a4',
+      type: 'action',
+      value: 'generate report',
+      label: 'Generate Report',
+      icon: TrendingUp,
+      category: 'actions',
+      description: 'Create analytics report',
+    },
+
     // Filters
-    { id: 'f1', type: 'filter', value: 'status:available', label: 'Available Equipment', icon: Filter, category: 'filters', description: 'Show only available items' },
-    { id: 'f2', type: 'filter', value: 'category:3d-printing', label: '3D Printing', icon: Tag, category: 'filters', description: 'Filter by category' },
-    { id: 'f3', type: 'filter', value: 'location:main-floor', label: 'Main Floor', icon: MapPin, category: 'filters', description: 'Filter by location' },
-    { id: 'f4', type: 'filter', value: 'date:today', label: 'Today', icon: Clock, category: 'filters', description: 'Show today\'s items' },
+    {
+      id: 'f1',
+      type: 'filter',
+      value: 'status:available',
+      label: 'Available Equipment',
+      icon: Filter,
+      category: 'filters',
+      description: 'Show only available items',
+    },
+    {
+      id: 'f2',
+      type: 'filter',
+      value: 'category:3d-printing',
+      label: '3D Printing',
+      icon: Tag,
+      category: 'filters',
+      description: 'Filter by category',
+    },
+    {
+      id: 'f3',
+      type: 'filter',
+      value: 'location:main-floor',
+      label: 'Main Floor',
+      icon: MapPin,
+      category: 'filters',
+      description: 'Filter by location',
+    },
+    {
+      id: 'f4',
+      type: 'filter',
+      value: 'date:today',
+      label: 'Today',
+      icon: Clock,
+      category: 'filters',
+      description: "Show today's items",
+    },
   ];
 
   const availableFilters: SearchFilter[] = [
@@ -106,8 +242,8 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         { label: 'Available', value: 'available' },
         { label: 'In Use', value: 'in_use' },
         { label: 'Maintenance', value: 'maintenance' },
-        { label: 'Offline', value: 'offline' }
-      ]
+        { label: 'Offline', value: 'offline' },
+      ],
     },
     {
       id: 'category',
@@ -118,90 +254,95 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         { label: '3D Printing', value: '3d_printing' },
         { label: 'Laser Cutting', value: 'laser_cutting' },
         { label: 'Electronics', value: 'electronics' },
-        { label: 'Woodworking', value: 'woodworking' }
-      ]
+        { label: 'Woodworking', value: 'woodworking' },
+      ],
     },
     {
       id: 'location',
       label: 'Location',
       value: '',
-      type: 'text'
+      type: 'text',
     },
     {
       id: 'date_from',
       label: 'From Date',
       value: '',
-      type: 'date'
+      type: 'date',
     },
     {
       id: 'date_to',
       label: 'To Date',
       value: '',
-      type: 'date'
-    }
+      type: 'date',
+    },
   ];
 
   // Smart search algorithm
-  const getSmartSuggestions = useCallback((searchQuery: string): SearchSuggestion[] => {
-    if (!searchQuery.trim()) {
-      // Show recent searches and popular actions when empty
-      const recentSuggestions = recentSearches.slice(0, 3).map((search, index) => ({
-        id: `recent-${index}`,
-        type: 'recent' as const,
-        value: search,
-        label: search,
-        icon: Clock,
-        category: 'recent',
-        description: 'Recent search'
-      }));
-      
-      const popularActions = sampleSuggestions.filter(s => s.type === 'action').slice(0, 4);
-      return [...recentSuggestions, ...popularActions];
-    }
+  const getSmartSuggestions = useCallback(
+    (searchQuery: string): SearchSuggestion[] => {
+      if (!searchQuery.trim()) {
+        // Show recent searches and popular actions when empty
+        const recentSuggestions = recentSearches.slice(0, 3).map((search, index) => ({
+          id: `recent-${index}`,
+          type: 'recent' as const,
+          value: search,
+          label: search,
+          icon: Clock,
+          category: 'recent',
+          description: 'Recent search',
+        }));
 
-    const normalizedQuery = searchQuery.toLowerCase().trim();
-    const suggestions: SearchSuggestion[] = [];
-
-    // 1. Exact keyword matches (highest priority)
-    const exactMatches = sampleSuggestions.filter(s => 
-      s.value.toLowerCase() === normalizedQuery ||
-      s.label.toLowerCase() === normalizedQuery
-    );
-    suggestions.push(...exactMatches);
-
-    // 2. Partial keyword matches
-    const partialMatches = sampleSuggestions.filter(s => 
-      !exactMatches.find(em => em.id === s.id) &&
-      (s.value.toLowerCase().includes(normalizedQuery) ||
-       s.label.toLowerCase().includes(normalizedQuery))
-    );
-    suggestions.push(...partialMatches);
-
-    // 3. Description matches
-    const descriptionMatches = sampleSuggestions.filter(s => 
-      !suggestions.find(existing => existing.id === s.id) &&
-      s.description?.toLowerCase().includes(normalizedQuery)
-    );
-    suggestions.push(...descriptionMatches);
-
-    // 4. Smart pattern detection
-    const patterns = detectSearchPatterns(normalizedQuery);
-    patterns.forEach(pattern => {
-      if (!suggestions.find(s => s.id === pattern.id)) {
-        suggestions.push(pattern);
+        const popularActions = sampleSuggestions.filter((s) => s.type === 'action').slice(0, 4);
+        return [...recentSuggestions, ...popularActions];
       }
-    });
 
-    // 5. Category-based suggestions
-    if (categories.length > 1 || categories[0] !== 'all') {
-      const categoryFiltered = suggestions.filter(s => 
-        categories.includes('all') || categories.includes(s.category)
+      const normalizedQuery = searchQuery.toLowerCase().trim();
+      const suggestions: SearchSuggestion[] = [];
+
+      // 1. Exact keyword matches (highest priority)
+      const exactMatches = sampleSuggestions.filter(
+        (s) =>
+          s.value.toLowerCase() === normalizedQuery || s.label.toLowerCase() === normalizedQuery,
       );
-      return categoryFiltered.slice(0, 8);
-    }
+      suggestions.push(...exactMatches);
 
-    return suggestions.slice(0, 8);
-  }, [recentSearches, categories]);
+      // 2. Partial keyword matches
+      const partialMatches = sampleSuggestions.filter(
+        (s) =>
+          !exactMatches.find((em) => em.id === s.id) &&
+          (s.value.toLowerCase().includes(normalizedQuery) ||
+            s.label.toLowerCase().includes(normalizedQuery)),
+      );
+      suggestions.push(...partialMatches);
+
+      // 3. Description matches
+      const descriptionMatches = sampleSuggestions.filter(
+        (s) =>
+          !suggestions.find((existing) => existing.id === s.id) &&
+          s.description?.toLowerCase().includes(normalizedQuery),
+      );
+      suggestions.push(...descriptionMatches);
+
+      // 4. Smart pattern detection
+      const patterns = detectSearchPatterns(normalizedQuery);
+      patterns.forEach((pattern) => {
+        if (!suggestions.find((s) => s.id === pattern.id)) {
+          suggestions.push(pattern);
+        }
+      });
+
+      // 5. Category-based suggestions
+      if (categories.length > 1 || categories[0] !== 'all') {
+        const categoryFiltered = suggestions.filter(
+          (s) => categories.includes('all') || categories.includes(s.category),
+        );
+        return categoryFiltered.slice(0, 8);
+      }
+
+      return suggestions.slice(0, 8);
+    },
+    [recentSearches, categories],
+  );
 
   const detectSearchPatterns = (query: string): SearchSuggestion[] => {
     const patterns: SearchSuggestion[] = [];
@@ -217,7 +358,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         label: `Filter by ${field}: ${value}`,
         icon: Filter,
         category: 'filters',
-        description: `Apply ${field} filter`
+        description: `Apply ${field} filter`,
       });
     }
 
@@ -230,16 +371,25 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         label: `Search by ID: ${query}`,
         icon: Hash,
         category: 'search',
-        description: 'Find specific item by ID'
+        description: 'Find specific item by ID',
       });
     }
 
     // Detect action patterns (verb + noun)
-    const actionWords = ['create', 'add', 'schedule', 'generate', 'update', 'delete', 'view', 'edit'];
+    const actionWords = [
+      'create',
+      'add',
+      'schedule',
+      'generate',
+      'update',
+      'delete',
+      'view',
+      'edit',
+    ];
     const nounWords = ['reservation', 'inventory', 'maintenance', 'report', 'member', 'equipment'];
-    
-    actionWords.forEach(verb => {
-      nounWords.forEach(noun => {
+
+    actionWords.forEach((verb) => {
+      nounWords.forEach((noun) => {
         if (query.includes(verb) && query.includes(noun)) {
           patterns.push({
             id: `pattern-action-${verb}-${noun}`,
@@ -248,7 +398,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
             label: `${verb.charAt(0).toUpperCase() + verb.slice(1)} ${noun}`,
             icon: Zap,
             category: 'actions',
-            description: `Quick action: ${verb} ${noun}`
+            description: `Quick action: ${verb} ${noun}`,
           });
         }
       });
@@ -285,13 +435,11 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedSuggestion(prev => 
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
+        setSelectedSuggestion((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedSuggestion(prev => prev > 0 ? prev - 1 : -1);
+        setSelectedSuggestion((prev) => (prev > 0 ? prev - 1 : -1));
         break;
       case 'Enter':
         e.preventDefault();
@@ -316,10 +464,10 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         id: field,
         label: field.charAt(0).toUpperCase() + field.slice(1),
         value: value,
-        type: 'text'
+        type: 'text',
       };
-      
-      const updatedFilters = [...activeFilters.filter(f => f.id !== field), newFilter];
+
+      const updatedFilters = [...activeFilters.filter((f) => f.id !== field), newFilter];
       setActiveFilters(updatedFilters);
       onFilterChange?.(updatedFilters);
       setQuery('');
@@ -337,13 +485,13 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   };
 
   const removeFilter = (filterId: string) => {
-    const updatedFilters = activeFilters.filter(f => f.id !== filterId);
+    const updatedFilters = activeFilters.filter((f) => f.id !== filterId);
     setActiveFilters(updatedFilters);
     onFilterChange?.(updatedFilters);
   };
 
   const addFilter = (filter: SearchFilter) => {
-    const updatedFilters = [...activeFilters.filter(f => f.id !== filter.id), filter];
+    const updatedFilters = [...activeFilters.filter((f) => f.id !== filter.id), filter];
     setActiveFilters(updatedFilters);
     onFilterChange?.(updatedFilters);
   };
@@ -355,12 +503,18 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const getSuggestionTypeColor = (type: string) => {
     switch (type) {
-      case 'keyword': return 'text-blue-600';
-      case 'entity': return 'text-green-600';
-      case 'action': return 'text-purple-600';
-      case 'filter': return 'text-orange-600';
-      case 'recent': return 'text-gray-600';
-      default: return 'text-gray-600';
+      case 'keyword':
+        return 'text-blue-600';
+      case 'entity':
+        return 'text-green-600';
+      case 'action':
+        return 'text-purple-600';
+      case 'filter':
+        return 'text-orange-600';
+      case 'recent':
+        return 'text-gray-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -416,11 +570,10 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
               variant="secondary"
               className="flex items-center gap-1 px-2 py-1"
             >
-              <span className="text-xs">{filter.label}: {filter.value}</span>
-              <button
-                onClick={() => removeFilter(filter.id)}
-                className="ml-1 hover:text-red-600"
-              >
+              <span className="text-xs">
+                {filter.label}: {filter.value}
+              </span>
+              <button onClick={() => removeFilter(filter.id)} className="ml-1 hover:text-red-600">
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -445,17 +598,13 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900 truncate">
-                      {suggestion.label}
-                    </span>
+                    <span className="font-medium text-gray-900 truncate">{suggestion.label}</span>
                     <Badge variant="outline" className="text-xs">
                       {suggestion.type}
                     </Badge>
                   </div>
                   {suggestion.description && (
-                    <p className="text-sm text-gray-600 truncate mt-1">
-                      {suggestion.description}
-                    </p>
+                    <p className="text-sm text-gray-600 truncate mt-1">{suggestion.description}</p>
                   )}
                 </div>
               </div>
@@ -476,7 +625,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                 </label>
                 {filter.type === 'select' ? (
                   <select
-                    value={activeFilters.find(f => f.id === filter.id)?.value || ''}
+                    value={activeFilters.find((f) => f.id === filter.id)?.value || ''}
                     onChange={(e) => {
                       if (e.target.value) {
                         addFilter({ ...filter, value: e.target.value });
@@ -496,7 +645,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                 ) : (
                   <Input
                     type={filter.type}
-                    value={activeFilters.find(f => f.id === filter.id)?.value || ''}
+                    value={activeFilters.find((f) => f.id === filter.id)?.value || ''}
                     onChange={(e) => {
                       if (e.target.value) {
                         addFilter({ ...filter, value: e.target.value });

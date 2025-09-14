@@ -13,14 +13,11 @@ interface MembershipPlanModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
-  open,
-  onOpenChange
-}) => {
+const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({ open, onOpenChange }) => {
   const { createMembershipPlan } = useMember();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -34,34 +31,38 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
-  const handleArrayChange = (field: 'features' | 'equipment' | 'rooms', index: number, value: string) => {
-    setFormData(prev => ({
+  const handleArrayChange = (
+    field: 'features' | 'equipment' | 'rooms',
+    index: number,
+    value: string,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
+      [field]: prev[field].map((item, i) => (i === index ? value : item)),
     }));
   };
 
   const addArrayItem = (field: 'features' | 'equipment' | 'rooms') => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: [...prev[field], '']
+      [field]: [...prev[field], ''],
     }));
   };
 
   const removeArrayItem = (field: 'features' | 'equipment' | 'rooms', index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
+      [field]: prev[field].filter((_, i) => i !== index),
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.description || !formData.duration_days || !formData.price) {
       setError('Please fill in all required fields');
       return;
@@ -69,12 +70,12 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
 
     const price = parseFloat(formData.price);
     const durationDays = parseInt(formData.duration_days);
-    
+
     if (isNaN(price) || price < 0) {
       setError('Please enter a valid price');
       return;
     }
-    
+
     if (isNaN(durationDays) || durationDays < 1) {
       setError('Please enter a valid duration in days');
       return;
@@ -89,17 +90,19 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
         description: formData.description,
         duration_days: durationDays,
         price: price,
-        features: formData.features.filter(f => f.trim() !== ''),
+        features: formData.features.filter((f) => f.trim() !== ''),
         access_level: {
-          equipment: formData.equipment.filter(e => e.trim() !== ''),
-          rooms: formData.rooms.filter(r => r.trim() !== ''),
+          equipment: formData.equipment.filter((e) => e.trim() !== ''),
+          rooms: formData.rooms.filter((r) => r.trim() !== ''),
           hours_per_day: formData.hours_per_day ? parseInt(formData.hours_per_day) : undefined,
-          max_reservations: formData.max_reservations ? parseInt(formData.max_reservations) : undefined,
-        }
+          max_reservations: formData.max_reservations
+            ? parseInt(formData.max_reservations)
+            : undefined,
+        },
       };
-      
+
       await createMembershipPlan(planData);
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -112,7 +115,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
         hours_per_day: '',
         max_reservations: '',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create membership plan');
@@ -146,7 +149,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
             Create Membership Plan
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -160,7 +163,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
           {/* Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
-            
+
             <div>
               <Label htmlFor="plan-name">Plan Name *</Label>
               <Input
@@ -220,7 +223,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
           {/* Features */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900">Features</h3>
-            
+
             {formData.features.map((feature, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
@@ -241,7 +244,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
                 )}
               </div>
             ))}
-            
+
             <Button
               type="button"
               variant="outline"
@@ -257,7 +260,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
           {/* Access Level */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900">Access Level</h3>
-            
+
             {/* Equipment Access */}
             <div>
               <Label className="text-base font-medium">Equipment Access</Label>
@@ -281,7 +284,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
                   )}
                 </div>
               ))}
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -317,7 +320,7 @@ const MembershipPlanModal: React.FC<MembershipPlanModalProps> = ({
                   )}
                 </div>
               ))}
-              
+
               <Button
                 type="button"
                 variant="outline"

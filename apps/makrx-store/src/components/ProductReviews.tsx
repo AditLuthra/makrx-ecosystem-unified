@@ -1,7 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, ThumbsUp, ThumbsDown, User, ChevronDown, Filter, Search, Edit, Trash2, Flag } from 'lucide-react';
+import {
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  User,
+  ChevronDown,
+  Filter,
+  Search,
+  Edit,
+  Trash2,
+  Flag,
+} from 'lucide-react';
 
 interface Review {
   id: string;
@@ -49,12 +60,16 @@ const mockReviews: Review[] = [
     userAvatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=U',
     rating: 5,
     title: 'Excellent quality and fast shipping!',
-    content: 'This 3D printed phone case exceeded my expectations. The material feels premium and the custom design came out perfectly. Highly recommend for anyone looking for personalized accessories.',
+    content:
+      'This 3D printed phone case exceeded my expectations. The material feels premium and the custom design came out perfectly. Highly recommend for anyone looking for personalized accessories.',
     date: '2024-01-15',
     verified: true,
     helpful: 12,
     notHelpful: 1,
-    images: ['https://via.placeholder.com/200x200/3B82F6/FFFFFF?text=Photo', 'https://via.placeholder.com/200x200/3B82F6/FFFFFF?text=Photo']
+    images: [
+      'https://via.placeholder.com/200x200/3B82F6/FFFFFF?text=Photo',
+      'https://via.placeholder.com/200x200/3B82F6/FFFFFF?text=Photo',
+    ],
   },
   {
     id: '2',
@@ -63,16 +78,18 @@ const mockReviews: Review[] = [
     userAvatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=U',
     rating: 4,
     title: 'Good product, minor issues with color',
-    content: 'Overall very satisfied with the purchase. The print quality is excellent and it fits my phone perfectly. The only issue is that the color was slightly different from what I expected, but still looks great.',
+    content:
+      'Overall very satisfied with the purchase. The print quality is excellent and it fits my phone perfectly. The only issue is that the color was slightly different from what I expected, but still looks great.',
     date: '2024-01-12',
     verified: true,
     helpful: 8,
     notHelpful: 2,
     response: {
-      content: 'Thank you for your feedback! We\'re working on improving our color accuracy. Please contact support if you\'d like a replacement.',
+      content:
+        "Thank you for your feedback! We're working on improving our color accuracy. Please contact support if you'd like a replacement.",
       date: '2024-01-13',
-      author: 'MakrX Team'
-    }
+      author: 'MakrX Team',
+    },
   },
   {
     id: '3',
@@ -81,11 +98,12 @@ const mockReviews: Review[] = [
     userAvatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=U',
     rating: 5,
     title: 'Perfect custom design service',
-    content: 'Amazing experience from design to delivery. The team helped me refine my design and the final product is exactly what I wanted. Will definitely order again!',
+    content:
+      'Amazing experience from design to delivery. The team helped me refine my design and the final product is exactly what I wanted. Will definitely order again!',
     date: '2024-01-10',
     verified: true,
     helpful: 15,
-    notHelpful: 0
+    notHelpful: 0,
   },
   {
     id: '4',
@@ -94,11 +112,12 @@ const mockReviews: Review[] = [
     userAvatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=U',
     rating: 3,
     title: 'Average quality for the price',
-    content: 'The case works fine and protects my phone well. However, I expected better surface finish for the price point. It\'s functional but not premium feeling.',
+    content:
+      "The case works fine and protects my phone well. However, I expected better surface finish for the price point. It's functional but not premium feeling.",
     date: '2024-01-08',
     verified: true,
     helpful: 5,
-    notHelpful: 8
+    notHelpful: 8,
   },
   {
     id: '5',
@@ -107,12 +126,13 @@ const mockReviews: Review[] = [
     userAvatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=U',
     rating: 5,
     title: 'Love the customization options!',
-    content: 'So many options to personalize! The upload process was easy and the preview feature helped me visualize the final product. Shipping was super fast too.',
+    content:
+      'So many options to personalize! The upload process was easy and the preview feature helped me visualize the final product. Shipping was super fast too.',
     date: '2024-01-05',
     verified: true,
     helpful: 9,
-    notHelpful: 1
-  }
+    notHelpful: 1,
+  },
 ];
 
 const mockSummary: ReviewSummary = {
@@ -123,11 +143,15 @@ const mockSummary: ReviewSummary = {
     4: 12,
     3: 4,
     2: 2,
-    1: 1
-  }
+    1: 1,
+  },
 };
 
-export default function ProductReviews({ productId, userId, isAuthenticated }: ProductReviewsProps) {
+export default function ProductReviews({
+  productId,
+  userId,
+  isAuthenticated,
+}: ProductReviewsProps) {
   const [reviews, setReviews] = useState<Review[]>(mockReviews);
   const [summary, setSummary] = useState<ReviewSummary>(mockSummary);
   const [filteredReviews, setFilteredReviews] = useState<Review[]>(mockReviews);
@@ -138,7 +162,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
   const [newReview, setNewReview] = useState({
     rating: 0,
     title: '',
-    content: ''
+    content: '',
   });
 
   useEffect(() => {
@@ -146,14 +170,15 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
 
     // Filter by rating
     if (filterRating) {
-      filtered = filtered.filter(review => review.rating === filterRating);
+      filtered = filtered.filter((review) => review.rating === filterRating);
     }
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(review =>
-        review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        review.content.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (review) =>
+          review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          review.content.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -190,28 +215,35 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
       date: new Date().toISOString().split('T')[0],
       verified: true,
       helpful: 0,
-      notHelpful: 0
+      notHelpful: 0,
     };
 
-    setReviews(prev => [review, ...prev]);
+    setReviews((prev) => [review, ...prev]);
     setNewReview({ rating: 0, title: '', content: '' });
     setShowWriteReview(false);
   };
 
   const handleHelpful = (reviewId: string, isHelpful: boolean) => {
-    setReviews(prev => prev.map(review => {
-      if (review.id === reviewId) {
-        return {
-          ...review,
-          helpful: isHelpful ? review.helpful + 1 : review.helpful,
-          notHelpful: !isHelpful ? review.notHelpful + 1 : review.notHelpful
-        };
-      }
-      return review;
-    }));
+    setReviews((prev) =>
+      prev.map((review) => {
+        if (review.id === reviewId) {
+          return {
+            ...review,
+            helpful: isHelpful ? review.helpful + 1 : review.helpful,
+            notHelpful: !isHelpful ? review.notHelpful + 1 : review.notHelpful,
+          };
+        }
+        return review;
+      }),
+    );
   };
 
-  const StarRating = ({ rating, size = 'sm', interactive = false, onRatingChange }: {
+  const StarRating = ({
+    rating,
+    size = 'sm',
+    interactive = false,
+    onRatingChange,
+  }: {
     rating: number;
     size?: 'sm' | 'md' | 'lg';
     interactive?: boolean;
@@ -220,7 +252,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
     const sizeClasses = {
       sm: 'w-4 h-4',
       md: 'w-5 h-5',
-      lg: 'w-6 h-6'
+      lg: 'w-6 h-6',
     };
 
     return (
@@ -234,9 +266,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
           >
             <Star
               className={`w-full h-full ${
-                star <= rating
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : 'fill-gray-200 text-gray-200'
+                star <= rating ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'
               }`}
             />
           </button>
@@ -245,12 +275,18 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
     );
   };
 
-  const RatingDistribution = ({ distribution, total }: { distribution: ReviewSummary['ratingDistribution'], total: number }) => (
+  const RatingDistribution = ({
+    distribution,
+    total,
+  }: {
+    distribution: ReviewSummary['ratingDistribution'];
+    total: number;
+  }) => (
     <div className="space-y-2">
       {[5, 4, 3, 2, 1].map((rating) => {
         const count = distribution[rating as keyof typeof distribution];
         const percentage = total > 0 ? (count / total) * 100 : 0;
-        
+
         return (
           <div key={rating} className="flex items-center gap-2 text-sm">
             <span className="w-8">{rating}</span>
@@ -281,9 +317,12 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
             </div>
           </div>
         </div>
-        
+
         <div>
-          <RatingDistribution distribution={summary.ratingDistribution} total={summary.totalReviews} />
+          <RatingDistribution
+            distribution={summary.ratingDistribution}
+            total={summary.totalReviews}
+          />
         </div>
       </div>
 
@@ -311,34 +350,34 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
                 rating={newReview.rating}
                 size="lg"
                 interactive
-                onRatingChange={(rating) => setNewReview(prev => ({ ...prev, rating }))}
+                onRatingChange={(rating) => setNewReview((prev) => ({ ...prev, rating }))}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">Review Title *</label>
               <input
                 type="text"
                 value={newReview.title}
-                onChange={(e) => setNewReview(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setNewReview((prev) => ({ ...prev, title: e.target.value }))}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Summarize your experience"
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">Your Review *</label>
               <textarea
                 value={newReview.content}
-                onChange={(e) => setNewReview(prev => ({ ...prev, content: e.target.value }))}
+                onChange={(e) => setNewReview((prev) => ({ ...prev, content: e.target.value }))}
                 rows={4}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Share your thoughts about this product..."
                 required
               />
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 type="submit"
@@ -372,7 +411,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
               className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           <select
             value={filterRating || ''}
             onChange={(e) => setFilterRating(e.target.value ? parseInt(e.target.value) : null)}
@@ -386,7 +425,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
             <option value="1">1 Star</option>
           </select>
         </div>
-        
+
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as any)}
@@ -438,15 +477,15 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
                     </div>
                   </div>
                 </div>
-                
+
                 <button className="text-gray-400 hover:text-gray-600">
                   <Flag className="w-4 h-4" />
                 </button>
               </div>
-              
+
               <h4 className="font-semibold mb-2">{review.title}</h4>
               <p className="text-gray-700 mb-4">{review.content}</p>
-              
+
               {review.images && review.images.length > 0 && (
                 <div className="flex gap-2 mb-4">
                   {review.images.map((image, index) => (
@@ -459,7 +498,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
                   ))}
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <button
@@ -478,7 +517,7 @@ export default function ProductReviews({ productId, userId, isAuthenticated }: P
                   </button>
                 </div>
               </div>
-              
+
               {review.response && (
                 <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">

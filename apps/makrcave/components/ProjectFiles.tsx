@@ -30,9 +30,15 @@ import {
   ExternalLink,
   Github,
   HardDrive,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { formatDistanceToNow } from 'date-fns';
 import GitHubIntegration from './GitHubIntegration';
@@ -71,7 +77,7 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
   githubIntegrationEnabled = false,
   githubRepoUrl,
   githubRepoName,
-  githubDefaultBranch = 'main'
+  githubDefaultBranch = 'main',
 }) => {
   const getHeaders = useAuthHeaders();
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -88,9 +94,12 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
     const fileType = type.toLowerCase();
     if (fileType.includes('image')) return <Image className="h-4 w-4 text-blue-600" />;
     if (fileType.includes('video')) return <Video className="h-4 w-4 text-purple-600" />;
-    if (fileType.includes('pdf') || fileType.includes('document')) return <FileText className="h-4 w-4 text-red-600" />;
-    if (fileType.includes('zip') || fileType.includes('archive')) return <Archive className="h-4 w-4 text-yellow-600" />;
-    if (fileType.includes('code') || fileType.includes('text')) return <Code className="h-4 w-4 text-green-600" />;
+    if (fileType.includes('pdf') || fileType.includes('document'))
+      return <FileText className="h-4 w-4 text-red-600" />;
+    if (fileType.includes('zip') || fileType.includes('archive'))
+      return <Archive className="h-4 w-4 text-yellow-600" />;
+    if (fileType.includes('code') || fileType.includes('text'))
+      return <Code className="h-4 w-4 text-green-600" />;
     return <File className="h-4 w-4 text-gray-600" />;
   };
 
@@ -116,7 +125,7 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
       Array.from(selectedFiles).forEach((file, index) => {
         formData.append(`files`, file);
       });
-      
+
       formData.append('description', fileDescription);
       formData.append('is_public', isPublic.toString());
       formData.append('file_type', fileType || 'document');
@@ -192,23 +201,32 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
   };
 
   const getFileTypes = () => {
-    const types = Array.from(new Set(files.map(f => f.file_type)));
+    const types = Array.from(new Set(files.map((f) => f.file_type)));
     return types;
   };
 
-  const filteredFiles = files.filter(file => {
-    const matchesSearch = file.original_filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (file.description && file.description.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredFiles = files.filter((file) => {
+    const matchesSearch =
+      file.original_filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (file.description && file.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesType = filterType === 'all' || file.file_type === filterType;
     return matchesSearch && matchesType;
   });
 
   const getFileCategoryStats = () => {
     const stats = {
-      documents: files.filter(f => f.file_type.includes('document') || f.file_type.includes('pdf')).length,
-      images: files.filter(f => f.file_type.includes('image')).length,
-      videos: files.filter(f => f.file_type.includes('video')).length,
-      others: files.filter(f => !f.file_type.includes('document') && !f.file_type.includes('pdf') && !f.file_type.includes('image') && !f.file_type.includes('video')).length,
+      documents: files.filter(
+        (f) => f.file_type.includes('document') || f.file_type.includes('pdf'),
+      ).length,
+      images: files.filter((f) => f.file_type.includes('image')).length,
+      videos: files.filter((f) => f.file_type.includes('video')).length,
+      others: files.filter(
+        (f) =>
+          !f.file_type.includes('document') &&
+          !f.file_type.includes('pdf') &&
+          !f.file_type.includes('image') &&
+          !f.file_type.includes('video'),
+      ).length,
     };
     return stats;
   };
@@ -326,7 +344,10 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredFiles.map((file) => (
-                <div key={file.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div
+                  key={file.id}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       {getFileIcon(file.file_type)}
@@ -388,9 +409,7 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
                   </div>
 
                   {file.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {file.description}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{file.description}</p>
                   )}
 
                   <div className="space-y-2">
@@ -437,9 +456,8 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
           <h3 className="text-lg font-semibold">Project Files</h3>
           <p className="text-sm text-gray-600">
             {githubIntegrationEnabled
-              ? "Manage files from GitHub repository and local uploads"
-              : "Manage documents, images, and other project files"
-            }
+              ? 'Manage files from GitHub repository and local uploads'
+              : 'Manage documents, images, and other project files'}
           </p>
         </div>
         {canEdit && (
@@ -490,7 +508,7 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
           <DialogHeader>
             <DialogTitle>Upload Files</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -577,8 +595,8 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
               <Button variant="outline" onClick={() => setShowUploadModal(false)}>
                 Cancel
               </Button>
-              <Button 
-                onClick={handleFileUpload} 
+              <Button
+                onClick={handleFileUpload}
                 disabled={isUploading || !selectedFiles || selectedFiles.length === 0}
               >
                 {isUploading ? (

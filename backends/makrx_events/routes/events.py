@@ -38,12 +38,17 @@ def get_event(event_id: str, db: Session = Depends(get_db)):
 
 def make_slug(title: str) -> str:
     import re
+
     slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
     return slug
 
 
 @router.post("/events", response_model=EventRead, status_code=201)
-def create_event(payload: EventCreate, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_event(
+    payload: EventCreate,
+    user: CurrentUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     ev = Event(
         id=str(uuid4()),
         slug=make_slug(payload.title),
@@ -60,7 +65,12 @@ def create_event(payload: EventCreate, user: CurrentUser = Depends(get_current_u
 
 
 @router.patch("/events/{event_id}", response_model=EventRead)
-def update_event(event_id: str, payload: EventUpdate, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_event(
+    event_id: str,
+    payload: EventUpdate,
+    user: CurrentUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     ev = db.query(Event).filter(Event.id == event_id).first()
     if not ev:
         raise HTTPException(status_code=404, detail="Event not found")
@@ -74,15 +84,24 @@ def update_event(event_id: str, payload: EventUpdate, user: CurrentUser = Depend
         elif k == "end_date":
             ev.end_date = v
         elif k == "status":
-            ev.status = getattr(v, 'value', v)
+            ev.status = getattr(v, "value", v)
     db.add(ev)
     db.commit()
     db.refresh(ev)
     return ev
 
 
-@router.post("/events/{event_id}/register", response_model=RegistrationRead, status_code=201)
-def register_event(event_id: str, _payload: RegistrationCreate, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+@router.post(
+    "/events/{event_id}/register",
+    response_model=RegistrationRead,
+    status_code=201,
+)
+def register_event(
+    event_id: str,
+    _payload: RegistrationCreate,
+    user: CurrentUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     # ensure event exists
     ev = db.query(Event).filter(Event.id == event_id).first()
     if not ev:
@@ -100,7 +119,10 @@ def register_event(event_id: str, _payload: RegistrationCreate, user: CurrentUse
 
 
 @router.get("/my-events", response_model=List[EventRead])
-def my_events(user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+def my_events(
+    user: CurrentUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     items = (
         db.query(Event)
         .filter(Event.organizer_id == user.user_id)
@@ -111,6 +133,13 @@ def my_events(user: CurrentUser = Depends(get_current_user), db: Session = Depen
 
 
 @router.get("/my-registrations", response_model=List[RegistrationRead])
-def my_registrations(user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
-    regs = db.query(EventRegistration).filter(EventRegistration.user_id == user.user_id).all()
+def my_registrations(
+    user: CurrentUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    regs = (
+        db.query(EventRegistration)
+        .filter(EventRegistration.user_id == user.user_id)
+        .all()
+    )
     return regs

@@ -3,6 +3,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+
 # Enums
 class ItemStatus(str, Enum):
     ACTIVE = "active"
@@ -11,14 +12,17 @@ class ItemStatus(str, Enum):
     RESERVED = "reserved"
     DISCONTINUED = "discontinued"
 
+
 class SupplierType(str, Enum):
     MAKRX = "makrx"
     EXTERNAL = "external"
+
 
 class AccessLevel(str, Enum):
     BASIC = "basic"
     CERTIFIED = "certified"
     ADMIN_ONLY = "admin_only"
+
 
 class UsageAction(str, Enum):
     ADD = "add"
@@ -27,6 +31,7 @@ class UsageAction(str, Enum):
     ADJUST = "adjust"
     DAMAGE = "damage"
     TRANSFER = "transfer"
+
 
 # Base schemas
 class InventoryUsageLogBase(BaseModel):
@@ -40,20 +45,24 @@ class InventoryUsageLogBase(BaseModel):
     linked_job_id: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
+
 class InventoryUsageLogCreate(InventoryUsageLogBase):
     inventory_item_id: str
+
 
 class InventoryUsageLogUpdate(BaseModel):
     reason: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
+
 class InventoryUsageLog(InventoryUsageLogBase):
     id: str
     inventory_item_id: str
     timestamp: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Inventory Item schemas
 class InventoryItemBase(BaseModel):
@@ -68,7 +77,7 @@ class InventoryItemBase(BaseModel):
     supplier_type: SupplierType = SupplierType.EXTERNAL
     product_code: Optional[str] = Field(None, max_length=100)
     linked_makerspace_id: str
-    
+
     # Optional fields
     image_url: Optional[str] = None
     notes: Optional[str] = None
@@ -79,24 +88,35 @@ class InventoryItemBase(BaseModel):
     description: Optional[str] = None
     is_scanned: bool = False
 
-    @validator('product_code')
+    @validator("product_code")
     def validate_product_code(cls, v, values):
-        if values.get('supplier_type') == SupplierType.MAKRX and not v:
-            raise ValueError('MakrX items must have a product code')
+        if values.get("supplier_type") == SupplierType.MAKRX and not v:
+            raise ValueError("MakrX items must have a product code")
         return v
 
-    @validator('category')
+    @validator("category")
     def validate_category(cls, v):
         valid_categories = [
-            'filament', 'resin', 'tools', 'electronics', 'materials', 
-            'machines', 'sensors', 'components', 'consumables'
+            "filament",
+            "resin",
+            "tools",
+            "electronics",
+            "materials",
+            "machines",
+            "sensors",
+            "components",
+            "consumables",
         ]
         if v not in valid_categories:
-            raise ValueError(f'Category must be one of: {", ".join(valid_categories)}')
+            raise ValueError(
+                f'Category must be one of: {", ".join(valid_categories)}'
+            )
         return v
+
 
 class InventoryItemCreate(InventoryItemBase):
     created_by: str
+
 
 class InventoryItemUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
@@ -109,7 +129,7 @@ class InventoryItemUpdate(BaseModel):
     status: Optional[ItemStatus] = None
     supplier_type: Optional[SupplierType] = None
     product_code: Optional[str] = Field(None, max_length=100)
-    
+
     # Optional fields
     image_url: Optional[str] = None
     notes: Optional[str] = None
@@ -119,6 +139,7 @@ class InventoryItemUpdate(BaseModel):
     description: Optional[str] = None
     updated_by: str
 
+
 class InventoryItem(InventoryItemBase):
     id: str
     created_at: datetime
@@ -126,9 +147,10 @@ class InventoryItem(InventoryItemBase):
     created_by: str
     updated_by: Optional[str] = None
     usage_logs: List[InventoryUsageLog] = []
-    
+
     class Config:
         from_attributes = True
+
 
 # Bulk operation schemas
 class BulkUpdateRequest(BaseModel):
@@ -136,18 +158,23 @@ class BulkUpdateRequest(BaseModel):
     updates: Dict[str, Any]
     updated_by: str
 
+
 class BulkIssueRequest(BaseModel):
-    items: List[Dict[str, Any]]  # [{item_id: str, quantity: float, reason: str}]
+    items: List[
+        Dict[str, Any]
+    ]  # [{item_id: str, quantity: float, reason: str}]
     user_id: str
     user_name: str
     reason: Optional[str] = None
     linked_project_id: Optional[str] = None
     linked_job_id: Optional[str] = None
 
+
 class BulkDeleteRequest(BaseModel):
     item_ids: List[str]
     deleted_by: str
     reason: Optional[str] = None
+
 
 # CSV Import schemas
 class CSVImportRequest(BaseModel):
@@ -155,6 +182,7 @@ class CSVImportRequest(BaseModel):
     data: List[Dict[str, Any]]
     makerspace_id: str
     created_by: str
+
 
 class BulkImportJobStatus(BaseModel):
     id: str
@@ -166,9 +194,10 @@ class BulkImportJobStatus(BaseModel):
     status: str
     error_log: Optional[List[Dict[str, Any]]] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Filter and search schemas
 class InventoryFilter(BaseModel):
@@ -180,14 +209,15 @@ class InventoryFilter(BaseModel):
     owner_user_id: Optional[str] = None
     low_stock_only: bool = False
     search: Optional[str] = None
-    
+
     # Pagination
     skip: int = Field(0, ge=0)
     limit: int = Field(100, ge=1, le=1000)
-    
+
     # Sorting
     sort_by: str = "updated_at"
     sort_order: str = Field("desc", regex="^(asc|desc)$")
+
 
 class InventoryResponse(BaseModel):
     items: List[InventoryItem]
@@ -196,6 +226,7 @@ class InventoryResponse(BaseModel):
     per_page: int
     has_next: bool
     has_prev: bool
+
 
 # Analytics and reporting schemas
 class InventoryStats(BaseModel):
@@ -208,6 +239,7 @@ class InventoryStats(BaseModel):
     categories: Dict[str, int]
     locations: Dict[str, int]
 
+
 class UsageReport(BaseModel):
     item_id: str
     item_name: str
@@ -217,6 +249,7 @@ class UsageReport(BaseModel):
     usage_frequency: int
     last_used: Optional[datetime] = None
     most_common_reason: Optional[str] = None
+
 
 class LowStockAlert(BaseModel):
     id: str
@@ -231,11 +264,15 @@ class LowStockAlert(BaseModel):
     can_reorder: bool
     suggested_quantity: Optional[int] = None
 
+
 # MakrX Store integration schemas
 class ReorderRequest(BaseModel):
-    items: List[Dict[str, Any]]  # [{item_id: str, quantity: int, product_code: str}]
+    items: List[
+        Dict[str, Any]
+    ]  # [{item_id: str, quantity: int, product_code: str}]
     makerspace_id: str
     requested_by: str
+
 
 class ReorderResponse(BaseModel):
     success: bool
@@ -243,25 +280,32 @@ class ReorderResponse(BaseModel):
     order_reference: Optional[str] = None
     message: str
 
+
 # Error response schema
 class ErrorResponse(BaseModel):
     detail: str
     code: Optional[str] = None
     field: Optional[str] = None
 
+
 # Success response schema
 class SuccessResponse(BaseModel):
     message: str
     data: Optional[Dict[str, Any]] = None
 
+
 # Additional response schemas for API routes
 class InventoryItemResponse(InventoryItem):
     """Response schema for inventory items with usage logs"""
+
     pass
+
 
 class InventoryUsageLogResponse(InventoryUsageLog):
     """Response schema for usage logs"""
+
     item_name: Optional[str] = None
+
 
 class IssueItemRequest(BaseModel):
     quantity: float = Field(..., gt=0)
@@ -269,9 +313,11 @@ class IssueItemRequest(BaseModel):
     project_id: Optional[str] = None
     job_id: Optional[str] = None
 
+
 class ReorderRequest(BaseModel):
     quantity: float = Field(..., gt=0)
     notes: Optional[str] = None
+
 
 class InventoryStatsResponse(BaseModel):
     total_items: int
@@ -284,6 +330,7 @@ class InventoryStatsResponse(BaseModel):
     estimated_total_value: Optional[float] = None
     category_breakdown: Dict[str, int]
     location_breakdown: Dict[str, int]
+
 
 class LowStockAlertResponse(BaseModel):
     item_id: str

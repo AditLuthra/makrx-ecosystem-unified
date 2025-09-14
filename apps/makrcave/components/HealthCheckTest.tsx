@@ -13,7 +13,7 @@ const HealthCheckTest: React.FC = () => {
   const runHealthCheck = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const status = await healthCheckService.runAllChecks();
       setHealthStatus(status);
@@ -43,14 +43,10 @@ const HealthCheckTest: React.FC = () => {
       healthy: 'default' as const,
       degraded: 'secondary' as const,
       unhealthy: 'destructive' as const,
-      unknown: 'outline' as const
+      unknown: 'outline' as const,
     };
-    
-    return (
-      <Badge variant={variants[status as keyof typeof variants] || 'outline'}>
-        {status}
-      </Badge>
-    );
+
+    return <Badge variant={variants[status as keyof typeof variants] || 'outline'}>{status}</Badge>;
   };
 
   useEffect(() => {
@@ -66,12 +62,7 @@ const HealthCheckTest: React.FC = () => {
               System Health Check
               {healthStatus && getStatusIcon(healthStatus.overall)}
             </CardTitle>
-            <Button 
-              onClick={runHealthCheck} 
-              disabled={loading}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={runHealthCheck} disabled={loading} variant="outline" size="sm">
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
@@ -102,9 +93,7 @@ const HealthCheckTest: React.FC = () => {
                   <p className="text-sm text-gray-600">
                     Last updated: {new Date(healthStatus.lastUpdated).toLocaleTimeString()}
                   </p>
-                  <p className="text-sm text-gray-600">
-                    Environment: {healthStatus.environment}
-                  </p>
+                  <p className="text-sm text-gray-600">Environment: {healthStatus.environment}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {getStatusIcon(healthStatus.overall)}
@@ -117,7 +106,7 @@ const HealthCheckTest: React.FC = () => {
                 <h3 className="font-semibold text-gray-900 mb-4">Service Status</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {healthStatus.services.map((service, index) => (
-                    <div 
+                    <div
                       key={`${service.service}-${index}`}
                       className="p-4 border border-gray-200 rounded-lg"
                     >
@@ -125,22 +114,22 @@ const HealthCheckTest: React.FC = () => {
                         <span className="font-medium text-sm">{service.service}</span>
                         {getStatusIcon(service.status)}
                       </div>
-                      
+
                       <div className="flex items-center justify-between mb-2">
                         {getStatusBadge(service.status)}
                         <span className="text-xs text-gray-500">
                           {Math.round(service.responseTime)}ms
                         </span>
                       </div>
-                      
+
                       {service.details && (
                         <p className="text-xs text-gray-600 mb-2">{service.details}</p>
                       )}
-                      
+
                       {service.error && (
                         <p className="text-xs text-red-600">Error: {service.error}</p>
                       )}
-                      
+
                       {service.metadata && (
                         <div className="mt-2 text-xs text-gray-500">
                           {service.metadata.environment && (
@@ -163,19 +152,19 @@ const HealthCheckTest: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">
-                    {healthStatus.services.filter(s => s.status === 'healthy').length}
+                    {healthStatus.services.filter((s) => s.status === 'healthy').length}
                   </div>
                   <div className="text-sm text-gray-600">Healthy</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-600">
-                    {healthStatus.services.filter(s => s.status === 'degraded').length}
+                    {healthStatus.services.filter((s) => s.status === 'degraded').length}
                   </div>
                   <div className="text-sm text-gray-600">Degraded</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">
-                    {healthStatus.services.filter(s => s.status === 'unhealthy').length}
+                    {healthStatus.services.filter((s) => s.status === 'unhealthy').length}
                   </div>
                   <div className="text-sm text-gray-600">Unhealthy</div>
                 </div>

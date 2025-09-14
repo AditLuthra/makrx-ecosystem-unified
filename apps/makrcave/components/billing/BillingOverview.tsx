@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  Zap
+  Zap,
 } from 'lucide-react';
 
 interface BillingAnalytics {
@@ -24,22 +24,26 @@ interface BillingOverviewProps {
   detailed?: boolean;
 }
 
-const BillingOverview: React.FC<BillingOverviewProps> = ({ 
-  analytics, 
-  userRole, 
-  detailed = false 
+const BillingOverview: React.FC<BillingOverviewProps> = ({
+  analytics,
+  userRole,
+  detailed = false,
 }) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'USD',
     }).format(amount);
   };
 
   const getChangeIndicator = (value: number, isPositive: boolean = true) => {
     const color = isPositive ? 'text-green-600' : 'text-red-600';
-    const icon = isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />;
-    
+    const icon = isPositive ? (
+      <TrendingUp className="h-3 w-3" />
+    ) : (
+      <TrendingUp className="h-3 w-3 rotate-180" />
+    );
+
     return (
       <div className={`flex items-center gap-1 ${color}`}>
         {icon}
@@ -129,7 +133,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">{formatCurrency(7500)}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -137,7 +141,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">{formatCurrency(3200)}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
@@ -145,7 +149,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">{formatCurrency(1500)}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
@@ -171,7 +175,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">98.2%</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-500" />
@@ -179,7 +183,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">1.2s</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-purple-500" />
@@ -187,7 +191,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">{formatCurrency(485)}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-500" />
@@ -195,7 +199,7 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                     </div>
                     <span className="font-semibold">12.5%</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4 text-red-500" />
@@ -219,23 +223,29 @@ const BillingOverview: React.FC<BillingOverviewProps> = ({
                   <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
                   <div className="text-sm">
                     <p className="font-medium text-green-800">Revenue Target Achieved</p>
-                    <p className="text-green-700">Monthly revenue target of ₹9,96,000 reached 3 days early.</p>
+                    <p className="text-green-700">
+                      Monthly revenue target of ₹9,96,000 reached 3 days early.
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
                   <div className="text-sm">
                     <p className="font-medium text-yellow-800">High Credit Usage</p>
-                    <p className="text-yellow-700">Credit usage is 15% higher than usual this month.</p>
+                    <p className="text-yellow-700">
+                      Credit usage is 15% higher than usual this month.
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <Clock className="h-4 w-4 text-blue-600 mt-0.5" />
                   <div className="text-sm">
                     <p className="font-medium text-blue-800">Scheduled Maintenance</p>
-                    <p className="text-blue-700">Payment system maintenance scheduled for next weekend.</p>
+                    <p className="text-blue-700">
+                      Payment system maintenance scheduled for next weekend.
+                    </p>
                   </div>
                 </div>
               </div>

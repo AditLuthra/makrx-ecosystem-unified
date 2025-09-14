@@ -8,18 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../ui/badge';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { 
-  CalendarIcon, 
-  Upload, 
-  X, 
-  Wrench, 
-  Clock, 
-  DollarSign, 
+import {
+  CalendarIcon,
+  Upload,
+  X,
+  Wrench,
+  Clock,
+  DollarSign,
   Users,
   AlertTriangle,
   CheckCircle,
   FileText,
-  Camera
+  Camera,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuthHeaders } from '@makrx/auth';
@@ -49,7 +49,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
   isOpen,
   onClose,
   log,
-  onSave
+  onSave,
 }) => {
   const [formData, setFormData] = useState({
     equipment_id: '',
@@ -65,7 +65,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
     parts_needed: [] as string[],
     safety_requirements: '',
     notes: '',
-    attachments: [] as File[]
+    attachments: [] as File[],
   });
 
   const [equipment, setEquipment] = useState<Equipment[]>([]);
@@ -76,7 +76,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       loadEquipmentAndTechnicians();
-      
+
       if (log) {
         // Editing existing log
         setFormData({
@@ -93,7 +93,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
           parts_needed: log.parts_used || [],
           safety_requirements: log.safety_requirements || '',
           notes: log.notes || '',
-          attachments: []
+          attachments: [],
         });
       } else {
         // Reset form for new log
@@ -111,7 +111,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
           parts_needed: [],
           safety_requirements: '',
           notes: '',
-          attachments: []
+          attachments: [],
         });
       }
     }
@@ -124,7 +124,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
       // Load equipment list
       const headers = await getHeaders();
       const equipmentResponse = await fetch('/api/v1/equipment', { headers });
-      
+
       if (equipmentResponse.ok) {
         const equipmentData = await equipmentResponse.json();
         setEquipment(equipmentData);
@@ -133,7 +133,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
         setEquipment([
           { id: 'eq-1', name: '3D Printer Pro', type: '3D Printer', location: 'Station A1' },
           { id: 'eq-2', name: 'Laser Cutter X1', type: 'Laser Cutter', location: 'Station B2' },
-          { id: 'eq-3', name: 'CNC Mill Pro', type: 'CNC Machine', location: 'Station C1' }
+          { id: 'eq-3', name: 'CNC Mill Pro', type: 'CNC Machine', location: 'Station C1' },
         ]);
       }
 
@@ -141,9 +141,13 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
       setTechnicians([
         { id: 'tech-1', name: 'Alex Johnson', specialization: '3D Printing', available: true },
         { id: 'tech-2', name: 'Sarah Tech', specialization: 'Laser Cutting', available: true },
-        { id: 'tech-3', name: 'Mike Mechanic', specialization: 'CNC & Mechanical', available: false }
+        {
+          id: 'tech-3',
+          name: 'Mike Mechanic',
+          specialization: 'CNC & Mechanical',
+          available: false,
+        },
       ]);
-
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -156,7 +160,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
     try {
       const submitData = {
         ...formData,
-        estimated_duration: formData.estimated_duration ? parseInt(formData.estimated_duration) : null,
+        estimated_duration: formData.estimated_duration
+          ? parseInt(formData.estimated_duration)
+          : null,
         estimated_cost: formData.estimated_cost ? parseFloat(formData.estimated_cost) : null,
         scheduled_date: formData.scheduled_date?.toISOString(),
       };
@@ -171,43 +177,48 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
 
   const addPart = () => {
     if (newPart.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        parts_needed: [...prev.parts_needed, newPart.trim()]
+        parts_needed: [...prev.parts_needed, newPart.trim()],
       }));
       setNewPart('');
     }
   };
 
   const removePart = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      parts_needed: prev.parts_needed.filter((_, i) => i !== index)
+      parts_needed: prev.parts_needed.filter((_, i) => i !== index),
     }));
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      attachments: [...prev.attachments, ...files]
+      attachments: [...prev.attachments, ...files],
     }));
   };
 
   const removeAttachment = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
+      attachments: prev.attachments.filter((_, i) => i !== index),
     }));
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'scheduled': return <Clock className="h-4 w-4" />;
-      case 'in_progress': return <Wrench className="h-4 w-4" />;
-      case 'resolved': return <CheckCircle className="h-4 w-4" />;
-      case 'overdue': return <AlertTriangle className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case 'scheduled':
+        return <Clock className="h-4 w-4" />;
+      case 'in_progress':
+        return <Wrench className="h-4 w-4" />;
+      case 'resolved':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'overdue':
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
@@ -228,7 +239,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="equipment_id">Equipment *</Label>
               <Select
                 value={formData.equipment_id}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, equipment_id: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, equipment_id: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select equipment" />
@@ -247,7 +258,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="type">Maintenance Type *</Label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -268,7 +279,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="status">Status</Label>
               <Select
                 value={formData.status}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -306,7 +317,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -324,7 +335,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="assigned_to">Assigned To</Label>
               <Select
                 value={formData.assigned_to}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, assigned_to: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, assigned_to: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select technician" />
@@ -351,7 +362,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                 placeholder="Brief maintenance title..."
                 required
               />
@@ -362,7 +373,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Detailed description of the maintenance work..."
                 rows={3}
                 required
@@ -376,19 +387,18 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label>Scheduled Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
+                  <Button variant="outline" className="w-full justify-start text-left font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.scheduled_date ? format(formData.scheduled_date, "PPP") : "Pick a date"}
+                    {formData.scheduled_date
+                      ? format(formData.scheduled_date, 'PPP')
+                      : 'Pick a date'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
                     selected={formData.scheduled_date}
-                    onSelect={(date) => setFormData(prev => ({ ...prev, scheduled_date: date }))}
+                    onSelect={(date) => setFormData((prev) => ({ ...prev, scheduled_date: date }))}
                     initialFocus
                   />
                 </PopoverContent>
@@ -403,7 +413,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
                   id="estimated_duration"
                   type="number"
                   value={formData.estimated_duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, estimated_duration: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, estimated_duration: e.target.value }))
+                  }
                   placeholder="120"
                   className="pl-10"
                 />
@@ -419,7 +431,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
                   type="number"
                   step="0.01"
                   value={formData.estimated_cost}
-                  onChange={(e) => setFormData(prev => ({ ...prev, estimated_cost: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, estimated_cost: e.target.value }))
+                  }
                   placeholder="0.00"
                   className="pl-10"
                 />
@@ -443,16 +457,13 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
                 </Button>
               </div>
             </div>
-            
+
             {formData.parts_needed.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {formData.parts_needed.map((part, index) => (
                   <Badge key={index} variant="secondary" className="flex items-center gap-1">
                     {part}
-                    <X
-                      className="h-3 w-3 cursor-pointer"
-                      onClick={() => removePart(index)}
-                    />
+                    <X className="h-3 w-3 cursor-pointer" onClick={() => removePart(index)} />
                   </Badge>
                 ))}
               </div>
@@ -465,7 +476,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
             <Textarea
               id="safety_requirements"
               value={formData.safety_requirements}
-              onChange={(e) => setFormData(prev => ({ ...prev, safety_requirements: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, safety_requirements: e.target.value }))
+              }
               placeholder="Safety precautions, PPE requirements, lockout procedures..."
               rows={2}
             />
@@ -498,7 +511,10 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <div className="space-y-2">
                 <p className="text-sm font-medium">Attached Files:</p>
                 {formData.attachments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                  >
                     <span className="text-sm">{file.name}</span>
                     <Button
                       type="button"
@@ -520,7 +536,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
             <Textarea
               id="notes"
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="Additional notes, observations, or instructions..."
               rows={3}
             />
@@ -532,7 +548,7 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : (log ? 'Update Log' : 'Create Log')}
+              {loading ? 'Saving...' : log ? 'Update Log' : 'Create Log'}
             </Button>
           </div>
         </form>

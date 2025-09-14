@@ -37,7 +37,7 @@ export interface UserOrganization {
   id: string;
   name: string;
   slug: string;
-  role: 'owner' | 'admin' | 'manager' | 'member';
+  role: "owner" | "admin" | "manager" | "member";
 }
 
 export interface AuthConfig {
@@ -71,10 +71,18 @@ export interface AuthState {
 }
 
 export type AuthAction =
-  | { type: 'LOGIN_SUCCESS'; payload: { user: MakrXUser; token: string; refreshToken: string } }
-  | { type: 'LOGOUT' }
-  | { type: 'REFRESH_TOKEN'; payload: { token: string; refreshToken: string } }
-  | { type: 'UPDATE_USER'; payload: Partial<MakrXUser> };
+  | {
+      type: "LOGIN_SUCCESS";
+      payload: { user: MakrXUser; token: string; refreshToken: string };
+    }
+  | { type: "LOGOUT" }
+  | { type: "REFRESH_TOKEN"; payload: { token: string; refreshToken: string } }
+  | { type: "UPDATE_USER"; payload: Partial<MakrXUser> };
 
 // Roles used across admin views
-export type UserRole = 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
+export type UserRole =
+  | "super_admin"
+  | "admin"
+  | "makerspace_admin"
+  | "service_provider"
+  | "user";

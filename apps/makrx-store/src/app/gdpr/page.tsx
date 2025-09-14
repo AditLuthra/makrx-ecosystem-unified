@@ -1,7 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Download, Mail, FileText, User, Eye, Trash2, Settings, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  Shield,
+  Download,
+  Mail,
+  FileText,
+  User,
+  Eye,
+  Trash2,
+  Settings,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 
 interface DataRequest {
   type: 'access' | 'portability' | 'rectification' | 'erasure' | 'restriction' | 'objection';
@@ -17,43 +28,43 @@ const dataRequests: DataRequest[] = [
     title: 'Right of Access',
     description: 'Request a copy of the personal data we hold about you',
     icon: Eye,
-    processingTime: '30 days'
+    processingTime: '30 days',
   },
   {
     type: 'portability',
     title: 'Data Portability',
     description: 'Receive your data in a structured, machine-readable format',
     icon: Download,
-    processingTime: '30 days'
+    processingTime: '30 days',
   },
   {
     type: 'rectification',
     title: 'Right to Rectification',
     description: 'Request correction of inaccurate or incomplete personal data',
     icon: Settings,
-    processingTime: '30 days'
+    processingTime: '30 days',
   },
   {
     type: 'erasure',
     title: 'Right to Erasure',
     description: 'Request deletion of your personal data ("right to be forgotten")',
     icon: Trash2,
-    processingTime: '30 days'
+    processingTime: '30 days',
   },
   {
     type: 'restriction',
     title: 'Restriction of Processing',
     description: 'Request limitation of how we process your personal data',
     icon: Shield,
-    processingTime: '30 days'
+    processingTime: '30 days',
   },
   {
     type: 'objection',
     title: 'Right to Object',
     description: 'Object to processing of your data for specific purposes',
     icon: FileText,
-    processingTime: '30 days'
-  }
+    processingTime: '30 days',
+  },
 ];
 
 export default function GDPRPage() {
@@ -65,7 +76,7 @@ export default function GDPRPage() {
     phone: '',
     requestType: '',
     description: '',
-    verificationMethod: 'email'
+    verificationMethod: 'email',
   });
 
   const handleSubmitRequest = (e: React.FormEvent) => {
@@ -75,7 +86,7 @@ export default function GDPRPage() {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -93,8 +104,8 @@ export default function GDPRPage() {
               GDPR Data Protection Rights
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Exercise your rights under the General Data Protection Regulation (GDPR). 
-              We're committed to protecting your privacy and ensuring transparent data practices.
+              Exercise your rights under the General Data Protection Regulation (GDPR). We're
+              committed to protecting your privacy and ensuring transparent data practices.
             </p>
           </div>
         </div>
@@ -109,7 +120,7 @@ export default function GDPRPage() {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Your Data Protection Rights
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {dataRequests.map((request) => {
                   const Icon = request.icon;
@@ -151,7 +162,7 @@ export default function GDPRPage() {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
                   Submit Data Protection Request
                 </h3>
-                
+
                 <form onSubmit={handleSubmitRequest} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -278,8 +289,9 @@ export default function GDPRPage() {
                       <div className="text-sm text-blue-700 dark:text-blue-400">
                         <p className="font-medium mb-1">Identity Verification Required</p>
                         <p>
-                          To protect your privacy, we need to verify your identity before processing your request. 
-                          This ensures that personal data is only disclosed to the rightful individual.
+                          To protect your privacy, we need to verify your identity before processing
+                          your request. This ensures that personal data is only disclosed to the
+                          rightful individual.
                         </p>
                       </div>
                     </div>
@@ -300,7 +312,7 @@ export default function GDPRPage() {
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
                 How We Process Your Data
               </h3>
-              
+
               <div className="space-y-6">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
@@ -320,10 +332,18 @@ export default function GDPRPage() {
                     Legal Basis for Processing
                   </h4>
                   <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                    <li>• <strong>Contract:</strong> To provide our services and fulfill orders</li>
-                    <li>• <strong>Legitimate Interest:</strong> To improve our services and security</li>
-                    <li>• <strong>Consent:</strong> For marketing communications and cookies</li>
-                    <li>• <strong>Legal Obligation:</strong> For tax records and compliance</li>
+                    <li>
+                      • <strong>Contract:</strong> To provide our services and fulfill orders
+                    </li>
+                    <li>
+                      • <strong>Legitimate Interest:</strong> To improve our services and security
+                    </li>
+                    <li>
+                      • <strong>Consent:</strong> For marketing communications and cookies
+                    </li>
+                    <li>
+                      • <strong>Legal Obligation:</strong> For tax records and compliance
+                    </li>
                   </ul>
                 </div>
 
@@ -362,8 +382,10 @@ export default function GDPRPage() {
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Address</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      MakrX Inc.<br />
-                      123 Innovation St<br />
+                      MakrX Inc.
+                      <br />
+                      123 Innovation St
+                      <br />
                       San Francisco, CA 94102
                     </p>
                   </div>
@@ -400,25 +422,35 @@ export default function GDPRPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">1</span>
+                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                      1
+                    </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white text-sm">Submit Request</p>
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">
+                      Submit Request
+                    </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Immediate</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">2</span>
+                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                      2
+                    </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white text-sm">Identity Verification</p>
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">
+                      Identity Verification
+                    </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">1-3 days</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">3</span>
+                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                      3
+                    </span>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white text-sm">Processing</p>
@@ -443,7 +475,8 @@ export default function GDPRPage() {
                 Supervisory Authority
               </h4>
               <p className="text-sm text-blue-700 dark:text-blue-400 mb-3">
-                If you're not satisfied with our response, you have the right to lodge a complaint with your local data protection authority.
+                If you're not satisfied with our response, you have the right to lodge a complaint
+                with your local data protection authority.
               </p>
               <a
                 href="https://ec.europa.eu/justice/article-29/structure/data-protection-authorities/index_en.htm"

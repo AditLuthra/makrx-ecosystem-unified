@@ -1,23 +1,17 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthContext";
-import { auth } from "@/lib/auth";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
+import { auth } from '@/lib/auth';
 
 interface PortalAuthContextValue {
   handlePortalAuth: () => void;
   isPortalAuthenticated: boolean;
 }
 
-const PortalAuthContext = createContext<PortalAuthContextValue | undefined>(
-  undefined,
-);
+const PortalAuthContext = createContext<PortalAuthContextValue | undefined>(undefined);
 
-export function PortalAuthProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function PortalAuthProvider({ children }: { children: React.ReactNode }) {
   const { login } = useAuth();
   const [isPortalAuthenticated, setIsPortalAuthenticated] = useState(false);
 
@@ -25,29 +19,29 @@ export function PortalAuthProvider({
     // Check for portal authentication token in URL
     const handlePortalAuth = () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const authToken = urlParams.get("auth_token");
-      const isPortalAuth = urlParams.get("portal_auth") === "true";
+      const authToken = urlParams.get('auth_token');
+      const isPortalAuth = urlParams.get('portal_auth') === 'true';
 
       if (authToken && isPortalAuth) {
-        console.log("Portal authentication token detected");
+        console.log('Portal authentication token detected');
 
         // Store token for API requests
-        localStorage.setItem("portal_auth_token", authToken);
-        localStorage.setItem("portal_auth_timestamp", Date.now().toString());
+        localStorage.setItem('portal_auth_token', authToken);
+        localStorage.setItem('portal_auth_timestamp', Date.now().toString());
 
         // Set authentication state
         setIsPortalAuthenticated(true);
 
         // Clean up URL parameters
         const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, "", cleanUrl);
+        window.history.replaceState({}, '', cleanUrl);
 
         // Trigger login via Keycloak
         login();
       } else {
         // Check for existing portal token
-        const storedToken = localStorage.getItem("portal_auth_token");
-        const timestamp = localStorage.getItem("portal_auth_timestamp");
+        const storedToken = localStorage.getItem('portal_auth_token');
+        const timestamp = localStorage.getItem('portal_auth_timestamp');
 
         if (storedToken && timestamp) {
           const tokenAge = Date.now() - parseInt(timestamp);
@@ -57,8 +51,8 @@ export function PortalAuthProvider({
             setIsPortalAuthenticated(true);
           } else {
             // Token expired, clean up
-            localStorage.removeItem("portal_auth_token");
-            localStorage.removeItem("portal_auth_timestamp");
+            localStorage.removeItem('portal_auth_token');
+            localStorage.removeItem('portal_auth_timestamp');
           }
         }
       }
@@ -70,12 +64,12 @@ export function PortalAuthProvider({
   // Listen for cross-portal sign out messages
   useEffect(() => {
     const handleCrossPortalMessage = (event: MessageEvent) => {
-      if (event.data?.type === "CROSS_PORTAL_SIGNOUT") {
-        console.log("Received cross-portal signout message in Store");
+      if (event.data?.type === 'CROSS_PORTAL_SIGNOUT') {
+        console.log('Received cross-portal signout message in Store');
 
         // Clear portal authentication
-        localStorage.removeItem("portal_auth_token");
-        localStorage.removeItem("portal_auth_timestamp");
+        localStorage.removeItem('portal_auth_token');
+        localStorage.removeItem('portal_auth_timestamp');
         setIsPortalAuthenticated(false);
 
         // Could also trigger a logout here if needed
@@ -83,18 +77,17 @@ export function PortalAuthProvider({
       }
     };
 
-    window.addEventListener("message", handleCrossPortalMessage);
-    return () =>
-      window.removeEventListener("message", handleCrossPortalMessage);
+    window.addEventListener('message', handleCrossPortalMessage);
+    return () => window.removeEventListener('message', handleCrossPortalMessage);
   }, []);
 
   const value: PortalAuthContextValue = {
     handlePortalAuth: () => {
       // This function can be called manually if needed
       const urlParams = new URLSearchParams(window.location.search);
-      const authToken = urlParams.get("auth_token");
+      const authToken = urlParams.get('auth_token');
       if (authToken) {
-        localStorage.setItem("portal_auth_token", authToken);
+        localStorage.setItem('portal_auth_token', authToken);
         setIsPortalAuthenticated(true);
         login();
       }
@@ -102,25 +95,21 @@ export function PortalAuthProvider({
     isPortalAuthenticated,
   };
 
-  return (
-    <PortalAuthContext.Provider value={value}>
-      {children}
-    </PortalAuthContext.Provider>
-  );
+  return <PortalAuthContext.Provider value={value}>{children}</PortalAuthContext.Provider>;
 }
 
 export function usePortalAuth() {
   const context = useContext(PortalAuthContext);
   if (context === undefined) {
-    throw new Error("usePortalAuth must be used within a PortalAuthProvider");
+    throw new Error('usePortalAuth must be used within a PortalAuthProvider');
   }
   return context;
 }
 
 // Utility function to get portal auth token for API requests
 export function getPortalAuthToken(): string | null {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("portal_auth_token");
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('portal_auth_token');
   }
   return null;
 }
@@ -136,13 +125,13 @@ export async function portalAwareApiRequest(
 
   // Add portal auth token if available
   if (portalToken) {
-    headers.set("X-Portal-Auth-Token", portalToken);
+    headers.set('X-Portal-Auth-Token', portalToken);
   }
 
   // Add standard auth token if available
   const authToken = await auth.getToken();
   if (authToken) {
-    headers.set("Authorization", `Bearer ${authToken}`);
+    headers.set('Authorization', `Bearer ${authToken}`);
   }
 
   return fetch(url, {

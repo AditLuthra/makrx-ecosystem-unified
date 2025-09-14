@@ -187,7 +187,7 @@ CSP risks: apps/makrx-events/next.config.js sets stringent CSP in prod: style-sr
 File uploads: app/api/upload/route.ts writes to public/uploads/\*. In serverless or containerized ephemeral FS this is not persistent; production should use cloud storage (S3, R2, etc.) with signed URLs. Current code is fine for demo only.
 Auth verification: lib/auth-middleware.ts decodes JWT without signature verification (“simple decode”) and only checks exp. For production, verify with Keycloak JWKS (or use the @makrx/auth server utilities if available).
 Env validator vs actual usage mismatch: lib/environment-validator.ts references SESSION_SECRET and Razorpay keys (VITE_RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET), but elsewhere Stripe is used and no session store is implemented. Align on the actual features to launch.
-Images: Using <img> with remote URLs. next.config.js images.remotePatterns allow images.unsplash.com and replit.com; other hosts will be blocked.
+
 Medium Priority
 
 Duplicate/legacy components: Two section renderers:

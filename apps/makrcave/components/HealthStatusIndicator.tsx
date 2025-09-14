@@ -8,19 +8,15 @@ import { useState } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from './ui/popover';
-import { 
-  Activity, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  ExternalLink, 
-  RefreshCw, 
-  XCircle 
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  ExternalLink,
+  RefreshCw,
+  XCircle,
 } from 'lucide-react';
 import { useHealth, useHealthStatus, useHealthMetrics } from '../contexts/HealthContext';
 import { useNavigate } from 'react-router-dom';
@@ -31,10 +27,10 @@ interface HealthStatusIndicatorProps {
   position?: 'header' | 'sidebar' | 'floating';
 }
 
-export default function HealthStatusIndicator({ 
-  showLabel = false, 
+export default function HealthStatusIndicator({
+  showLabel = false,
   variant = 'compact',
-  position = 'header' 
+  position = 'header',
 }: HealthStatusIndicatorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { runHealthChecks, isLoading, lastUpdate } = useHealth();
@@ -48,28 +44,40 @@ export default function HealthStatusIndicator({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'text-green-500';
-      case 'degraded': return 'text-yellow-500';
-      case 'unhealthy': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'healthy':
+        return 'text-green-500';
+      case 'degraded':
+        return 'text-yellow-500';
+      case 'unhealthy':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy': return <CheckCircle className="w-4 h-4" />;
-      case 'degraded': return <AlertTriangle className="w-4 h-4" />;
-      case 'unhealthy': return <XCircle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case 'healthy':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'degraded':
+        return <AlertTriangle className="w-4 h-4" />;
+      case 'unhealthy':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'healthy': return 'default';
-      case 'degraded': return 'secondary';
-      case 'unhealthy': return 'destructive';
-      default: return 'outline';
+      case 'healthy':
+        return 'default';
+      case 'degraded':
+        return 'secondary';
+      case 'unhealthy':
+        return 'destructive';
+      default:
+        return 'outline';
     }
   };
 
@@ -100,9 +108,13 @@ export default function HealthStatusIndicator({
       </div>
       {showLabel && (
         <span className="text-sm font-medium">
-          {healthStatus.overall === 'healthy' ? 'Healthy' : 
-           healthStatus.overall === 'degraded' ? 'Issues' : 
-           healthStatus.overall === 'unhealthy' ? 'Critical' : 'Unknown'}
+          {healthStatus.overall === 'healthy'
+            ? 'Healthy'
+            : healthStatus.overall === 'degraded'
+              ? 'Issues'
+              : healthStatus.overall === 'unhealthy'
+                ? 'Critical'
+                : 'Unknown'}
         </span>
       )}
     </div>
@@ -138,9 +150,7 @@ export default function HealthStatusIndicator({
         {/* Health Metrics */}
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="text-center p-2 bg-muted rounded">
-            <div className="font-semibold text-lg text-green-600">
-              {metrics.healthyServices}
-            </div>
+            <div className="font-semibold text-lg text-green-600">{metrics.healthyServices}</div>
             <div className="text-muted-foreground">Healthy</div>
           </div>
           <div className="text-center p-2 bg-muted rounded">
@@ -183,12 +193,7 @@ export default function HealthStatusIndicator({
             <RefreshCw className={`w-3 h-3 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleViewDetails}
-            className="flex-1"
-          >
+          <Button variant="outline" size="sm" onClick={handleViewDetails} className="flex-1">
             <ExternalLink className="w-3 h-3 mr-1" />
             Details
           </Button>
@@ -211,12 +216,7 @@ export default function HealthStatusIndicator({
                 {metrics.healthyServices}/{metrics.totalServices} services healthy
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleViewDetails}
-              className="ml-2"
-            >
+            <Button variant="ghost" size="sm" onClick={handleViewDetails} className="ml-2">
               <ExternalLink className="w-3 h-3" />
             </Button>
           </div>
@@ -237,17 +237,17 @@ export default function HealthStatusIndicator({
     return (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="h-8 px-2 hover:bg-muted/50"
             title="System Health Status"
           >
             {renderCompactIndicator()}
           </Button>
         </PopoverTrigger>
-        <PopoverContent 
-          className="p-0 w-auto" 
+        <PopoverContent
+          className="p-0 w-auto"
           align="end"
           side={position === 'header' ? 'bottom' : 'right'}
         >
@@ -266,7 +266,7 @@ export default function HealthStatusIndicator({
           {healthStatus.overall}
         </Badge>
       </div>
-      
+
       <div className="space-y-1 text-xs">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Healthy:</span>
@@ -274,7 +274,9 @@ export default function HealthStatusIndicator({
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Issues:</span>
-          <span className="text-orange-600">{metrics.degradedServices + metrics.unhealthyServices}</span>
+          <span className="text-orange-600">
+            {metrics.degradedServices + metrics.unhealthyServices}
+          </span>
         </div>
       </div>
 
@@ -286,18 +288,9 @@ export default function HealthStatusIndicator({
           disabled={isLoading}
           className="flex-1 h-7 text-xs"
         >
-          {isLoading ? (
-            <RefreshCw className="w-3 h-3 animate-spin" />
-          ) : (
-            'Refresh'
-          )}
+          {isLoading ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Refresh'}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleViewDetails}
-          className="h-7 px-2"
-        >
+        <Button variant="outline" size="sm" onClick={handleViewDetails} className="h-7 px-2">
           <ExternalLink className="w-3 h-3" />
         </Button>
       </div>

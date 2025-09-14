@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import {
   CheckCircle,
   Clock,
@@ -22,16 +22,16 @@ import {
   User,
   Calendar,
   DollarSign,
-} from "lucide-react";
-import { api, formatPrice } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+} from 'lucide-react';
+import { api, formatPrice } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface OrderStatus {
   id: string;
-  status: "created" | "dispatched" | "accepted" | "in_progress" | "completed" | "delivered";
+  status: 'created' | 'dispatched' | 'accepted' | 'in_progress' | 'completed' | 'delivered';
   customer_id: string;
   quote: {
-    service_type: "printing" | "engraving";
+    service_type: 'printing' | 'engraving';
     material: string;
     quantity: number;
     price: number;
@@ -65,39 +65,39 @@ interface OrderStatus {
 
 const STATUS_STEPS = [
   {
-    key: "created",
-    label: "Order Created",
-    description: "Your order has been placed and payment confirmed",
+    key: 'created',
+    label: 'Order Created',
+    description: 'Your order has been placed and payment confirmed',
     icon: Package,
   },
   {
-    key: "dispatched",
-    label: "Finding Provider",
+    key: 'dispatched',
+    label: 'Finding Provider',
     description: "We're matching you with the best available provider",
     icon: Clock,
   },
   {
-    key: "accepted",
-    label: "Provider Assigned",
-    description: "A provider has accepted your job and will begin work",
+    key: 'accepted',
+    label: 'Provider Assigned',
+    description: 'A provider has accepted your job and will begin work',
     icon: CheckCircle,
   },
   {
-    key: "in_progress",
-    label: "In Production",
-    description: "Your item is being printed/engraved",
+    key: 'in_progress',
+    label: 'In Production',
+    description: 'Your item is being printed/engraved',
     icon: Printer,
   },
   {
-    key: "completed",
-    label: "Ready for Pickup",
-    description: "Your item is complete and ready for collection",
+    key: 'completed',
+    label: 'Ready for Pickup',
+    description: 'Your item is complete and ready for collection',
     icon: CheckCircle,
   },
   {
-    key: "delivered",
-    label: "Delivered",
-    description: "Order has been delivered to you",
+    key: 'delivered',
+    label: 'Delivered',
+    description: 'Order has been delivered to you',
     icon: Truck,
   },
 ];
@@ -114,10 +114,10 @@ export default function OrderTracking() {
 
   useEffect(() => {
     loadOrder();
-    
+
     // Set up polling for active orders
     const interval = setInterval(() => {
-      if (order && !["completed", "delivered"].includes(order.status)) {
+      if (order && !['completed', 'delivered'].includes(order.status)) {
         refreshOrder();
       }
     }, 30000); // Poll every 30 seconds
@@ -132,8 +132,8 @@ export default function OrderTracking() {
       const response = await api.getServiceOrder(orderId);
       setOrder(response);
     } catch (err: any) {
-      console.error("Failed to load order:", err);
-      setError(err.message || "Failed to load order details");
+      console.error('Failed to load order:', err);
+      setError(err.message || 'Failed to load order details');
     } finally {
       setLoading(false);
     }
@@ -145,14 +145,14 @@ export default function OrderTracking() {
       const response = await api.getServiceOrder(orderId);
       setOrder(response);
     } catch (err) {
-      console.error("Failed to refresh order:", err);
+      console.error('Failed to refresh order:', err);
     } finally {
       setRefreshing(false);
     }
   };
 
   const getCurrentStepIndex = (status: string) => {
-    return STATUS_STEPS.findIndex(step => step.key === status);
+    return STATUS_STEPS.findIndex((step) => step.key === status);
   };
 
   const isStepCompleted = (stepIndex: number, currentStatus: string) => {
@@ -161,17 +161,19 @@ export default function OrderTracking() {
 
   const getEstimatedCompletion = () => {
     if (!order) return null;
-    
+
     if (order.estimated_completion) {
       return new Date(order.estimated_completion);
     }
-    
+
     if (order.accepted_at && order.quote.estimated_time_hours) {
       const acceptedDate = new Date(order.accepted_at);
-      const estimatedDate = new Date(acceptedDate.getTime() + order.quote.estimated_time_hours * 60 * 60 * 1000);
+      const estimatedDate = new Date(
+        acceptedDate.getTime() + order.quote.estimated_time_hours * 60 * 60 * 1000,
+      );
       return estimatedDate;
     }
-    
+
     return null;
   };
 
@@ -224,24 +226,22 @@ export default function OrderTracking() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Orders
           </Link>
-          
+
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Order #{orderId.slice(-8)}
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900">Order #{orderId.slice(-8)}</h1>
               <p className="text-gray-600 mt-2">
-                {order.quote.service_type === "printing" ? "3D Printing" : "Laser Engraving"} Order
+                {order.quote.service_type === 'printing' ? '3D Printing' : 'Laser Engraving'} Order
               </p>
             </div>
-            
+
             <button
               onClick={refreshOrder}
               disabled={refreshing}
               className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-              {refreshing ? "Refreshing..." : "Refresh"}
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              {refreshing ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
         </div>
@@ -250,7 +250,7 @@ export default function OrderTracking() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center">
-              {order.quote.service_type === "printing" ? (
+              {order.quote.service_type === 'printing' ? (
                 <Printer className="h-8 w-8 text-blue-500 mr-3" />
               ) : (
                 <Scissors className="h-8 w-8 text-purple-500 mr-3" />
@@ -258,30 +258,30 @@ export default function OrderTracking() {
               <div>
                 <p className="text-sm text-gray-600">Service</p>
                 <p className="font-semibold">
-                  {order.quote.service_type === "printing" ? "3D Printing" : "Laser Engraving"}
+                  {order.quote.service_type === 'printing' ? '3D Printing' : 'Laser Engraving'}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center">
               <DollarSign className="h-8 w-8 text-green-500 mr-3" />
               <div>
                 <p className="text-sm text-gray-600">Total</p>
-                <p className="font-semibold">{formatPrice(order.quote.price, order.quote.currency)}</p>
+                <p className="font-semibold">
+                  {formatPrice(order.quote.price, order.quote.currency)}
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-center">
               <Calendar className="h-8 w-8 text-orange-500 mr-3" />
               <div>
                 <p className="text-sm text-gray-600">Ordered</p>
-                <p className="font-semibold">
-                  {new Date(order.created_at).toLocaleDateString()}
-                </p>
+                <p className="font-semibold">{new Date(order.created_at).toLocaleDateString()}</p>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Material:</span>
@@ -308,16 +308,18 @@ export default function OrderTracking() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">Order Status</h2>
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  order.status === "completed" || order.status === "delivered"
-                    ? "bg-green-100 text-green-800"
-                    : order.status === "in_progress"
-                    ? "bg-blue-100 text-blue-800"
-                    : order.status === "accepted"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : "bg-gray-100 text-gray-800"
-                }`}>
-                  {order.status.replace("_", " ").toUpperCase()}
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    order.status === 'completed' || order.status === 'delivered'
+                      ? 'bg-green-100 text-green-800'
+                      : order.status === 'in_progress'
+                        ? 'bg-blue-100 text-blue-800'
+                        : order.status === 'accepted'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {order.status.replace('_', ' ').toUpperCase()}
                 </span>
               </div>
 
@@ -333,29 +335,33 @@ export default function OrderTracking() {
                       {index < STATUS_STEPS.length - 1 && (
                         <div
                           className={`absolute left-4 top-8 h-16 w-px ${
-                            isCompleted ? "bg-green-500" : "bg-gray-300"
+                            isCompleted ? 'bg-green-500' : 'bg-gray-300'
                           }`}
                         />
                       )}
-                      
+
                       <div className="flex items-start">
                         <div
                           className={`flex h-8 w-8 items-center justify-center rounded-full ${
                             isCompleted
-                              ? "bg-green-500 text-white"
+                              ? 'bg-green-500 text-white'
                               : isCurrent
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-300 text-gray-600"
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-300 text-gray-600'
                           }`}
                         >
                           <Icon className="h-4 w-4" />
                         </div>
-                        
+
                         <div className="ml-4 flex-1">
                           <div className="flex items-center justify-between">
                             <h3
                               className={`text-sm font-medium ${
-                                isCompleted ? "text-green-900" : isCurrent ? "text-blue-900" : "text-gray-500"
+                                isCompleted
+                                  ? 'text-green-900'
+                                  : isCurrent
+                                    ? 'text-blue-900'
+                                    : 'text-gray-500'
                               }`}
                             >
                               {step.label}
@@ -366,7 +372,11 @@ export default function OrderTracking() {
                           </div>
                           <p
                             className={`mt-1 text-sm ${
-                              isCompleted ? "text-green-700" : isCurrent ? "text-blue-700" : "text-gray-500"
+                              isCompleted
+                                ? 'text-green-700'
+                                : isCurrent
+                                  ? 'text-blue-700'
+                                  : 'text-gray-500'
                             }`}
                           >
                             {step.description}
@@ -379,19 +389,22 @@ export default function OrderTracking() {
               </div>
 
               {/* Estimated Completion */}
-              {estimatedCompletion && order.status !== "completed" && order.status !== "delivered" && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <div className="flex items-center">
-                    <Clock className="h-5 w-5 text-blue-500 mr-2" />
-                    <div>
-                      <p className="text-sm font-medium text-blue-900">Estimated Completion</p>
-                      <p className="text-sm text-blue-700">
-                        {estimatedCompletion.toLocaleDateString()} at {estimatedCompletion.toLocaleTimeString()}
-                      </p>
+              {estimatedCompletion &&
+                order.status !== 'completed' &&
+                order.status !== 'delivered' && (
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center">
+                      <Clock className="h-5 w-5 text-blue-500 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">Estimated Completion</p>
+                        <p className="text-sm text-blue-700">
+                          {estimatedCompletion.toLocaleDateString()} at{' '}
+                          {estimatedCompletion.toLocaleTimeString()}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
 
             {/* Status Messages */}
@@ -432,7 +445,7 @@ export default function OrderTracking() {
             {order.provider && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Provider</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center">
                     <User className="h-5 w-5 text-gray-400 mr-3" />
@@ -441,15 +454,17 @@ export default function OrderTracking() {
                       <p className="text-sm text-gray-600">{order.provider.contact_name}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <Star className="h-5 w-5 text-yellow-400 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">{order.provider.rating.toFixed(1)} Rating</p>
+                      <p className="font-medium text-gray-900">
+                        {order.provider.rating.toFixed(1)} Rating
+                      </p>
                       <p className="text-sm text-gray-600">Based on customer reviews</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <MapPin className="h-5 w-5 text-gray-400 mr-3 mt-0.5" />
                     <div>
@@ -468,7 +483,7 @@ export default function OrderTracking() {
                         Send Email
                       </a>
                     )}
-                    
+
                     {order.provider.phone && (
                       <a
                         href={`tel:${order.provider.phone}`}
@@ -486,14 +501,14 @@ export default function OrderTracking() {
             {/* Order Actions */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
-              
+
               <div className="space-y-3">
                 <button className="flex items-center w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg">
                   <MessageSquare className="h-4 w-4 mr-3" />
                   Send Message
                 </button>
-                
-                {order.status === "delivered" && (
+
+                {order.status === 'delivered' && (
                   <Link
                     href={`/orders/${orderId}/review`}
                     className="flex items-center w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg"
@@ -502,7 +517,7 @@ export default function OrderTracking() {
                     Write Review
                   </Link>
                 )}
-                
+
                 <button className="flex items-center w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg">
                   <Package className="h-4 w-4 mr-3" />
                   Order Details

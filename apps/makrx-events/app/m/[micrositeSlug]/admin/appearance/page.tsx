@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
-import AppearanceClient from "./AppearanceClient";
+import { notFound } from 'next/navigation';
+import AppearanceClient from './AppearanceClient';
 
 interface MicrositeAppearancePageProps {
   params: {

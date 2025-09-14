@@ -1,4 +1,12 @@
-from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Enum as SQLEnum, Text
+from sqlalchemy import (
+    Column,
+    String,
+    DateTime,
+    Boolean,
+    ForeignKey,
+    Enum as SQLEnum,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -15,8 +23,12 @@ class MemberInvite(Base):
     email = Column(String(255), nullable=False, index=True)
     role = Column(SQLEnum(MemberRole), nullable=False, default=MemberRole.USER)
 
-    membership_plan_id = Column(UUID(as_uuid=True), ForeignKey("membership_plans.id"), nullable=False)
-    invited_by = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
+    membership_plan_id = Column(
+        UUID(as_uuid=True), ForeignKey("membership_plans.id"), nullable=False
+    )
+    invited_by = Column(
+        UUID(as_uuid=True), ForeignKey("members.id"), nullable=False
+    )
     makerspace_id = Column(UUID(as_uuid=True), nullable=False, index=True)
 
     invite_token = Column(String(128), unique=True, nullable=False, index=True)
@@ -36,4 +48,3 @@ class MemberInvite(Base):
 
     membership_plan = relationship("MembershipPlan")
     invited_by_user = relationship("Member", foreign_keys=[invited_by])
-

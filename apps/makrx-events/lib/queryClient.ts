@@ -1,17 +1,13 @@
-export const apiRequest = async (
-  method: string,
-  url: string,
-  data?: any
-): Promise<Response> => {
+export const apiRequest = async (method: string, url: string, data?: any): Promise<Response> => {
   const config: RequestInit = {
     method,
-    credentials: "include",
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   };
 
-  if (data && method !== "GET") {
+  if (data && method !== 'GET') {
     config.body = JSON.stringify(data);
   }
 

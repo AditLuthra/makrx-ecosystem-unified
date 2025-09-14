@@ -31,7 +31,7 @@ const nextConfig = {
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         process: 'process/browser',
-      })
+      }),
     );
 
     return config;

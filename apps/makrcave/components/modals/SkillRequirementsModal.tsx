@@ -46,20 +46,20 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
   onOpenChange,
   equipment = [],
   skills = [],
-  selectedEquipmentId
+  selectedEquipmentId,
 }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'view' | 'manage'>('view');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const [selectedEquipment, setSelectedEquipment] = useState(selectedEquipmentId || '');
   const [requirements, setRequirements] = useState<SkillRequirement[]>([]);
   const [newRequirement, setNewRequirement] = useState({
     skillId: '',
     required: true,
-    alternative: false
+    alternative: false,
   });
 
   // Mock data for skill requirements
@@ -71,7 +71,7 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
       skillName: '3D Printer Operation',
       skillLevel: 'beginner',
       required: true,
-      alternative: false
+      alternative: false,
     },
     {
       id: 'req-2',
@@ -80,7 +80,7 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
       skillName: 'Safety Training',
       skillLevel: 'beginner',
       required: true,
-      alternative: false
+      alternative: false,
     },
     {
       id: 'req-3',
@@ -89,8 +89,8 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
       skillName: 'Laser Safety',
       skillLevel: 'intermediate',
       required: true,
-      alternative: false
-    }
+      alternative: false,
+    },
   ];
 
   useEffect(() => {
@@ -103,16 +103,17 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
   }, [open, selectedEquipmentId]);
 
   const getSelectedEquipmentData = () => {
-    return equipment.find(eq => eq.id === selectedEquipment);
+    return equipment.find((eq) => eq.id === selectedEquipment);
   };
 
   const getEquipmentRequirements = () => {
-    return requirements.filter(req => req.equipmentId === selectedEquipment);
+    return requirements.filter((req) => req.equipmentId === selectedEquipment);
   };
 
-  const filteredEquipment = equipment.filter(eq => 
-    eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    eq.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEquipment = equipment.filter(
+    (eq) =>
+      eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      eq.category.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleAddRequirement = () => {
@@ -121,7 +122,7 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
       return;
     }
 
-    const skill = skills.find(s => s.id === newRequirement.skillId);
+    const skill = skills.find((s) => s.id === newRequirement.skillId);
     if (!skill) {
       setError('Selected skill not found');
       return;
@@ -129,7 +130,7 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
 
     // Check if requirement already exists
     const exists = requirements.some(
-      req => req.equipmentId === selectedEquipment && req.skillId === newRequirement.skillId
+      (req) => req.equipmentId === selectedEquipment && req.skillId === newRequirement.skillId,
     );
 
     if (exists) {
@@ -144,36 +145,36 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
       skillName: skill.name,
       skillLevel: skill.level,
       required: newRequirement.required,
-      alternative: newRequirement.alternative
+      alternative: newRequirement.alternative,
     };
 
-    setRequirements(prev => [...prev, newReq]);
+    setRequirements((prev) => [...prev, newReq]);
     setNewRequirement({
       skillId: '',
       required: true,
-      alternative: false
+      alternative: false,
     });
     setError(null);
 
     toast({
-      title: "Requirement Added",
+      title: 'Requirement Added',
       description: `${skill.name} requirement added to ${getSelectedEquipmentData()?.name}`,
     });
   };
 
   const handleRemoveRequirement = (reqId: string) => {
-    setRequirements(prev => prev.filter(req => req.id !== reqId));
+    setRequirements((prev) => prev.filter((req) => req.id !== reqId));
     toast({
-      title: "Requirement Removed",
-      description: "Skill requirement has been removed",
-      variant: "destructive",
+      title: 'Requirement Removed',
+      description: 'Skill requirement has been removed',
+      variant: 'destructive',
     });
   };
 
   const handleUpdateRequirement = (reqId: string, field: keyof SkillRequirement, value: any) => {
-    setRequirements(prev => prev.map(req => 
-      req.id === reqId ? { ...req, [field]: value } : req
-    ));
+    setRequirements((prev) =>
+      prev.map((req) => (req.id === reqId ? { ...req, [field]: value } : req)),
+    );
   };
 
   const handleSave = async () => {
@@ -182,13 +183,13 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
-        title: "Requirements Updated",
-        description: "Equipment skill requirements have been saved",
+        title: 'Requirements Updated',
+        description: 'Equipment skill requirements have been saved',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save requirements');
@@ -209,7 +210,7 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
             Equipment Skill Requirements
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-y-auto">
           {/* Tab Navigation */}
           <div className="flex border-b border-gray-200 mb-6">
@@ -298,9 +299,17 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
               ) : (
                 <div className="space-y-3">
                   {equipmentRequirements.map((req) => (
-                    <div key={req.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div
+                      key={req.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
-                        <Badge variant="outline" className={req.required ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'}>
+                        <Badge
+                          variant="outline"
+                          className={
+                            req.required ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'
+                          }
+                        >
                           {req.required ? 'Required' : 'Recommended'}
                         </Badge>
                         <div>
@@ -328,7 +337,12 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="skill">Skill</Label>
-                    <Select value={newRequirement.skillId} onValueChange={(value) => setNewRequirement(prev => ({ ...prev, skillId: value }))}>
+                    <Select
+                      value={newRequirement.skillId}
+                      onValueChange={(value) =>
+                        setNewRequirement((prev) => ({ ...prev, skillId: value }))
+                      }
+                    >
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="Select skill" />
                       </SelectTrigger>
@@ -337,7 +351,9 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                           <SelectItem key={skill.id} value={skill.id}>
                             <div>
                               <div className="font-medium">{skill.name}</div>
-                              <div className="text-sm text-gray-600">{skill.category} - {skill.level}</div>
+                              <div className="text-sm text-gray-600">
+                                {skill.category} - {skill.level}
+                              </div>
                             </div>
                           </SelectItem>
                         ))}
@@ -352,7 +368,9 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                         <input
                           type="radio"
                           checked={newRequirement.required}
-                          onChange={() => setNewRequirement(prev => ({ ...prev, required: true }))}
+                          onChange={() =>
+                            setNewRequirement((prev) => ({ ...prev, required: true }))
+                          }
                           className="text-blue-600"
                         />
                         <span className="text-sm">Required</span>
@@ -361,7 +379,9 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                         <input
                           type="radio"
                           checked={!newRequirement.required}
-                          onChange={() => setNewRequirement(prev => ({ ...prev, required: false }))}
+                          onChange={() =>
+                            setNewRequirement((prev) => ({ ...prev, required: false }))
+                          }
                           className="text-blue-600"
                         />
                         <span className="text-sm">Recommended</span>
@@ -376,7 +396,12 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                         <input
                           type="checkbox"
                           checked={newRequirement.alternative}
-                          onChange={(e) => setNewRequirement(prev => ({ ...prev, alternative: e.target.checked }))}
+                          onChange={(e) =>
+                            setNewRequirement((prev) => ({
+                              ...prev,
+                              alternative: e.target.checked,
+                            }))
+                          }
                           className="rounded"
                         />
                         <span className="text-sm">Alternative option</span>
@@ -403,7 +428,10 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                 ) : (
                   <div className="space-y-3">
                     {equipmentRequirements.map((req) => (
-                      <div key={req.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                      <div
+                        key={req.id}
+                        className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           <div>
                             <div className="font-medium">{req.skillName}</div>
@@ -414,7 +442,13 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                         <div className="flex items-center gap-3">
                           <select
                             value={req.required ? 'required' : 'recommended'}
-                            onChange={(e) => handleUpdateRequirement(req.id, 'required', e.target.value === 'required')}
+                            onChange={(e) =>
+                              handleUpdateRequirement(
+                                req.id,
+                                'required',
+                                e.target.value === 'required',
+                              )
+                            }
                             className="text-sm border border-gray-300 rounded px-2 py-1"
                           >
                             <option value="required">Required</option>
@@ -425,7 +459,9 @@ const SkillRequirementsModal: React.FC<SkillRequirementsModalProps> = ({
                             <input
                               type="checkbox"
                               checked={req.alternative}
-                              onChange={(e) => handleUpdateRequirement(req.id, 'alternative', e.target.checked)}
+                              onChange={(e) =>
+                                handleUpdateRequirement(req.id, 'alternative', e.target.checked)
+                              }
                               className="rounded"
                             />
                             <span className="text-xs">Alt</span>

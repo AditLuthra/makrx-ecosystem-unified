@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Activity,
   CheckCircle,
@@ -26,14 +26,14 @@ import {
   Users,
   UserX,
   XCircle,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface SystemHealth {
-  api_status: "healthy" | "degraded" | "unhealthy";
-  database_status: "healthy" | "degraded" | "unhealthy";
-  redis_status: "healthy" | "degraded" | "unhealthy";
-  storage_status: "healthy" | "degraded" | "unhealthy";
+  api_status: 'healthy' | 'degraded' | 'unhealthy';
+  database_status: 'healthy' | 'degraded' | 'unhealthy';
+  redis_status: 'healthy' | 'degraded' | 'unhealthy';
+  storage_status: 'healthy' | 'degraded' | 'unhealthy';
   response_time_ms: number;
   uptime_hours: number;
   active_users: number;
@@ -42,12 +42,8 @@ interface SystemHealth {
 
 interface SecurityAlert {
   id: string;
-  type:
-    | "failed_login"
-    | "suspicious_activity"
-    | "data_breach"
-    | "unauthorized_access";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'failed_login' | 'suspicious_activity' | 'data_breach' | 'unauthorized_access';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   timestamp: string;
   user_id?: string;
@@ -68,18 +64,16 @@ interface UserActivity {
 }
 
 interface SuperAdminDashboardProps {
-  userRole: "super_admin" | "admin";
+  userRole: 'super_admin' | 'admin';
 }
 
-const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
-  userRole,
-}) => {
-  const [activeTab, setActiveTab] = useState("overview");
+const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ userRole }) => {
+  const [activeTab, setActiveTab] = useState('overview');
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
   const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -94,10 +88,10 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setSystemHealth({
-        api_status: "healthy",
-        database_status: "healthy",
-        redis_status: "degraded",
-        storage_status: "healthy",
+        api_status: 'healthy',
+        database_status: 'healthy',
+        redis_status: 'degraded',
+        storage_status: 'healthy',
         response_time_ms: 145,
         uptime_hours: 168,
         active_users: 1247,
@@ -106,66 +100,62 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
 
       setSecurityAlerts([
         {
-          id: "alert_1",
-          type: "failed_login",
-          severity: "medium",
-          message: "Multiple failed login attempts from IP 192.168.1.100",
-          timestamp: "2024-01-07T10:30:00Z",
-          ip_address: "192.168.1.100",
+          id: 'alert_1',
+          type: 'failed_login',
+          severity: 'medium',
+          message: 'Multiple failed login attempts from IP 192.168.1.100',
+          timestamp: '2024-01-07T10:30:00Z',
+          ip_address: '192.168.1.100',
           resolved: false,
         },
         {
-          id: "alert_2",
-          type: "suspicious_activity",
-          severity: "high",
-          message:
-            "Unusual data access pattern detected for user admin@makrx.store",
-          timestamp: "2024-01-07T09:15:00Z",
-          user_id: "user_123",
+          id: 'alert_2',
+          type: 'suspicious_activity',
+          severity: 'high',
+          message: 'Unusual data access pattern detected for user admin@makrx.store',
+          timestamp: '2024-01-07T09:15:00Z',
+          user_id: 'user_123',
           resolved: false,
         },
       ]);
 
       setUserActivities([
         {
-          id: "activity_1",
-          user_id: "user_123",
-          user_email: "admin@makrx.store",
-          action: "DELETE_PRODUCT",
-          resource: "Product ID: 456",
-          timestamp: "2024-01-07T11:00:00Z",
-          ip_address: "10.0.0.1",
-          user_agent: "Mozilla/5.0...",
+          id: 'activity_1',
+          user_id: 'user_123',
+          user_email: 'admin@makrx.store',
+          action: 'DELETE_PRODUCT',
+          resource: 'Product ID: 456',
+          timestamp: '2024-01-07T11:00:00Z',
+          ip_address: '10.0.0.1',
+          user_agent: 'Mozilla/5.0...',
           success: true,
         },
       ]);
     } catch (error) {
-      console.error("Failed to load super admin data:", error);
+      console.error('Failed to load super admin data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusBadge = (
-    status: string,
-    type: "health" | "severity" = "health"
-  ) => {
-    if (type === "health") {
+  const getStatusBadge = (status: string, type: 'health' | 'severity' = 'health') => {
+    if (type === 'health') {
       const healthConfig = {
         healthy: {
-          variant: "default" as const,
-          label: "Healthy",
-          color: "text-green-600",
+          variant: 'default' as const,
+          label: 'Healthy',
+          color: 'text-green-600',
         },
         degraded: {
-          variant: "secondary" as const,
-          label: "Degraded",
-          color: "text-yellow-600",
+          variant: 'secondary' as const,
+          label: 'Degraded',
+          color: 'text-yellow-600',
         },
         unhealthy: {
-          variant: "destructive" as const,
-          label: "Unhealthy",
-          color: "text-red-600",
+          variant: 'destructive' as const,
+          label: 'Unhealthy',
+          color: 'text-red-600',
         },
       };
       const config = healthConfig[status as keyof typeof healthConfig];
@@ -176,17 +166,17 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
       );
     } else {
       const severityConfig = {
-        low: { variant: "secondary" as const, label: "Low" },
-        medium: { variant: "secondary" as const, label: "Medium" },
-        high: { variant: "destructive" as const, label: "High" },
-        critical: { variant: "destructive" as const, label: "Critical" },
+        low: { variant: 'secondary' as const, label: 'Low' },
+        medium: { variant: 'secondary' as const, label: 'Medium' },
+        high: { variant: 'destructive' as const, label: 'High' },
+        critical: { variant: 'destructive' as const, label: 'Critical' },
       };
       const config = severityConfig[status as keyof typeof severityConfig];
       return <Badge variant={config.variant}>{config.label}</Badge>;
     }
   };
 
-  const isSuperAdmin = userRole === "super_admin";
+  const isSuperAdmin = userRole === 'super_admin';
 
   if (loading) {
     return (
@@ -203,12 +193,12 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              {isSuperAdmin ? "Super Admin Dashboard" : "Admin Dashboard"}
+              {isSuperAdmin ? 'Super Admin Dashboard' : 'Admin Dashboard'}
             </h1>
             <p className="text-gray-600">
               {isSuperAdmin
-                ? "System-wide monitoring and administration"
-                : "Administrative tools and analytics"}
+                ? 'System-wide monitoring and administration'
+                : 'Administrative tools and analytics'}
             </p>
           </div>
           <div className="flex items-center space-x-4">
@@ -232,9 +222,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      API Status
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">API Status</p>
                     {getStatusBadge(systemHealth.api_status)}
                     <p className="text-sm text-gray-500 mt-1">
                       {systemHealth.response_time_ms}ms avg
@@ -249,13 +237,9 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Database
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Database</p>
                     {getStatusBadge(systemHealth.database_status)}
-                    <p className="text-sm text-gray-500 mt-1">
-                      Primary + 2 replicas
-                    </p>
+                    <p className="text-sm text-gray-500 mt-1">Primary + 2 replicas</p>
                   </div>
                   <Database className="h-8 w-8 text-green-600" />
                 </div>
@@ -266,15 +250,9 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Active Users
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {systemHealth.active_users}
-                    </p>
-                    <p className="text-sm text-green-600">
-                      +5.2% from yesterday
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Active Users</p>
+                    <p className="text-2xl font-bold text-gray-900">{systemHealth.active_users}</p>
+                    <p className="text-sm text-green-600">+5.2% from yesterday</p>
                   </div>
                   <Users className="h-8 w-8 text-purple-600" />
                 </div>
@@ -286,9 +264,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Uptime</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {systemHealth.uptime_hours}h
-                    </p>
+                    <p className="text-2xl font-bold text-gray-900">{systemHealth.uptime_hours}h</p>
                     <p className="text-sm text-blue-600">99.8% availability</p>
                   </div>
                   <Monitor className="h-8 w-8 text-orange-600" />
@@ -299,14 +275,8 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         )}
 
         {/* Dashboard Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
-          <TabsList
-            className={`grid w-full ${isSuperAdmin ? "grid-cols-6" : "grid-cols-4"}`}
-          >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className={`grid w-full ${isSuperAdmin ? 'grid-cols-6' : 'grid-cols-4'}`}>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
@@ -340,18 +310,14 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          {getStatusBadge(alert.severity, "severity")}
+                          {getStatusBadge(alert.severity, 'severity')}
                           <span className="text-sm text-gray-500">
                             {new Date(alert.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <p className="font-medium text-gray-900">
-                          {alert.message}
-                        </p>
+                        <p className="font-medium text-gray-900">{alert.message}</p>
                         {alert.ip_address && (
-                          <p className="text-sm text-gray-600">
-                            IP: {alert.ip_address}
-                          </p>
+                          <p className="text-sm text-gray-600">IP: {alert.ip_address}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
@@ -382,23 +348,14 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium">
-                            {activity.user_email}
-                          </span>
-                          <Badge
-                            variant={
-                              activity.success ? "default" : "destructive"
-                            }
-                          >
+                          <span className="font-medium">{activity.user_email}</span>
+                          <Badge variant={activity.success ? 'default' : 'destructive'}>
                             {activity.action}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          {activity.resource}
-                        </p>
+                        <p className="text-sm text-gray-600">{activity.resource}</p>
                         <p className="text-xs text-gray-500">
-                          {new Date(activity.timestamp).toLocaleString()} •{" "}
-                          {activity.ip_address}
+                          {new Date(activity.timestamp).toLocaleString()} • {activity.ip_address}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -450,8 +407,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                     Comprehensive User Management
                   </h3>
                   <p className="text-gray-500">
-                    Advanced user search, role management, and activity
-                    monitoring coming soon...
+                    Advanced user search, role management, and activity monitoring coming soon...
                   </p>
                 </div>
               </CardContent>
@@ -472,9 +428,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Failed Login Rate
-                        </span>
+                        <span className="text-sm font-medium">Failed Login Rate</span>
                         <span className="text-sm text-gray-600">0.8%</span>
                       </div>
                       <Progress value={0.8} className="h-2" />
@@ -482,9 +436,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          2FA Adoption
-                        </span>
+                        <span className="text-sm font-medium">2FA Adoption</span>
                         <span className="text-sm text-gray-600">67%</span>
                       </div>
                       <Progress value={67} className="h-2" />
@@ -492,9 +444,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Session Security
-                        </span>
+                        <span className="text-sm font-medium">Session Security</span>
                         <span className="text-sm text-gray-600">98%</span>
                       </div>
                       <Progress value={98} className="h-2" />
@@ -517,9 +467,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                         <UserCheck className="h-5 w-5 text-blue-600" />
                         <div>
                           <p className="font-medium">Active Sessions</p>
-                          <p className="text-sm text-gray-600">
-                            1,247 users online
-                          </p>
+                          <p className="text-sm text-gray-600">1,247 users online</p>
                         </div>
                       </div>
                       <Button size="sm" variant="outline">
@@ -532,9 +480,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                         <UserX className="h-5 w-5 text-yellow-600" />
                         <div>
                           <p className="font-medium">Suspended Accounts</p>
-                          <p className="text-sm text-gray-600">
-                            3 accounts under review
-                          </p>
+                          <p className="text-sm text-gray-600">3 accounts under review</p>
                         </div>
                       </div>
                       <Button size="sm" variant="outline">
@@ -560,9 +506,9 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          {getStatusBadge(alert.severity, "severity")}
+                          {getStatusBadge(alert.severity, 'severity')}
                           <span className="text-sm font-medium capitalize">
-                            {alert.type.replace("_", " ")}
+                            {alert.type.replace('_', ' ')}
                           </span>
                           <span className="text-sm text-gray-500">
                             {new Date(alert.timestamp).toLocaleString()}
@@ -570,9 +516,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                         </div>
                         <p className="text-gray-900 mb-1">{alert.message}</p>
                         {alert.ip_address && (
-                          <p className="text-sm text-gray-600">
-                            Source IP: {alert.ip_address}
-                          </p>
+                          <p className="text-sm text-gray-600">Source IP: {alert.ip_address}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
@@ -603,12 +547,9 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
               <CardContent>
                 <div className="text-center py-8">
                   <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Content Management
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Content Management</h3>
                   <p className="text-gray-500">
-                    Site-wide content management, announcements, and policy
-                    updates...
+                    Site-wide content management, announcements, and policy updates...
                   </p>
                 </div>
               </CardContent>
@@ -628,9 +569,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                       <div className="space-y-4">
                         <div>
                           <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium">
-                              CPU Usage
-                            </span>
+                            <span className="text-sm font-medium">CPU Usage</span>
                             <span className="text-sm text-gray-600">45%</span>
                           </div>
                           <Progress value={45} className="h-2" />
@@ -638,9 +577,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
 
                         <div>
                           <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium">
-                              Memory Usage
-                            </span>
+                            <span className="text-sm font-medium">Memory Usage</span>
                             <span className="text-sm text-gray-600">67%</span>
                           </div>
                           <Progress value={67} className="h-2" />
@@ -648,9 +585,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
 
                         <div>
                           <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium">
-                              Disk Usage
-                            </span>
+                            <span className="text-sm font-medium">Disk Usage</span>
                             <span className="text-sm text-gray-600">23%</span>
                           </div>
                           <Progress value={23} className="h-2" />
@@ -667,27 +602,19 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                       {systemHealth && (
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              API Gateway
-                            </span>
+                            <span className="text-sm font-medium">API Gateway</span>
                             {getStatusBadge(systemHealth.api_status)}
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              Database
-                            </span>
+                            <span className="text-sm font-medium">Database</span>
                             {getStatusBadge(systemHealth.database_status)}
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              Redis Cache
-                            </span>
+                            <span className="text-sm font-medium">Redis Cache</span>
                             {getStatusBadge(systemHealth.redis_status)}
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              File Storage
-                            </span>
+                            <span className="text-sm font-medium">File Storage</span>
                             {getStatusBadge(systemHealth.storage_status)}
                           </div>
                         </div>
@@ -715,26 +642,17 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                         >
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <Badge
-                                variant={
-                                  activity.success ? "default" : "destructive"
-                                }
-                              >
+                              <Badge variant={activity.success ? 'default' : 'destructive'}>
                                 {activity.action}
                               </Badge>
-                              <span className="text-sm font-medium">
-                                {activity.user_email}
-                              </span>
+                              <span className="text-sm font-medium">{activity.user_email}</span>
                               <span className="text-sm text-gray-500">
                                 {new Date(activity.timestamp).toLocaleString()}
                               </span>
                             </div>
-                            <p className="text-gray-900 mb-1">
-                              {activity.resource}
-                            </p>
+                            <p className="text-gray-900 mb-1">{activity.resource}</p>
                             <p className="text-sm text-gray-600">
-                              IP: {activity.ip_address} •{" "}
-                              {activity.user_agent.substring(0, 50)}...
+                              IP: {activity.ip_address} • {activity.user_agent.substring(0, 50)}...
                             </p>
                           </div>
                           <div className="flex items-center gap-2">

@@ -44,7 +44,7 @@ export class CertificateGenerator {
     // For now, return a mock URL
     const fileName = `certificate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.pdf`;
     const mockUrl = `/certificates/${fileName}`;
-    
+
     // TODO: Implement actual PDF generation
     // const pdf = new jsPDF();
     // pdf.text('Certificate of Achievement', 20, 20);
@@ -52,7 +52,7 @@ export class CertificateGenerator {
     // pdf.text(data.awardName, 20, 60);
     // const pdfBuffer = pdf.output('arraybuffer');
     // Upload to file storage and return URL
-    
+
     return mockUrl;
   }
 }

@@ -13,10 +13,10 @@ export class WebSocketService {
   private clients: Map<string, ClientConnection> = new Map();
 
   constructor(server: Server) {
-    this.wss = new WebSocketServer({ 
-      server, 
+    this.wss = new WebSocketServer({
+      server,
       path: '/ws',
-      perMessageDeflate: false 
+      perMessageDeflate: false,
     });
 
     this.setupWebSocketServer();
@@ -51,11 +51,13 @@ export class WebSocketService {
       });
 
       // Send connection acknowledgment
-      ws.send(JSON.stringify({
-        type: 'connection',
-        status: 'connected',
-        clientId,
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'connection',
+          status: 'connected',
+          clientId,
+        }),
+      );
     });
   }
 
@@ -71,7 +73,7 @@ export class WebSocketService {
       case 'subscribe':
         const channel = message.channel;
         client.subscriptions.add(channel);
-        
+
         // If subscribing to event channel, store eventId
         if (channel.startsWith('event:')) {
           client.eventId = channel.split(':')[1];
@@ -112,10 +114,12 @@ export class WebSocketService {
   broadcastToUser(userId: string, notification: any) {
     this.clients.forEach((client, clientId) => {
       if (client.userId === userId && client.ws.readyState === WebSocket.OPEN) {
-        client.ws.send(JSON.stringify({
-          type: 'notification',
-          data: notification,
-        }));
+        client.ws.send(
+          JSON.stringify({
+            type: 'notification',
+            data: notification,
+          }),
+        );
       }
     });
   }
@@ -137,8 +141,9 @@ export class WebSocketService {
   getStats() {
     return {
       totalConnections: this.clients.size,
-      activeConnections: Array.from(this.clients.values())
-        .filter(client => client.ws.readyState === WebSocket.OPEN).length,
+      activeConnections: Array.from(this.clients.values()).filter(
+        (client) => client.ws.readyState === WebSocket.OPEN,
+      ).length,
     };
   }
 }

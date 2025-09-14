@@ -3,6 +3,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+
 # Enums
 class MemberRole(str, Enum):
     USER = "user"
@@ -10,17 +11,20 @@ class MemberRole(str, Enum):
     ADMIN = "admin"
     MAKERSPACE_ADMIN = "makerspace_admin"
 
+
 class MemberStatus(str, Enum):
     ACTIVE = "active"
     EXPIRED = "expired"
     PENDING = "pending"
     SUSPENDED = "suspended"
 
+
 class InviteStatus(str, Enum):
     PENDING = "pending"
     ACCEPTED = "accepted"
     EXPIRED = "expired"
     CANCELLED = "cancelled"
+
 
 # Base schemas
 class MembershipPlanBase(BaseModel):
@@ -32,8 +36,10 @@ class MembershipPlanBase(BaseModel):
     access_level: Dict[str, Any] = {}
     is_active: bool = True
 
+
 class MembershipPlanCreate(MembershipPlanBase):
     makerspace_id: str
+
 
 class MembershipPlanUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -43,6 +49,7 @@ class MembershipPlanUpdate(BaseModel):
     features: Optional[List[str]] = None
     access_level: Optional[Dict[str, Any]] = None
     is_active: Optional[bool] = None
+
 
 class MembershipPlanResponse(MembershipPlanBase):
     id: str
@@ -54,6 +61,7 @@ class MembershipPlanResponse(MembershipPlanBase):
     class Config:
         from_attributes = True
 
+
 # Member schemas
 class MemberBase(BaseModel):
     email: EmailStr
@@ -64,12 +72,14 @@ class MemberBase(BaseModel):
     skills: List[str] = []
     bio: Optional[str] = None
 
+
 class MemberCreate(MemberBase):
     keycloak_user_id: str
     membership_plan_id: str
     makerspace_id: str
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
+
 
 class MemberUpdate(BaseModel):
     email: Optional[EmailStr] = None
@@ -84,9 +94,11 @@ class MemberUpdate(BaseModel):
     status: Optional[MemberStatus] = None
     notes: Optional[str] = None
 
+
 class MemberSuspend(BaseModel):
     reason: str = Field(..., min_length=1)
     suspended_by: str
+
 
 class MemberResponse(MemberBase):
     id: str
@@ -117,6 +129,7 @@ class MemberResponse(MemberBase):
     class Config:
         from_attributes = True
 
+
 class MemberSummaryResponse(BaseModel):
     id: str
     email: str
@@ -133,6 +146,7 @@ class MemberSummaryResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Member invite schemas
 class MemberInviteBase(BaseModel):
     email: EmailStr
@@ -140,13 +154,16 @@ class MemberInviteBase(BaseModel):
     membership_plan_id: str
     invite_message: Optional[str] = None
 
+
 class MemberInviteCreate(MemberInviteBase):
     makerspace_id: str
     invited_by: str
 
+
 class MemberInviteUpdate(BaseModel):
     status: Optional[InviteStatus] = None
     invite_message: Optional[str] = None
+
 
 class MemberInviteResponse(MemberInviteBase):
     id: str
@@ -167,6 +184,7 @@ class MemberInviteResponse(MemberInviteBase):
     class Config:
         from_attributes = True
 
+
 # Activity log schemas
 class MemberActivityLogCreate(BaseModel):
     member_id: str
@@ -176,6 +194,7 @@ class MemberActivityLogCreate(BaseModel):
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
     session_id: Optional[str] = None
+
 
 class MemberActivityLogResponse(BaseModel):
     id: str
@@ -191,6 +210,7 @@ class MemberActivityLogResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Transaction schemas
 class MembershipTransactionCreate(BaseModel):
     member_id: str
@@ -205,10 +225,12 @@ class MembershipTransactionCreate(BaseModel):
     processed_by: Optional[str] = None
     notes: Optional[str] = None
 
+
 class MembershipTransactionUpdate(BaseModel):
     payment_status: Optional[str] = None
     payment_id: Optional[str] = None
     notes: Optional[str] = None
+
 
 class MembershipTransactionResponse(BaseModel):
     id: str
@@ -230,6 +252,7 @@ class MembershipTransactionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Utility schemas
 class MemberFilter(BaseModel):
     status: Optional[List[MemberStatus]] = None
@@ -239,25 +262,34 @@ class MemberFilter(BaseModel):
     search: Optional[str] = None  # Search in name, email, skills
     is_active: Optional[bool] = None
 
+
 class MemberSort(BaseModel):
     field: str = "created_at"
     direction: str = "desc"
 
-    @validator('field')
+    @validator("field")
     def validate_field(cls, v):
         allowed_fields = [
-            'created_at', 'updated_at', 'join_date', 'last_login',
-            'first_name', 'last_name', 'email', 'status', 'role'
+            "created_at",
+            "updated_at",
+            "join_date",
+            "last_login",
+            "first_name",
+            "last_name",
+            "email",
+            "status",
+            "role",
         ]
         if v not in allowed_fields:
-            raise ValueError(f'Sort field must be one of: {allowed_fields}')
+            raise ValueError(f"Sort field must be one of: {allowed_fields}")
         return v
 
-    @validator('direction')
+    @validator("direction")
     def validate_direction(cls, v):
-        if v.lower() not in ['asc', 'desc']:
+        if v.lower() not in ["asc", "desc"]:
             raise ValueError('Sort direction must be "asc" or "desc"')
         return v.lower()
+
 
 class MemberStatistics(BaseModel):
     total_members: int
@@ -270,15 +302,18 @@ class MemberStatistics(BaseModel):
     new_members_this_month: int
     expiring_soon: int  # Members expiring in next 30 days
 
+
 class BulkMemberOperation(BaseModel):
     member_ids: List[str]
     operation: str  # suspend, activate, change_plan, etc.
     data: Optional[Dict[str, Any]] = {}
 
+
 class MemberImport(BaseModel):
     members: List[MemberCreate]
     send_invites: bool = True
     skip_duplicates: bool = True
+
 
 class MemberExport(BaseModel):
     format: str = "csv"  # csv, xlsx, json

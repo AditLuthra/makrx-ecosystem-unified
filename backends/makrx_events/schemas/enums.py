@@ -36,4 +36,3 @@ class RegistrationStatus(str, Enum):
     pending = "pending"
     cancelled = "cancelled"
     checked_in = "checked_in"
-

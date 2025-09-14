@@ -14,7 +14,7 @@ import {
   LogOut,
   Crown,
   ToggleLeft,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
 
 export default function SuperAdminSidebar() {
@@ -28,38 +28,38 @@ export default function SuperAdminSidebar() {
       name: 'System Overview',
       href: '/portal/dashboard',
       icon: LayoutDashboard,
-      active: isActive('/portal/dashboard')
+      active: isActive('/portal/dashboard'),
     },
     {
       name: 'Makerspaces',
       href: '/portal/makerspaces',
       icon: Building2,
-      active: isActive('/portal/makerspaces')
+      active: isActive('/portal/makerspaces'),
     },
     {
       name: 'Global Users',
       href: '/portal/users',
       icon: Users,
-      active: isActive('/portal/users')
+      active: isActive('/portal/users'),
     },
     {
       name: 'Analytics',
       href: '/portal/analytics',
       icon: BarChart3,
-      active: isActive('/portal/analytics')
+      active: isActive('/portal/analytics'),
     },
     {
       name: 'Billing & Finance',
       href: '/portal/billing',
       icon: DollarSign,
-      active: isActive('/portal/billing')
+      active: isActive('/portal/billing'),
     },
     {
       name: 'Network Status',
       href: '/portal/network',
       icon: Globe,
-      active: isActive('/portal/network')
-    }
+      active: isActive('/portal/network'),
+    },
   ];
 
   const systemNavigation = [
@@ -67,32 +67,32 @@ export default function SuperAdminSidebar() {
       name: 'System Settings',
       href: '/portal/system/settings',
       icon: Settings,
-      active: isActive('/portal/system/settings')
+      active: isActive('/portal/system/settings'),
     },
     {
       name: 'Security & Access',
       href: '/portal/system/security',
       icon: Shield,
-      active: isActive('/portal/system/security')
+      active: isActive('/portal/system/security'),
     },
     {
       name: 'Database Management',
       href: '/portal/system/database',
       icon: Database,
-      active: isActive('/portal/system/database')
+      active: isActive('/portal/system/database'),
     },
     {
       name: 'System Logs',
       href: '/portal/system/logs',
       icon: Activity,
-      active: isActive('/portal/system/logs')
+      active: isActive('/portal/system/logs'),
     },
     {
       name: 'Feature Flags',
       href: '/portal/admin/feature-flags',
       icon: ToggleLeft,
-      active: isActive('/portal/admin/feature-flags')
-    }
+      active: isActive('/portal/admin/feature-flags'),
+    },
   ];
 
   return (

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   CheckCircle,
   Package,
@@ -17,9 +17,9 @@ import {
   Star,
   ArrowRight,
   Share2,
-} from "lucide-react";
-import { api, type Order, formatPrice, formatDateTime } from "@/lib/api";
-import { withAuth } from "@/contexts/AuthContext";
+} from 'lucide-react';
+import { api, type Order, formatPrice, formatDateTime } from '@/lib/api';
+import { withAuth } from '@/contexts/AuthContext';
 
 function OrderConfirmationPage() {
   const params = useParams();
@@ -35,8 +35,8 @@ function OrderConfirmationPage() {
         const orderData = await api.getOrder(parseInt(orderId));
         setOrder(orderData);
       } catch (err) {
-        console.error("Failed to load order:", err);
-        setError("Order not found");
+        console.error('Failed to load order:', err);
+        setError('Order not found');
       } finally {
         setLoading(false);
       }
@@ -56,11 +56,11 @@ function OrderConfirmationPage() {
           url: window.location.href,
         });
       } catch (error) {
-        console.log("Error sharing:", error);
+        console.log('Error sharing:', error);
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert("Order link copied to clipboard!");
+      alert('Order link copied to clipboard!');
     }
   };
 
@@ -78,12 +78,9 @@ function OrderConfirmationPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Order Not Found
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Order Not Found</h1>
               <p className="text-gray-600 mb-6">
-                The order you're looking for doesn't exist or you don't have
-                permission to view it.
+                The order you're looking for doesn't exist or you don't have permission to view it.
               </p>
               <Link
                 href="/account/orders"
@@ -100,32 +97,32 @@ function OrderConfirmationPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "text-yellow-600 bg-yellow-100";
-      case "processing":
-        return "text-blue-600 bg-blue-100";
-      case "shipped":
-        return "text-purple-600 bg-purple-100";
-      case "delivered":
-        return "text-green-600 bg-green-100";
-      case "cancelled":
-        return "text-red-600 bg-red-100";
+      case 'pending':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'processing':
+        return 'text-blue-600 bg-blue-100';
+      case 'shipped':
+        return 'text-purple-600 bg-purple-100';
+      case 'delivered':
+        return 'text-green-600 bg-green-100';
+      case 'cancelled':
+        return 'text-red-600 bg-red-100';
       default:
-        return "text-gray-600 bg-gray-100";
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pending":
+      case 'pending':
         return <Package className="h-5 w-5" />;
-      case "processing":
+      case 'processing':
         return <Package className="h-5 w-5" />;
-      case "shipped":
+      case 'shipped':
         return <Truck className="h-5 w-5" />;
-      case "delivered":
+      case 'delivered':
         return <CheckCircle className="h-5 w-5" />;
-      case "cancelled":
+      case 'cancelled':
         return <Package className="h-5 w-5" />;
       default:
         return <Package className="h-5 w-5" />;
@@ -134,33 +131,31 @@ function OrderConfirmationPage() {
 
   const orderTimeline = [
     {
-      status: "Order Placed",
+      status: 'Order Placed',
       date: order.created_at,
       completed: true,
-      description: "Your order has been received and is being processed",
+      description: 'Your order has been received and is being processed',
     },
     {
-      status: "Processing",
+      status: 'Processing',
       date:
-        order.status === "processing" ||
-        order.status === "shipped" ||
-        order.status === "delivered"
+        order.status === 'processing' || order.status === 'shipped' || order.status === 'delivered'
           ? order.updated_at
           : null,
-      completed: ["processing", "shipped", "delivered"].includes(order.status),
-      description: "Your order is being prepared for shipment",
+      completed: ['processing', 'shipped', 'delivered'].includes(order.status),
+      description: 'Your order is being prepared for shipment',
     },
     {
-      status: "Shipped",
+      status: 'Shipped',
       date: order.shipped_at,
-      completed: ["shipped", "delivered"].includes(order.status),
-      description: "Your order has been shipped and is on its way",
+      completed: ['shipped', 'delivered'].includes(order.status),
+      description: 'Your order has been shipped and is on its way',
     },
     {
-      status: "Delivered",
+      status: 'Delivered',
       date: order.delivered_at,
-      completed: order.status === "delivered",
-      description: "Your order has been delivered successfully",
+      completed: order.status === 'delivered',
+      description: 'Your order has been delivered successfully',
     },
   ];
 
@@ -172,25 +167,20 @@ function OrderConfirmationPage() {
           <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Order Confirmed!
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Order Confirmed!</h1>
           <p className="text-lg text-gray-600 mb-2">
-            Thank you for your order. We've received your payment and will begin
-            processing your order soon.
+            Thank you for your order. We've received your payment and will begin processing your
+            order soon.
           </p>
           <p className="text-sm text-gray-500">
-            Order #{order.order_number} • Placed on{" "}
-            {formatDateTime(order.created_at)}
+            Order #{order.order_number} • Placed on {formatDateTime(order.created_at)}
           </p>
         </div>
 
         {/* Order Status */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Order Status
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900">Order Status</h2>
             <div className="flex items-center space-x-4">
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}
@@ -198,10 +188,7 @@ function OrderConfirmationPage() {
                 {getStatusIcon(order.status)}
                 <span className="ml-2 capitalize">{order.status}</span>
               </span>
-              <button
-                onClick={handleShare}
-                className="p-2 text-gray-400 hover:text-gray-600"
-              >
+              <button onClick={handleShare} className="p-2 text-gray-400 hover:text-gray-600">
                 <Share2 className="h-5 w-5" />
               </button>
             </div>
@@ -213,9 +200,7 @@ function OrderConfirmationPage() {
               <div key={index} className="flex items-start">
                 <div
                   className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                    item.completed
-                      ? "bg-green-100 text-green-600"
-                      : "bg-gray-100 text-gray-400"
+                    item.completed ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
                   }`}
                 >
                   {item.completed ? (
@@ -227,19 +212,15 @@ function OrderConfirmationPage() {
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
                     <h3
-                      className={`font-medium ${item.completed ? "text-gray-900" : "text-gray-500"}`}
+                      className={`font-medium ${item.completed ? 'text-gray-900' : 'text-gray-500'}`}
                     >
                       {item.status}
                     </h3>
                     {item.date && (
-                      <span className="text-sm text-gray-500">
-                        {formatDateTime(item.date)}
-                      </span>
+                      <span className="text-sm text-gray-500">{formatDateTime(item.date)}</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -261,9 +242,7 @@ function OrderConfirmationPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Order Items */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Order Items
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Items</h2>
             <div className="space-y-4">
               {order.items.map((item) => (
                 <div key={item.id} className="flex items-center">
@@ -279,12 +258,8 @@ function OrderConfirmationPage() {
                     )}
                   </div>
                   <div className="ml-4 flex-1">
-                    <h3 className="font-medium text-gray-900">
-                      {item.product_name}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Quantity: {item.quantity}
-                    </p>
+                    <h3 className="font-medium text-gray-900">{item.product_name}</h3>
+                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                   </div>
                   <p className="font-medium text-gray-900">
                     {formatPrice(item.total_price, order.currency)}
@@ -302,16 +277,14 @@ function OrderConfirmationPage() {
               {order.discount_amount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Discount</span>
-                  <span>
-                    -{formatPrice(order.discount_amount, order.currency)}
-                  </span>
+                  <span>-{formatPrice(order.discount_amount, order.currency)}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-gray-600">Shipping</span>
                 <span>
                   {order.shipping_amount === 0
-                    ? "FREE"
+                    ? 'FREE'
                     : formatPrice(order.shipping_amount, order.currency)}
                 </span>
               </div>
@@ -330,31 +303,20 @@ function OrderConfirmationPage() {
           <div className="space-y-6">
             {/* Shipping Address */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Shipping Address
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Shipping Address</h2>
               <div className="flex items-start">
                 <MapPin className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
                 <div>
-                  <p className="font-medium text-gray-900">
-                    {order.addresses.shipping.name}
-                  </p>
-                  <p className="text-gray-600">
-                    {order.addresses.shipping.line1}
-                  </p>
+                  <p className="font-medium text-gray-900">{order.addresses.shipping.name}</p>
+                  <p className="text-gray-600">{order.addresses.shipping.line1}</p>
                   {order.addresses.shipping.line2 && (
-                    <p className="text-gray-600">
-                      {order.addresses.shipping.line2}
-                    </p>
+                    <p className="text-gray-600">{order.addresses.shipping.line2}</p>
                   )}
                   <p className="text-gray-600">
-                    {order.addresses.shipping.city},{" "}
-                    {order.addresses.shipping.state}{" "}
+                    {order.addresses.shipping.city}, {order.addresses.shipping.state}{' '}
                     {order.addresses.shipping.postal_code}
                   </p>
-                  <p className="text-gray-600">
-                    {order.addresses.shipping.country}
-                  </p>
+                  <p className="text-gray-600">{order.addresses.shipping.country}</p>
                   {order.addresses.shipping.phone && (
                     <p className="text-gray-600 mt-2 flex items-center">
                       <Phone className="h-4 w-4 mr-1" />
@@ -367,47 +329,37 @@ function OrderConfirmationPage() {
 
             {/* Payment Info */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Payment Information
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Information</h2>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <CreditCard className="h-5 w-5 text-gray-400 mr-3" />
                   <div>
                     <p className="font-medium text-gray-900 capitalize">
-                      {order.payment_method || "Credit Card"}
+                      {order.payment_method || 'Credit Card'}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      Payment Status: {order.payment_status}
-                    </p>
+                    <p className="text-sm text-gray-600">Payment Status: {order.payment_status}</p>
                   </div>
                 </div>
                 {order.payment_id && (
-                  <p className="text-sm text-gray-500">
-                    Payment ID: {order.payment_id}
-                  </p>
+                  <p className="text-sm text-gray-500">Payment ID: {order.payment_id}</p>
                 )}
               </div>
             </div>
 
             {/* Estimated Delivery */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Estimated Delivery
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Estimated Delivery</h2>
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-gray-400 mr-3" />
                 <div>
                   <p className="font-medium text-gray-900">
-                    {order.shipping_method === "express"
-                      ? "2-3 business days"
-                      : order.shipping_method === "overnight"
-                        ? "Next business day"
-                        : "5-7 business days"}
+                    {order.shipping_method === 'express'
+                      ? '2-3 business days'
+                      : order.shipping_method === 'overnight'
+                        ? 'Next business day'
+                        : '5-7 business days'}
                   </p>
-                  <p className="text-sm text-gray-600">
-                    From order processing date
-                  </p>
+                  <p className="text-sm text-gray-600">From order processing date</p>
                 </div>
               </div>
             </div>
@@ -419,17 +371,14 @@ function OrderConfirmationPage() {
           <div className="flex items-start">
             <Mail className="h-6 w-6 text-blue-600 mt-0.5 mr-3" />
             <div>
-              <h3 className="font-medium text-blue-900 mb-2">
-                Confirmation Email Sent
-              </h3>
+              <h3 className="font-medium text-blue-900 mb-2">Confirmation Email Sent</h3>
               <p className="text-blue-800 text-sm mb-3">
-                We've sent a confirmation email to{" "}
-                <strong>{order.email}</strong> with your order details and
-                tracking information.
+                We've sent a confirmation email to <strong>{order.email}</strong> with your order
+                details and tracking information.
               </p>
               <p className="text-blue-700 text-sm">
-                Can't find the email? Check your spam folder or contact our
-                support team for assistance.
+                Can't find the email? Check your spam folder or contact our support team for
+                assistance.
               </p>
             </div>
           </div>
@@ -437,20 +386,15 @@ function OrderConfirmationPage() {
 
         {/* Next Steps */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            What's Next?
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">What's Next?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Package className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="font-medium text-gray-900 mb-2">
-                We'll Process Your Order
-              </h3>
+              <h3 className="font-medium text-gray-900 mb-2">We'll Process Your Order</h3>
               <p className="text-sm text-gray-600">
-                Your order will be processed and prepared for shipment within
-                1-2 business days.
+                Your order will be processed and prepared for shipment within 1-2 business days.
               </p>
             </div>
 
@@ -458,12 +402,9 @@ function OrderConfirmationPage() {
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Truck className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="font-medium text-gray-900 mb-2">
-                Track Your Package
-              </h3>
+              <h3 className="font-medium text-gray-900 mb-2">Track Your Package</h3>
               <p className="text-sm text-gray-600">
-                Once shipped, you'll receive tracking information to monitor
-                your delivery.
+                Once shipped, you'll receive tracking information to monitor your delivery.
               </p>
             </div>
 

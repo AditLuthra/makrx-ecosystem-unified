@@ -1,4 +1,4 @@
-"use client";
+'use client';
 // ERROR LOGS DASHBOARD PAGE
 // Administrative dashboard for viewing and managing system error logs
 import { useState, useEffect } from 'react';
@@ -6,20 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { 
-  AlertTriangle, 
-  Bug, 
-  Activity, 
-  Filter, 
-  Download, 
-  Trash2, 
+import {
+  AlertTriangle,
+  Bug,
+  Activity,
+  Filter,
+  Download,
+  Trash2,
   RefreshCw,
   Clock,
   User,
   Globe,
   Server,
   Smartphone,
-  Eye
+  Eye,
 } from 'lucide-react';
 import loggingService, { LogEntry } from '../../services/loggingService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -52,31 +52,41 @@ function ErrorLogsContent() {
 
   const loadLogs = async () => {
     setIsLoading(true);
-    
+
     try {
-      loggingService.info('ui', 'ErrorLogsPage.loadLogs', 'Loading error logs for admin dashboard', {
-        userId: user?.id,
-        userRole: user?.role
-      });
+      loggingService.info(
+        'ui',
+        'ErrorLogsPage.loadLogs',
+        'Loading error logs for admin dashboard',
+        {
+          userId: user?.id,
+          userRole: user?.role,
+        },
+      );
 
       const allLogs = loggingService.getLogs();
       const logStats = loggingService.getLogStats();
-      
+
       setLogs(allLogs);
       setStats(logStats);
-      
+
       // Apply current filters
       applyFilters(allLogs, selectedLevel, selectedCategory);
-      
+
       loggingService.info('ui', 'ErrorLogsPage.loadLogs', 'Error logs loaded successfully', {
         totalLogs: allLogs.length,
-        errorCount: logStats.errorCount24h
+        errorCount: logStats.errorCount24h,
       });
-      
     } catch (error) {
-      loggingService.error('ui', 'ErrorLogsPage.loadLogs', 'Failed to load error logs', {
-        error: (error as Error).message
-      }, (error as Error).stack);
+      loggingService.error(
+        'ui',
+        'ErrorLogsPage.loadLogs',
+        'Failed to load error logs',
+        {
+          error: (error as Error).message,
+        },
+        (error as Error).stack,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -86,20 +96,20 @@ function ErrorLogsContent() {
     let filtered = [...logList];
 
     if (level !== 'all') {
-      filtered = filtered.filter(log => log.level === level);
+      filtered = filtered.filter((log) => log.level === level);
     }
 
     if (category !== 'all') {
-      filtered = filtered.filter(log => log.category === category);
+      filtered = filtered.filter((log) => log.category === category);
     }
 
     setFilteredLogs(filtered);
-    
+
     loggingService.debug('ui', 'ErrorLogsPage.applyFilters', 'Applied log filters', {
       level,
       category,
       originalCount: logList.length,
-      filteredCount: filtered.length
+      filteredCount: filtered.length,
     });
   };
 
@@ -120,9 +130,9 @@ function ErrorLogsContent() {
   const handleClearLogs = () => {
     loggingService.info('ui', 'ErrorLogsPage.handleClearLogs', 'Admin cleared all logs', {
       userId: user?.id,
-      logsCleared: logs.length
+      logsCleared: logs.length,
     });
-    
+
     loggingService.clearLogs();
     loadLogs();
   };
@@ -141,7 +151,7 @@ function ErrorLogsContent() {
 
     loggingService.info('ui', 'ErrorLogsPage.handleExportLogs', 'Admin exported logs', {
       userId: user?.id,
-      logsExported: logs.length
+      logsExported: logs.length,
     });
   };
 
@@ -151,33 +161,50 @@ function ErrorLogsContent() {
 
   const getLevelIcon = (level: LogEntry['level']) => {
     switch (level) {
-      case 'critical': return <AlertTriangle className="w-4 h-4 text-red-600" />;
-      case 'error': return <Bug className="w-4 h-4 text-red-500" />;
-      case 'warn': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      case 'info': return <Activity className="w-4 h-4 text-blue-500" />;
-      case 'debug': return <Eye className="w-4 h-4 text-gray-500" />;
-      default: return <Activity className="w-4 h-4" />;
+      case 'critical':
+        return <AlertTriangle className="w-4 h-4 text-red-600" />;
+      case 'error':
+        return <Bug className="w-4 h-4 text-red-500" />;
+      case 'warn':
+        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+      case 'info':
+        return <Activity className="w-4 h-4 text-blue-500" />;
+      case 'debug':
+        return <Eye className="w-4 h-4 text-gray-500" />;
+      default:
+        return <Activity className="w-4 h-4" />;
     }
   };
 
   const getLevelBadgeVariant = (level: LogEntry['level']) => {
     switch (level) {
-      case 'critical': return 'destructive' as const;
-      case 'error': return 'destructive' as const;
-      case 'warn': return 'secondary' as const;
-      case 'info': return 'default' as const;
-      case 'debug': return 'outline' as const;
-      default: return 'outline' as const;
+      case 'critical':
+        return 'destructive' as const;
+      case 'error':
+        return 'destructive' as const;
+      case 'warn':
+        return 'secondary' as const;
+      case 'info':
+        return 'default' as const;
+      case 'debug':
+        return 'outline' as const;
+      default:
+        return 'outline' as const;
     }
   };
 
   const getCategoryIcon = (category: LogEntry['category']) => {
     switch (category) {
-      case 'auth': return <User className="w-4 h-4" />;
-      case 'api': return <Server className="w-4 h-4" />;
-      case 'ui': return <Smartphone className="w-4 h-4" />;
-      case 'system': return <Globe className="w-4 h-4" />;
-      default: return <Activity className="w-4 h-4" />;
+      case 'auth':
+        return <User className="w-4 h-4" />;
+      case 'api':
+        return <Server className="w-4 h-4" />;
+      case 'ui':
+        return <Smartphone className="w-4 h-4" />;
+      case 'system':
+        return <Globe className="w-4 h-4" />;
+      default:
+        return <Activity className="w-4 h-4" />;
     }
   };
 
@@ -216,9 +243,7 @@ function ErrorLogsContent() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Critical Issues</p>
-              <p className="text-2xl font-bold text-red-700">
-                {stats?.byLevel?.critical || 0}
-              </p>
+              <p className="text-2xl font-bold text-red-700">{stats?.byLevel?.critical || 0}</p>
             </div>
             <AlertTriangle className="w-8 h-8 text-red-600" />
           </div>
@@ -231,10 +256,9 @@ function ErrorLogsContent() {
             <div>
               <p className="text-sm text-muted-foreground">Last Error</p>
               <p className="text-sm font-medium">
-                {stats?.lastError ? 
-                  new Date(stats.lastError.timestamp).toLocaleTimeString() : 
-                  'None'
-                }
+                {stats?.lastError
+                  ? new Date(stats.lastError.timestamp).toLocaleTimeString()
+                  : 'None'}
               </p>
             </div>
             <Clock className="w-8 h-8 text-gray-500" />
@@ -256,8 +280,8 @@ function ErrorLogsContent() {
         <div className="flex flex-wrap gap-4">
           <div>
             <label className="text-sm font-medium">Level</label>
-            <select 
-              value={selectedLevel} 
+            <select
+              value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
               className="ml-2 px-3 py-1 border rounded-md"
             >
@@ -272,8 +296,8 @@ function ErrorLogsContent() {
 
           <div>
             <label className="text-sm font-medium">Category</label>
-            <select 
-              value={selectedCategory} 
+            <select
+              value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="ml-2 px-3 py-1 border rounded-md"
             >
@@ -310,9 +334,7 @@ function ErrorLogsContent() {
   const renderLogsList = () => (
     <Card>
       <CardHeader>
-        <CardTitle>
-          Error Logs ({filteredLogs.length})
-        </CardTitle>
+        <CardTitle>Error Logs ({filteredLogs.length})</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -334,9 +356,7 @@ function ErrorLogsContent() {
                     {getLevelIcon(log.level)}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <Badge variant={getLevelBadgeVariant(log.level)}>
-                          {log.level}
-                        </Badge>
+                        <Badge variant={getLevelBadgeVariant(log.level)}>{log.level}</Badge>
                         <Badge variant="outline">
                           {getCategoryIcon(log.category)}
                           <span className="ml-1">{log.category}</span>
@@ -357,7 +377,7 @@ function ErrorLogsContent() {
     </Card>
   );
 
-  const renderLogDetail = () => (
+  const renderLogDetail = () =>
     selectedLog && (
       <Card>
         <CardHeader>
@@ -432,8 +452,7 @@ function ErrorLogsContent() {
           </div>
         </CardContent>
       </Card>
-    )
-  );
+    );
 
   // ========================================
   // MAIN RENDER
@@ -445,9 +464,7 @@ function ErrorLogsContent() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Error Logs</h1>
-          <p className="text-muted-foreground">
-            Monitor and analyze system errors and logs
-          </p>
+          <p className="text-muted-foreground">Monitor and analyze system errors and logs</p>
         </div>
       </div>
 
@@ -469,7 +486,9 @@ function ErrorLogsContent() {
         </TabsContent>
 
         <TabsContent value="details" className="space-y-4">
-          {selectedLog ? renderLogDetail() : (
+          {selectedLog ? (
+            renderLogDetail()
+          ) : (
             <Card>
               <CardContent className="p-8 text-center text-muted-foreground">
                 Select a log entry to view details

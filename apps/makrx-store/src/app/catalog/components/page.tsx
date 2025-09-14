@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Grid, List, Filter } from "lucide-react";
-import { api, type Product } from "@/lib/api";
-import ProductGrid from "@/components/ProductGrid";
-import EnhancedCategoryFilters, { useFiltersToggle } from "@/components/EnhancedCategoryFilters";
-import SortSelect from "@/components/SortSelect";
-import { getAllFiltersForCategory } from "@/data/categoryFilters";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, Grid, List, Filter } from 'lucide-react';
+import { api, type Product } from '@/lib/api';
+import ProductGrid from '@/components/ProductGrid';
+import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
+import SortSelect from '@/components/SortSelect';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
 
 export default function ComponentsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("featured");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -25,14 +25,14 @@ export default function ComponentsPage() {
       try {
         setLoading(true);
         const productsData = await api.getProducts({
-          category: "components",
+          category: 'components',
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
       } catch (err) {
-        console.error("Failed to load components:", err);
-        setError("Failed to load products");
+        console.error('Failed to load components:', err);
+        setError('Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -67,8 +67,8 @@ export default function ComponentsPage() {
             Mechanical Components
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
-            Mechanical parts, fasteners, and building components for construction, assembly, and manufacturing.
-            From basic screws and bolts to specialized bearings and motors.
+            Mechanical parts, fasteners, and building components for construction, assembly, and
+            manufacturing. From basic screws and bolts to specialized bearings and motors.
           </p>
         </div>
 
@@ -111,30 +111,30 @@ export default function ComponentsPage() {
               <span>Filters</span>
             </button>
             <p className="text-gray-600 dark:text-gray-400">
-              {loading ? "Loading..." : `${products.length} products found`}
+              {loading ? 'Loading...' : `${products.length} products found`}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
-            
+
             <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
               <button
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={`p-2 ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <Grid className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={`p-2 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -145,7 +145,9 @@ export default function ComponentsPage() {
 
         <div className="flex gap-8">
           {/* Filters Sidebar */}
-          <div className={`${isFiltersOpen ? "block" : "hidden"} lg:block w-full lg:w-80 flex-shrink-0`}>
+          <div
+            className={`${isFiltersOpen ? 'block' : 'hidden'} lg:block w-full lg:w-80 flex-shrink-0`}
+          >
             <EnhancedCategoryFilters
               category="components"
               onFiltersChange={handleFilterChange}
@@ -167,11 +169,7 @@ export default function ComponentsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid 
-                products={products} 
-                loading={loading} 
-                viewMode={viewMode}
-              />
+              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
             )}
           </div>
         </div>
@@ -187,10 +185,18 @@ export default function ComponentsPage() {
                 Essential Components
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Fasteners:</strong> Metric and imperial bolts, screws, nuts, washers</li>
-                <li>• <strong>Bearings:</strong> Ball bearings, roller bearings, linear bearings</li>
-                <li>• <strong>Motion:</strong> Lead screws, pulleys, belts, gears, couplings</li>
-                <li>• <strong>Structure:</strong> Aluminum extrusions, brackets, plates, shafts</li>
+                <li>
+                  • <strong>Fasteners:</strong> Metric and imperial bolts, screws, nuts, washers
+                </li>
+                <li>
+                  • <strong>Bearings:</strong> Ball bearings, roller bearings, linear bearings
+                </li>
+                <li>
+                  • <strong>Motion:</strong> Lead screws, pulleys, belts, gears, couplings
+                </li>
+                <li>
+                  • <strong>Structure:</strong> Aluminum extrusions, brackets, plates, shafts
+                </li>
               </ul>
             </div>
             <div>
@@ -198,10 +204,18 @@ export default function ComponentsPage() {
                 Quality Standards
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Precision:</strong> CNC machined components with tight tolerances</li>
-                <li>• <strong>Materials:</strong> High-grade steel, aluminum, and engineered plastics</li>
-                <li>• <strong>Standards:</strong> DIN, ISO, and ANSI compliant fasteners</li>
-                <li>• <strong>Compatibility:</strong> Designed for maker and industrial applications</li>
+                <li>
+                  • <strong>Precision:</strong> CNC machined components with tight tolerances
+                </li>
+                <li>
+                  • <strong>Materials:</strong> High-grade steel, aluminum, and engineered plastics
+                </li>
+                <li>
+                  • <strong>Standards:</strong> DIN, ISO, and ANSI compliant fasteners
+                </li>
+                <li>
+                  • <strong>Compatibility:</strong> Designed for maker and industrial applications
+                </li>
               </ul>
             </div>
           </div>

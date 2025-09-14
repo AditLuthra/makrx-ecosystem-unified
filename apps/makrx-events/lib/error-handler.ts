@@ -6,7 +6,12 @@ export class AppError extends Error {
   public isOperational: boolean;
   public code?: string;
 
-  constructor(message: string, statusCode: number = 500, isOperational: boolean = true, code?: string) {
+  constructor(
+    message: string,
+    statusCode: number = 500,
+    isOperational: boolean = true,
+    code?: string,
+  ) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
@@ -65,13 +70,13 @@ export function handleApiError(error: unknown): NextResponse {
       {
         error: 'Validation failed',
         code: 'VALIDATION_ERROR',
-        details: error.errors.map(err => ({
+        details: error.errors.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
           code: err.code,
         })),
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -82,7 +87,7 @@ export function handleApiError(error: unknown): NextResponse {
         code: error.code,
         ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 
@@ -93,22 +98,23 @@ export function handleApiError(error: unknown): NextResponse {
         error: 'Resource already exists',
         code: 'DUPLICATE_RESOURCE',
       },
-      { status: 409 }
+      { status: 409 },
     );
   }
 
   // Network errors
-  if (error instanceof Error && (
-    error.message.includes('ECONNREFUSED') ||
-    error.message.includes('ETIMEDOUT') ||
-    error.message.includes('Network')
-  )) {
+  if (
+    error instanceof Error &&
+    (error.message.includes('ECONNREFUSED') ||
+      error.message.includes('ETIMEDOUT') ||
+      error.message.includes('Network'))
+  ) {
     return NextResponse.json(
       {
         error: 'Service temporarily unavailable',
         code: 'SERVICE_UNAVAILABLE',
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 
@@ -122,14 +128,12 @@ export function handleApiError(error: unknown): NextResponse {
         stack: error instanceof Error ? error.stack : undefined,
       }),
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
 // Async error wrapper for API routes
-export function asyncHandler(
-  handler: (req: any, context?: any) => Promise<NextResponse>
-) {
+export function asyncHandler(handler: (req: any, context?: any) => Promise<NextResponse>) {
   return async (req: any, context?: any): Promise<NextResponse> => {
     try {
       return await handler(req, context);
@@ -145,7 +149,7 @@ const requestCounts = new Map<string, { count: number; resetTime: number }>();
 export function rateLimit(
   identifier: string,
   limit: number = 100,
-  windowMs: number = 15 * 60 * 1000 // 15 minutes
+  windowMs: number = 15 * 60 * 1000, // 15 minutes
 ): { allowed: boolean; remaining: number; resetTime: number } {
   const now = Date.now();
   const record = requestCounts.get(identifier);

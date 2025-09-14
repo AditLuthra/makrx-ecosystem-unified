@@ -3,8 +3,8 @@
 import { useComprehensivePerformanceMonitoring } from '../hooks/usePerformance';
 
 export default function PerformanceMonitor() {
-    useComprehensivePerformanceMonitoring();
+  useComprehensivePerformanceMonitoring();
 
-    // This component doesn't render anything, it just sets up monitoring
-    return null;
+  // This component doesn't render anything, it just sets up monitoring
+  return null;
 }

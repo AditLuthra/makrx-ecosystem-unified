@@ -1,40 +1,40 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+} from '@/components/ui/select';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   LineChart,
   Line,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
-import { 
-  TrendingUp, 
-  Users, 
-  Calendar, 
+import {
+  TrendingUp,
+  Users,
+  Calendar,
   DollarSign,
   Activity,
   MapPin,
   Trophy,
-  Download
+  Download,
 } from 'lucide-react';
 
 interface PlatformAnalytics {
@@ -53,23 +53,23 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function PlatformAnalytics() {
   const [timeRange, setTimeRange] = useState('6m');
-  
+
   const { data: analytics, isLoading } = useQuery<PlatformAnalytics>({
     queryKey: ['/api/admin/analytics', { timeRange }],
   });
 
   const handleExportData = () => {
     if (!analytics) return;
-    
+
     const csvData = [
       ['Metric', 'Value'],
       ['Total Users', analytics.totalUsers],
-      ['Total Events', analytics.totalEvents], 
+      ['Total Events', analytics.totalEvents],
       ['Total Registrations', analytics.totalRegistrations],
       ['Total Revenue', `$${analytics.totalRevenue}`],
     ];
 
-    const csv = csvData.map(row => row.join(',')).join('\n');
+    const csv = csvData.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -90,9 +90,7 @@ export default function PlatformAnalytics() {
   if (!analytics) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center py-8 text-muted-foreground">
-          Failed to load analytics data
-        </div>
+        <div className="text-center py-8 text-muted-foreground">Failed to load analytics data</div>
       </div>
     );
   }
@@ -137,13 +135,11 @@ export default function PlatformAnalytics() {
             <div className="text-2xl font-bold">{analytics.totalUsers.toLocaleString()}</div>
             <div className="flex items-center mt-2">
               <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              <p className="text-xs text-green-600">
-                +12% from last month
-              </p>
+              <p className="text-xs text-green-600">+12% from last month</p>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Events</CardTitle>
@@ -153,9 +149,7 @@ export default function PlatformAnalytics() {
             <div className="text-2xl font-bold">{analytics.totalEvents.toLocaleString()}</div>
             <div className="flex items-center mt-2">
               <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              <p className="text-xs text-green-600">
-                +8% from last month
-              </p>
+              <p className="text-xs text-green-600">+8% from last month</p>
             </div>
           </CardContent>
         </Card>
@@ -166,12 +160,12 @@ export default function PlatformAnalytics() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics.totalRegistrations.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {analytics.totalRegistrations.toLocaleString()}
+            </div>
             <div className="flex items-center mt-2">
               <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              <p className="text-xs text-green-600">
-                +24% from last month
-              </p>
+              <p className="text-xs text-green-600">+24% from last month</p>
             </div>
           </CardContent>
         </Card>
@@ -185,9 +179,7 @@ export default function PlatformAnalytics() {
             <div className="text-2xl font-bold">${analytics.totalRevenue.toLocaleString()}</div>
             <div className="flex items-center mt-2">
               <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              <p className="text-xs text-green-600">
-                +18% from last month
-              </p>
+              <p className="text-xs text-green-600">+18% from last month</p>
             </div>
           </CardContent>
         </Card>
@@ -207,17 +199,17 @@ export default function PlatformAnalytics() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="users" 
-                  stroke="#8884d8" 
+                <Line
+                  type="monotone"
+                  dataKey="users"
+                  stroke="#8884d8"
                   name="Users"
                   strokeWidth={2}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="events" 
-                  stroke="#82ca9d" 
+                <Line
+                  type="monotone"
+                  dataKey="events"
+                  stroke="#82ca9d"
                   name="Events"
                   strokeWidth={2}
                 />
@@ -280,7 +272,10 @@ export default function PlatformAnalytics() {
         <CardContent>
           <div className="space-y-4">
             {analytics.topLocations.map((location, index) => (
-              <div key={location.location} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={location.location}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-medium">
                     {index + 1}

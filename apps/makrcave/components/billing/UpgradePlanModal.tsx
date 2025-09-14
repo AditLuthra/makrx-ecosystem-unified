@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import {
-  X,
-  Crown,
-  Check,
-  Star,
-  Zap,
-  Shield,
-  Users,
-  Clock
-} from 'lucide-react';
+import { X, Crown, Check, Star, Zap, Shield, Users, Clock } from 'lucide-react';
 
 interface Plan {
   id: string;
@@ -34,7 +25,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
   isOpen,
   onClose,
   currentPlan,
-  onUpgrade
+  onUpgrade,
 }) => {
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
@@ -52,8 +43,8 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
         '20 Hours/Month',
         'Basic Support',
         'Community Access',
-        '1GB Storage'
-      ]
+        '1GB Storage',
+      ],
     },
     {
       id: 'professional',
@@ -70,8 +61,8 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
         'Advanced Analytics',
         '10GB Storage',
         'API Access',
-        'Equipment Reservations'
-      ]
+        'Equipment Reservations',
+      ],
     },
     {
       id: 'team',
@@ -88,9 +79,9 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
         'Advanced Integrations',
         'Custom Branding',
         'Dedicated Support',
-        'Multi-location Access'
-      ]
-    }
+        'Multi-location Access',
+      ],
+    },
   ];
 
   const handlePlanSelect = (planId: string) => {
@@ -98,14 +89,14 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
   };
 
   const handleUpgrade = () => {
-    const plan = plans.find(p => p.id === selectedPlan);
+    const plan = plans.find((p) => p.id === selectedPlan);
     if (plan) {
       onUpgrade({
         planId: plan.id,
         planName: plan.name,
         price: plan.price,
         currency: plan.currency,
-        period: billingPeriod
+        period: billingPeriod,
       });
     }
   };
@@ -124,10 +115,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
             </h2>
             <p className="text-gray-600">Choose the perfect plan for your needs</p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -145,18 +133,18 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
                   billingPeriod === 'annual' ? 'bg-blue-600' : 'bg-gray-300'
                 }`}
               >
-                <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                  billingPeriod === 'annual' ? 'translate-x-6' : 'translate-x-0.5'
-                }`} />
+                <div
+                  className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                    billingPeriod === 'annual' ? 'translate-x-6' : 'translate-x-0.5'
+                  }`}
+                />
               </button>
             </div>
             <span className={billingPeriod === 'annual' ? 'font-semibold' : 'text-gray-600'}>
               Annual
             </span>
             {billingPeriod === 'annual' && (
-              <Badge className="bg-green-100 text-green-800">
-                Save 20%
-              </Badge>
+              <Badge className="bg-green-100 text-green-800">Save 20%</Badge>
             )}
           </div>
         </div>
@@ -171,10 +159,12 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
                   selectedPlan === plan.id
                     ? 'border-blue-600 bg-blue-50'
                     : plan.popular
-                    ? 'border-yellow-400'
-                    : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-yellow-400'
+                      : 'border-gray-200 hover:border-gray-300'
                 } ${currentPlan.toLowerCase() === plan.name.toLowerCase() ? 'opacity-60' : ''}`}
-                onClick={() => currentPlan.toLowerCase() !== plan.name.toLowerCase() && handlePlanSelect(plan.id)}
+                onClick={() =>
+                  currentPlan.toLowerCase() !== plan.name.toLowerCase() && handlePlanSelect(plan.id)
+                }
               >
                 {/* Popular Badge */}
                 {plan.popular && (
@@ -245,12 +235,18 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleUpgrade}
-              disabled={!selectedPlan || currentPlan.toLowerCase() === plans.find(p => p.id === selectedPlan)?.name.toLowerCase()}
+              disabled={
+                !selectedPlan ||
+                currentPlan.toLowerCase() ===
+                  plans.find((p) => p.id === selectedPlan)?.name.toLowerCase()
+              }
             >
               <Zap className="h-4 w-4 mr-2" />
-              {selectedPlan ? `Upgrade to ${plans.find(p => p.id === selectedPlan)?.name}` : 'Select a Plan'}
+              {selectedPlan
+                ? `Upgrade to ${plans.find((p) => p.id === selectedPlan)?.name}`
+                : 'Select a Plan'}
             </Button>
           </div>
         </div>

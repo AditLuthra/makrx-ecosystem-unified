@@ -29,11 +29,26 @@ from .invites import *
 
 __all__ = [
     # Core models
-    'Member', 'Inventory', 'Equipment', 'Project', 'Billing',
-    # Extended models  
-    'EquipmentReservation', 'Announcement', 'Notification',
-    'Analytics', 'Collaboration', 'FilamentTracking',
-    'JobManagement', 'MachineAccess', 'MakerspaceSettings',
-    'MembershipPlan', 'Skill', 'AccessControl',
-    'EnhancedAnalytics', 'EnhancedBOM', 'EnhancedMember', 'MemberInvite'
+    "Member",
+    "Inventory",
+    "Equipment",
+    "Project",
+    "Billing",
+    # Extended models
+    "EquipmentReservation",
+    "Announcement",
+    "Notification",
+    "Analytics",
+    "Collaboration",
+    "FilamentTracking",
+    "JobManagement",
+    "MachineAccess",
+    "MakerspaceSettings",
+    "MembershipPlan",
+    "Skill",
+    "AccessControl",
+    "EnhancedAnalytics",
+    "EnhancedBOM",
+    "EnhancedMember",
+    "MemberInvite",
 ]

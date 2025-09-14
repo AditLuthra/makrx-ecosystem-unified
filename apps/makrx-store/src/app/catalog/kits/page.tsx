@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Grid, List, Filter } from "lucide-react";
-import { api, type Product } from "@/lib/api";
-import ProductGrid from "@/components/ProductGrid";
-import EnhancedCategoryFilters, { useFiltersToggle } from "@/components/EnhancedCategoryFilters";
-import SortSelect from "@/components/SortSelect";
-import { getAllFiltersForCategory } from "@/data/categoryFilters";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, Grid, List, Filter } from 'lucide-react';
+import { api, type Product } from '@/lib/api';
+import ProductGrid from '@/components/ProductGrid';
+import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
+import SortSelect from '@/components/SortSelect';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
 
 export default function KitsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("featured");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -25,14 +25,14 @@ export default function KitsPage() {
       try {
         setLoading(true);
         const productsData = await api.getProducts({
-          category: "kits",
+          category: 'kits',
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
       } catch (err) {
-        console.error("Failed to load kits:", err);
-        setError("Failed to load products");
+        console.error('Failed to load kits:', err);
+        setError('Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -67,8 +67,8 @@ export default function KitsPage() {
             Kits & Bundles
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
-            Complete project kits, starter bundles, and curated sets for learning, prototyping, 
-            and building. Everything you need in one convenient package.
+            Complete project kits, starter bundles, and curated sets for learning, prototyping, and
+            building. Everything you need in one convenient package.
           </p>
         </div>
 
@@ -79,7 +79,8 @@ export default function KitsPage() {
               Learning Kits
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Educational kits with tutorials, components, and guides for learning electronics, programming, and making.
+              Educational kits with tutorials, components, and guides for learning electronics,
+              programming, and making.
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -87,7 +88,8 @@ export default function KitsPage() {
               Project Kits
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Complete kits for specific projects like robots, IoT devices, instruments, and gadgets.
+              Complete kits for specific projects like robots, IoT devices, instruments, and
+              gadgets.
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -95,7 +97,8 @@ export default function KitsPage() {
               Starter Bundles
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Curated bundles of components, tools, and materials to get started with new technologies.
+              Curated bundles of components, tools, and materials to get started with new
+              technologies.
             </p>
           </div>
         </div>
@@ -111,30 +114,30 @@ export default function KitsPage() {
               <span>Filters</span>
             </button>
             <p className="text-gray-600 dark:text-gray-400">
-              {loading ? "Loading..." : `${products.length} products found`}
+              {loading ? 'Loading...' : `${products.length} products found`}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
-            
+
             <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
               <button
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={`p-2 ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <Grid className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={`p-2 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -145,7 +148,9 @@ export default function KitsPage() {
 
         <div className="flex gap-8">
           {/* Filters Sidebar */}
-          <div className={`${isFiltersOpen ? "block" : "hidden"} lg:block w-full lg:w-80 flex-shrink-0`}>
+          <div
+            className={`${isFiltersOpen ? 'block' : 'hidden'} lg:block w-full lg:w-80 flex-shrink-0`}
+          >
             <EnhancedCategoryFilters
               category="kits"
               onFiltersChange={handleFilterChange}
@@ -167,11 +172,7 @@ export default function KitsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid 
-                products={products} 
-                loading={loading} 
-                viewMode={viewMode}
-              />
+              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
             )}
           </div>
         </div>
@@ -187,10 +188,18 @@ export default function KitsPage() {
                 Popular Kit Categories
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Arduino Kits:</strong> From basic LED circuits to advanced robotics</li>
-                <li>• <strong>Raspberry Pi Kits:</strong> IoT, home automation, and computing projects</li>
-                <li>• <strong>Robotics Kits:</strong> Wheeled, walking, and flying robot platforms</li>
-                <li>• <strong>IoT Kits:</strong> Sensor networks, smart home, and connected devices</li>
+                <li>
+                  • <strong>Arduino Kits:</strong> From basic LED circuits to advanced robotics
+                </li>
+                <li>
+                  • <strong>Raspberry Pi Kits:</strong> IoT, home automation, and computing projects
+                </li>
+                <li>
+                  • <strong>Robotics Kits:</strong> Wheeled, walking, and flying robot platforms
+                </li>
+                <li>
+                  • <strong>IoT Kits:</strong> Sensor networks, smart home, and connected devices
+                </li>
               </ul>
             </div>
             <div>
@@ -198,10 +207,18 @@ export default function KitsPage() {
                 What&apos;s Included
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Components:</strong> All electronic parts and hardware</li>
-                <li>• <strong>Instructions:</strong> Step-by-step guides and tutorials</li>
-                <li>• <strong>Code:</strong> Sample programs and libraries</li>
-                <li>• <strong>Support:</strong> Online resources and community access</li>
+                <li>
+                  • <strong>Components:</strong> All electronic parts and hardware
+                </li>
+                <li>
+                  • <strong>Instructions:</strong> Step-by-step guides and tutorials
+                </li>
+                <li>
+                  • <strong>Code:</strong> Sample programs and libraries
+                </li>
+                <li>
+                  • <strong>Support:</strong> Online resources and community access
+                </li>
               </ul>
             </div>
           </div>

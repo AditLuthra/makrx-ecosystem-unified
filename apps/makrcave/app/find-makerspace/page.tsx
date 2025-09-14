@@ -2,10 +2,27 @@
 
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
-import { MapPin, Clock, Users, Star, Filter, Search, Phone, Mail, Globe, ArrowRight } from 'lucide-react';
+import {
+  MapPin,
+  Clock,
+  Users,
+  Star,
+  Filter,
+  Search,
+  Phone,
+  Mail,
+  Globe,
+  ArrowRight,
+} from 'lucide-react';
 import Link from 'next/link';
 import InteractiveMap from '../../components/InteractiveMap';
 
@@ -52,22 +69,23 @@ const FindMakerspace = () => {
     {
       id: 'ms_1',
       name: 'TechMaker Hub',
-      description: 'A community-driven makerspace focused on technology innovation and collaborative learning.',
+      description:
+        'A community-driven makerspace focused on technology innovation and collaborative learning.',
       location: {
         address: '123 Innovation Street',
         city: 'San Francisco',
         state: 'CA',
         country: 'USA',
-        coordinates: { lat: 37.7749, lng: -122.4194 }
+        coordinates: { lat: 37.7749, lng: -122.4194 },
       },
       hours: {
         weekdays: '9:00 AM - 10:00 PM',
-        weekends: '10:00 AM - 8:00 PM'
+        weekends: '10:00 AM - 8:00 PM',
       },
       contact: {
         phone: '+1 (555) 123-4567',
         email: 'hello@techmakerhub.com',
-        website: 'https://techmakerhub.com'
+        website: 'https://techmakerhub.com',
       },
       amenities: ['WiFi', 'Coffee Bar', 'Parking', '24/7 Access', 'Community Events'],
       equipment: ['3D Printers', 'Laser Cutters', 'Electronics Lab', 'Woodworking', 'Textiles'],
@@ -75,96 +93,110 @@ const FindMakerspace = () => {
         {
           name: 'Basic',
           price: '$99/month',
-          features: ['Weekday access', 'Basic equipment', 'Community events']
+          features: ['Weekday access', 'Basic equipment', 'Community events'],
         },
         {
           name: 'Pro',
           price: '$199/month',
-          features: ['24/7 access', 'All equipment', 'Storage space', 'Guest passes']
-        }
+          features: ['24/7 access', 'All equipment', 'Storage space', 'Guest passes'],
+        },
       ],
       rating: 4.8,
       memberCount: 156,
       images: ['/placeholder.svg'],
-      verified: true
+      verified: true,
     },
     {
       id: 'ms_2',
       name: 'Austin Makers Collective',
-      description: 'Open community space for makers, artists, and entrepreneurs to create, learn, and collaborate.',
+      description:
+        'Open community space for makers, artists, and entrepreneurs to create, learn, and collaborate.',
       location: {
         address: '456 Creativity Lane',
         city: 'Austin',
         state: 'TX',
         country: 'USA',
-        coordinates: { lat: 30.2672, lng: -97.7431 }
+        coordinates: { lat: 30.2672, lng: -97.7431 },
       },
       hours: {
         weekdays: '8:00 AM - 11:00 PM',
-        weekends: '9:00 AM - 9:00 PM'
+        weekends: '9:00 AM - 9:00 PM',
       },
       contact: {
         phone: '+1 (555) 987-6543',
         email: 'info@austinmakers.org',
-        website: 'https://austinmakers.org'
+        website: 'https://austinmakers.org',
       },
       amenities: ['WiFi', 'Kitchen', 'Parking', 'Bike Storage', 'Lockers'],
-      equipment: ['3D Printers', 'CNC Machines', 'Pottery Studio', 'Photography Studio', 'Metal Shop'],
+      equipment: [
+        '3D Printers',
+        'CNC Machines',
+        'Pottery Studio',
+        'Photography Studio',
+        'Metal Shop',
+      ],
       membershipPlans: [
         {
           name: 'Student',
           price: '$49/month',
-          features: ['Weekday access', 'Basic equipment', 'Workshops']
+          features: ['Weekday access', 'Basic equipment', 'Workshops'],
         },
         {
           name: 'Professional',
           price: '$149/month',
-          features: ['Full access', 'All equipment', 'Private storage', 'Meeting rooms']
-        }
+          features: ['Full access', 'All equipment', 'Private storage', 'Meeting rooms'],
+        },
       ],
       rating: 4.6,
       memberCount: 203,
       images: ['/placeholder.svg'],
-      verified: true
+      verified: true,
     },
     {
       id: 'ms_3',
       name: 'Brooklyn Build Lab',
-      description: 'Urban makerspace specializing in sustainable making and circular design principles.',
+      description:
+        'Urban makerspace specializing in sustainable making and circular design principles.',
       location: {
         address: '789 Maker Boulevard',
         city: 'Brooklyn',
         state: 'NY',
         country: 'USA',
-        coordinates: { lat: 40.6782, lng: -73.9442 }
+        coordinates: { lat: 40.6782, lng: -73.9442 },
       },
       hours: {
         weekdays: '10:00 AM - 9:00 PM',
-        weekends: '11:00 AM - 7:00 PM'
+        weekends: '11:00 AM - 7:00 PM',
       },
       contact: {
         email: 'contact@brooklynbuildlab.com',
-        website: 'https://brooklynbuildlab.com'
+        website: 'https://brooklynbuildlab.com',
       },
       amenities: ['WiFi', 'Sustainable Materials', 'Recycling Center', 'Garden Space'],
-      equipment: ['3D Printers', 'Laser Cutters', 'Upcycling Workshop', 'Sewing Machines', 'Electronics'],
+      equipment: [
+        '3D Printers',
+        'Laser Cutters',
+        'Upcycling Workshop',
+        'Sewing Machines',
+        'Electronics',
+      ],
       membershipPlans: [
         {
           name: 'Community',
           price: '$79/month',
-          features: ['Daytime access', 'Workshop participation', 'Material sharing']
+          features: ['Daytime access', 'Workshop participation', 'Material sharing'],
         },
         {
           name: 'Maker',
           price: '$159/month',
-          features: ['Extended hours', 'All equipment', 'Project storage', 'Mentorship']
-        }
+          features: ['Extended hours', 'All equipment', 'Project storage', 'Mentorship'],
+        },
       ],
       rating: 4.9,
       memberCount: 89,
       images: ['/placeholder.svg'],
-      verified: true
-    }
+      verified: true,
+    },
   ];
 
   const filterOptions = [
@@ -178,31 +210,33 @@ const FindMakerspace = () => {
     'Textiles',
     '24/7 Access',
     'Student Friendly',
-    'Parking Available'
+    'Parking Available',
   ];
 
-  const filteredMakerspaces = makerspaces.filter(makerspace => {
-    const matchesSearch = searchQuery === '' || 
+  const filteredMakerspaces = makerspaces.filter((makerspace) => {
+    const matchesSearch =
+      searchQuery === '' ||
       makerspace.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       makerspace.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
       makerspace.location.state.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesFilters = selectedFilters.length === 0 || 
-      selectedFilters.every(filter => 
-        makerspace.equipment.includes(filter) || 
-        makerspace.amenities.includes(filter) ||
-        (filter === 'Student Friendly' && makerspace.membershipPlans.some(plan => plan.name === 'Student')) ||
-        (filter === 'Parking Available' && makerspace.amenities.includes('Parking'))
+    const matchesFilters =
+      selectedFilters.length === 0 ||
+      selectedFilters.every(
+        (filter) =>
+          makerspace.equipment.includes(filter) ||
+          makerspace.amenities.includes(filter) ||
+          (filter === 'Student Friendly' &&
+            makerspace.membershipPlans.some((plan) => plan.name === 'Student')) ||
+          (filter === 'Parking Available' && makerspace.amenities.includes('Parking')),
       );
 
     return matchesSearch && matchesFilters;
   });
 
   const toggleFilter = (filter: string) => {
-    setSelectedFilters(prev => 
-      prev.includes(filter) 
-        ? prev.filter(f => f !== filter)
-        : [...prev, filter]
+    setSelectedFilters((prev) =>
+      prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter],
     );
   };
 
@@ -218,11 +252,17 @@ const FindMakerspace = () => {
               </div>
               <span className="text-2xl font-bold text-white">MakrCave</span>
             </Link>
-            
+
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link>
-              <Link href="/makrverse" className="text-white/80 hover:text-white transition-colors">MakrVerse</Link>
-              <Link href="/find-makerspace" className="text-white hover:text-white font-semibold">Find Makerspace</Link>
+              <Link href="/" className="text-white/80 hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link href="/makrverse" className="text-white/80 hover:text-white transition-colors">
+                MakrVerse
+              </Link>
+              <Link href="/find-makerspace" className="text-white hover:text-white font-semibold">
+                Find Makerspace
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">
@@ -248,7 +288,8 @@ const FindMakerspace = () => {
               </span>
             </h1>
             <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-              Discover makerspaces near you with the tools, community, and resources to bring your ideas to life.
+              Discover makerspaces near you with the tools, community, and resources to bring your
+              ideas to life.
             </p>
           </div>
 
@@ -325,7 +366,10 @@ const FindMakerspace = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredMakerspaces.map((makerspace) => (
-              <Card key={makerspace.id} className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300">
+              <Card
+                key={makerspace.id}
+                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300"
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
@@ -349,7 +393,9 @@ const FindMakerspace = () => {
                       <MapPin className="h-4 w-4 text-blue-400 mt-1 flex-shrink-0" />
                       <div className="text-white/80 text-sm">
                         <div>{makerspace.location.address}</div>
-                        <div>{makerspace.location.city}, {makerspace.location.state}</div>
+                        <div>
+                          {makerspace.location.city}, {makerspace.location.state}
+                        </div>
                       </div>
                     </div>
 
@@ -360,19 +406,28 @@ const FindMakerspace = () => {
 
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-blue-400" />
-                      <span className="text-white/80 text-sm">{makerspace.memberCount} active members</span>
+                      <span className="text-white/80 text-sm">
+                        {makerspace.memberCount} active members
+                      </span>
                     </div>
 
                     <div>
                       <div className="text-white/70 text-xs mb-2">Available Equipment:</div>
                       <div className="flex flex-wrap gap-1">
                         {makerspace.equipment.slice(0, 3).map((equipment) => (
-                          <Badge key={equipment} variant="outline" className="border-white/30 text-white/70 text-xs">
+                          <Badge
+                            key={equipment}
+                            variant="outline"
+                            className="border-white/30 text-white/70 text-xs"
+                          >
                             {equipment}
                           </Badge>
                         ))}
                         {makerspace.equipment.length > 3 && (
-                          <Badge variant="outline" className="border-white/30 text-white/70 text-xs">
+                          <Badge
+                            variant="outline"
+                            className="border-white/30 text-white/70 text-xs"
+                          >
                             +{makerspace.equipment.length - 3} more
                           </Badge>
                         )}
@@ -383,7 +438,10 @@ const FindMakerspace = () => {
                       <div className="text-white/70 text-xs mb-2">Membership Plans:</div>
                       <div className="space-y-1">
                         {makerspace.membershipPlans.map((plan) => (
-                          <div key={plan.name} className="flex justify-between items-center text-sm">
+                          <div
+                            key={plan.name}
+                            className="flex justify-between items-center text-sm"
+                          >
                             <span className="text-white/80">{plan.name}</span>
                             <span className="text-blue-400 font-semibold">{plan.price}</span>
                           </div>
@@ -396,7 +454,11 @@ const FindMakerspace = () => {
                         View Details
                       </Button>
                       {makerspace.contact.phone && (
-                        <Button variant="outline" size="sm" className="border-white/30 text-white/80">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-white/30 text-white/80"
+                        >
                           <Phone className="h-4 w-4" />
                         </Button>
                       )}
@@ -404,7 +466,11 @@ const FindMakerspace = () => {
                         <Mail className="h-4 w-4" />
                       </Button>
                       {makerspace.contact.website && (
-                        <Button variant="outline" size="sm" className="border-white/30 text-white/80">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-white/30 text-white/80"
+                        >
                           <Globe className="h-4 w-4" />
                         </Button>
                       )}
@@ -417,7 +483,9 @@ const FindMakerspace = () => {
 
           {filteredMakerspaces.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-white/60 text-lg mb-4">No makerspaces found matching your criteria.</p>
+              <p className="text-white/60 text-lg mb-4">
+                No makerspaces found matching your criteria.
+              </p>
               <Button
                 onClick={() => {
                   setSearchQuery('');
@@ -436,9 +504,7 @@ const FindMakerspace = () => {
       {/* CTA Section */}
       <section className="py-16 bg-black/20">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Don't see your makerspace listed?
-          </h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Don't see your makerspace listed?</h2>
           <p className="text-xl text-white/80 mb-8">
             Join the MakrCave network and connect your makerspace to the global community.
           </p>

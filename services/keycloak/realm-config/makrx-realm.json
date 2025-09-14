@@ -62,14 +62,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "gateway-frontend-secret-12345",
-      "redirectUris": [
-        "http://localhost:3000/*",
-        "https://makrx.org/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3000",
-        "https://makrx.org"
-      ],
+      "redirectUris": ["http://localhost:3000/*", "https://makrx.org/*"],
+      "webOrigins": ["http://localhost:3000", "https://makrx.org"],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,
@@ -83,14 +77,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "gateway-hacker-secret-12345",
-      "redirectUris": [
-        "http://localhost:3001/*",
-        "https://hacker.makrx.org/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3001",
-        "https://hacker.makrx.org"
-      ],
+      "redirectUris": ["http://localhost:3001/*", "https://hacker.makrx.org/*"],
+      "webOrigins": ["http://localhost:3001", "https://hacker.makrx.org"],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,
@@ -104,14 +92,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "makrcave-secret-12345",
-      "redirectUris": [
-        "http://localhost:3002/*",
-        "https://makrcave.com/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3002",
-        "https://makrcave.com"
-      ],
+      "redirectUris": ["http://localhost:3002/*", "https://makrcave.com/*"],
+      "webOrigins": ["http://localhost:3002", "https://makrcave.com"],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,
@@ -137,14 +119,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "makrx-store-secret-12345",
-      "redirectUris": [
-        "http://localhost:3003/*",
-        "https://makrx.store/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3003",
-        "https://makrx.store"
-      ],
+      "redirectUris": ["http://localhost:3003/*", "https://makrx.store/*"],
+      "webOrigins": ["http://localhost:3003", "https://makrx.store"],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,
@@ -170,14 +146,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "makrx-events-secret-12345",
-      "redirectUris": [
-        "http://localhost:3004/*",
-        "https://makrx.events/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3004",
-        "https://makrx.events"
-      ],
+      "redirectUris": ["http://localhost:3004/*", "https://makrx.events/*"],
+      "webOrigins": ["http://localhost:3004", "https://makrx.events"],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,

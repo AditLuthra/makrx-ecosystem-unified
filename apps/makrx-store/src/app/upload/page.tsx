@@ -1,7 +1,7 @@
-import dynamicImport from 'next/dynamic'
+import dynamicImport from 'next/dynamic';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
-const UploadClient = dynamicImport(() => import('./page.client'), { ssr: false })
+const UploadClient = dynamicImport(() => import('./page.client'), { ssr: false });
 
-export default UploadClient
+export default UploadClient;

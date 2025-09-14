@@ -6,9 +6,11 @@ from .common import CamelModel
 
 class MicrositeCreate(BaseModel):
     title: Optional[str] = Field(default=None, min_length=1, max_length=200)
-    slug: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$")
+    slug: Optional[str] = Field(
+        default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$"
+    )
 
-    @field_validator('slug')
+    @field_validator("slug")
     @classmethod
     def normalize_slug(cls, v):
         if not v:
@@ -18,9 +20,11 @@ class MicrositeCreate(BaseModel):
 
 class MicrositeUpdate(BaseModel):
     title: Optional[str] = Field(default=None, min_length=1, max_length=200)
-    slug: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$")
+    slug: Optional[str] = Field(
+        default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$"
+    )
 
-    @field_validator('slug')
+    @field_validator("slug")
     @classmethod
     def normalize_slug(cls, v):
         if not v:

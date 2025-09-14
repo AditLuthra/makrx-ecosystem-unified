@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 interface CategoryFiltersProps {
   facets: any[];
@@ -14,7 +14,7 @@ export default function CategoryFilters({
   onFilterChange,
 }: CategoryFiltersProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["categories", "brands", "price"]),
+    new Set(['categories', 'brands', 'price']),
   );
 
   const toggleSection = (sectionName: string) => {
@@ -35,9 +35,7 @@ export default function CategoryFilters({
     const newFilters = { ...activeFilters };
     if (value) {
       if (Array.isArray(newFilters[filterType])) {
-        newFilters[filterType] = newFilters[filterType].filter(
-          (v: string) => v !== value,
-        );
+        newFilters[filterType] = newFilters[filterType].filter((v: string) => v !== value);
         if (newFilters[filterType].length === 0) {
           delete newFilters[filterType];
         }
@@ -56,9 +54,7 @@ export default function CategoryFilters({
       {hasActiveFilters && (
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-              Active Filters
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Active Filters</h3>
             <button
               onClick={clearAllFilters}
               className="text-sm text-red-600 dark:text-red-400 hover:underline"
@@ -132,9 +128,7 @@ export default function CategoryFilters({
       {/* Filter Sections */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Filters
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
         </div>
 
         {facets.map((facet, index) => (
@@ -147,7 +141,7 @@ export default function CategoryFilters({
               className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
-                {facet.name.replace("_", " ")}
+                {facet.name.replace('_', ' ')}
               </span>
               {expandedSections.has(facet.name) ? (
                 <svg
@@ -184,16 +178,11 @@ export default function CategoryFilters({
               <div className="px-4 pb-4">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {facet.values?.map((value: any) => (
-                    <label
-                      key={value.name || value.id}
-                      className="flex items-center"
-                    >
+                    <label key={value.name || value.id} className="flex items-center">
                       <input
                         type="checkbox"
                         checked={
-                          activeFilters[facet.name]?.includes(
-                            value.name || value.id,
-                          ) || false
+                          activeFilters[facet.name]?.includes(value.name || value.id) || false
                         }
                         onChange={(e) => {
                           const currentValues = activeFilters[facet.name] || [];
@@ -203,15 +192,12 @@ export default function CategoryFilters({
                           if (e.target.checked) {
                             newValues = [...currentValues, valueToToggle];
                           } else {
-                            newValues = currentValues.filter(
-                              (v: any) => v !== valueToToggle,
-                            );
+                            newValues = currentValues.filter((v: any) => v !== valueToToggle);
                           }
 
                           onFilterChange({
                             ...activeFilters,
-                            [facet.name]:
-                              newValues.length > 0 ? newValues : undefined,
+                            [facet.name]: newValues.length > 0 ? newValues : undefined,
                           });
                         }}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -219,9 +205,7 @@ export default function CategoryFilters({
                       <span className="ml-2 text-sm text-gray-600 dark:text-gray-300 flex-1">
                         {value.name}
                         {value.count !== undefined && (
-                          <span className="text-gray-400 ml-1">
-                            ({value.count})
-                          </span>
+                          <span className="text-gray-400 ml-1">({value.count})</span>
                         )}
                       </span>
                     </label>

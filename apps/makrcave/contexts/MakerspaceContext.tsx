@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 interface Makerspace {
   id: string;
@@ -34,20 +34,9 @@ interface MakerspaceContextValue {
   inventory: InventoryItem[];
   inventoryItems: InventoryItem[];
   addInventoryItem: (item: Partial<InventoryItem>) => Promise<void> | void;
-  updateInventoryItem: (
-    id: string,
-    patch: Partial<InventoryItem>
-  ) => Promise<void> | void;
-  issueInventoryItem: (
-    id: string,
-    qty: number,
-    reason?: string
-  ) => Promise<void> | void;
-  restockInventoryItem: (
-    id: string,
-    qty: number,
-    reason?: string
-  ) => Promise<void> | void;
+  updateInventoryItem: (id: string, patch: Partial<InventoryItem>) => Promise<void> | void;
+  issueInventoryItem: (id: string, qty: number, reason?: string) => Promise<void> | void;
+  restockInventoryItem: (id: string, qty: number, reason?: string) => Promise<void> | void;
   deleteInventoryItem: (id: string) => Promise<void> | void;
   loadInventoryItems: () => Promise<void> | void;
   // Equipment list for access/policy components
@@ -57,9 +46,7 @@ interface MakerspaceContextValue {
 const Ctx = createContext<MakerspaceContextValue | null>(null);
 
 export function MakerspaceProvider({ children }: { children: ReactNode }) {
-  const [currentMakerspace, setCurrentMakerspace] = useState<Makerspace | null>(
-    null
-  );
+  const [currentMakerspace, setCurrentMakerspace] = useState<Makerspace | null>(null);
   const value: MakerspaceContextValue = {
     currentMakerspace,
     setCurrentMakerspace,
@@ -79,8 +66,7 @@ export function MakerspaceProvider({ children }: { children: ReactNode }) {
 
 export function useMakerspace() {
   const ctx = useContext(Ctx);
-  if (!ctx)
-    throw new Error("useMakerspace must be used within MakerspaceProvider");
+  if (!ctx) throw new Error('useMakerspace must be used within MakerspaceProvider');
   return ctx;
 }
 

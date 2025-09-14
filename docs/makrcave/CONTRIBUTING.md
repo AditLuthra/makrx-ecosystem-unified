@@ -9,7 +9,9 @@ By participating in this project, you are expected to uphold our Code of Conduct
 ## Getting Started
 
 ### Prerequisites
+
 Before you begin, ensure you have:
+
 - Node.js 20+ and npm
 - Python 3.11+
 - PostgreSQL 14+
@@ -17,6 +19,7 @@ Before you begin, ensure you have:
 - Basic understanding of React, FastAPI, and PostgreSQL
 
 ### Development Setup
+
 1. Fork the repository on GitHub
 2. Clone your fork locally
 3. Follow the setup instructions in [app/README.md](app/README.md)
@@ -27,24 +30,28 @@ Before you begin, ensure you have:
 We welcome several types of contributions:
 
 ### 🐛 Bug Reports
+
 - Use the GitHub issue template
 - Include steps to reproduce
 - Provide system information
 - Add screenshots if applicable
 
 ### ✨ Feature Requests
+
 - Check existing issues first
 - Describe the problem you're solving
 - Propose a solution
 - Consider backward compatibility
 
 ### 🔧 Code Contributions
+
 - Bug fixes
 - New features
 - Performance improvements
 - Documentation updates
 
 ### 📚 Documentation
+
 - API documentation
 - User guides
 - Code comments
@@ -53,7 +60,9 @@ We welcome several types of contributions:
 ## Development Workflow
 
 ### 1. Branch Naming
+
 Use descriptive branch names with prefixes:
+
 ```
 feature/equipment-reservation-system
 bugfix/inventory-count-error
@@ -62,7 +71,9 @@ hotfix/security-vulnerability
 ```
 
 ### 2. Commit Messages
+
 Follow the Conventional Commits specification:
+
 ```
 feat(equipment): add reservation conflict detection
 fix(inventory): resolve stock count calculation bug
@@ -71,6 +82,7 @@ test(auth): add unit tests for login flow
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -82,6 +94,7 @@ Types:
 ### 3. Pull Request Process
 
 #### Before Submitting
+
 - [ ] Run all tests and ensure they pass
 - [ ] Run linting and fix any issues
 - [ ] Update documentation if needed
@@ -89,22 +102,27 @@ Types:
 - [ ] Ensure code follows project conventions
 
 #### Pull Request Template
+
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
 - [ ] Refactoring
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Documentation updated
@@ -114,6 +132,7 @@ Brief description of changes
 ## Code Standards
 
 ### Frontend (TypeScript/React)
+
 ```typescript
 // Use functional components with TypeScript
 interface ComponentProps {
@@ -123,7 +142,7 @@ interface ComponentProps {
 
 export function MyComponent({ title, onAction }: ComponentProps) {
   const [state, setState] = useState<string>('');
-  
+
   return (
     <div className="component-wrapper">
       <h1>{title}</h1>
@@ -134,6 +153,7 @@ export function MyComponent({ title, onAction }: ComponentProps) {
 ```
 
 **Standards:**
+
 - Use TypeScript strict mode
 - Implement proper error handling
 - Follow React hooks best practices
@@ -141,6 +161,7 @@ export function MyComponent({ title, onAction }: ComponentProps) {
 - Include proper prop types
 
 ### Backend (Python/FastAPI)
+
 ```python
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -163,6 +184,7 @@ async def create_example(
 ```
 
 **Standards:**
+
 - Use type hints for all functions
 - Implement proper error handling
 - Follow FastAPI best practices
@@ -170,6 +192,7 @@ async def create_example(
 - Include comprehensive docstrings
 
 ### Database
+
 - Use descriptive table and column names
 - Include proper indexes
 - Implement foreign key constraints
@@ -178,6 +201,7 @@ async def create_example(
 ## Testing Guidelines
 
 ### Frontend Testing
+
 ```typescript
 // Unit test example
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -192,7 +216,7 @@ describe('MyComponent', () => {
   test('calls onAction when button clicked', () => {
     const mockAction = jest.fn();
     render(<MyComponent title="Test" onAction={mockAction} />);
-    
+
     fireEvent.click(screen.getByText('Action'));
     expect(mockAction).toHaveBeenCalled();
   });
@@ -200,6 +224,7 @@ describe('MyComponent', () => {
 ```
 
 ### Backend Testing
+
 ```python
 import pytest
 from fastapi.testclient import TestClient
@@ -223,12 +248,14 @@ def test_create_example_validation_error():
 ## Security Guidelines
 
 ### Authentication & Authorization
+
 - Always validate user permissions
 - Use secure session management
 - Implement proper CORS policies
 - Validate all input data
 
 ### Data Protection
+
 - Encrypt sensitive data
 - Use HTTPS in production
 - Implement rate limiting
@@ -237,12 +264,14 @@ def test_create_example_validation_error():
 ## Performance Guidelines
 
 ### Frontend Performance
+
 - Use React.memo for expensive components
 - Implement code splitting
 - Optimize images and assets
 - Monitor bundle size
 
 ### Backend Performance
+
 - Use database indexes effectively
 - Implement caching where appropriate
 - Optimize database queries
@@ -251,6 +280,7 @@ def test_create_example_validation_error():
 ## Documentation Standards
 
 ### Code Documentation
+
 ```typescript
 /**
  * Calculates the total cost of equipment usage
@@ -262,13 +292,14 @@ def test_create_example_validation_error():
 function calculateUsageCost(
   equipment: Equipment,
   duration: number,
-  rate: number
+  rate: number,
 ): number {
   // Implementation
 }
 ```
 
 ### API Documentation
+
 - Use OpenAPI/Swagger documentation
 - Include request/response examples
 - Document error responses
@@ -277,6 +308,7 @@ function calculateUsageCost(
 ## Review Process
 
 ### Code Review Checklist
+
 - [ ] Code follows project standards
 - [ ] Tests are comprehensive
 - [ ] Documentation is updated
@@ -286,6 +318,7 @@ function calculateUsageCost(
 - [ ] Edge cases considered
 
 ### Reviewer Guidelines
+
 - Be constructive and respectful
 - Focus on the code, not the person
 - Provide specific suggestions
@@ -295,12 +328,15 @@ function calculateUsageCost(
 ## Release Process
 
 ### Versioning
+
 We use Semantic Versioning (SemVer):
+
 - **MAJOR**: Breaking changes
 - **MINOR**: New features (backward compatible)
 - **PATCH**: Bug fixes (backward compatible)
 
 ### Release Checklist
+
 - [ ] All tests pass
 - [ ] Documentation updated
 - [ ] Version number bumped
@@ -311,12 +347,14 @@ We use Semantic Versioning (SemVer):
 ## Getting Help
 
 ### Resources
+
 - [Project Documentation](README.md)
 - [Development Guide](app/README.md)
 - [API Documentation](backend/API_README.md)
 - [Component Documentation](components/README.md)
 
 ### Support Channels
+
 - GitHub Issues for bug reports
 - GitHub Discussions for questions
 - Project Wiki for detailed guides
@@ -325,6 +363,7 @@ We use Semantic Versioning (SemVer):
 ## Recognition
 
 Contributors will be recognized in:
+
 - README.md contributor section
 - Release notes
 - Project documentation

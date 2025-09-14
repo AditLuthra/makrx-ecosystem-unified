@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Clock, MapPin, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface MicrositeSchedulePageProps {
   params: {
@@ -12,106 +12,106 @@ interface MicrositeSchedulePageProps {
 
 export default async function MicrositeSchedulePage({ params }: MicrositeSchedulePageProps) {
   const { micrositeSlug } = await params;
-  
+
   const microsite = {
-    title: "MakerFest 2024",
-    slug: micrositeSlug
+    title: 'MakerFest 2024',
+    slug: micrositeSlug,
   };
 
   const schedule = {
-    "March 15, 2024": [
+    'March 15, 2024': [
       {
-        time: "9:00 AM",
-        title: "Registration & Welcome",
-        location: "Main Lobby",
-        type: "general"
+        time: '9:00 AM',
+        title: 'Registration & Welcome',
+        location: 'Main Lobby',
+        type: 'general',
       },
       {
-        time: "10:00 AM",
-        title: "Opening Keynote",
-        location: "Main Auditorium",
-        type: "keynote",
-        speaker: "Dr. Jane Smith"
+        time: '10:00 AM',
+        title: 'Opening Keynote',
+        location: 'Main Auditorium',
+        type: 'keynote',
+        speaker: 'Dr. Jane Smith',
       },
       {
-        time: "2:00 PM",
-        title: "3D Printing Workshop",
-        location: "Workshop Hall A",
-        type: "workshop"
+        time: '2:00 PM',
+        title: '3D Printing Workshop',
+        location: 'Workshop Hall A',
+        type: 'workshop',
       },
       {
-        time: "6:00 PM",
-        title: "Welcome Mixer",
-        location: "Exhibition Hall",
-        type: "social"
-      }
+        time: '6:00 PM',
+        title: 'Welcome Mixer',
+        location: 'Exhibition Hall',
+        type: 'social',
+      },
     ],
-    "March 16, 2024": [
+    'March 16, 2024': [
       {
-        time: "9:00 AM",
-        title: "Coffee & Networking",
-        location: "Main Lobby",
-        type: "social"
+        time: '9:00 AM',
+        title: 'Coffee & Networking',
+        location: 'Main Lobby',
+        type: 'social',
       },
       {
-        time: "10:00 AM",
-        title: "Robotics Championship Begins",
-        location: "Main Arena",
-        type: "competition"
+        time: '10:00 AM',
+        title: 'Robotics Championship Begins',
+        location: 'Main Arena',
+        type: 'competition',
       },
       {
-        time: "10:00 AM",
-        title: "IoT Hackathon Kickoff",
-        location: "Hackathon Zone",
-        type: "competition"
+        time: '10:00 AM',
+        title: 'IoT Hackathon Kickoff',
+        location: 'Hackathon Zone',
+        type: 'competition',
       },
       {
-        time: "12:00 PM",
-        title: "Lunch Break",
-        location: "Food Court",
-        type: "break"
+        time: '12:00 PM',
+        title: 'Lunch Break',
+        location: 'Food Court',
+        type: 'break',
       },
       {
-        time: "2:00 PM",
-        title: "Arduino Workshop",
-        location: "Workshop Hall B",
-        type: "workshop"
-      }
+        time: '2:00 PM',
+        title: 'Arduino Workshop',
+        location: 'Workshop Hall B',
+        type: 'workshop',
+      },
     ],
-    "March 17, 2024": [
+    'March 17, 2024': [
       {
-        time: "10:00 AM",
-        title: "Final Presentations",
-        location: "Main Auditorium",
-        type: "presentation"
+        time: '10:00 AM',
+        title: 'Final Presentations',
+        location: 'Main Auditorium',
+        type: 'presentation',
       },
       {
-        time: "2:00 PM",
-        title: "Awards Ceremony",
-        location: "Main Auditorium",
-        type: "ceremony"
+        time: '2:00 PM',
+        title: 'Awards Ceremony',
+        location: 'Main Auditorium',
+        type: 'ceremony',
       },
       {
-        time: "4:00 PM",
-        title: "Closing Reception",
-        location: "Exhibition Hall",
-        type: "social"
-      }
-    ]
+        time: '4:00 PM',
+        title: 'Closing Reception',
+        location: 'Exhibition Hall',
+        type: 'social',
+      },
+    ],
   };
 
   const getEventTypeColor = (type: string) => {
     const colors = {
-      keynote: "bg-purple-100 text-purple-800",
-      workshop: "bg-green-100 text-green-800",
-      competition: "bg-red-100 text-red-800",
-      social: "bg-blue-100 text-blue-800",
-      presentation: "bg-orange-100 text-orange-800",
-      ceremony: "bg-yellow-100 text-yellow-800",
-      break: "bg-gray-100 text-gray-800",
-      general: "bg-gray-100 text-gray-800"
+      keynote: 'bg-purple-100 text-purple-800',
+      workshop: 'bg-green-100 text-green-800',
+      competition: 'bg-red-100 text-red-800',
+      social: 'bg-blue-100 text-blue-800',
+      presentation: 'bg-orange-100 text-orange-800',
+      ceremony: 'bg-yellow-100 text-yellow-800',
+      break: 'bg-gray-100 text-gray-800',
+      general: 'bg-gray-100 text-gray-800',
     };
-    return colors[type as keyof typeof colors] || "bg-gray-100 text-gray-800";
+    return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -121,19 +121,28 @@ export default async function MicrositeSchedulePage({ params }: MicrositeSchedul
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link href={`/m/${micrositeSlug}`} className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href={`/m/${micrositeSlug}`}
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {microsite.title}
               </Link>
             </div>
             <nav className="flex items-center space-x-6">
-              <Link href={`/m/${micrositeSlug}/events`} className="text-gray-700 hover:text-primary">
+              <Link
+                href={`/m/${micrositeSlug}/events`}
+                className="text-gray-700 hover:text-primary"
+              >
                 Events
               </Link>
               <Link href={`/m/${micrositeSlug}/schedule`} className="text-primary font-medium">
                 Schedule
               </Link>
-              <Link href={`/m/${micrositeSlug}/sponsors`} className="text-gray-700 hover:text-primary">
+              <Link
+                href={`/m/${micrositeSlug}/sponsors`}
+                className="text-gray-700 hover:text-primary"
+              >
                 Sponsors
               </Link>
             </nav>
@@ -161,7 +170,10 @@ export default async function MicrositeSchedulePage({ params }: MicrositeSchedul
               <CardContent>
                 <div className="space-y-4">
                   {events.map((event, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50">
+                    <div
+                      key={index}
+                      className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50"
+                    >
                       <div className="flex-shrink-0 w-20 text-sm font-medium text-gray-900">
                         {event.time}
                       </div>
@@ -199,12 +211,24 @@ export default async function MicrositeSchedulePage({ params }: MicrositeSchedul
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">Keynote</Badge>
-              <Badge variant="secondary" className="bg-green-100 text-green-800">Workshop</Badge>
-              <Badge variant="secondary" className="bg-red-100 text-red-800">Competition</Badge>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">Social</Badge>
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">Presentation</Badge>
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Ceremony</Badge>
+              <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                Keynote
+              </Badge>
+              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                Workshop
+              </Badge>
+              <Badge variant="secondary" className="bg-red-100 text-red-800">
+                Competition
+              </Badge>
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                Social
+              </Badge>
+              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                Presentation
+              </Badge>
+              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                Ceremony
+              </Badge>
             </div>
           </CardContent>
         </Card>

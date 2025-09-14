@@ -1,12 +1,18 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+import {
   BarChart3,
   Users,
   Clock,
@@ -33,7 +39,7 @@ import {
   RefreshCw,
   Download,
   Filter,
-  Eye
+  Eye,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMakerspace } from '../../contexts/MakerspaceContext';
@@ -91,7 +97,10 @@ const CapacityPlanning: React.FC = () => {
     try {
       setLoading(true);
       const headers = await getHeaders();
-      const response = await fetch(`/api/v1/capacity/metrics?timeRange=${selectedTimeRange}&makerspaceId=${currentMakerspace?.id}`, { headers });
+      const response = await fetch(
+        `/api/v1/capacity/metrics?timeRange=${selectedTimeRange}&makerspaceId=${currentMakerspace?.id}`,
+        { headers },
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -110,14 +119,14 @@ const CapacityPlanning: React.FC = () => {
 
   useEffect(() => {
     loadCapacityMetrics();
-    
+
     // Auto-refresh every 2 minutes
     if (autoRefresh) {
       const interval = setInterval(() => {
         loadCapacityMetrics();
         setLastUpdated(new Date());
       }, 120000);
-      
+
       return () => clearInterval(interval);
     }
   }, [selectedTimeRange, autoRefresh, loadCapacityMetrics]);
@@ -138,7 +147,7 @@ const CapacityPlanning: React.FC = () => {
         max_capacity: 20,
         status: 'optimal',
         equipment_count: 8,
-        avg_session_time: 2.5
+        avg_session_time: 2.5,
       },
       {
         id: 'electronics-lab',
@@ -147,7 +156,7 @@ const CapacityPlanning: React.FC = () => {
         max_capacity: 10,
         status: 'high',
         equipment_count: 12,
-        avg_session_time: 4.2
+        avg_session_time: 4.2,
       },
       {
         id: '3d-printing',
@@ -156,7 +165,7 @@ const CapacityPlanning: React.FC = () => {
         max_capacity: 8,
         status: 'high',
         equipment_count: 6,
-        avg_session_time: 5.8
+        avg_session_time: 5.8,
       },
       {
         id: 'meeting-room',
@@ -165,14 +174,14 @@ const CapacityPlanning: React.FC = () => {
         max_capacity: 12,
         status: 'low',
         equipment_count: 2,
-        avg_session_time: 1.8
-      }
+        avg_session_time: 1.8,
+      },
     ],
     trends: {
       daily_pattern: Array.from({ length: 24 }, (_, i) => ({
         hour: i,
         occupancy: Math.round(Math.random() * 40 + 5),
-        efficiency: Math.round(Math.random() * 30 + 60)
+        efficiency: Math.round(Math.random() * 30 + 60),
       })),
       weekly_pattern: [
         { day: 'Mon', avg_occupancy: 28, peak_time: '14:00' },
@@ -181,9 +190,9 @@ const CapacityPlanning: React.FC = () => {
         { day: 'Thu', avg_occupancy: 31, peak_time: '11:00' },
         { day: 'Fri', avg_occupancy: 25, peak_time: '16:00' },
         { day: 'Sat', avg_occupancy: 22, peak_time: '13:00' },
-        { day: 'Sun', avg_occupancy: 18, peak_time: '15:00' }
+        { day: 'Sun', avg_occupancy: 18, peak_time: '15:00' },
       ],
-      monthly_growth: 12.5
+      monthly_growth: 12.5,
     },
     recommendations: [
       {
@@ -192,7 +201,7 @@ const CapacityPlanning: React.FC = () => {
         title: 'Add 3D Printing Capacity',
         description: 'High demand for 3D printers during peak hours (85% utilization)',
         impact: '+15% capacity',
-        effort: 'Medium'
+        effort: 'Medium',
       },
       {
         type: 'scheduling',
@@ -200,7 +209,7 @@ const CapacityPlanning: React.FC = () => {
         title: 'Optimize Peak Hour Distribution',
         description: 'Implement dynamic pricing to distribute peak loads',
         impact: '+22% efficiency',
-        effort: 'Low'
+        effort: 'Low',
       },
       {
         type: 'zone',
@@ -208,7 +217,7 @@ const CapacityPlanning: React.FC = () => {
         title: 'Redesign Electronics Lab Layout',
         description: 'Current layout limits concurrent users despite space availability',
         impact: '+3 users',
-        effort: 'High'
+        effort: 'High',
       },
       {
         type: 'equipment',
@@ -216,9 +225,9 @@ const CapacityPlanning: React.FC = () => {
         title: 'Move Underutilized Equipment',
         description: 'Laser engraver in meeting room has 12% utilization',
         impact: '+8% space efficiency',
-        effort: 'Low'
-      }
-    ]
+        effort: 'Low',
+      },
+    ],
   });
 
   const getUtilizationColor = (rate: number) => {
@@ -230,30 +239,44 @@ const CapacityPlanning: React.FC = () => {
 
   const getZoneStatusColor = (status: string) => {
     switch (status) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'optimal': return 'bg-green-100 text-green-800 border-green-200';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'optimal':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getZoneStatusIcon = (status: string) => {
     switch (status) {
-      case 'critical': return AlertTriangle;
-      case 'high': return TrendingUp;
-      case 'optimal': return CheckCircle2;
-      case 'low': return ArrowDownRight;
-      default: return Activity;
+      case 'critical':
+        return AlertTriangle;
+      case 'high':
+        return TrendingUp;
+      case 'optimal':
+        return CheckCircle2;
+      case 'low':
+        return ArrowDownRight;
+      default:
+        return Activity;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -273,8 +296,12 @@ const CapacityPlanning: React.FC = () => {
         <Card>
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to Load Capacity Data</h3>
-            <p className="text-gray-600 mb-4">There was an error loading the capacity planning data.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Unable to Load Capacity Data
+            </h3>
+            <p className="text-gray-600 mb-4">
+              There was an error loading the capacity planning data.
+            </p>
             <Button onClick={loadCapacityMetrics}>Try Again</Button>
           </CardContent>
         </Card>
@@ -289,12 +316,15 @@ const CapacityPlanning: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Capacity Planning & Optimization</h1>
           <p className="text-gray-600 mt-1">
-            Monitor space utilization and optimize resource allocation for {currentMakerspace?.name || 'your makerspace'}
+            Monitor space utilization and optimize resource allocation for{' '}
+            {currentMakerspace?.name || 'your makerspace'}
           </p>
           <div className="flex items-center space-x-2 mt-2 text-sm text-gray-500">
             <Activity className="h-4 w-4" />
             <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-            <span className={`flex items-center space-x-1 ${autoRefresh ? 'text-green-600' : 'text-gray-400'}`}>
+            <span
+              className={`flex items-center space-x-1 ${autoRefresh ? 'text-green-600' : 'text-gray-400'}`}
+            >
               {autoRefresh ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
               <span>{autoRefresh ? 'Live' : 'Paused'}</span>
             </span>
@@ -359,7 +389,9 @@ const CapacityPlanning: React.FC = () => {
                 <p className="text-2xl font-bold text-gray-900">{metrics.utilization_rate}%</p>
                 <div className="flex items-center space-x-1 text-sm">
                   <ArrowUpRight className="h-3 w-3 text-green-500" />
-                  <span className="text-green-600">+{metrics.trends.monthly_growth}% vs last month</span>
+                  <span className="text-green-600">
+                    +{metrics.trends.monthly_growth}% vs last month
+                  </span>
                 </div>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -374,7 +406,9 @@ const CapacityPlanning: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg Session Time</p>
-                <p className="text-2xl font-bold text-gray-900">{metrics.average_session_duration}h</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {metrics.average_session_duration}h
+                </p>
                 <p className="text-sm text-gray-600">Per member visit</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -391,8 +425,11 @@ const CapacityPlanning: React.FC = () => {
                 <p className="text-sm font-medium text-gray-600">Efficiency Score</p>
                 <p className="text-2xl font-bold text-gray-900">{metrics.efficiency_score}/100</p>
                 <Badge className={getUtilizationColor(metrics.efficiency_score)}>
-                  {metrics.efficiency_score >= 80 ? 'Excellent' : 
-                   metrics.efficiency_score >= 60 ? 'Good' : 'Needs Attention'}
+                  {metrics.efficiency_score >= 80
+                    ? 'Excellent'
+                    : metrics.efficiency_score >= 60
+                      ? 'Good'
+                      : 'Needs Attention'}
                 </Badge>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -417,27 +454,34 @@ const CapacityPlanning: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {metrics.zones.map(zone => {
+            {metrics.zones.map((zone) => {
               const StatusIcon = getZoneStatusIcon(zone.status);
               const utilizationRate = (zone.current_occupancy / zone.max_capacity) * 100;
-              
+
               return (
                 <Card key={zone.id} className="border-2">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-semibold text-gray-900">{zone.name}</h4>
-                      <StatusIcon className={`h-4 w-4 ${
-                        zone.status === 'critical' ? 'text-red-500' :
-                        zone.status === 'high' ? 'text-orange-500' :
-                        zone.status === 'optimal' ? 'text-green-500' :
-                        'text-blue-500'
-                      }`} />
+                      <StatusIcon
+                        className={`h-4 w-4 ${
+                          zone.status === 'critical'
+                            ? 'text-red-500'
+                            : zone.status === 'high'
+                              ? 'text-orange-500'
+                              : zone.status === 'optimal'
+                                ? 'text-green-500'
+                                : 'text-blue-500'
+                        }`}
+                      />
                     </div>
-                    
+
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Occupancy:</span>
-                        <span className="font-medium">{zone.current_occupancy}/{zone.max_capacity}</span>
+                        <span className="font-medium">
+                          {zone.current_occupancy}/{zone.max_capacity}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Utilization:</span>
@@ -452,11 +496,9 @@ const CapacityPlanning: React.FC = () => {
                         <span className="font-medium">{zone.avg_session_time}h</span>
                       </div>
                     </div>
-                    
+
                     <div className="mt-3">
-                      <Badge className={getZoneStatusColor(zone.status)}>
-                        {zone.status}
-                      </Badge>
+                      <Badge className={getZoneStatusColor(zone.status)}>{zone.status}</Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -526,8 +568,12 @@ const CapacityPlanning: React.FC = () => {
                     <h4 className="font-semibold text-gray-900 mb-1">{rec.title}</h4>
                     <p className="text-sm text-gray-600 mb-3">{rec.description}</p>
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
-                      <span>Impact: <strong>{rec.impact}</strong></span>
-                      <span>Effort: <strong>{rec.effort}</strong></span>
+                      <span>
+                        Impact: <strong>{rec.impact}</strong>
+                      </span>
+                      <span>
+                        Effort: <strong>{rec.effort}</strong>
+                      </span>
                     </div>
                   </div>
                   <Button variant="outline" size="sm">

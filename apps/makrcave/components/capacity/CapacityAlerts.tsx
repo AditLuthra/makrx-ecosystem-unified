@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { 
+import {
   AlertTriangle,
   CheckCircle2,
   Clock,
@@ -12,7 +12,7 @@ import {
   Bell,
   X,
   Eye,
-  Settings
+  Settings,
 } from 'lucide-react';
 
 interface CapacityAlert {
@@ -38,7 +38,7 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
   // Generate dynamic alerts based on current metrics
   const generateAlerts = (): CapacityAlert[] => {
     const alerts: CapacityAlert[] = [];
-    
+
     // Check overall utilization
     const overallUtilization = (metrics.current_occupancy / metrics.max_capacity) * 100;
     if (overallUtilization > 85) {
@@ -56,8 +56,8 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
         suggested_actions: [
           'Activate overflow protocols',
           'Consider temporary capacity restrictions',
-          'Monitor safety compliance closely'
-        ]
+          'Monitor safety compliance closely',
+        ],
       });
     } else if (overallUtilization > 75) {
       alerts.push({
@@ -74,15 +74,15 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
         suggested_actions: [
           'Monitor closely for further increases',
           'Prepare contingency plans',
-          'Consider load balancing'
-        ]
+          'Consider load balancing',
+        ],
       });
     }
 
     // Check zone-specific alerts
     metrics.zones.forEach((zone: any) => {
       const zoneUtilization = (zone.current_occupancy / zone.max_capacity) * 100;
-      
+
       if (zoneUtilization > 90) {
         alerts.push({
           id: `zone-${zone.id}-critical`,
@@ -99,8 +99,8 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
           suggested_actions: [
             'Implement immediate capacity controls',
             'Redirect new users to other zones',
-            'Ensure safety protocols are followed'
-          ]
+            'Ensure safety protocols are followed',
+          ],
         });
       } else if (zoneUtilization > 80) {
         alerts.push({
@@ -118,8 +118,8 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
           suggested_actions: [
             'Monitor zone capacity closely',
             'Consider temporary equipment adjustments',
-            'Prepare for potential overflow'
-          ]
+            'Prepare for potential overflow',
+          ],
         });
       }
     });
@@ -140,8 +140,8 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
         suggested_actions: [
           'Review resource allocation',
           'Analyze usage patterns',
-          'Consider layout optimization'
-        ]
+          'Consider layout optimization',
+        ],
       });
     }
 
@@ -161,8 +161,8 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
         suggested_actions: [
           'Review equipment scheduling',
           'Consider capacity expansion',
-          'Implement queue management'
-        ]
+          'Implement queue management',
+        ],
       });
     }
 
@@ -179,7 +179,7 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
         trend: 'stable',
         timestamp: new Date().toISOString(),
         action_required: false,
-        suggested_actions: []
+        suggested_actions: [],
       });
     }
 
@@ -190,46 +190,66 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'critical': return AlertTriangle;
-      case 'warning': return Clock;
-      case 'info': return CheckCircle2;
-      default: return Bell;
+      case 'critical':
+        return AlertTriangle;
+      case 'warning':
+        return Clock;
+      case 'info':
+        return CheckCircle2;
+      default:
+        return Bell;
     }
   };
 
   const getAlertColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'border-red-200 bg-red-50';
-      case 'warning': return 'border-yellow-200 bg-yellow-50';
-      case 'info': return 'border-blue-200 bg-blue-50';
-      default: return 'border-gray-200 bg-gray-50';
+      case 'critical':
+        return 'border-red-200 bg-red-50';
+      case 'warning':
+        return 'border-yellow-200 bg-yellow-50';
+      case 'info':
+        return 'border-blue-200 bg-blue-50';
+      default:
+        return 'border-gray-200 bg-gray-50';
     }
   };
 
   const getAlertTextColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'text-red-800';
-      case 'warning': return 'text-yellow-800';
-      case 'info': return 'text-blue-800';
-      default: return 'text-gray-800';
+      case 'critical':
+        return 'text-red-800';
+      case 'warning':
+        return 'text-yellow-800';
+      case 'info':
+        return 'text-blue-800';
+      default:
+        return 'text-gray-800';
     }
   };
 
   const getAlertBadgeColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'warning': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'info': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'warning':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'info':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'increasing': return <TrendingUp className="h-3 w-3 text-red-500" />;
-      case 'decreasing': return <TrendingUp className="h-3 w-3 text-green-500 transform rotate-180" />;
-      case 'stable': return <Zap className="h-3 w-3 text-blue-500" />;
-      default: return null;
+      case 'increasing':
+        return <TrendingUp className="h-3 w-3 text-red-500" />;
+      case 'decreasing':
+        return <TrendingUp className="h-3 w-3 text-green-500 transform rotate-180" />;
+      case 'stable':
+        return <Zap className="h-3 w-3 text-blue-500" />;
+      default:
+        return null;
     }
   };
 
@@ -242,9 +262,9 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
     return `${hours}h ago`;
   };
 
-  const criticalAlerts = alerts.filter(alert => alert.type === 'critical');
-  const warningAlerts = alerts.filter(alert => alert.type === 'warning');
-  const infoAlerts = alerts.filter(alert => alert.type === 'info');
+  const criticalAlerts = alerts.filter((alert) => alert.type === 'critical');
+  const warningAlerts = alerts.filter((alert) => alert.type === 'warning');
+  const infoAlerts = alerts.filter((alert) => alert.type === 'info');
 
   return (
     <div className="space-y-4">
@@ -276,53 +296,70 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
 
       {/* Alert List */}
       <div className="space-y-3">
-        {alerts.map(alert => {
+        {alerts.map((alert) => {
           const AlertIcon = getAlertIcon(alert.type);
-          
+
           return (
             <Card key={alert.id} className={`border-2 ${getAlertColor(alert.type)}`}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      alert.type === 'critical' ? 'bg-red-100' :
-                      alert.type === 'warning' ? 'bg-yellow-100' :
-                      'bg-blue-100'
-                    }`}>
-                      <AlertIcon className={`h-4 w-4 ${
-                        alert.type === 'critical' ? 'text-red-600' :
-                        alert.type === 'warning' ? 'text-yellow-600' :
-                        'text-blue-600'
-                      }`} />
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        alert.type === 'critical'
+                          ? 'bg-red-100'
+                          : alert.type === 'warning'
+                            ? 'bg-yellow-100'
+                            : 'bg-blue-100'
+                      }`}
+                    >
+                      <AlertIcon
+                        className={`h-4 w-4 ${
+                          alert.type === 'critical'
+                            ? 'text-red-600'
+                            : alert.type === 'warning'
+                              ? 'text-yellow-600'
+                              : 'text-blue-600'
+                        }`}
+                      />
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
                         <h4 className={`font-semibold ${getAlertTextColor(alert.type)}`}>
                           {alert.title}
                         </h4>
-                        <Badge className={getAlertBadgeColor(alert.type)}>
-                          {alert.type}
-                        </Badge>
+                        <Badge className={getAlertBadgeColor(alert.type)}>{alert.type}</Badge>
                         {alert.action_required && (
                           <Badge className="bg-red-100 text-red-800 border-red-200">
                             Action Required
                           </Badge>
                         )}
                       </div>
-                      
+
                       <p className={`text-sm ${getAlertTextColor(alert.type)} mb-2`}>
                         {alert.description}
                       </p>
-                      
+
                       <div className="flex items-center space-x-4 text-xs text-gray-600">
                         <div className="flex items-center space-x-1">
                           <span className="font-medium">{alert.metric}:</span>
-                          <span>{alert.current_value.toFixed(1)}{alert.metric.includes('Utilization') || alert.metric.includes('Score') ? '%' : ''}</span>
+                          <span>
+                            {alert.current_value.toFixed(1)}
+                            {alert.metric.includes('Utilization') || alert.metric.includes('Score')
+                              ? '%'
+                              : ''}
+                          </span>
                           {alert.threshold_value > 0 && (
                             <>
                               <span>/</span>
-                              <span>{alert.threshold_value}{alert.metric.includes('Utilization') || alert.metric.includes('Score') ? '%' : ''}</span>
+                              <span>
+                                {alert.threshold_value}
+                                {alert.metric.includes('Utilization') ||
+                                alert.metric.includes('Score')
+                                  ? '%'
+                                  : ''}
+                              </span>
                             </>
                           )}
                         </div>
@@ -341,10 +378,12 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
                           <span>{formatTimeAgo(alert.timestamp)}</span>
                         </div>
                       </div>
-                      
+
                       {alert.suggested_actions.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
-                          <h5 className="text-xs font-medium text-gray-700 mb-2">Suggested Actions:</h5>
+                          <h5 className="text-xs font-medium text-gray-700 mb-2">
+                            Suggested Actions:
+                          </h5>
                           <ul className="text-xs text-gray-600 space-y-1">
                             {alert.suggested_actions.map((action, index) => (
                               <li key={index} className="flex items-start space-x-2">
@@ -357,7 +396,7 @@ const CapacityAlerts: React.FC<CapacityAlertsProps> = ({ metrics }) => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2 ml-4">
                     <Button variant="ghost" size="sm">
                       <Eye className="h-4 w-4" />

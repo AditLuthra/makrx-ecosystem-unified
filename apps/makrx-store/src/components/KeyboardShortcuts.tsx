@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/Button'
-import { 
-  X, 
-  Search, 
-  Filter, 
-  ShoppingCart, 
-  Heart, 
-  Scale, 
-  Home, 
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/Button';
+import {
+  X,
+  Search,
+  Filter,
+  ShoppingCart,
+  Heart,
+  Scale,
+  Home,
   Package,
   Keyboard,
-  Command
-} from 'lucide-react'
+  Command,
+} from 'lucide-react';
 
 interface KeyboardShortcutsModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsModalProps) {
@@ -28,8 +28,8 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         { key: 'G → H', description: 'Go to Home', icon: Home },
         { key: 'G → C', description: 'Go to Catalog', icon: Package },
         { key: 'G → Cart', description: 'Go to Cart', icon: ShoppingCart },
-        { key: 'Esc', description: 'Close modals/overlays', icon: X }
-      ]
+        { key: 'Esc', description: 'Close modals/overlays', icon: X },
+      ],
     },
     {
       category: 'Search & Browse',
@@ -38,8 +38,8 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         { key: '⌘K', description: 'Open search (Mac)', icon: Search },
         { key: 'Ctrl+K', description: 'Open search (Windows)', icon: Search },
         { key: 'F', description: 'Toggle filters', icon: Filter },
-        { key: '↑/↓', description: 'Navigate search results', icon: Search }
-      ]
+        { key: '↑/↓', description: 'Navigate search results', icon: Search },
+      ],
     },
     {
       category: 'Product Actions',
@@ -47,8 +47,8 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         { key: 'A', description: 'Add to cart', icon: ShoppingCart },
         { key: 'W', description: 'Add to wishlist', icon: Heart },
         { key: 'C', description: 'Add to compare', icon: Scale },
-        { key: 'Enter', description: 'Select/confirm action', icon: Command }
-      ]
+        { key: 'Enter', description: 'Select/confirm action', icon: Command },
+      ],
     },
     {
       category: 'View Controls',
@@ -56,24 +56,24 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         { key: '1', description: 'Grid view', icon: Package },
         { key: '2', description: 'List view', icon: Package },
         { key: 'S → P', description: 'Sort by price', icon: Package },
-        { key: 'S → R', description: 'Sort by rating', icon: Package }
-      ]
-    }
-  ]
+        { key: 'S → R', description: 'Sort by rating', icon: Package },
+      ],
+    },
+  ];
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -107,7 +107,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
                 </h3>
                 <div className="space-y-3">
                   {category.shortcuts.map((shortcut, shortcutIndex) => {
-                    const Icon = shortcut.icon
+                    const Icon = shortcut.icon;
                     return (
                       <div
                         key={shortcutIndex}
@@ -125,7 +125,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
                           {shortcut.key}
                         </kbd>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -135,7 +135,10 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
           <div className="mt-8 p-4 bg-blue-50 rounded-xl">
             <h4 className="font-semibold text-store-text mb-2">Pro Tips</h4>
             <ul className="text-sm text-store-text-light space-y-1">
-              <li>• Press <kbd className="px-1 bg-white rounded border text-xs">?</kbd> anytime to open this shortcuts menu</li>
+              <li>
+                • Press <kbd className="px-1 bg-white rounded border text-xs">?</kbd> anytime to
+                open this shortcuts menu
+              </li>
               <li>• Use Tab to navigate through form fields and buttons</li>
               <li>• Most shortcuts work on any page in the store</li>
               <li>• Shortcuts are disabled when typing in input fields</li>
@@ -152,142 +155,139 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Global keyboard shortcuts hook
 export function useKeyboardShortcuts() {
-  const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts when user is typing in inputs
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return
+        return;
       }
 
-      const key = e.key.toLowerCase()
-      const metaKey = e.metaKey || e.ctrlKey
+      const key = e.key.toLowerCase();
+      const metaKey = e.metaKey || e.ctrlKey;
 
       switch (key) {
         case '?':
-          e.preventDefault()
-          setShowShortcuts(true)
-          break
-        
+          e.preventDefault();
+          setShowShortcuts(true);
+          break;
+
         case 'escape':
-          e.preventDefault()
-          setShowShortcuts(false)
+          e.preventDefault();
+          setShowShortcuts(false);
           // Also close any open modals/overlays
-          break
+          break;
 
         case '/':
-          e.preventDefault()
+          e.preventDefault();
           // Focus search input
-          const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement
+          const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
           if (searchInput) {
-            searchInput.focus()
+            searchInput.focus();
           }
-          break
+          break;
 
         case 'k':
           if (metaKey) {
-            e.preventDefault()
+            e.preventDefault();
             // Open search modal (handled by SmartSearch component)
           }
-          break
+          break;
 
         case 'g':
           // Navigation shortcuts (g + h for home, g + c for catalog)
-          e.preventDefault()
+          e.preventDefault();
           const handleNavigation = (nextKey: string) => {
             const navigationHandler = (navE: KeyboardEvent) => {
-              navE.preventDefault()
+              navE.preventDefault();
               switch (navE.key.toLowerCase()) {
                 case 'h':
-                  window.location.href = '/'
-                  break
+                  window.location.href = '/';
+                  break;
                 case 'c':
-                  window.location.href = '/catalog'
-                  break
+                  window.location.href = '/catalog';
+                  break;
               }
-              document.removeEventListener('keydown', navigationHandler)
-            }
-            document.addEventListener('keydown', navigationHandler)
+              document.removeEventListener('keydown', navigationHandler);
+            };
+            document.addEventListener('keydown', navigationHandler);
             setTimeout(() => {
-              document.removeEventListener('keydown', navigationHandler)
-            }, 2000) // Remove listener after 2 seconds
-          }
-          handleNavigation(key)
-          break
+              document.removeEventListener('keydown', navigationHandler);
+            }, 2000); // Remove listener after 2 seconds
+          };
+          handleNavigation(key);
+          break;
 
         case 'f':
-          e.preventDefault()
+          e.preventDefault();
           // Toggle filters (this would need to be implemented per page)
-          const filterButton = document.querySelector('[data-filters-toggle]') as HTMLButtonElement
+          const filterButton = document.querySelector('[data-filters-toggle]') as HTMLButtonElement;
           if (filterButton) {
-            filterButton.click()
+            filterButton.click();
           }
-          break
+          break;
 
         case 'a':
-          e.preventDefault()
+          e.preventDefault();
           // Add to cart (on product pages)
-          const addToCartButton = document.querySelector('[data-add-to-cart]') as HTMLButtonElement
+          const addToCartButton = document.querySelector('[data-add-to-cart]') as HTMLButtonElement;
           if (addToCartButton && !addToCartButton.disabled) {
-            addToCartButton.click()
+            addToCartButton.click();
           }
-          break
+          break;
 
         case 'w':
-          e.preventDefault()
+          e.preventDefault();
           // Add to wishlist
-          const wishlistButton = document.querySelector('[data-wishlist]') as HTMLButtonElement
+          const wishlistButton = document.querySelector('[data-wishlist]') as HTMLButtonElement;
           if (wishlistButton) {
-            wishlistButton.click()
+            wishlistButton.click();
           }
-          break
+          break;
 
         case '1':
-          e.preventDefault()
+          e.preventDefault();
           // Switch to grid view
-          const gridViewButton = document.querySelector('[data-view="grid"]') as HTMLButtonElement
+          const gridViewButton = document.querySelector('[data-view="grid"]') as HTMLButtonElement;
           if (gridViewButton) {
-            gridViewButton.click()
+            gridViewButton.click();
           }
-          break
+          break;
 
         case '2':
-          e.preventDefault()
+          e.preventDefault();
           // Switch to list view
-          const listViewButton = document.querySelector('[data-view="list"]') as HTMLButtonElement
+          const listViewButton = document.querySelector('[data-view="list"]') as HTMLButtonElement;
           if (listViewButton) {
-            listViewButton.click()
+            listViewButton.click();
           }
-          break
+          break;
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return {
     showShortcuts,
-    setShowShortcuts
-  }
+    setShowShortcuts,
+  };
 }
 
 export default function KeyboardShortcutsProvider({ children }: { children: React.ReactNode }) {
-  const { showShortcuts, setShowShortcuts } = useKeyboardShortcuts()
+  const { showShortcuts, setShowShortcuts } = useKeyboardShortcuts();
 
   return (
     <>
       {children}
-      <KeyboardShortcutsModal 
-        isOpen={showShortcuts} 
-        onClose={() => setShowShortcuts(false)} 
-      />
+      <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </>
-  )
+  );
 }

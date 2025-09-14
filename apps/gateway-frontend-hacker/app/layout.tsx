@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { Inter } from 'next/font/google';
 import { KeycloakProvider } from '@makrx/auth';
 import { EnhancedNavigation } from '@/components/EnhancedNavigation';

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Calendar,
   Clock,
@@ -12,7 +12,7 @@ import {
   Lightbulb,
   Cog,
   ChevronRight,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface BlogPost {
   id: string;
@@ -40,158 +40,148 @@ interface Category {
 
 const blogPosts: BlogPost[] = [
   {
-    id: "1",
-    title: "The Future of On-Demand Manufacturing: Trends to Watch in 2024",
+    id: '1',
+    title: 'The Future of On-Demand Manufacturing: Trends to Watch in 2024',
     excerpt:
-      "Explore the emerging trends that are reshaping the manufacturing landscape, from AI-powered design optimization to sustainable production methods.",
-    content:
-      "The manufacturing industry is undergoing a dramatic transformation...",
+      'Explore the emerging trends that are reshaping the manufacturing landscape, from AI-powered design optimization to sustainable production methods.',
+    content: 'The manufacturing industry is undergoing a dramatic transformation...',
     author: {
-      name: "Sarah Chen",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "CEO & Founder",
+      name: 'Sarah Chen',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'CEO & Founder',
     },
-    date: "2024-01-20",
-    readTime: "8 min read",
-    category: "Industry Insights",
-    tags: ["Manufacturing", "AI", "Trends", "Sustainability"],
+    date: '2024-01-20',
+    readTime: '8 min read',
+    category: 'Industry Insights',
+    tags: ['Manufacturing', 'AI', 'Trends', 'Sustainability'],
     featured: true,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
   {
-    id: "2",
-    title:
-      "Design for Manufacturing: 10 Tips to Reduce Costs and Improve Quality",
+    id: '2',
+    title: 'Design for Manufacturing: 10 Tips to Reduce Costs and Improve Quality',
     excerpt:
-      "Learn practical design principles that can significantly reduce manufacturing costs while improving product quality and reliability.",
-    content: "Design for Manufacturing (DFM) is a critical consideration...",
+      'Learn practical design principles that can significantly reduce manufacturing costs while improving product quality and reliability.',
+    content: 'Design for Manufacturing (DFM) is a critical consideration...',
     author: {
-      name: "Marcus Rodriguez",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "CTO",
+      name: 'Marcus Rodriguez',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'CTO',
     },
-    date: "2024-01-15",
-    readTime: "12 min read",
-    category: "Design & Engineering",
-    tags: ["DFM", "Cost Reduction", "Quality", "Best Practices"],
+    date: '2024-01-15',
+    readTime: '12 min read',
+    category: 'Design & Engineering',
+    tags: ['DFM', 'Cost Reduction', 'Quality', 'Best Practices'],
     featured: true,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
   {
-    id: "3",
-    title: "Case Study: How Startup XYZ Reduced Prototyping Costs by 70%",
+    id: '3',
+    title: 'Case Study: How Startup XYZ Reduced Prototyping Costs by 70%',
     excerpt:
-      "A detailed look at how one startup leveraged our platform to dramatically reduce their prototyping costs and accelerate time to market.",
-    content: "Startup XYZ came to us with a challenge...",
+      'A detailed look at how one startup leveraged our platform to dramatically reduce their prototyping costs and accelerate time to market.',
+    content: 'Startup XYZ came to us with a challenge...',
     author: {
-      name: "Emily Park",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "Head of Customer Success",
+      name: 'Emily Park',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'Head of Customer Success',
     },
-    date: "2024-01-10",
-    readTime: "6 min read",
-    category: "Case Studies",
-    tags: ["Startup", "Prototyping", "Cost Reduction", "Success Story"],
+    date: '2024-01-10',
+    readTime: '6 min read',
+    category: 'Case Studies',
+    tags: ['Startup', 'Prototyping', 'Cost Reduction', 'Success Story'],
     featured: false,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
   {
-    id: "4",
-    title: "Understanding Material Properties: A Guide for Makers",
+    id: '4',
+    title: 'Understanding Material Properties: A Guide for Makers',
     excerpt:
-      "Comprehensive guide to selecting the right materials for your projects, covering everything from plastics to metals to composites.",
-    content: "Material selection is one of the most critical decisions...",
+      'Comprehensive guide to selecting the right materials for your projects, covering everything from plastics to metals to composites.',
+    content: 'Material selection is one of the most critical decisions...',
     author: {
-      name: "Dr. James Wilson",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "Materials Engineer",
+      name: 'Dr. James Wilson',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'Materials Engineer',
     },
-    date: "2024-01-08",
-    readTime: "15 min read",
-    category: "Technical Guides",
-    tags: ["Materials", "Properties", "Selection", "Engineering"],
+    date: '2024-01-08',
+    readTime: '15 min read',
+    category: 'Technical Guides',
+    tags: ['Materials', 'Properties', 'Selection', 'Engineering'],
     featured: false,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
   {
-    id: "5",
-    title: "Sustainability in Manufacturing: Our Carbon Neutral Journey",
+    id: '5',
+    title: 'Sustainability in Manufacturing: Our Carbon Neutral Journey',
     excerpt:
-      "Learn about our journey to achieve carbon neutrality and how sustainable manufacturing practices benefit both business and environment.",
-    content: "Sustainability has been a core value at MakrX since day one...",
+      'Learn about our journey to achieve carbon neutrality and how sustainable manufacturing practices benefit both business and environment.',
+    content: 'Sustainability has been a core value at MakrX since day one...',
     author: {
-      name: "Lisa Thompson",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "Sustainability Director",
+      name: 'Lisa Thompson',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'Sustainability Director',
     },
-    date: "2024-01-05",
-    readTime: "10 min read",
-    category: "Sustainability",
-    tags: [
-      "Sustainability",
-      "Carbon Neutral",
-      "Environment",
-      "Green Manufacturing",
-    ],
+    date: '2024-01-05',
+    readTime: '10 min read',
+    category: 'Sustainability',
+    tags: ['Sustainability', 'Carbon Neutral', 'Environment', 'Green Manufacturing'],
     featured: false,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
   {
-    id: "6",
+    id: '6',
     title: "Getting Started with 3D Printing: A Beginner's Complete Guide",
     excerpt:
-      "Everything you need to know to start your 3D printing journey, from choosing your first printer to mastering advanced techniques.",
-    content: "3D printing has revolutionized the way we create...",
+      'Everything you need to know to start your 3D printing journey, from choosing your first printer to mastering advanced techniques.',
+    content: '3D printing has revolutionized the way we create...',
     author: {
-      name: "Alex Kumar",
-      avatar: "https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A",
-      role: "Community Manager",
+      name: 'Alex Kumar',
+      avatar: 'https://via.placeholder.com/40x40/3B82F6/FFFFFF?text=A',
+      role: 'Community Manager',
     },
-    date: "2024-01-03",
-    readTime: "20 min read",
-    category: "Tutorials",
-    tags: ["3D Printing", "Beginner", "Tutorial", "Getting Started"],
+    date: '2024-01-03',
+    readTime: '20 min read',
+    category: 'Tutorials',
+    tags: ['3D Printing', 'Beginner', 'Tutorial', 'Getting Started'],
     featured: false,
-    imageUrl: "https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog",
+    imageUrl: 'https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Blog',
   },
 ];
 
 const categories: Category[] = [
-  { name: "All Posts", count: blogPosts.length, icon: BookOpen },
-  { name: "Industry Insights", count: 8, icon: TrendingUp },
-  { name: "Design & Engineering", count: 12, icon: Cog },
-  { name: "Case Studies", count: 6, icon: Lightbulb },
-  { name: "Technical Guides", count: 15, icon: BookOpen },
-  { name: "Tutorials", count: 10, icon: BookOpen },
-  { name: "Sustainability", count: 4, icon: TrendingUp },
+  { name: 'All Posts', count: blogPosts.length, icon: BookOpen },
+  { name: 'Industry Insights', count: 8, icon: TrendingUp },
+  { name: 'Design & Engineering', count: 12, icon: Cog },
+  { name: 'Case Studies', count: 6, icon: Lightbulb },
+  { name: 'Technical Guides', count: 15, icon: BookOpen },
+  { name: 'Tutorials', count: 10, icon: BookOpen },
+  { name: 'Sustainability', count: 4, icon: TrendingUp },
 ];
 
 const featuredTopics = [
-  "Manufacturing Trends",
-  "Design for Manufacturing",
-  "3D Printing",
-  "CNC Machining",
-  "Sustainability",
-  "AI in Manufacturing",
-  "Prototyping",
-  "Material Science",
+  'Manufacturing Trends',
+  'Design for Manufacturing',
+  '3D Printing',
+  'CNC Machining',
+  'Sustainability',
+  'AI in Manufacturing',
+  'Prototyping',
+  'Material Science',
 ];
 
 export default function BlogPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All Posts");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('All Posts');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
   const filteredPosts = blogPosts.filter((post) => {
-    const categoryMatch =
-      selectedCategory === "All Posts" || post.category === selectedCategory;
+    const categoryMatch = selectedCategory === 'All Posts' || post.category === selectedCategory;
     const searchMatch =
-      searchTerm === "" ||
+      searchTerm === '' ||
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+      post.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     return categoryMatch && searchMatch;
   });
 
@@ -204,12 +194,10 @@ export default function BlogPage() {
       <div className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              MakrX Blog
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">MakrX Blog</h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              Insights, tutorials, and stories from the world of manufacturing.
-              Learn from our experts and community of makers.
+              Insights, tutorials, and stories from the world of manufacturing. Learn from our
+              experts and community of makers.
             </p>
 
             {/* Search */}
@@ -245,8 +233,8 @@ export default function BlogPage() {
                       onClick={() => setSelectedCategory(category.name)}
                       className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors ${
                         selectedCategory === category.name
-                          ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -302,7 +290,7 @@ export default function BlogPage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Featured Posts */}
-            {selectedCategory === "All Posts" && featuredPosts.length > 0 && (
+            {selectedCategory === 'All Posts' && featuredPosts.length > 0 && (
               <div className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                   Featured Articles
@@ -323,9 +311,7 @@ export default function BlogPage() {
                         <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            <span>
-                              {new Date(post.date).toLocaleDateString()}
-                            </span>
+                            <span>{new Date(post.date).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
@@ -367,9 +353,7 @@ export default function BlogPage() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {selectedCategory === "All Posts"
-                    ? "Latest Articles"
-                    : selectedCategory}
+                  {selectedCategory === 'All Posts' ? 'Latest Articles' : selectedCategory}
                 </h2>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   {filteredPosts.length} articles
@@ -397,9 +381,7 @@ export default function BlogPage() {
                           </span>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            <span>
-                              {new Date(post.date).toLocaleDateString()}
-                            </span>
+                            <span>{new Date(post.date).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
@@ -485,9 +467,7 @@ export default function BlogPage() {
                   </span>
                   <div className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>
-                      {new Date(selectedPost.date).toLocaleDateString()}
-                    </span>
+                    <span>{new Date(selectedPost.date).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
@@ -519,9 +499,7 @@ export default function BlogPage() {
                   <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                     {selectedPost.excerpt}
                   </p>
-                  <div className="text-gray-700 dark:text-gray-300">
-                    {selectedPost.content}
-                  </div>
+                  <div className="text-gray-700 dark:text-gray-300">{selectedPost.content}</div>
                 </div>
 
                 <div className="flex items-center gap-2 mt-8 pt-6 border-t dark:border-gray-600">

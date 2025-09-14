@@ -45,10 +45,10 @@ interface TemplateSelectorProps {
   onPreviewTemplate?: (templateId: string) => void;
 }
 
-export default function TemplateSelector({ 
-  selectedTemplate, 
-  onSelectTemplate, 
-  onPreviewTemplate 
+export default function TemplateSelector({
+  selectedTemplate,
+  onSelectTemplate,
+  onPreviewTemplate,
 }: TemplateSelectorProps) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,17 +70,16 @@ export default function TemplateSelector({
     }
   };
 
-  const categories = ['all', ...Array.from(new Set(templates.map(t => t.category)))];
-  const filteredTemplates = activeCategory === 'all' 
-    ? templates 
-    : templates.filter(t => t.category === activeCategory);
+  const categories = ['all', ...Array.from(new Set(templates.map((t) => t.category)))];
+  const filteredTemplates =
+    activeCategory === 'all' ? templates : templates.filter((t) => t.category === activeCategory);
 
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="h-6 bg-muted rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <Card key={i} className="animate-pulse">
               <div className="h-48 bg-muted rounded-t-lg" />
               <CardContent className="p-4 space-y-2">
@@ -105,7 +104,7 @@ export default function TemplateSelector({
 
       {/* Category Navigation */}
       <div className="flex space-x-1 bg-muted p-1 rounded-lg">
-        {categories.map(category => (
+        {categories.map((category) => (
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
@@ -122,13 +121,11 @@ export default function TemplateSelector({
 
       {/* Templates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTemplates.map(template => (
-          <Card 
-            key={template.id} 
+        {filteredTemplates.map((template) => (
+          <Card
+            key={template.id}
             className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedTemplate === template.id 
-                ? 'ring-2 ring-primary ring-offset-2' 
-                : ''
+              selectedTemplate === template.id ? 'ring-2 ring-primary ring-offset-2' : ''
             }`}
             onClick={() => onSelectTemplate(template.id)}
           >
@@ -152,14 +149,14 @@ export default function TemplateSelector({
                   Preview
                 </Button>
               </div>
-              
+
               {/* Selection Indicator */}
               {selectedTemplate === template.id && (
                 <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
                   <Check className="h-4 w-4" />
                 </div>
               )}
-              
+
               {/* Usage Count */}
               <div className="absolute top-2 left-2">
                 <Badge variant="secondary" className="bg-black/50 text-white border-0">
@@ -176,9 +173,7 @@ export default function TemplateSelector({
                   {template.category}
                 </Badge>
               </div>
-              <CardDescription className="text-sm">
-                {template.description}
-              </CardDescription>
+              <CardDescription className="text-sm">{template.description}</CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-4">
@@ -214,9 +209,9 @@ export default function TemplateSelector({
               </div>
 
               {/* Action Button */}
-              <Button 
+              <Button
                 className="w-full mt-4"
-                variant={selectedTemplate === template.id ? "default" : "outline"}
+                variant={selectedTemplate === template.id ? 'default' : 'outline'}
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectTemplate(template.id);
@@ -238,9 +233,7 @@ export default function TemplateSelector({
 
       {filteredTemplates.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-muted-foreground">
-            No templates found in this category.
-          </div>
+          <div className="text-muted-foreground">No templates found in this category.</div>
         </div>
       )}
     </div>

@@ -1,19 +1,25 @@
 'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 export default function CreateEvent() {
   const router = useRouter();
@@ -21,56 +27,57 @@ export default function CreateEvent() {
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    shortDescription: "",
-    type: "workshop",
-    location: "",
-    startDate: "",
-    endDate: "",
-    registrationFee: "0",
-    maxAttendees: "",
+    title: '',
+    description: '',
+    shortDescription: '',
+    type: 'workshop',
+    location: '',
+    startDate: '',
+    endDate: '',
+    registrationFee: '0',
+    maxAttendees: '',
     features: {
       competitions: false,
       workshops: true,
-      exhibitions: false
-    }
+      exhibitions: false,
+    },
   });
 
   const createEventMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("POST", "/api/events", data);
+      return await apiRequest('POST', '/api/events', data);
     },
     onSuccess: () => {
       toast({
-        title: "Event Created",
-        description: "Your event has been created successfully!",
+        title: 'Event Created',
+        description: 'Your event has been created successfully!',
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
-      router.push("/admin");
+      queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+      router.push('/admin');
     },
     onError: () => {
       toast({
-        title: "Error", 
-        description: "Failed to create event. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create event. Please try again.',
+        variant: 'destructive',
       });
-    }
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.description || !formData.location) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
+        title: 'Missing Information',
+        description: 'Please fill in all required fields.',
+        variant: 'destructive',
       });
       return;
     }
 
-    const slug = formData.title.toLowerCase()
+    const slug = formData.title
+      .toLowerCase()
       .replace(/[^a-z0-9\s]/g, '')
       .replace(/\s+/g, '-')
       .trim();
@@ -78,14 +85,14 @@ export default function CreateEvent() {
     createEventMutation.mutate({
       ...formData,
       slug,
-      featuredFlags: formData.features
+      featuredFlags: formData.features,
     });
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Create New Event</h1>
@@ -105,7 +112,7 @@ export default function CreateEvent() {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="Enter event title"
                   className="mt-1"
                 />
@@ -116,7 +123,7 @@ export default function CreateEvent() {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Describe your event in detail"
                   className="mt-1"
                   rows={4}
@@ -128,7 +135,7 @@ export default function CreateEvent() {
                 <Input
                   id="shortDescription"
                   value={formData.shortDescription}
-                  onChange={(e) => setFormData({...formData, shortDescription: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
                   placeholder="Brief one-line description"
                   className="mt-1"
                 />
@@ -138,7 +145,7 @@ export default function CreateEvent() {
                 <Label htmlFor="type">Event Type</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) => setFormData({...formData, type: value})}
+                  onValueChange={(value) => setFormData({ ...formData, type: value })}
                 >
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select event type" />
@@ -156,7 +163,7 @@ export default function CreateEvent() {
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Event location or 'Online'"
                   className="mt-1"
                 />
@@ -169,7 +176,7 @@ export default function CreateEvent() {
                     id="startDate"
                     type="datetime-local"
                     value={formData.startDate}
-                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -179,7 +186,7 @@ export default function CreateEvent() {
                     id="endDate"
                     type="datetime-local"
                     value={formData.endDate}
-                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -194,7 +201,7 @@ export default function CreateEvent() {
                     min="0"
                     step="0.01"
                     value={formData.registrationFee}
-                    onChange={(e) => setFormData({...formData, registrationFee: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, registrationFee: e.target.value })}
                     placeholder="0.00"
                     className="mt-1"
                   />
@@ -206,7 +213,7 @@ export default function CreateEvent() {
                     type="number"
                     min="1"
                     value={formData.maxAttendees}
-                    onChange={(e) => setFormData({...formData, maxAttendees: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, maxAttendees: e.target.value })}
                     placeholder="Leave empty for unlimited"
                     className="mt-1"
                   />
@@ -217,40 +224,46 @@ export default function CreateEvent() {
                 <Label className="text-base font-medium">Event Features</Label>
                 <div className="mt-3 space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="workshops" className="text-sm">Include Workshops</Label>
+                    <Label htmlFor="workshops" className="text-sm">
+                      Include Workshops
+                    </Label>
                     <Switch
                       id="workshops"
                       checked={formData.features.workshops}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         setFormData({
-                          ...formData, 
-                          features: {...formData.features, workshops: checked}
+                          ...formData,
+                          features: { ...formData.features, workshops: checked },
                         })
                       }
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="competitions" className="text-sm">Include Competitions</Label>
+                    <Label htmlFor="competitions" className="text-sm">
+                      Include Competitions
+                    </Label>
                     <Switch
                       id="competitions"
                       checked={formData.features.competitions}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         setFormData({
-                          ...formData, 
-                          features: {...formData.features, competitions: checked}
+                          ...formData,
+                          features: { ...formData.features, competitions: checked },
                         })
                       }
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="exhibitions" className="text-sm">Include Exhibitions</Label>
+                    <Label htmlFor="exhibitions" className="text-sm">
+                      Include Exhibitions
+                    </Label>
                     <Switch
                       id="exhibitions"
                       checked={formData.features.exhibitions}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         setFormData({
-                          ...formData, 
-                          features: {...formData.features, exhibitions: checked}
+                          ...formData,
+                          features: { ...formData.features, exhibitions: checked },
                         })
                       }
                     />
@@ -259,18 +272,10 @@ export default function CreateEvent() {
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button 
-                  type="submit" 
-                  className="flex-1"
-                  disabled={createEventMutation.isPending}
-                >
-                  {createEventMutation.isPending ? "Creating..." : "Create Event"}
+                <Button type="submit" className="flex-1" disabled={createEventMutation.isPending}>
+                  {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
                 </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => router.push("/")}
-                >
+                <Button type="button" variant="outline" onClick={() => router.push('/')}>
                   Cancel
                 </Button>
               </div>
@@ -278,7 +283,7 @@ export default function CreateEvent() {
           </CardContent>
         </Card>
       </div>
-      
+
       <Footer />
     </div>
   );

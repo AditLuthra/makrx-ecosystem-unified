@@ -7,14 +7,14 @@ import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
-import { 
-  Plus, 
-  UserPlus, 
-  Crown, 
-  Edit, 
-  Eye, 
-  X, 
-  Mail, 
+import {
+  Plus,
+  UserPlus,
+  Crown,
+  Edit,
+  Eye,
+  X,
+  Mail,
   Calendar,
   MoreHorizontal,
   Shield,
@@ -23,9 +23,15 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Users
+  Users,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Collaborator {
@@ -44,11 +50,11 @@ interface TeamManagementProps {
   onUpdate: () => void;
 }
 
-const TeamManagement: React.FC<TeamManagementProps> = ({ 
-  projectId, 
-  collaborators, 
-  canEdit, 
-  onUpdate 
+const TeamManagement: React.FC<TeamManagementProps> = ({
+  projectId,
+  collaborators,
+  canEdit,
+  onUpdate,
 }) => {
   const getHeaders = useAuthHeaders();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -59,28 +65,40 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'owner': return <Crown className="h-4 w-4 text-yellow-600" />;
-      case 'editor': return <Edit className="h-4 w-4 text-blue-600" />;
-      case 'viewer': return <Eye className="h-4 w-4 text-gray-600" />;
-      default: return <Shield className="h-4 w-4 text-gray-600" />;
+      case 'owner':
+        return <Crown className="h-4 w-4 text-yellow-600" />;
+      case 'editor':
+        return <Edit className="h-4 w-4 text-blue-600" />;
+      case 'viewer':
+        return <Eye className="h-4 w-4 text-gray-600" />;
+      default:
+        return <Shield className="h-4 w-4 text-gray-600" />;
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'owner': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'editor': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'viewer': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'owner':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'editor':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'viewer':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getRoleDescription = (role: string) => {
     switch (role) {
-      case 'owner': return 'Full project control, can delete project';
-      case 'editor': return 'Can edit project, manage BOM, reserve equipment';
-      case 'viewer': return 'Can view project details and files';
-      default: return 'Unknown role';
+      case 'owner':
+        return 'Full project control, can delete project';
+      case 'editor':
+        return 'Can edit project, manage BOM, reserve equipment';
+      case 'viewer':
+        return 'Can view project details and files';
+      default:
+        return 'Unknown role';
     }
   };
 
@@ -180,8 +198,8 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
     }
   };
 
-  const pendingInvitations = collaborators.filter(c => !c.accepted_at);
-  const activeMembers = collaborators.filter(c => c.accepted_at);
+  const pendingInvitations = collaborators.filter((c) => !c.accepted_at);
+  const activeMembers = collaborators.filter((c) => c.accepted_at);
 
   return (
     <div className="space-y-6">
@@ -208,7 +226,9 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Crown className="h-4 w-4 text-yellow-600" />
               <div>
-                <p className="text-2xl font-bold">{collaborators.filter(c => c.role === 'owner').length}</p>
+                <p className="text-2xl font-bold">
+                  {collaborators.filter((c) => c.role === 'owner').length}
+                </p>
                 <p className="text-xs text-gray-600">Owners</p>
               </div>
             </div>
@@ -219,7 +239,9 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Edit className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-2xl font-bold">{collaborators.filter(c => c.role === 'editor').length}</p>
+                <p className="text-2xl font-bold">
+                  {collaborators.filter((c) => c.role === 'editor').length}
+                </p>
                 <p className="text-xs text-gray-600">Editors</p>
               </div>
             </div>
@@ -230,7 +252,9 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Eye className="h-4 w-4 text-gray-600" />
               <div>
-                <p className="text-2xl font-bold">{collaborators.filter(c => c.role === 'viewer').length}</p>
+                <p className="text-2xl font-bold">
+                  {collaborators.filter((c) => c.role === 'viewer').length}
+                </p>
                 <p className="text-xs text-gray-600">Viewers</p>
               </div>
             </div>
@@ -261,7 +285,10 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
           <CardContent>
             <div className="space-y-3">
               {pendingInvitations.map((collaborator) => (
-                <div key={collaborator.id} className="flex items-center justify-between p-3 border rounded-lg bg-orange-50">
+                <div
+                  key={collaborator.id}
+                  className="flex items-center justify-between p-3 border rounded-lg bg-orange-50"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center">
                       <Mail className="h-4 w-4 text-orange-600" />
@@ -306,7 +333,10 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
         <CardContent>
           <div className="space-y-3">
             {activeMembers.map((collaborator) => (
-              <div key={collaborator.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={collaborator.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-blue-600">
@@ -316,20 +346,21 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
                   <div>
                     <p className="font-medium">{collaborator.user_id}</p>
                     <p className="text-sm text-gray-600">
-                      Joined {formatDate(collaborator.accepted_at)} • Invited by {collaborator.invited_by}
+                      Joined {formatDate(collaborator.accepted_at)} • Invited by{' '}
+                      {collaborator.invited_by}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {getRoleDescription(collaborator.role)}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Badge className={getRoleColor(collaborator.role)}>
                     {getRoleIcon(collaborator.role)}
                     {collaborator.role}
                   </Badge>
-                  
+
                   {canEdit && collaborator.role !== 'owner' && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -339,19 +370,23 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         {collaborator.role !== 'editor' && (
-                          <DropdownMenuItem onClick={() => handleUpdateRole(collaborator.user_id, 'editor')}>
+                          <DropdownMenuItem
+                            onClick={() => handleUpdateRole(collaborator.user_id, 'editor')}
+                          >
                             <Edit className="h-4 w-4 mr-2" />
                             Make Editor
                           </DropdownMenuItem>
                         )}
                         {collaborator.role !== 'viewer' && (
-                          <DropdownMenuItem onClick={() => handleUpdateRole(collaborator.user_id, 'viewer')}>
+                          <DropdownMenuItem
+                            onClick={() => handleUpdateRole(collaborator.user_id, 'viewer')}
+                          >
                             <Eye className="h-4 w-4 mr-2" />
                             Make Viewer
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleRemoveMember(collaborator.user_id)}
                           className="text-red-600"
                         >
@@ -364,7 +399,7 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
                 </div>
               </div>
             ))}
-            
+
             {activeMembers.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -429,7 +464,7 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
           <DialogHeader>
             <DialogTitle>Add Team Member</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -454,7 +489,10 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
 
             <div>
               <Label htmlFor="role">Role</Label>
-              <Select value={newMemberRole} onValueChange={(value: 'editor' | 'viewer') => setNewMemberRole(value)}>
+              <Select
+                value={newMemberRole}
+                onValueChange={(value: 'editor' | 'viewer') => setNewMemberRole(value)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>

@@ -56,7 +56,7 @@ export default function AddEquipmentModal({
     model: '',
     purchase_date: '',
     warranty_info: '',
-    ...initialData
+    ...initialData,
   });
 
   const [loading, setLoading] = useState(false);
@@ -65,9 +65,9 @@ export default function AddEquipmentModal({
 
   useEffect(() => {
     if (isOpen && initialData) {
-      setFormData(prev => ({ ...prev, ...initialData }));
+      setFormData((prev) => ({ ...prev, ...initialData }));
     } else if (isOpen && editEquipment) {
-      setFormData(prev => ({ ...prev, ...(editEquipment as any) }));
+      setFormData((prev) => ({ ...prev, ...(editEquipment as any) }));
     } else if (isOpen && !initialData) {
       // Reset form for new equipment
       setFormData({
@@ -93,19 +93,19 @@ export default function AddEquipmentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form data
     const validationResult = validateForm(formData);
-    
+
     if (!validationResult.isValid) {
       setValidationErrors(validationResult.errors);
       return;
     }
-    
+
     // Clear previous validation errors
     setValidationErrors({});
     setLoading(true);
-    
+
     try {
       if (onSave) {
         await onSave(formData);
@@ -122,21 +122,21 @@ export default function AddEquipmentModal({
   };
 
   const handleInputChange = (field: keyof Equipment, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear validation error for this field when user starts typing
     if (validationErrors[field as string]) {
-      setValidationErrors(prev => {
+      setValidationErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[field as string];
         return newErrors;
       });
     }
-    
+
     // Optional: Real-time validation
     const fieldError = validateField(field as string, value);
     if (fieldError) {
-      setValidationErrors(prev => ({ ...prev, [field]: fieldError }));
+      setValidationErrors((prev) => ({ ...prev, [field]: fieldError }));
     }
   };
 
@@ -169,8 +169,8 @@ export default function AddEquipmentModal({
                 value={formData.equipment_id}
                 onChange={(e) => handleInputChange('equipment_id', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                  validationErrors.equipment_id 
-                    ? 'border-red-500 focus:ring-red-500' 
+                  validationErrors.equipment_id
+                    ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-blue-500'
                 }`}
                 required
@@ -192,8 +192,8 @@ export default function AddEquipmentModal({
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                  validationErrors.name 
-                    ? 'border-red-500 focus:ring-red-500' 
+                  validationErrors.name
+                    ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-blue-500'
                 }`}
                 required
@@ -216,8 +216,8 @@ export default function AddEquipmentModal({
                 value={formData.type}
                 onChange={(e) => handleInputChange('type', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                  validationErrors.category 
-                    ? 'border-red-500 focus:ring-red-500' 
+                  validationErrors.category
+                    ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-blue-500'
                 }`}
                 required

@@ -3,9 +3,21 @@ import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import {
-  X, ArrowRight, ArrowLeft, Play, Pause, RotateCcw,
-  Lightbulb, Target, MousePointer, Keyboard, Eye,
-  CheckCircle, SkipForward, Zap, BookOpen
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Play,
+  Pause,
+  RotateCcw,
+  Lightbulb,
+  Target,
+  MousePointer,
+  Keyboard,
+  Eye,
+  CheckCircle,
+  SkipForward,
+  Zap,
+  BookOpen,
 } from 'lucide-react';
 
 interface TutorialStep {
@@ -34,7 +46,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
   steps,
   onComplete,
   autoPlay = false,
-  canSkip = true
+  canSkip = true,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -50,14 +62,15 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
     const element = document.querySelector(currentStepData.target) as HTMLElement;
     if (element) {
       setHighlightedElement(element);
-      
+
       // Calculate tooltip position
       const rect = element.getBoundingClientRect();
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      
-      let x = 0, y = 0;
-      
+
+      let x = 0,
+        y = 0;
+
       switch (currentStepData.position) {
         case 'top':
           x = rect.left + scrollLeft + rect.width / 2;
@@ -76,14 +89,14 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           y = rect.top + scrollTop + rect.height / 2;
           break;
       }
-      
+
       setTooltipPosition({ x, y });
-      
+
       // Scroll element into view
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
-        inline: 'center'
+        inline: 'center',
       });
     }
   }, [currentStep, currentStepData, isVisible]);
@@ -100,7 +113,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       handleComplete();
     }
@@ -108,7 +121,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -150,13 +163,13 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
   return (
     <>
       {/* Overlay Background */}
-      <div 
+      <div
         ref={overlayRef}
         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
         style={{
-          background: highlightedElement 
+          background: highlightedElement
             ? `radial-gradient(circle at ${tooltipPosition.x}px ${tooltipPosition.y}px, transparent 100px, rgba(0,0,0,0.6) 200px)`
-            : 'rgba(0,0,0,0.6)'
+            : 'rgba(0,0,0,0.6)',
         }}
       >
         {/* Highlight Ring */}
@@ -171,19 +184,28 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
               border: '3px solid rgb(59, 130, 246)',
               borderRadius: '8px',
               boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
-              animation: 'pulse 2s infinite'
+              animation: 'pulse 2s infinite',
             }}
           />
         )}
 
         {/* Tutorial Tooltip */}
-        <Card 
+        <Card
           className="absolute bg-white/95 backdrop-blur-md border-white/20 shadow-2xl max-w-sm z-10"
           style={{
             left: Math.max(20, Math.min(window.innerWidth - 380, tooltipPosition.x - 190)),
-            top: Math.max(20, Math.min(window.innerHeight - 300, tooltipPosition.y + 
-              (currentStepData.position === 'top' ? -200 : 
-               currentStepData.position === 'bottom' ? 20 : -100)))
+            top: Math.max(
+              20,
+              Math.min(
+                window.innerHeight - 300,
+                tooltipPosition.y +
+                  (currentStepData.position === 'top'
+                    ? -200
+                    : currentStepData.position === 'bottom'
+                      ? 20
+                      : -100),
+              ),
+            ),
           }}
         >
           <CardContent className="p-6">
@@ -213,9 +235,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {currentStepData.title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {currentStepData.content}
-                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">{currentStepData.content}</p>
               </div>
 
               {/* Action Hint */}
@@ -243,20 +263,10 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
             {/* Controls */}
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={togglePlay}
-                  className="h-8"
-                >
+                <Button variant="outline" size="sm" onClick={togglePlay} className="h-8">
                   {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={restart}
-                  className="h-8"
-                >
+                <Button variant="outline" size="sm" onClick={restart} className="h-8">
                   <RotateCcw className="h-3 w-3" />
                 </Button>
               </div>
@@ -273,7 +283,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                     Skip
                   </Button>
                 )}
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -283,7 +293,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 >
                   <ArrowLeft className="h-3 w-3" />
                 </Button>
-                
+
                 <Button
                   onClick={currentStep === steps.length - 1 ? handleComplete : handleNext}
                   size="sm"
@@ -311,7 +321,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 <span>{Math.round(((currentStep + 1) / steps.length) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div 
+                <div
                   className="bg-gradient-to-r from-blue-500 to-purple-600 h-1.5 rounded-full transition-all duration-300"
                   style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
                 />
@@ -334,7 +344,8 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
       {/* Styles for animations */}
       <style jsx global>{`
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
             transform: scale(1);
           }

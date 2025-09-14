@@ -1,9 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
-import { 
-  X, Save, Wrench, Calendar, Clock, DollarSign, 
-  FileText, User, AlertTriangle, CheckCircle, Plus,
-  Minus, Package, List
+import {
+  X,
+  Save,
+  Wrench,
+  Calendar,
+  Clock,
+  DollarSign,
+  FileText,
+  User,
+  AlertTriangle,
+  CheckCircle,
+  Plus,
+  Minus,
+  Package,
+  List,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -29,7 +40,7 @@ interface MaintenanceLog {
   performed_by_user_id?: string;
   performed_by_name?: string;
   supervised_by?: string;
-  parts_used?: Array<{name: string, quantity: number, cost: number}>;
+  parts_used?: Array<{ name: string; quantity: number; cost: number }>;
   labor_cost?: number;
   parts_cost?: number;
   total_cost?: number;
@@ -54,14 +65,14 @@ export default function MaintenanceModal({
   onClose,
   equipment,
   editLog,
-  onSubmit
+  onSubmit,
 }: MaintenanceModalProps) {
   const { user } = useAuth();
   const getHeaders = useAuthHeaders();
   const [currentTab, setCurrentTab] = useState<'form' | 'history'>('form');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [maintenanceHistory, setMaintenanceHistory] = useState<MaintenanceLog[]>([]);
-  
+
   const [formData, setFormData] = useState<MaintenanceLog>({
     maintenance_type: 'routine',
     title: '',
@@ -79,7 +90,7 @@ export default function MaintenanceModal({
     recommendations: '',
     next_maintenance_due: '',
     is_completed: false,
-    notes: ''
+    notes: '',
   });
 
   useEffect(() => {
@@ -87,10 +98,16 @@ export default function MaintenanceModal({
       if (editLog) {
         setFormData({
           ...editLog,
-          started_at: editLog.started_at ? new Date(editLog.started_at).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
-          completed_at: editLog.completed_at ? new Date(editLog.completed_at).toISOString().slice(0, 16) : '',
+          started_at: editLog.started_at
+            ? new Date(editLog.started_at).toISOString().slice(0, 16)
+            : new Date().toISOString().slice(0, 16),
+          completed_at: editLog.completed_at
+            ? new Date(editLog.completed_at).toISOString().slice(0, 16)
+            : '',
           scheduled_date: editLog.scheduled_date ? editLog.scheduled_date.split('T')[0] : '',
-          next_maintenance_due: editLog.next_maintenance_due ? editLog.next_maintenance_due.split('T')[0] : ''
+          next_maintenance_due: editLog.next_maintenance_due
+            ? editLog.next_maintenance_due.split('T')[0]
+            : '',
         });
       } else {
         // Reset form for new maintenance log
@@ -111,7 +128,7 @@ export default function MaintenanceModal({
           recommendations: '',
           next_maintenance_due: '',
           is_completed: false,
-          notes: ''
+          notes: '',
         });
       }
       setErrors({});
@@ -142,8 +159,8 @@ export default function MaintenanceModal({
           performed_by_name: 'John Smith',
           actions_taken: 'Cleaned print bed, calibrated axes, lubricated moving parts',
           is_completed: true,
-          total_cost: 50.00
-        }
+          total_cost: 50.0,
+        },
       ]);
     }
   };
@@ -153,34 +170,34 @@ export default function MaintenanceModal({
     { value: 'repair', label: 'Repair', icon: '🛠️' },
     { value: 'calibration', label: 'Calibration', icon: '⚖️' },
     { value: 'cleaning', label: 'Cleaning', icon: '🧽' },
-    { value: 'replacement', label: 'Part Replacement', icon: '🔄' }
+    { value: 'replacement', label: 'Part Replacement', icon: '🔄' },
   ];
 
   const addPart = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      parts_used: [...(prev.parts_used || []), { name: '', quantity: 1, cost: 0 }]
+      parts_used: [...(prev.parts_used || []), { name: '', quantity: 1, cost: 0 }],
     }));
   };
 
   const removePart = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      parts_used: prev.parts_used?.filter((_, i) => i !== index) || []
+      parts_used: prev.parts_used?.filter((_, i) => i !== index) || [],
     }));
   };
 
   const updatePart = (index: number, field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      parts_used: prev.parts_used?.map((part, i) => 
-        i === index ? { ...part, [field]: value } : part
-      ) || []
+      parts_used:
+        prev.parts_used?.map((part, i) => (i === index ? { ...part, [field]: value } : part)) || [],
     }));
   };
 
   const calculateTotalCost = () => {
-    const partsTotal = formData.parts_used?.reduce((sum, part) => sum + (part.cost * part.quantity), 0) || 0;
+    const partsTotal =
+      formData.parts_used?.reduce((sum, part) => sum + part.cost * part.quantity, 0) || 0;
     const laborTotal = formData.labor_cost || 0;
     return partsTotal + laborTotal;
   };
@@ -200,8 +217,11 @@ export default function MaintenanceModal({
       newErrors.completed_at = 'Completion time is required when marking as completed';
     }
 
-    if (formData.completed_at && formData.started_at && 
-        new Date(formData.completed_at) <= new Date(formData.started_at)) {
+    if (
+      formData.completed_at &&
+      formData.started_at &&
+      new Date(formData.completed_at) <= new Date(formData.started_at)
+    ) {
       newErrors.completed_at = 'Completion time must be after start time';
     }
 
@@ -215,11 +235,12 @@ export default function MaintenanceModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     // Calculate totals
-    const partsTotal = formData.parts_used?.reduce((sum, part) => sum + (part.cost * part.quantity), 0) || 0;
+    const partsTotal =
+      formData.parts_used?.reduce((sum, part) => sum + part.cost * part.quantity, 0) || 0;
     const totalCost = partsTotal + (formData.labor_cost || 0);
 
     // Auto-calculate duration if not provided
@@ -239,9 +260,13 @@ export default function MaintenanceModal({
       total_cost: totalCost,
       duration_hours: duration,
       started_at: new Date(formData.started_at).toISOString(),
-      completed_at: formData.completed_at ? new Date(formData.completed_at).toISOString() : undefined,
+      completed_at: formData.completed_at
+        ? new Date(formData.completed_at).toISOString()
+        : undefined,
       scheduled_date: formData.scheduled_date ? `${formData.scheduled_date}T00:00:00Z` : undefined,
-      next_maintenance_due: formData.next_maintenance_due ? `${formData.next_maintenance_due}T00:00:00Z` : undefined
+      next_maintenance_due: formData.next_maintenance_due
+        ? `${formData.next_maintenance_due}T00:00:00Z`
+        : undefined,
     };
 
     onSubmit(submitData);
@@ -258,7 +283,7 @@ export default function MaintenanceModal({
           </label>
           <select
             value={formData.maintenance_type}
-            onChange={(e) => setFormData(prev => ({ ...prev, maintenance_type: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, maintenance_type: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           >
             {maintenanceTypes.map((type) => (
@@ -276,7 +301,7 @@ export default function MaintenanceModal({
           <input
             type="text"
             value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
             placeholder="Brief description of maintenance"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
@@ -288,7 +313,7 @@ export default function MaintenanceModal({
         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
         <textarea
           value={formData.description || ''}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
           placeholder="Detailed description of the maintenance work..."
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -302,7 +327,7 @@ export default function MaintenanceModal({
           <input
             type="date"
             value={formData.scheduled_date || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, scheduled_date: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, scheduled_date: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
         </div>
@@ -314,7 +339,7 @@ export default function MaintenanceModal({
           <input
             type="datetime-local"
             value={formData.started_at}
-            onChange={(e) => setFormData(prev => ({ ...prev, started_at: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, started_at: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
           {errors.started_at && <p className="text-sm text-red-600 mt-1">{errors.started_at}</p>}
@@ -325,10 +350,12 @@ export default function MaintenanceModal({
           <input
             type="datetime-local"
             value={formData.completed_at || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, completed_at: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, completed_at: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
-          {errors.completed_at && <p className="text-sm text-red-600 mt-1">{errors.completed_at}</p>}
+          {errors.completed_at && (
+            <p className="text-sm text-red-600 mt-1">{errors.completed_at}</p>
+          )}
         </div>
       </div>
 
@@ -338,13 +365,17 @@ export default function MaintenanceModal({
           <input
             type="number"
             value={formData.duration_hours || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, duration_hours: parseFloat(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, duration_hours: parseFloat(e.target.value) || 0 }))
+            }
             placeholder="Auto-calculated if start/end times provided"
             min="0"
             step="0.1"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
-          {errors.duration_hours && <p className="text-sm text-red-600 mt-1">{errors.duration_hours}</p>}
+          {errors.duration_hours && (
+            <p className="text-sm text-red-600 mt-1">{errors.duration_hours}</p>
+          )}
         </div>
 
         <div>
@@ -352,7 +383,7 @@ export default function MaintenanceModal({
           <input
             type="text"
             value={formData.supervised_by || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, supervised_by: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, supervised_by: e.target.value }))}
             placeholder="Supervisor name (if applicable)"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
           />
@@ -406,7 +437,9 @@ export default function MaintenanceModal({
               />
             </div>
             <div className="col-span-2 flex items-center">
-              <span className="text-sm text-gray-600 mr-2">${(part.cost * part.quantity).toFixed(2)}</span>
+              <span className="text-sm text-gray-600 mr-2">
+                ${(part.cost * part.quantity).toFixed(2)}
+              </span>
               <button
                 type="button"
                 onClick={() => removePart(index)}
@@ -426,7 +459,9 @@ export default function MaintenanceModal({
           <input
             type="number"
             value={formData.labor_cost || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, labor_cost: parseFloat(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, labor_cost: parseFloat(e.target.value) || 0 }))
+            }
             placeholder="0.00"
             min="0"
             step="0.01"
@@ -438,7 +473,7 @@ export default function MaintenanceModal({
           <label className="block text-sm font-medium text-gray-700 mb-1">Parts Cost ($)</label>
           <input
             type="text"
-            value={`$${(formData.parts_used?.reduce((sum, part) => sum + (part.cost * part.quantity), 0) || 0).toFixed(2)}`}
+            value={`$${(formData.parts_used?.reduce((sum, part) => sum + part.cost * part.quantity, 0) || 0).toFixed(2)}`}
             readOnly
             className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
           />
@@ -461,7 +496,7 @@ export default function MaintenanceModal({
           <label className="block text-sm font-medium text-gray-700 mb-1">Issues Found</label>
           <textarea
             value={formData.issues_found || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, issues_found: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, issues_found: e.target.value }))}
             placeholder="Describe any issues or problems discovered..."
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -472,7 +507,7 @@ export default function MaintenanceModal({
           <label className="block text-sm font-medium text-gray-700 mb-1">Actions Taken</label>
           <textarea
             value={formData.actions_taken || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, actions_taken: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, actions_taken: e.target.value }))}
             placeholder="Describe the maintenance work performed..."
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -483,7 +518,7 @@ export default function MaintenanceModal({
           <label className="block text-sm font-medium text-gray-700 mb-1">Recommendations</label>
           <textarea
             value={formData.recommendations || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, recommendations: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, recommendations: e.target.value }))}
             placeholder="Recommendations for future maintenance or improvements..."
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -496,7 +531,9 @@ export default function MaintenanceModal({
         <input
           type="date"
           value={formData.next_maintenance_due || ''}
-          onChange={(e) => setFormData(prev => ({ ...prev, next_maintenance_due: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, next_maintenance_due: e.target.value }))
+          }
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
         />
       </div>
@@ -505,7 +542,7 @@ export default function MaintenanceModal({
         <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
         <textarea
           value={formData.notes || ''}
-          onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
           placeholder="Any additional notes or comments..."
           rows={2}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-makrx-blue focus:border-transparent"
@@ -517,7 +554,7 @@ export default function MaintenanceModal({
           <input
             type="checkbox"
             checked={formData.is_completed}
-            onChange={(e) => setFormData(prev => ({ ...prev, is_completed: e.target.checked }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, is_completed: e.target.checked }))}
           />
           <span className="text-sm font-medium text-gray-700">Mark as completed</span>
         </label>
@@ -558,15 +595,21 @@ export default function MaintenanceModal({
                 <div>
                   <h4 className="font-medium text-gray-900">{log.title}</h4>
                   <p className="text-sm text-gray-600">
-                    {maintenanceTypes.find(t => t.value === log.maintenance_type)?.label}
+                    {maintenanceTypes.find((t) => t.value === log.maintenance_type)?.label}
                   </p>
                 </div>
-                <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  log.is_completed 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {log.is_completed ? <CheckCircle className="w-3 h-3 mr-1" /> : <Clock className="w-3 h-3 mr-1" />}
+                <div
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    log.is_completed
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {log.is_completed ? (
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                  ) : (
+                    <Clock className="w-3 h-3 mr-1" />
+                  )}
                   {log.is_completed ? 'Completed' : 'In Progress'}
                 </div>
               </div>

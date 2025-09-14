@@ -3,12 +3,31 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
 } from 'recharts';
 import {
-  Package, TrendingDown, AlertTriangle, Zap, DollarSign,
-  RefreshCw, ShoppingCart, Warehouse, Target
+  Package,
+  TrendingDown,
+  AlertTriangle,
+  Zap,
+  DollarSign,
+  RefreshCw,
+  ShoppingCart,
+  Warehouse,
+  Target,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -52,7 +71,7 @@ const InventoryInsights: React.FC = () => {
     try {
       const response = await fetch('/api/analytics/inventory', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -63,17 +82,17 @@ const InventoryInsights: React.FC = () => {
         processChartData(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load inventory insights",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load inventory insights',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching inventory insights:', error);
       toast({
-        title: "Error",
-        description: "Failed to load inventory insights",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load inventory insights',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -86,7 +105,7 @@ const InventoryInsights: React.FC = () => {
       name: `Item ${index + 1}`,
       consumed: item.total_consumed,
       cost: item.total_cost,
-      item_id: item.item_id
+      item_id: item.item_id,
     }));
     setConsumptionData(consumptionChart);
 
@@ -94,7 +113,7 @@ const InventoryInsights: React.FC = () => {
     const costChart = data.top_consumed_items.slice(0, 8).map((item, index) => ({
       name: `Item ${index + 1}`,
       value: item.total_cost,
-      color: `hsl(${index * 45}, 70%, 60%)`
+      color: `hsl(${index * 45}, 70%, 60%)`,
     }));
     setCostData(costChart);
 
@@ -102,7 +121,8 @@ const InventoryInsights: React.FC = () => {
     const alertChart = data.fastest_depleting.slice(0, 10).map((item, index) => ({
       name: `Item ${index + 1}`,
       rate: item.consumption_rate,
-      status: item.consumption_rate > 5 ? 'critical' : item.consumption_rate > 2 ? 'warning' : 'normal'
+      status:
+        item.consumption_rate > 5 ? 'critical' : item.consumption_rate > 2 ? 'warning' : 'normal',
     }));
     setAlertData(alertChart);
   };
@@ -159,7 +179,9 @@ const InventoryInsights: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Top Consumed Items</p>
-                <p className="text-2xl font-bold text-blue-600">{insights.top_consumed_items.length}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {insights.top_consumed_items.length}
+                </p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
             </div>
@@ -171,7 +193,9 @@ const InventoryInsights: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Fast Depleting</p>
-                <p className="text-2xl font-bold text-red-600">{insights.fastest_depleting.length}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {insights.fastest_depleting.length}
+                </p>
               </div>
               <TrendingDown className="h-8 w-8 text-red-600" />
             </div>
@@ -183,7 +207,9 @@ const InventoryInsights: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Reorder Alerts</p>
-                <p className="text-2xl font-bold text-orange-600">{insights.reorder_alerts.length}</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {insights.reorder_alerts.length}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-orange-600" />
             </div>
@@ -195,7 +221,9 @@ const InventoryInsights: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Efficiency Score</p>
-                <p className={`text-2xl font-bold ${getEfficiencyColor(insights.efficiency_score)}`}>
+                <p
+                  className={`text-2xl font-bold ${getEfficiencyColor(insights.efficiency_score)}`}
+                >
                   {insights.efficiency_score.toFixed(1)}%
                 </p>
               </div>
@@ -210,8 +238,8 @@ const InventoryInsights: React.FC = () => {
         <Alert className="border-orange-200 bg-orange-50">
           <AlertTriangle className="h-4 w-4 text-orange-600" />
           <AlertDescription className="text-orange-800">
-            <span className="font-medium">{insights.reorder_alerts.length} items</span> need restocking. 
-            Review your inventory levels to avoid stockouts.
+            <span className="font-medium">{insights.reorder_alerts.length} items</span> need
+            restocking. Review your inventory levels to avoid stockouts.
           </AlertDescription>
         </Alert>
       )}
@@ -226,14 +254,17 @@ const InventoryInsights: React.FC = () => {
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={consumptionData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <BarChart
+                  data={consumptionData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
                       typeof value === 'number' ? value.toFixed(2) : value,
-                      name === 'consumed' ? 'Quantity Consumed' : 'Total Cost ($)'
+                      name === 'consumed' ? 'Quantity Consumed' : 'Total Cost ($)',
                     ]}
                   />
                   <Bar dataKey="consumed" fill="#3B82F6" />
@@ -259,7 +290,9 @@ const InventoryInsights: React.FC = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => percent > 5 ? `${name} ${(percent * 100).toFixed(0)}%` : ''}
+                    label={({ name, percent }) =>
+                      percent > 5 ? `${name} ${(percent * 100).toFixed(0)}%` : ''
+                    }
                   >
                     {costData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -287,10 +320,18 @@ const InventoryInsights: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${Number(value).toFixed(2)} units/day`, 'Consumption Rate']} />
+                  <Tooltip
+                    formatter={(value) => [
+                      `${Number(value).toFixed(2)} units/day`,
+                      'Consumption Rate',
+                    ]}
+                  />
                   <Bar dataKey="rate" fill="#10B981">
                     {alertData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.rate > 5 ? '#EF4444' : entry.rate > 2 ? '#F59E0B' : '#10B981'} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.rate > 5 ? '#EF4444' : entry.rate > 2 ? '#F59E0B' : '#10B981'}
+                      />
                     ))}
                   </Bar>
                 </BarChart>
@@ -313,11 +354,11 @@ const InventoryInsights: React.FC = () => {
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Area 
-                      type="monotone" 
-                      dataKey="total_consumed" 
-                      stroke="#3B82F6" 
-                      fill="#3B82F6" 
+                    <Area
+                      type="monotone"
+                      dataKey="total_consumed"
+                      stroke="#3B82F6"
+                      fill="#3B82F6"
                       fillOpacity={0.3}
                     />
                   </AreaChart>
@@ -346,14 +387,19 @@ const InventoryInsights: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {insights.top_consumed_items.slice(0, 8).map((item, index) => (
-                <div key={item.item_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={item.item_id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-600">{index + 1}</span>
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">Item {index + 1}</p>
-                      <p className="text-sm text-gray-500">{item.total_consumed.toFixed(2)} units consumed</p>
+                      <p className="text-sm text-gray-500">
+                        {item.total_consumed.toFixed(2)} units consumed
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -375,7 +421,10 @@ const InventoryInsights: React.FC = () => {
             <div className="space-y-4">
               {insights.reorder_alerts.length > 0 ? (
                 insights.reorder_alerts.slice(0, 8).map((alert, index) => (
-                  <div key={alert.item_id} className="flex items-center justify-between p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div
+                    key={alert.item_id}
+                    className="flex items-center justify-between p-3 bg-orange-50 border border-orange-200 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="h-5 w-5 text-orange-600" />
                       <div>
@@ -416,7 +465,8 @@ const InventoryInsights: React.FC = () => {
                 <h4 className="font-medium text-blue-900">Optimize Stock Levels</h4>
               </div>
               <p className="text-sm text-blue-800">
-                Review consumption patterns to adjust minimum stock thresholds for frequently used items.
+                Review consumption patterns to adjust minimum stock thresholds for frequently used
+                items.
               </p>
             </div>
 

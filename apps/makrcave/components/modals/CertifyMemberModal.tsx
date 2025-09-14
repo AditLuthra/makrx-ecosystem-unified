@@ -45,12 +45,12 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
   onOpenChange,
   members = [],
   skills = [],
-  existingCertification
+  existingCertification,
 }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     userId: existingCertification?.userId || '',
     skillId: existingCertification?.skillId || '',
@@ -64,16 +64,16 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
   const getSelectedMember = () => {
-    return members.find(m => m.id === formData.userId);
+    return members.find((m) => m.id === formData.userId);
   };
 
   const getSelectedSkill = () => {
-    return skills.find(s => s.id === formData.skillId);
+    return skills.find((s) => s.id === formData.skillId);
   };
 
   const validateForm = (): boolean => {
@@ -87,7 +87,11 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
     }
     const selectedSkill = getSelectedSkill();
     if (selectedSkill?.level === 'advanced' || selectedSkill?.level === 'expert') {
-      if (!formData.practicalTestPassed || !formData.theoryTestPassed || !formData.safetyTestPassed) {
+      if (
+        !formData.practicalTestPassed ||
+        !formData.theoryTestPassed ||
+        !formData.safetyTestPassed
+      ) {
         setError('All tests must be passed for advanced/expert level skills');
         return false;
       }
@@ -97,7 +101,7 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -105,16 +109,16 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const member = getSelectedMember();
       const skill = getSelectedSkill();
-      
+
       toast({
-        title: "Certification Approved",
+        title: 'Certification Approved',
         description: `${member?.name} has been certified for ${skill?.name}`,
       });
-      
+
       // Reset form
       setFormData({
         userId: '',
@@ -127,7 +131,7 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
         theoryTestPassed: false,
         safetyTestPassed: false,
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to certify member');
@@ -164,7 +168,7 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
             {existingCertification ? 'Review Certification Request' : 'Certify Member'}
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -191,8 +195,8 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="member">Member *</Label>
-              <Select 
-                value={formData.userId} 
+              <Select
+                value={formData.userId}
                 onValueChange={(value) => handleInputChange('userId', value)}
                 disabled={!!existingCertification}
               >
@@ -214,8 +218,8 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
 
             <div>
               <Label htmlFor="skill">Skill *</Label>
-              <Select 
-                value={formData.skillId} 
+              <Select
+                value={formData.skillId}
                 onValueChange={(value) => handleInputChange('skillId', value)}
                 disabled={!!existingCertification}
               >
@@ -227,7 +231,9 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
                     <SelectItem key={skill.id} value={skill.id}>
                       <div>
                         <div className="font-medium">{skill.name}</div>
-                        <div className="text-sm text-gray-600">{skill.category} - {skill.level}</div>
+                        <div className="text-sm text-gray-600">
+                          {skill.category} - {skill.level}
+                        </div>
                       </div>
                     </SelectItem>
                   ))}
@@ -240,13 +246,18 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
             <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
               <h4 className="font-medium text-gray-900 mb-2">Skill Information</h4>
               <div className="space-y-2 text-sm">
-                <div><strong>Category:</strong> {selectedSkill.category}</div>
-                <div><strong>Level:</strong> 
+                <div>
+                  <strong>Category:</strong> {selectedSkill.category}
+                </div>
+                <div>
+                  <strong>Level:</strong>
                   <Badge variant="outline" className="ml-2">
                     {selectedSkill.level}
                   </Badge>
                 </div>
-                <div><strong>Description:</strong> {selectedSkill.description}</div>
+                <div>
+                  <strong>Description:</strong> {selectedSkill.description}
+                </div>
                 {selectedSkill.prerequisites.length > 0 && (
                   <div>
                     <strong>Prerequisites:</strong>
@@ -278,8 +289,8 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="certificationType">Certification Type</Label>
-              <Select 
-                value={formData.certificationType} 
+              <Select
+                value={formData.certificationType}
                 onValueChange={(value) => handleInputChange('certificationType', value)}
               >
                 <SelectTrigger className="mt-1">
@@ -332,9 +343,11 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm text-gray-700">Safety Test Passed</span>
-                <CheckCircle className={`h-4 w-4 ${formData.safetyTestPassed ? 'text-green-600' : 'text-gray-300'}`} />
+                <CheckCircle
+                  className={`h-4 w-4 ${formData.safetyTestPassed ? 'text-green-600' : 'text-gray-300'}`}
+                />
               </label>
-              
+
               <label className="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -343,9 +356,11 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm text-gray-700">Theory Test Passed</span>
-                <CheckCircle className={`h-4 w-4 ${formData.theoryTestPassed ? 'text-green-600' : 'text-gray-300'}`} />
+                <CheckCircle
+                  className={`h-4 w-4 ${formData.theoryTestPassed ? 'text-green-600' : 'text-gray-300'}`}
+                />
               </label>
-              
+
               <label className="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -354,7 +369,9 @@ const CertifyMemberModal: React.FC<CertifyMemberModalProps> = ({
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm text-gray-700">Practical Test Passed</span>
-                <CheckCircle className={`h-4 w-4 ${formData.practicalTestPassed ? 'text-green-600' : 'text-gray-300'}`} />
+                <CheckCircle
+                  className={`h-4 w-4 ${formData.practicalTestPassed ? 'text-green-600' : 'text-gray-300'}`}
+                />
               </label>
             </div>
           </div>

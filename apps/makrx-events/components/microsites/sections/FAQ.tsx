@@ -43,24 +43,24 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
     setOpenItems(newOpenItems);
   };
 
-  const filteredItems = selectedCategory === 'all' 
-    ? content.items 
-    : content.items.filter(item => item.category === selectedCategory);
+  const filteredItems =
+    selectedCategory === 'all'
+      ? content.items
+      : content.items.filter((item) => item.category === selectedCategory);
 
-  const categories = content.categories || ['all', ...Array.from(new Set(content.items.map(item => item.category).filter(Boolean)))];
+  const categories = content.categories || [
+    'all',
+    ...Array.from(new Set(content.items.map((item) => item.category).filter(Boolean))),
+  ];
 
   return (
     <section className="py-16 bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            {content.title}
-          </h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4">{content.title}</h2>
           {content.description && (
-            <p className="text-xl text-muted-foreground">
-              {content.description}
-            </p>
+            <p className="text-xl text-muted-foreground">{content.description}</p>
           )}
         </div>
 
@@ -78,7 +78,7 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
                 }`}
                 style={{
                   backgroundColor: selectedCategory === category ? primaryColor : 'transparent',
-                  border: `1px solid ${selectedCategory === category ? primaryColor : 'var(--border)'}`
+                  border: `1px solid ${selectedCategory === category ? primaryColor : 'var(--border)'}`,
                 }}
               >
                 {category === 'all' ? 'All' : category}
@@ -96,9 +96,7 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
                 className="w-full text-left p-6 hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-foreground pr-4">
-                    {item.question}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-foreground pr-4">{item.question}</h3>
                   <div className="flex-shrink-0">
                     {openItems.has(index) ? (
                       <ChevronUp className="h-5 w-5 text-muted-foreground" />
@@ -108,7 +106,7 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
                   </div>
                 </div>
               </button>
-              
+
               {openItems.has(index) && (
                 <CardContent className="px-6 pb-6 pt-0">
                   <div className="prose prose-sm max-w-none text-muted-foreground">
@@ -125,12 +123,8 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
           <div className="text-center py-12">
             <div className="text-muted-foreground">
               <div className="text-4xl mb-4">❓</div>
-              <h3 className="text-lg font-medium mb-2">
-                No questions found
-              </h3>
-              <p className="text-sm">
-                Try selecting a different category or check back later.
-              </p>
+              <h3 className="text-lg font-medium mb-2">No questions found</h3>
+              <p className="text-sm">Try selecting a different category or check back later.</p>
             </div>
           </div>
         )}

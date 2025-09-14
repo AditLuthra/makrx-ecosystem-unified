@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { X, Filter, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
-import { getAllFiltersForCategory, type CategoryFilter } from "@/data/categoryFilters";
+import { useState, useEffect, useMemo } from 'react';
+import { X, Filter, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
+import { getAllFiltersForCategory, type CategoryFilter } from '@/data/categoryFilters';
 
 interface FilterFacet {
   name: string;
@@ -35,7 +35,7 @@ function CategoryBasedFilters({
   category,
   onFiltersChange,
   onClose,
-  className = "",
+  className = '',
 }: {
   category: string;
   onFiltersChange: (filters: any) => void;
@@ -52,9 +52,7 @@ function CategoryBasedFilters({
   useEffect(() => {
     if (categoryFilters.length > 0 && expandedSections.size === 0) {
       // Expand first 3 filters by default
-      const defaultExpanded = new Set(
-        categoryFilters.slice(0, 3).map(filter => filter.id)
-      );
+      const defaultExpanded = new Set(categoryFilters.slice(0, 3).map((filter) => filter.id));
       setExpandedSections(defaultExpanded);
     }
   }, [categoryFilters, expandedSections.size]);
@@ -80,7 +78,7 @@ function CategoryBasedFilters({
         newFilters[filterId] = [...newFilters[filterId], value];
       }
     } else {
-      newFilters[filterId] = newFilters[filterId].filter(v => v !== value);
+      newFilters[filterId] = newFilters[filterId].filter((v) => v !== value);
       if (newFilters[filterId].length === 0) {
         delete newFilters[filterId];
       }
@@ -99,7 +97,7 @@ function CategoryBasedFilters({
     const newFilters = { ...activeFilters };
     if (value) {
       if (newFilters[filterId]) {
-        newFilters[filterId] = newFilters[filterId].filter(v => v !== value);
+        newFilters[filterId] = newFilters[filterId].filter((v) => v !== value);
         if (newFilters[filterId].length === 0) {
           delete newFilters[filterId];
         }
@@ -118,22 +116,15 @@ function CategoryBasedFilters({
     return (
       <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 ${className}`}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Filters
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
           {onClose && (
-            <button
-              onClick={onClose}
-              className="md:hidden p-1 text-gray-400 hover:text-gray-600"
-            >
+            <button onClick={onClose} className="md:hidden p-1 text-gray-400 hover:text-gray-600">
               <X className="h-5 w-5" />
             </button>
           )}
         </div>
         <div className="space-y-4">
-          <p className="text-gray-600 dark:text-gray-400">
-            No filters available for {category}.
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">No filters available for {category}.</p>
         </div>
       </div>
     );
@@ -145,9 +136,7 @@ function CategoryBasedFilters({
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Filters
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
           {activeFilterCount > 0 && (
             <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium px-2 py-1 rounded-full">
               {activeFilterCount}
@@ -177,16 +166,14 @@ function CategoryBasedFilters({
       {/* Active Filters */}
       {hasActiveFilters && (
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-            Active Filters
-          </h4>
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Active Filters</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters).map(([filterId, values]) => {
-              const filter = categoryFilters.find(f => f.id === filterId);
+              const filter = categoryFilters.find((f) => f.id === filterId);
               const filterName = filter?.name || filterId;
 
               return values.map((value: string) => {
-                const option = filter?.options?.find(opt => opt.value === value);
+                const option = filter?.options?.find((opt) => opt.value === value);
                 const displayValue = option?.label || value;
 
                 return (
@@ -194,9 +181,7 @@ function CategoryBasedFilters({
                     key={`${filterId}-${value}`}
                     className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
                   >
-                    <span className="font-medium">
-                      {filterName}:
-                    </span>
+                    <span className="font-medium">{filterName}:</span>
                     <span>{displayValue}</span>
                     <button
                       onClick={() => removeFilter(filterId, value)}
@@ -254,15 +239,15 @@ function CategoryBasedFilters({
                           <input
                             type="checkbox"
                             checked={isChecked}
-                            onChange={(e) => handleFilterChange(filter.id, option.value, e.target.checked)}
+                            onChange={(e) =>
+                              handleFilterChange(filter.id, option.value, e.target.checked)
+                            }
                             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                           />
                           <span className="ml-3 text-sm text-gray-600 dark:text-gray-300 flex-1">
                             {option.label}
                             {option.count !== undefined && (
-                              <span className="text-gray-400 ml-1">
-                                ({option.count})
-                              </span>
+                              <span className="text-gray-400 ml-1">({option.count})</span>
                             )}
                           </span>
                         </label>
@@ -310,9 +295,7 @@ function CategoryBasedFilters({
                           <span className="ml-3 text-sm text-gray-600 dark:text-gray-300 flex-1">
                             {option.label}
                             {option.count !== undefined && (
-                              <span className="text-gray-400 ml-1">
-                                ({option.count})
-                              </span>
+                              <span className="text-gray-400 ml-1">({option.count})</span>
                             )}
                           </span>
                         </label>
@@ -338,11 +321,11 @@ export default function EnhancedCategoryFilters({
   onFiltersChange,
   onClose,
   isOpen,
-  className = "",
+  className = '',
 }: EnhancedCategoryFiltersProps) {
   // All hooks must be at the top
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["categories", "brands", "price", "material"])
+    new Set(['categories', 'brands', 'price', 'material']),
   );
 
   // Close drawer on desktop
@@ -353,18 +336,20 @@ export default function EnhancedCategoryFilters({
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isOpen, onToggle]);
-  
+
   // Handle legacy category-based interface by loading actual filters
   if (category && onFiltersChange) {
-    return <CategoryBasedFilters
-      category={category}
-      onFiltersChange={onFiltersChange}
-      onClose={onClose}
-      className={className}
-    />;
+    return (
+      <CategoryBasedFilters
+        category={category}
+        onFiltersChange={onFiltersChange}
+        onClose={onClose}
+        className={className}
+      />
+    );
   }
 
   const toggleSection = (sectionName: string) => {
@@ -387,9 +372,7 @@ export default function EnhancedCategoryFilters({
     const newFilters = { ...(activeFilters || {}) };
     if (value) {
       if (Array.isArray(newFilters[filterType])) {
-        newFilters[filterType] = newFilters[filterType].filter(
-          (v: string) => v !== value
-        );
+        newFilters[filterType] = newFilters[filterType].filter((v: string) => v !== value);
         if (newFilters[filterType].length === 0) {
           delete newFilters[filterType];
         }
@@ -426,9 +409,7 @@ export default function EnhancedCategoryFilters({
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Filters
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
           {activeFilterCount > 0 && (
             <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium px-2 py-1 rounded-full">
               {activeFilterCount}
@@ -456,9 +437,7 @@ export default function EnhancedCategoryFilters({
       {/* Active Filters */}
       {hasActiveFilters && (
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-            Active Filters
-          </h4>
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Active Filters</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters ?? {}).map(([key, values]) =>
               values.map((value: string) => (
@@ -466,9 +445,7 @@ export default function EnhancedCategoryFilters({
                   key={`${key}-${value}`}
                   className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
                 >
-                  <span className="font-medium capitalize">
-                    {key.replace("_", " ")}:
-                  </span>
+                  <span className="font-medium capitalize">{key.replace('_', ' ')}:</span>
                   <span>{value}</span>
                   <button
                     onClick={() => removeFilter(key, value)}
@@ -477,7 +454,7 @@ export default function EnhancedCategoryFilters({
                     <X className="h-3 w-3" />
                   </button>
                 </span>
-              ))
+              )),
             )}
           </div>
         </div>
@@ -485,7 +462,7 @@ export default function EnhancedCategoryFilters({
 
       {/* Filter Sections */}
       <div className="flex-1 overflow-y-auto">
-  {(facets ?? []).map((facet) => (
+        {(facets ?? []).map((facet) => (
           <div
             key={facet.name}
             className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
@@ -495,7 +472,7 @@ export default function EnhancedCategoryFilters({
               className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
-                {facet.name.replace("_", " ")}
+                {facet.name.replace('_', ' ')}
                 {(activeFilters?.[facet.name]?.length ?? 0) > 0 && (
                   <span className="ml-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium px-2 py-0.5 rounded-full">
                     {activeFilters?.[facet.name]?.length ?? 0}
@@ -528,9 +505,7 @@ export default function EnhancedCategoryFilters({
                         <span className="ml-3 text-sm text-gray-600 dark:text-gray-300 flex-1">
                           {value.name}
                           {value.count !== undefined && (
-                            <span className="text-gray-400 ml-1">
-                              ({value.count})
-                            </span>
+                            <span className="text-gray-400 ml-1">({value.count})</span>
                           )}
                         </span>
                       </label>
@@ -607,13 +582,13 @@ export function useFiltersToggle() {
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isFiltersOpen) {
+      if (e.key === 'Escape' && isFiltersOpen) {
         closeFilters();
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [isFiltersOpen]);
 
   return {

@@ -1,10 +1,5 @@
 export const getRoleRedirect = (roles: string[] = []): string => {
-  const prioritizedRoles = [
-    'super_admin',
-    'admin',
-    'makerspace_admin',
-    'service_provider',
-  ];
+  const prioritizedRoles = ['super_admin', 'admin', 'makerspace_admin', 'service_provider'];
 
   const role = prioritizedRoles.find((r) => roles.includes(r)) ?? 'user';
 

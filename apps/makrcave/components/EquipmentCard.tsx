@@ -1,8 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  Wrench, Calendar, Star, MapPin, Clock, Shield, Settings,
-  Eye, Edit, PlayCircle, PauseCircle, CheckCircle, XCircle,
-  AlertTriangle, User, DollarSign, BookOpen, Zap, BarChart3
+  Wrench,
+  Calendar,
+  Star,
+  MapPin,
+  Clock,
+  Shield,
+  Settings,
+  Eye,
+  Edit,
+  PlayCircle,
+  PauseCircle,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  User,
+  DollarSign,
+  BookOpen,
+  Zap,
+  BarChart3,
 } from 'lucide-react';
 import { useSkills } from '../contexts/SkillContext';
 
@@ -54,7 +70,7 @@ export default function EquipmentCard({
   userRole,
   canReserve,
   canEdit,
-  canMaintenance
+  canMaintenance,
 }: EquipmentCardProps) {
   const [showQuickActions, setShowQuickActions] = useState(false);
   const quickActionsRef = useRef<HTMLDivElement>(null);
@@ -139,9 +155,7 @@ export default function EquipmentCard({
       <Star
         key={i}
         className={`w-4 h-4 ${
-          i < Math.floor(rating) 
-            ? 'text-yellow-400 fill-current' 
-            : 'text-gray-300'
+          i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
         }`}
       />
     ));
@@ -149,7 +163,7 @@ export default function EquipmentCard({
 
   const formatCategoryName = (category?: string) => {
     if (!category) return 'Unknown';
-    return category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   const isMaintenanceDue = () => {
@@ -173,7 +187,11 @@ export default function EquipmentCard({
           {/* Equipment Image */}
           <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
             {equipment.image_url ? (
-              <img src={equipment.image_url} alt={equipment.name} className="w-full h-full object-cover" />
+              <img
+                src={equipment.image_url}
+                alt={equipment.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="text-2xl">{getCategoryIcon(equipment.category)}</span>
             )}
@@ -184,11 +202,17 @@ export default function EquipmentCard({
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 truncate">{equipment.name}</h3>
-                <p className="text-sm text-gray-600">{equipment.equipment_id} • {formatCategoryName(equipment.category)}</p>
-                <p className="text-sm text-gray-500">{equipment.manufacturer} {equipment.model}</p>
+                <p className="text-sm text-gray-600">
+                  {equipment.equipment_id} • {formatCategoryName(equipment.category)}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {equipment.manufacturer} {equipment.model}
+                </p>
               </div>
-              
-              <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(equipment.status)}`}>
+
+              <div
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(equipment.status)}`}
+              >
                 {getStatusIcon(equipment.status)}
                 <span className="ml-1 capitalize">{equipment.status.replace('_', ' ')}</span>
               </div>
@@ -201,7 +225,7 @@ export default function EquipmentCard({
               <MapPin className="w-4 h-4 mr-1" />
               {equipment.location}
             </div>
-            
+
             <div className="flex items-center">
               <Clock className="w-4 h-4 mr-1" />
               {(equipment.total_usage_hours || 0).toFixed(0)}h
@@ -214,8 +238,7 @@ export default function EquipmentCard({
 
             {equipment.hourly_rate && (
               <div className="flex items-center">
-                <DollarSign className="w-4 h-4 mr-1" />
-                ${(equipment.hourly_rate || 0).toFixed(2)}/h
+                <DollarSign className="w-4 h-4 mr-1" />${(equipment.hourly_rate || 0).toFixed(2)}/h
               </div>
             )}
           </div>
@@ -240,10 +263,16 @@ export default function EquipmentCard({
                     ? 'bg-makrx-blue text-white hover:bg-makrx-blue/90'
                     : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 }`}
-                title={!hasRequiredSkills ? `Missing skills: ${accessCheck.missingSkills.join(', ')}` : undefined}
+                title={
+                  !hasRequiredSkills
+                    ? `Missing skills: ${accessCheck.missingSkills.join(', ')}`
+                    : undefined
+                }
               >
                 <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden sm:inline">{hasRequiredSkills ? 'Reserve' : 'Skills Required'}</span>
+                <span className="hidden sm:inline">
+                  {hasRequiredSkills ? 'Reserve' : 'Skills Required'}
+                </span>
                 <span className="sm:hidden">{hasRequiredSkills ? 'Book' : 'Locked'}</span>
               </button>
             )}
@@ -258,26 +287,34 @@ export default function EquipmentCard({
       {/* Equipment Image */}
       <div className="relative w-full h-48 bg-gray-100">
         {equipment.image_url ? (
-          <img src={equipment.image_url} alt={equipment.name} className="w-full h-full object-cover" />
+          <img
+            src={equipment.image_url}
+            alt={equipment.name}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-6xl">{getCategoryIcon(equipment.category)}</span>
           </div>
         )}
-        
+
         {/* Status Badge */}
-        <div className={`absolute top-3 right-3 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(equipment.status)}`}>
+        <div
+          className={`absolute top-3 right-3 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(equipment.status)}`}
+        >
           {getStatusIcon(equipment.status)}
           <span className="ml-1 capitalize">{equipment.status.replace('_', ' ')}</span>
         </div>
 
         {/* Skill/Certification Badge */}
         {(equipment.requires_certification || !hasRequiredSkills) && (
-          <div className={`absolute top-3 left-3 inline-flex items-center px-2 py-1 border rounded-full text-xs font-medium ${
-            hasRequiredSkills
-              ? 'bg-green-100 text-green-800 border-green-200'
-              : 'bg-red-100 text-red-800 border-red-200'
-          }`}>
+          <div
+            className={`absolute top-3 left-3 inline-flex items-center px-2 py-1 border rounded-full text-xs font-medium ${
+              hasRequiredSkills
+                ? 'bg-green-100 text-green-800 border-green-200'
+                : 'bg-red-100 text-red-800 border-red-200'
+            }`}
+          >
             <Shield className="w-3 h-3 mr-1" />
             {hasRequiredSkills ? 'Certified' : 'Skills Required'}
           </div>
@@ -300,10 +337,12 @@ export default function EquipmentCard({
             <p className="text-sm text-gray-600">{equipment.equipment_id}</p>
             <p className="text-sm text-gray-500">{formatCategoryName(equipment.category)}</p>
             {equipment.manufacturer && equipment.model && (
-              <p className="text-sm text-gray-500">{equipment.manufacturer} {equipment.model}</p>
+              <p className="text-sm text-gray-500">
+                {equipment.manufacturer} {equipment.model}
+              </p>
             )}
           </div>
-          
+
           <div className="relative" ref={quickActionsRef}>
             <button
               onClick={() => setShowQuickActions(!showQuickActions)}
@@ -324,7 +363,7 @@ export default function EquipmentCard({
                   <Eye className="w-4 h-4 mr-2" />
                   View Details
                 </button>
-                
+
                 {canEdit && (
                   <button
                     onClick={() => {
@@ -337,7 +376,7 @@ export default function EquipmentCard({
                     Edit Equipment
                   </button>
                 )}
-                
+
                 {canMaintenance && (
                   <button
                     onClick={() => {
@@ -361,7 +400,7 @@ export default function EquipmentCard({
             <MapPin className="w-4 h-4 mr-2" />
             {equipment.location}
           </div>
-          
+
           <div className="flex items-center text-sm text-gray-600">
             <Clock className="w-4 h-4 mr-2" />
             <span className={getUtilizationColor(equipment.total_usage_hours || 0)}>
@@ -387,8 +426,7 @@ export default function EquipmentCard({
 
           {equipment.hourly_rate && (
             <div className="flex items-center text-sm text-gray-600">
-              <DollarSign className="w-4 h-4 mr-2" />
-              ${(equipment.hourly_rate || 0).toFixed(2)}/hour
+              <DollarSign className="w-4 h-4 mr-2" />${(equipment.hourly_rate || 0).toFixed(2)}/hour
             </div>
           )}
         </div>
@@ -428,14 +466,24 @@ export default function EquipmentCard({
                     ? 'bg-makrx-blue text-white hover:bg-makrx-blue/90'
                     : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 }`}
-                title={!hasRequiredSkills ? `Missing skills: ${accessCheck.missingSkills.join(', ')}` : undefined}
+                title={
+                  !hasRequiredSkills
+                    ? `Missing skills: ${accessCheck.missingSkills.join(', ')}`
+                    : undefined
+                }
               >
                 <Calendar className="w-4 h-4 mr-1 flex-shrink-0" />
                 <span className="truncate">
                   {hasRequiredSkills ? (
-                    <><span className="hidden sm:inline">Reserve</span><span className="sm:hidden">Book</span></>
+                    <>
+                      <span className="hidden sm:inline">Reserve</span>
+                      <span className="sm:hidden">Book</span>
+                    </>
                   ) : (
-                    <><span className="hidden sm:inline">Skills Required</span><span className="sm:hidden">Locked</span></>
+                    <>
+                      <span className="hidden sm:inline">Skills Required</span>
+                      <span className="sm:hidden">Locked</span>
+                    </>
                   )}
                 </span>
               </button>
@@ -465,9 +513,7 @@ export default function EquipmentCard({
             <span className={getUtilizationColor(equipment.total_usage_hours || 0)}>
               {(equipment.usage_count || 0) > 0 ? 'Active' : 'New'}
             </span>
-            <span>
-              {(equipment.usage_count || 0) > 0 ? 'Recently' : 'Never'}
-            </span>
+            <span>{(equipment.usage_count || 0) > 0 ? 'Recently' : 'Never'}</span>
             <span>{(equipment.average_rating || 0).toFixed(1)}★</span>
           </div>
         </div>

@@ -3,10 +3,7 @@ import { z } from 'zod';
 import { insertTicketTierSchema } from '@shared/schema';
 
 // GET /api/ticketing-profiles/[id]/tiers - Get all tiers for a ticketing profile
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -16,7 +13,7 @@ export async function GET(
         id: 'tier_1',
         ticketingProfileId: id,
         name: 'Early Bird',
-        price: 75.00,
+        price: 75.0,
         currency: 'USD',
         quota: 15,
         sold: 15,
@@ -26,20 +23,20 @@ export async function GET(
         isActive: false,
         description: 'Limited early bird pricing - all materials included',
         taxRate: 0.08,
-        feeAbs: 2.50,
+        feeAbs: 2.5,
         feePct: 0.03,
         metadata: {
           benefits: ['Workshop materials', 'Certificate', 'Lunch'],
-          restrictions: ['One per person', 'Non-transferable']
+          restrictions: ['One per person', 'Non-transferable'],
         },
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-15T14:20:00Z'
+        updatedAt: '2024-02-15T14:20:00Z',
       },
       {
         id: 'tier_2',
         ticketingProfileId: id,
         name: 'Regular',
-        price: 100.00,
+        price: 100.0,
         currency: 'USD',
         quota: 10,
         sold: 8,
@@ -49,35 +46,29 @@ export async function GET(
         isActive: true,
         description: 'Standard workshop admission with all materials',
         taxRate: 0.08,
-        feeAbs: 2.50,
+        feeAbs: 2.5,
         feePct: 0.03,
         metadata: {
           benefits: ['Workshop materials', 'Certificate', 'Lunch'],
-          restrictions: ['One per person']
+          restrictions: ['One per person'],
         },
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-16T08:30:00Z'
-      }
+        updatedAt: '2024-02-16T08:30:00Z',
+      },
     ];
 
     return NextResponse.json({
       data: mockTiers,
-      count: mockTiers.length
+      count: mockTiers.length,
     });
   } catch (error) {
     console.error('Error fetching ticket tiers:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch ticket tiers' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch ticket tiers' }, { status: 500 });
   }
 }
 
 // POST /api/ticketing-profiles/[id]/tiers - Create a new ticket tier
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -104,25 +95,22 @@ export async function POST(
       feePct: validatedData.feePct || 0,
       metadata: validatedData.metadata || {},
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(newTier, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error creating ticket tier:', error);
-    return NextResponse.json(
-      { error: 'Failed to create ticket tier' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create ticket tier' }, { status: 500 });
   }
 }

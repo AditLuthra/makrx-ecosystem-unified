@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ import {
   Check,
   Archive,
   Settings,
-  Filter
+  Filter,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -28,7 +28,14 @@ import { useAuthHeaders } from '@makrx/auth';
 interface Notification {
   id: string;
   type: 'alert' | 'warning' | 'info' | 'success';
-  category: 'inventory' | 'equipment' | 'reservations' | 'members' | 'billing' | 'maintenance' | 'system';
+  category:
+    | 'inventory'
+    | 'equipment'
+    | 'reservations'
+    | 'members'
+    | 'billing'
+    | 'maintenance'
+    | 'system';
   title: string;
   message: string;
   priority: 'high' | 'medium' | 'low';
@@ -46,7 +53,7 @@ const NotificationsCenter: React.FC = () => {
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
   const getHeaders = useAuthHeaders();
-  
+
   // All hooks must be at the top
   const [activeTab, setActiveTab] = useState('all');
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -68,7 +75,11 @@ const NotificationsCenter: React.FC = () => {
           setNotifications([]);
         }
       } catch (error: any) {
-        toast({ title: 'Failed to load notifications', description: error?.message || 'Unknown error', variant: 'destructive' });
+        toast({
+          title: 'Failed to load notifications',
+          description: error?.message || 'Unknown error',
+          variant: 'destructive',
+        });
         setNotifications([]);
       } finally {
         setLoading(false);
@@ -95,30 +106,48 @@ const NotificationsCenter: React.FC = () => {
     if (type === 'alert') return <AlertTriangle className="h-5 w-5 text-red-500" />;
     if (type === 'warning') return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
     if (type === 'success') return <CheckCircle className="h-5 w-5 text-green-500" />;
-    
+
     // Category-based icons
     switch (category) {
-      case 'inventory': return <Package className="h-5 w-5 text-blue-500" />;
-      case 'equipment': return <Wrench className="h-5 w-5 text-orange-500" />;
-      case 'reservations': return <Calendar className="h-5 w-5 text-purple-500" />;
-      case 'members': return <Users className="h-5 w-5 text-indigo-500" />;
-      case 'billing': return <DollarSign className="h-5 w-5 text-green-500" />;
-      case 'maintenance': return <Settings className="h-5 w-5 text-red-500" />;
-      default: return <Info className="h-5 w-5 text-gray-500" />;
+      case 'inventory':
+        return <Package className="h-5 w-5 text-blue-500" />;
+      case 'equipment':
+        return <Wrench className="h-5 w-5 text-orange-500" />;
+      case 'reservations':
+        return <Calendar className="h-5 w-5 text-purple-500" />;
+      case 'members':
+        return <Users className="h-5 w-5 text-indigo-500" />;
+      case 'billing':
+        return <DollarSign className="h-5 w-5 text-green-500" />;
+      case 'maintenance':
+        return <Settings className="h-5 w-5 text-red-500" />;
+      default:
+        return <Info className="h-5 w-5 text-gray-500" />;
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-  };
+  const getPriorityColor = (priority: string) => {};
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'high':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300">High</Badge>;
+        return (
+          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300">
+            High
+          </Badge>
+        );
       case 'medium':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">Medium</Badge>;
+        return (
+          <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+            Medium
+          </Badge>
+        );
       case 'low':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">Low</Badge>;
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+            Low
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{priority}</Badge>;
     }
@@ -128,7 +157,7 @@ const NotificationsCenter: React.FC = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
@@ -136,51 +165,39 @@ const NotificationsCenter: React.FC = () => {
   };
 
   const handleMarkAsRead = (notificationId: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === notificationId 
-          ? { ...notif, status: 'read' }
-          : notif
-      )
+    setNotifications((prev) =>
+      prev.map((notif) => (notif.id === notificationId ? { ...notif, status: 'read' } : notif)),
     );
     toast({
-      title: "Notification marked as read",
+      title: 'Notification marked as read',
     });
   };
 
   const handleMarkAsResolved = (notificationId: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === notificationId 
-          ? { ...notif, status: 'resolved' }
-          : notif
-      )
+    setNotifications((prev) =>
+      prev.map((notif) => (notif.id === notificationId ? { ...notif, status: 'resolved' } : notif)),
     );
     toast({
-      title: "Notification resolved",
+      title: 'Notification resolved',
     });
   };
 
   const handleArchive = (notificationId: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === notificationId 
-          ? { ...notif, status: 'archived' }
-          : notif
-      )
+    setNotifications((prev) =>
+      prev.map((notif) => (notif.id === notificationId ? { ...notif, status: 'archived' } : notif)),
     );
     toast({
-      title: "Notification archived",
+      title: 'Notification archived',
     });
   };
 
   const handleBulkAction = (action: 'read' | 'archive' | 'delete') => {
-    setNotifications(prev => 
-      prev.map(notif => 
+    setNotifications((prev) =>
+      prev.map((notif) =>
         selectedNotifications.includes(notif.id)
           ? { ...notif, status: action === 'read' ? 'read' : 'archived' }
-          : notif
-      )
+          : notif,
+      ),
     );
     setSelectedNotifications([]);
     toast({
@@ -191,23 +208,24 @@ const NotificationsCenter: React.FC = () => {
   const getFilteredNotifications = () => {
     switch (activeTab) {
       case 'unread':
-        return notifications.filter(n => n.status === 'unread');
+        return notifications.filter((n) => n.status === 'unread');
       case 'action-required':
-        return notifications.filter(n => n.actionRequired && n.status !== 'resolved');
+        return notifications.filter((n) => n.actionRequired && n.status !== 'resolved');
       case 'high-priority':
-        return notifications.filter(n => n.priority === 'high' && n.status !== 'resolved');
+        return notifications.filter((n) => n.priority === 'high' && n.status !== 'resolved');
       case 'archived':
-        return notifications.filter(n => n.status === 'archived');
+        return notifications.filter((n) => n.status === 'archived');
       default:
-        return notifications.filter(n => n.status !== 'archived');
+        return notifications.filter((n) => n.status !== 'archived');
     }
   };
 
   const stats = {
-    total: notifications.filter(n => n.status !== 'archived').length,
-    unread: notifications.filter(n => n.status === 'unread').length,
-    actionRequired: notifications.filter(n => n.actionRequired && n.status !== 'resolved').length,
-    highPriority: notifications.filter(n => n.priority === 'high' && n.status !== 'resolved').length
+    total: notifications.filter((n) => n.status !== 'archived').length,
+    unread: notifications.filter((n) => n.status === 'unread').length,
+    actionRequired: notifications.filter((n) => n.actionRequired && n.status !== 'resolved').length,
+    highPriority: notifications.filter((n) => n.priority === 'high' && n.status !== 'resolved')
+      .length,
   };
 
   return (
@@ -219,7 +237,9 @@ const NotificationsCenter: React.FC = () => {
             <Bell className="h-6 w-6" />
             Notifications Center
           </h1>
-          <p className="text-gray-600">Monitor alerts and system notifications for your makerspace</p>
+          <p className="text-gray-600">
+            Monitor alerts and system notifications for your makerspace
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -295,13 +315,15 @@ const NotificationsCenter: React.FC = () => {
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">All ({stats.total})</TabsTrigger>
           <TabsTrigger value="unread">Unread ({stats.unread})</TabsTrigger>
-          <TabsTrigger value="action-required">Action Required ({stats.actionRequired})</TabsTrigger>
+          <TabsTrigger value="action-required">
+            Action Required ({stats.actionRequired})
+          </TabsTrigger>
           <TabsTrigger value="high-priority">High Priority ({stats.highPriority})</TabsTrigger>
           <TabsTrigger value="archived">Archived</TabsTrigger>
         </TabsList>
 
         {/* All tabs use the same content structure */}
-        {['all', 'unread', 'action-required', 'high-priority', 'archived'].map(tabValue => (
+        {['all', 'unread', 'action-required', 'high-priority', 'archived'].map((tabValue) => (
           <TabsContent key={tabValue} value={tabValue} className="space-y-4">
             {getFilteredNotifications().length === 0 ? (
               <Card>
@@ -320,7 +342,10 @@ const NotificationsCenter: React.FC = () => {
             ) : (
               <div className="space-y-3">
                 {getFilteredNotifications().map((notification) => (
-                  <Card key={notification.id} className={`${notification.status === 'unread' ? 'border-l-4 border-l-blue-500' : ''}`}>
+                  <Card
+                    key={notification.id}
+                    className={`${notification.status === 'unread' ? 'border-l-4 border-l-blue-500' : ''}`}
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
                         <div className="flex items-center gap-3 flex-1">
@@ -329,9 +354,11 @@ const NotificationsCenter: React.FC = () => {
                             checked={selectedNotifications.includes(notification.id)}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setSelectedNotifications(prev => [...prev, notification.id]);
+                                setSelectedNotifications((prev) => [...prev, notification.id]);
                               } else {
-                                setSelectedNotifications(prev => prev.filter(id => id !== notification.id));
+                                setSelectedNotifications((prev) =>
+                                  prev.filter((id) => id !== notification.id),
+                                );
                               }
                             }}
                             className="rounded"
@@ -341,13 +368,20 @@ const NotificationsCenter: React.FC = () => {
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <h4 className="font-medium text-gray-900">{notification.title}</h4>
+                                  <h4 className="font-medium text-gray-900">
+                                    {notification.title}
+                                  </h4>
                                   {getPriorityBadge(notification.priority)}
                                   {notification.status === 'unread' && (
-                                    <Badge variant="default" className="bg-blue-100 text-blue-800">New</Badge>
+                                    <Badge variant="default" className="bg-blue-100 text-blue-800">
+                                      New
+                                    </Badge>
                                   )}
                                   {notification.actionRequired && (
-                                    <Badge variant="outline" className="bg-orange-100 text-orange-800">
+                                    <Badge
+                                      variant="outline"
+                                      className="bg-orange-100 text-orange-800"
+                                    >
                                       Action Required
                                     </Badge>
                                   )}
@@ -371,14 +405,15 @@ const NotificationsCenter: React.FC = () => {
                                     <Check className="h-4 w-4" />
                                   </Button>
                                 )}
-                                {notification.actionRequired && notification.status !== 'resolved' && (
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleMarkAsResolved(notification.id)}
-                                  >
-                                    Resolve
-                                  </Button>
-                                )}
+                                {notification.actionRequired &&
+                                  notification.status !== 'resolved' && (
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleMarkAsResolved(notification.id)}
+                                    >
+                                      Resolve
+                                    </Button>
+                                  )}
                                 <Button
                                   size="sm"
                                   variant="ghost"

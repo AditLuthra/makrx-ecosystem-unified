@@ -38,6 +38,7 @@ async def test_readyz_db_failure(monkeypatch):
     class _FailConn:
         def __enter__(self):
             raise RuntimeError("db down")
+
         def __exit__(self, exc_type, exc, tb):
             return False
 
@@ -59,8 +60,10 @@ async def test_readyz_ok(monkeypatch):
     class _OkConn:
         def __enter__(self):
             return self
+
         def __exit__(self, exc_type, exc, tb):
             return False
+
         def execute(self, *_args, **_kwargs):
             return None
 
@@ -74,10 +77,13 @@ async def test_readyz_ok(monkeypatch):
     class _FakeAsyncClientOK:
         def __init__(self, *args, **kwargs):
             pass
+
         async def __aenter__(self):
             return self
+
         async def __aexit__(self, exc_type, exc, tb):
             return False
+
         async def get(self, url):
             return _FakeResp200()
 

@@ -4,7 +4,8 @@
 @tailwind utilities;
 
 /* Smooth scrolling for anchor links and prevent horizontal overflow */
-html, body {
+html,
+body {
   scroll-behavior: smooth;
   max-width: 100vw;
   overflow-x: hidden;
@@ -26,12 +27,24 @@ html, body {
 
 /* Glitch animation effects */
 @keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
 
 .glitch-effect {
@@ -40,9 +53,18 @@ html, body {
 
 /* Sparks animation */
 @keyframes sparks {
-  0% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
-  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(360deg);
+  }
 }
 
 .sparks {
@@ -51,8 +73,13 @@ html, body {
 
 /* Screen flicker effect */
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .screen-flicker {
@@ -66,11 +93,15 @@ html, body {
 
 /* Enhanced map marker glow effects */
 .map-marker-glow {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 40px rgba(34, 197, 94, 0.4);
+  box-shadow:
+    0 0 20px rgba(34, 197, 94, 0.6),
+    0 0 40px rgba(34, 197, 94, 0.4);
 }
 
 .map-marker-featured {
-  box-shadow: 0 0 25px rgba(251, 191, 36, 0.8), 0 0 50px rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 0 25px rgba(251, 191, 36, 0.8),
+    0 0 50px rgba(251, 191, 36, 0.5);
 }
 
 /* Enhanced Responsive utilities */
@@ -196,10 +227,17 @@ html, body {
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold;
     font-family: 'Exo', 'Inter', system-ui, sans-serif;
   }
@@ -232,10 +270,12 @@ html, body {
   }
 
   @media (max-width: 640px) {
-    .makrcave-btn-primary, .makrcave-btn-secondary, .makrcave-btn-outline {
+    .makrcave-btn-primary,
+    .makrcave-btn-secondary,
+    .makrcave-btn-outline {
       @apply px-4 py-3 text-sm min-h-[48px];
     }
-    
+
     .makrcave-nav-item {
       @apply py-3 text-base min-h-[48px];
     }

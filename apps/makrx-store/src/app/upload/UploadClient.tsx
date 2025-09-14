@@ -1,4 +1,3 @@
-"use client";
+'use client';
 
-export { default } from "./page.client";
-
+export { default } from './page.client';

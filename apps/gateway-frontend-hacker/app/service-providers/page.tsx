@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata: Metadata = {
   title: 'Service Providers — MakrX',
@@ -10,13 +10,18 @@ export const metadata: Metadata = {
 export default function ServiceProvidersPage() {
   return (
     <main className="min-h-screen bg-dark-bg-primary">
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Service Providers",
-        url: "https://makrx.org/service-providers"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Service Providers',
+          url: 'https://makrx.org/service-providers',
+        }}
+      />
       <section className="py-20 border-b border-makr-blue/30 bg-gradient-to-br from-terminal-green/20 to-makr-blue/20">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-4 font-mono">Service Providers</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-4 font-mono">
+            Service Providers
+          </h1>
           <p className="text-dark-text-secondary max-w-2xl mx-auto font-mono">
             Join our provider network and start receiving manufacturing jobs from across India.
           </p>
@@ -33,7 +38,10 @@ export default function ServiceProvidersPage() {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-dark-text-secondary font-mono">
-            Want to explore more? <Link href="/ecosystem" className="text-makr-blue hover:text-makr-yellow">See our ecosystem →</Link>
+            Want to explore more?{' '}
+            <Link href="/ecosystem" className="text-makr-blue hover:text-makr-yellow">
+              See our ecosystem →
+            </Link>
           </p>
         </div>
       </section>

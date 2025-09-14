@@ -6,9 +6,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  BarChart3, Users, Building2, Package, DollarSign, TrendingUp, 
-  TrendingDown, Clock, Activity, AlertCircle, CheckCircle, 
-  Download, Filter, Calendar, Cpu, Printer, Zap
+  BarChart3,
+  Users,
+  Building2,
+  Package,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Clock,
+  Activity,
+  AlertCircle,
+  CheckCircle,
+  Download,
+  Filter,
+  Calendar,
+  Cpu,
+  Printer,
+  Zap,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -37,7 +51,12 @@ interface AnalyticsData {
   };
   operational: {
     systemHealth: { service: string; status: 'healthy' | 'warning' | 'error'; uptime: number }[];
-    maintenanceAlerts: { equipment: string; issue: string; priority: 'low' | 'medium' | 'high'; date: string }[];
+    maintenanceAlerts: {
+      equipment: string;
+      issue: string;
+      priority: 'low' | 'medium' | 'high';
+      date: string;
+    }[];
     inventoryAlerts: { item: string; current: number; minimum: number; makerspace: string }[];
   };
 }
@@ -52,8 +71,8 @@ const mockAnalyticsData: AnalyticsData = {
       makerspaces: 12.5,
       users: 23.8,
       revenue: 18.7,
-      equipment: 8.3
-    }
+      equipment: 8.3,
+    },
   },
   usage: {
     dailyActiveUsers: [120, 135, 158, 142, 167, 189, 156, 178, 165, 143, 192, 187, 201, 195, 168],
@@ -62,14 +81,14 @@ const mockAnalyticsData: AnalyticsData = {
       { name: 'Laser Cutters', usage: 65, capacity: 80 },
       { name: 'CNC Machines', usage: 45, capacity: 60 },
       { name: 'Electronics Stations', usage: 82, capacity: 120 },
-      { name: 'Workbenches', usage: 156, capacity: 200 }
+      { name: 'Workbenches', usage: 156, capacity: 200 },
     ],
     popularEquipment: [
       { name: 'Prusa i3 MK3S+', hours: 847, bookings: 156 },
       { name: 'Ultimaker S5', hours: 723, bookings: 134 },
       { name: 'Glowforge Pro', hours: 689, bookings: 198 },
       { name: 'Tormach PCNC 440', hours: 567, bookings: 89 },
-      { name: 'Formlabs Form 3L', hours: 445, bookings: 76 }
+      { name: 'Formlabs Form 3L', hours: 445, bookings: 76 },
     ],
     peakHours: [
       { hour: '9 AM', usage: 45 },
@@ -83,24 +102,26 @@ const mockAnalyticsData: AnalyticsData = {
       { hour: '5 PM', usage: 82 },
       { hour: '6 PM', usage: 74 },
       { hour: '7 PM', usage: 56 },
-      { hour: '8 PM', usage: 34 }
-    ]
+      { hour: '8 PM', usage: 34 },
+    ],
   },
   revenue: {
-    monthlyRevenue: [45680, 52340, 48920, 56780, 61450, 58930, 64200, 69780, 67240, 72560, 78940, 89650],
+    monthlyRevenue: [
+      45680, 52340, 48920, 56780, 61450, 58930, 64200, 69780, 67240, 72560, 78940, 89650,
+    ],
     revenueByMakerspace: [
       { name: 'TechHub Downtown', revenue: 12450, growth: 8.5 },
       { name: 'Innovation Lab NYC', revenue: 18650, growth: 15.2 },
       { name: 'MakerSpace Austin', revenue: 9870, growth: -2.1 },
       { name: 'Creative Factory LA', revenue: 14320, growth: 12.8 },
-      { name: 'Seattle Maker Collective', revenue: 11280, growth: 6.7 }
+      { name: 'Seattle Maker Collective', revenue: 11280, growth: 6.7 },
     ],
     subscriptionMetrics: [
       { plan: 'Basic Maker', count: 456, revenue: 11400 },
       { plan: 'Professional', count: 234, revenue: 23400 },
       { plan: 'Service Provider', count: 89, revenue: 17800 },
-      { plan: 'Enterprise', count: 23, revenue: 34500 }
-    ]
+      { plan: 'Enterprise', count: 23, revenue: 34500 },
+    ],
   },
   operational: {
     systemHealth: [
@@ -108,21 +129,46 @@ const mockAnalyticsData: AnalyticsData = {
       { service: 'Booking System', status: 'healthy', uptime: 99.7 },
       { service: 'Payment Processing', status: 'warning', uptime: 98.2 },
       { service: 'Equipment Monitoring', status: 'healthy', uptime: 99.5 },
-      { service: 'Analytics Engine', status: 'healthy', uptime: 99.8 }
+      { service: 'Analytics Engine', status: 'healthy', uptime: 99.8 },
     ],
     maintenanceAlerts: [
-      { equipment: 'Ultimaker S5 #3', issue: 'Nozzle replacement needed', priority: 'medium', date: '2024-01-22' },
-      { equipment: 'Laser Cutter #2', issue: 'Mirror cleaning required', priority: 'low', date: '2024-01-21' },
-      { equipment: 'CNC Mill #1', issue: 'Coolant system leak', priority: 'high', date: '2024-01-20' },
-      { equipment: 'Prusa i3 #7', issue: 'Bed leveling required', priority: 'low', date: '2024-01-19' }
+      {
+        equipment: 'Ultimaker S5 #3',
+        issue: 'Nozzle replacement needed',
+        priority: 'medium',
+        date: '2024-01-22',
+      },
+      {
+        equipment: 'Laser Cutter #2',
+        issue: 'Mirror cleaning required',
+        priority: 'low',
+        date: '2024-01-21',
+      },
+      {
+        equipment: 'CNC Mill #1',
+        issue: 'Coolant system leak',
+        priority: 'high',
+        date: '2024-01-20',
+      },
+      {
+        equipment: 'Prusa i3 #7',
+        issue: 'Bed leveling required',
+        priority: 'low',
+        date: '2024-01-19',
+      },
     ],
     inventoryAlerts: [
       { item: 'PLA Filament (Black)', current: 3, minimum: 5, makerspace: 'TechHub Downtown' },
       { item: 'Acrylic Sheets (3mm)', current: 2, minimum: 8, makerspace: 'Innovation Lab NYC' },
       { item: 'Aluminum Stock', current: 1, minimum: 3, makerspace: 'MakerSpace Austin' },
-      { item: 'Electronics Components', current: 15, minimum: 20, makerspace: 'Creative Factory LA' }
-    ]
-  }
+      {
+        item: 'Electronics Components',
+        current: 15,
+        minimum: 20,
+        makerspace: 'Creative Factory LA',
+      },
+    ],
+  },
 };
 
 export default function AdminAnalyticsDashboard() {
@@ -147,19 +193,27 @@ export default function AdminAnalyticsDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'bg-green-100 text-green-800';
-      case 'warning': return 'bg-yellow-100 text-yellow-800';
-      case 'error': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'healthy':
+        return 'bg-green-100 text-green-800';
+      case 'warning':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'error':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'high':
+        return 'bg-red-100 text-red-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -199,8 +253,8 @@ export default function AdminAnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{data.overview.totalMakerspaces}</div>
             <div className="flex items-center text-xs text-green-600">
-              <TrendingUp className="w-3 h-3 mr-1" />
-              +{data.overview.growthMetrics.makerspaces}% from last month
+              <TrendingUp className="w-3 h-3 mr-1" />+{data.overview.growthMetrics.makerspaces}%
+              from last month
             </div>
           </CardContent>
         </Card>
@@ -213,8 +267,8 @@ export default function AdminAnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatNumber(data.overview.totalUsers)}</div>
             <div className="flex items-center text-xs text-green-600">
-              <TrendingUp className="w-3 h-3 mr-1" />
-              +{data.overview.growthMetrics.users}% from last month
+              <TrendingUp className="w-3 h-3 mr-1" />+{data.overview.growthMetrics.users}% from last
+              month
             </div>
           </CardContent>
         </Card>
@@ -227,8 +281,8 @@ export default function AdminAnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(data.overview.totalRevenue)}</div>
             <div className="flex items-center text-xs text-green-600">
-              <TrendingUp className="w-3 h-3 mr-1" />
-              +{data.overview.growthMetrics.revenue}% from last month
+              <TrendingUp className="w-3 h-3 mr-1" />+{data.overview.growthMetrics.revenue}% from
+              last month
             </div>
           </CardContent>
         </Card>
@@ -241,8 +295,8 @@ export default function AdminAnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{data.overview.activeEquipment}</div>
             <div className="flex items-center text-xs text-green-600">
-              <TrendingUp className="w-3 h-3 mr-1" />
-              +{data.overview.growthMetrics.equipment}% from last month
+              <TrendingUp className="w-3 h-3 mr-1" />+{data.overview.growthMetrics.equipment}% from
+              last month
             </div>
           </CardContent>
         </Card>
@@ -271,13 +325,18 @@ export default function AdminAnalyticsDashboard() {
                     <div key={index}>
                       <div className="flex justify-between text-sm mb-1">
                         <span>{equipment.name}</span>
-                        <span>{equipment.usage}/{equipment.capacity}</span>
+                        <span>
+                          {equipment.usage}/{equipment.capacity}
+                        </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            equipment.usage / equipment.capacity > 0.8 ? 'bg-red-500' :
-                            equipment.usage / equipment.capacity > 0.6 ? 'bg-yellow-500' : 'bg-green-500'
+                            equipment.usage / equipment.capacity > 0.8
+                              ? 'bg-red-500'
+                              : equipment.usage / equipment.capacity > 0.6
+                                ? 'bg-yellow-500'
+                                : 'bg-green-500'
                           }`}
                           style={{ width: `${(equipment.usage / equipment.capacity) * 100}%` }}
                         />
@@ -353,10 +412,16 @@ export default function AdminAnalyticsDashboard() {
                       <span className="font-medium">{space.name}</span>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{formatCurrency(space.revenue)}</span>
-                        <div className={`flex items-center text-xs ${
-                          space.growth >= 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {space.growth >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                        <div
+                          className={`flex items-center text-xs ${
+                            space.growth >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}
+                        >
+                          {space.growth >= 0 ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3" />
+                          )}
                           {Math.abs(space.growth)}%
                         </div>
                       </div>
@@ -400,7 +465,9 @@ export default function AdminAnalyticsDashboard() {
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div
                       className="w-full bg-green-500 rounded-t"
-                      style={{ height: `${(revenue / Math.max(...data.revenue.monthlyRevenue)) * 100}%` }}
+                      style={{
+                        height: `${(revenue / Math.max(...data.revenue.monthlyRevenue)) * 100}%`,
+                      }}
                     />
                     <span className="text-xs text-gray-600 mt-1">
                       {new Date(2024, index).toLocaleDateString('en-US', { month: 'short' })}
@@ -427,9 +494,7 @@ export default function AdminAnalyticsDashboard() {
                     <div key={index} className="flex items-center justify-between">
                       <span className="font-medium">{service.service}</span>
                       <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(service.status)}>
-                          {service.status}
-                        </Badge>
+                        <Badge className={getStatusColor(service.status)}>{service.status}</Badge>
                         <span className="text-xs text-gray-500">{service.uptime}%</span>
                       </div>
                     </div>
@@ -450,9 +515,7 @@ export default function AdminAnalyticsDashboard() {
                     <div key={index} className="border rounded-lg p-3">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-medium">{alert.equipment}</span>
-                        <Badge className={getPriorityColor(alert.priority)}>
-                          {alert.priority}
-                        </Badge>
+                        <Badge className={getPriorityColor(alert.priority)}>{alert.priority}</Badge>
                       </div>
                       <p className="text-sm text-gray-600">{alert.issue}</p>
                       <span className="text-xs text-gray-500">{alert.date}</span>
@@ -475,12 +538,12 @@ export default function AdminAnalyticsDashboard() {
                   <div key={index} className="border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium">{alert.item}</span>
-                      <Badge className="bg-orange-100 text-orange-800">
-                        Low Stock
-                      </Badge>
+                      <Badge className="bg-orange-100 text-orange-800">Low Stock</Badge>
                     </div>
                     <div className="text-sm text-gray-600">
-                      <p>Current: {alert.current} | Minimum: {alert.minimum}</p>
+                      <p>
+                        Current: {alert.current} | Minimum: {alert.minimum}
+                      </p>
                       <p>{alert.makerspace}</p>
                     </div>
                   </div>

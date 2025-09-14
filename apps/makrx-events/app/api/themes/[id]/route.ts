@@ -3,10 +3,7 @@ import { z } from 'zod';
 import { insertThemeSchema } from '@shared/schema';
 
 // GET /api/themes/[id] - Get specific theme
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -31,17 +28,18 @@ export async function GET(
         success: '#10B981',
         warning: '#F59E0B',
         error: '#EF4444',
-        info: '#3B82F6'
+        info: '#3B82F6',
       },
       assets: {
         logoUrl: null,
         heroUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
         faviconUrl: null,
-        brandColor: '#3B82F6'
+        brandColor: '#3B82F6',
       },
       preview: {
-        thumbnail: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop',
-        description: 'Bold and vibrant festival theme with blue primary colors'
+        thumbnail:
+          'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop',
+        description: 'Bold and vibrant festival theme with blue primary colors',
       },
       cssVariables: {
         '--color-primary': '#3B82F6',
@@ -53,29 +51,23 @@ export async function GET(
         '--color-border': '#E5E7EB',
         '--radius': '0.5rem',
         '--font-heading': 'Inter, sans-serif',
-        '--font-body': 'Inter, sans-serif'
+        '--font-body': 'Inter, sans-serif',
       },
       isActive: true,
       usageCount: 12, // How many microsites use this theme
       createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-02-01T14:30:00Z'
+      updatedAt: '2024-02-01T14:30:00Z',
     };
 
     return NextResponse.json(mockTheme);
   } catch (error) {
     console.error('Error fetching theme:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch theme' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch theme' }, { status: 500 });
   }
 }
 
 // PATCH /api/themes/[id] - Update theme
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -87,7 +79,7 @@ export async function PATCH(
     // Generate CSS variables from tokens
     const generateCSSVariables = (tokens: any) => {
       const cssVars: Record<string, string> = {};
-      
+
       if (tokens.primary) cssVars['--color-primary'] = tokens.primary;
       if (tokens.accent) cssVars['--color-accent'] = tokens.accent;
       if (tokens.background) cssVars['--color-background'] = tokens.background;
@@ -98,7 +90,7 @@ export async function PATCH(
       if (tokens.radius) cssVars['--radius'] = tokens.radius;
       if (tokens.fontHeading) cssVars['--font-heading'] = `${tokens.fontHeading}, sans-serif`;
       if (tokens.fontBody) cssVars['--font-body'] = `${tokens.fontBody}, sans-serif`;
-      
+
       return cssVars;
     };
 
@@ -113,36 +105,30 @@ export async function PATCH(
       cssVariables: generateCSSVariables(validatedData.tokens || {}),
       preview: {
         thumbnail: validatedData.assets?.heroUrl || null,
-        description: validatedData.description || ''
+        description: validatedData.description || '',
       },
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(updatedTheme);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error updating theme:', error);
-    return NextResponse.json(
-      { error: 'Failed to update theme' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update theme' }, { status: 500 });
   }
 }
 
 // DELETE /api/themes/[id] - Delete custom theme
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -152,15 +138,9 @@ export async function DELETE(
     // Mock deletion - replace with actual database delete
     console.log(`Deleting theme: ${id}`);
 
-    return NextResponse.json(
-      { message: 'Theme deleted successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Theme deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting theme:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete theme' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete theme' }, { status: 500 });
   }
 }

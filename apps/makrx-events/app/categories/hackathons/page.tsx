@@ -1,46 +1,48 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import Header from "@/components/header";
-import { Calendar, MapPin, Users, Zap, Clock } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Header from '@/components/header';
+import { Calendar, MapPin, Users, Zap, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HackathonsPage() {
   const hackathons = [
     {
-      id: "iot-hackathon",
-      title: "IoT Smart Cities Hackathon",
-      description: "48-hour intensive hackathon focused on Internet of Things solutions for smart cities. Build connected devices that solve real urban challenges.",
-      date: "March 16-17, 2024",
-      location: "San Francisco, CA",
+      id: 'iot-hackathon',
+      title: 'IoT Smart Cities Hackathon',
+      description:
+        '48-hour intensive hackathon focused on Internet of Things solutions for smart cities. Build connected devices that solve real urban challenges.',
+      date: 'March 16-17, 2024',
+      location: 'San Francisco, CA',
       attendees: 200,
-      duration: "48 hours",
-      prize: "$15,000",
-      deadline: "March 10, 2024",
-      image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3",
-      tags: ["IoT", "Smart Cities", "48h"],
-      difficulty: "Advanced"
+      duration: '48 hours',
+      prize: '$15,000',
+      deadline: 'March 10, 2024',
+      image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3',
+      tags: ['IoT', 'Smart Cities', '48h'],
+      difficulty: 'Advanced',
     },
     {
-      id: "ai-healthcare-hack",
-      title: "AI for Healthcare Hackathon",
-      description: "Build AI-powered solutions to improve healthcare accessibility, diagnosis, and patient care using machine learning and data science.",
-      date: "April 22-24, 2024",
-      location: "Boston, MA",
+      id: 'ai-healthcare-hack',
+      title: 'AI for Healthcare Hackathon',
+      description:
+        'Build AI-powered solutions to improve healthcare accessibility, diagnosis, and patient care using machine learning and data science.',
+      date: 'April 22-24, 2024',
+      location: 'Boston, MA',
       attendees: 150,
-      duration: "72 hours",
-      prize: "$20,000",
-      deadline: "April 15, 2024",
-      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3",
-      tags: ["AI", "Healthcare", "ML"],
-      difficulty: "Intermediate"
-    }
+      duration: '72 hours',
+      prize: '$20,000',
+      deadline: 'April 15, 2024',
+      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3',
+      tags: ['AI', 'Healthcare', 'ML'],
+      difficulty: 'Intermediate',
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -48,13 +50,17 @@ export default function HackathonsPage() {
             Hackathons
           </h1>
           <p className="text-lg text-gray-600">
-            Intensive coding events where teams build innovative solutions in limited time. Perfect for rapid prototyping and learning.
+            Intensive coding events where teams build innovative solutions in limited time. Perfect
+            for rapid prototyping and learning.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {hackathons.map((hackathon) => (
-            <Card key={hackathon.id} className="overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+            <Card
+              key={hackathon.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-l-purple-500"
+            >
               <div className="aspect-video relative overflow-hidden">
                 <img
                   src={hackathon.image}
@@ -67,22 +73,18 @@ export default function HackathonsPage() {
                   </Badge>
                 </div>
                 <div className="absolute top-4 right-4">
-                  <Badge className="bg-purple-600 text-white">
-                    {hackathon.difficulty}
-                  </Badge>
+                  <Badge className="bg-purple-600 text-white">{hackathon.difficulty}</Badge>
                 </div>
               </div>
-              
+
               <CardHeader>
                 <CardTitle className="text-xl flex items-center">
                   {hackathon.title}
                   <Zap className="h-5 w-5 ml-2 text-purple-500" />
                 </CardTitle>
-                <CardDescription className="line-clamp-3">
-                  {hackathon.description}
-                </CardDescription>
+                <CardDescription className="line-clamp-3">{hackathon.description}</CardDescription>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
                   <div className="flex justify-between items-center">
@@ -126,14 +128,15 @@ export default function HackathonsPage() {
 
                 <div className="flex gap-2 pt-2">
                   <Button asChild size="sm" className="flex-1">
-                    <Link href={`/events/${hackathon.id}`}>
-                      View Details
-                    </Link>
+                    <Link href={`/events/${hackathon.id}`}>View Details</Link>
                   </Button>
-                  <Button asChild size="sm" variant="default" className="flex-1 bg-purple-600 hover:bg-purple-700">
-                    <Link href={`/events/${hackathon.id}/register`}>
-                      Join Hackathon
-                    </Link>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="default"
+                    className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  >
+                    <Link href={`/events/${hackathon.id}/register`}>Join Hackathon</Link>
                   </Button>
                 </div>
               </CardContent>

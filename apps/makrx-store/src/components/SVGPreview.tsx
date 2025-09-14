@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Maximize2, RotateCcw, ZoomIn, ZoomOut, Ruler, AlertCircle } from 'lucide-react';
@@ -13,7 +13,7 @@ interface SVGPreviewProps {
   }) => void;
 }
 
-export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", onAnalysis }) => {
+export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = '', onAnalysis }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,9 +45,10 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
       }
 
       // Extract dimensions
-      let width = 100, height = 100; // defaults
+      let width = 100,
+        height = 100; // defaults
       const viewBox = svgElement.getAttribute('viewBox');
-      
+
       if (viewBox) {
         const [x, y, w, h] = viewBox.split(' ').map(Number);
         width = w;
@@ -58,7 +59,9 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
       }
 
       // Calculate approximate area and path length
-      const paths = svgElement.querySelectorAll('path, rect, circle, ellipse, polygon, polyline, line');
+      const paths = svgElement.querySelectorAll(
+        'path, rect, circle, ellipse, polygon, polyline, line',
+      );
       let totalPathLength = 0;
       let estimatedArea = 0;
 
@@ -101,8 +104,8 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
     }
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 5));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.1));
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.2, 5));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev / 1.2, 0.1));
   const handleResetZoom = () => setZoom(1);
 
   return (
@@ -159,13 +162,16 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
       )}
 
       {/* SVG Viewport */}
-      <div 
+      <div
         ref={containerRef}
         className="w-full h-96 flex items-center justify-center overflow-hidden p-4"
-        style={{ background: 'repeating-conic-gradient(#f8f9fa 0% 25%, transparent 0% 50%) 50% / 20px 20px' }}
+        style={{
+          background:
+            'repeating-conic-gradient(#f8f9fa 0% 25%, transparent 0% 50%) 50% / 20px 20px',
+        }}
       >
         {svgContent && (
-          <div 
+          <div
             style={{ transform: `scale(${zoom})` }}
             className="transition-transform duration-200"
           >
@@ -189,7 +195,9 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Dimensions:</span>
-              <p className="font-mono">{analysis.dimensions.x} × {analysis.dimensions.y} mm</p>
+              <p className="font-mono">
+                {analysis.dimensions.x} × {analysis.dimensions.y} mm
+              </p>
             </div>
             <div>
               <span className="text-gray-600">Est. Area:</span>
@@ -200,10 +208,13 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = "", on
               <p className="font-mono">{(analysis.path_length_mm / 10).toFixed(1)} cm</p>
             </div>
           </div>
-          
+
           {showDimensions && (
             <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-800">
-              <p>💡 Dimensions shown assume 96 DPI. For precise sizing, include dimensions in your SVG file.</p>
+              <p>
+                💡 Dimensions shown assume 96 DPI. For precise sizing, include dimensions in your
+                SVG file.
+              </p>
             </div>
           )}
         </div>

@@ -16,7 +16,7 @@ import {
   Upload,
   Save,
   RefreshCw,
-  Image as ImageIcon
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface OperatingHours {
@@ -63,7 +63,7 @@ const timezones = [
   'America/Los_Angeles',
   'America/Chicago',
   'Australia/Sydney',
-  'Asia/Tokyo'
+  'Asia/Tokyo',
 ];
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -73,7 +73,7 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
   settings,
   onUpdate,
   onSave,
-  saving
+  saving,
 }) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -81,13 +81,13 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
   const defaultOperatingHours: OperatingHours = {
     open: '09:00',
     close: '18:00',
-    closed: false
+    closed: false,
   };
 
   const getOperatingHours = () => {
     if (!settings.operating_hours) {
       const defaultHours: any = {};
-      days.forEach(day => {
+      days.forEach((day) => {
         defaultHours[day] = { ...defaultOperatingHours };
       });
       defaultHours.sunday.closed = true;
@@ -106,8 +106,8 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
       ...currentHours,
       [day]: {
         ...currentHours[day],
-        [field]: value
-      }
+        [field]: value,
+      },
     };
     onUpdate({ operating_hours: updatedHours });
   };
@@ -150,7 +150,7 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
       timezone: settings.timezone,
       latitude: settings.latitude,
       longitude: settings.longitude,
-      operating_hours: getOperatingHours()
+      operating_hours: getOperatingHours(),
     };
     onSave(generalData);
   };
@@ -177,16 +177,21 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
                 className="mt-1"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="timezone">Timezone</Label>
-              <Select value={settings.timezone || 'Asia/Kolkata'} onValueChange={(value) => handleInputChange('timezone', value)}>
+              <Select
+                value={settings.timezone || 'Asia/Kolkata'}
+                onValueChange={(value) => handleInputChange('timezone', value)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {timezones.map((tz) => (
-                    <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                    <SelectItem key={tz} value={tz}>
+                      {tz}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -211,9 +216,9 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
             <div className="mt-1 flex items-center gap-4">
               {settings.logo_url && (
                 <div className="w-16 h-16 border rounded-lg overflow-hidden bg-gray-100">
-                  <img 
-                    src={settings.logo_url} 
-                    alt="Makerspace Logo" 
+                  <img
+                    src={settings.logo_url}
+                    alt="Makerspace Logo"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -287,7 +292,7 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
                 className="mt-1"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="contact_phone" className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
@@ -317,7 +322,7 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
                 className="mt-1"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="longitude">Longitude</Label>
               <Input
@@ -351,10 +356,8 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
               const dayHours = getOperatingHours()[day] || defaultOperatingHours;
               return (
                 <div key={day} className="flex items-center gap-4 p-3 border rounded-lg">
-                  <div className="w-20 font-medium text-sm">
-                    {dayLabels[index]}
-                  </div>
-                  
+                  <div className="w-20 font-medium text-sm">{dayLabels[index]}</div>
+
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -376,7 +379,7 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
                           className="w-32"
                         />
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <Label className="text-xs">To:</Label>
                         <Input
@@ -388,10 +391,8 @@ const GeneralSettingsForm: React.FC<GeneralSettingsFormProps> = ({
                       </div>
                     </>
                   )}
-                  
-                  {dayHours.closed && (
-                    <span className="text-sm text-gray-500 italic">Closed</span>
-                  )}
+
+                  {dayHours.closed && <span className="text-sm text-gray-500 italic">Closed</span>}
                 </div>
               );
             })}

@@ -33,6 +33,7 @@ engine = create_engine(DATABASE_URL, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -40,6 +41,8 @@ def get_db():
     finally:
         db.close()
 
+
 def init_db():
     from . import models  # register models
+
     Base.metadata.create_all(bind=engine)

@@ -10,6 +10,7 @@ from datetime import datetime
 from enum import Enum
 import uuid
 
+
 # Enums
 class UploadStatus(str, Enum):
     UPLOADED = "uploaded"
@@ -18,11 +19,13 @@ class UploadStatus(str, Enum):
     FAILED = "failed"
     EXPIRED = "expired"
 
+
 class QuoteStatus(str, Enum):
     ACTIVE = "active"
     EXPIRED = "expired"
     ACCEPTED = "accepted"
     CANCELLED = "cancelled"
+
 
 class ServiceOrderStatus(str, Enum):
     PENDING = "pending"
@@ -37,11 +40,13 @@ class ServiceOrderStatus(str, Enum):
     DELIVERED = "delivered"
     CANCELLED = "cancelled"
 
+
 class PrintQuality(str, Enum):
     DRAFT = "draft"
     STANDARD = "standard"
     HIGH = "high"
     ULTRA = "ultra"
+
 
 class PrintMaterial(str, Enum):
     PLA = "pla"
@@ -54,29 +59,35 @@ class PrintMaterial(str, Enum):
     WOOD = "wood"
     METAL = "metal"
 
+
 class Priority(str, Enum):
     LOW = "low"
     NORMAL = "normal"
     HIGH = "high"
     URGENT = "urgent"
 
+
 # Base schemas
 class TimestampMixin(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
+
 # Upload schemas
 class UploadRequest(BaseModel):
     filename: str = Field(..., min_length=1, max_length=255)
     content_type: str
-    file_size: int = Field(..., gt=0, le=100*1024*1024)  # Max 100MB
-    
-    @validator('filename')
+    file_size: int = Field(..., gt=0, le=100 * 1024 * 1024)  # Max 100MB
+
+    @validator("filename")
     def validate_filename(cls, v):
-        allowed_extensions = ['.stl', '.obj', '.3mf', '.step', '.stp']
+        allowed_extensions = [".stl", ".obj", ".3mf", ".step", ".stp"]
         if not any(v.lower().endswith(ext) for ext in allowed_extensions):
-            raise ValueError(f'File type not supported. Allowed: {", ".join(allowed_extensions)}')
+            raise ValueError(
+                f'File type not supported. Allowed: {", ".join(allowed_extensions)}'
+            )
         return v
+
 
 class UploadResponse(BaseModel):
     upload_id: uuid.UUID
@@ -85,9 +96,11 @@ class UploadResponse(BaseModel):
     file_key: str
     expires_in: int
 
+
 class UploadComplete(BaseModel):
     upload_id: uuid.UUID
     file_key: str
+
 
 class Upload(TimestampMixin):
     id: uuid.UUID
@@ -106,8 +119,9 @@ class Upload(TimestampMixin):
     error_message: Optional[str] = None
     processed_at: Optional[datetime] = None
     expires_at: Optional[datetime] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 # Quote schemas
 class QuoteRequest(BaseModel):
@@ -116,12 +130,15 @@ class QuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(Decimal('0.2'), ge=Decimal('0.05'), le=Decimal('0.8'))
+    layer_height: Decimal = Field(
+        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
+    )
     supports: bool = False
     quantity: int = Field(1, ge=1, le=100)
     rush_order: bool = False
     delivery_address: Optional[Dict[str, Any]] = None
     pickup_location: Optional[str] = None
+
 
 class QuoteResponse(BaseModel):
     quote_id: uuid.UUID
@@ -133,6 +150,7 @@ class QuoteResponse(BaseModel):
     material_usage: Dict[str, Any]
     print_parameters: Dict[str, Any]
     expires_at: datetime
+
 
 class Quote(TimestampMixin):
     id: uuid.UUID
@@ -156,11 +174,12 @@ class Quote(TimestampMixin):
     status: QuoteStatus
     pickup_location: Optional[str] = None
     delivery_address: Optional[Dict[str, Any]] = None
-    shipping_cost: Decimal = Decimal('0.00')
+    shipping_cost: Decimal = Decimal("0.00")
     accepted_at: Optional[datetime] = None
     upload: Optional[Upload] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 # Service Provider schemas
 class ServiceProviderCapabilities(BaseModel):
@@ -169,6 +188,7 @@ class ServiceProviderCapabilities(BaseModel):
     technologies: List[str] = []  # FDM, SLA, SLS, etc.
     max_layer_height: Optional[float] = None
     min_layer_height: Optional[float] = None
+
 
 class ServiceProvider(TimestampMixin):
     id: int
@@ -182,11 +202,12 @@ class ServiceProvider(TimestampMixin):
     pricing_tiers: Dict[str, Any] = {}
     is_active: bool
     is_verified: bool
-    rating: Decimal = Decimal('0.00')
+    rating: Decimal = Decimal("0.00")
     total_jobs: int = 0
     last_active: Optional[datetime] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 # Service Order schemas
 class ServiceOrderCreate(BaseModel):
@@ -195,6 +216,7 @@ class ServiceOrderCreate(BaseModel):
     priority: Priority = Priority.NORMAL
     customer_notes: Optional[str] = None
     delivery_instructions: Optional[str] = None
+
 
 class ServiceOrderUpdate(BaseModel):
     status: Optional[ServiceOrderStatus] = None
@@ -205,6 +227,7 @@ class ServiceOrderUpdate(BaseModel):
     quality_notes: Optional[str] = None
     provider_notes: Optional[str] = None
     tracking_number: Optional[str] = None
+
 
 class ServiceOrder(TimestampMixin):
     id: uuid.UUID
@@ -233,8 +256,9 @@ class ServiceOrder(TimestampMixin):
     delivered_at: Optional[datetime] = None
     quote: Optional[Quote] = None
     provider: Optional[ServiceProvider] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class ServiceOrderList(BaseModel):
     service_orders: List[ServiceOrder]
@@ -242,6 +266,7 @@ class ServiceOrderList(BaseModel):
     page: int
     per_page: int
     pages: int
+
 
 # Service Order Log schemas
 class ServiceOrderLogCreate(BaseModel):
@@ -255,6 +280,7 @@ class ServiceOrderLogCreate(BaseModel):
     actor_name: Optional[str] = None
     metadata: Dict[str, Any] = {}
 
+
 class ServiceOrderLog(BaseModel):
     id: int
     service_order_id: uuid.UUID
@@ -267,9 +293,10 @@ class ServiceOrderLog(BaseModel):
     actor_name: Optional[str] = None
     metadata: Dict[str, Any] = {}
     created_at: datetime
-    
+
     class Config:
         orm_mode = True
+
 
 # Provider job management schemas
 class ProviderJobFilter(BaseModel):
@@ -279,11 +306,13 @@ class ProviderJobFilter(BaseModel):
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
 
+
 class ProviderJobUpdate(BaseModel):
     status: ServiceOrderStatus
     message: Optional[str] = None
     estimated_completion: Optional[datetime] = None
     tracking_data: Optional[Dict[str, Any]] = None
+
 
 # File analysis schemas
 class MeshAnalysis(BaseModel):
@@ -296,6 +325,7 @@ class MeshAnalysis(BaseModel):
     bounding_box: Dict[str, float]  # min_x, max_x, etc.
     center_of_mass: Dict[str, float]  # x, y, z
 
+
 # Quote comparison schemas
 class QuoteComparison(BaseModel):
     quotes: List[Quote]
@@ -303,6 +333,7 @@ class QuoteComparison(BaseModel):
     cheapest_quote_id: Optional[uuid.UUID] = None
     fastest_quote_id: Optional[uuid.UUID] = None
     best_value_quote_id: Optional[uuid.UUID] = None
+
 
 # Service order tracking schemas
 class ServiceOrderTracking(BaseModel):
@@ -313,7 +344,8 @@ class ServiceOrderTracking(BaseModel):
     milestones: List[Dict[str, Any]] = []
     tracking_events: List[ServiceOrderLog] = []
     current_location: Optional[str] = None
-    
+
+
 # Batch operations schemas
 class BatchQuoteRequest(BaseModel):
     upload_ids: List[uuid.UUID] = Field(..., min_items=1, max_items=50)
@@ -321,9 +353,12 @@ class BatchQuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(Decimal('0.2'), ge=Decimal('0.05'), le=Decimal('0.8'))
+    layer_height: Decimal = Field(
+        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
+    )
     supports: bool = False
     rush_order: bool = False
+
 
 class BatchQuoteResponse(BaseModel):
     quotes: List[QuoteResponse]
@@ -331,6 +366,7 @@ class BatchQuoteResponse(BaseModel):
     total_weight_g: Decimal
     total_time_minutes: int
     bulk_discount: Optional[Dict[str, Any]] = None
+
 
 # Material and quality info schemas
 class MaterialInfo(BaseModel):
@@ -345,6 +381,7 @@ class MaterialInfo(BaseModel):
     supports_required: bool
     post_processing: List[str]
 
+
 class QualityInfo(BaseModel):
     name: str
     display_name: str
@@ -353,6 +390,7 @@ class QualityInfo(BaseModel):
     time_multiplier: float
     recommended_for: List[str]
     surface_finish: str
+
 
 # Service capabilities schema
 class ServiceCapabilities(BaseModel):
@@ -363,6 +401,7 @@ class ServiceCapabilities(BaseModel):
     file_formats: List[str]
     max_file_size_mb: int
     turnaround_times: Dict[str, str]  # quality -> time range
+
 
 # Update forward references
 Upload.update_forward_refs()

@@ -7,16 +7,46 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from './ui/dialog';
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import {
-  Palette, Package, ShoppingCart, AlertTriangle, TrendingDown, Clock,
-  Thermometer, Scale, Printer, Upload, Download, MoreVertical, Plus,
-  RefreshCw, ExternalLink, Droplets, Target, Activity, CheckCircle,
-  XCircle, Eye, Edit, QrCode, BarChart3
+  Palette,
+  Package,
+  ShoppingCart,
+  AlertTriangle,
+  TrendingDown,
+  Clock,
+  Thermometer,
+  Scale,
+  Printer,
+  Upload,
+  Download,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  ExternalLink,
+  Droplets,
+  Target,
+  Activity,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Edit,
+  QrCode,
+  BarChart3,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
@@ -82,7 +112,7 @@ interface FilamentTrackerProps {
 const FilamentTracker: React.FC<FilamentTrackerProps> = ({
   showHeader = true,
   maxItems,
-  compactView = false
+  compactView = false,
 }) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -96,7 +126,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
   const [filters, setFilters] = useState({
     material: 'all',
     status: 'all',
-    lowStockOnly: false
+    lowStockOnly: false,
   });
 
   const getHeaders = useAuthHeaders();
@@ -129,17 +159,17 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
         setRolls(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load filament rolls",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load filament rolls',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching filament rolls:', error);
       toast({
-        title: "Error",
-        description: "Failed to load filament rolls",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load filament rolls',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -157,14 +187,14 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
           deduction_method: 'manual',
           print_name: printName,
           is_manual_entry: true,
-          manual_reason: 'Manual usage entry'
+          manual_reason: 'Manual usage entry',
         }),
       });
 
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: "Success",
+          title: 'Success',
           description: `Recorded ${weightUsed}g usage. ${result.remaining_weight_g}g remaining.`,
         });
         fetchFilamentRolls();
@@ -172,17 +202,17 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to record usage",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to record usage',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error recording usage:', error);
       toast({
-        title: "Error",
-        description: "Failed to record usage",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to record usage',
+        variant: 'destructive',
       });
     }
   };
@@ -196,17 +226,17 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
         body: JSON.stringify({
           quantity: 1,
           urgent: false,
-          notes: 'Manual reorder request'
+          notes: 'Manual reorder request',
         }),
       });
 
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: "Success",
-          description: "Reorder request created successfully",
+          title: 'Success',
+          description: 'Reorder request created successfully',
         });
-        
+
         // Open MakrX Store if URL is available
         if (result.makrx_order_url) {
           window.open(result.makrx_order_url, '_blank');
@@ -214,17 +244,17 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to create reorder request",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to create reorder request',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error creating reorder:', error);
       toast({
-        title: "Error",
-        description: "Failed to create reorder request",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create reorder request',
+        variant: 'destructive',
       });
     }
   };
@@ -232,7 +262,9 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
   const fetchRollDetails = async (rollId: string) => {
     try {
       const headers = await getHeaders();
-      const response = await fetch(`/api/v1/filament/rolls/${rollId}?include_usage_history=true`, { headers });
+      const response = await fetch(`/api/v1/filament/rolls/${rollId}?include_usage_history=true`, {
+        headers,
+      });
 
       if (response.ok) {
         const rollData = await response.json();
@@ -252,7 +284,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
       low: 'bg-yellow-100 text-yellow-800',
       empty: 'bg-gray-100 text-gray-800',
       damaged: 'bg-red-100 text-red-800',
-      reserved: 'bg-purple-100 text-purple-800'
+      reserved: 'bg-purple-100 text-purple-800',
     };
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
@@ -264,7 +296,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
       petg: '🔷',
       tpu: '🟡',
       wood_pla: '🟤',
-      carbon_fiber: '⚫'
+      carbon_fiber: '⚫',
     };
     return icons[material as keyof typeof icons] || '🔘';
   };
@@ -285,7 +317,8 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
           <DialogHeader>
             <DialogTitle>Record Filament Usage</DialogTitle>
             <DialogDescription>
-              Record manual filament usage for {selectedRoll.color_name} {selectedRoll.material.toUpperCase()}
+              Record manual filament usage for {selectedRoll.color_name}{' '}
+              {selectedRoll.material.toUpperCase()}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -343,14 +376,14 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <div 
-                className="w-4 h-4 rounded-full border" 
+              <div
+                className="w-4 h-4 rounded-full border"
                 style={{ backgroundColor: selectedRoll.color_hex || '#gray' }}
               />
               {selectedRoll.brand} {selectedRoll.material.toUpperCase()} - {selectedRoll.color_name}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto max-h-[70vh]">
             {/* Roll Information */}
             <div className="lg:col-span-2 space-y-4">
@@ -365,23 +398,31 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span>Original Weight:</span>
-                      <span className="font-medium">{formatWeight(selectedRoll.original_weight_g)}</span>
+                      <span className="font-medium">
+                        {formatWeight(selectedRoll.original_weight_g)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Current Weight:</span>
-                      <span className="font-medium">{formatWeight(selectedRoll.current_weight_g)}</span>
+                      <span className="font-medium">
+                        {formatWeight(selectedRoll.current_weight_g)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Remaining:</span>
-                      <span className={`font-medium ${selectedRoll.is_low_stock ? 'text-red-600' : 'text-green-600'}`}>
+                      <span
+                        className={`font-medium ${selectedRoll.is_low_stock ? 'text-red-600' : 'text-green-600'}`}
+                      >
                         {formatWeight(selectedRoll.remaining_weight_g)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Used:</span>
-                      <span className="font-medium">{formatWeight(selectedRoll.used_weight_g)}</span>
+                      <span className="font-medium">
+                        {formatWeight(selectedRoll.used_weight_g)}
+                      </span>
                     </div>
-                    
+
                     <div className="mt-4">
                       <div className="flex justify-between text-sm mb-2">
                         <span>Usage Progress</span>
@@ -452,7 +493,9 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
                       {selectedRoll.cost_per_kg && (
                         <div className="flex justify-between">
                           <span>Cost per kg:</span>
-                          <span className="font-medium">${selectedRoll.cost_per_kg.toFixed(2)}</span>
+                          <span className="font-medium">
+                            ${selectedRoll.cost_per_kg.toFixed(2)}
+                          </span>
                         </div>
                       )}
                       <Button
@@ -549,7 +592,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
     );
   }
 
-  const lowStockRolls = rolls.filter(roll => roll.is_low_stock);
+  const lowStockRolls = rolls.filter((roll) => roll.is_low_stock);
   const displayRolls = maxItems ? rolls.slice(0, maxItems) : rolls;
 
   return (
@@ -597,7 +640,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
         <div className="flex gap-4 items-center">
           <select
             value={filters.material}
-            onChange={(e) => setFilters(prev => ({ ...prev, material: e.target.value }))}
+            onChange={(e) => setFilters((prev) => ({ ...prev, material: e.target.value }))}
             className="px-3 py-2 border rounded-md"
           >
             <option value="all">All Materials</option>
@@ -608,12 +651,12 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
             <option value="wood_pla">Wood PLA</option>
             <option value="carbon_fiber">Carbon Fiber</option>
           </select>
-          
+
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={filters.lowStockOnly}
-              onChange={(e) => setFilters(prev => ({ ...prev, lowStockOnly: e.target.checked }))}
+              onChange={(e) => setFilters((prev) => ({ ...prev, lowStockOnly: e.target.checked }))}
             />
             <span className="text-sm">Low stock only</span>
           </label>
@@ -621,14 +664,16 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
       )}
 
       {/* Filament Rolls Grid */}
-      <div className={`grid gap-4 ${compactView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+      <div
+        className={`grid gap-4 ${compactView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}
+      >
         {displayRolls.map((roll) => (
           <Card key={roll.id} className={`${roll.is_low_stock ? 'border-orange-300' : ''}`}>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div 
-                    className="w-4 h-4 rounded-full border" 
+                  <div
+                    className="w-4 h-4 rounded-full border"
                     style={{ backgroundColor: roll.color_hex || '#gray' }}
                   />
                   <div>
@@ -651,7 +696,7 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => {
                         setSelectedRoll(roll);
                         setShowUsageModal(true);
@@ -670,27 +715,29 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
                 </DropdownMenu>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-0">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span>Remaining:</span>
-                  <span className={`font-medium ${roll.is_low_stock ? 'text-red-600' : 'text-green-600'}`}>
+                  <span
+                    className={`font-medium ${roll.is_low_stock ? 'text-red-600' : 'text-green-600'}`}
+                  >
                     {formatWeight(roll.remaining_weight_g)}
                   </span>
                 </div>
-                
+
                 <div>
                   <div className="flex justify-between text-xs mb-1">
                     <span>Used: {roll.usage_percentage.toFixed(0)}%</span>
                     <span>{formatWeight(roll.original_weight_g)} total</span>
                   </div>
-                  <Progress 
-                    value={roll.usage_percentage} 
+                  <Progress
+                    value={roll.usage_percentage}
                     className={`h-2 ${roll.is_low_stock ? 'bg-red-100' : ''}`}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <Badge className={getStatusColor(roll.status)} variant="outline">
                     {roll.status.replace('_', ' ')}
@@ -706,14 +753,14 @@ const FilamentTracker: React.FC<FilamentTrackerProps> = ({
                     </Badge>
                   )}
                 </div>
-                
+
                 {roll.assigned_printer_id && (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Printer className="h-3 w-3" />
                     Assigned to printer
                   </div>
                 )}
-                
+
                 <div className="text-xs text-muted-foreground">
                   Est. {roll.estimated_remaining_prints} prints remaining
                 </div>

@@ -1,12 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
-import {
-  Wallet,
-  Plus,
-  TrendingUp,
-  Zap
-} from 'lucide-react';
+import { Wallet, Plus, TrendingUp, Zap } from 'lucide-react';
 
 interface CreditBalanceDisplayProps {
   balance: number;
@@ -14,10 +9,10 @@ interface CreditBalanceDisplayProps {
   onAddCredits: () => void;
 }
 
-const CreditBalanceDisplay: React.FC<CreditBalanceDisplayProps> = ({ 
-  balance, 
-  totalSpent, 
-  onAddCredits 
+const CreditBalanceDisplay: React.FC<CreditBalanceDisplayProps> = ({
+  balance,
+  totalSpent,
+  onAddCredits,
 }) => {
   const getBalanceColor = (balance: number) => {
     if (balance < 50) return 'text-red-600';
@@ -45,9 +40,7 @@ const CreditBalanceDisplay: React.FC<CreditBalanceDisplayProps> = ({
         <div className="space-y-3">
           <div>
             <p className="text-sm text-gray-600">Available Credits</p>
-            <p className={`text-2xl font-bold ${getBalanceColor(balance)}`}>
-              {balance}
-            </p>
+            <p className={`text-2xl font-bold ${getBalanceColor(balance)}`}>{balance}</p>
           </div>
 
           <div>
@@ -65,10 +58,10 @@ const CreditBalanceDisplay: React.FC<CreditBalanceDisplayProps> = ({
             </div>
           )}
 
-          <Button 
+          <Button
             onClick={onAddCredits}
-            variant={balance < 50 ? "default" : "outline"}
-            size="sm" 
+            variant={balance < 50 ? 'default' : 'outline'}
+            size="sm"
             className="w-full"
           >
             <Plus className="h-4 w-4 mr-2" />

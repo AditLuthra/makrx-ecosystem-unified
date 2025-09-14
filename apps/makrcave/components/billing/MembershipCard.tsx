@@ -8,7 +8,7 @@ import {
   DollarSign,
   CheckCircle,
   AlertTriangle,
-  ArrowUpRight
+  ArrowUpRight,
 } from 'lucide-react';
 
 interface Subscription {
@@ -26,35 +26,43 @@ interface MembershipCardProps {
   detailed?: boolean;
 }
 
-const MembershipCard: React.FC<MembershipCardProps> = ({ 
-  subscription, 
-  onUpgrade, 
-  detailed = false 
+const MembershipCard: React.FC<MembershipCardProps> = ({
+  subscription,
+  onUpgrade,
+  detailed = false,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'expired': return 'bg-red-100 text-red-800';
-      case 'cancelled': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'expired':
+        return 'bg-red-100 text-red-800';
+      case 'cancelled':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle className="h-4 w-4" />;
-      case 'expired': return <AlertTriangle className="h-4 w-4" />;
-      case 'cancelled': return <AlertTriangle className="h-4 w-4" />;
-      default: return <AlertTriangle className="h-4 w-4" />;
+      case 'active':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'expired':
+        return <AlertTriangle className="h-4 w-4" />;
+      case 'cancelled':
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <AlertTriangle className="h-4 w-4" />;
     }
   };
 
   const getPlanIcon = (plan: string) => {
     switch (plan.toLowerCase()) {
       case 'professional':
-      case 'pro': 
+      case 'pro':
         return <Crown className="h-5 w-5 text-yellow-500" />;
-      default: 
+      default:
         return <Crown className="h-5 w-5 text-gray-500" />;
     }
   };
@@ -75,13 +83,13 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">
-            {subscription.plan} Plan
-          </h3>
+          <h3 className="text-xl font-bold text-gray-900">{subscription.plan} Plan</h3>
           <div className="flex items-center gap-2 text-2xl font-bold text-blue-600 mt-1">
             <DollarSign className="h-6 w-6" />
             {subscription.amount}
-            <span className="text-sm text-gray-600 font-normal">/{subscription.currency}/month</span>
+            <span className="text-sm text-gray-600 font-normal">
+              /{subscription.currency}/month
+            </span>
           </div>
         </div>
 
@@ -120,7 +128,9 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
               <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
               <div className="text-sm">
                 <p className="font-medium text-red-800">Plan Expired</p>
-                <p className="text-red-700">Renew your subscription to continue accessing premium features.</p>
+                <p className="text-red-700">
+                  Renew your subscription to continue accessing premium features.
+                </p>
               </div>
             </div>
           </div>

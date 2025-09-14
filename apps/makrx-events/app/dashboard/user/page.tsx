@@ -1,57 +1,57 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import Header from "@/components/header";
-import { Calendar, MapPin, Award, QrCode, Heart, Clock } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Header from '@/components/header';
+import { Calendar, MapPin, Award, QrCode, Heart, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 export default function UserDashboard() {
   const upcomingEvents = [
     {
-      id: "maker-fest-2024",
-      title: "Maker Fest 2024",
-      date: "March 15-17, 2024",
-      location: "San Francisco, CA",
-      status: "confirmed",
-      ticketType: "Free",
-      qrCode: "MF2024-ABC123"
+      id: 'maker-fest-2024',
+      title: 'Maker Fest 2024',
+      date: 'March 15-17, 2024',
+      location: 'San Francisco, CA',
+      status: 'confirmed',
+      ticketType: 'Free',
+      qrCode: 'MF2024-ABC123',
     },
     {
-      id: "3d-printing-workshop",
-      title: "3D Printing Workshop",
-      date: "May 5, 2024",
-      location: "Austin, TX",
-      status: "pending",
-      ticketType: "Paid",
-      price: "$120"
-    }
+      id: '3d-printing-workshop',
+      title: '3D Printing Workshop',
+      date: 'May 5, 2024',
+      location: 'Austin, TX',
+      status: 'pending',
+      ticketType: 'Paid',
+      price: '$120',
+    },
   ];
 
   const pastEvents = [
     {
-      id: "robotics-workshop-2023",
-      title: "Arduino Robotics Workshop",
-      date: "December 10, 2023",
-      location: "Seattle, WA",
+      id: 'robotics-workshop-2023',
+      title: 'Arduino Robotics Workshop',
+      date: 'December 10, 2023',
+      location: 'Seattle, WA',
       certificate: true,
-      badge: "Arduino Certified"
-    }
+      badge: 'Arduino Certified',
+    },
   ];
 
   const wishlist = [
     {
-      id: "ai-conference-2024",
-      title: "AI & Machine Learning Conference",
-      date: "June 12-14, 2024",
-      location: "New York, NY",
-      price: "$299"
-    }
+      id: 'ai-conference-2024',
+      title: 'AI & Machine Learning Conference',
+      date: 'June 12-14, 2024',
+      location: 'New York, NY',
+      price: '$299',
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">My Dashboard</h1>
@@ -75,7 +75,7 @@ export default function UserDashboard() {
                   <div key={event.id} className="border rounded-lg p-4 hover:bg-gray-50">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-semibold text-lg">{event.title}</h3>
-                      <Badge 
+                      <Badge
                         variant={event.status === 'confirmed' ? 'default' : 'secondary'}
                         className={event.status === 'confirmed' ? 'bg-green-600' : ''}
                       >
@@ -105,9 +105,7 @@ export default function UserDashboard() {
                           </Button>
                         )}
                         <Button asChild size="sm">
-                          <Link href={`/events/${event.id}`}>
-                            View Details
-                          </Link>
+                          <Link href={`/events/${event.id}`}>View Details</Link>
                         </Button>
                       </div>
                     </div>
@@ -230,14 +228,10 @@ export default function UserDashboard() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button asChild className="w-full" variant="outline">
-                  <Link href="/events">
-                    Browse Events
-                  </Link>
+                  <Link href="/events">Browse Events</Link>
                 </Button>
                 <Button asChild className="w-full" variant="outline">
-                  <Link href="/dashboard/organizer">
-                    Become Organizer
-                  </Link>
+                  <Link href="/dashboard/organizer">Become Organizer</Link>
                 </Button>
               </CardContent>
             </Card>

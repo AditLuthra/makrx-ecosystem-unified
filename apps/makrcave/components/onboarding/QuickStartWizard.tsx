@@ -3,10 +3,25 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
-import { 
-  Rocket, CheckCircle, Clock, Users, MapPin, Zap, Star, 
-  ArrowRight, Target, Award, Coffee, Calendar, Settings,
-  Lightbulb, TrendingUp, BookOpen, Heart, Package
+import {
+  Rocket,
+  CheckCircle,
+  Clock,
+  Users,
+  MapPin,
+  Zap,
+  Star,
+  ArrowRight,
+  Target,
+  Award,
+  Coffee,
+  Calendar,
+  Settings,
+  Lightbulb,
+  TrendingUp,
+  BookOpen,
+  Heart,
+  Package,
 } from 'lucide-react';
 
 interface QuickAction {
@@ -30,7 +45,7 @@ interface QuickStartWizardProps {
 const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
   userType,
   onClose,
-  onActionComplete
+  onActionComplete,
 }) => {
   const [completedActions, setCompletedActions] = useState<Set<string>>(new Set());
   const [currentCategory, setCurrentCategory] = useState<string>('setup');
@@ -47,7 +62,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to profile'),
-        completed: false
+        completed: false,
       },
       {
         id: 'explore_community',
@@ -58,7 +73,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'explore' as const,
         action: () => console.log('Navigate to community'),
-        completed: false
+        completed: false,
       },
       {
         id: 'join_discord',
@@ -69,8 +84,8 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'connect' as const,
         action: () => window.open('https://discord.gg/makrcave', '_blank'),
-        completed: false
-      }
+        completed: false,
+      },
     ];
 
     const makerActions = [
@@ -84,7 +99,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'explore' as const,
         action: () => console.log('Navigate to map'),
-        completed: false
+        completed: false,
       },
       {
         id: 'create_first_project',
@@ -95,7 +110,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'medium' as const,
         category: 'create' as const,
         action: () => console.log('Navigate to new project'),
-        completed: false
+        completed: false,
       },
       {
         id: 'book_equipment',
@@ -106,7 +121,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'create' as const,
         action: () => console.log('Navigate to booking'),
-        completed: false
+        completed: false,
       },
       {
         id: 'take_skill_assessment',
@@ -117,8 +132,8 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'medium' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to skills'),
-        completed: false
-      }
+        completed: false,
+      },
     ];
 
     const adminActions = [
@@ -132,7 +147,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'medium' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to makerspace setup'),
-        completed: false
+        completed: false,
       },
       {
         id: 'add_equipment',
@@ -143,7 +158,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to equipment'),
-        completed: false
+        completed: false,
       },
       {
         id: 'invite_members',
@@ -154,7 +169,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'connect' as const,
         action: () => console.log('Navigate to invitations'),
-        completed: false
+        completed: false,
       },
       {
         id: 'configure_pricing',
@@ -165,8 +180,8 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'medium' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to pricing'),
-        completed: false
-      }
+        completed: false,
+      },
     ];
 
     const providerActions = [
@@ -180,7 +195,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'medium' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to services'),
-        completed: false
+        completed: false,
       },
       {
         id: 'upload_portfolio',
@@ -191,7 +206,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'setup' as const,
         action: () => console.log('Navigate to portfolio'),
-        completed: false
+        completed: false,
       },
       {
         id: 'accept_first_job',
@@ -202,8 +217,8 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         difficulty: 'easy' as const,
         category: 'create' as const,
         action: () => console.log('Navigate to jobs'),
-        completed: false
-      }
+        completed: false,
+      },
     ];
 
     switch (type) {
@@ -223,17 +238,17 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
     { id: 'setup', label: 'Setup', icon: Settings, color: 'blue' },
     { id: 'explore', label: 'Explore', icon: MapPin, color: 'green' },
     { id: 'create', label: 'Create', icon: Lightbulb, color: 'purple' },
-    { id: 'connect', label: 'Connect', icon: Users, color: 'pink' }
+    { id: 'connect', label: 'Connect', icon: Users, color: 'pink' },
   ];
 
-  const filteredActions = actions.filter(action => action.category === currentCategory);
-  const totalCompleted = actions.filter(action => completedActions.has(action.id)).length;
+  const filteredActions = actions.filter((action) => action.category === currentCategory);
+  const totalCompleted = actions.filter((action) => completedActions.has(action.id)).length;
   const progress = (totalCompleted / actions.length) * 100;
 
   const handleActionComplete = (actionId: string) => {
-    setCompletedActions(prev => new Set([...prev, actionId]));
+    setCompletedActions((prev) => new Set([...prev, actionId]));
     onActionComplete(actionId);
-    
+
     // Show celebration if this completes a milestone
     if ((totalCompleted + 1) % 3 === 0) {
       setShowCelebration(true);
@@ -255,7 +270,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
   };
 
   const getCategoryColor = (categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId);
+    const category = categories.find((c) => c.id === categoryId);
     switch (category?.color) {
       case 'blue':
         return 'from-blue-500 to-cyan-500';
@@ -284,18 +299,16 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
                 Get the most out of MakrCave with these essential first steps
               </CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-              className="text-white hover:bg-white/20"
-            >
+            <Button variant="ghost" onClick={onClose} className="text-white hover:bg-white/20">
               ✕
             </Button>
           </div>
-          
+
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-2">
-              <span>Progress: {totalCompleted} of {actions.length} completed</span>
+              <span>
+                Progress: {totalCompleted} of {actions.length} completed
+              </span>
               <span>{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="bg-white/20" />
@@ -305,10 +318,12 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
         <CardContent className="p-6 overflow-y-auto max-h-[60vh]">
           {/* Category Tabs */}
           <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-6">
-            {categories.map(category => {
-              const categoryActions = actions.filter(a => a.category === category.id);
-              const categoryCompleted = categoryActions.filter(a => completedActions.has(a.id)).length;
-              
+            {categories.map((category) => {
+              const categoryActions = actions.filter((a) => a.category === category.id);
+              const categoryCompleted = categoryActions.filter((a) =>
+                completedActions.has(a.id),
+              ).length;
+
               return (
                 <button
                   key={category.id}
@@ -335,37 +350,35 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredActions.map((action, index) => {
               const isCompleted = completedActions.has(action.id);
-              
+
               return (
-                <Card 
+                <Card
                   key={action.id}
                   className={`transition-all duration-300 hover:shadow-lg ${
-                    isCompleted 
-                      ? 'bg-green-50 border-green-200' 
-                      : 'hover:shadow-md cursor-pointer'
+                    isCompleted ? 'bg-green-50 border-green-200' : 'hover:shadow-md cursor-pointer'
                   }`}
                   onClick={() => !isCompleted && handleActionComplete(action.id)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start space-x-3">
-                      <div className={`p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(action.category)}`}>
+                      <div
+                        className={`p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(action.category)}`}
+                      >
                         <action.icon className="h-5 w-5 text-white" />
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900 truncate">
-                            {action.title}
-                          </h3>
+                          <h3 className="font-semibold text-gray-900 truncate">{action.title}</h3>
                           {isCompleted && (
                             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                           )}
                         </div>
-                        
+
                         <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                           {action.description}
                         </p>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="flex items-center text-gray-500 text-xs">
@@ -376,10 +389,8 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
                               {action.difficulty}
                             </Badge>
                           </div>
-                          
-                          {!isCompleted && (
-                            <ArrowRight className="h-4 w-4 text-gray-400" />
-                          )}
+
+                          {!isCompleted && <ArrowRight className="h-4 w-4 text-gray-400" />}
                         </div>
                       </div>
                     </div>
@@ -399,11 +410,10 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
                 <div>
                   <h3 className="font-semibold text-gray-900">Great Progress!</h3>
                   <p className="text-gray-600 text-sm">
-                    You've completed {totalCompleted} actions. 
-                    {totalCompleted >= actions.length 
-                      ? " You're all set to start making amazing things!" 
-                      : ` Just ${actions.length - totalCompleted} more to go!`
-                    }
+                    You've completed {totalCompleted} actions.
+                    {totalCompleted >= actions.length
+                      ? " You're all set to start making amazing things!"
+                      : ` Just ${actions.length - totalCompleted} more to go!`}
                   </p>
                 </div>
               </div>
@@ -434,7 +444,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
                 documentation
               </Button>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <Button variant="outline" onClick={onClose}>
                 Close Guide

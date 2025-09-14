@@ -1,14 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import Header from "@/components/header";
-import { Calendar, MapPin, Users, DollarSign, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import Header from '@/components/header';
+import { Calendar, MapPin, Users, DollarSign, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface RegisterPageProps {
   params: {
@@ -19,64 +25,64 @@ interface RegisterPageProps {
 // Mock event data - same as main event page
 const getEventData = (eventId: string) => {
   const events = {
-    "maker-fest-2024": {
-      id: "maker-fest-2024",
-      title: "Maker Fest 2024",
-      type: "festival",
-      date: "March 15-17, 2024",
-      location: "Moscone Center, San Francisco, CA",
+    'maker-fest-2024': {
+      id: 'maker-fest-2024',
+      title: 'Maker Fest 2024',
+      type: 'festival',
+      date: 'March 15-17, 2024',
+      location: 'Moscone Center, San Francisco, CA',
       attendees: 2500,
-      price: "Free",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3",
-      registrationType: "individual"
+      price: 'Free',
+      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3',
+      registrationType: 'individual',
     },
-    "robotics-championship": {
-      id: "robotics-championship", 
-      title: "Robotics Championship 2024",
-      type: "competition",
-      date: "April 20, 2024",
-      location: "MIT Campus, Boston, MA",
+    'robotics-championship': {
+      id: 'robotics-championship',
+      title: 'Robotics Championship 2024',
+      type: 'competition',
+      date: 'April 20, 2024',
+      location: 'MIT Campus, Boston, MA',
       attendees: 150,
-      price: "$200/team",
-      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3",
-      registrationType: "team"
+      price: '$200/team',
+      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3',
+      registrationType: 'team',
     },
-    "3d-printing-workshop": {
-      id: "3d-printing-workshop",
-      title: "3D Printing Mastery Workshop", 
-      type: "workshop",
-      date: "May 5, 2024",
-      location: "Austin Maker Space, Austin, TX",
+    '3d-printing-workshop': {
+      id: '3d-printing-workshop',
+      title: '3D Printing Mastery Workshop',
+      type: 'workshop',
+      date: 'May 5, 2024',
+      location: 'Austin Maker Space, Austin, TX',
       attendees: 50,
-      price: "$120",
-      image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3",
-      registrationType: "individual"
-    }
+      price: '$120',
+      image: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3',
+      registrationType: 'individual',
+    },
   };
-  
+
   return events[eventId as keyof typeof events] || null;
 };
 
 export default async function RegisterPage({ params }: RegisterPageProps) {
   const { eventId } = await params;
   const event = getEventData(eventId);
-  
+
   if (!event) {
     notFound();
   }
 
-  const isCompetition = event.type === "competition";
-  const isWorkshop = event.type === "workshop";
-  const isFestival = event.type === "festival";
-  const isTeamRegistration = event.registrationType === "team";
+  const isCompetition = event.type === 'competition';
+  const isWorkshop = event.type === 'workshop';
+  const isFestival = event.type === 'festival';
+  const isTeamRegistration = event.registrationType === 'team';
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Link */}
-        <Link 
+        <Link
           href={`/events/${event.id}`}
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"
         >
@@ -90,13 +96,16 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl">
-                  {isCompetition ? "Competition Registration" : 
-                   isWorkshop ? "Workshop Enrollment" : "Event Registration"}
+                  {isCompetition
+                    ? 'Competition Registration'
+                    : isWorkshop
+                      ? 'Workshop Enrollment'
+                      : 'Event Registration'}
                 </CardTitle>
                 <CardDescription>
-                  {isTeamRegistration ? 
-                    "Register your team for this competition" :
-                    "Complete your registration below"}
+                  {isTeamRegistration
+                    ? 'Register your team for this competition'
+                    : 'Complete your registration below'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -147,8 +156,8 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                       </div>
                       <div>
                         <Label htmlFor="teamMembers">Team Members</Label>
-                        <Textarea 
-                          id="teamMembers" 
+                        <Textarea
+                          id="teamMembers"
                           placeholder="List all team members (name, email, role)"
                           className="min-h-[100px]"
                         />
@@ -176,14 +185,16 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                     {(isCompetition || isWorkshop) && (
                       <div>
                         <Label htmlFor="background">
-                          {isCompetition ? "Relevant Competition Experience" : "Technical Background"}
+                          {isCompetition
+                            ? 'Relevant Competition Experience'
+                            : 'Technical Background'}
                         </Label>
-                        <Textarea 
-                          id="background" 
+                        <Textarea
+                          id="background"
                           placeholder={
-                            isCompetition ? 
-                            "Describe any previous robotics/competition experience..." :
-                            "Tell us about your technical background and what you hope to learn..."
+                            isCompetition
+                              ? 'Describe any previous robotics/competition experience...'
+                              : 'Tell us about your technical background and what you hope to learn...'
                           }
                           className="min-h-[80px]"
                         />
@@ -235,11 +246,11 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                     <div className="flex items-start space-x-2">
                       <Checkbox id="terms" />
                       <Label htmlFor="terms" className="text-sm">
-                        I agree to the{" "}
+                        I agree to the{' '}
                         <Link href="/terms" className="text-blue-600 hover:underline">
                           Terms and Conditions
-                        </Link>{" "}
-                        and{" "}
+                        </Link>{' '}
+                        and{' '}
                         <Link href="/privacy" className="text-blue-600 hover:underline">
                           Privacy Policy
                         </Link>
@@ -254,15 +265,17 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                   </div>
 
                   {/* Submit Button */}
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className={`w-full ${
-                      isCompetition ? 'bg-red-600 hover:bg-red-700' :
-                      isWorkshop ? 'bg-green-600 hover:bg-green-700' :
-                      'bg-blue-600 hover:bg-blue-700'
+                      isCompetition
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : isWorkshop
+                          ? 'bg-green-600 hover:bg-green-700'
+                          : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
-                    {event.price === "Free" ? "Register Now" : `Register & Pay ${event.price}`}
+                    {event.price === 'Free' ? 'Register Now' : `Register & Pay ${event.price}`}
                   </Button>
                 </form>
               </CardContent>
@@ -277,13 +290,9 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="aspect-video overflow-hidden rounded-lg">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
                 </div>
-                
+
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-3 text-gray-400" />
@@ -295,7 +304,9 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                   </div>
                   <div className="flex items-center">
                     <Users className="h-4 w-4 mr-3 text-gray-400" />
-                    <span>{event.attendees} {isTeamRegistration ? 'participants' : 'attendees'}</span>
+                    <span>
+                      {event.attendees} {isTeamRegistration ? 'participants' : 'attendees'}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <DollarSign className="h-4 w-4 mr-3 text-gray-400" />
@@ -304,9 +315,7 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
                 </div>
 
                 <div className="pt-4 border-t">
-                  <div className="text-sm text-gray-600 mb-2">
-                    Registration includes:
-                  </div>
+                  <div className="text-sm text-gray-600 mb-2">Registration includes:</div>
                   <ul className="text-xs text-gray-500 space-y-1">
                     {isFestival && (
                       <>

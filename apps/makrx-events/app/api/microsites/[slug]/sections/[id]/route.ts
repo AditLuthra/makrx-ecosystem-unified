@@ -5,7 +5,7 @@ import { insertPageSectionSchema } from '@shared/schema';
 // GET /api/microsites/[slug]/sections/[id] - Get specific section
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = await params;
@@ -23,26 +23,23 @@ export async function GET(
         description: 'Join thousands of makers for the largest maker festival.',
         backgroundImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
         ctaText: 'Register Now',
-        ctaUrl: `/m/${slug}/register`
+        ctaUrl: `/m/${slug}/register`,
       },
       createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-02-01T15:30:00Z'
+      updatedAt: '2024-02-01T15:30:00Z',
     };
 
     return NextResponse.json(mockSection);
   } catch (error) {
     console.error('Error fetching section:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch section' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch section' }, { status: 500 });
   }
 }
 
 // PATCH /api/microsites/[slug]/sections/[id] - Update section
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = await params;
@@ -60,33 +57,30 @@ export async function PATCH(
       order: validatedData.order || 1,
       isVisible: validatedData.isVisible ?? true,
       contentJson: validatedData.contentJson || {},
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(updatedSection);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error updating section:', error);
-    return NextResponse.json(
-      { error: 'Failed to update section' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update section' }, { status: 500 });
   }
 }
 
 // DELETE /api/microsites/[slug]/sections/[id] - Delete section
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = await params;
@@ -94,15 +88,9 @@ export async function DELETE(
     // Mock deletion - replace with actual database delete
     console.log(`Deleting section ${id} from microsite ${slug}`);
 
-    return NextResponse.json(
-      { message: 'Section deleted successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Section deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting section:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete section' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete section' }, { status: 500 });
   }
 }

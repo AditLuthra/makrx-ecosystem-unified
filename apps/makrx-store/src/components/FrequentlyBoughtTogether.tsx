@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Product, formatPrice } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { ShoppingCart, Plus, Check } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { Product, formatPrice } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { ShoppingCart, Plus, Check } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface FrequentlyBoughtTogetherProps {
   baseProduct: Product;
   recommendations: Product[];
 }
 
-export default function FrequentlyBoughtTogether({ 
-  baseProduct, 
-  recommendations 
+export default function FrequentlyBoughtTogether({
+  baseProduct,
+  recommendations,
 }: FrequentlyBoughtTogetherProps) {
   const { isAuthenticated } = useAuth();
   const { addNotification } = useNotifications();
@@ -24,9 +24,8 @@ export default function FrequentlyBoughtTogether({
 
   // Calculate total price
   const totalPrice = [...selectedProducts].reduce((sum, productId) => {
-    const product = productId === baseProduct.id 
-      ? baseProduct 
-      : recommendations.find(p => p.id === productId);
+    const product =
+      productId === baseProduct.id ? baseProduct : recommendations.find((p) => p.id === productId);
     return sum + (product?.price || 0);
   }, 0);
 
@@ -48,7 +47,7 @@ export default function FrequentlyBoughtTogether({
       addNotification({
         type: 'warning',
         title: 'Sign In Required',
-        message: 'Please sign in to add items to cart'
+        message: 'Please sign in to add items to cart',
       });
       return;
     }
@@ -56,25 +55,27 @@ export default function FrequentlyBoughtTogether({
     setIsAddingToCart(true);
     try {
       const selectedProductList = [...selectedProducts]
-        .map(id => id === baseProduct.id ? baseProduct : recommendations.find(p => p.id === id))
+        .map((id) =>
+          id === baseProduct.id ? baseProduct : recommendations.find((p) => p.id === id),
+        )
         .filter(Boolean) as Product[];
 
       // Add each selected product to cart
       for (const product of selectedProductList) {
         // Mock cart addition - replace with actual API call
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
       }
 
       addNotification({
         type: 'success',
         title: 'Added to Cart',
-        message: `${selectedProducts.size} items added to your cart`
+        message: `${selectedProducts.size} items added to your cart`,
       });
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Error',
-        message: 'Failed to add items to cart'
+        message: 'Failed to add items to cart',
       });
     } finally {
       setIsAddingToCart(false);
@@ -124,7 +125,10 @@ export default function FrequentlyBoughtTogether({
 
           {/* Recommended Products */}
           {recommendations.slice(0, 3).map((product, index) => (
-            <div key={product.id} className="flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <div
+              key={product.id}
+              className="flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
               <input
                 type="checkbox"
                 checked={selectedProducts.has(product.id)}
@@ -141,7 +145,7 @@ export default function FrequentlyBoughtTogether({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <Link 
+                <Link
                   href={`/p/${product.slug}`}
                   className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 truncate block"
                 >

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Grid, List, Filter } from "lucide-react";
-import { api, type Product } from "@/lib/api";
-import ProductGrid from "@/components/ProductGrid";
-import EnhancedCategoryFilters, { useFiltersToggle } from "@/components/EnhancedCategoryFilters";
-import SortSelect from "@/components/SortSelect";
-import { getAllFiltersForCategory } from "@/data/categoryFilters";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, Grid, List, Filter } from 'lucide-react';
+import { api, type Product } from '@/lib/api';
+import ProductGrid from '@/components/ProductGrid';
+import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
+import SortSelect from '@/components/SortSelect';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
 
 export default function MaterialsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("featured");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -25,14 +25,14 @@ export default function MaterialsPage() {
       try {
         setLoading(true);
         const productsData = await api.getProducts({
-          category: "filament",
+          category: 'filament',
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
       } catch (err) {
-        console.error("Failed to load materials:", err);
-        setError("Failed to load products");
+        console.error('Failed to load materials:', err);
+        setError('Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -67,7 +67,7 @@ export default function MaterialsPage() {
             Materials & Supplies
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
-            Premium materials for 3D printing, electronics, woodworking, metalworking, and crafting. 
+            Premium materials for 3D printing, electronics, woodworking, metalworking, and crafting.
             From filaments and resins to sheets, rods, and specialty materials.
           </p>
         </div>
@@ -111,30 +111,30 @@ export default function MaterialsPage() {
               <span>Filters</span>
             </button>
             <p className="text-gray-600 dark:text-gray-400">
-              {loading ? "Loading..." : `${products.length} products found`}
+              {loading ? 'Loading...' : `${products.length} products found`}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
-            
+
             <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
               <button
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={`p-2 ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <Grid className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={`p-2 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -145,7 +145,9 @@ export default function MaterialsPage() {
 
         <div className="flex gap-8">
           {/* Filters Sidebar */}
-          <div className={`${isFiltersOpen ? "block" : "hidden"} lg:block w-full lg:w-80 flex-shrink-0`}>
+          <div
+            className={`${isFiltersOpen ? 'block' : 'hidden'} lg:block w-full lg:w-80 flex-shrink-0`}
+          >
             <EnhancedCategoryFilters
               category="materials"
               onFiltersChange={handleFilterChange}
@@ -167,11 +169,7 @@ export default function MaterialsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid 
-                products={products} 
-                loading={loading} 
-                viewMode={viewMode}
-              />
+              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
             )}
           </div>
         </div>
@@ -187,10 +185,18 @@ export default function MaterialsPage() {
                 3D Printing Materials
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>PLA:</strong> Easy printing, biodegradable, ideal for beginners</li>
-                <li>• <strong>ABS:</strong> Strong, heat-resistant, professional applications</li>
-                <li>• <strong>PETG:</strong> Chemical resistant, crystal clear options</li>
-                <li>• <strong>Specialty:</strong> Wood-fill, metal-fill, carbon fiber, TPU</li>
+                <li>
+                  • <strong>PLA:</strong> Easy printing, biodegradable, ideal for beginners
+                </li>
+                <li>
+                  • <strong>ABS:</strong> Strong, heat-resistant, professional applications
+                </li>
+                <li>
+                  • <strong>PETG:</strong> Chemical resistant, crystal clear options
+                </li>
+                <li>
+                  • <strong>Specialty:</strong> Wood-fill, metal-fill, carbon fiber, TPU
+                </li>
               </ul>
             </div>
             <div>
@@ -198,10 +204,18 @@ export default function MaterialsPage() {
                 Fabrication Materials
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Acrylic:</strong> Clear and colored sheets for laser cutting</li>
-                <li>• <strong>Wood:</strong> Plywood, MDF, hardwood boards and veneers</li>
-                <li>• <strong>Metal:</strong> Aluminum, steel, brass sheets and profiles</li>
-                <li>• <strong>Composites:</strong> Carbon fiber, fiberglass, G10/FR4</li>
+                <li>
+                  • <strong>Acrylic:</strong> Clear and colored sheets for laser cutting
+                </li>
+                <li>
+                  • <strong>Wood:</strong> Plywood, MDF, hardwood boards and veneers
+                </li>
+                <li>
+                  • <strong>Metal:</strong> Aluminum, steel, brass sheets and profiles
+                </li>
+                <li>
+                  • <strong>Composites:</strong> Carbon fiber, fiberglass, G10/FR4
+                </li>
               </ul>
             </div>
           </div>

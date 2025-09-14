@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Calendar,
   Download,
@@ -13,7 +13,7 @@ import {
   Award,
   TrendingUp,
   Globe,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface PressRelease {
   id: string;
@@ -26,7 +26,7 @@ interface PressRelease {
 }
 
 interface MediaKit {
-  type: "logo" | "photo" | "document";
+  type: 'logo' | 'photo' | 'document';
   title: string;
   description: string;
   format: string;
@@ -43,139 +43,136 @@ interface Award {
 
 const pressReleases: PressRelease[] = [
   {
-    id: "1",
-    title: "MakrX Raises $25M Series A to Democratize Manufacturing Access",
-    date: "2024-01-15",
+    id: '1',
+    title: 'MakrX Raises $25M Series A to Democratize Manufacturing Access',
+    date: '2024-01-15',
     excerpt:
-      "Funding will accelerate global expansion of on-demand manufacturing platform and AI-powered quote generation system.",
+      'Funding will accelerate global expansion of on-demand manufacturing platform and AI-powered quote generation system.',
     content:
-      "MakrX, the leading platform for on-demand manufacturing services, today announced it has raised $25 million in Series A funding led by Andreessen Horowitz, with participation from existing investors including Y Combinator and Bessemer Venture Partners...",
-    tags: ["Funding", "Series A", "Growth"],
+      'MakrX, the leading platform for on-demand manufacturing services, today announced it has raised $25 million in Series A funding led by Andreessen Horowitz, with participation from existing investors including Y Combinator and Bessemer Venture Partners...',
+    tags: ['Funding', 'Series A', 'Growth'],
   },
   {
-    id: "2",
-    title: "MakrX Launches AI-Powered Manufacturing Quote System",
-    date: "2023-12-03",
+    id: '2',
+    title: 'MakrX Launches AI-Powered Manufacturing Quote System',
+    date: '2023-12-03',
     excerpt:
-      "New system reduces quote time from days to minutes while improving accuracy by 40% through machine learning algorithms.",
+      'New system reduces quote time from days to minutes while improving accuracy by 40% through machine learning algorithms.',
     content:
-      "MakrX today unveiled its revolutionary AI-powered quote generation system that instantly analyzes uploaded 3D models and provides accurate manufacturing quotes in under 60 seconds...",
-    tags: ["Product", "AI", "Innovation"],
+      'MakrX today unveiled its revolutionary AI-powered quote generation system that instantly analyzes uploaded 3D models and provides accurate manufacturing quotes in under 60 seconds...',
+    tags: ['Product', 'AI', 'Innovation'],
   },
   {
-    id: "3",
-    title:
-      "MakrX Partners with Leading Universities for Maker Education Program",
-    date: "2023-11-20",
+    id: '3',
+    title: 'MakrX Partners with Leading Universities for Maker Education Program',
+    date: '2023-11-20',
     excerpt:
-      "Partnership with MIT, Stanford, and UC Berkeley brings advanced manufacturing tools to 10,000+ students.",
+      'Partnership with MIT, Stanford, and UC Berkeley brings advanced manufacturing tools to 10,000+ students.',
     content:
-      "MakrX announced partnerships with three leading universities to provide students with access to professional-grade manufacturing services through its educational platform...",
-    tags: ["Education", "Partnership", "Universities"],
+      'MakrX announced partnerships with three leading universities to provide students with access to professional-grade manufacturing services through its educational platform...',
+    tags: ['Education', 'Partnership', 'Universities'],
   },
   {
-    id: "4",
-    title: "MakrX Achieves Carbon Neutral Manufacturing Network",
-    date: "2023-10-08",
+    id: '4',
+    title: 'MakrX Achieves Carbon Neutral Manufacturing Network',
+    date: '2023-10-08',
     excerpt:
-      "Company becomes first in industry to offset 100% of manufacturing emissions through renewable energy partnerships.",
+      'Company becomes first in industry to offset 100% of manufacturing emissions through renewable energy partnerships.',
     content:
-      "MakrX today announced it has achieved carbon neutrality across its entire global manufacturing network, making it the first on-demand manufacturing platform to reach this milestone...",
-    tags: ["Sustainability", "Environment", "Milestone"],
+      'MakrX today announced it has achieved carbon neutrality across its entire global manufacturing network, making it the first on-demand manufacturing platform to reach this milestone...',
+    tags: ['Sustainability', 'Environment', 'Milestone'],
   },
   {
-    id: "5",
-    title: "MakrX Expands to European Market with €10M Investment",
-    date: "2023-09-12",
+    id: '5',
+    title: 'MakrX Expands to European Market with €10M Investment',
+    date: '2023-09-12',
     excerpt:
-      "European expansion includes partnerships with 200+ manufacturers across Germany, France, and the Netherlands.",
+      'European expansion includes partnerships with 200+ manufacturers across Germany, France, and the Netherlands.',
     content:
-      "MakrX announced its expansion into the European market with a €10 million investment from European VCs and strategic partnerships with leading manufacturers...",
-    tags: ["Expansion", "Europe", "International"],
+      'MakrX announced its expansion into the European market with a €10 million investment from European VCs and strategic partnerships with leading manufacturers...',
+    tags: ['Expansion', 'Europe', 'International'],
   },
 ];
 
 const mediaKit: MediaKit[] = [
   {
-    type: "logo",
-    title: "MakrX Logo Package",
-    description: "Official logos in various formats and colors",
-    format: "ZIP (PNG, SVG, EPS)",
-    size: "2.5 MB",
-    downloadUrl: "#",
+    type: 'logo',
+    title: 'MakrX Logo Package',
+    description: 'Official logos in various formats and colors',
+    format: 'ZIP (PNG, SVG, EPS)',
+    size: '2.5 MB',
+    downloadUrl: '#',
   },
   {
-    type: "photo",
-    title: "Executive Headshots",
-    description: "High-resolution photos of leadership team",
-    format: "ZIP (JPEG)",
-    size: "15 MB",
-    downloadUrl: "#",
+    type: 'photo',
+    title: 'Executive Headshots',
+    description: 'High-resolution photos of leadership team',
+    format: 'ZIP (JPEG)',
+    size: '15 MB',
+    downloadUrl: '#',
   },
   {
-    type: "photo",
-    title: "Product Screenshots",
-    description: "Platform interface and feature screenshots",
-    format: "ZIP (PNG)",
-    size: "8 MB",
-    downloadUrl: "#",
+    type: 'photo',
+    title: 'Product Screenshots',
+    description: 'Platform interface and feature screenshots',
+    format: 'ZIP (PNG)',
+    size: '8 MB',
+    downloadUrl: '#',
   },
   {
-    type: "document",
-    title: "Company Fact Sheet",
-    description: "Key statistics and company information",
-    format: "PDF",
-    size: "1.2 MB",
-    downloadUrl: "#",
+    type: 'document',
+    title: 'Company Fact Sheet',
+    description: 'Key statistics and company information',
+    format: 'PDF',
+    size: '1.2 MB',
+    downloadUrl: '#',
   },
   {
-    type: "document",
-    title: "Manufacturing Network Stats",
-    description: "Global network statistics and capabilities",
-    format: "PDF",
-    size: "2.1 MB",
-    downloadUrl: "#",
+    type: 'document',
+    title: 'Manufacturing Network Stats',
+    description: 'Global network statistics and capabilities',
+    format: 'PDF',
+    size: '2.1 MB',
+    downloadUrl: '#',
   },
 ];
 
 const awards: Award[] = [
   {
-    title: "Best Manufacturing Innovation",
-    organization: "TechCrunch Disrupt",
-    year: "2024",
-    category: "Startup Battlefield Winner",
+    title: 'Best Manufacturing Innovation',
+    organization: 'TechCrunch Disrupt',
+    year: '2024',
+    category: 'Startup Battlefield Winner',
   },
   {
-    title: "Sustainability Leadership Award",
-    organization: "Manufacturing Institute",
-    year: "2023",
-    category: "Environmental Impact",
+    title: 'Sustainability Leadership Award',
+    organization: 'Manufacturing Institute',
+    year: '2023',
+    category: 'Environmental Impact',
   },
   {
-    title: "AI Excellence in Manufacturing",
-    organization: "MIT Technology Review",
-    year: "2023",
-    category: "Innovators Under 35",
+    title: 'AI Excellence in Manufacturing',
+    organization: 'MIT Technology Review',
+    year: '2023',
+    category: 'Innovators Under 35',
   },
   {
-    title: "Forbes 30 Under 30",
-    organization: "Forbes",
-    year: "2023",
-    category: "Manufacturing & Industry",
+    title: 'Forbes 30 Under 30',
+    organization: 'Forbes',
+    year: '2023',
+    category: 'Manufacturing & Industry',
   },
 ];
 
 const companyStats = [
-  { label: "Manufacturing Partners", value: "500+", icon: Users },
-  { label: "Countries Served", value: "25+", icon: Globe },
-  { label: "Projects Completed", value: "100k+", icon: TrendingUp },
-  { label: "Awards Won", value: "12+", icon: Award },
+  { label: 'Manufacturing Partners', value: '500+', icon: Users },
+  { label: 'Countries Served', value: '25+', icon: Globe },
+  { label: 'Projects Completed', value: '100k+', icon: TrendingUp },
+  { label: 'Awards Won', value: '12+', icon: Award },
 ];
 
 export default function PressPage() {
-  const [selectedRelease, setSelectedRelease] = useState<PressRelease | null>(
-    null,
-  );
+  const [selectedRelease, setSelectedRelease] = useState<PressRelease | null>(null);
 
   const handleDownload = (item: MediaKit) => {
     console.log(`Downloading ${item.title}`);
@@ -188,12 +185,10 @@ export default function PressPage() {
       <div className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Press & Media
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Press & Media</h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              Latest news, announcements, and media resources from MakrX.
-              Building the future of accessible manufacturing technology.
+              Latest news, announcements, and media resources from MakrX. Building the future of
+              accessible manufacturing technology.
             </p>
 
             {/* Company Stats */}
@@ -208,9 +203,7 @@ export default function PressPage() {
                     <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {stat.value}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {stat.label}
-                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</div>
                   </div>
                 );
               })}
@@ -255,9 +248,7 @@ export default function PressPage() {
                     {release.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    {release.excerpt}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{release.excerpt}</p>
 
                   <div className="flex items-center justify-between">
                     <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">
@@ -293,23 +284,15 @@ export default function PressPage() {
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      Sarah Johnson
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      press@makrx.com
-                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">Sarah Johnson</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">press@makrx.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      +1 (555) 123-4567
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Media Relations
-                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Media Relations</p>
                   </div>
                 </div>
               </div>
@@ -327,13 +310,13 @@ export default function PressPage() {
                     className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      {item.type === "logo" && (
+                      {item.type === 'logo' && (
                         <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       )}
-                      {item.type === "photo" && (
+                      {item.type === 'photo' && (
                         <Image className="w-5 h-5 text-green-600 dark:text-green-400" />
                       )}
-                      {item.type === "document" && (
+                      {item.type === 'document' && (
                         <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                       )}
                       <div>
@@ -367,15 +350,11 @@ export default function PressPage() {
               <div className="space-y-4">
                 {awards.map((award, index) => (
                   <div key={index} className="border-l-4 border-blue-500 pl-4">
-                    <h4 className="font-medium text-gray-900 dark:text-white">
-                      {award.title}
-                    </h4>
+                    <h4 className="font-medium text-gray-900 dark:text-white">{award.title}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
                       {award.organization} • {award.year}
                     </p>
-                    <p className="text-xs text-blue-600 dark:text-blue-400">
-                      {award.category}
-                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">{award.category}</p>
                   </div>
                 ))}
               </div>
@@ -387,8 +366,7 @@ export default function PressPage() {
                 Press Updates
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                Get the latest press releases and company news delivered to your
-                inbox.
+                Get the latest press releases and company news delivered to your inbox.
               </p>
               <div className="flex gap-2">
                 <input
@@ -413,9 +391,7 @@ export default function PressPage() {
                   <div>
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
                       <Calendar className="w-4 h-4" />
-                      <span>
-                        {new Date(selectedRelease.date).toLocaleDateString()}
-                      </span>
+                      <span>{new Date(selectedRelease.date).toLocaleDateString()}</span>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                       {selectedRelease.title}
@@ -433,9 +409,7 @@ export default function PressPage() {
                   <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                     {selectedRelease.excerpt}
                   </p>
-                  <div className="text-gray-700 dark:text-gray-300">
-                    {selectedRelease.content}
-                  </div>
+                  <div className="text-gray-700 dark:text-gray-300">{selectedRelease.content}</div>
                 </div>
 
                 <div className="flex items-center justify-between mt-8 pt-6 border-t dark:border-gray-600">

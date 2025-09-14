@@ -3,20 +3,20 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  Github, 
-  GitBranch, 
-  GitCommit, 
-  FileText, 
-  Star, 
-  Eye, 
-  GitFork, 
+import {
+  Github,
+  GitBranch,
+  GitCommit,
+  FileText,
+  Star,
+  Eye,
+  GitFork,
   ExternalLink,
   Calendar,
   User,
   Download,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 
 interface GitHubCommit {
@@ -56,10 +56,10 @@ interface GitHubIntegrationProps {
   className?: string;
 }
 
-const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({ 
-  repoUrl, 
+const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
+  repoUrl,
   branch = 'main',
-  className = '' 
+  className = '',
 }) => {
   const [repo, setRepo] = useState<GitHubRepo | null>(null);
   const [commits, setCommits] = useState<GitHubCommit[]>([]);
@@ -88,7 +88,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
       forks_count: 8,
       language: 'Arduino',
       updated_at: new Date().toISOString(),
-      html_url: repoUrl
+      html_url: repoUrl,
     };
 
     const mockCommits: GitHubCommit[] = [
@@ -98,9 +98,9 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
         author: {
           name: 'John Maker',
           email: 'john@example.com',
-          date: new Date(Date.now() - 86400000).toISOString()
+          date: new Date(Date.now() - 86400000).toISOString(),
         },
-        url: `${repoUrl}/commit/abc123`
+        url: `${repoUrl}/commit/abc123`,
       },
       {
         sha: 'def456',
@@ -108,9 +108,9 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
         author: {
           name: 'Sarah Developer',
           email: 'sarah@example.com',
-          date: new Date(Date.now() - 172800000).toISOString()
+          date: new Date(Date.now() - 172800000).toISOString(),
         },
-        url: `${repoUrl}/commit/def456`
+        url: `${repoUrl}/commit/def456`,
       },
       {
         sha: 'ghi789',
@@ -118,10 +118,10 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
         author: {
           name: 'John Maker',
           email: 'john@example.com',
-          date: new Date(Date.now() - 259200000).toISOString()
+          date: new Date(Date.now() - 259200000).toISOString(),
         },
-        url: `${repoUrl}/commit/ghi789`
-      }
+        url: `${repoUrl}/commit/ghi789`,
+      },
     ];
 
     const mockFiles: GitHubFile[] = [
@@ -132,7 +132,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
       { name: 'wifi_config.h', path: 'src/wifi_config.h', type: 'file', size: 512 },
       { name: 'schematics', path: 'schematics', type: 'dir' },
       { name: 'circuit.png', path: 'schematics/circuit.png', type: 'file', size: 102400 },
-      { name: 'BOM.xlsx', path: 'BOM.xlsx', type: 'file', size: 8192 }
+      { name: 'BOM.xlsx', path: 'BOM.xlsx', type: 'file', size: 8192 },
     ];
 
     return { mockRepo, mockCommits, mockFiles };
@@ -151,10 +151,10 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
       // In a real implementation, you would fetch from GitHub API
       // For now, we'll use mock data
       const { mockRepo, mockCommits, mockFiles } = getMockData();
-      
+
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setRepo(mockRepo);
       setCommits(mockCommits);
       setFiles(mockFiles);
@@ -176,7 +176,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -184,7 +184,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
     const sizes = ['B', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 B';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   if (!repoInfo) {
@@ -207,19 +207,10 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
             GitHub Integration
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchGitHubData}
-              disabled={loading}
-            >
+            <Button variant="outline" size="sm" onClick={fetchGitHubData} disabled={loading}>
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(repoUrl, '_blank')}
-            >
+            <Button variant="outline" size="sm" onClick={() => window.open(repoUrl, '_blank')}>
               <ExternalLink className="h-4 w-4" />
             </Button>
           </div>
@@ -251,9 +242,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-lg">{repo.full_name}</h3>
-                    {repo.description && (
-                      <p className="text-gray-600 mt-1">{repo.description}</p>
-                    )}
+                    {repo.description && <p className="text-gray-600 mt-1">{repo.description}</p>}
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -341,11 +330,18 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
               ) : (
                 <div className="space-y-2">
                   {files.map((file) => (
-                    <div key={file.path} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                    <div
+                      key={file.path}
+                      className="flex items-center justify-between p-2 hover:bg-gray-50 rounded"
+                    >
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-500" />
                         <span className="font-medium">{file.name}</span>
-                        {file.type === 'dir' && <Badge variant="secondary" className="text-xs">DIR</Badge>}
+                        {file.type === 'dir' && (
+                          <Badge variant="secondary" className="text-xs">
+                            DIR
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         {file.size && (
@@ -355,7 +351,9 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => window.open(`${repoUrl}/blob/${branch}/${file.path}`, '_blank')}
+                            onClick={() =>
+                              window.open(`${repoUrl}/blob/${branch}/${file.path}`, '_blank')
+                            }
                           >
                             <ExternalLink className="h-3 w-3" />
                           </Button>

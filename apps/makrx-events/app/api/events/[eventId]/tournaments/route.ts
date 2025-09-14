@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { tournaments, activities } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const eventTournaments = await db
       .select({
@@ -24,7 +21,7 @@ export async function GET(
           id: activities.id,
           title: activities.title,
           type: activities.type,
-        }
+        },
       })
       .from(tournaments)
       .leftJoin(activities, eq(tournaments.activityId, activities.id))
@@ -38,10 +35,7 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const { name, description, format, activityId, maxParticipants } = await request.json();
 

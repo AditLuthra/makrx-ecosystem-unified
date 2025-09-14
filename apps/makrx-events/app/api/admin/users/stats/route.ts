@@ -14,19 +14,14 @@ export async function GET(request: NextRequest) {
     }
 
     const user = (request as AuthenticatedRequest).user;
-    
+
     // Check if user has admin privileges
     if (!user?.roles?.includes('super_admin') && !user?.roles?.includes('event_admin')) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     }
 
     // Get user statistics
-    const [totalUsersResult] = await db
-      .select({ count: count() })
-      .from(users);
+    const [totalUsersResult] = await db.select({ count: count() }).from(users);
 
     const [activeUsersResult] = await db
       .select({ count: count() })
@@ -53,9 +48,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(stats);
   } catch (error) {
     console.error('Error fetching user stats:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user statistics' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch user statistics' }, { status: 500 });
   }
 }

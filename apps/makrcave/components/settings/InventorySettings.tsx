@@ -14,7 +14,7 @@ import {
   Save,
   Info,
   Gauge,
-  ShoppingCart
+  ShoppingCart,
 } from 'lucide-react';
 
 interface MakerspaceSettings {
@@ -37,7 +37,7 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
   settings,
   onUpdate,
   onSave,
-  saving
+  saving,
 }) => {
   const handleToggle = (field: string, value: boolean) => {
     onUpdate({ [field]: value });
@@ -54,7 +54,7 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
       stock_threshold_notification: settings.stock_threshold_notification,
       allow_personal_consumables: settings.allow_personal_consumables,
       store_inventory_sync: settings.store_inventory_sync,
-      default_stock_threshold: settings.default_stock_threshold
+      default_stock_threshold: settings.default_stock_threshold,
     };
     onSave(inventoryData);
   };
@@ -69,8 +69,9 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
             <div className="text-sm text-green-800">
               <p className="font-medium">Inventory Management Configuration</p>
               <p className="text-green-700 mt-1">
-                Configure how your makerspace tracks and manages inventory including consumables, 
-                materials, and stock levels. These settings affect billing, notifications, and member access.
+                Configure how your makerspace tracks and manages inventory including consumables,
+                materials, and stock levels. These settings affect billing, notifications, and
+                member access.
               </p>
             </div>
           </div>
@@ -220,15 +221,16 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
                 min="1"
                 max="1000"
                 value={settings.default_stock_threshold || 10}
-                onChange={(e) => handleInputChange('default_stock_threshold', parseInt(e.target.value) || 10)}
+                onChange={(e) =>
+                  handleInputChange('default_stock_threshold', parseInt(e.target.value) || 10)
+                }
                 className="w-32"
               />
-              <span className="text-sm text-gray-600">
-                units (applies to new inventory items)
-              </span>
+              <span className="text-sm text-gray-600">units (applies to new inventory items)</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              This threshold is used as the default for new inventory items. Individual items can have custom thresholds.
+              This threshold is used as the default for new inventory items. Individual items can
+              have custom thresholds.
             </p>
           </div>
         </CardContent>
@@ -285,19 +287,19 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Filament Deduction:</span>
-                  <Badge variant={settings.filament_deduction_enabled ? "default" : "outline"}>
+                  <Badge variant={settings.filament_deduction_enabled ? 'default' : 'outline'}>
                     {settings.filament_deduction_enabled ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Personal Materials:</span>
-                  <Badge variant={settings.allow_personal_consumables ? "default" : "outline"}>
+                  <Badge variant={settings.allow_personal_consumables ? 'default' : 'outline'}>
                     {settings.allow_personal_consumables ? 'Allowed' : 'Not Allowed'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Store Sync:</span>
-                  <Badge variant={settings.store_inventory_sync ? "default" : "outline"}>
+                  <Badge variant={settings.store_inventory_sync ? 'default' : 'outline'}>
                     {settings.store_inventory_sync ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
@@ -309,21 +311,19 @@ const InventorySettings: React.FC<InventorySettingsProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Stock Alerts:</span>
-                  <Badge variant={settings.minimum_stock_alerts ? "default" : "outline"}>
+                  <Badge variant={settings.minimum_stock_alerts ? 'default' : 'outline'}>
                     {settings.minimum_stock_alerts ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Auto Notifications:</span>
-                  <Badge variant={settings.stock_threshold_notification ? "default" : "outline"}>
+                  <Badge variant={settings.stock_threshold_notification ? 'default' : 'outline'}>
                     {settings.stock_threshold_notification ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Default Threshold:</span>
-                  <Badge variant="outline">
-                    {settings.default_stock_threshold || 10} units
-                  </Badge>
+                  <Badge variant="outline">{settings.default_stock_threshold || 10} units</Badge>
                 </div>
               </div>
             </div>

@@ -11,8 +11,8 @@ import os
 # Create FastAPI app
 app = FastAPI(
     title="MakrX Store API - Simple",
-    description="Simplified Store backend for testing", 
-    version="1.0.0"
+    description="Simplified Store backend for testing",
+    version="1.0.0",
 )
 
 # CORS middleware
@@ -24,14 +24,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 async def health_check():
     return {
         "status": "healthy",
         "service": "makrx-store-backend",
         "timestamp": time.time(),
-        "version": "1.0.0-simple"
+        "version": "1.0.0-simple",
     }
+
 
 @app.get("/api/products")
 async def get_products():
@@ -41,34 +43,35 @@ async def get_products():
                 "id": 1,
                 "name": "3D Printing Filament PLA",
                 "price": 25.99,
-                "in_stock": True
+                "in_stock": True,
             },
             {
                 "id": 2,
                 "name": "Arduino Uno R3",
                 "price": 22.50,
-                "in_stock": True
-            }
+                "in_stock": True,
+            },
         ]
     }
+
 
 @app.get("/api/categories")
 async def get_categories():
     return {
         "categories": [
             {"id": 1, "name": "3D Printing", "slug": "3d-printing"},
-            {"id": 2, "name": "Electronics", "slug": "electronics"}
+            {"id": 2, "name": "Electronics", "slug": "electronics"},
         ]
     }
 
+
 @app.get("/api/cart")
 async def get_cart():
-    return {
-        "items": [],
-        "total": 0
-    }
+    return {"items": [], "total": 0}
+
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("main_simple:app", host="0.0.0.0", port=port, reload=False)

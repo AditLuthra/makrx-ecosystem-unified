@@ -2,7 +2,12 @@ import nodemailer from 'nodemailer';
 
 // Create SMTP transporter
 const createTransporter = () => {
-  if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  if (
+    !process.env.SMTP_HOST ||
+    !process.env.SMTP_PORT ||
+    !process.env.SMTP_USER ||
+    !process.env.SMTP_PASS
+  ) {
     console.warn('SMTP configuration incomplete, email functionality disabled');
     return null;
   }
@@ -29,10 +34,7 @@ interface RegistrationEmailData {
   paymentStatus?: string;
 }
 
-export async function sendRegistrationConfirmationEmail(
-  to: string,
-  data: RegistrationEmailData
-) {
+export async function sendRegistrationConfirmationEmail(to: string, data: RegistrationEmailData) {
   const transporter = createTransporter();
   if (!transporter) {
     console.warn('SMTP not configured, skipping email');
@@ -40,7 +42,7 @@ export async function sendRegistrationConfirmationEmail(
   }
 
   const eventUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://makrx.events'}/events/${data.eventSlug}`;
-  
+
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -140,7 +142,7 @@ export async function sendRegistrationConfirmationEmail(
     await transporter.sendMail({
       from: {
         name: 'MakrX.events',
-        address: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@makrx.events'
+        address: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@makrx.events',
       },
       to,
       subject: `Registration Confirmed: ${data.eventTitle}`,

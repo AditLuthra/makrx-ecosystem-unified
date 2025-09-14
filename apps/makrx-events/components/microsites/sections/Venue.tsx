@@ -3,7 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Globe, Car, Train, Plane, Wifi, Coffee, Utensils, Accessibility } from 'lucide-react';
+import {
+  MapPin,
+  Phone,
+  Globe,
+  Car,
+  Train,
+  Plane,
+  Wifi,
+  Coffee,
+  Utensils,
+  Accessibility,
+} from 'lucide-react';
 
 interface VenueContent {
   title: string;
@@ -60,7 +71,7 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
     const icons = {
       parking: Car,
       'public transport': Train,
-      airport: Plane
+      airport: Plane,
     };
     return icons[type as keyof typeof icons] || MapPin;
   };
@@ -75,15 +86,9 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            {content.title}
-          </h2>
-          <h3 className="text-2xl font-semibold text-muted-foreground mb-2">
-            {content.name}
-          </h3>
-          <p className="text-lg text-muted-foreground">
-            {formatAddress()}
-          </p>
+          <h2 className="text-4xl font-bold text-foreground mb-4">{content.title}</h2>
+          <h3 className="text-2xl font-semibold text-muted-foreground mb-2">{content.name}</h3>
+          <p className="text-lg text-muted-foreground">{formatAddress()}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -95,9 +100,7 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
                 <CardTitle>About the Venue</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  {content.description}
-                </p>
+                <p className="text-muted-foreground">{content.description}</p>
               </CardContent>
             </Card>
 
@@ -111,7 +114,7 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
                   {content.contact.phone && (
                     <div className="flex items-center gap-3">
                       <Phone className="h-5 w-5 text-muted-foreground" />
-                      <a 
+                      <a
                         href={`tel:${content.contact.phone}`}
                         className="text-foreground hover:text-primary transition-colors"
                       >
@@ -122,7 +125,7 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
                   {content.contact.website && (
                     <div className="flex items-center gap-3">
                       <Globe className="h-5 w-5 text-muted-foreground" />
-                      <a 
+                      <a
                         href={content.contact.website}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -134,7 +137,7 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
                   )}
                   <div className="flex items-center gap-3">
                     <MapPin className="h-5 w-5 text-muted-foreground" />
-                    <a 
+                    <a
                       href={`https://maps.google.com/?q=${encodeURIComponent(formatAddress())}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -274,16 +277,15 @@ export default function Venue({ content, variant = 'default', theme }: VenueProp
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {content.rooms.map((room, index) => (
-                    <div key={index} className="border-b border-border last:border-b-0 pb-4 last:pb-0">
+                    <div
+                      key={index}
+                      className="border-b border-border last:border-b-0 pb-4 last:pb-0"
+                    >
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-foreground">{room.name}</h4>
-                        <Badge variant="outline">
-                          Capacity: {room.capacity}
-                        </Badge>
+                        <Badge variant="outline">Capacity: {room.capacity}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {room.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-2">{room.description}</p>
                       {room.features && room.features.length > 0 && (
                         <div className="flex flex-wrap gap-1">
                           {room.features.map((feature, idx) => (

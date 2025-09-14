@@ -19,9 +19,10 @@ from ..security.helpers import get_request_context
 
 logger = logging.getLogger(__name__)
 
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Rate limiting middleware with endpoint-specific limits"""
-    
+
     def __init__(self, app):
         super().__init__(app)
         self.clients = defaultdict(lambda: defaultdict(list))
@@ -33,7 +34,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 self.redis_client = redis.from_url(self.redis_url)
             except Exception:
                 self.redis_client = None
-        
+
         # Endpoint-specific rate limits (calls per hour)
         self.limits = {
             "/api/v1/auth/": {"calls": 20, "period": 3600},  # Auth endpoints
@@ -41,17 +42,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/v1/equipment/": {"calls": 100, "period": 3600},  # Equipment
             "/api/v1/projects/": {"calls": 150, "period": 3600},  # Projects
             "/api/v1/members/": {"calls": 100, "period": 3600},  # Members
-            "/api/v1/billing/": {"calls": 50, "period": 3600},   # Billing
-            "default": {"calls": 300, "period": 3600}  # Default limit
+            "/api/v1/billing/": {"calls": 50, "period": 3600},  # Billing
+            "default": {"calls": 300, "period": 3600},  # Default limit
         }
-    
+
     def get_endpoint_category(self, path: str) -> str:
         """Get the rate limit category for a path"""
         for prefix in self.limits:
             if prefix != "default" and path.startswith(prefix):
                 return prefix
         return "default"
-    
+
     async def dispatch(self, request: Request, call_next):
         # Determine client IP (proxy-aware if enabled)
         client_ip = request.client.host if request.client else "unknown"
@@ -66,15 +67,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     parts = [p.strip() for p in fwd.split(";")]
                     for part in parts:
                         if part.lower().startswith("for="):
-                            client_ip = part.split("=", 1)[1].strip().strip('"')
+                            client_ip = (
+                                part.split("=", 1)[1].strip().strip('"')
+                            )
                             break
         endpoint_category = self.get_endpoint_category(request.url.path)
-        
+
         # Get limits for this endpoint category
         limit_config = self.limits[endpoint_category]
         calls_limit = limit_config["calls"]
         period = limit_config["period"]
-        
+
         now = time.time()
         remaining = None
         if self.redis_client:
@@ -91,7 +94,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     raise HTTPException(
                         status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                         detail=f"Rate limit exceeded for {endpoint_category}. Try again later.",
-                        headers={"Retry-After": str(period)}
+                        headers={"Retry-After": str(period)},
                     )
                 remaining = max(0, calls_limit - int(current))
             except HTTPException:
@@ -103,7 +106,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if remaining is None:
             # In-memory fallback
             self.clients[client_ip][endpoint_category] = [
-                t for t in self.clients[client_ip][endpoint_category] if now - t < period
+                t
+                for t in self.clients[client_ip][endpoint_category]
+                if now - t < period
             ]
             if len(self.clients[client_ip][endpoint_category]) >= calls_limit:
                 logger.warning(
@@ -113,11 +118,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 raise HTTPException(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     detail=f"Rate limit exceeded for {endpoint_category}. Try again later.",
-                    headers={"Retry-After": str(period)}
+                    headers={"Retry-After": str(period)},
                 )
             self.clients[client_ip][endpoint_category].append(now)
-            remaining = calls_limit - len(self.clients[client_ip][endpoint_category])
-        
+            remaining = calls_limit - len(
+                self.clients[client_ip][endpoint_category]
+            )
+
         # Add rate limit headers
         response = await call_next(request)
         # Propagate request id header
@@ -127,8 +134,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         response.headers["X-RateLimit-Limit"] = str(calls_limit)
         response.headers["X-RateLimit-Remaining"] = str(remaining)
         response.headers["X-RateLimit-Reset"] = str(int(now + period))
-        
+
         return response
+
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add comprehensive security headers (CSP built from env)."""
@@ -171,16 +179,21 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         }
         # Only advertise HSTS when behind TLS (typically production)
         if os.getenv("ENVIRONMENT") == "production":
-            headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+            headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains; preload"
+            )
         response.headers.update(headers)
         return response
+
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Log security-relevant requests"""
 
     def __init__(self, app):
         super().__init__(app)
-        self.sample_rate = float(os.environ.get("REQUEST_LOG_SAMPLE_RATE", "1.0"))
+        self.sample_rate = float(
+            os.environ.get("REQUEST_LOG_SAMPLE_RATE", "1.0")
+        )
 
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
@@ -205,9 +218,19 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
         # Check for suspicious patterns
         suspicious_patterns = [
-            "../", "..\\", "%2e%2e", "union select", "drop table",
-            "<script", "javascript:", "onclick=", "onerror=",
-            "/etc/passwd", "/proc/", "cmd.exe", "powershell"
+            "../",
+            "..\\",
+            "%2e%2e",
+            "union select",
+            "drop table",
+            "<script",
+            "javascript:",
+            "onclick=",
+            "onerror=",
+            "/etc/passwd",
+            "/proc/",
+            "cmd.exe",
+            "powershell",
         ]
 
         path_lower = path.lower()
@@ -246,6 +269,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             )
 
         return response
+
 
 def add_security_middleware(app):
     """Add all security middleware to the FastAPI app"""

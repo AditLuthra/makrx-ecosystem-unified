@@ -5,16 +5,18 @@ import { Badge } from '../ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
-import {
-  Download, FileText, Table, FileSpreadsheet, Calendar,
-  CheckCircle, Clock, AlertCircle, RefreshCw, X
+  Download,
+  FileText,
+  Table,
+  FileSpreadsheet,
+  Calendar,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  RefreshCw,
+  X,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -52,7 +54,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - 30);
-      
+
       setStartDate(startDate.toISOString().split('T')[0]);
       setEndDate(endDate.toISOString().split('T')[0]);
     }
@@ -63,7 +65,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
     try {
       const response = await fetch('/api/analytics/reports', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -82,9 +84,9 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
   const handleSubmitRequest = async () => {
     if (!reportType || !reportFormat) {
       toast({
-        title: "Validation Error",
-        description: "Please select both report type and format",
-        variant: "destructive",
+        title: 'Validation Error',
+        description: 'Please select both report type and format',
+        variant: 'destructive',
       });
       return;
     }
@@ -97,13 +99,13 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
         filters: {
           start_date: startDate,
           end_date: endDate,
-        }
+        },
       };
 
       const response = await fetch('/api/analytics/reports/request', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
@@ -112,30 +114,30 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: "Success",
-          description: "Report generation requested successfully",
+          title: 'Success',
+          description: 'Report generation requested successfully',
         });
-        
+
         // Reset form
         setReportType('');
         setReportFormat('');
-        
+
         // Refresh requests list
         fetchReportRequests();
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to request report",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to request report',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error requesting report:', error);
       toast({
-        title: "Error",
-        description: "Failed to request report",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to request report',
+        variant: 'destructive',
       });
     } finally {
       setSubmitting(false);
@@ -146,7 +148,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
     try {
       const response = await fetch(`/api/analytics/reports/${requestId}/download`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
@@ -155,23 +157,23 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
         // Open download URL in new tab
         window.open(data.download_url, '_blank');
         toast({
-          title: "Success",
-          description: "Report download started",
+          title: 'Success',
+          description: 'Report download started',
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to download report",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to download report',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error downloading report:', error);
       toast({
-        title: "Error",
-        description: "Failed to download report",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to download report',
+        variant: 'destructive',
       });
     }
   };
@@ -305,8 +307,8 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
               </div>
 
               {/* Submit Button */}
-              <Button 
-                onClick={handleSubmitRequest} 
+              <Button
+                onClick={handleSubmitRequest}
                 disabled={submitting || !reportType || !reportFormat}
                 className="w-full"
               >
@@ -326,7 +328,10 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
               {/* Info */}
               <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
                 <p className="font-medium text-blue-900 mb-1">Report Generation</p>
-                <p>Reports are generated in the background. You'll receive a notification when ready for download.</p>
+                <p>
+                  Reports are generated in the background. You'll receive a notification when ready
+                  for download.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -361,15 +366,19 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
                         <div className="flex items-center gap-2">
                           {getFormatIcon(request.report_format)}
                           <span className="font-medium text-sm">
-                            {request.report_type.charAt(0).toUpperCase() + request.report_type.slice(1)} Report
+                            {request.report_type.charAt(0).toUpperCase() +
+                              request.report_type.slice(1)}{' '}
+                            Report
                           </span>
                         </div>
                         <Badge variant={getStatusBadge(request.status)} className="text-xs">
                           {getStatusIcon(request.status)}
-                          <span className="ml-1">{request.status.charAt(0).toUpperCase() + request.status.slice(1)}</span>
+                          <span className="ml-1">
+                            {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                          </span>
                         </Badge>
                       </div>
-                      
+
                       <div className="text-xs text-gray-500 mb-2">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
@@ -423,27 +432,39 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-1">Usage Analytics</h4>
-                <p className="text-sm text-blue-800">User activity, logins, project creations, equipment usage</p>
+                <p className="text-sm text-blue-800">
+                  User activity, logins, project creations, equipment usage
+                </p>
               </div>
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                 <h4 className="font-medium text-green-900 mb-1">Inventory Report</h4>
-                <p className="text-sm text-green-800">Stock levels, consumption patterns, reorder alerts</p>
+                <p className="text-sm text-green-800">
+                  Stock levels, consumption patterns, reorder alerts
+                </p>
               </div>
               <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <h4 className="font-medium text-orange-900 mb-1">Equipment Metrics</h4>
-                <p className="text-sm text-orange-800">Usage hours, uptime, maintenance schedules</p>
+                <p className="text-sm text-orange-800">
+                  Usage hours, uptime, maintenance schedules
+                </p>
               </div>
               <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
                 <h4 className="font-medium text-purple-900 mb-1">Project Analytics</h4>
-                <p className="text-sm text-purple-800">Project costs, BOM analysis, collaboration stats</p>
+                <p className="text-sm text-purple-800">
+                  Project costs, BOM analysis, collaboration stats
+                </p>
               </div>
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                 <h4 className="font-medium text-red-900 mb-1">Revenue Report</h4>
-                <p className="text-sm text-red-800">Income breakdown, payment methods, growth trends</p>
+                <p className="text-sm text-red-800">
+                  Income breakdown, payment methods, growth trends
+                </p>
               </div>
               <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
                 <h4 className="font-medium text-gray-900 mb-1">Member Activity</h4>
-                <p className="text-sm text-gray-800">Member engagement, project participation, usage patterns</p>
+                <p className="text-sm text-gray-800">
+                  Member engagement, project participation, usage patterns
+                </p>
               </div>
             </div>
           </CardContent>

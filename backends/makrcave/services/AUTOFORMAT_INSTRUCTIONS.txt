@@ -1,0 +1,11 @@
+# To auto-format this file for PEP8/Flake8 compliance, run:
+#
+#   black real_analytics_service.py
+#
+# Or, for line length 79 (PEP8 strict):
+#   black --line-length 79 real_analytics_service.py
+#
+# Or, for in-place fix of only line length and whitespace:
+#   autopep8 --in-place --max-line-length 79 real_analytics_service.py
+#
+# This will fix all line length, blank line, and indentation issues automatically.

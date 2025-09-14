@@ -8,17 +8,15 @@ interface NotificationWidgetProps {
   showHeader?: boolean;
 }
 
-export default function NotificationWidget({ 
-  category, 
-  maxItems = 5, 
+export default function NotificationWidget({
+  category,
+  maxItems = 5,
   title,
-  showHeader = true 
+  showHeader = true,
 }: NotificationWidgetProps) {
   const { notifications, getNotificationsByCategory, markAsRead } = useNotifications();
 
-  const filteredNotifications = category 
-    ? getNotificationsByCategory(category)
-    : notifications;
+  const filteredNotifications = category ? getNotificationsByCategory(category) : notifications;
 
   const displayNotifications = filteredNotifications
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
@@ -85,7 +83,7 @@ export default function NotificationWidget({
           )}
         </div>
       )}
-      
+
       <div className="space-y-3">
         {displayNotifications.map((notification) => (
           <div
@@ -96,11 +94,13 @@ export default function NotificationWidget({
             onClick={() => !notification.read && markAsRead(notification.id)}
           >
             {getNotificationIcon(notification.type)}
-            
+
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <h4
+                    className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}
+                  >
                     {notification.title}
                   </h4>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
@@ -122,7 +122,7 @@ export default function NotificationWidget({
                     )}
                   </div>
                 </div>
-                
+
                 {!notification.read && (
                   <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1"></div>
                 )}

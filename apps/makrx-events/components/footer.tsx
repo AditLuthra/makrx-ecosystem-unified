@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -10,14 +10,12 @@ export default function Footer() {
           <div className="col-span-1 sm:col-span-2 md:col-span-2">
             <h3 className="text-xl font-bold mb-4">MakrX.events</h3>
             <p className="text-gray-300 mb-4">
-              The premier platform for discovering and creating maker events, 
-              workshops, competitions, and exhibitions worldwide.
+              The premier platform for discovering and creating maker events, workshops,
+              competitions, and exhibitions worldwide.
             </p>
-            <div className="flex space-x-4">
-              {/* Social media links could go here */}
-            </div>
+            <div className="flex space-x-4">{/* Social media links could go here */}</div>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -32,13 +30,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/create-event" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/create-event"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   Create Event
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Support</h4>
             <ul className="space-y-2">
@@ -55,7 +56,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
           <p className="text-gray-300">
             © {new Date().getFullYear()} MakrX.events. All rights reserved.

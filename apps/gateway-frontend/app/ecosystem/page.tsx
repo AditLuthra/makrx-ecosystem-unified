@@ -1,9 +1,10 @@
-'use client';
+import React from 'react';
 
-import { Ecosystem } from '../../components/page-components/PlaceholderPage';
-
-export const dynamic = 'force-dynamic';
-
-export default function EcosystemPage() {
-  return <Ecosystem />;
+export default function ComingSoonPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-4xl font-bold">Coming Soon!</h1>
+      <p className="mt-3 text-xl">We're working hard to bring you this page.</p>
+    </div>
+  );
 }

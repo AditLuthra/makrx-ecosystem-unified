@@ -6,11 +6,16 @@ import { eq, and, or, gte, lte, ilike, sql } from 'drizzle-orm';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Extract filter parameters
     const search = searchParams.get('search') || '';
     const type = searchParams.get('type');
-    const types = type ? type.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const types = type
+      ? type
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [];
     const status = searchParams.get('status') || 'all';
     const location = searchParams.get('location') || '';
     const priceRange = searchParams.get('priceRange') || 'all';
@@ -27,8 +32,8 @@ export async function GET(request: NextRequest) {
         or(
           ilike(events.title, `%${search}%`),
           ilike(events.description, `%${search}%`),
-          ilike(events.location, `%${search}%`)
-        )
+          ilike(events.location, `%${search}%`),
+        ),
       );
     }
 
@@ -63,17 +68,11 @@ export async function GET(request: NextRequest) {
       if (priceRange === 'free') {
         conditions.push(sql`events.registration_fee = 0`);
       } else if (priceRange === '0-25') {
-        conditions.push(
-          sql`events.registration_fee >= 0 AND events.registration_fee <= 25`
-        );
+        conditions.push(sql`events.registration_fee >= 0 AND events.registration_fee <= 25`);
       } else if (priceRange === '25-50') {
-        conditions.push(
-          sql`events.registration_fee >= 25 AND events.registration_fee <= 50`
-        );
+        conditions.push(sql`events.registration_fee >= 25 AND events.registration_fee <= 50`);
       } else if (priceRange === '50-100') {
-        conditions.push(
-          sql`events.registration_fee >= 50 AND events.registration_fee <= 100`
-        );
+        conditions.push(sql`events.registration_fee >= 50 AND events.registration_fee <= 100`);
       } else if (priceRange === '100+') {
         conditions.push(sql`events.registration_fee >= 100`);
       }
@@ -118,25 +117,23 @@ export async function GET(request: NextRequest) {
           competitions: sql`false as competitions`,
           workshops: sql`false as workshops`,
           exhibitions: sql`false as exhibitions`,
-        }
+        },
       })
       .from(events)
-      .leftJoin(users, eq(events.organizerId, users.id))
-;
-
+      .leftJoin(users, eq(events.organizerId, users.id));
     // Apply filters and execute query
-    const query = conditions.length > 0 
-      ? baseQuery.where(and(...conditions))
-      : baseQuery;
+    const query = conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
 
     const allEvents = await query.orderBy(sql`events.start_date`);
 
     // Filter for available spots if requested (this requires a subquery for registration count)
     let filteredEvents = allEvents;
     if (hasAvailableSpots) {
-      filteredEvents = allEvents.filter(event => {
+      filteredEvents = allEvents.filter((event) => {
         // If maxAttendees is null/undefined, assume unlimited spots
-        return !event.maxAttendees || (typeof event.maxAttendees === 'number' && event.maxAttendees > 0);
+        return (
+          !event.maxAttendees || (typeof event.maxAttendees === 'number' && event.maxAttendees > 0)
+        );
       });
     }
 
@@ -153,21 +150,24 @@ export async function POST(request: Request) {
     try {
       body = await request.json();
     } catch (error) {
-      return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid JSON format' }, { status: 400 });
     }
-    
+
     // Validate required fields
     if (!body.title || !body.description || !body.location || !body.startDate || !body.endDate) {
-      return NextResponse.json({ error: "Missing required fields: title, description, location, startDate, endDate" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required fields: title, description, location, startDate, endDate' },
+        { status: 400 },
+      );
     }
-    
+
     // Generate slug from title
     const slug = body.title
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, '')
       .replace(/\s+/g, '-')
       .substring(0, 50);
-    
+
     // Create event in database using raw SQL to avoid schema mismatch
     const result = await db.execute(sql`
       INSERT INTO events (
@@ -188,12 +188,12 @@ export async function POST(request: Request) {
         ${'published'}
       ) RETURNING *
     `);
-    
+
     const newEvent = result.rows[0];
-    
+
     return NextResponse.json(newEvent, { status: 201 });
   } catch (error) {
     console.error('Error creating event:', error);
-    return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
   }
 }

@@ -1,22 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { 
-  ArrowLeft, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff,
-  GripVertical,
-  Save
-} from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { ArrowLeft, Plus, Edit, Trash2, Eye, EyeOff, GripVertical, Save } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface MicrositePageEditorProps {
   params: {
@@ -26,73 +17,74 @@ interface MicrositePageEditorProps {
 
 export default async function MicrositePageEditor({ params }: MicrositePageEditorProps) {
   const { micrositeSlug } = await params;
-  
+
   // Mock data - would fetch from database
   const microsite = {
     slug: micrositeSlug,
-    title: "MakerFest 2024"
+    title: 'MakerFest 2024',
   };
 
   const pageSections = [
     {
-      id: "1",
-      type: "hero",
-      title: "Hero Section",
+      id: '1',
+      type: 'hero',
+      title: 'Hero Section',
       order: 1,
       isVisible: true,
       content: {
-        title: "MakerFest 2024",
-        subtitle: "The Ultimate Maker Experience",
-        backgroundImage: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
-        ctaText: "Register Now",
-        ctaUrl: `/m/${micrositeSlug}/register`
-      }
+        title: 'MakerFest 2024',
+        subtitle: 'The Ultimate Maker Experience',
+        backgroundImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
+        ctaText: 'Register Now',
+        ctaUrl: `/m/${micrositeSlug}/register`,
+      },
     },
     {
-      id: "2", 
-      type: "about",
-      title: "About Section",
+      id: '2',
+      type: 'about',
+      title: 'About Section',
       order: 2,
       isVisible: true,
       content: {
-        title: "About MakerFest 2024",
-        description: "Join thousands of makers, inventors, and technology enthusiasts for the largest maker festival on the West Coast.",
-        features: ["50+ Interactive Workshops", "3 Major Competitions", "100+ Vendor Marketplace"]
-      }
+        title: 'About MakerFest 2024',
+        description:
+          'Join thousands of makers, inventors, and technology enthusiasts for the largest maker festival on the West Coast.',
+        features: ['50+ Interactive Workshops', '3 Major Competitions', '100+ Vendor Marketplace'],
+      },
     },
     {
-      id: "3",
-      type: "schedule",
-      title: "Schedule Overview",
+      id: '3',
+      type: 'schedule',
+      title: 'Schedule Overview',
       order: 3,
       isVisible: true,
       content: {
-        title: "Event Schedule",
-        showFullSchedule: true
-      }
+        title: 'Event Schedule',
+        showFullSchedule: true,
+      },
     },
     {
-      id: "4",
-      type: "sponsors",
-      title: "Sponsors",
+      id: '4',
+      type: 'sponsors',
+      title: 'Sponsors',
       order: 4,
       isVisible: false,
       content: {
-        title: "Our Partners",
-        tiers: ["Title", "Gold", "Silver", "Bronze"]
-      }
-    }
+        title: 'Our Partners',
+        tiers: ['Title', 'Gold', 'Silver', 'Bronze'],
+      },
+    },
   ];
 
   const availableSectionTypes = [
-    { type: "hero", name: "Hero Banner", description: "Main banner with title and call-to-action" },
-    { type: "about", name: "About Section", description: "Information about the event" },
-    { type: "schedule", name: "Schedule", description: "Event timeline and schedule" },
-    { type: "sponsors", name: "Sponsors", description: "Sponsor logos and information" },
-    { type: "faq", name: "FAQ", description: "Frequently asked questions" },
-    { type: "venue", name: "Venue Info", description: "Location and venue details" },
-    { type: "speakers", name: "Speakers", description: "Featured speakers and judges" },
-    { type: "tracks", name: "Event Tracks", description: "Competition and workshop categories" }
+    { type: 'hero', name: 'Hero Banner', description: 'Main banner with title and call-to-action' },
+    { type: 'about', name: 'About Section', description: 'Information about the event' },
+    { type: 'schedule', name: 'Schedule', description: 'Event timeline and schedule' },
+    { type: 'sponsors', name: 'Sponsors', description: 'Sponsor logos and information' },
+    { type: 'faq', name: 'FAQ', description: 'Frequently asked questions' },
+    { type: 'venue', name: 'Venue Info', description: 'Location and venue details' },
+    { type: 'speakers', name: 'Speakers', description: 'Featured speakers and judges' },
+    { type: 'tracks', name: 'Event Tracks', description: 'Competition and workshop categories' },
   ];
 
   return (
@@ -102,7 +94,10 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link href={`/m/${micrositeSlug}/admin`} className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href={`/m/${micrositeSlug}/admin`}
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Admin
               </Link>
@@ -127,9 +122,7 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
             <Edit className="inline h-8 w-8 mr-3" />
             Page Content Editor
           </h1>
-          <p className="text-gray-600">
-            Manage the sections and content of your microsite
-          </p>
+          <p className="text-gray-600">Manage the sections and content of your microsite</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -158,7 +151,11 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
                       <div className="flex items-center space-x-2">
                         <Switch checked={section.isVisible} />
                         <Button variant="ghost" size="sm">
-                          {section.isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                          {section.isVisible ? (
+                            <Eye className="h-4 w-4" />
+                          ) : (
+                            <EyeOff className="h-4 w-4" />
+                          )}
                         </Button>
                         <Button variant="ghost" size="sm">
                           <Edit className="h-4 w-4" />
@@ -171,49 +168,49 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {section.type === "hero" && (
+                      {section.type === 'hero' && (
                         <>
                           <div>
                             <Label htmlFor="hero-title">Title</Label>
-                            <Input 
-                              id="hero-title" 
+                            <Input
+                              id="hero-title"
                               defaultValue={section.content.title}
                               className="mt-1"
                             />
                           </div>
                           <div>
                             <Label htmlFor="hero-subtitle">Subtitle</Label>
-                            <Input 
-                              id="hero-subtitle" 
+                            <Input
+                              id="hero-subtitle"
                               defaultValue={section.content.subtitle}
                               className="mt-1"
                             />
                           </div>
                           <div>
                             <Label htmlFor="hero-cta">Call-to-Action Text</Label>
-                            <Input 
-                              id="hero-cta" 
+                            <Input
+                              id="hero-cta"
                               defaultValue={section.content.ctaText}
                               className="mt-1"
                             />
                           </div>
                         </>
                       )}
-                      
-                      {section.type === "about" && (
+
+                      {section.type === 'about' && (
                         <>
                           <div>
                             <Label htmlFor="about-title">Title</Label>
-                            <Input 
-                              id="about-title" 
+                            <Input
+                              id="about-title"
                               defaultValue={section.content.title}
                               className="mt-1"
                             />
                           </div>
                           <div>
                             <Label htmlFor="about-description">Description</Label>
-                            <Textarea 
-                              id="about-description" 
+                            <Textarea
+                              id="about-description"
                               defaultValue={section.content.description}
                               className="mt-1"
                               rows={3}
@@ -221,7 +218,7 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
                           </div>
                           <div>
                             <Label>Features (one per line)</Label>
-                            <Textarea 
+                            <Textarea
                               defaultValue={section.content.features?.join('\n')}
                               className="mt-1"
                               rows={3}
@@ -230,12 +227,16 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
                         </>
                       )}
 
-                      {section.type === "sponsors" && (
+                      {section.type === 'sponsors' && (
                         <div>
                           <Label>Sponsor Tiers</Label>
                           <div className="grid grid-cols-2 gap-2 mt-2">
                             {section.content.tiers?.map((tier, index) => (
-                              <Input key={index} defaultValue={tier} placeholder={`Tier ${index + 1}`} />
+                              <Input
+                                key={index}
+                                defaultValue={tier}
+                                placeholder={`Tier ${index + 1}`}
+                              />
                             ))}
                           </div>
                         </div>
@@ -256,8 +257,8 @@ export default async function MicrositePageEditor({ params }: MicrositePageEdito
               </CardHeader>
               <CardContent className="space-y-3">
                 {availableSectionTypes.map((sectionType) => (
-                  <div 
-                    key={sectionType.type} 
+                  <div
+                    key={sectionType.type}
                     className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
                   >
                     <div className="font-medium text-sm">{sectionType.name}</div>

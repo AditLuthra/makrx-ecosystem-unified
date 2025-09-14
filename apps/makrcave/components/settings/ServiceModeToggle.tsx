@@ -17,7 +17,7 @@ import {
   Info,
   ShoppingCart,
   Factory,
-  Globe
+  Globe,
 } from 'lucide-react';
 
 interface MakerspaceSettings {
@@ -37,18 +37,22 @@ interface ServiceModeToggleProps {
 }
 
 const printTechnologies = [
-  { value: 'fdm', label: 'FDM (Fused Deposition Modeling)', description: 'Most common 3D printing technology' },
+  {
+    value: 'fdm',
+    label: 'FDM (Fused Deposition Modeling)',
+    description: 'Most common 3D printing technology',
+  },
   { value: 'sla', label: 'SLA (Stereolithography)', description: 'High precision resin printing' },
   { value: 'sls', label: 'SLS (Selective Laser Sintering)', description: 'Powder-based printing' },
   { value: 'polyjet', label: 'PolyJet', description: 'Multi-material jetting' },
-  { value: 'carbon_fiber', label: 'Carbon Fiber', description: 'Reinforced composite printing' }
+  { value: 'carbon_fiber', label: 'Carbon Fiber', description: 'Reinforced composite printing' },
 ];
 
 const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
   settings,
   onUpdate,
   onSave,
-  saving
+  saving,
 }) => {
   const handleToggle = (field: string, value: boolean) => {
     onUpdate({ [field]: value });
@@ -61,18 +65,18 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
   const handleTechnologyToggle = (tech: string, checked: boolean) => {
     const currentTechs = settings.allowed_print_technologies || ['fdm'];
     let newTechs;
-    
+
     if (checked) {
       newTechs = [...currentTechs, tech];
     } else {
-      newTechs = currentTechs.filter(t => t !== tech);
+      newTechs = currentTechs.filter((t) => t !== tech);
     }
-    
+
     // Ensure at least one technology is selected
     if (newTechs.length === 0) {
       newTechs = ['fdm'];
     }
-    
+
     onUpdate({ allowed_print_technologies: newTechs });
   };
 
@@ -83,7 +87,7 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
       allowed_print_technologies: settings.allowed_print_technologies,
       delivery_radius_km: settings.delivery_radius_km,
       default_service_fee_percent: settings.default_service_fee_percent,
-      auto_job_assignment: settings.auto_job_assignment
+      auto_job_assignment: settings.auto_job_assignment,
     };
     onSave(serviceData);
   };
@@ -100,8 +104,9 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
             <div className="text-sm text-indigo-800">
               <p className="font-medium">Service Provider Mode</p>
               <p className="text-indigo-700 mt-1">
-                Transform your makerspace into a service provider by accepting external jobs and orders. 
-                This enables revenue generation from non-members and integration with MakrX.Store.
+                Transform your makerspace into a service provider by accepting external jobs and
+                orders. This enables revenue generation from non-members and integration with
+                MakrX.Store.
               </p>
             </div>
           </div>
@@ -220,15 +225,22 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
             {/* Allowed Print Technologies */}
             <div className="space-y-3">
               <Label className="font-medium">Allowed Print Technologies</Label>
-              <p className="text-sm text-gray-600">Select the 3D printing technologies your makerspace supports</p>
-              
+              <p className="text-sm text-gray-600">
+                Select the 3D printing technologies your makerspace supports
+              </p>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {printTechnologies.map((tech) => (
-                  <div key={tech.value} className="flex items-start space-x-3 p-3 border rounded-lg">
+                  <div
+                    key={tech.value}
+                    className="flex items-start space-x-3 p-3 border rounded-lg"
+                  >
                     <Checkbox
                       id={`tech-${tech.value}`}
                       checked={currentTechs.includes(tech.value)}
-                      onCheckedChange={(checked) => handleTechnologyToggle(tech.value, checked as boolean)}
+                      onCheckedChange={(checked) =>
+                        handleTechnologyToggle(tech.value, checked as boolean)
+                      }
                       className="mt-0.5"
                     />
                     <div className="flex-1">
@@ -240,10 +252,10 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
                   </div>
                 ))}
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mt-2">
                 {currentTechs.map((tech) => {
-                  const techInfo = printTechnologies.find(t => t.value === tech);
+                  const techInfo = printTechnologies.find((t) => t.value === tech);
                   return (
                     <Badge key={tech} variant="outline" className="bg-blue-100 text-blue-800">
                       {techInfo ? techInfo.label.split(' ')[0] : tech.toUpperCase()}
@@ -279,7 +291,9 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
                   min="1"
                   max="1000"
                   value={settings.delivery_radius_km || 10}
-                  onChange={(e) => handleInputChange('delivery_radius_km', parseInt(e.target.value) || 10)}
+                  onChange={(e) =>
+                    handleInputChange('delivery_radius_km', parseInt(e.target.value) || 10)
+                  }
                 />
                 <p className="text-xs text-gray-500">
                   Maximum distance for job auto-assignment and delivery services
@@ -299,7 +313,12 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
                   max="100"
                   step="0.1"
                   value={settings.default_service_fee_percent || 5}
-                  onChange={(e) => handleInputChange('default_service_fee_percent', parseFloat(e.target.value) || 5)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'default_service_fee_percent',
+                      parseFloat(e.target.value) || 5,
+                    )
+                  }
                 />
                 <p className="text-xs text-gray-500">
                   Additional fee percentage added to material costs for services
@@ -335,13 +354,13 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Store Integration:</span>
-                    <Badge variant={settings.accept_jobs_from_store ? "default" : "outline"}>
+                    <Badge variant={settings.accept_jobs_from_store ? 'default' : 'outline'}>
                       {settings.accept_jobs_from_store ? 'Connected' : 'Disabled'}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Auto Assignment:</span>
-                    <Badge variant={settings.auto_job_assignment ? "default" : "outline"}>
+                    <Badge variant={settings.auto_job_assignment ? 'default' : 'outline'}>
                       {settings.auto_job_assignment ? 'Enabled' : 'Manual'}
                     </Badge>
                   </div>
@@ -353,21 +372,15 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
                 <div className="space-y-1 text-xs">
                   <div className="flex items-center justify-between">
                     <span>Delivery Radius:</span>
-                    <Badge variant="outline">
-                      {settings.delivery_radius_km || 10} km
-                    </Badge>
+                    <Badge variant="outline">{settings.delivery_radius_km || 10} km</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Service Fee:</span>
-                    <Badge variant="outline">
-                      {settings.default_service_fee_percent || 5}%
-                    </Badge>
+                    <Badge variant="outline">{settings.default_service_fee_percent || 5}%</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Technologies:</span>
-                    <Badge variant="outline">
-                      {currentTechs.length} types
-                    </Badge>
+                    <Badge variant="outline">{currentTechs.length} types</Badge>
                   </div>
                 </div>
               </div>
@@ -381,13 +394,24 @@ const ServiceModeToggle: React.FC<ServiceModeToggleProps> = ({
               <div className="text-xs text-gray-600 space-y-1">
                 <p>• Your makerspace will be visible as a service provider</p>
                 {settings.accept_jobs_from_store && (
-                  <p>• Jobs from MakrX.Store will be automatically routed within {settings.delivery_radius_km}km radius</p>
+                  <p>
+                    • Jobs from MakrX.Store will be automatically routed within{' '}
+                    {settings.delivery_radius_km}km radius
+                  </p>
                 )}
                 {settings.auto_job_assignment && (
-                  <p>• Compatible jobs will be automatically accepted without manual intervention</p>
+                  <p>
+                    • Compatible jobs will be automatically accepted without manual intervention
+                  </p>
                 )}
-                <p>• Service fee of {settings.default_service_fee_percent}% will be added to all external jobs</p>
-                <p>• Supported technologies: {currentTechs.map(tech => tech.toUpperCase()).join(', ')}</p>
+                <p>
+                  • Service fee of {settings.default_service_fee_percent}% will be added to all
+                  external jobs
+                </p>
+                <p>
+                  • Supported technologies:{' '}
+                  {currentTechs.map((tech) => tech.toUpperCase()).join(', ')}
+                </p>
               </div>
             </div>
           )}

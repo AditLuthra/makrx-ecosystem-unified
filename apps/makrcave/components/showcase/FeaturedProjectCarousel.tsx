@@ -3,7 +3,7 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { 
+import {
   ChevronLeft,
   ChevronRight,
   Star,
@@ -18,7 +18,7 @@ import {
   Award,
   Zap,
   Shield,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 
 interface FeaturedProject {
@@ -60,7 +60,7 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
     if (!isAutoPlaying || projects.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % projects.length);
+      setCurrentIndex((prev) => (prev + 1) % projects.length);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -81,21 +81,31 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'advanced': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'expert': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'expert':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getDifficultyIcon = (level: string) => {
     switch (level) {
-      case 'beginner': return '🟢';
-      case 'intermediate': return '🟡';
-      case 'advanced': return '🟠';
-      case 'expert': return '🔴';
-      default: return '⚪';
+      case 'beginner':
+        return '🟢';
+      case 'intermediate':
+        return '🟡';
+      case 'advanced':
+        return '🟠';
+      case 'expert':
+        return '🔴';
+      default:
+        return '⚪';
     }
   };
 
@@ -116,10 +126,10 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
             {projects.length} Featured
           </Badge>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
             className={isAutoPlaying ? 'bg-blue-50 border-blue-200' : ''}
@@ -145,8 +155,8 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
               {/* Image/Video Section */}
               <div className="relative overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
                 {currentProject.thumbnail_url ? (
-                  <img 
-                    src={currentProject.thumbnail_url} 
+                  <img
+                    src={currentProject.thumbnail_url}
                     alt={currentProject.name}
                     className="w-full h-full object-cover"
                   />
@@ -155,7 +165,7 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                     <Package className="h-24 w-24 text-gray-400" />
                   </div>
                 )}
-                
+
                 {/* Video overlay */}
                 {currentProject.demo_video_url && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20">
@@ -185,7 +195,9 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                 {/* Difficulty badge */}
                 <div className="absolute top-4 left-4">
                   <Badge className={getDifficultyColor(currentProject.difficulty_level)}>
-                    <span className="mr-1">{getDifficultyIcon(currentProject.difficulty_level)}</span>
+                    <span className="mr-1">
+                      {getDifficultyIcon(currentProject.difficulty_level)}
+                    </span>
                     {currentProject.difficulty_level}
                   </Badge>
                 </div>
@@ -197,8 +209,8 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                       key={index}
                       onClick={() => goToSlide(index)}
                       className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                        index === currentIndex 
-                          ? 'bg-white shadow-lg' 
+                        index === currentIndex
+                          ? 'bg-white shadow-lg'
                           : 'bg-white bg-opacity-50 hover:bg-opacity-75'
                       }`}
                     />
@@ -212,18 +224,20 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                   {/* Header */}
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="text-xs">{currentProject.category}</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        {currentProject.category}
+                      </Badge>
                       {currentProject.awards.slice(0, 2).map((award, index) => (
                         <span key={index} className="text-lg" title={award.name}>
                           {award.icon}
                         </span>
                       ))}
                     </div>
-                    
+
                     <h3 className="text-3xl font-bold text-gray-900 leading-tight">
                       {currentProject.name}
                     </h3>
-                    
+
                     <p className="text-gray-600 text-lg leading-relaxed">
                       {currentProject.description}
                     </p>
@@ -248,11 +262,15 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {currentProject.tags.slice(0, 4).map(tag => (
-                      <Badge key={tag} variant="outline" className="text-sm">{tag}</Badge>
+                    {currentProject.tags.slice(0, 4).map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-sm">
+                        {tag}
+                      </Badge>
                     ))}
                     {currentProject.tags.length > 4 && (
-                      <Badge variant="outline" className="text-sm">+{currentProject.tags.length - 4} more</Badge>
+                      <Badge variant="outline" className="text-sm">
+                        +{currentProject.tags.length - 4} more
+                      </Badge>
                     )}
                   </div>
 
@@ -274,13 +292,15 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2 text-gray-600">
                         <Eye className="h-5 w-5" />
                         <div>
                           <div className="text-sm text-gray-500">Views</div>
-                          <div className="font-medium">{currentProject.view_count.toLocaleString()}</div>
+                          <div className="font-medium">
+                            {currentProject.view_count.toLocaleString()}
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
@@ -296,10 +316,12 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
 
                 {/* Action buttons */}
                 <div className="flex items-center space-x-4 pt-6">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    onClick={() => window.location.href = `/portal/projects/${currentProject.project_id}`}
+                    onClick={() =>
+                      (window.location.href = `/portal/projects/${currentProject.project_id}`)
+                    }
                   >
                     View Project
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -349,8 +371,8 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
               <Card className="w-32 h-20 overflow-hidden">
                 <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 relative">
                   {project.thumbnail_url ? (
-                    <img 
-                      src={project.thumbnail_url} 
+                    <img
+                      src={project.thumbnail_url}
                       alt={project.name}
                       className="w-full h-full object-cover"
                     />
@@ -359,14 +381,14 @@ const FeaturedProjectCarousel: React.FC<FeaturedProjectCarouselProps> = ({ proje
                       <Package className="h-6 w-6 text-gray-400" />
                     </div>
                   )}
-                  
+
                   {/* Featured indicator */}
                   <div className="absolute top-1 right-1">
                     <div className="w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
                       <Star className="h-2 w-2 text-white fill-current" />
                     </div>
                   </div>
-                  
+
                   {/* Project name overlay */}
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1">
                     <div className="text-xs font-medium truncate">{project.name}</div>

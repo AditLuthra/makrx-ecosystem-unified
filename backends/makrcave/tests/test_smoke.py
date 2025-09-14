@@ -1,4 +1,5 @@
 import os
+
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test.db")
 os.environ.setdefault("ENVIRONMENT", "test")
 
@@ -61,7 +62,9 @@ def test_happy_path_with_override(monkeypatch):
     assert r.status_code in (200, 404, 204)
 
 
-def test_member_create_and_read(client, auth_override, seed_makerspace_and_plan):
+def test_member_create_and_read(
+    client, auth_override, seed_makerspace_and_plan
+):
     makerspace_id, plan_id = seed_makerspace_and_plan
     payload = {
         "keycloak_user_id": "kc-user-1",
@@ -69,7 +72,7 @@ def test_member_create_and_read(client, auth_override, seed_makerspace_and_plan)
         "first_name": "User",
         "last_name": "One",
         "membership_plan_id": plan_id,
-        "makerspace_id": makerspace_id
+        "makerspace_id": makerspace_id,
     }
     resp = client.post("/api/v1/members", json=payload)
     assert resp.status_code in (200, 201)
@@ -91,7 +94,9 @@ def test_notifications_list_with_override(client, auth_override):
     assert r.status_code in (200, 404, 204)
 
 
-def test_inventory_list_with_override(client, auth_override, seed_makerspace_and_plan):
+def test_inventory_list_with_override(
+    client, auth_override, seed_makerspace_and_plan
+):
     makerspace_id, _ = seed_makerspace_and_plan
     r = client.get(f"/api/v1/inventory?makerspace_id={makerspace_id}")
     assert r.status_code in (200, 404, 204)

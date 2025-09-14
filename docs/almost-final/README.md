@@ -7,6 +7,7 @@
 MakrX is a comprehensive ecosystem designed to connect makers, inventors, and creative communities with the tools, spaces, and resources they need to design, prototype, and manufacture anything — efficiently, collaboratively, and at scale.
 
 ### Vision Statement
+
 To democratize making by providing an integrated platform that bridges the gap between digital design and physical creation, fostering global maker communities through shared knowledge, resources, and collaboration.
 
 ## 🏗️ Ecosystem Architecture
@@ -38,17 +39,18 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 
 ## 🌐 Domain Breakdown
 
-| Domain | URL | Purpose | Target Users |
-|--------|-----|---------|--------------|
-| **MakrX.org** | `https://makrx.org` | **Public Gateway** - Ecosystem overview, service information, external app links | All visitors |
-| **MakrCave** | `https://makrcave.com` | Makerspace management, booking, community features | Makerspace admins, members |
-| **MakrX.Store** | `https://makrx.store` | E-commerce marketplace, tools and components | Customers, makers |
-| **3D.MakrX.Store** | `https://3d.makrx.store` | Custom fabrication services, upload & quote | Designers, makers |
-| **Provider Panel** | `https://providers.makrx.org` | Service provider portal, job management | Service providers |
+| Domain             | URL                           | Purpose                                                                          | Target Users               |
+| ------------------ | ----------------------------- | -------------------------------------------------------------------------------- | -------------------------- |
+| **MakrX.org**      | `https://makrx.org`           | **Public Gateway** - Ecosystem overview, service information, external app links | All visitors               |
+| **MakrCave**       | `https://makrcave.com`        | Makerspace management, booking, community features                               | Makerspace admins, members |
+| **MakrX.Store**    | `https://makrx.store`         | E-commerce marketplace, tools and components                                     | Customers, makers          |
+| **3D.MakrX.Store** | `https://3d.makrx.store`      | Custom fabrication services, upload & quote                                      | Designers, makers          |
+| **Provider Panel** | `https://providers.makrx.org` | Service provider portal, job management                                          | Service providers          |
 
 ## 🔧 Quick Start
 
 ### Prerequisites
+
 - Docker & Docker Compose
 - Node.js 18+
 - Git
@@ -56,18 +58,21 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 ### Local Development Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd makrx-ecosystem
    ```
 
 2. **Environment Setup**
+
    ```bash
    cp .env.production.template .env
    # Edit .env with your local configuration
    ```
 
 3. **Start the ecosystem**
+
    ```bash
    docker-compose up -d
    npm install
@@ -76,40 +81,44 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 
 4. **Access the applications**
    - Gateway: `http://localhost:3000`
-   - MakrCave: `http://localhost:3001` 
+   - MakrCave: `http://localhost:3001`
    - Store: `http://localhost:3002`
    - API Documentation: `http://localhost:8000/docs`
 
 ## 👥 User Roles & Permissions
 
-| Role | Global Access | Domain Access | Key Permissions |
-|------|---------------|---------------|----------------|
-| **Super Admin** | Full ecosystem | All domains | System configuration, user management |
-| **Admin** | Organization-wide | Assigned domains | Feature flags, analytics, billing |
-| **Makerspace Admin** | Makerspace-scoped | MakrCave primary | Member management, inventory, equipment |
-| **Service Provider** | Provider-scoped | MakrCave, Store | Job management, order fulfillment |
-| **Member** | Community access | All domains | Equipment booking, project collaboration |
-| **Store Customer** | Public + purchases | Store primary | Product ordering, account management |
-| **Guest** | Public content | Landing pages | Browse, register, explore |
+| Role                 | Global Access      | Domain Access    | Key Permissions                          |
+| -------------------- | ------------------ | ---------------- | ---------------------------------------- |
+| **Super Admin**      | Full ecosystem     | All domains      | System configuration, user management    |
+| **Admin**            | Organization-wide  | Assigned domains | Feature flags, analytics, billing        |
+| **Makerspace Admin** | Makerspace-scoped  | MakrCave primary | Member management, inventory, equipment  |
+| **Service Provider** | Provider-scoped    | MakrCave, Store  | Job management, order fulfillment        |
+| **Member**           | Community access   | All domains      | Equipment booking, project collaboration |
+| **Store Customer**   | Public + purchases | Store primary    | Product ordering, account management     |
+| **Guest**            | Public content     | Landing pages    | Browse, register, explore                |
 
 ## 🏃‍♂️ Key User Flows
 
 ### 1. New User Onboarding
+
 ```
 Register → Email Verification → Profile Setup → Domain Selection → Feature Access
 ```
 
 ### 2. Makerspace Workflow
+
 ```
 Browse Makerspaces → Join/Apply → Equipment Training → Skill Certification → Book Equipment → Create Projects
 ```
 
 ### 3. E-commerce Flow
+
 ```
 Browse Products → Add to Cart → Checkout → Payment → Order Fulfillment → Delivery
 ```
 
 ### 4. Fabrication Service
+
 ```
 Upload STL → Auto-quote → Select Provider → Payment → Production → Quality Check → Shipping
 ```
@@ -117,6 +126,7 @@ Upload STL → Auto-quote → Select Provider → Payment → Production → Qua
 ## 🚀 Features
 
 ### Core Platform Features
+
 - **Single Sign-On (SSO)** - Unified authentication across all domains
 - **Role-Based Access Control** - Granular permissions system
 - **Feature Flags** - Dynamic feature management
@@ -124,6 +134,7 @@ Upload STL → Auto-quote → Select Provider → Payment → Production → Qua
 - **API-First Architecture** - Extensible and integrable
 
 ### MakrCave Features
+
 - **Smart Inventory Management** - Auto-tracking with Store integration
 - **Equipment Reservations** - Skill-gated booking system
 - **Project Management** - BOM collaboration and version control
@@ -131,6 +142,7 @@ Upload STL → Auto-quote → Select Provider → Payment → Production → Qua
 - **Analytics Dashboard** - Usage metrics and insights
 
 ### Store Features
+
 - **Product Catalog** - Maker-focused inventory
 - **Instant Fabrication Quotes** - STL upload with auto-pricing
 - **BOM Integration** - Direct ordering from MakrCave projects
@@ -164,12 +176,14 @@ makrx-ecosystem/
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **Framework**: React 18 (Gateway, MakrCave), Next.js 14 (Store)
 - **Styling**: Tailwind CSS, shadcn/ui components
 - **State**: React Context, TanStack Query
 - **Routing**: React Router, Next.js App Router
 
 ### Backend
+
 - **API**: FastAPI (Python)
 - **Database**: PostgreSQL
 - **Authentication**: Keycloak
@@ -178,6 +192,7 @@ makrx-ecosystem/
 - **Search**: Elasticsearch (optional)
 
 ### Infrastructure
+
 - **Containerization**: Docker
 - **Orchestration**: Docker Compose / Kubernetes
 - **Proxy**: Nginx
@@ -197,6 +212,7 @@ makrx-ecosystem/
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details on:
+
 - Code style and standards
 - Pull request process
 - Feature flag usage

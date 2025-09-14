@@ -18,7 +18,7 @@ import {
   Upload,
   CheckCircle,
   AlertCircle,
-  Info
+  Info,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import GeneralSettingsForm from '../../components/settings/GeneralSettingsForm';
@@ -111,17 +111,17 @@ const Settings: React.FC = () => {
         setSettings(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load settings",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load settings',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
       toast({
-        title: "Error",
-        description: "Failed to load settings",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load settings',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -129,7 +129,7 @@ const Settings: React.FC = () => {
   };
 
   const updateSettings = (section: string, newData: Partial<MakerspaceSettings>) => {
-    setSettings(prev => ({ ...prev, ...newData }));
+    setSettings((prev) => ({ ...prev, ...newData }));
     setHasUnsavedChanges(true);
   };
 
@@ -149,23 +149,23 @@ const Settings: React.FC = () => {
         setHasUnsavedChanges(false);
         setLastSaved(new Date());
         toast({
-          title: "Success",
-          description: "Settings saved successfully",
+          title: 'Success',
+          description: 'Settings saved successfully',
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to save settings",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to save settings',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error saving settings:', error);
       toast({
-        title: "Error",
-        description: "Failed to save settings",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save settings',
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -188,23 +188,23 @@ const Settings: React.FC = () => {
         setHasUnsavedChanges(false);
         setLastSaved(new Date());
         toast({
-          title: "Success",
+          title: 'Success',
           description: `${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully`,
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to save settings",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to save settings',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error saving section settings:', error);
       toast({
-        title: "Error",
-        description: "Failed to save settings",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save settings',
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -227,30 +227,34 @@ const Settings: React.FC = () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         toast({
-          title: "Success",
-          description: "Settings exported successfully",
+          title: 'Success',
+          description: 'Settings exported successfully',
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to export settings",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to export settings',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error exporting settings:', error);
       toast({
-        title: "Error",
-        description: "Failed to export settings",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to export settings',
+        variant: 'destructive',
       });
     }
   };
 
   const resetToDefaults = async () => {
-    if (!confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to reset all settings to defaults? This action cannot be undone.',
+      )
+    ) {
       return;
     }
 
@@ -265,17 +269,17 @@ const Settings: React.FC = () => {
 
       // Fetch new default settings
       await fetchSettings();
-      
+
       toast({
-        title: "Success",
-        description: "Settings reset to defaults",
+        title: 'Success',
+        description: 'Settings reset to defaults',
       });
     } catch (error) {
       console.error('Error resetting settings:', error);
       toast({
-        title: "Error",
-        description: "Failed to reset settings",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to reset settings',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -321,8 +325,8 @@ const Settings: React.FC = () => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button 
-            onClick={saveSettings} 
+          <Button
+            onClick={saveSettings}
             disabled={saving || !hasUnsavedChanges}
             className="min-w-24"
           >
@@ -346,8 +350,9 @@ const Settings: React.FC = () => {
             <div className="text-sm text-blue-800">
               <p className="font-medium">Settings Management</p>
               <p className="text-blue-700 mt-1">
-                Configure your makerspace operations including access control, billing, inventory management, and appearance. 
-                Changes are automatically validated and will take effect immediately after saving.
+                Configure your makerspace operations including access control, billing, inventory
+                management, and appearance. Changes are automatically validated and will take effect
+                immediately after saving.
               </p>
             </div>
           </div>
@@ -428,8 +433,6 @@ const Settings: React.FC = () => {
             saving={saving}
           />
         </TabsContent>
-
-
       </Tabs>
 
       {/* Quick Actions */}
@@ -447,7 +450,11 @@ const Settings: React.FC = () => {
               <Download className="h-4 w-4 mr-2" />
               Export Settings
             </Button>
-            <Button variant="outline" className="text-red-600 hover:text-red-700" onClick={resetToDefaults}>
+            <Button
+              variant="outline"
+              className="text-red-600 hover:text-red-700"
+              onClick={resetToDefaults}
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               Reset to Defaults
             </Button>

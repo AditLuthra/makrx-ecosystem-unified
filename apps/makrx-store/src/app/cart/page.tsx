@@ -4,9 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  Plus, Minus, Trash2, ArrowLeft, ShoppingBag, 
-  Truck, Tag, Gift, CreditCard, ShieldCheck 
+import {
+  Plus,
+  Minus,
+  Trash2,
+  ArrowLeft,
+  ShoppingBag,
+  Truck,
+  Tag,
+  Gift,
+  CreditCard,
+  ShieldCheck,
 } from 'lucide-react';
 import { api, type Cart, type CartItem, formatPrice } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,7 +25,7 @@ export default function CartPage() {
   const router = useRouter();
   const { isAuthenticated, login } = useAuth();
   const { addNotification } = useNotifications();
-  
+
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<{ [key: number]: boolean }>({});
@@ -60,22 +68,27 @@ export default function CartPage() {
   const updateCartItem = async (itemId: number, newQuantity: number) => {
     if (!cart) return;
 
-    setUpdating(prev => ({ ...prev, [itemId]: true }));
-    
+    setUpdating((prev) => ({ ...prev, [itemId]: true }));
+
     try {
       if (newQuantity === 0) {
         await api.removeFromCart(itemId);
-        const removedItem = cart.items.find(item => item.id === itemId);
-        setCart(prev => prev ? {
-          ...prev,
-          items: prev.items.filter(item => item.id !== itemId),
-          item_count: prev.item_count - 1,
-          subtotal: prev.subtotal - (prev.items.find(item => item.id === itemId)?.total_price || 0)
-        } : null);
+        const removedItem = cart.items.find((item) => item.id === itemId);
+        setCart((prev) =>
+          prev
+            ? {
+                ...prev,
+                items: prev.items.filter((item) => item.id !== itemId),
+                item_count: prev.item_count - 1,
+                subtotal:
+                  prev.subtotal - (prev.items.find((item) => item.id === itemId)?.total_price || 0),
+              }
+            : null,
+        );
         addNotification({
           type: 'success',
           title: 'Item Removed',
-          message: `${removedItem?.product.name} removed from cart`
+          message: `${removedItem?.product.name} removed from cart`,
         });
       } else {
         await api.updateCartItem(itemId, newQuantity);
@@ -84,7 +97,7 @@ export default function CartPage() {
         addNotification({
           type: 'success',
           title: 'Cart Updated',
-          message: 'Quantity updated successfully'
+          message: 'Quantity updated successfully',
         });
       }
     } catch (error) {
@@ -92,31 +105,36 @@ export default function CartPage() {
       addNotification({
         type: 'error',
         title: 'Update Failed',
-        message: 'Failed to update cart item. Please try again.'
+        message: 'Failed to update cart item. Please try again.',
       });
     } finally {
-      setUpdating(prev => ({ ...prev, [itemId]: false }));
+      setUpdating((prev) => ({ ...prev, [itemId]: false }));
     }
   };
 
   const removeCartItem = async (itemId: number) => {
     if (!cart) return;
-    
-    setUpdating(prev => ({ ...prev, [itemId]: true }));
-    
+
+    setUpdating((prev) => ({ ...prev, [itemId]: true }));
+
     try {
       await api.removeFromCart(itemId);
-      setCart(prev => prev ? {
-        ...prev,
-        items: prev.items.filter(item => item.id !== itemId),
-        item_count: prev.item_count - 1,
-        subtotal: prev.subtotal - (prev.items.find(item => item.id === itemId)?.total_price || 0)
-      } : null);
+      setCart((prev) =>
+        prev
+          ? {
+              ...prev,
+              items: prev.items.filter((item) => item.id !== itemId),
+              item_count: prev.item_count - 1,
+              subtotal:
+                prev.subtotal - (prev.items.find((item) => item.id === itemId)?.total_price || 0),
+            }
+          : null,
+      );
     } catch (error) {
       console.error('Failed to remove cart item:', error);
       alert('Failed to remove cart item');
     } finally {
-      setUpdating(prev => ({ ...prev, [itemId]: false }));
+      setUpdating((prev) => ({ ...prev, [itemId]: false }));
     }
   };
 
@@ -140,7 +158,7 @@ export default function CartPage() {
       login();
       return;
     }
-    
+
     router.push('/checkout');
   };
 
@@ -234,7 +252,7 @@ export default function CartPage() {
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Cart Items</h2>
               </div>
-              
+
               <div className="divide-y divide-gray-200">
                 {cart.items.map((item) => (
                   <div key={item.id} className="p-6">
@@ -260,7 +278,7 @@ export default function CartPage() {
                       <div className="ml-6 flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <Link 
+                            <Link
                               href={`/product/${item.product?.slug}`}
                               className="text-lg font-medium text-gray-900 hover:text-blue-600"
                             >
@@ -303,7 +321,7 @@ export default function CartPage() {
                               <Plus className="h-4 w-4" />
                             </button>
                           </div>
-                          
+
                           <div className="text-right">
                             <p className="text-lg font-semibold text-gray-900">
                               {formatPrice(item.total_price, cart.currency)}
@@ -326,7 +344,7 @@ export default function CartPage() {
             {/* Shipping Estimator */}
             <ShippingEstimator
               subtotal={subtotal}
-              items={cart.items.map(item => ({
+              items={cart.items.map((item) => ({
                 id: item.id,
                 quantity: item.quantity,
                 weight: 0.5, // Default weight in kg
@@ -341,9 +359,7 @@ export default function CartPage() {
 
               {/* Coupon Code */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Coupon Code
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Coupon Code</label>
                 <div className="flex space-x-2">
                   <input
                     type="text"
@@ -384,7 +400,9 @@ export default function CartPage() {
                       <Tag className="h-4 w-4 mr-1" />
                       Coupon Discount
                     </span>
-                    <span className="font-medium">-{formatPrice(discountAmount, cart.currency)}</span>
+                    <span className="font-medium">
+                      -{formatPrice(discountAmount, cart.currency)}
+                    </span>
                   </div>
                 )}
 
@@ -425,7 +443,7 @@ export default function CartPage() {
                 <CreditCard className="h-5 w-5 mr-2" />
                 Proceed to Checkout
               </button>
-              
+
               {/* Security Badge */}
               <div className="mt-4 flex items-center justify-center text-sm text-gray-600">
                 <ShieldCheck className="h-4 w-4 mr-1" />
@@ -464,7 +482,7 @@ export default function CartPage() {
                 <p className="text-sm text-gray-600">On orders over ₹6,225</p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-center space-x-3">
               <ShieldCheck className="h-8 w-8 text-blue-600" />
               <div>
@@ -472,7 +490,7 @@ export default function CartPage() {
                 <p className="text-sm text-gray-600">SSL encrypted checkout</p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-center space-x-3">
               <Gift className="h-8 w-8 text-purple-600" />
               <div>

@@ -3,6 +3,7 @@
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 20+ with npm
 - Python 3.11+
 - PostgreSQL 14+
@@ -12,12 +13,14 @@
 ### Initial Setup
 
 1. **Clone Repository**
+
 ```bash
 git clone <repository-url>
 cd makrcave
 ```
 
 2. **Install Dependencies**
+
 ```bash
 # Frontend dependencies
 npm install
@@ -29,6 +32,7 @@ cd ..
 ```
 
 3. **Environment Configuration**
+
 ```bash
 # Copy environment templates
 cp .env.example .env.local
@@ -40,6 +44,7 @@ nano backend/.env
 ```
 
 4. **Database Setup**
+
 ```bash
 # Start PostgreSQL
 sudo systemctl start postgresql
@@ -53,6 +58,7 @@ python init_db.py
 ```
 
 5. **Start Development Servers**
+
 ```bash
 # Terminal 1: Backend API (Port 8000)
 cd backend
@@ -65,6 +71,7 @@ npm run dev
 ## Development Workflow
 
 ### Branch Strategy
+
 ```
 main                    # Production branch
 ├── develop            # Development integration
@@ -76,12 +83,14 @@ main                    # Production branch
 ### Code Standards
 
 #### Frontend (TypeScript/React)
+
 - **ESLint + Prettier** for code formatting
 - **TypeScript strict mode** enabled
 - **React best practices** with hooks and functional components
 - **Tailwind CSS** for styling
 
 #### Backend (Python/FastAPI)
+
 - **Black + isort** for code formatting
 - **Type hints** required for all functions
 - **Pydantic models** for data validation
@@ -90,6 +99,7 @@ main                    # Production branch
 ### Git Workflow
 
 1. **Create Feature Branch**
+
 ```bash
 git checkout develop
 git pull origin develop
@@ -97,6 +107,7 @@ git checkout -b feature/new-feature
 ```
 
 2. **Make Changes**
+
 ```bash
 # Make your changes
 git add .
@@ -104,6 +115,7 @@ git commit -m "feat: add new feature functionality"
 ```
 
 3. **Push and Create PR**
+
 ```bash
 git push origin feature/new-feature
 # Create Pull Request on GitHub
@@ -114,6 +126,7 @@ git push origin feature/new-feature
 ### Linting and Formatting
 
 #### Frontend
+
 ```bash
 # Run ESLint
 npm run lint
@@ -129,6 +142,7 @@ npm run typecheck
 ```
 
 #### Backend
+
 ```bash
 cd backend
 
@@ -146,6 +160,7 @@ flake8 .
 ### Testing
 
 #### Frontend Testing
+
 ```bash
 # Unit tests with Jest
 npm run test
@@ -158,6 +173,7 @@ npm run test:coverage
 ```
 
 #### Backend Testing
+
 ```bash
 cd backend
 
@@ -174,6 +190,7 @@ pytest tests/integration/
 ## Database Management
 
 ### Migrations
+
 ```bash
 cd backend
 
@@ -188,6 +205,7 @@ alembic downgrade -1
 ```
 
 ### Database Reset
+
 ```bash
 cd backend
 
@@ -203,6 +221,7 @@ python init_db.py --seed
 ### Creating New Endpoints
 
 1. **Define Pydantic Schema**
+
 ```python
 # backend/schemas/new_entity.py
 from pydantic import BaseModel
@@ -219,6 +238,7 @@ class NewEntityResponse(BaseModel):
 ```
 
 2. **Create Database Model**
+
 ```python
 # backend/models/new_entity.py
 from sqlalchemy import Column, String, DateTime
@@ -226,7 +246,7 @@ from .base import Base
 
 class NewEntity(Base):
     __tablename__ = "new_entities"
-    
+
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String)
@@ -234,6 +254,7 @@ class NewEntity(Base):
 ```
 
 3. **Implement CRUD Operations**
+
 ```python
 # backend/crud/new_entity.py
 from sqlalchemy.orm import Session
@@ -249,6 +270,7 @@ def create_new_entity(db: Session, entity_data: NewEntityCreate):
 ```
 
 4. **Create API Routes**
+
 ```python
 # backend/routes/new_entity.py
 from fastapi import APIRouter, Depends
@@ -268,6 +290,7 @@ def create_new_entity(
 ```
 
 ### API Documentation
+
 - **Interactive docs**: http://localhost:8000/docs
 - **OpenAPI schema**: http://localhost:8000/openapi.json
 - **Redoc**: http://localhost:8000/redoc
@@ -275,6 +298,7 @@ def create_new_entity(
 ## Frontend Development
 
 ### Component Structure
+
 ```tsx
 // components/NewComponent.tsx
 import { useState } from 'react';
@@ -286,20 +310,18 @@ interface NewComponentProps {
   className?: string;
 }
 
-export function NewComponent({ 
-  title, 
-  variant = 'primary',
-  className 
-}: NewComponentProps) {
+export function NewComponent({ title, variant = 'primary', className }: NewComponentProps) {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
-    <div className={cn(
-      'base-styles',
-      variant === 'primary' && 'primary-styles',
-      variant === 'secondary' && 'secondary-styles',
-      className
-    )}>
+    <div
+      className={cn(
+        'base-styles',
+        variant === 'primary' && 'primary-styles',
+        variant === 'secondary' && 'secondary-styles',
+        className,
+      )}
+    >
       <h2>{title}</h2>
       {/* Component content */}
     </div>
@@ -308,11 +330,13 @@ export function NewComponent({
 ```
 
 ### State Management
+
 - **React Context** for global state
 - **React Query** for server state
 - **useState/useReducer** for local state
 
 ### Styling Guidelines
+
 - **Tailwind CSS** utility classes
 - **CSS variables** for themes
 - **Responsive design** with mobile-first approach
@@ -321,6 +345,7 @@ export function NewComponent({
 ## Debugging
 
 ### Frontend Debugging
+
 ```bash
 # Chrome DevTools
 # React DevTools extension
@@ -332,6 +357,7 @@ npm run start
 ```
 
 ### Backend Debugging
+
 ```python
 # Add breakpoints
 import pdb; pdb.set_trace()
@@ -348,12 +374,14 @@ logging.basicConfig(level=logging.DEBUG)
 ## Performance Optimization
 
 ### Frontend
+
 - **Code splitting** with dynamic imports
 - **Image optimization** with Next.js Image component
 - **Bundle analysis** with webpack-bundle-analyzer
 - **Lighthouse** performance audits
 
 ### Backend
+
 - **Database indexing** for query optimization
 - **Caching** with Redis
 - **Connection pooling** for database
@@ -362,6 +390,7 @@ logging.basicConfig(level=logging.DEBUG)
 ## Security Checklist
 
 ### Frontend
+
 - [ ] Input validation on all forms
 - [ ] XSS protection
 - [ ] CSRF token implementation
@@ -369,6 +398,7 @@ logging.basicConfig(level=logging.DEBUG)
 - [ ] Content Security Policy
 
 ### Backend
+
 - [ ] Input sanitization
 - [ ] SQL injection prevention
 - [ ] Authentication on all protected routes
@@ -378,11 +408,13 @@ logging.basicConfig(level=logging.DEBUG)
 ## Deployment
 
 ### Development Environment
+
 - **Local development** with hot reload
 - **Docker containers** for consistent environments
 - **Environment variables** for configuration
 
 ### Production Deployment
+
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
 ## Troubleshooting
@@ -390,16 +422,19 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 ### Common Issues
 
 #### Frontend
+
 - **Node modules issues**: Delete `node_modules` and `package-lock.json`, run `npm install`
 - **TypeScript errors**: Check `tsconfig.json` configuration
 - **Build failures**: Check Next.js configuration and dependencies
 
 #### Backend
+
 - **Import errors**: Check Python path and virtual environment
 - **Database connection**: Verify PostgreSQL is running and credentials are correct
 - **Permission errors**: Check file permissions and user privileges
 
 ### Getting Help
+
 - Check existing GitHub issues
 - Review documentation
 - Ask questions in team chat

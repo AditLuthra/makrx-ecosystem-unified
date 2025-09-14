@@ -64,7 +64,10 @@ class UnifiedAuth:
             )
 
     async def verify_jwt(
-        self, token: str, expected_audience: str, request_id: Optional[str] = None
+        self,
+        token: str,
+        expected_audience: str,
+        request_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Verify JWT with exact rules:
@@ -173,7 +176,8 @@ auth = UnifiedAuth()
 
 
 async def verify_service_jwt(
-    request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> Dict[str, Any]:
     """
     Service→Service auth: client-credentials JWT (KC) or mTLS for internal bridges
@@ -189,9 +193,9 @@ async def verify_service_jwt(
         )
 
         # Verify this is a service token (not user token)
-        if payload.get("typ") != "Bearer" or "service-account" not in payload.get(
-            "sub", ""
-        ):
+        if payload.get(
+            "typ"
+        ) != "Bearer" or "service-account" not in payload.get("sub", ""):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=AuthError(
@@ -219,7 +223,8 @@ async def verify_service_jwt(
 
 
 async def get_current_user(
-    request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> Dict[str, Any]:
     """
     Frontend user authentication
@@ -355,7 +360,9 @@ class RoleChecker:
         self.required_roles = required_roles
 
     def __call__(
-        self, request: Request, current_user: Dict[str, Any] = Depends(get_current_user)
+        self,
+        request: Request,
+        current_user: Dict[str, Any] = Depends(get_current_user),
     ):
         user_roles = current_user.get("roles", [])
 
@@ -379,7 +386,9 @@ class RoleChecker:
 # Convenience role checkers
 require_admin = RoleChecker(["admin", "superadmin"])
 require_provider = RoleChecker(["provider", "admin", "superadmin"])
-require_makerspace_admin = RoleChecker(["makerspace_admin", "admin", "superadmin"])
+require_makerspace_admin = RoleChecker(
+    ["makerspace_admin", "admin", "superadmin"]
+)
 
 # ==========================================
 # Idempotency Key Handler
@@ -416,7 +425,9 @@ class IdempotencyChecker:
             "timestamp": datetime.utcnow().isoformat(),
         }
 
-    async def get_cached_result(self, key: str, operation: str) -> Optional[Any]:
+    async def get_cached_result(
+        self, key: str, operation: str
+    ) -> Optional[Any]:
         """Get cached result for duplicate request"""
         cache_key = f"{operation}:{key}"
         cached = self.cache.get(cache_key)

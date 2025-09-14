@@ -51,7 +51,7 @@ export default function Hero({ content, variant = 'default', micrositeSlug, them
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -70,26 +70,16 @@ export default function Hero({ content, variant = 'default', micrositeSlug, them
       {/* Background */}
       <div className="absolute inset-0 z-0">
         {content.backgroundVideo ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          >
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
             <source src={content.backgroundVideo} type="video/mp4" />
           </video>
         ) : heroBackground ? (
-          <img
-            src={heroBackground}
-            alt="Hero background"
-            className="w-full h-full object-cover"
-          />
+          <img src={heroBackground} alt="Hero background" className="w-full h-full object-cover" />
         ) : (
           <div
             className="w-full h-full"
             style={{
-              background: `linear-gradient(135deg, ${primaryColor}, ${theme?.tokens?.accent || '#8B5CF6'})`
+              background: `linear-gradient(135deg, ${primaryColor}, ${theme?.tokens?.accent || '#8B5CF6'})`,
             }}
           />
         )}
@@ -117,16 +107,12 @@ export default function Hero({ content, variant = 'default', micrositeSlug, them
 
           {/* Subtitle */}
           {content.subtitle && (
-            <p className="text-xl md:text-2xl text-white/90 mb-6 font-medium">
-              {content.subtitle}
-            </p>
+            <p className="text-xl md:text-2xl text-white/90 mb-6 font-medium">{content.subtitle}</p>
           )}
 
           {/* Description */}
           {content.description && (
-            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
-              {content.description}
-            </p>
+            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">{content.description}</p>
           )}
 
           {/* Event Info */}
@@ -152,9 +138,7 @@ export default function Hero({ content, variant = 'default', micrositeSlug, them
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {content.stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-3xl font-bold text-white mb-2">
-                    {stat.value}
-                  </div>
+                  <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
                   <div className="text-white/80">{stat.label}</div>
                 </div>
               ))}
@@ -167,11 +151,11 @@ export default function Hero({ content, variant = 'default', micrositeSlug, them
               {content.ctaButtons.map((button, index) => {
                 const isExternal = button.href.startsWith('http');
                 const href = isExternal ? button.href : `/m/${micrositeSlug}${button.href}`;
-                
+
                 const buttonVariants = {
                   primary: 'default',
                   secondary: 'secondary',
-                  outline: 'outline'
+                  outline: 'outline',
                 };
 
                 const ButtonComponent = (

@@ -10,7 +10,7 @@ import {
   Calendar,
   Power,
   PowerOff,
-  Clock
+  Clock,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -51,7 +51,7 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
   onView,
   onEdit,
   onStatusChange,
-  getStatusBadge
+  getStatusBadge,
 }) => {
   if (loading) {
     return (
@@ -88,7 +88,7 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -99,13 +99,27 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
           <table className="w-full table-mobile">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Makerspace</th>
-                <th className="hidden sm:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Status</th>
-                <th className="hidden md:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Admin(s)</th>
-                <th className="hidden lg:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Users</th>
-                <th className="hidden lg:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Revenue</th>
-                <th className="hidden xl:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Created</th>
-                <th className="text-right py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">Actions</th>
+                <th className="text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Makerspace
+                </th>
+                <th className="hidden sm:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Status
+                </th>
+                <th className="hidden md:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Admin(s)
+                </th>
+                <th className="hidden lg:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Users
+                </th>
+                <th className="hidden lg:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Revenue
+                </th>
+                <th className="hidden xl:table-cell text-left py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Created
+                </th>
+                <th className="text-right py-3 px-3 sm:px-6 text-xs sm:text-sm font-medium text-gray-900">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -113,7 +127,9 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
                 <tr key={makerspace.id} className="hover:bg-gray-50">
                   <td className="py-3 px-3 sm:py-4 sm:px-6">
                     <div>
-                      <div className="font-medium text-gray-900 text-sm sm:text-base">{makerspace.name}</div>
+                      <div className="font-medium text-gray-900 text-sm sm:text-base">
+                        {makerspace.name}
+                      </div>
                       <div className="text-xs sm:text-sm text-gray-600 flex items-center gap-1 mt-1">
                         <MapPin className="h-3 w-3 flex-shrink-0" />
                         <span className="truncate">{makerspace.location}</span>
@@ -204,7 +220,7 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {makerspace.status === 'active' ? (
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => onStatusChange(makerspace.id, 'suspended')}
                               className="text-red-600"
                             >
@@ -212,7 +228,7 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
                               Suspend
                             </DropdownMenuItem>
                           ) : makerspace.status === 'suspended' ? (
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => onStatusChange(makerspace.id, 'active')}
                               className="text-green-600"
                             >
@@ -221,14 +237,14 @@ const MakerspaceListTable: React.FC<MakerspaceListTableProps> = ({
                             </DropdownMenuItem>
                           ) : makerspace.status === 'pending' ? (
                             <>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => onStatusChange(makerspace.id, 'active')}
                                 className="text-green-600"
                               >
                                 <Power className="h-4 w-4 mr-2" />
                                 Approve
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => onStatusChange(makerspace.id, 'suspended')}
                                 className="text-red-600"
                               >

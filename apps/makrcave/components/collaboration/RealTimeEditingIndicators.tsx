@@ -31,7 +31,7 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
   projectId,
   elementId,
   showViewers = false,
-  className = ''
+  className = '',
 }) => {
   const { user } = useAuth();
   const { addEventListener, isConnected } = useRealTimeUpdates();
@@ -51,7 +51,7 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
       user_id: user.id,
       user_name: user.name || user.email,
       element: isEditing ? element : null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Debounce broadcasts to avoid spam
@@ -62,15 +62,15 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
     broadcastTimer.current = setTimeout(async () => {
       const eventString = JSON.stringify(eventData);
       if (lastBroadcast.current === eventString) return;
-      
+
       lastBroadcast.current = eventString;
-      
+
       try {
         const headers = await getHeaders({ 'Content-Type': 'application/json' });
         await fetch('/api/v1/collaboration/editing', {
           method: 'POST',
           headers,
-          body: eventString
+          body: eventString,
         });
       } catch (error) {
         console.error('Failed to broadcast editing status:', error);
@@ -88,15 +88,15 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
       user_id: user.id,
       user_name: user.name || user.email,
       view_location: viewLocation,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     getHeaders({ 'Content-Type': 'application/json' }).then((headers) => {
       fetch('/api/v1/collaboration/viewing', {
         method: 'POST',
         headers,
-        body: JSON.stringify(eventData)
-      }).catch(error => {
+        body: JSON.stringify(eventData),
+      }).catch((error) => {
         console.error('Failed to broadcast viewing status:', error);
       });
     });
@@ -109,14 +109,14 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
     const removeListeners = [
       addEventListener('collaboration.editing', (event) => {
         if (event.payload.project_id === projectId && event.payload.user_id !== user?.id) {
-          setEditingUsers(prev => {
-            const filtered = prev.filter(u => u.user_id !== event.payload.user_id);
+          setEditingUsers((prev) => {
+            const filtered = prev.filter((u) => u.user_id !== event.payload.user_id);
             if (event.payload.element) {
               filtered.push({
                 user_id: event.payload.user_id,
                 user_name: event.payload.user_name,
                 element: event.payload.element,
-                timestamp: new Date(event.payload.timestamp)
+                timestamp: new Date(event.payload.timestamp),
               });
             }
             return filtered;
@@ -125,23 +125,27 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
       }),
 
       addEventListener('collaboration.viewing', (event) => {
-        if (event.payload.project_id === projectId && event.payload.user_id !== user?.id && showViewers) {
-          setViewingUsers(prev => {
-            const filtered = prev.filter(u => u.user_id !== event.payload.user_id);
+        if (
+          event.payload.project_id === projectId &&
+          event.payload.user_id !== user?.id &&
+          showViewers
+        ) {
+          setViewingUsers((prev) => {
+            const filtered = prev.filter((u) => u.user_id !== event.payload.user_id);
             filtered.push({
               user_id: event.payload.user_id,
               user_name: event.payload.user_name,
               view_location: event.payload.view_location,
-              timestamp: new Date(event.payload.timestamp)
+              timestamp: new Date(event.payload.timestamp),
             });
             return filtered;
           });
         }
-      })
+      }),
     ];
 
     return () => {
-      removeListeners.forEach(remove => remove());
+      removeListeners.forEach((remove) => remove());
     };
   }, [isConnected, projectId, addEventListener, user?.id, showViewers]);
 
@@ -151,12 +155,12 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
       const now = new Date();
       const timeout = 30000; // 30 seconds
 
-      setEditingUsers(prev => 
-        prev.filter(u => now.getTime() - u.timestamp.getTime() < timeout)
+      setEditingUsers((prev) =>
+        prev.filter((u) => now.getTime() - u.timestamp.getTime() < timeout),
       );
 
-      setViewingUsers(prev => 
-        prev.filter(u => now.getTime() - u.timestamp.getTime() < timeout)
+      setViewingUsers((prev) =>
+        prev.filter((u) => now.getTime() - u.timestamp.getTime() < timeout),
       );
     }, 5000);
 
@@ -172,12 +176,12 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
 
   // Get users editing specific element
   const getUsersEditingElement = (element: string) => {
-    return editingUsers.filter(u => u.element === element);
+    return editingUsers.filter((u) => u.element === element);
   };
 
   // Get users viewing current location
   const getUsersViewingLocation = (location: string) => {
-    return viewingUsers.filter(u => u.view_location === location);
+    return viewingUsers.filter((u) => u.view_location === location);
   };
 
   // Render editing indicators for a specific element
@@ -195,14 +199,14 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
               </AvatarFallback>
             </Avatar>
             <Edit3 className="absolute -top-1 -right-1 h-3 w-3 text-blue-500 bg-white rounded-full p-0.5" />
-            
+
             {/* Tooltip */}
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
               {user.user_name} is editing
             </div>
           </div>
         ))}
-        
+
         {users.length > 3 && (
           <Badge variant="outline" className="h-5 text-xs px-1">
             +{users.length - 3}
@@ -215,7 +219,7 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
   // Render viewing indicators for current location
   const renderViewingIndicators = (location: string) => {
     if (!showViewers) return null;
-    
+
     const users = getUsersViewingLocation(location);
     if (users.length === 0) return null;
 
@@ -229,14 +233,14 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
                 {user.user_name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            
+
             {/* Tooltip */}
             <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
               {user.user_name} is viewing
             </div>
           </div>
         ))}
-        
+
         {users.length > 3 && (
           <Badge variant="outline" className="h-4 text-xs px-1">
             +{users.length - 3}
@@ -251,7 +255,7 @@ const RealTimeEditingIndicators: React.FC<RealTimeEditingIndicatorsProps> = ({
     return {
       onFocus: () => broadcastEditingStatus(elementId, true),
       onBlur: () => broadcastEditingStatus(elementId, false),
-      onMouseEnter: () => broadcastViewingStatus(elementId)
+      onMouseEnter: () => broadcastViewingStatus(elementId),
     };
   };
 
@@ -302,8 +306,8 @@ export const useEditingBroadcast = (projectId: string, elementId: string) => {
             user_id: user.id,
             user_name: user.name || user.email,
             element: isEditing ? elementId : null,
-            timestamp: new Date().toISOString()
-          })
+            timestamp: new Date().toISOString(),
+          }),
         });
       } catch (error) {
         console.error('Failed to broadcast editing status:', error);

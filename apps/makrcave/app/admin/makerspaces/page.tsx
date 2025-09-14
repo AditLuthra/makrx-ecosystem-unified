@@ -26,7 +26,7 @@ import {
   Edit,
   Trash2,
   Power,
-  PowerOff
+  PowerOff,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -78,13 +78,15 @@ interface Makerspace {
 const Makerspaces: React.FC = () => {
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
-  
+
   // All hooks must be at the top of the component
   const [activeTab, setActiveTab] = useState('overview');
   const [makerspaces, setMakerspaces] = useState<Makerspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended' | 'pending'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended' | 'pending'>(
+    'all',
+  );
   const [selectedMakerspace, setSelectedMakerspace] = useState<Makerspace | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -105,17 +107,17 @@ const Makerspaces: React.FC = () => {
         setMakerspaces(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load makerspaces",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load makerspaces',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching makerspaces:', error);
       toast({
-        title: "Error",
-        description: "Failed to load makerspaces",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load makerspaces',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -151,22 +153,22 @@ const Makerspaces: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: `Makerspace status updated to ${newStatus}`,
         });
         fetchMakerspaces();
       } else {
         toast({
-          title: "Error",
-          description: "Failed to update makerspace status",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to update makerspace status',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update makerspace status",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update makerspace status',
+        variant: 'destructive',
       });
     }
   };
@@ -199,21 +201,22 @@ const Makerspaces: React.FC = () => {
     }
   };
 
-  const filteredMakerspaces = makerspaces.filter(ms => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredMakerspaces = makerspaces.filter((ms) => {
+    const matchesSearch =
+      searchTerm === '' ||
       ms.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ms.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || ms.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
   const overviewStats = {
     total: makerspaces.length,
-    active: makerspaces.filter(ms => ms.status === 'active').length,
-    suspended: makerspaces.filter(ms => ms.status === 'suspended').length,
-    pending: makerspaces.filter(ms => ms.status === 'pending').length,
+    active: makerspaces.filter((ms) => ms.status === 'active').length,
+    suspended: makerspaces.filter((ms) => ms.status === 'suspended').length,
+    pending: makerspaces.filter((ms) => ms.status === 'pending').length,
     totalUsers: makerspaces.reduce((sum, ms) => sum + (ms.stats?.totalUsers || 0), 0),
     totalRevenue: makerspaces.reduce((sum, ms) => sum + (ms.stats?.monthlyRevenue || 0), 0),
   };
@@ -326,8 +329,8 @@ const Makerspaces: React.FC = () => {
                 className="pl-10"
               />
             </div>
-            <select 
-              value={statusFilter} 
+            <select
+              value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
               className="px-3 py-2 border rounded-md"
             >

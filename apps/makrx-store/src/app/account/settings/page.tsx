@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 import {
   ArrowLeft,
   User,
@@ -12,10 +12,10 @@ import {
   Trash2,
   Download,
   Upload,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function AccountSettings() {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState('profile');
   const [emailNotifications, setEmailNotifications] = useState({
     orderUpdates: true,
     promotions: false,
@@ -31,12 +31,12 @@ export default function AccountSettings() {
   });
 
   const tabs = [
-    { id: "profile", label: "Profile", icon: User },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "security", label: "Security", icon: Shield },
-    { id: "billing", label: "Billing", icon: CreditCard },
-    { id: "preferences", label: "Preferences", icon: Globe },
-    { id: "data", label: "Data & Privacy", icon: Download },
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'preferences', label: 'Preferences', icon: Globe },
+    { id: 'data', label: 'Data & Privacy', icon: Download },
   ];
 
   return (
@@ -52,9 +52,7 @@ export default function AccountSettings() {
             Back to Account
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
-          <p className="text-gray-600 mt-2">
-            Manage your account preferences and settings
-          </p>
+          <p className="text-gray-600 mt-2">Manage your account preferences and settings</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -69,8 +67,8 @@ export default function AccountSettings() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
                       activeTab === tab.id
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="w-5 h-5 mr-3" />
@@ -84,11 +82,9 @@ export default function AccountSettings() {
           {/* Content */}
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-sm">
-              {activeTab === "profile" && (
+              {activeTab === 'profile' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6">
-                    Profile Information
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-6">Profile Information</h2>
 
                   <div className="space-y-6">
                     {/* Profile Picture */}
@@ -172,112 +168,87 @@ export default function AccountSettings() {
                 </div>
               )}
 
-              {activeTab === "notifications" && (
+              {activeTab === 'notifications' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6">
-                    Notification Preferences
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-6">Notification Preferences</h2>
 
                   <div className="space-y-8">
                     {/* Email Notifications */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Email Notifications
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Email Notifications</h3>
                       <div className="space-y-4">
-                        {Object.entries(emailNotifications).map(
-                          ([key, enabled]) => (
-                            <div
-                              key={key}
-                              className="flex items-center justify-between"
-                            >
-                              <div>
-                                <p className="font-medium capitalize">
-                                  {key.replace(/([A-Z])/g, " $1").toLowerCase()}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  {key === "orderUpdates" &&
-                                    "Receive updates about your orders"}
-                                  {key === "promotions" &&
-                                    "Get notified about special offers"}
-                                  {key === "newProducts" &&
-                                    "Learn about new products"}
-                                  {key === "priceDrops" &&
-                                    "Get alerts when prices drop"}
-                                  {key === "newsletter" &&
-                                    "Receive our weekly newsletter"}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() =>
-                                  setEmailNotifications((prev) => ({
-                                    ...prev,
-                                    [key]: !enabled,
-                                  }))
-                                }
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                                  enabled ? "bg-blue-600" : "bg-gray-200"
-                                }`}
-                              >
-                                <span
-                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                    enabled ? "translate-x-6" : "translate-x-1"
-                                  }`}
-                                />
-                              </button>
+                        {Object.entries(emailNotifications).map(([key, enabled]) => (
+                          <div key={key} className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium capitalize">
+                                {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {key === 'orderUpdates' && 'Receive updates about your orders'}
+                                {key === 'promotions' && 'Get notified about special offers'}
+                                {key === 'newProducts' && 'Learn about new products'}
+                                {key === 'priceDrops' && 'Get alerts when prices drop'}
+                                {key === 'newsletter' && 'Receive our weekly newsletter'}
+                              </p>
                             </div>
-                          ),
-                        )}
+                            <button
+                              onClick={() =>
+                                setEmailNotifications((prev) => ({
+                                  ...prev,
+                                  [key]: !enabled,
+                                }))
+                              }
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                                enabled ? 'bg-blue-600' : 'bg-gray-200'
+                              }`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  enabled ? 'translate-x-6' : 'translate-x-1'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
                     {/* Push Notifications */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Push Notifications
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Push Notifications</h3>
                       <div className="space-y-4">
-                        {Object.entries(pushNotifications).map(
-                          ([key, enabled]) => (
-                            <div
-                              key={key}
-                              className="flex items-center justify-between"
-                            >
-                              <div>
-                                <p className="font-medium capitalize">
-                                  {key.replace(/([A-Z])/g, " $1").toLowerCase()}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  {key === "orderShipped" &&
-                                    "When your order ships"}
-                                  {key === "orderDelivered" &&
-                                    "When your order is delivered"}
-                                  {key === "promotions" &&
-                                    "Special offers and deals"}
-                                  {key === "reminders" &&
-                                    "Cart and wishlist reminders"}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() =>
-                                  setPushNotifications((prev) => ({
-                                    ...prev,
-                                    [key]: !enabled,
-                                  }))
-                                }
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                                  enabled ? "bg-blue-600" : "bg-gray-200"
-                                }`}
-                              >
-                                <span
-                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                    enabled ? "translate-x-6" : "translate-x-1"
-                                  }`}
-                                />
-                              </button>
+                        {Object.entries(pushNotifications).map(([key, enabled]) => (
+                          <div key={key} className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium capitalize">
+                                {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {key === 'orderShipped' && 'When your order ships'}
+                                {key === 'orderDelivered' && 'When your order is delivered'}
+                                {key === 'promotions' && 'Special offers and deals'}
+                                {key === 'reminders' && 'Cart and wishlist reminders'}
+                              </p>
                             </div>
-                          ),
-                        )}
+                            <button
+                              onClick={() =>
+                                setPushNotifications((prev) => ({
+                                  ...prev,
+                                  [key]: !enabled,
+                                }))
+                              }
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                                enabled ? 'bg-blue-600' : 'bg-gray-200'
+                              }`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  enabled ? 'translate-x-6' : 'translate-x-1'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -290,18 +261,14 @@ export default function AccountSettings() {
                 </div>
               )}
 
-              {activeTab === "security" && (
+              {activeTab === 'security' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6">
-                    Security Settings
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-6">Security Settings</h2>
 
                   <div className="space-y-8">
                     {/* Change Password */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Change Password
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Change Password</h3>
                       <div className="space-y-4 max-w-md">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -338,19 +305,14 @@ export default function AccountSettings() {
 
                     {/* Two-Factor Authentication */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4">
-                        Two-Factor Authentication
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Two-Factor Authentication</h3>
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                         <div className="flex items-center">
                           <Shield className="w-5 h-5 text-green-600 mr-2" />
-                          <span className="text-green-800 font-medium">
-                            2FA is enabled
-                          </span>
+                          <span className="text-green-800 font-medium">2FA is enabled</span>
                         </div>
                         <p className="text-green-700 text-sm mt-1">
-                          Your account is protected with two-factor
-                          authentication
+                          Your account is protected with two-factor authentication
                         </p>
                       </div>
                       <div className="space-x-3">
@@ -365,33 +327,21 @@ export default function AccountSettings() {
 
                     {/* Active Sessions */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4">
-                        Active Sessions
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Active Sessions</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                           <div>
                             <p className="font-medium">Current Session</p>
-                            <p className="text-sm text-gray-600">
-                              Chrome on macOS • New York, NY
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Last active: Now
-                            </p>
+                            <p className="text-sm text-gray-600">Chrome on macOS • New York, NY</p>
+                            <p className="text-sm text-gray-500">Last active: Now</p>
                           </div>
-                          <span className="text-green-600 text-sm font-medium">
-                            Active
-                          </span>
+                          <span className="text-green-600 text-sm font-medium">Active</span>
                         </div>
                         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                           <div>
                             <p className="font-medium">Mobile App</p>
-                            <p className="text-sm text-gray-600">
-                              iPhone • New York, NY
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Last active: 2 hours ago
-                            </p>
+                            <p className="text-sm text-gray-600">iPhone • New York, NY</p>
+                            <p className="text-sm text-gray-500">Last active: 2 hours ago</p>
                           </div>
                           <button className="text-red-600 text-sm hover:text-red-700">
                             Revoke
@@ -403,39 +353,29 @@ export default function AccountSettings() {
                 </div>
               )}
 
-              {activeTab === "billing" && (
+              {activeTab === 'billing' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6">
-                    Billing Information
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-6">Billing Information</h2>
 
                   <div className="space-y-8">
                     {/* Payment Methods */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Payment Methods
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Payment Methods</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                           <div className="flex items-center">
                             <CreditCard className="w-8 h-8 text-gray-400 mr-3" />
                             <div>
                               <p className="font-medium">•••• •••• •••• 4242</p>
-                              <p className="text-sm text-gray-600">
-                                Expires 12/25
-                              </p>
+                              <p className="text-sm text-gray-600">Expires 12/25</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
                               Default
                             </span>
-                            <button className="text-blue-600 hover:text-blue-700">
-                              Edit
-                            </button>
-                            <button className="text-red-600 hover:text-red-700">
-                              Remove
-                            </button>
+                            <button className="text-blue-600 hover:text-blue-700">Edit</button>
+                            <button className="text-red-600 hover:text-red-700">Remove</button>
                           </div>
                         </div>
                       </div>
@@ -446,9 +386,7 @@ export default function AccountSettings() {
 
                     {/* Billing Address */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4">
-                        Billing Address
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Billing Address</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
                         <div className="md:col-span-2">
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -489,16 +427,14 @@ export default function AccountSettings() {
                 </div>
               )}
 
-              {activeTab === "preferences" && (
+              {activeTab === 'preferences' && (
                 <div className="p-6">
                   <h2 className="text-2xl font-semibold mb-6">Preferences</h2>
 
                   <div className="space-y-8">
                     {/* Language & Region */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Language & Region
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Language & Region</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -527,16 +463,12 @@ export default function AccountSettings() {
 
                     {/* Display Preferences */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4">
-                        Display Preferences
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Display Preferences</h3>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium">Dark Mode</p>
-                            <p className="text-sm text-gray-600">
-                              Use dark theme across the site
-                            </p>
+                            <p className="text-sm text-gray-600">Use dark theme across the site</p>
                           </div>
                           <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors">
                             <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
@@ -545,9 +477,7 @@ export default function AccountSettings() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium">Compact View</p>
-                            <p className="text-sm text-gray-600">
-                              Show more items per page
-                            </p>
+                            <p className="text-sm text-gray-600">Show more items per page</p>
                           </div>
                           <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition-colors">
                             <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6" />
@@ -559,21 +489,17 @@ export default function AccountSettings() {
                 </div>
               )}
 
-              {activeTab === "data" && (
+              {activeTab === 'data' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6">
-                    Data & Privacy
-                  </h2>
+                  <h2 className="text-2xl font-semibold mb-6">Data & Privacy</h2>
 
                   <div className="space-y-8">
                     {/* Data Export */}
                     <div>
-                      <h3 className="text-lg font-medium mb-4">
-                        Export Your Data
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Export Your Data</h3>
                       <p className="text-gray-600 mb-4">
-                        Download a copy of your account data including orders,
-                        preferences, and activity.
+                        Download a copy of your account data including orders, preferences, and
+                        activity.
                       </p>
                       <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                         <Download className="w-4 h-4 mr-2" />
@@ -583,9 +509,7 @@ export default function AccountSettings() {
 
                     {/* Privacy Settings */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4">
-                        Privacy Settings
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4">Privacy Settings</h3>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -600,9 +524,7 @@ export default function AccountSettings() {
                         </div>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium">
-                              Marketing Communications
-                            </p>
+                            <p className="font-medium">Marketing Communications</p>
                             <p className="text-sm text-gray-600">
                               Receive personalized recommendations
                             </p>
@@ -616,16 +538,12 @@ export default function AccountSettings() {
 
                     {/* Delete Account */}
                     <div className="border-t pt-8">
-                      <h3 className="text-lg font-medium mb-4 text-red-600">
-                        Danger Zone
-                      </h3>
+                      <h3 className="text-lg font-medium mb-4 text-red-600">Danger Zone</h3>
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <h4 className="font-medium text-red-800 mb-2">
-                          Delete Account
-                        </h4>
+                        <h4 className="font-medium text-red-800 mb-2">Delete Account</h4>
                         <p className="text-red-700 text-sm mb-4">
-                          Permanently delete your account and all associated
-                          data. This action cannot be undone.
+                          Permanently delete your account and all associated data. This action
+                          cannot be undone.
                         </p>
                         <button className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                           <Trash2 className="w-4 h-4 mr-2" />

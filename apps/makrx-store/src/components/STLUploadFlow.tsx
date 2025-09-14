@@ -1,34 +1,25 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/Button";
-import { Alert, AlertContent } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/Button';
+import { Alert, AlertContent } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Calculator,
-  Eye,
-  File,
-  RotateCcw,
-  Upload,
-  X,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
-import React, { useCallback, useRef, useState } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calculator, Eye, File, RotateCcw, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useCallback, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 
 interface UploadedFile {
   id: string;
@@ -36,7 +27,7 @@ interface UploadedFile {
   url?: string;
   analysis?: FileAnalysis;
   preview?: string;
-  status: "uploading" | "analyzing" | "ready" | "error";
+  status: 'uploading' | 'analyzing' | 'ready' | 'error';
   error?: string;
 }
 
@@ -79,17 +70,17 @@ const STLUploadFlow: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const [printOptions, setPrintOptions] = useState<PrintOptions>({
-    material: "pla",
-    quality: "standard",
-    color: "natural",
+    material: 'pla',
+    quality: 'standard',
+    color: 'natural',
     infill: 20,
     supports: false,
     quantity: 1,
-    priority: "normal",
+    priority: 'normal',
   });
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [activeTab, setActiveTab] = useState("upload");
+  const [activeTab, setActiveTab] = useState('upload');
   const [currentStep, setCurrentStep] = useState(1);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -100,84 +91,79 @@ const STLUploadFlow: React.FC = () => {
   const controlsRef = useRef<OrbitControls | null>(null);
 
   const materials = [
-    { value: "pla", label: "PLA - Biodegradable, Easy to Print", price: 0.5 },
-    { value: "abs", label: "ABS - Strong, Heat Resistant", price: 0.6 },
-    { value: "petg", label: "PETG - Chemical Resistant, Clear", price: 0.7 },
-    { value: "tpu", label: "TPU - Flexible, Rubber-like", price: 1.2 },
-    { value: "wood_pla", label: "Wood PLA - Natural Look & Feel", price: 0.8 },
-    { value: "carbon_fiber", label: "Carbon Fiber - Ultra Strong", price: 2.0 },
+    { value: 'pla', label: 'PLA - Biodegradable, Easy to Print', price: 0.5 },
+    { value: 'abs', label: 'ABS - Strong, Heat Resistant', price: 0.6 },
+    { value: 'petg', label: 'PETG - Chemical Resistant, Clear', price: 0.7 },
+    { value: 'tpu', label: 'TPU - Flexible, Rubber-like', price: 1.2 },
+    { value: 'wood_pla', label: 'Wood PLA - Natural Look & Feel', price: 0.8 },
+    { value: 'carbon_fiber', label: 'Carbon Fiber - Ultra Strong', price: 2.0 },
   ];
 
   const qualities = [
     {
-      value: "draft",
-      label: "Draft (0.3mm) - Fast & Economical",
+      value: 'draft',
+      label: 'Draft (0.3mm) - Fast & Economical',
       multiplier: 0.8,
     },
     {
-      value: "standard",
-      label: "Standard (0.2mm) - Good Quality",
+      value: 'standard',
+      label: 'Standard (0.2mm) - Good Quality',
       multiplier: 1.0,
     },
-    { value: "high", label: "High (0.15mm) - Fine Details", multiplier: 1.3 },
+    { value: 'high', label: 'High (0.15mm) - Fine Details', multiplier: 1.3 },
     {
-      value: "ultra",
-      label: "Ultra (0.1mm) - Maximum Detail",
+      value: 'ultra',
+      label: 'Ultra (0.1mm) - Maximum Detail',
       multiplier: 1.6,
     },
   ];
 
   const priorities = [
-    { value: "low", label: "Low Priority (7-10 days)", multiplier: 0.9 },
-    { value: "normal", label: "Normal (3-5 days)", multiplier: 1.0 },
-    { value: "high", label: "High Priority (1-2 days)", multiplier: 1.3 },
-    { value: "urgent", label: "Urgent (24 hours)", multiplier: 1.8 },
+    { value: 'low', label: 'Low Priority (7-10 days)', multiplier: 0.9 },
+    { value: 'normal', label: 'Normal (3-5 days)', multiplier: 1.0 },
+    { value: 'high', label: 'High Priority (1-2 days)', multiplier: 1.3 },
+    { value: 'urgent', label: 'Urgent (24 hours)', multiplier: 1.8 },
   ];
 
-  const handleFileSelect = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(event.target.files || []);
+  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
 
-      files.forEach((file) => {
-        const allowedTypes = [".stl", ".obj", ".3mf", ".ply"];
-        const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+    files.forEach((file) => {
+      const allowedTypes = ['.stl', '.obj', '.3mf', '.ply'];
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
 
-        if (!allowedTypes.includes(fileExtension)) {
-          alert(
-            `Unsupported file type: ${fileExtension}. Please upload STL, OBJ, 3MF, or PLY files.`
-          );
-          return;
-        }
-
-        const newFile: UploadedFile = {
-          id: Math.random().toString(36).substr(2, 9),
-          file,
-          status: "uploading",
-        };
-
-        setUploadedFiles((prev) => [...prev, newFile]);
-        uploadAndAnalyzeFile(newFile);
-      });
-
-      // Clear the input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (!allowedTypes.includes(fileExtension)) {
+        alert(
+          `Unsupported file type: ${fileExtension}. Please upload STL, OBJ, 3MF, or PLY files.`,
+        );
+        return;
       }
-    },
-    []
-  );
+
+      const newFile: UploadedFile = {
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        status: 'uploading',
+      };
+
+      setUploadedFiles((prev) => [...prev, newFile]);
+      uploadAndAnalyzeFile(newFile);
+    });
+
+    // Clear the input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
 
   const uploadAndAnalyzeFile = async (uploadedFile: UploadedFile) => {
     try {
       // Simulate file upload
       const formData = new FormData();
-      formData.append("file", uploadedFile.file);
+      formData.append('file', uploadedFile.file);
 
       // Update status to analyzing
       setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadedFile.id ? { ...f, status: "analyzing" } : f
-        )
+        prev.map((f) => (f.id === uploadedFile.id ? { ...f, status: 'analyzing' } : f)),
       );
 
       // Create file URL for 3D preview
@@ -204,13 +190,13 @@ const STLUploadFlow: React.FC = () => {
           f.id === uploadedFile.id
             ? {
                 ...f,
-                status: "ready",
+                status: 'ready',
                 url: fileUrl,
                 analysis,
                 preview: fileUrl,
               }
-            : f
-        )
+            : f,
+        ),
       );
 
       // Auto-select first file
@@ -219,17 +205,15 @@ const STLUploadFlow: React.FC = () => {
           ...uploadedFile,
           url: fileUrl,
           analysis,
-          status: "ready",
+          status: 'ready',
         });
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error('Upload error:', error);
       setUploadedFiles((prev) =>
         prev.map((f) =>
-          f.id === uploadedFile.id
-            ? { ...f, status: "error", error: "Upload failed" }
-            : f
-        )
+          f.id === uploadedFile.id ? { ...f, status: 'error', error: 'Upload failed' } : f,
+        ),
       );
     }
   };
@@ -326,10 +310,10 @@ const STLUploadFlow: React.FC = () => {
         };
         animate();
       } catch (error) {
-        console.error("3D preview error:", error);
+        console.error('3D preview error:', error);
       }
     },
-    [printOptions.material]
+    [printOptions.material],
   );
 
   const getMaterialColor = (material: string): number => {
@@ -354,41 +338,21 @@ const STLUploadFlow: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       const { analysis } = selectedFile;
-      const materialInfo = materials.find(
-        (m) => m.value === printOptions.material
-      );
-      const qualityInfo = qualities.find(
-        (q) => q.value === printOptions.quality
-      );
-      const priorityInfo = priorities.find(
-        (p) => p.value === printOptions.priority
-      );
+      const materialInfo = materials.find((m) => m.value === printOptions.material);
+      const qualityInfo = qualities.find((q) => q.value === printOptions.quality);
+      const priorityInfo = priorities.find((p) => p.value === printOptions.priority);
 
       // Calculate costs
-      const materialCost =
-        analysis.volume * (materialInfo?.price || 0.5) * printOptions.quantity;
-      const timeCost =
-        (analysis.estimatedPrintTime / 60) * 15.0 * printOptions.quantity;
-      const supportCost = printOptions.supports
-        ? analysis.volume * 0.2 * printOptions.quantity
-        : 0;
-      const setupFee =
-        printOptions.quantity === 1
-          ? 5.0
-          : 5.0 + (printOptions.quantity - 1) * 1.0;
+      const materialCost = analysis.volume * (materialInfo?.price || 0.5) * printOptions.quantity;
+      const timeCost = (analysis.estimatedPrintTime / 60) * 15.0 * printOptions.quantity;
+      const supportCost = printOptions.supports ? analysis.volume * 0.2 * printOptions.quantity : 0;
+      const setupFee = printOptions.quantity === 1 ? 5.0 : 5.0 + (printOptions.quantity - 1) * 1.0;
 
-      const qualityAdjustment =
-        materialCost * ((qualityInfo?.multiplier || 1.0) - 1);
-      const priorityAdjustment =
-        materialCost * ((priorityInfo?.multiplier || 1.0) - 1);
+      const qualityAdjustment = materialCost * ((qualityInfo?.multiplier || 1.0) - 1);
+      const priorityAdjustment = materialCost * ((priorityInfo?.multiplier || 1.0) - 1);
 
       let subtotal =
-        materialCost +
-        timeCost +
-        supportCost +
-        setupFee +
-        qualityAdjustment +
-        priorityAdjustment;
+        materialCost + timeCost + supportCost + setupFee + qualityAdjustment + priorityAdjustment;
 
       // Quantity discounts
       if (printOptions.quantity >= 10) {
@@ -398,7 +362,7 @@ const STLUploadFlow: React.FC = () => {
       }
 
       const tax = subtotal * 0.08;
-      const shipping = printOptions.priority === "urgent" ? 25.0 : 10.0;
+      const shipping = printOptions.priority === 'urgent' ? 25.0 : 10.0;
       const total = subtotal + tax + shipping;
 
       const breakdown: PricingBreakdown = {
@@ -416,16 +380,16 @@ const STLUploadFlow: React.FC = () => {
       };
 
       setPricing(breakdown);
-      setActiveTab("quote");
+      setActiveTab('quote');
     } catch (error) {
-      console.error("Pricing calculation error:", error);
+      console.error('Pricing calculation error:', error);
     } finally {
       setIsCalculating(false);
     }
   }, [selectedFile, printOptions, materials, qualities, priorities]);
 
   React.useEffect(() => {
-    if (selectedFile && activeTab === "preview") {
+    if (selectedFile && activeTab === 'preview') {
       load3DPreview(selectedFile);
     }
   }, [selectedFile, activeTab, load3DPreview]);
@@ -445,7 +409,7 @@ const STLUploadFlow: React.FC = () => {
       files.forEach((file) => dt.items.add(file));
       fileInputRef.current.files = dt.files;
 
-      const event = new Event("change", { bubbles: true });
+      const event = new Event('change', { bubbles: true });
       fileInputRef.current.dispatchEvent(event);
     }
   };
@@ -474,15 +438,15 @@ const STLUploadFlow: React.FC = () => {
         pricing: pricing,
       };
 
-      console.log("Adding to cart:", orderData);
+      console.log('Adding to cart:', orderData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert("Successfully added to cart!");
+      alert('Successfully added to cart!');
     } catch (error) {
-      console.error("Add to cart error:", error);
-      alert("Failed to add to cart");
+      console.error('Add to cart error:', error);
+      alert('Failed to add to cart');
     }
   };
 
@@ -490,12 +454,10 @@ const STLUploadFlow: React.FC = () => {
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Professional 3D Printing Services
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Professional 3D Printing Services</h1>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          Upload your 3D files, get instant quotes, and have your prints
-          delivered by our network of verified makers
+          Upload your 3D files, get instant quotes, and have your prints delivered by our network of
+          verified makers
         </p>
       </div>
 
@@ -503,24 +465,20 @@ const STLUploadFlow: React.FC = () => {
       <div className="flex justify-center mb-8">
         <div className="flex items-center space-x-4">
           {[
-            { step: 1, title: "Upload Files", tab: "upload" },
-            { step: 2, title: "Configure Print", tab: "configure" },
-            { step: 3, title: "3D Preview", tab: "preview" },
-            { step: 4, title: "Get Quote", tab: "quote" },
+            { step: 1, title: 'Upload Files', tab: 'upload' },
+            { step: 2, title: 'Configure Print', tab: 'configure' },
+            { step: 3, title: '3D Preview', tab: 'preview' },
+            { step: 4, title: 'Get Quote', tab: 'quote' },
           ].map(({ step, title, tab }) => (
             <div key={step} className="flex items-center">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  activeTab === tab
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-600"
+                  activeTab === tab ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
                 }`}
               >
                 {step}
               </div>
-              <span className="ml-2 text-sm font-medium text-gray-700">
-                {title}
-              </span>
+              <span className="ml-2 text-sm font-medium text-gray-700">{title}</span>
               {step < 4 && <div className="w-8 h-px bg-gray-200 mx-4" />}
             </div>
           ))}
@@ -558,12 +516,8 @@ const STLUploadFlow: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Upload your 3D files
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  Drag and drop files here, or click to browse
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Upload your 3D files</h3>
+                <p className="text-gray-500 mb-4">Drag and drop files here, or click to browse</p>
                 <p className="text-sm text-gray-400">
                   Supported formats: STL, OBJ, 3MF, PLY (Max 100MB per file)
                 </p>
@@ -597,34 +551,30 @@ const STLUploadFlow: React.FC = () => {
                           </div>
                           <Badge
                             variant={
-                              file.status === "ready"
-                                ? "default"
-                                : file.status === "error"
-                                  ? "destructive"
-                                  : "secondary"
+                              file.status === 'ready'
+                                ? 'default'
+                                : file.status === 'error'
+                                  ? 'destructive'
+                                  : 'secondary'
                             }
                           >
                             {file.status}
                           </Badge>
                         </div>
                         <div className="flex items-center space-x-2">
-                          {file.status === "ready" && (
+                          {file.status === 'ready' && (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => {
                                 setSelectedFile(file);
-                                setActiveTab("configure");
+                                setActiveTab('configure');
                               }}
                             >
                               Configure
                             </Button>
                           )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFile(file.id)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
@@ -648,27 +598,19 @@ const STLUploadFlow: React.FC = () => {
                 {selectedFile?.analysis && (
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-sm font-medium">
-                        Dimensions (mm)
-                      </Label>
+                      <Label className="text-sm font-medium">Dimensions (mm)</Label>
                       <div className="grid grid-cols-3 gap-2 mt-1">
                         <div className="text-center p-2 bg-gray-50 rounded">
                           <div className="text-sm text-gray-500">X</div>
-                          <div className="font-medium">
-                            {selectedFile.analysis.dimensions.x}
-                          </div>
+                          <div className="font-medium">{selectedFile.analysis.dimensions.x}</div>
                         </div>
                         <div className="text-center p-2 bg-gray-50 rounded">
                           <div className="text-sm text-gray-500">Y</div>
-                          <div className="font-medium">
-                            {selectedFile.analysis.dimensions.y}
-                          </div>
+                          <div className="font-medium">{selectedFile.analysis.dimensions.y}</div>
                         </div>
                         <div className="text-center p-2 bg-gray-50 rounded">
                           <div className="text-sm text-gray-500">Z</div>
-                          <div className="font-medium">
-                            {selectedFile.analysis.dimensions.z}
-                          </div>
+                          <div className="font-medium">{selectedFile.analysis.dimensions.z}</div>
                         </div>
                       </div>
                     </div>
@@ -676,38 +618,25 @@ const STLUploadFlow: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label className="text-sm text-gray-500">Volume</Label>
-                        <div className="font-medium">
-                          {selectedFile.analysis.volume} cm³
-                        </div>
+                        <div className="font-medium">{selectedFile.analysis.volume} cm³</div>
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Estimated Weight
-                        </Label>
+                        <Label className="text-sm text-gray-500">Estimated Weight</Label>
                         <div className="font-medium">
                           {selectedFile.analysis.estimatedMaterialWeight}g
                         </div>
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Print Time
-                        </Label>
+                        <Label className="text-sm text-gray-500">Print Time</Label>
                         <div className="font-medium">
-                          {Math.floor(
-                            selectedFile.analysis.estimatedPrintTime / 60
-                          )}
-                          h {selectedFile.analysis.estimatedPrintTime % 60}m
+                          {Math.floor(selectedFile.analysis.estimatedPrintTime / 60)}h{' '}
+                          {selectedFile.analysis.estimatedPrintTime % 60}m
                         </div>
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Complexity
-                        </Label>
+                        <Label className="text-sm text-gray-500">Complexity</Label>
                         <div className="font-medium">
-                          {Math.round(
-                            selectedFile.analysis.complexityScore * 100
-                          )}
-                          %
+                          {Math.round(selectedFile.analysis.complexityScore * 100)}%
                         </div>
                       </div>
                     </div>
@@ -715,8 +644,7 @@ const STLUploadFlow: React.FC = () => {
                     {selectedFile.analysis.supportsRequired && (
                       <Alert>
                         <AlertContent>
-                          This model may require support structures for optimal
-                          printing.
+                          This model may require support structures for optimal printing.
                         </AlertContent>
                       </Alert>
                     )}
@@ -827,9 +755,7 @@ const STLUploadFlow: React.FC = () => {
                       }))
                     }
                   />
-                  <div className="text-sm text-gray-500 mt-1">
-                    {printOptions.infill}%
-                  </div>
+                  <div className="text-sm text-gray-500 mt-1">{printOptions.infill}%</div>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -847,7 +773,7 @@ const STLUploadFlow: React.FC = () => {
                 </div>
 
                 <Button
-                  onClick={() => setActiveTab("preview")}
+                  onClick={() => setActiveTab('preview')}
                   className="w-full"
                   disabled={!selectedFile}
                 >
@@ -893,13 +819,9 @@ const STLUploadFlow: React.FC = () => {
                 <p className="text-sm text-gray-500 mb-4">
                   Use mouse to rotate, zoom, and pan the 3D model
                 </p>
-                <Button
-                  onClick={calculatePricing}
-                  className="w-full"
-                  disabled={isCalculating}
-                >
+                <Button onClick={calculatePricing} className="w-full" disabled={isCalculating}>
                   <Calculator className="mr-2 h-4 w-4" />
-                  {isCalculating ? "Calculating..." : "Calculate Price"}
+                  {isCalculating ? 'Calculating...' : 'Calculate Price'}
                 </Button>
               </div>
             </CardContent>
@@ -977,51 +899,29 @@ const STLUploadFlow: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <Label className="text-sm text-gray-500">File</Label>
-                      <div className="font-medium">
-                        {selectedFile?.file.name}
-                      </div>
+                      <div className="font-medium">{selectedFile?.file.name}</div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Material
-                        </Label>
+                        <Label className="text-sm text-gray-500">Material</Label>
                         <div className="font-medium">
-                          {
-                            materials.find(
-                              (m) => m.value === printOptions.material
-                            )?.label
-                          }
+                          {materials.find((m) => m.value === printOptions.material)?.label}
                         </div>
                       </div>
                       <div>
                         <Label className="text-sm text-gray-500">Quality</Label>
                         <div className="font-medium">
-                          {
-                            qualities.find(
-                              (q) => q.value === printOptions.quality
-                            )?.label
-                          }
+                          {qualities.find((q) => q.value === printOptions.quality)?.label}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Quantity
-                        </Label>
-                        <div className="font-medium">
-                          {printOptions.quantity}
-                        </div>
+                        <Label className="text-sm text-gray-500">Quantity</Label>
+                        <div className="font-medium">{printOptions.quantity}</div>
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-500">
-                          Priority
-                        </Label>
+                        <Label className="text-sm text-gray-500">Priority</Label>
                         <div className="font-medium">
-                          {
-                            priorities.find(
-                              (p) => p.value === printOptions.priority
-                            )?.label
-                          }
+                          {priorities.find((p) => p.value === printOptions.priority)?.label}
                         </div>
                       </div>
                     </div>

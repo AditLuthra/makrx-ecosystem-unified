@@ -13,7 +13,7 @@ import {
   Save,
   RefreshCw,
   AlertTriangle,
-  Info
+  Info,
 } from 'lucide-react';
 
 interface MakerspaceSettings {
@@ -38,7 +38,7 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
   settings,
   onUpdate,
   onSave,
-  saving
+  saving,
 }) => {
   const handleToggle = (field: string, value: boolean) => {
     onUpdate({ [field]: value });
@@ -53,7 +53,7 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
       auto_approve_members: settings.auto_approve_members,
       require_safety_training: settings.require_safety_training,
       equipment_access_logging: settings.equipment_access_logging,
-      visitor_registration_required: settings.visitor_registration_required
+      visitor_registration_required: settings.visitor_registration_required,
     };
     onSave(accessData);
   };
@@ -68,7 +68,7 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
             <div className="text-sm text-blue-800">
               <p className="font-medium">Access Control Configuration</p>
               <p className="text-blue-700 mt-1">
-                Configure how members and visitors can access your makerspace and its equipment. 
+                Configure how members and visitors can access your makerspace and its equipment.
                 These settings affect registration, equipment access, and safety requirements.
               </p>
             </div>
@@ -186,7 +186,8 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
                 )}
               </div>
               <p className="text-sm text-gray-600 mt-1">
-                Require members to complete training or demonstrate skills before accessing equipment
+                Require members to complete training or demonstrate skills before accessing
+                equipment
               </p>
             </div>
             <Switch
@@ -321,19 +322,19 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Membership Required:</span>
-                  <Badge variant={settings.membership_required ? "default" : "outline"}>
+                  <Badge variant={settings.membership_required ? 'default' : 'outline'}>
                     {settings.membership_required ? 'Yes' : 'No'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Public Registration:</span>
-                  <Badge variant={settings.public_registration ? "default" : "outline"}>
+                  <Badge variant={settings.public_registration ? 'default' : 'outline'}>
                     {settings.public_registration ? 'Allowed' : 'Invite Only'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Auto-approve:</span>
-                  <Badge variant={settings.auto_approve_members ? "default" : "outline"}>
+                  <Badge variant={settings.auto_approve_members ? 'default' : 'outline'}>
                     {settings.auto_approve_members ? 'Yes' : 'Manual'}
                   </Badge>
                 </div>
@@ -345,19 +346,19 @@ const AccessControlSettings: React.FC<AccessControlSettingsProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Skill-gated Access:</span>
-                  <Badge variant={settings.skill_gated_access ? "default" : "outline"}>
+                  <Badge variant={settings.skill_gated_access ? 'default' : 'outline'}>
                     {settings.skill_gated_access ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Reservations:</span>
-                  <Badge variant={settings.enable_reservations ? "default" : "outline"}>
+                  <Badge variant={settings.enable_reservations ? 'default' : 'outline'}>
                     {settings.enable_reservations ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Safety Training:</span>
-                  <Badge variant={settings.require_safety_training ? "default" : "outline"}>
+                  <Badge variant={settings.require_safety_training ? 'default' : 'outline'}>
                     {settings.require_safety_training ? 'Required' : 'Optional'}
                   </Badge>
                 </div>

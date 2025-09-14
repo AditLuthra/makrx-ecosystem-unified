@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Calendar,
   Ticket,
   Users,
   Settings,
@@ -16,75 +16,75 @@ import {
   Clock,
   Star,
   TrendingUp,
-  CreditCard
-} from "lucide-react";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+  CreditCard,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 export default function Dashboard() {
   const { data: userStats, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/user-stats"],
+    queryKey: ['/api/user-stats'],
   });
 
   const { data: events, isLoading: eventsLoading } = useQuery({
-    queryKey: ["/api/events"],
+    queryKey: ['/api/events'],
   });
 
   // Mock user data since we don't have auth
   const userData = {
-    name: "John Smith",
-    email: "john.smith@example.com",
-    profileImage: "/api/placeholder/40/40",
+    name: 'John Smith',
+    email: 'john.smith@example.com',
+    profileImage: '/api/placeholder/40/40',
     stats: (userStats as any)?.user || {
       eventsAttended: 2,
       eventsCreated: 1,
       totalSpent: 85,
-      upcomingEvents: 2
-    }
+      upcomingEvents: 2,
+    },
   };
 
   const upcomingRegistrations = [
     {
-      id: "reg_001",
-      eventTitle: "MakerFest 2024 - Arduino Workshop",
-      eventSlug: "makerfest2024",
-      subEventTitle: "Arduino Basics",
-      date: "2024-03-15T10:00:00Z",
-      location: "TechHub SF",
-      status: "confirmed",
+      id: 'reg_001',
+      eventTitle: 'MakerFest 2024 - Arduino Workshop',
+      eventSlug: 'makerfest2024',
+      subEventTitle: 'Arduino Basics',
+      date: '2024-03-15T10:00:00Z',
+      location: 'TechHub SF',
+      status: 'confirmed',
       price: 45,
-      qrCode: "/api/qr/reg_001",
-      checkInStatus: "not_checked_in"
+      qrCode: '/api/qr/reg_001',
+      checkInStatus: 'not_checked_in',
     },
     {
-      id: "reg_002",
-      eventTitle: "Bay Area Hackathon 2024",
-      eventSlug: "bay-hackathon-2024",
-      subEventTitle: "Main Event",
-      date: "2024-03-22T18:00:00Z",
-      location: "Stanford University",
-      status: "confirmed",
+      id: 'reg_002',
+      eventTitle: 'Bay Area Hackathon 2024',
+      eventSlug: 'bay-hackathon-2024',
+      subEventTitle: 'Main Event',
+      date: '2024-03-22T18:00:00Z',
+      location: 'Stanford University',
+      status: 'confirmed',
       price: 0,
-      qrCode: "/api/qr/reg_002",
-      checkInStatus: "not_checked_in"
-    }
+      qrCode: '/api/qr/reg_002',
+      checkInStatus: 'not_checked_in',
+    },
   ];
 
   const pastRegistrations = [
     {
-      id: "reg_003",
-      eventTitle: "3D Printing Workshop",
-      eventSlug: "3d-printing-workshop",
-      subEventTitle: "Advanced Techniques",
-      date: "2024-02-15T14:00:00Z",
-      location: "Maker Space",
-      status: "attended",
+      id: 'reg_003',
+      eventTitle: '3D Printing Workshop',
+      eventSlug: '3d-printing-workshop',
+      subEventTitle: 'Advanced Techniques',
+      date: '2024-02-15T14:00:00Z',
+      location: 'Maker Space',
+      status: 'attended',
       price: 35,
-      checkInStatus: "checked_in",
-      rating: 5
-    }
+      checkInStatus: 'checked_in',
+      rating: 5,
+    },
   ];
 
   if (statsLoading || eventsLoading) {
@@ -104,7 +104,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* User Profile Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-6 mb-8">
@@ -117,7 +117,7 @@ export default function Dashboard() {
               <p className="text-blue-100">{userData.email}</p>
             </div>
           </div>
-          
+
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div className="text-center">
@@ -158,9 +158,7 @@ export default function Dashboard() {
                     <Calendar className="w-5 h-5" />
                     Upcoming Events
                   </CardTitle>
-                  <CardDescription>
-                    Events you're registered for
-                  </CardDescription>
+                  <CardDescription>Events you're registered for</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {upcomingRegistrations.map((registration) => (
@@ -168,13 +166,17 @@ export default function Dashboard() {
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-semibold">{registration.eventTitle}</h4>
-                          <p className="text-sm text-muted-foreground">{registration.subEventTitle}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {registration.subEventTitle}
+                          </p>
                         </div>
-                        <Badge variant={registration.status === 'confirmed' ? 'default' : 'secondary'}>
+                        <Badge
+                          variant={registration.status === 'confirmed' ? 'default' : 'secondary'}
+                        >
                           {registration.status}
                         </Badge>
                       </div>
-                      
+
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -189,7 +191,7 @@ export default function Dashboard() {
                           {registration.price > 0 ? `$${registration.price}` : 'Free'}
                         </div>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/m/${registration.eventSlug}`}>
@@ -211,9 +213,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle>Event History</CardTitle>
-                  <CardDescription>
-                    Your past event experiences
-                  </CardDescription>
+                  <CardDescription>Your past event experiences</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {pastRegistrations.map((registration) => (
@@ -221,7 +221,9 @@ export default function Dashboard() {
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-semibold">{registration.eventTitle}</h4>
-                          <p className="text-sm text-muted-foreground">{registration.subEventTitle}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {registration.subEventTitle}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary">Attended</Badge>
@@ -234,7 +236,7 @@ export default function Dashboard() {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -259,9 +261,7 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle>My Events</CardTitle>
-                    <CardDescription>
-                      Events you've created and manage
-                    </CardDescription>
+                    <CardDescription>Events you've created and manage</CardDescription>
                   </div>
                   <Button asChild>
                     <Link href="/create-event">
@@ -304,8 +304,9 @@ export default function Dashboard() {
                     <div className="flex justify-between">
                       <span>Average per Event</span>
                       <span className="font-medium">
-                        ${userData.stats.eventsAttended > 0 
-                          ? Math.round(userData.stats.totalSpent / userData.stats.eventsAttended) 
+                        $
+                        {userData.stats.eventsAttended > 0
+                          ? Math.round(userData.stats.totalSpent / userData.stats.eventsAttended)
                           : 0}
                       </span>
                     </div>
@@ -321,11 +322,15 @@ export default function Dashboard() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>Total Events</span>
-                      <span className="font-medium">{(userStats as any)?.platform?.totalEvents || 0}</span>
+                      <span className="font-medium">
+                        {(userStats as any)?.platform?.totalEvents || 0}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Total Users</span>
-                      <span className="font-medium">{(userStats as any)?.platform?.totalUsers || 0}</span>
+                      <span className="font-medium">
+                        {(userStats as any)?.platform?.totalUsers || 0}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -341,26 +346,24 @@ export default function Dashboard() {
                   <Settings className="w-5 h-5" />
                   Account Settings
                 </CardTitle>
-                <CardDescription>
-                  Manage your account preferences
-                </CardDescription>
+                <CardDescription>Manage your account preferences</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium">Display Name</label>
-                    <input 
-                      type="text" 
-                      value={userData.name} 
+                    <input
+                      type="text"
+                      value={userData.name}
                       className="w-full mt-1 px-3 py-2 border rounded-md"
                       readOnly
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium">Email</label>
-                    <input 
-                      type="email" 
-                      value={userData.email} 
+                    <input
+                      type="email"
+                      value={userData.email}
                       className="w-full mt-1 px-3 py-2 border rounded-md"
                       readOnly
                     />

@@ -38,7 +38,7 @@ echo ""
 
 echo "✨ Next Steps:"
 echo "1. Run: npm ci --legacy-peer-deps"
-echo "2. Run: ./scripts/unix/setup.sh (or scripts/windows/setup.bat on Windows)"  
+echo "2. Run: ./scripts/unix/setup.sh (or scripts/windows/setup.bat on Windows)"
 echo "3. Start development: npm run dev"
 echo ""
 echo "🚀 Your MakrX ecosystem is ready for development and contributors!"

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Grid, List, Filter } from "lucide-react";
-import { api, type Product } from "@/lib/api";
-import ProductGrid from "@/components/ProductGrid";
-import EnhancedCategoryFilters, { useFiltersToggle } from "@/components/EnhancedCategoryFilters";
-import SortSelect from "@/components/SortSelect";
-import { getAllFiltersForCategory } from "@/data/categoryFilters";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, Grid, List, Filter } from 'lucide-react';
+import { api, type Product } from '@/lib/api';
+import ProductGrid from '@/components/ProductGrid';
+import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
+import SortSelect from '@/components/SortSelect';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
 
 export default function ToolsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("featured");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -25,14 +25,14 @@ export default function ToolsPage() {
       try {
         setLoading(true);
         const productsData = await api.getProducts({
-          category: "tools",
+          category: 'tools',
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
       } catch (err) {
-        console.error("Failed to load tools:", err);
-        setError("Failed to load products");
+        console.error('Failed to load tools:', err);
+        setError('Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -67,7 +67,7 @@ export default function ToolsPage() {
             Tools & Hardware
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
-            Professional tools, hardware, and equipment for makers, engineers, and craftspeople. 
+            Professional tools, hardware, and equipment for makers, engineers, and craftspeople.
             From precision instruments to power tools and hand tools.
           </p>
         </div>
@@ -79,7 +79,8 @@ export default function ToolsPage() {
               Hand Tools
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Screwdrivers, wrenches, pliers, measuring tools, and precision instruments for detailed work.
+              Screwdrivers, wrenches, pliers, measuring tools, and precision instruments for
+              detailed work.
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -87,7 +88,8 @@ export default function ToolsPage() {
               Power Tools
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Drills, sanders, saws, grinders, and other power tools for efficient material processing.
+              Drills, sanders, saws, grinders, and other power tools for efficient material
+              processing.
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -104,13 +106,14 @@ export default function ToolsPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className="flex items-center space-x-4">
             <EnhancedCategoryFilters
-              facets={categoryFilters.map(filter => ({
+              facets={categoryFilters.map((filter) => ({
                 name: filter.id,
-                values: filter.options?.map(opt => ({
-                  id: opt.value,
-                  name: opt.label,
-                  count: opt.count
-                })) || []
+                values:
+                  filter.options?.map((opt) => ({
+                    id: opt.value,
+                    name: opt.label,
+                    count: opt.count,
+                  })) || [],
               }))}
               activeFilters={activeFilters}
               onFilterChange={handleFilterChange}
@@ -119,30 +122,30 @@ export default function ToolsPage() {
               className="lg:hidden"
             />
             <p className="text-gray-600 dark:text-gray-400">
-              {loading ? "Loading..." : `${products.length} products found`}
+              {loading ? 'Loading...' : `${products.length} products found`}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
-            
+
             <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
               <button
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={`p-2 ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <Grid className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={`p-2 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -155,13 +158,14 @@ export default function ToolsPage() {
           {/* Filters Sidebar */}
           <div className="hidden lg:block w-80 flex-shrink-0">
             <EnhancedCategoryFilters
-              facets={categoryFilters.map(filter => ({
+              facets={categoryFilters.map((filter) => ({
                 name: filter.id,
-                values: filter.options?.map(opt => ({
-                  id: opt.value,
-                  name: opt.label,
-                  count: opt.count
-                })) || []
+                values:
+                  filter.options?.map((opt) => ({
+                    id: opt.value,
+                    name: opt.label,
+                    count: opt.count,
+                  })) || [],
               }))}
               activeFilters={activeFilters}
               onFilterChange={handleFilterChange}
@@ -184,11 +188,7 @@ export default function ToolsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid 
-                products={products} 
-                loading={loading} 
-                viewMode={viewMode}
-              />
+              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
             )}
           </div>
         </div>
@@ -204,10 +204,18 @@ export default function ToolsPage() {
                 Essential Categories
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Measurement:</strong> Calipers, micrometers, rulers, gauges</li>
-                <li>• <strong>Cutting:</strong> Knives, shears, rotary cutters, utility blades</li>
-                <li>• <strong>Assembly:</strong> Screwdrivers, hex keys, torque wrenches</li>
-                <li>• <strong>Soldering:</strong> Irons, stations, tips, flux, solder</li>
+                <li>
+                  • <strong>Measurement:</strong> Calipers, micrometers, rulers, gauges
+                </li>
+                <li>
+                  • <strong>Cutting:</strong> Knives, shears, rotary cutters, utility blades
+                </li>
+                <li>
+                  • <strong>Assembly:</strong> Screwdrivers, hex keys, torque wrenches
+                </li>
+                <li>
+                  • <strong>Soldering:</strong> Irons, stations, tips, flux, solder
+                </li>
               </ul>
             </div>
             <div>
@@ -215,10 +223,18 @@ export default function ToolsPage() {
                 Quality Brands
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Precision:</strong> Mitutoyo, Starrett, Brown & Sharpe</li>
-                <li>• <strong>Power Tools:</strong> Makita, DeWalt, Bosch, Milwaukee</li>
-                <li>• <strong>Hand Tools:</strong> Wera, Wiha, Klein Tools, Snap-on</li>
-                <li>• <strong>Soldering:</strong> Hakko, Weller, JBC, Metcal</li>
+                <li>
+                  • <strong>Precision:</strong> Mitutoyo, Starrett, Brown & Sharpe
+                </li>
+                <li>
+                  • <strong>Power Tools:</strong> Makita, DeWalt, Bosch, Milwaukee
+                </li>
+                <li>
+                  • <strong>Hand Tools:</strong> Wera, Wiha, Klein Tools, Snap-on
+                </li>
+                <li>
+                  • <strong>Soldering:</strong> Hakko, Weller, JBC, Metcal
+                </li>
               </ul>
             </div>
           </div>

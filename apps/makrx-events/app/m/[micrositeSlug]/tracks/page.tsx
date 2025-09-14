@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Cpu, Zap, Wrench, Palette, Code, Bot } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Cpu, Zap, Wrench, Palette, Code, Bot } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface MicrositeTracksPageProps {
   params: {
@@ -13,116 +13,110 @@ interface MicrositeTracksPageProps {
 
 export default async function MicrositeTracksPage({ params }: MicrositeTracksPageProps) {
   const { micrositeSlug } = await params;
-  
+
   // Mock data - would fetch from database
   const microsite = {
     slug: micrositeSlug,
-    title: "MakerFest 2024"
+    title: 'MakerFest 2024',
   };
 
   const tracks = [
     {
-      id: "robotics",
-      name: "Robotics & Automation",
+      id: 'robotics',
+      name: 'Robotics & Automation',
       icon: Bot,
-      color: "bg-blue-500",
-      description: "Build, program, and compete with autonomous robots and automated systems.",
+      color: 'bg-blue-500',
+      description: 'Build, program, and compete with autonomous robots and automated systems.',
       events: 8,
       competitions: 2,
       workshops: 6,
       featured: [
-        "Autonomous Robot Competition",
-        "Arduino Robotics Workshop", 
-        "Industrial Automation Showcase"
+        'Autonomous Robot Competition',
+        'Arduino Robotics Workshop',
+        'Industrial Automation Showcase',
       ],
-      skills: ["Arduino Programming", "Sensor Integration", "Motor Control", "AI/ML"],
-      difficulty: "Intermediate to Advanced"
+      skills: ['Arduino Programming', 'Sensor Integration', 'Motor Control', 'AI/ML'],
+      difficulty: 'Intermediate to Advanced',
     },
     {
-      id: "iot", 
-      name: "IoT & Smart Devices",
+      id: 'iot',
+      name: 'IoT & Smart Devices',
       icon: Cpu,
-      color: "bg-green-500",
-      description: "Connected devices, sensors, and smart home/city technologies.",
+      color: 'bg-green-500',
+      description: 'Connected devices, sensors, and smart home/city technologies.',
       events: 6,
       competitions: 1,
       workshops: 5,
       featured: [
-        "Smart Cities Hackathon",
-        "IoT Sensor Networks Workshop",
-        "Connected Home Devices"
+        'Smart Cities Hackathon',
+        'IoT Sensor Networks Workshop',
+        'Connected Home Devices',
       ],
-      skills: ["Raspberry Pi", "Cloud Integration", "Wireless Protocols", "Data Analytics"],
-      difficulty: "Beginner to Intermediate"
+      skills: ['Raspberry Pi', 'Cloud Integration', 'Wireless Protocols', 'Data Analytics'],
+      difficulty: 'Beginner to Intermediate',
     },
     {
-      id: "manufacturing",
-      name: "Digital Manufacturing",
+      id: 'manufacturing',
+      name: 'Digital Manufacturing',
       icon: Wrench,
-      color: "bg-orange-500", 
-      description: "3D printing, CNC machining, laser cutting, and modern fabrication techniques.",
+      color: 'bg-orange-500',
+      description: '3D printing, CNC machining, laser cutting, and modern fabrication techniques.',
       events: 7,
       competitions: 1,
       workshops: 6,
-      featured: [
-        "3D Printing Mastery Workshop",
-        "CNC Design Challenge",
-        "Laser Cutting Precision"
-      ],
-      skills: ["CAD Design", "3D Printing", "CNC Programming", "Materials Science"],
-      difficulty: "Beginner to Advanced"
+      featured: ['3D Printing Mastery Workshop', 'CNC Design Challenge', 'Laser Cutting Precision'],
+      skills: ['CAD Design', '3D Printing', 'CNC Programming', 'Materials Science'],
+      difficulty: 'Beginner to Advanced',
     },
     {
-      id: "electronics",
-      name: "Electronics & PCB Design", 
+      id: 'electronics',
+      name: 'Electronics & PCB Design',
       icon: Zap,
-      color: "bg-purple-500",
-      description: "Circuit design, PCB layout, and electronic prototyping for makers.",
+      color: 'bg-purple-500',
+      description: 'Circuit design, PCB layout, and electronic prototyping for makers.',
       events: 5,
       competitions: 1,
       workshops: 4,
       featured: [
-        "PCB Design Workshop",
-        "Electronic Music Instruments",
-        "Power Electronics Fundamentals"
+        'PCB Design Workshop',
+        'Electronic Music Instruments',
+        'Power Electronics Fundamentals',
       ],
-      skills: ["Circuit Design", "PCB Layout", "Soldering", "Embedded Programming"],
-      difficulty: "Intermediate to Advanced"
+      skills: ['Circuit Design', 'PCB Layout', 'Soldering', 'Embedded Programming'],
+      difficulty: 'Intermediate to Advanced',
     },
     {
-      id: "software",
-      name: "Software & Programming",
+      id: 'software',
+      name: 'Software & Programming',
       icon: Code,
-      color: "bg-indigo-500",
-      description: "Programming for makers, embedded systems, and maker-focused software development.",
+      color: 'bg-indigo-500',
+      description:
+        'Programming for makers, embedded systems, and maker-focused software development.',
       events: 6,
       competitions: 2,
       workshops: 4,
-      featured: [
-        "Embedded C++ Workshop",
-        "Maker App Development",
-        "Open Source Hardware Tools"
-      ],
-      skills: ["Python", "C/C++", "JavaScript", "Embedded Programming"],
-      difficulty: "Beginner to Advanced"
+      featured: ['Embedded C++ Workshop', 'Maker App Development', 'Open Source Hardware Tools'],
+      skills: ['Python', 'C/C++', 'JavaScript', 'Embedded Programming'],
+      difficulty: 'Beginner to Advanced',
     },
     {
-      id: "creative",
-      name: "Creative Making & Art",
+      id: 'creative',
+      name: 'Creative Making & Art',
       icon: Palette,
-      color: "bg-pink-500",
-      description: "Interactive art, creative coding, and artistic applications of maker technologies.",
+      color: 'bg-pink-500',
+      description:
+        'Interactive art, creative coding, and artistic applications of maker technologies.',
       events: 4,
       competitions: 1,
       workshops: 3,
       featured: [
-        "Interactive Art Installation",
-        "LED Art Workshop",
-        "Creative Coding with Processing"
+        'Interactive Art Installation',
+        'LED Art Workshop',
+        'Creative Coding with Processing',
       ],
-      skills: ["Creative Coding", "Interactive Design", "Digital Art", "Performance Tech"],
-      difficulty: "Beginner to Intermediate"
-    }
+      skills: ['Creative Coding', 'Interactive Design', 'Digital Art', 'Performance Tech'],
+      difficulty: 'Beginner to Intermediate',
+    },
   ];
 
   if (!microsite) {
@@ -136,19 +130,28 @@ export default async function MicrositeTracksPage({ params }: MicrositeTracksPag
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link href={`/m/${micrositeSlug}`} className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href={`/m/${micrositeSlug}`}
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {microsite.title}
               </Link>
             </div>
             <nav className="flex items-center space-x-6">
-              <Link href={`/m/${micrositeSlug}/events`} className="text-gray-700 hover:text-primary">
+              <Link
+                href={`/m/${micrositeSlug}/events`}
+                className="text-gray-700 hover:text-primary"
+              >
                 Events
               </Link>
               <Link href={`/m/${micrositeSlug}/tracks`} className="text-primary font-medium">
                 Tracks
               </Link>
-              <Link href={`/m/${micrositeSlug}/speakers`} className="text-gray-700 hover:text-primary">
+              <Link
+                href={`/m/${micrositeSlug}/speakers`}
+                className="text-gray-700 hover:text-primary"
+              >
                 Speakers
               </Link>
               <Link href={`/m/${micrositeSlug}/venue`} className="text-gray-700 hover:text-primary">
@@ -164,7 +167,8 @@ export default async function MicrositeTracksPage({ params }: MicrositeTracksPag
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Event Tracks</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore specialized tracks designed for different interests and skill levels in the maker community.
+            Explore specialized tracks designed for different interests and skill levels in the
+            maker community.
           </p>
         </div>
 
@@ -221,7 +225,7 @@ export default async function MicrositeTracksPage({ params }: MicrositeTracksPag
                 </div>
                 <p className="text-gray-600">{track.description}</p>
               </CardHeader>
-              
+
               <CardContent className="space-y-6">
                 {/* Event Breakdown */}
                 <div className="grid grid-cols-2 gap-4">
@@ -302,9 +306,7 @@ export default async function MicrositeTracksPage({ params }: MicrositeTracksPag
             </div>
             <div className="text-center mt-6">
               <Button asChild>
-                <Link href={`/m/${micrositeSlug}/events`}>
-                  Explore All Events
-                </Link>
+                <Link href={`/m/${micrositeSlug}/events`}>Explore All Events</Link>
               </Button>
             </div>
           </CardContent>

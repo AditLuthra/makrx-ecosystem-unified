@@ -4,12 +4,32 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, ScatterChart, Scatter, LineChart, Line
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  ScatterChart,
+  Scatter,
+  LineChart,
+  Line,
 } from 'recharts';
 import {
-  FolderOpen, Users, ShoppingCart, DollarSign, CheckCircle,
-  RefreshCw, TrendingUp, Package, Clock, Target
+  FolderOpen,
+  Users,
+  ShoppingCart,
+  DollarSign,
+  CheckCircle,
+  RefreshCw,
+  TrendingUp,
+  Package,
+  Clock,
+  Target,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -53,7 +73,7 @@ const ProjectAnalytics: React.FC = () => {
     try {
       const response = await fetch('/api/analytics/projects', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -64,17 +84,17 @@ const ProjectAnalytics: React.FC = () => {
         processChartData(data);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load project analytics",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load project analytics',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching project analytics:', error);
       toast({
-        title: "Error",
-        description: "Failed to load project analytics",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load project analytics',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -87,7 +107,7 @@ const ProjectAnalytics: React.FC = () => {
       name: `Project ${index + 1}`,
       cost: project.total_cost,
       bom_size: project.bom_items_count,
-      project_id: project.project_id
+      project_id: project.project_id,
     }));
     setCostDistributionData(costChart);
 
@@ -96,7 +116,7 @@ const ProjectAnalytics: React.FC = () => {
       name: `Project ${index + 1}`,
       items: project.bom_items_count,
       cost: project.total_cost,
-      project_id: project.project_id
+      project_id: project.project_id,
     }));
     setBomSizeData(bomChart);
 
@@ -105,7 +125,7 @@ const ProjectAnalytics: React.FC = () => {
       name: `Project ${index + 1}`,
       collaborators: project.collaboration_count,
       cost: project.total_cost,
-      project_id: project.project_id
+      project_id: project.project_id,
     }));
     setCollaborationData(collabChart);
 
@@ -115,13 +135,13 @@ const ProjectAnalytics: React.FC = () => {
       {
         name: 'MakrX Store',
         value: makrxPercentage,
-        fill: '#3B82F6'
+        fill: '#3B82F6',
       },
       {
         name: 'External Sources',
         value: 100 - makrxPercentage,
-        fill: '#F59E0B'
-      }
+        fill: '#F59E0B',
+      },
     ];
     setSourceData(sourceChart);
   };
@@ -159,9 +179,11 @@ const ProjectAnalytics: React.FC = () => {
   }
 
   const completionRate = getCompletionRate();
-  const averageCost = analytics.costliest_projects.length > 0 
-    ? analytics.costliest_projects.reduce((sum, p) => sum + p.total_cost, 0) / analytics.costliest_projects.length 
-    : 0;
+  const averageCost =
+    analytics.costliest_projects.length > 0
+      ? analytics.costliest_projects.reduce((sum, p) => sum + p.total_cost, 0) /
+        analytics.costliest_projects.length
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -194,7 +216,9 @@ const ProjectAnalytics: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Completed</p>
                 <p className="text-2xl font-bold text-green-600">{analytics.completed_projects}</p>
-                <p className="text-xs text-green-600">{completionRate.toFixed(1)}% completion rate</p>
+                <p className="text-xs text-green-600">
+                  {completionRate.toFixed(1)}% completion rate
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -218,7 +242,9 @@ const ProjectAnalytics: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">MakrX Store %</p>
-                <p className="text-2xl font-bold text-orange-600">{analytics.makrx_store_percentage.toFixed(1)}%</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {analytics.makrx_store_percentage.toFixed(1)}%
+                </p>
               </div>
               <ShoppingCart className="h-8 w-8 text-orange-600" />
             </div>
@@ -230,11 +256,10 @@ const ProjectAnalytics: React.FC = () => {
       <Alert className="bg-blue-50 border-blue-200">
         <TrendingUp className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <span className="font-medium">Project Insights:</span> 
+          <span className="font-medium">Project Insights:</span>
           {` ${analytics.makrx_store_percentage.toFixed(0)}% of BOM items are sourced from MakrX Store. `}
-          {analytics.average_completion_time > 0 && 
-            `Average completion time is ${analytics.average_completion_time.toFixed(1)} days.`
-          }
+          {analytics.average_completion_time > 0 &&
+            `Average completion time is ${analytics.average_completion_time.toFixed(1)} days.`}
         </AlertDescription>
       </Alert>
 
@@ -248,14 +273,17 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={costDistributionData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <BarChart
+                  data={costDistributionData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
                       name === 'cost' ? formatCurrency(Number(value)) : `${value} items`,
-                      name === 'cost' ? 'Total Cost' : 'BOM Items'
+                      name === 'cost' ? 'Total Cost' : 'BOM Items',
                     ]}
                   />
                   <Bar dataKey="cost" fill="#3B82F6" />
@@ -273,14 +301,17 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart data={bomSizeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <ScatterChart
+                  data={bomSizeData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="items" name="BOM Items" />
                   <YAxis dataKey="cost" name="Cost" />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
                       name === 'cost' ? formatCurrency(Number(value)) : `${value} items`,
-                      name === 'cost' ? 'Total Cost' : 'BOM Items'
+                      name === 'cost' ? 'Total Cost' : 'BOM Items',
                     ]}
                   />
                   <Scatter fill="#10B981" />
@@ -301,14 +332,19 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={collaborationData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <BarChart
+                  data={collaborationData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      name === 'collaborators' ? `${value} collaborators` : formatCurrency(Number(value)),
-                      name === 'collaborators' ? 'Collaborators' : 'Project Cost'
+                      name === 'collaborators'
+                        ? `${value} collaborators`
+                        : formatCurrency(Number(value)),
+                      name === 'collaborators' ? 'Collaborators' : 'Project Cost',
                     ]}
                   />
                   <Bar dataKey="collaborators" fill="#8B5CF6" />
@@ -358,7 +394,10 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {analytics.most_active_projects.slice(0, 5).map((project, index) => (
-                <div key={project.project_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={project.project_id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-purple-600">{index + 1}</span>
@@ -372,7 +411,9 @@ const ProjectAnalytics: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">{formatCurrency(project.total_cost)}</p>
+                    <p className="font-medium text-gray-900">
+                      {formatCurrency(project.total_cost)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -388,7 +429,10 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {analytics.largest_boms.slice(0, 5).map((project, index) => (
-                <div key={project.project_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={project.project_id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-green-600">{index + 1}</span>
@@ -402,7 +446,9 @@ const ProjectAnalytics: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">{formatCurrency(project.total_cost)}</p>
+                    <p className="font-medium text-gray-900">
+                      {formatCurrency(project.total_cost)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -418,7 +464,10 @@ const ProjectAnalytics: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {analytics.costliest_projects.slice(0, 5).map((project, index) => (
-                <div key={project.project_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={project.project_id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-600">{index + 1}</span>
@@ -432,7 +481,9 @@ const ProjectAnalytics: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">{formatCurrency(project.total_cost)}</p>
+                    <p className="font-medium text-gray-900">
+                      {formatCurrency(project.total_cost)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -454,7 +505,9 @@ const ProjectAnalytics: React.FC = () => {
                 <h4 className="font-medium text-blue-900">Optimize Sourcing</h4>
               </div>
               <p className="text-sm text-blue-800">
-                Increase MakrX Store usage to {analytics.makrx_store_percentage < 80 ? '80%+' : '90%+'} for better inventory integration and cost optimization.
+                Increase MakrX Store usage to{' '}
+                {analytics.makrx_store_percentage < 80 ? '80%+' : '90%+'} for better inventory
+                integration and cost optimization.
               </p>
             </div>
 
@@ -464,7 +517,8 @@ const ProjectAnalytics: React.FC = () => {
                 <h4 className="font-medium text-green-900">Encourage Collaboration</h4>
               </div>
               <p className="text-sm text-green-800">
-                Promote team projects and knowledge sharing to improve completion rates and reduce individual project costs.
+                Promote team projects and knowledge sharing to improve completion rates and reduce
+                individual project costs.
               </p>
             </div>
 
@@ -474,7 +528,8 @@ const ProjectAnalytics: React.FC = () => {
                 <h4 className="font-medium text-orange-900">Track Progress</h4>
               </div>
               <p className="text-sm text-orange-800">
-                Implement project milestones and regular check-ins to improve completion rates and reduce time-to-completion.
+                Implement project milestones and regular check-ins to improve completion rates and
+                reduce time-to-completion.
               </p>
             </div>
           </div>

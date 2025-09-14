@@ -1,4 +1,4 @@
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata = {
   title: 'Ecosystem — MakrX',
@@ -8,10 +8,13 @@ export const metadata = {
 export default function EcosystemPage() {
   return (
     <main>
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Ecosystem",
-        url: "https://makrx.org/ecosystem"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Ecosystem',
+          url: 'https://makrx.org/ecosystem',
+        }}
+      />
       Ecosystem
     </main>
   );

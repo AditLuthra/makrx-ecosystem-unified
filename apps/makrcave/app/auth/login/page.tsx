@@ -26,10 +26,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
-        {/* <ThemeToggle /> */}
-      </div>
-      
+      <div className="absolute top-4 right-4">{/* <ThemeToggle /> */}</div>
+
       <div className="max-w-md w-full space-y-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
           {/* Logo */}
@@ -37,21 +35,15 @@ export default function Login() {
             <div className="flex items-center justify-center w-16 h-16 mx-auto bg-blue-600 rounded-full mb-4">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              MakrCave Portal
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Makerspace Management System
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MakrCave Portal</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Makerspace Management System</p>
           </div>
 
           {/* Loading State */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Redirecting to secure login...
-            </p>
-            
+            <p className="text-gray-600 dark:text-gray-300 mb-6">Redirecting to secure login...</p>
+
             <button
               onClick={handleManualLogin}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -72,7 +64,10 @@ export default function Login() {
         <div className="text-center text-sm text-gray-500 dark:text-gray-400">
           <p>© 2024 MakrX. All rights reserved.</p>
           <p className="mt-1">
-            Need help? <a href="/contact" className="text-blue-600 hover:text-blue-700">Contact Support</a>
+            Need help?{' '}
+            <a href="/contact" className="text-blue-600 hover:text-blue-700">
+              Contact Support
+            </a>
           </p>
         </div>
       </div>

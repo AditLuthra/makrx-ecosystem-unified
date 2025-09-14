@@ -1,23 +1,15 @@
-"use client";
+'use client';
 
-import NotificationDropdown from "@/components/NotificationDropdown";
-import SmartSearch from "@/components/SmartSearch";
-import { ThemeToggle, ThemeToggleCompact } from "@/components/ThemeToggle";
-import { useAuth } from "@/contexts/AuthContext";
-import { adminDataService, type AdminCategory } from "@/lib/adminData";
-import { api } from "@/lib/api";
-import {
-  LogOut,
-  Menu,
-  Package,
-  Settings,
-  ShoppingCart,
-  User,
-  X,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import NotificationDropdown from '@/components/NotificationDropdown';
+import SmartSearch from '@/components/SmartSearch';
+import { ThemeToggle, ThemeToggleCompact } from '@/components/ThemeToggle';
+import { useAuth } from '@/contexts/AuthContext';
+import { adminDataService, type AdminCategory } from '@/lib/adminData';
+import { api } from '@/lib/api';
+import { LogOut, Menu, Package, Settings, ShoppingCart, User, X } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export function Header() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -34,7 +26,7 @@ export function Header() {
         const categoriesData = adminDataService.getCategories();
         setCategories(categoriesData);
       } catch (error) {
-        console.error("Failed to load categories:", error);
+        console.error('Failed to load categories:', error);
       }
     };
 
@@ -43,10 +35,7 @@ export function Header() {
       setCategories(event.detail);
     };
 
-    window.addEventListener(
-      "categoriesUpdated",
-      handleCategoriesUpdate as EventListener
-    );
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdate as EventListener);
 
     loadCategories();
 
@@ -56,7 +45,7 @@ export function Header() {
           const cart = await api.getCart();
           setCartItemCount(cart.item_count);
         } catch (error) {
-          console.error("Failed to load cart:", error);
+          console.error('Failed to load cart:', error);
         }
       }
     };
@@ -64,10 +53,7 @@ export function Header() {
     loadCartCount();
 
     return () => {
-      window.removeEventListener(
-        "categoriesUpdated",
-        handleCategoriesUpdate as EventListener
-      );
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdate as EventListener);
     };
 
     loadCategories();
@@ -87,16 +73,16 @@ export function Header() {
 
   const handleUserMenuClick = (action: string) => {
     switch (action) {
-      case "account":
-        router.push("/account");
+      case 'account':
+        router.push('/account');
         break;
-      case "orders":
-        router.push("/account/orders");
+      case 'orders':
+        router.push('/account/orders');
         break;
-      case "settings":
-        router.push("/account/settings");
+      case 'settings':
+        router.push('/account/settings');
         break;
-      case "logout":
+      case 'logout':
         logout();
         break;
     }
@@ -117,9 +103,7 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-1">
-              <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                MakrX
-              </div>
+              <div className="text-xl font-bold text-blue-600 dark:text-blue-400">MakrX</div>
               <span className="text-sm text-muted-foreground">Store</span>
             </Link>
           </div>
@@ -153,9 +137,7 @@ export function Header() {
                     href="https://makrx.org"
                     className="block p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 hover:shadow-md transition-all duration-200 rounded-lg"
                   >
-                    <div className="font-medium text-popover-foreground">
-                      MakrX.org
-                    </div>
+                    <div className="font-medium text-popover-foreground">MakrX.org</div>
                     <div className="text-sm text-muted-foreground">
                       Ecosystem gateway & maker hub
                     </div>
@@ -164,17 +146,13 @@ export function Header() {
                     href="https://makrcave.com"
                     className="block p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 hover:shadow-md transition-all duration-200 rounded-lg"
                   >
-                    <div className="font-medium text-popover-foreground">
-                      MakrCave
-                    </div>
+                    <div className="font-medium text-popover-foreground">MakrCave</div>
                     <div className="text-sm text-muted-foreground">
                       Makerspace management platform
                     </div>
                   </a>
                   <div className="block p-3 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
-                    <div className="font-medium text-blue-600 dark:text-blue-400">
-                      MakrX.Store
-                    </div>
+                    <div className="font-medium text-blue-600 dark:text-blue-400">MakrX.Store</div>
                     <div className="text-sm text-blue-600/70 dark:text-blue-400/70">
                       You are here - E-commerce hub
                     </div>
@@ -194,12 +172,7 @@ export function Header() {
             <div className="relative group">
               <button className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center">
                 Categories
-                <svg
-                  className="ml-1 h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -215,15 +188,11 @@ export function Header() {
                     <div
                       key={category.id}
                       className="p-2 hover:bg-accent hover:text-accent-foreground rounded-md cursor-pointer"
-                      onMouseEnter={() =>
-                        setHoveredCategory(String(category.id))
-                      }
+                      onMouseEnter={() => setHoveredCategory(String(category.id))}
                       onMouseLeave={() => setHoveredCategory(null)}
                       onClick={() => handleCategoryClick(category)}
                     >
-                      <div className="font-medium text-popover-foreground">
-                        {category.name}
-                      </div>
+                      <div className="font-medium text-popover-foreground">{category.name}</div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {category.description}
                       </div>
@@ -233,18 +202,14 @@ export function Header() {
                         <div className="mt-2 space-y-1">
                           {getSubcategories(category.slug).map((subcatName) => {
                             const subcatKey =
-                              typeof subcatName === "string"
-                                ? subcatName
-                                : String(subcatName);
+                              typeof subcatName === 'string' ? subcatName : String(subcatName);
                             return (
                               <div
                                 key={subcatKey}
                                 className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer pl-2"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  router.push(
-                                    `/catalog/${category.slug}?sub=${subcatKey}`
-                                  );
+                                  router.push(`/catalog/${category.slug}?sub=${subcatKey}`);
                                 }}
                               >
                                 {subcatKey}
@@ -263,12 +228,7 @@ export function Header() {
             <div className="relative group">
               <button className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center">
                 Services
-                <svg
-                  className="ml-1 h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -284,9 +244,7 @@ export function Header() {
                     href="/3d-printing"
                     className="block p-2 hover:bg-accent hover:text-accent-foreground rounded-md"
                   >
-                    <div className="font-medium text-popover-foreground">
-                      3D Printing
-                    </div>
+                    <div className="font-medium text-popover-foreground">3D Printing</div>
                     <div className="text-sm text-muted-foreground">
                       Professional printing services
                     </div>
@@ -295,23 +253,15 @@ export function Header() {
                     href="/upload"
                     className="block p-2 hover:bg-accent hover:text-accent-foreground rounded-md"
                   >
-                    <div className="font-medium text-popover-foreground">
-                      Upload & Quote
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Get instant pricing
-                    </div>
+                    <div className="font-medium text-popover-foreground">Upload & Quote</div>
+                    <div className="text-sm text-muted-foreground">Get instant pricing</div>
                   </Link>
                   <Link
                     href="/sample-projects"
                     className="block p-2 hover:bg-accent hover:text-accent-foreground rounded-md"
                   >
-                    <div className="font-medium text-popover-foreground">
-                      Sample Projects
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Explore our gallery
-                    </div>
+                    <div className="font-medium text-popover-foreground">Sample Projects</div>
+                    <div className="text-sm text-muted-foreground">Explore our gallery</div>
                   </Link>
                 </div>
               </div>
@@ -343,7 +293,7 @@ export function Header() {
               <ShoppingCart className="h-6 w-6" />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemCount > 9 ? "9+" : cartItemCount}
+                  {cartItemCount > 9 ? '9+' : cartItemCount}
                 </span>
               )}
             </Link>
@@ -356,37 +306,35 @@ export function Header() {
               <div className="relative group">
                 <button className="flex items-center space-x-2 p-2 text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   <User className="h-6 w-6" />
-                  <span className="hidden md:block text-sm">
-                    {user?.name || user?.email}
-                  </span>
+                  <span className="hidden md:block text-sm">{user?.name || user?.email}</span>
                 </button>
 
                 <div className="absolute right-0 mt-2 w-48 bg-popover border border-border shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-2">
                     <button
-                      onClick={() => handleUserMenuClick("account")}
+                      onClick={() => handleUserMenuClick('account')}
                       className="w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground flex items-center"
                     >
                       <User className="h-4 w-4 mr-2" />
                       My Account
                     </button>
                     <button
-                      onClick={() => handleUserMenuClick("orders")}
+                      onClick={() => handleUserMenuClick('orders')}
                       className="w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground flex items-center"
                     >
                       <Package className="h-4 w-4 mr-2" />
                       My Orders
                     </button>
                     <button
-                      onClick={() => handleUserMenuClick("settings")}
+                      onClick={() => handleUserMenuClick('settings')}
                       className="w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground flex items-center"
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Settings
                     </button>
-                    {user?.roles.includes("admin") && (
+                    {user?.roles.includes('admin') && (
                       <button
-                        onClick={() => router.push("/admin")}
+                        onClick={() => router.push('/admin')}
                         className="w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground flex items-center"
                       >
                         <Settings className="h-4 w-4 mr-2" />
@@ -397,7 +345,7 @@ export function Header() {
                     <ThemeToggleCompact />
                     <hr className="my-1 border-border" />
                     <button
-                      onClick={() => handleUserMenuClick("logout")}
+                      onClick={() => handleUserMenuClick('logout')}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
@@ -412,12 +360,7 @@ export function Header() {
                 className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 hover:scale-105 transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 group"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -436,11 +379,7 @@ export function Header() {
               className="md:hidden p-2 rounded-lg text-foreground hover:text-blue-600 dark:hover:text-blue-400 hover:bg-accent transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
@@ -523,7 +462,7 @@ export function Header() {
                 <div className="font-medium text-foreground mb-2">Account</div>
                 <button
                   onClick={() => {
-                    handleUserMenuClick("account");
+                    handleUserMenuClick('account');
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-left py-1 pl-4 text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400"
@@ -532,7 +471,7 @@ export function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    handleUserMenuClick("orders");
+                    handleUserMenuClick('orders');
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-left py-1 pl-4 text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400"
@@ -541,7 +480,7 @@ export function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    handleUserMenuClick("logout");
+                    handleUserMenuClick('logout');
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-left py-1 pl-4 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"

@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { api } from "@/lib/api";
-import { useAuth } from "./AuthContext";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { api } from '@/lib/api';
+import { useAuth } from './AuthContext';
 
 export interface Notification {
   id: string;
-  type: "success" | "error" | "warning" | "info";
+  type: 'success' | 'error' | 'warning' | 'info';
   title: string;
   message: string;
   timestamp: Date;
@@ -24,18 +18,14 @@ export interface Notification {
 interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
-  addNotification: (
-    notification: Omit<Notification, "id" | "timestamp" | "read">,
-  ) => void;
+  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
   clearAll: () => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined,
-);
+const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -51,38 +41,38 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     const connectWebSocket = () => {
       try {
-        const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000"}/ws/notifications/${user.id}`;
+        const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000'}/ws/notifications/${user.id}`;
         ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
-          console.log("Connected to notification WebSocket");
+          console.log('Connected to notification WebSocket');
         };
 
         ws.onmessage = (event) => {
           try {
             const notification = JSON.parse(event.data);
             addNotification({
-              type: notification.type || "info",
+              type: notification.type || 'info',
               title: notification.title,
               message: notification.message,
               actionUrl: notification.action_url,
               actionLabel: notification.action_label,
             });
           } catch (error) {
-            console.error("Failed to parse WebSocket message:", error);
+            console.error('Failed to parse WebSocket message:', error);
           }
         };
 
         ws.onclose = () => {
-          console.log("WebSocket disconnected, attempting to reconnect...");
+          console.log('WebSocket disconnected, attempting to reconnect...');
           reconnectTimeout = setTimeout(connectWebSocket, 5000);
         };
 
         ws.onerror = (error) => {
-          console.error("WebSocket error:", error);
+          console.error('WebSocket error:', error);
         };
       } catch (error) {
-        console.error("Failed to connect to WebSocket:", error);
+        console.error('Failed to connect to WebSocket:', error);
         reconnectTimeout = setTimeout(connectWebSocket, 5000);
       }
     };
@@ -113,7 +103,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           })),
         );
       } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+        console.error('Failed to fetch notifications:', error);
       }
     };
 
@@ -126,9 +116,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
-  const addNotification = (
-    notification: Omit<Notification, "id" | "timestamp" | "read">,
-  ) => {
+  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: Notification = {
       ...notification,
       id: Date.now().toString(),
@@ -140,19 +128,19 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     // Show browser notification if permission granted
     if (
-      typeof window !== "undefined" &&
-      "Notification" in window &&
-      Notification.permission === "granted"
+      typeof window !== 'undefined' &&
+      'Notification' in window &&
+      Notification.permission === 'granted'
     ) {
       new Notification(notification.title, {
         body: notification.message,
-        icon: "/favicon.ico",
+        icon: '/favicon.ico',
         tag: newNotification.id,
       });
     }
 
     // Auto-remove success notifications after 5 seconds
-    if (notification.type === "success") {
+    if (notification.type === 'success') {
       setTimeout(() => {
         removeNotification(newNotification.id);
       }, 5000);
@@ -160,14 +148,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   };
 
   const markAsRead = async (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
 
     try {
       await api.markNotificationAsRead(id);
     } catch (error) {
-      console.error("Failed to mark notification as read:", error);
+      console.error('Failed to mark notification as read:', error);
     }
   };
 
@@ -177,7 +163,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     try {
       await api.markAllNotificationsAsRead();
     } catch (error) {
-      console.error("Failed to mark all notifications as read:", error);
+      console.error('Failed to mark all notifications as read:', error);
     }
   };
 
@@ -201,36 +187,30 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     clearAll,
   };
 
-  return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 }
 
 export function useNotifications() {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error(
-      "useNotifications must be used within a NotificationProvider",
-    );
+    throw new Error('useNotifications must be used within a NotificationProvider');
   }
   return context;
 }
 
 // Request notification permission
 export async function requestNotificationPermission() {
-  if (typeof window === "undefined" || !("Notification" in window)) {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
     return false;
   }
 
-  if (Notification.permission === "granted") {
+  if (Notification.permission === 'granted') {
     return true;
   }
 
-  if (Notification.permission !== "denied") {
+  if (Notification.permission !== 'denied') {
     const permission = await Notification.requestPermission();
-    return permission === "granted";
+    return permission === 'granted';
   }
 
   return false;

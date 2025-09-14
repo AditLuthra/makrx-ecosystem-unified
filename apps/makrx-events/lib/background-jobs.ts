@@ -28,19 +28,18 @@ export class BackgroundJobProcessor {
           // Update status
           await db
             .update(emailQueue)
-            .set({ 
+            .set({
               status: success ? 'sent' : 'failed',
               sentAt: success ? new Date() : null,
-              error: success ? null : 'Failed to send email'
+              error: success ? null : 'Failed to send email',
             })
             .where(eq(emailQueue.id, email.id));
-
         } catch (error) {
           await db
             .update(emailQueue)
-            .set({ 
+            .set({
               status: 'failed',
-              error: error instanceof Error ? error.message : 'Unknown error'
+              error: error instanceof Error ? error.message : 'Unknown error',
             })
             .where(eq(emailQueue.id, email.id));
         }
@@ -81,7 +80,6 @@ export class BackgroundJobProcessor {
               completedAt: new Date(),
             })
             .where(eq(exportJobs.id, job.id));
-
         } catch (error) {
           await db
             .update(exportJobs)
@@ -107,8 +105,8 @@ export class BackgroundJobProcessor {
         .where(
           and(
             eq(bulkCommunications.status, 'scheduled'),
-            eq(bulkCommunications.scheduledFor, now) // Use proper date comparison
-          )
+            eq(bulkCommunications.scheduledFor, now), // Use proper date comparison
+          ),
         )
         .limit(5);
 
@@ -131,13 +129,13 @@ export class BackgroundJobProcessor {
         return await this.emailService.sendTemplateEmail(
           email.to,
           email.templateId,
-          email.templateData
+          email.templateData,
         );
       } else {
         return await this.emailService.sendPlainEmail(
           email.to,
           email.subject,
-          email.htmlContent || email.textContent
+          email.htmlContent || email.textContent,
         );
       }
     } catch (error) {
@@ -146,17 +144,19 @@ export class BackgroundJobProcessor {
     }
   }
 
-  private async generateExport(job: any): Promise<{ fileUrl: string; fileSize: number; recordCount: number }> {
+  private async generateExport(
+    job: any,
+  ): Promise<{ fileUrl: string; fileSize: number; recordCount: number }> {
     // Mock implementation - in real app, generate actual files
     const fileName = `export_${job.type}_${Date.now()}.${job.format}`;
     const fileUrl = `/exports/${fileName}`;
-    
+
     // TODO: Implement actual export generation based on job.type
     // - attendees: Export participant data
-    // - payments: Export payment transactions  
+    // - payments: Export payment transactions
     // - analytics: Export event analytics
     // - certificates: Export certificate data
-    
+
     return {
       fileUrl,
       fileSize: 1024 * 50, // Mock 50KB file
@@ -184,7 +184,7 @@ export class BackgroundJobProcessor {
           await this.emailService.sendPlainEmail(
             recipient.email,
             communication.title,
-            communication.content
+            communication.content,
           );
           sentCount++;
         } catch (error) {
@@ -203,7 +203,6 @@ export class BackgroundJobProcessor {
           sentAt: new Date(),
         })
         .where(eq(bulkCommunications.id, communication.id));
-
     } catch (error) {
       await db
         .update(bulkCommunications)
@@ -217,9 +216,7 @@ export class BackgroundJobProcessor {
     try {
       if (communication.targetAudience === 'all') {
         // Mock implementation - replace with actual database queries
-        return [
-          { email: 'user@example.com', name: 'Sample User' }
-        ];
+        return [{ email: 'user@example.com', name: 'Sample User' }];
       }
 
       // TODO: Implement other audience types

@@ -12,30 +12,30 @@ NC='\033[0m'
 
 # Stop backend processes
 if [ -f ".makrcave-backend.pid" ]; then
-    echo -e "${BLUE}Stopping MakrCave backend...${NC}"
-    pid=$(cat ".makrcave-backend.pid")
-    if kill -0 $pid 2>/dev/null; then
-        kill $pid
-    fi
-    rm -f ".makrcave-backend.pid"
+	echo -e "${BLUE}Stopping MakrCave backend...${NC}"
+	pid=$(cat ".makrcave-backend.pid")
+	if kill -0 $pid 2>/dev/null; then
+		kill $pid
+	fi
+	rm -f ".makrcave-backend.pid"
 fi
 
 if [ -f ".makrx-events-backend.pid" ]; then
-    echo -e "${BLUE}Stopping MakrX Events backend...${NC}"
-    pid=$(cat ".makrx-events-backend.pid")
-    if kill -0 $pid 2>/dev/null; then
-        kill $pid
-    fi
-    rm -f ".makrx-events-backend.pid"
+	echo -e "${BLUE}Stopping MakrX Events backend...${NC}"
+	pid=$(cat ".makrx-events-backend.pid")
+	if kill -0 $pid 2>/dev/null; then
+		kill $pid
+	fi
+	rm -f ".makrx-events-backend.pid"
 fi
 
 if [ -f ".makrx-store-backend.pid" ]; then
-    echo -e "${BLUE}Stopping MakrX Store backend...${NC}"
-    pid=$(cat ".makrx-store-backend.pid")
-    if kill -0 $pid 2>/dev/null; then
-        kill $pid
-    fi
-    rm -f ".makrx-store-backend.pid"
+	echo -e "${BLUE}Stopping MakrX Store backend...${NC}"
+	pid=$(cat ".makrx-store-backend.pid")
+	if kill -0 $pid 2>/dev/null; then
+		kill $pid
+	fi
+	rm -f ".makrx-store-backend.pid"
 fi
 
 # Stop Docker services

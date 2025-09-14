@@ -1,4 +1,15 @@
-from sqlalchemy import Column, String, Text, DateTime, Integer, Numeric, Boolean, ForeignKey, UniqueConstraint, Index
+from sqlalchemy import (
+    Column,
+    String,
+    Text,
+    DateTime,
+    Integer,
+    Numeric,
+    Boolean,
+    ForeignKey,
+    UniqueConstraint,
+    Index,
+)
 from sqlalchemy.sql import func
 from ..database import Base
 
@@ -7,7 +18,12 @@ class SubEvent(Base):
     __tablename__ = "sub_events"
 
     id = Column(String, primary_key=True)
-    microsite_id = Column(String, ForeignKey("microsites.id", ondelete="CASCADE"), index=True, nullable=False)
+    microsite_id = Column(
+        String,
+        ForeignKey("microsites.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     slug = Column(Text, index=True)
     title = Column(Text, nullable=False)
     type = Column(String)
@@ -27,9 +43,13 @@ class SubEvent(Base):
     prizes_md = Column(Text)
     waitlist = Column(Boolean)
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
 
     __table_args__ = (
-        UniqueConstraint("microsite_id", "slug", name="uq_sub_events_microsite_slug"),
+        UniqueConstraint(
+            "microsite_id", "slug", name="uq_sub_events_microsite_slug"
+        ),
         Index("ix_sub_events_status", "status"),
     )

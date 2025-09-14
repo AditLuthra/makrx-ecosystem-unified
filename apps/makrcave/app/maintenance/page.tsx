@@ -1,12 +1,18 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Wrench,
   Calendar,
   Clock,
@@ -23,7 +29,7 @@ import {
   FileText,
   Eye,
   Edit,
-  Trash2
+  Trash2,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -82,7 +88,7 @@ interface EquipmentStatus {
 const Maintenance: React.FC = () => {
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
-  
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [maintenanceLogs, setMaintenanceLogs] = useState<MaintenanceLog[]>([]);
@@ -102,7 +108,7 @@ const Maintenance: React.FC = () => {
       // Load maintenance logs
       const headers = await getHeaders();
       const logsResponse = await fetch('/api/v1/maintenance/logs', { headers });
-      
+
       if (logsResponse.ok) {
         const logs = await logsResponse.json();
         setMaintenanceLogs(logs);
@@ -110,7 +116,7 @@ const Maintenance: React.FC = () => {
 
       // Load maintenance schedules
       const schedulesResponse = await fetch('/api/v1/maintenance/schedules', { headers });
-      
+
       if (schedulesResponse.ok) {
         const schedules = await schedulesResponse.json();
         setMaintenanceSchedules(schedules);
@@ -118,12 +124,11 @@ const Maintenance: React.FC = () => {
 
       // Load equipment statuses
       const statusResponse = await fetch('/api/v1/maintenance/equipment-status', { headers });
-      
+
       if (statusResponse.ok) {
         const statuses = await statusResponse.json();
         setEquipmentStatuses(statuses);
       }
-
     } catch (error) {
       console.error('Error loading maintenance data:', error);
       // No mock fallback; keep empty states
@@ -138,7 +143,7 @@ const Maintenance: React.FC = () => {
 
   // Check permissions - provide context for makerspace-level access
   const canAccessMaintenance = hasPermission('equipment', 'maintenance', {
-    isAssignedMakerspace: true // Assume user is working within their assigned makerspace
+    isAssignedMakerspace: true, // Assume user is working within their assigned makerspace
   });
 
   if (!canAccessMaintenance) {
@@ -147,7 +152,9 @@ const Maintenance: React.FC = () => {
         <div className="text-center">
           <AlertTriangle className="h-12 w-12 mx-auto text-red-400 mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">Access Denied</h3>
-          <p className="text-gray-600 mb-4">You don't have permission to access maintenance management</p>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access maintenance management
+          </p>
           <p className="text-sm text-gray-500">Contact your administrator for access</p>
         </div>
       </div>
@@ -170,7 +177,7 @@ const Maintenance: React.FC = () => {
       scheduled_date: '2024-01-20T14:00:00Z',
       estimated_duration: 120,
       cost: 50,
-      maintenance_type: 'routine'
+      maintenance_type: 'routine',
     },
     {
       id: 'log-2',
@@ -186,7 +193,7 @@ const Maintenance: React.FC = () => {
       created_at: '2024-01-18T09:30:00Z',
       estimated_duration: 180,
       parts_used: ['Laser mirror', 'Alignment tool'],
-      cost: 150
+      cost: 150,
     },
     {
       id: 'log-3',
@@ -203,8 +210,8 @@ const Maintenance: React.FC = () => {
       resolved_at: '2024-01-12T16:30:00Z',
       actual_duration: 240,
       cost: 300,
-      parts_used: ['Spindle bearing set', 'Lubricant']
-    }
+      parts_used: ['Spindle bearing set', 'Lubricant'],
+    },
   ];
 
   const getMockMaintenanceSchedules = (): MaintenanceSchedule[] => [
@@ -218,7 +225,7 @@ const Maintenance: React.FC = () => {
       next_due_date: '2024-01-20',
       is_active: true,
       maintenance_type: 'Preventive Cleaning',
-      responsible_team: 'Tech Team'
+      responsible_team: 'Tech Team',
     },
     {
       id: 'sched-2',
@@ -230,8 +237,8 @@ const Maintenance: React.FC = () => {
       next_due_date: '2024-02-15',
       is_active: true,
       maintenance_type: 'Lens Cleaning & Calibration',
-      responsible_team: 'Laser Specialists'
-    }
+      responsible_team: 'Laser Specialists',
+    },
   ];
 
   const getMockEquipmentStatuses = (): EquipmentStatus[] => [
@@ -240,7 +247,7 @@ const Maintenance: React.FC = () => {
       name: '3D Printer Pro',
       status: 'maintenance_scheduled',
       last_maintenance: '2023-12-20',
-      next_maintenance: '2024-01-20'
+      next_maintenance: '2024-01-20',
     },
     {
       equipment_id: 'eq-2',
@@ -249,61 +256,80 @@ const Maintenance: React.FC = () => {
       current_issue: 'Laser alignment issue',
       estimated_repair_time: '3 hours',
       last_maintenance: '2024-01-05',
-      next_maintenance: '2024-02-15'
+      next_maintenance: '2024-02-15',
     },
     {
       equipment_id: 'eq-3',
       name: 'CNC Mill Pro',
       status: 'available',
       last_maintenance: '2024-01-12',
-      next_maintenance: '2024-02-12'
-    }
+      next_maintenance: '2024-02-12',
+    },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-yellow-100 text-yellow-800';
-      case 'resolved': return 'bg-green-100 text-green-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'scheduled':
+        return 'bg-blue-100 text-blue-800';
+      case 'in_progress':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'resolved':
+        return 'bg-green-100 text-green-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'critical':
+        return 'bg-red-100 text-red-800';
+      case 'high':
+        return 'bg-orange-100 text-orange-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getEquipmentStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800';
-      case 'maintenance_scheduled': return 'bg-blue-100 text-blue-800';
-      case 'out_of_service': return 'bg-red-100 text-red-800';
-      case 'in_maintenance': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'available':
+        return 'bg-green-100 text-green-800';
+      case 'maintenance_scheduled':
+        return 'bg-blue-100 text-blue-800';
+      case 'out_of_service':
+        return 'bg-red-100 text-red-800';
+      case 'in_maintenance':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const filteredLogs = maintenanceLogs.filter(log => {
-    const matchesSearch = log.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         log.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredLogs = maintenanceLogs.filter((log) => {
+    const matchesSearch =
+      log.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || log.status === statusFilter;
     const matchesType = typeFilter === 'all' || log.type === typeFilter;
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const upcomingMaintenance = maintenanceSchedules.filter(schedule => 
-    new Date(schedule.next_due_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const upcomingMaintenance = maintenanceSchedules.filter(
+    (schedule) =>
+      new Date(schedule.next_due_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
   );
 
-  const outOfServiceCount = equipmentStatuses.filter(eq => eq.status === 'out_of_service').length;
-  const scheduledCount = equipmentStatuses.filter(eq => eq.status === 'maintenance_scheduled').length;
+  const outOfServiceCount = equipmentStatuses.filter((eq) => eq.status === 'out_of_service').length;
+  const scheduledCount = equipmentStatuses.filter(
+    (eq) => eq.status === 'maintenance_scheduled',
+  ).length;
 
   if (loading) {
     return (
@@ -418,14 +444,21 @@ const Maintenance: React.FC = () => {
               {upcomingMaintenance.length > 0 ? (
                 <div className="space-y-3">
                   {upcomingMaintenance.map((schedule) => (
-                    <div key={schedule.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div
+                      key={schedule.id}
+                      className="flex items-center justify-between p-3 bg-blue-50 rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{schedule.equipment_name}</p>
                         <p className="text-sm text-gray-600">{schedule.maintenance_type}</p>
-                        <p className="text-sm text-gray-500">Due: {new Date(schedule.next_due_date).toLocaleDateString()}</p>
+                        <p className="text-sm text-gray-500">
+                          Due: {new Date(schedule.next_due_date).toLocaleDateString()}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-blue-600">{schedule.responsible_team}</p>
+                        <p className="text-sm font-medium text-blue-600">
+                          {schedule.responsible_team}
+                        </p>
                         <Badge variant="outline">
                           {schedule.interval_value} {schedule.interval_type}
                         </Badge>
@@ -499,12 +532,8 @@ const Maintenance: React.FC = () => {
                         <Badge className={getStatusColor(log.status)}>
                           {log.status.replace('_', ' ')}
                         </Badge>
-                        <Badge className={getPriorityColor(log.priority)}>
-                          {log.priority}
-                        </Badge>
-                        <Badge variant="outline">
-                          {log.type}
-                        </Badge>
+                        <Badge className={getPriorityColor(log.priority)}>{log.priority}</Badge>
+                        <Badge variant="outline">{log.type}</Badge>
                       </div>
                       <p className="text-gray-600 mb-3">{log.description}</p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -519,7 +548,9 @@ const Maintenance: React.FC = () => {
                         <div>
                           <p className="text-gray-500">Duration</p>
                           <p className="font-medium">
-                            {log.estimated_duration ? `${log.estimated_duration} min (est.)` : 'Not set'}
+                            {log.estimated_duration
+                              ? `${log.estimated_duration} min (est.)`
+                              : 'Not set'}
                           </p>
                         </div>
                         <div>
@@ -566,7 +597,10 @@ const Maintenance: React.FC = () => {
             <CardContent>
               <div className="space-y-4">
                 {maintenanceSchedules.map((schedule) => (
-                  <div key={schedule.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={schedule.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div>
                       <h3 className="font-semibold">{schedule.equipment_name}</h3>
                       <p className="text-sm text-gray-600">{schedule.maintenance_type}</p>
@@ -575,10 +609,12 @@ const Maintenance: React.FC = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">Next Due: {new Date(schedule.next_due_date).toLocaleDateString()}</p>
+                      <p className="text-sm font-medium">
+                        Next Due: {new Date(schedule.next_due_date).toLocaleDateString()}
+                      </p>
                       <p className="text-sm text-gray-500">Team: {schedule.responsible_team}</p>
-                      <Badge variant={schedule.is_active ? "default" : "secondary"}>
-                        {schedule.is_active ? "Active" : "Inactive"}
+                      <Badge variant={schedule.is_active ? 'default' : 'secondary'}>
+                        {schedule.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
                   </div>
@@ -600,17 +636,19 @@ const Maintenance: React.FC = () => {
                       {equipment.status.replace('_', ' ')}
                     </Badge>
                   </div>
-                  
+
                   {equipment.current_issue && (
                     <div className="mb-3 p-3 bg-red-50 rounded-lg">
                       <p className="text-sm font-medium text-red-800">Current Issue:</p>
                       <p className="text-sm text-red-600">{equipment.current_issue}</p>
                       {equipment.estimated_repair_time && (
-                        <p className="text-sm text-red-500">Est. repair time: {equipment.estimated_repair_time}</p>
+                        <p className="text-sm text-red-500">
+                          Est. repair time: {equipment.estimated_repair_time}
+                        </p>
                       )}
                     </div>
                   )}
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Last Maintenance:</span>
@@ -621,7 +659,7 @@ const Maintenance: React.FC = () => {
                       <span>{new Date(equipment.next_maintenance).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1">
                       <Eye className="h-4 w-4 mr-1" />

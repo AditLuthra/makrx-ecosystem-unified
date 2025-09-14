@@ -8,16 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Trophy, 
-  CheckCircle, 
-  Clock, 
-  Search, 
-  Plus,
-  Settings,
-  BarChart3
-} from 'lucide-react';
+import { Users, Trophy, CheckCircle, Clock, Search, Plus, Settings, BarChart3 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 
@@ -114,21 +105,23 @@ export default function EventManagePage() {
       setSelectedUser('');
     },
     onError: (error: any) => {
-      toast({ 
-        title: 'Error', 
+      toast({
+        title: 'Error',
         description: error.message || 'Failed to check in participant',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     },
   });
 
-  const filteredRegistrations = registrations?.filter(reg => 
-    reg.user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    reg.user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    reg.user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredRegistrations =
+    registrations?.filter(
+      (reg) =>
+        reg.user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        reg.user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        reg.user.email?.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) || [];
 
-  const checkedInUserIds = new Set(checkIns?.map(ci => ci.userId) || []);
+  const checkedInUserIds = new Set(checkIns?.map((ci) => ci.userId) || []);
   const checkedInCount = checkIns?.length || 0;
   const totalRegistrations = registrations?.length || 0;
 
@@ -188,7 +181,9 @@ export default function EventManagePage() {
                   <div className="text-center py-8">Loading participants...</div>
                 ) : filteredRegistrations.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    {searchQuery ? 'No participants found matching your search' : 'No registrations found'}
+                    {searchQuery
+                      ? 'No participants found matching your search'
+                      : 'No registrations found'}
                   </div>
                 ) : (
                   filteredRegistrations.map((registration) => {
@@ -201,9 +196,11 @@ export default function EventManagePage() {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${
-                            isCheckedIn ? 'bg-green-500' : 'bg-gray-300'
-                          }`} />
+                          <div
+                            className={`w-3 h-3 rounded-full ${
+                              isCheckedIn ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
+                          />
                           <div>
                             <p className="font-medium">
                               {registration.user.firstName} {registration.user.lastName}
@@ -246,9 +243,7 @@ export default function EventManagePage() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Competition Management</CardTitle>
-                <CardDescription>
-                  Create and manage tournaments for your event
-                </CardDescription>
+                <CardDescription>Create and manage tournaments for your event</CardDescription>
               </div>
               <Button className="flex items-center gap-2">
                 <Plus className="w-4 h-4" />
@@ -271,10 +266,15 @@ export default function EventManagePage() {
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{tournament.name}</CardTitle>
-                          <Badge variant={
-                            tournament.status === 'completed' ? 'default' :
-                            tournament.status === 'in_progress' ? 'secondary' : 'outline'
-                          }>
+                          <Badge
+                            variant={
+                              tournament.status === 'completed'
+                                ? 'default'
+                                : tournament.status === 'in_progress'
+                                  ? 'secondary'
+                                  : 'outline'
+                            }
+                          >
                             {tournament.status}
                           </Badge>
                         </div>
@@ -325,7 +325,7 @@ export default function EventManagePage() {
                 <div className="text-2xl font-bold">{totalRegistrations}</div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Checked In</CardTitle>
@@ -334,7 +334,10 @@ export default function EventManagePage() {
               <CardContent>
                 <div className="text-2xl font-bold">{checkedInCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  {totalRegistrations > 0 ? Math.round((checkedInCount / totalRegistrations) * 100) : 0}% of registrations
+                  {totalRegistrations > 0
+                    ? Math.round((checkedInCount / totalRegistrations) * 100)
+                    : 0}
+                  % of registrations
                 </p>
               </CardContent>
             </Card>
@@ -346,7 +349,7 @@ export default function EventManagePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {tournaments?.filter(t => t.status === 'in_progress').length || 0}
+                  {tournaments?.filter((t) => t.status === 'in_progress').length || 0}
                 </div>
               </CardContent>
             </Card>

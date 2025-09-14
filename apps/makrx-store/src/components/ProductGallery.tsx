@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState } from 'react';
+import Image from 'next/image';
 // Using inline SVGs instead of Heroicons
 
 interface ProductGalleryProps {
@@ -19,19 +19,16 @@ export default function ProductGallery({
 }: ProductGalleryProps) {
   const [isZoomed, setIsZoomed] = useState(false);
 
-  const safeImages =
-    images && images.length > 0 ? images : ["/placeholder.svg"];
+  const safeImages = images && images.length > 0 ? images : ['/placeholder.svg'];
   const currentImage = safeImages[selectedImage] || safeImages[0];
 
   const handlePrevious = () => {
-    const newIndex =
-      selectedImage > 0 ? selectedImage - 1 : safeImages.length - 1;
+    const newIndex = selectedImage > 0 ? selectedImage - 1 : safeImages.length - 1;
     onImageChange(newIndex);
   };
 
   const handleNext = () => {
-    const newIndex =
-      selectedImage < safeImages.length - 1 ? selectedImage + 1 : 0;
+    const newIndex = selectedImage < safeImages.length - 1 ? selectedImage + 1 : 0;
     onImageChange(newIndex);
   };
 
@@ -53,7 +50,7 @@ export default function ProductGallery({
           sizes="(max-width: 768px) 100vw, 50vw"
           priority
           onError={(e) => {
-            e.currentTarget.src = "/placeholder.svg";
+            e.currentTarget.src = '/placeholder.svg';
           }}
         />
 
@@ -139,8 +136,8 @@ export default function ProductGallery({
               onClick={() => handleImageChange(index)}
               className={`relative flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-colors ${
                 index === selectedImage
-                  ? "border-blue-500"
-                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  ? 'border-blue-500'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               <Image
@@ -150,7 +147,7 @@ export default function ProductGallery({
                 className="object-cover"
                 sizes="64px"
                 onError={(e) => {
-                  e.currentTarget.src = "/placeholder.svg";
+                  e.currentTarget.src = '/placeholder.svg';
                 }}
               />
             </button>
@@ -172,19 +169,14 @@ export default function ProductGallery({
               height={800}
               className="object-contain max-h-[90vh] w-auto h-auto"
               onError={(e) => {
-                e.currentTarget.src = "/placeholder.svg";
+                e.currentTarget.src = '/placeholder.svg';
               }}
             />
             <button
               onClick={() => setIsZoomed(false)}
               className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

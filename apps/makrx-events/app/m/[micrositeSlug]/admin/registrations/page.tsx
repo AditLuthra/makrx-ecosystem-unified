@@ -1,18 +1,18 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, 
-  Download, 
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Users,
+  Download,
   ArrowLeft,
   Search,
   Filter,
@@ -21,10 +21,10 @@ import {
   UserCheck,
   Calendar,
   DollarSign,
-  QrCode
-} from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+  QrCode,
+} from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface RegistrationsPageProps {
   params: {
@@ -36,85 +36,85 @@ interface RegistrationsPageProps {
 async function getRegistrationsData(slug: string) {
   const mockData = {
     makerfest2024: {
-      id: "1",
-      slug: "makerfest2024",
-      title: "MakerFest 2024",
+      id: '1',
+      slug: 'makerfest2024',
+      title: 'MakerFest 2024',
       summary: {
         total: 1247,
         confirmed: 1089,
         checkedIn: 856,
         pending: 98,
         cancelled: 60,
-        waitlist: 89
+        waitlist: 89,
       },
       registrations: [
         {
-          id: "reg_001",
-          participantName: "Sarah Johnson",
-          email: "sarah@example.com",
-          phone: "+1 (555) 0123",
-          registrationDate: "2024-01-15T10:30:00Z",
-          status: "confirmed",
-          paymentStatus: "paid",
+          id: 'reg_001',
+          participantName: 'Sarah Johnson',
+          email: 'sarah@example.com',
+          phone: '+1 (555) 0123',
+          registrationDate: '2024-01-15T10:30:00Z',
+          status: 'confirmed',
+          paymentStatus: 'paid',
           amount: 45,
-          eventName: "Arduino Workshop",
-          checkedInAt: "2024-03-15T09:15:00Z",
-          attendeeType: "General"
+          eventName: 'Arduino Workshop',
+          checkedInAt: '2024-03-15T09:15:00Z',
+          attendeeType: 'General',
         },
         {
-          id: "reg_002",
-          participantName: "Mike Chen",
-          email: "mike.chen@email.com",
-          phone: "+1 (555) 0124",
-          registrationDate: "2024-01-18T14:22:00Z",
-          status: "confirmed",
-          paymentStatus: "free",
+          id: 'reg_002',
+          participantName: 'Mike Chen',
+          email: 'mike.chen@email.com',
+          phone: '+1 (555) 0124',
+          registrationDate: '2024-01-18T14:22:00Z',
+          status: 'confirmed',
+          paymentStatus: 'free',
           amount: 0,
-          eventName: "3D Printing Basics",
+          eventName: '3D Printing Basics',
           checkedInAt: null,
-          attendeeType: "Student"
+          attendeeType: 'Student',
         },
         {
-          id: "reg_003",
-          participantName: "Emily Rodriguez",
-          email: "emily.r@company.com",
-          phone: "+1 (555) 0125",
-          registrationDate: "2024-01-20T16:45:00Z",
-          status: "pending",
-          paymentStatus: "pending",
+          id: 'reg_003',
+          participantName: 'Emily Rodriguez',
+          email: 'emily.r@company.com',
+          phone: '+1 (555) 0125',
+          registrationDate: '2024-01-20T16:45:00Z',
+          status: 'pending',
+          paymentStatus: 'pending',
           amount: 150,
-          eventName: "Robotics Competition",
+          eventName: 'Robotics Competition',
           checkedInAt: null,
-          attendeeType: "Professional"
+          attendeeType: 'Professional',
         },
         {
-          id: "reg_004",
-          participantName: "Alex Thompson",
-          email: "alex@startup.io",
-          phone: "+1 (555) 0126",
-          registrationDate: "2024-02-01T09:12:00Z",
-          status: "confirmed",
-          paymentStatus: "paid",
+          id: 'reg_004',
+          participantName: 'Alex Thompson',
+          email: 'alex@startup.io',
+          phone: '+1 (555) 0126',
+          registrationDate: '2024-02-01T09:12:00Z',
+          status: 'confirmed',
+          paymentStatus: 'paid',
           amount: 25,
-          eventName: "IoT Hackathon",
-          checkedInAt: "2024-03-15T08:45:00Z",
-          attendeeType: "Startup"
+          eventName: 'IoT Hackathon',
+          checkedInAt: '2024-03-15T08:45:00Z',
+          attendeeType: 'Startup',
         },
         {
-          id: "reg_005",
-          participantName: "Lisa Park",
-          email: "lisa.park@university.edu",
-          phone: "+1 (555) 0127",
-          registrationDate: "2024-02-05T11:30:00Z",
-          status: "confirmed",
-          paymentStatus: "free",
+          id: 'reg_005',
+          participantName: 'Lisa Park',
+          email: 'lisa.park@university.edu',
+          phone: '+1 (555) 0127',
+          registrationDate: '2024-02-05T11:30:00Z',
+          status: 'confirmed',
+          paymentStatus: 'free',
           amount: 0,
-          eventName: "Sustainable Design",
+          eventName: 'Sustainable Design',
           checkedInAt: null,
-          attendeeType: "Student"
-        }
-      ]
-    }
+          attendeeType: 'Student',
+        },
+      ],
+    },
   };
 
   return mockData[slug as keyof typeof mockData] || null;
@@ -122,24 +122,40 @@ async function getRegistrationsData(slug: string) {
 
 const getStatusBadge = (status: string) => {
   const variants = {
-    confirmed: { variant: "default" as const, label: "Confirmed" },
-    pending: { variant: "secondary" as const, label: "Pending" },
-    cancelled: { variant: "destructive" as const, label: "Cancelled" },
-    waitlist: { variant: "outline" as const, label: "Waitlisted" }
+    confirmed: { variant: 'default' as const, label: 'Confirmed' },
+    pending: { variant: 'secondary' as const, label: 'Pending' },
+    cancelled: { variant: 'destructive' as const, label: 'Cancelled' },
+    waitlist: { variant: 'outline' as const, label: 'Waitlisted' },
   };
-  
-  return variants[status as keyof typeof variants] || { variant: "outline" as const, label: status };
+
+  return (
+    variants[status as keyof typeof variants] || { variant: 'outline' as const, label: status }
+  );
 };
 
 const getPaymentBadge = (paymentStatus: string) => {
   const variants = {
-    paid: { variant: "default" as const, label: "Paid", color: "bg-green-100 text-green-800" },
-    pending: { variant: "secondary" as const, label: "Pending", color: "bg-yellow-100 text-yellow-800" },
-    free: { variant: "outline" as const, label: "Free", color: "bg-gray-100 text-gray-800" },
-    refunded: { variant: "destructive" as const, label: "Refunded", color: "bg-red-100 text-red-800" }
+    paid: { variant: 'default' as const, label: 'Paid', color: 'bg-green-100 text-green-800' },
+    pending: {
+      variant: 'secondary' as const,
+      label: 'Pending',
+      color: 'bg-yellow-100 text-yellow-800',
+    },
+    free: { variant: 'outline' as const, label: 'Free', color: 'bg-gray-100 text-gray-800' },
+    refunded: {
+      variant: 'destructive' as const,
+      label: 'Refunded',
+      color: 'bg-red-100 text-red-800',
+    },
   };
-  
-  return variants[paymentStatus as keyof typeof variants] || { variant: "outline" as const, label: paymentStatus, color: "bg-gray-100 text-gray-800" };
+
+  return (
+    variants[paymentStatus as keyof typeof variants] || {
+      variant: 'outline' as const,
+      label: paymentStatus,
+      color: 'bg-gray-100 text-gray-800',
+    }
+  );
 };
 
 export default async function RegistrationsPage({ params }: RegistrationsPageProps) {
@@ -163,7 +179,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
                   Back to Admin
                 </Link>
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">{registrationsData.title} - Registrations</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {registrationsData.title} - Registrations
+              </h1>
             </div>
             <div className="flex items-center space-x-3">
               <Button variant="outline">
@@ -195,7 +213,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <CardTitle className="text-sm font-medium text-green-600">Confirmed</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{registrationsData.summary.confirmed}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {registrationsData.summary.confirmed}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -203,7 +223,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <CardTitle className="text-sm font-medium text-blue-600">Checked In</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{registrationsData.summary.checkedIn}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {registrationsData.summary.checkedIn}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -211,7 +233,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <CardTitle className="text-sm font-medium text-yellow-600">Pending</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{registrationsData.summary.pending}</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {registrationsData.summary.pending}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -219,7 +243,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <CardTitle className="text-sm font-medium text-red-600">Cancelled</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{registrationsData.summary.cancelled}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {registrationsData.summary.cancelled}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -227,7 +253,9 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <CardTitle className="text-sm font-medium text-purple-600">Waitlist</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{registrationsData.summary.waitlist}</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {registrationsData.summary.waitlist}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -242,8 +270,8 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <div className="flex-1">
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
-                  <Input 
-                    placeholder="Search by name, email, or registration ID..." 
+                  <Input
+                    placeholder="Search by name, email, or registration ID..."
                     className="pl-10"
                   />
                 </div>
@@ -296,9 +324,7 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
               <Users className="h-5 w-5 mr-2" />
               All Registrations
             </CardTitle>
-            <CardDescription>
-              Manage participant registrations and check-in status
-            </CardDescription>
+            <CardDescription>Manage participant registrations and check-in status</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -308,7 +334,10 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <span className="text-sm font-medium text-blue-600">
-                          {registration.participantName.split(' ').map(n => n[0]).join('')}
+                          {registration.participantName
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
                         </span>
                       </div>
                       <div className="flex-1">
@@ -331,8 +360,7 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
                             {new Date(registration.registrationDate).toLocaleDateString()}
                           </span>
                           <span className="flex items-center">
-                            <DollarSign className="h-3 w-3 mr-1" />
-                            ${registration.amount}
+                            <DollarSign className="h-3 w-3 mr-1" />${registration.amount}
                           </span>
                           <span>{registration.attendeeType}</span>
                         </div>
@@ -340,15 +368,13 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="text-right">
-                        <Badge 
+                        <Badge
                           className={getPaymentBadge(registration.paymentStatus).color}
                           variant="outline"
                         >
                           {getPaymentBadge(registration.paymentStatus).label}
                         </Badge>
-                        <div className="text-xs text-gray-500 mt-1">
-                          ID: {registration.id}
-                        </div>
+                        <div className="text-xs text-gray-500 mt-1">ID: {registration.id}</div>
                       </div>
                       <div className="flex space-x-1">
                         <Button size="sm" variant="outline">
@@ -366,7 +392,7 @@ export default async function RegistrationsPage({ params }: RegistrationsPagePro
                 </div>
               ))}
             </div>
-            
+
             {/* Pagination */}
             <div className="flex items-center justify-between mt-6">
               <div className="text-sm text-gray-500">

@@ -1,12 +1,13 @@
 """
 Create analytics tables via legacy helper
 """
+
 from alembic import op  # noqa: F401
 import sqlalchemy as sa  # noqa: F401
 
 
-revision = '0005_analytics_tables'
-down_revision = '0004_project_interaction_tables'
+revision = "0005_analytics_tables"
+down_revision = "0004_project_interaction_tables"
 branch_labels = None
 depends_on = None
 

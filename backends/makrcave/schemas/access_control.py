@@ -3,6 +3,7 @@ from typing import Optional, List, Dict, Any, Set
 from datetime import datetime
 from enum import Enum
 
+
 # Enums
 class PermissionType(str, Enum):
     VIEW_MEMBERS = "view_members"
@@ -39,10 +40,12 @@ class PermissionType(str, Enum):
     EDIT_MAKERSPACE_SETTINGS = "edit_makerspace_settings"
     DELETE_MAKERSPACES = "delete_makerspaces"
 
+
 class AccessScope(str, Enum):
     GLOBAL = "global"
     MAKERSPACE = "makerspace"
     SELF = "self"
+
 
 class RoleType(str, Enum):
     SUPER_ADMIN = "super_admin"
@@ -52,6 +55,7 @@ class RoleType(str, Enum):
     SERVICE_PROVIDER = "service_provider"
     GUEST = "guest"
     CUSTOM = "custom"
+
 
 # Permission schemas
 class PermissionBase(BaseModel):
@@ -65,8 +69,10 @@ class PermissionBase(BaseModel):
     resource_types: Optional[List[str]] = None
     field_restrictions: Optional[Dict[str, Any]] = None
 
+
 class PermissionCreate(PermissionBase):
     pass
+
 
 class PermissionUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -75,6 +81,7 @@ class PermissionUpdate(BaseModel):
     requires_two_factor: Optional[bool] = None
     resource_types: Optional[List[str]] = None
     field_restrictions: Optional[Dict[str, Any]] = None
+
 
 class PermissionResponse(PermissionBase):
     id: str
@@ -85,6 +92,7 @@ class PermissionResponse(PermissionBase):
 
     class Config:
         from_attributes = True
+
 
 # Role schemas
 class RoleBase(BaseModel):
@@ -106,10 +114,12 @@ class RoleBase(BaseModel):
     required_membership_plans: Optional[List[str]] = None
     excluded_membership_plans: Optional[List[str]] = None
 
+
 class RoleCreate(RoleBase):
     role_type: RoleType = RoleType.CUSTOM
     makerspace_id: Optional[str] = None
     permission_ids: List[str] = []
+
 
 class RoleUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -131,6 +141,7 @@ class RoleUpdate(BaseModel):
     excluded_membership_plans: Optional[List[str]] = None
     permission_ids: Optional[List[str]] = None
 
+
 class RoleResponse(RoleBase):
     id: str
     role_type: RoleType
@@ -147,6 +158,7 @@ class RoleResponse(RoleBase):
     class Config:
         from_attributes = True
 
+
 # User session schemas
 class UserSessionCreate(BaseModel):
     user_id: str
@@ -158,6 +170,7 @@ class UserSessionCreate(BaseModel):
     two_factor_verified: bool = False
     login_method: Optional[str] = None
     device_fingerprint: Optional[str] = None
+
 
 class UserSessionResponse(BaseModel):
     id: str
@@ -179,6 +192,7 @@ class UserSessionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Access log schemas
 class AccessLogCreate(BaseModel):
     user_id: str
@@ -197,6 +211,7 @@ class AccessLogCreate(BaseModel):
     success: bool = True
     failure_reason: Optional[str] = None
     security_flags: Optional[Dict[str, Any]] = None
+
 
 class AccessLogResponse(BaseModel):
     id: str
@@ -221,6 +236,7 @@ class AccessLogResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Role assignment schemas
 class RoleAssignmentCreate(BaseModel):
     user_id: str
@@ -229,10 +245,12 @@ class RoleAssignmentCreate(BaseModel):
     effective_date: Optional[datetime] = None
     expiry_date: Optional[datetime] = None
 
+
 class RoleAssignmentUpdate(BaseModel):
     reason: Optional[str] = None
     effective_date: Optional[datetime] = None
     expiry_date: Optional[datetime] = None
+
 
 class RoleAssignmentResponse(BaseModel):
     id: str
@@ -249,6 +267,7 @@ class RoleAssignmentResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # Password policy schemas
 class PasswordPolicyBase(BaseModel):
@@ -273,14 +292,16 @@ class PasswordPolicyBase(BaseModel):
     max_concurrent_sessions: int = Field(3, ge=1, le=20)
     force_logout_on_password_change: bool = True
 
-    @validator('max_length')
+    @validator("max_length")
     def max_length_must_be_greater_than_min(cls, v, values):
-        if 'min_length' in values and v < values['min_length']:
-            raise ValueError('max_length must be greater than min_length')
+        if "min_length" in values and v < values["min_length"]:
+            raise ValueError("max_length must be greater than min_length")
         return v
+
 
 class PasswordPolicyCreate(PasswordPolicyBase):
     makerspace_id: Optional[str] = None
+
 
 class PasswordPolicyUpdate(BaseModel):
     min_length: Optional[int] = Field(None, ge=1, le=128)
@@ -304,6 +325,7 @@ class PasswordPolicyUpdate(BaseModel):
     max_concurrent_sessions: Optional[int] = Field(None, ge=1, le=20)
     force_logout_on_password_change: Optional[bool] = None
 
+
 class PasswordPolicyResponse(PasswordPolicyBase):
     id: str
     makerspace_id: Optional[str] = None
@@ -315,16 +337,19 @@ class PasswordPolicyResponse(PasswordPolicyBase):
     class Config:
         from_attributes = True
 
+
 # Validation schemas
 class PasswordValidationRequest(BaseModel):
     password: str
     makerspace_id: Optional[str] = None
+
 
 class PasswordValidationResponse(BaseModel):
     valid: bool
     errors: List[str] = []
     strength_score: int = Field(..., ge=0, le=100)
     suggestions: List[str] = []
+
 
 # User access management schemas
 class UserAccessSummary(BaseModel):
@@ -340,6 +365,7 @@ class UserAccessSummary(BaseModel):
     requires_password_change: bool = False
     two_factor_enabled: bool = False
 
+
 class BulkRoleAssignment(BaseModel):
     user_ids: List[str]
     role_ids: List[str]
@@ -347,6 +373,7 @@ class BulkRoleAssignment(BaseModel):
     reason: Optional[str] = None
     effective_date: Optional[datetime] = None
     expiry_date: Optional[datetime] = None
+
 
 class AccessControlFilter(BaseModel):
     user_ids: Optional[List[str]] = None
@@ -357,6 +384,7 @@ class AccessControlFilter(BaseModel):
     has_active_session: Optional[bool] = None
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
+
 
 class AccessControlStats(BaseModel):
     total_users: int
@@ -371,6 +399,7 @@ class AccessControlStats(BaseModel):
     active_sessions: int
     recent_login_attempts: int
     failed_login_attempts: int
+
 
 # Enhanced member schema integration
 class EnhancedMemberResponse(BaseModel):
@@ -406,7 +435,7 @@ class EnhancedMemberResponse(BaseModel):
     updated_at: Optional[datetime] = None
     join_date: datetime
     makerspace_id: str
-    
+
     # Access control fields
     active_sessions: int = 0
     account_locked: bool = False
@@ -419,6 +448,7 @@ class EnhancedMemberResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Import/Export schemas
 class RoleExport(BaseModel):
     format: str = Field("json", regex="^(json|csv|xlsx)$")
@@ -426,15 +456,18 @@ class RoleExport(BaseModel):
     include_users: bool = False
     makerspace_id: Optional[str] = None
 
+
 class RoleImport(BaseModel):
     roles: List[RoleCreate]
     update_existing: bool = False
     skip_invalid: bool = True
 
+
 class PermissionExport(BaseModel):
     format: str = Field("json", regex="^(json|csv|xlsx)$")
     include_roles: bool = True
     system_permissions_only: bool = False
+
 
 class AuditLogFilter(BaseModel):
     user_id: Optional[str] = None
@@ -445,6 +478,7 @@ class AuditLogFilter(BaseModel):
     success_only: bool = False
     makerspace_id: Optional[str] = None
     ip_address: Optional[str] = None
+
 
 class SecurityAlert(BaseModel):
     id: str

@@ -47,10 +47,10 @@ function SearchPageContent() {
   const performSearch = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const filters: any = {};
-      
+
       if (brand) filters.brands = [brand];
       if (material) filters.material_types = [material];
       if (minPrice) filters.price_min = parseFloat(minPrice);
@@ -118,8 +118,18 @@ function SearchPageContent() {
                       }
                     }}
                   />
-                  <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -206,40 +216,57 @@ function SearchPageContent() {
           </div>
         )}
 
-        {!loading && !error && !searchResults && (query || brand || material || minPrice || maxPrice) && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">No search performed yet.</p>
-          </div>
-        )}
+        {!loading &&
+          !error &&
+          !searchResults &&
+          (query || brand || material || minPrice || maxPrice) && (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400">No search performed yet.</p>
+            </div>
+          )}
 
-        {!loading && !error && !searchResults && !query && !brand && !material && !minPrice && !maxPrice && (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Search Products
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Find exactly what you need for your next project
-            </p>
-            
-            {/* Popular Searches */}
-            <div className="max-w-2xl mx-auto">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Popular Searches
-              </h3>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {['PLA Filament', 'Arduino Boards', 'Stepper Motors', 'LED Strips', 'Sensors', '3D Printer Parts'].map((term) => (
-                  <button
-                    key={term}
-                    onClick={() => updateSearchParam('q', term)}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    {term}
-                  </button>
-                ))}
+        {!loading &&
+          !error &&
+          !searchResults &&
+          !query &&
+          !brand &&
+          !material &&
+          !minPrice &&
+          !maxPrice && (
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Search Products
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-8">
+                Find exactly what you need for your next project
+              </p>
+
+              {/* Popular Searches */}
+              <div className="max-w-2xl mx-auto">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Popular Searches
+                </h3>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    'PLA Filament',
+                    'Arduino Boards',
+                    'Stepper Motors',
+                    'LED Strips',
+                    'Sensors',
+                    '3D Printer Parts',
+                  ].map((term) => (
+                    <button
+                      key={term}
+                      onClick={() => updateSearchParam('q', term)}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {searchResults && (
           <div className="space-y-6">
@@ -259,10 +286,7 @@ function SearchPageContent() {
               </div>
 
               <div className="flex items-center gap-4">
-                <SortSelect
-                  value={sort}
-                  onChange={(value) => updateSearchParam('sort', value)}
-                />
+                <SortSelect value={sort} onChange={(value) => updateSearchParam('sort', value)} />
               </div>
             </div>
 
@@ -309,7 +333,8 @@ function SearchPageContent() {
                     }}
                     onFilterChange={(filters) => {
                       if (filters.brand) updateSearchParam('brand', filters.brand[0] || '');
-                      if (filters.material) updateSearchParam('material', filters.material[0] || '');
+                      if (filters.material)
+                        updateSearchParam('material', filters.material[0] || '');
                       if (filters.min_price) updateSearchParam('min', filters.min_price);
                       if (filters.max_price) updateSearchParam('max', filters.max_price);
                     }}
@@ -336,22 +361,24 @@ function SearchPageContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 animate-pulse">
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 animate-pulse">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div className="container mx-auto px-4 py-6">
+              <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          </div>
           <div className="container mx-auto px-4 py-6">
-            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    }>
+      }
+    >
       <SearchPageContent />
     </Suspense>
   );

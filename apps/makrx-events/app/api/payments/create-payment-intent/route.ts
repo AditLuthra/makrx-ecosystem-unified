@@ -6,11 +6,11 @@ const paymentIntentSchema = z.object({
   amount: z.number().min(50), // Minimum $0.50
   currency: z.string().default('usd'),
   description: z.string().optional(),
-  metadata: z.record(z.string()).optional()
+  metadata: z.record(z.string()).optional(),
 });
 
 // Initialize Stripe
-const stripe = process.env.STRIPE_SECRET_KEY 
+const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2025-07-30.basil',
     })
@@ -20,14 +20,11 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: NextRequest) {
   try {
     if (!stripe) {
-      return NextResponse.json(
-        { error: 'Payment processing is not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: 'Payment processing is not configured' }, { status: 503 });
     }
 
     const body = await request.json();
-    
+
     // Validate input
     const validatedData = paymentIntentSchema.parse(body);
 
@@ -46,29 +43,22 @@ export async function POST(request: NextRequest) {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (error instanceof Stripe.errors.StripeError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     console.error('Error creating payment intent:', error);
-    return NextResponse.json(
-      { error: 'Failed to create payment intent' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create payment intent' }, { status: 500 });
   }
 }

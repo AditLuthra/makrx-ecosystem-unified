@@ -8,15 +8,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { 
-  Plus, 
-  Package, 
-  ShoppingCart, 
-  Warehouse, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Edit, 
+import {
+  Plus,
+  Package,
+  ShoppingCart,
+  Warehouse,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Edit,
   Trash2,
   ExternalLink,
   DollarSign,
@@ -26,9 +26,15 @@ import {
   Download,
   Upload,
   Star,
-  Zap
+  Zap,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 
 interface BOMItem {
   id: number;
@@ -68,11 +74,13 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
   projectId,
   bomItems,
   canEdit,
-  onUpdate
+  onUpdate,
 }) => {
   const getHeaders = useAuthHeaders();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedItemType, setSelectedItemType] = useState<'inventory' | 'makrx_store'>('inventory');
+  const [selectedItemType, setSelectedItemType] = useState<'inventory' | 'makrx_store'>(
+    'inventory',
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -84,7 +92,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
     unit_cost: 0,
     usage_notes: '',
     is_critical: false,
-    alternatives: []
+    alternatives: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,29 +101,42 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'needed': return 'bg-red-100 text-red-800 border-red-200';
-      case 'ordered': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'received': return 'bg-green-100 text-green-800 border-green-200';
-      case 'reserved': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'needed':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'ordered':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'received':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'reserved':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'needed': return <AlertTriangle className="h-3 w-3" />;
-      case 'ordered': return <Clock className="h-3 w-3" />;
-      case 'received': return <CheckCircle className="h-3 w-3" />;
-      case 'reserved': return <Package className="h-3 w-3" />;
-      default: return <AlertTriangle className="h-3 w-3" />;
+      case 'needed':
+        return <AlertTriangle className="h-3 w-3" />;
+      case 'ordered':
+        return <Clock className="h-3 w-3" />;
+      case 'received':
+        return <CheckCircle className="h-3 w-3" />;
+      case 'reserved':
+        return <Package className="h-3 w-3" />;
+      default:
+        return <AlertTriangle className="h-3 w-3" />;
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'inventory': return <Warehouse className="h-4 w-4 text-blue-600" />;
-      case 'makrx_store': return <ShoppingCart className="h-4 w-4 text-green-600" />;
-      default: return <Package className="h-4 w-4 text-gray-600" />;
+      case 'inventory':
+        return <Warehouse className="h-4 w-4 text-blue-600" />;
+      case 'makrx_store':
+        return <ShoppingCart className="h-4 w-4 text-green-600" />;
+      default:
+        return <Package className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -129,7 +150,9 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
       setIsSearching(true);
       const endpoint = type === 'inventory' ? '/api/v1/inventory' : '/api/v1/makrx-store/search';
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch(`${endpoint}?search=${encodeURIComponent(query)}&limit=10`, { headers });
+      const response = await fetch(`${endpoint}?search=${encodeURIComponent(query)}&limit=10`, {
+        headers,
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -236,7 +259,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
       unit_cost: 0,
       usage_notes: '',
       is_critical: false,
-      alternatives: []
+      alternatives: [],
     });
     setSearchQuery('');
     setSearchResults([]);
@@ -249,7 +272,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
       item_id: item.id || item.product_id,
       item_name: item.name || item.title,
       part_code: item.part_code || item.sku || '',
-      unit_cost: item.price || 0
+      unit_cost: item.price || 0,
     });
     setSearchResults([]);
     setSearchQuery(item.name || item.title);
@@ -258,7 +281,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
   const exportBOM = () => {
     const csvContent = [
       ['Item Name', 'Type', 'Quantity', 'Unit Cost', 'Total Cost', 'Status', 'Critical', 'Notes'],
-      ...bomItems.map(item => [
+      ...bomItems.map((item) => [
         item.item_name,
         item.item_type,
         item.quantity,
@@ -266,9 +289,11 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
         item.total_cost || 0,
         item.procurement_status,
         item.is_critical ? 'Yes' : 'No',
-        item.usage_notes || ''
-      ])
-    ].map(row => row.join(',')).join('\n');
+        item.usage_notes || '',
+      ]),
+    ]
+      .map((row) => row.join(','))
+      .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -284,27 +309,33 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
   };
 
   const getCriticalItems = () => {
-    return bomItems.filter(item => item.is_critical);
+    return bomItems.filter((item) => item.is_critical);
   };
 
   const getItemsByStatus = (status: string) => {
-    return bomItems.filter(item => item.procurement_status === status);
+    return bomItems.filter((item) => item.procurement_status === status);
   };
 
   const getAvailabilityColor = (status: string) => {
     switch (status) {
-      case 'in-stock': return 'bg-green-100 text-green-800';
-      case 'low-stock': return 'bg-yellow-100 text-yellow-800';
-      case 'out-of-stock': return 'bg-red-100 text-red-800';
-      case 'unknown': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'in-stock':
+        return 'bg-green-100 text-green-800';
+      case 'low-stock':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'out-of-stock':
+        return 'bg-red-100 text-red-800';
+      case 'unknown':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getLowStockItems = () => {
-    return bomItems.filter(item =>
-      item.availability_status === 'low-stock' ||
-      (item.stock_level && item.reorder_point && item.stock_level <= item.reorder_point)
+    return bomItems.filter(
+      (item) =>
+        item.availability_status === 'low-stock' ||
+        (item.stock_level && item.reorder_point && item.stock_level <= item.reorder_point),
     );
   };
 
@@ -316,7 +347,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
         headers: headers5,
         body: JSON.stringify({
           quantity: item.quantity,
-          urgent: item.is_critical
+          urgent: item.is_critical,
         }),
       });
 
@@ -335,16 +366,17 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
   const calculateEstimatedCost = () => {
     const totalEstimatedCost = bomItems.reduce((total, item) => {
       if (item.unit_cost && item.quantity) {
-        return total + (item.unit_cost * item.quantity);
+        return total + item.unit_cost * item.quantity;
       }
       return total;
     }, 0);
     return totalEstimatedCost;
   };
 
-  const filteredItems = filterStatus === 'all' 
-    ? bomItems 
-    : bomItems.filter(item => item.procurement_status === filterStatus);
+  const filteredItems =
+    filterStatus === 'all'
+      ? bomItems
+      : bomItems.filter((item) => item.procurement_status === filterStatus);
 
   return (
     <div className="space-y-6">
@@ -352,9 +384,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Bill of Materials</h3>
-          <p className="text-sm text-gray-600">
-            Manage project components and procurement
-          </p>
+          <p className="text-sm text-gray-600">Manage project components and procurement</p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm" onClick={exportBOM}>
@@ -487,7 +517,10 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                           <h4 className="font-medium flex items-center gap-2">
                             {item.item_name}
                             {item.is_critical && (
-                              <Star className="h-4 w-4 text-red-500 fill-current" title="Critical Item" />
+                              <Star
+                                className="h-4 w-4 text-red-500 fill-current"
+                                title="Critical Item"
+                              />
                             )}
                           </h4>
                           <p className="text-sm text-gray-600">
@@ -496,21 +529,21 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                             {item.part_code && ` • Part: ${item.part_code}`}
                           </p>
                           {item.availability_status && (
-                            <Badge className={`${getAvailabilityColor(item.availability_status)} text-xs mt-1`}>
+                            <Badge
+                              className={`${getAvailabilityColor(item.availability_status)} text-xs mt-1`}
+                            >
                               {item.availability_status.replace('-', ' ')}
                             </Badge>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                         <div>
                           <span className="text-gray-600">Quantity:</span>
                           <span className="ml-1 font-medium">{item.quantity}</span>
                           {item.stock_level && (
-                            <div className="text-xs text-gray-500">
-                              Stock: {item.stock_level}
-                            </div>
+                            <div className="text-xs text-gray-500">Stock: {item.stock_level}</div>
                           )}
                         </div>
                         <div>
@@ -554,15 +587,26 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                             {item.alternatives.slice(0, 2).map((alt, index) => (
                               <div key={index} className="text-xs bg-gray-50 p-2 rounded">
                                 <span className="font-medium">{alt.item_name}</span>
-                                {alt.part_code && <span className="text-gray-500"> • {alt.part_code}</span>}
-                                {alt.unit_cost && <span className="text-green-600"> • ${alt.unit_cost.toFixed(2)}</span>}
-                                <Badge className={`ml-1 ${getAvailabilityColor(alt.availability_status)} text-xs`}>
+                                {alt.part_code && (
+                                  <span className="text-gray-500"> • {alt.part_code}</span>
+                                )}
+                                {alt.unit_cost && (
+                                  <span className="text-green-600">
+                                    {' '}
+                                    • ${alt.unit_cost.toFixed(2)}
+                                  </span>
+                                )}
+                                <Badge
+                                  className={`ml-1 ${getAvailabilityColor(alt.availability_status)} text-xs`}
+                                >
                                   {alt.availability_status}
                                 </Badge>
                               </div>
                             ))}
                             {item.alternatives.length > 2 && (
-                              <div className="text-xs text-gray-500">+{item.alternatives.length - 2} more alternatives</div>
+                              <div className="text-xs text-gray-500">
+                                +{item.alternatives.length - 2} more alternatives
+                              </div>
                             )}
                           </div>
                         </div>
@@ -588,12 +632,12 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                           Store
                         </Button>
                       )}
-                      
+
                       {canEdit && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className="h-4 w-4" aria-label="More options" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -603,19 +647,27 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {item.procurement_status !== 'received' && (
-                              <DropdownMenuItem onClick={() => handleUpdateItem(item.id, { procurement_status: 'received' })}>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateItem(item.id, { procurement_status: 'received' })
+                                }
+                              >
                                 <CheckCircle className="h-4 w-4 mr-2" />
                                 Mark as Received
                               </DropdownMenuItem>
                             )}
                             {item.procurement_status === 'needed' && (
-                              <DropdownMenuItem onClick={() => handleUpdateItem(item.id, { procurement_status: 'ordered' })}>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleUpdateItem(item.id, { procurement_status: 'ordered' })
+                                }
+                              >
                                 <Clock className="h-4 w-4 mr-2" />
                                 Mark as Ordered
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleDeleteItem(item.id)}
                               className="text-red-600"
                             >
@@ -640,7 +692,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
           <DialogHeader>
             <DialogTitle>Add BOM Item</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {/* Estimated Total Cost Display */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -665,7 +717,10 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
 
             <div>
               <Label>Item Source</Label>
-              <Select value={selectedItemType} onValueChange={(value: 'inventory' | 'makrx_store') => setSelectedItemType(value)}>
+              <Select
+                value={selectedItemType}
+                onValueChange={(value: 'inventory' | 'makrx_store') => setSelectedItemType(value)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -703,7 +758,7 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                   <Clock className="h-4 w-4 animate-spin" />
                 </div>
               )}
-              
+
               {searchResults.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
                   {searchResults.map((result, index) => (
@@ -741,7 +796,9 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                   type="number"
                   min="1"
                   value={newItem.quantity}
-                  onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })}
+                  onChange={(e) =>
+                    setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })
+                  }
                   className="mt-1"
                 />
               </div>
@@ -753,7 +810,9 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                   step="0.01"
                   min="0"
                   value={newItem.unit_cost}
-                  onChange={(e) => setNewItem({ ...newItem, unit_cost: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setNewItem({ ...newItem, unit_cost: parseFloat(e.target.value) || 0 })
+                  }
                   className="mt-1"
                 />
               </div>

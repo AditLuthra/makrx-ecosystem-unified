@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         type: 'predefined',
         tokens: {
           primary: '#3B82F6',
-          accent: '#8B5CF6', 
+          accent: '#8B5CF6',
           background: '#FFFFFF',
           foreground: '#1F2937',
           muted: '#F3F4F6',
@@ -26,19 +26,20 @@ export async function GET(request: NextRequest) {
           border: '#E5E7EB',
           radius: '0.5rem',
           fontHeading: 'Inter',
-          fontBody: 'Inter'
+          fontBody: 'Inter',
         },
         assets: {
           logoUrl: null,
           heroUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
-          faviconUrl: null
+          faviconUrl: null,
         },
         preview: {
-          thumbnail: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop',
-          description: 'Bold and vibrant festival theme with blue primary colors'
+          thumbnail:
+            'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop',
+          description: 'Bold and vibrant festival theme with blue primary colors',
         },
         isActive: true,
-        createdAt: '2024-01-15T10:00:00Z'
+        createdAt: '2024-01-15T10:00:00Z',
       },
       {
         id: 'theme_festival_classic_purple',
@@ -55,19 +56,20 @@ export async function GET(request: NextRequest) {
           border: '#E5E7EB',
           radius: '0.5rem',
           fontHeading: 'Inter',
-          fontBody: 'Inter'
+          fontBody: 'Inter',
         },
         assets: {
           logoUrl: null,
           heroUrl: 'https://images.unsplash.com/photo-1551818255-e6e10975cd86',
-          faviconUrl: null
+          faviconUrl: null,
         },
         preview: {
-          thumbnail: 'https://images.unsplash.com/photo-1551818255-e6e10975cd86?w=300&h=200&fit=crop',
-          description: 'Creative purple theme perfect for tech and innovation events'
+          thumbnail:
+            'https://images.unsplash.com/photo-1551818255-e6e10975cd86?w=300&h=200&fit=crop',
+          description: 'Creative purple theme perfect for tech and innovation events',
         },
         isActive: true,
-        createdAt: '2024-01-15T10:00:00Z'
+        createdAt: '2024-01-15T10:00:00Z',
       },
       {
         id: 'theme_dark_tech',
@@ -84,19 +86,20 @@ export async function GET(request: NextRequest) {
           border: '#262626',
           radius: '0.75rem',
           fontHeading: 'Orbitron',
-          fontBody: 'Inter'
+          fontBody: 'Inter',
         },
         assets: {
           logoUrl: null,
           heroUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176',
-          faviconUrl: null
+          faviconUrl: null,
         },
         preview: {
-          thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop',
-          description: 'Futuristic dark theme with neon accents and glass morphism'
+          thumbnail:
+            'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop',
+          description: 'Futuristic dark theme with neon accents and glass morphism',
         },
         isActive: true,
-        createdAt: '2024-01-15T10:00:00Z'
+        createdAt: '2024-01-15T10:00:00Z',
       },
       {
         id: 'theme_minimal_pro',
@@ -113,53 +116,54 @@ export async function GET(request: NextRequest) {
           border: '#E4E4E7',
           radius: '0.25rem',
           fontHeading: 'Playfair Display',
-          fontBody: 'Source Sans Pro'
+          fontBody: 'Source Sans Pro',
         },
         assets: {
           logoUrl: null,
           heroUrl: 'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc',
-          faviconUrl: null
+          faviconUrl: null,
         },
         preview: {
-          thumbnail: 'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=300&h=200&fit=crop',
-          description: 'Clean minimal design with high contrast and editorial typography'
+          thumbnail:
+            'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=300&h=200&fit=crop',
+          description: 'Clean minimal design with high contrast and editorial typography',
         },
         isActive: true,
-        createdAt: '2024-01-15T10:00:00Z'
-      }
+        createdAt: '2024-01-15T10:00:00Z',
+      },
     ];
 
     // Apply filters
     let filteredThemes = mockThemes;
-    
+
     if (templateId) {
-      filteredThemes = filteredThemes.filter(t => t.templateId === templateId);
+      filteredThemes = filteredThemes.filter((t) => t.templateId === templateId);
     }
-    
+
     if (type) {
-      filteredThemes = filteredThemes.filter(t => t.type === type);
+      filteredThemes = filteredThemes.filter((t) => t.type === type);
     }
 
     // Group by template for easier selection
-    const themesByTemplate = filteredThemes.reduce((acc, theme) => {
-      if (!acc[theme.templateId]) {
-        acc[theme.templateId] = [];
-      }
-      acc[theme.templateId].push(theme);
-      return acc;
-    }, {} as Record<string, typeof mockThemes>);
+    const themesByTemplate = filteredThemes.reduce(
+      (acc, theme) => {
+        if (!acc[theme.templateId]) {
+          acc[theme.templateId] = [];
+        }
+        acc[theme.templateId].push(theme);
+        return acc;
+      },
+      {} as Record<string, typeof mockThemes>,
+    );
 
     return NextResponse.json({
       data: filteredThemes,
       byTemplate: themesByTemplate,
-      count: filteredThemes.length
+      count: filteredThemes.length,
     });
   } catch (error) {
     console.error('Error fetching themes:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch themes' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch themes' }, { status: 500 });
   }
 }
 
@@ -181,29 +185,26 @@ export async function POST(request: NextRequest) {
       assets: validatedData.assets || {},
       preview: {
         thumbnail: validatedData.assets?.heroUrl || null,
-        description: validatedData.description || ''
+        description: validatedData.description || '',
       },
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(newTheme, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error creating theme:', error);
-    return NextResponse.json(
-      { error: 'Failed to create theme' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create theme' }, { status: 500 });
   }
 }

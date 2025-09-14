@@ -12,7 +12,12 @@ router = APIRouter()
 
 @router.get("/sponsors", response_model=List[SponsorRead])
 def list_all_sponsors(db: Session = Depends(get_db)):
-    return db.query(Sponsor).filter(Sponsor.status == "active").order_by(Sponsor.name.asc()).all()
+    return (
+        db.query(Sponsor)
+        .filter(Sponsor.status == "active")
+        .order_by(Sponsor.name.asc())
+        .all()
+    )
 
 
 @router.post("/sponsors", response_model=SponsorRead, status_code=201)

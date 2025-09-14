@@ -7,7 +7,9 @@ from .enums import SubEventStatus
 
 class SubEventCreate(BaseModel):
     title: str = Field(min_length=1, max_length=200)
-    slug: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$")
+    slug: Optional[str] = Field(
+        default=None, min_length=1, max_length=100, pattern=r"^[a-z0-9-]+$"
+    )
     type: Optional[str] = Field(default=None, max_length=50)
     track: Optional[str] = Field(default=None, max_length=50)
     capacity: Optional[int] = None
@@ -25,7 +27,7 @@ class SubEventCreate(BaseModel):
     prizes_md: Optional[str] = None
     waitlist: Optional[bool] = None
 
-    @field_validator('slug')
+    @field_validator("slug")
     @classmethod
     def normalize_slug(cls, v):
         if not v:

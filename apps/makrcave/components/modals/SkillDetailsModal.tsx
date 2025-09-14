@@ -4,21 +4,21 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { useToast } from '../../hooks/use-toast';
-import { 
-  GraduationCap, 
-  Users, 
-  Calendar, 
-  Award, 
-  Wrench, 
-  BookOpen, 
-  Edit, 
+import {
+  GraduationCap,
+  Users,
+  Calendar,
+  Award,
+  Wrench,
+  BookOpen,
+  Edit,
   Trash2,
   CheckCircle,
   Clock,
   AlertCircle,
   Star,
   User,
-  Settings
+  Settings,
 } from 'lucide-react';
 
 interface Skill {
@@ -67,7 +67,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
   onOpenChange,
   skill,
   onEdit,
-  onDelete
+  onDelete,
 }) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
@@ -76,7 +76,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
     totalCertified: 0,
     pendingCertifications: 0,
     expiredCertifications: 0,
-    averageScore: 0
+    averageScore: 0,
   });
 
   // Mock data for certified users
@@ -89,7 +89,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
       certifiedAt: '2024-01-15T10:00:00Z',
       expiresAt: '2025-01-15T10:00:00Z',
       certifiedBy: 'Sarah Martinez',
-      notes: 'Completed practical test successfully'
+      notes: 'Completed practical test successfully',
     },
     {
       userId: 'user-2',
@@ -97,7 +97,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
       userEmail: 'emily.davis@makrcave.local',
       status: 'pending',
       certifiedBy: '',
-      notes: 'Awaiting practical assessment'
+      notes: 'Awaiting practical assessment',
     },
     {
       userId: 'user-3',
@@ -107,18 +107,18 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
       certifiedAt: '2023-06-01T10:00:00Z',
       expiresAt: '2024-06-01T10:00:00Z',
       certifiedBy: 'Tech Lead',
-      notes: 'Needs recertification'
-    }
+      notes: 'Needs recertification',
+    },
   ];
 
   useEffect(() => {
     if (open) {
       setCertifiedUsers(mockCertifiedUsers);
       setStats({
-        totalCertified: mockCertifiedUsers.filter(u => u.status === 'certified').length,
-        pendingCertifications: mockCertifiedUsers.filter(u => u.status === 'pending').length,
-        expiredCertifications: mockCertifiedUsers.filter(u => u.status === 'expired').length,
-        averageScore: 87
+        totalCertified: mockCertifiedUsers.filter((u) => u.status === 'certified').length,
+        pendingCertifications: mockCertifiedUsers.filter((u) => u.status === 'pending').length,
+        expiredCertifications: mockCertifiedUsers.filter((u) => u.status === 'expired').length,
+        averageScore: 87,
       });
     }
   }, [open]);
@@ -128,11 +128,11 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
       beginner: { color: 'bg-blue-100 text-blue-800', icon: '★' },
       intermediate: { color: 'bg-yellow-100 text-yellow-800', icon: '★★' },
       advanced: { color: 'bg-orange-100 text-orange-800', icon: '★★★' },
-      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' }
+      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' },
     };
-    
+
     const config = levelConfig[level as keyof typeof levelConfig] || levelConfig.beginner;
-    
+
     return (
       <Badge variant="outline" className={config.color}>
         {config.icon} {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -175,12 +175,14 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this skill? This action cannot be undone.')) {
+    if (
+      window.confirm('Are you sure you want to delete this skill? This action cannot be undone.')
+    ) {
       onDelete?.();
       toast({
-        title: "Skill Deleted",
+        title: 'Skill Deleted',
         description: `${skill.name} has been removed from the system`,
-        variant: "destructive",
+        variant: 'destructive',
       });
       onOpenChange(false);
     }
@@ -189,7 +191,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
   const handleStatusToggle = () => {
     const newStatus = skill.status === 'active' ? 'disabled' : 'active';
     toast({
-      title: "Status Updated",
+      title: 'Status Updated',
       description: `${skill.name} is now ${newStatus}`,
     });
   };
@@ -219,9 +221,9 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                   Edit
                 </Button>
               )}
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleStatusToggle}
                 className={skill.status === 'active' ? 'text-orange-600' : 'text-green-600'}
               >
@@ -236,7 +238,7 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
             </div>
           </div>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-y-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
@@ -275,7 +277,9 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-yellow-600">Pending</p>
-                      <p className="text-2xl font-bold text-yellow-900">{stats.pendingCertifications}</p>
+                      <p className="text-2xl font-bold text-yellow-900">
+                        {stats.pendingCertifications}
+                      </p>
                     </div>
                     <Clock className="h-8 w-8 text-yellow-600" />
                   </div>
@@ -285,7 +289,9 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-red-600">Expired</p>
-                      <p className="text-2xl font-bold text-red-900">{stats.expiredCertifications}</p>
+                      <p className="text-2xl font-bold text-red-900">
+                        {stats.expiredCertifications}
+                      </p>
                     </div>
                     <AlertCircle className="h-8 w-8 text-red-600" />
                   </div>
@@ -365,11 +371,21 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">User</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">Status</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">Certified Date</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">Expires</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">Certified By</th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">
+                          User
+                        </th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">
+                          Status
+                        </th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">
+                          Certified Date
+                        </th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">
+                          Expires
+                        </th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-900">
+                          Certified By
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -379,22 +395,26 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                             <div className="flex items-center">
                               <User className="h-8 w-8 bg-gray-200 rounded-full p-1.5 mr-3" />
                               <div>
-                                <div className="font-medium text-gray-900">{userSkill.userName}</div>
+                                <div className="font-medium text-gray-900">
+                                  {userSkill.userName}
+                                </div>
                                 <div className="text-sm text-gray-600">{userSkill.userEmail}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6">
-                            {getStatusBadge(userSkill.status)}
-                          </td>
+                          <td className="py-4 px-6">{getStatusBadge(userSkill.status)}</td>
                           <td className="py-4 px-6">
                             <div className="text-sm text-gray-900">
-                              {userSkill.certifiedAt ? new Date(userSkill.certifiedAt).toLocaleDateString() : '-'}
+                              {userSkill.certifiedAt
+                                ? new Date(userSkill.certifiedAt).toLocaleDateString()
+                                : '-'}
                             </div>
                           </td>
                           <td className="py-4 px-6">
                             <div className="text-sm text-gray-900">
-                              {userSkill.expiresAt ? new Date(userSkill.expiresAt).toLocaleDateString() : '-'}
+                              {userSkill.expiresAt
+                                ? new Date(userSkill.expiresAt).toLocaleDateString()
+                                : '-'}
                             </div>
                           </td>
                           <td className="py-4 px-6">
@@ -522,7 +542,12 @@ const SkillDetailsModal: React.FC<SkillDetailsModalProps> = ({
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Pass Rate</span>
                       <span className="font-medium text-green-600">
-                        {Math.round((stats.totalCertified / (stats.totalCertified + stats.expiredCertifications)) * 100)}%
+                        {Math.round(
+                          (stats.totalCertified /
+                            (stats.totalCertified + stats.expiredCertifications)) *
+                            100,
+                        )}
+                        %
                       </span>
                     </div>
                   </div>

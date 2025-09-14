@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import { Shield, Eye, Lock, Users, FileText, Calendar } from "lucide-react";
+import React from 'react';
+import Link from 'next/link';
+import { Shield, Eye, Lock, Users, FileText, Calendar } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = "January 15, 2024";
+  const lastUpdated = 'January 15, 2024';
 
   const sections = [
     {
-      id: "information-collection",
-      title: "Information We Collect",
+      id: 'information-collection',
+      title: 'Information We Collect',
       icon: Eye,
       content: `We collect information you provide directly to us, such as when you create an account, make a purchase, upload files, or contact us. This includes:
 
@@ -21,8 +21,8 @@ export default function PrivacyPolicyPage() {
 • Communication with our support team`,
     },
     {
-      id: "information-use",
-      title: "How We Use Your Information",
+      id: 'information-use',
+      title: 'How We Use Your Information',
       icon: Users,
       content: `We use the information we collect to:
 
@@ -34,8 +34,8 @@ export default function PrivacyPolicyPage() {
 • Detect, investigate and prevent fraudulent transactions`,
     },
     {
-      id: "information-sharing",
-      title: "Information Sharing",
+      id: 'information-sharing',
+      title: 'Information Sharing',
       icon: Users,
       content: `We do not sell, trade, or rent your personal information to third parties. We may share your information only in these circumstances:
 
@@ -46,8 +46,8 @@ export default function PrivacyPolicyPage() {
 • With your explicit consent`,
     },
     {
-      id: "data-security",
-      title: "Data Security",
+      id: 'data-security',
+      title: 'Data Security',
       icon: Lock,
       content: `We implement appropriate security measures to protect your information:
 
@@ -59,8 +59,8 @@ export default function PrivacyPolicyPage() {
 • Regular backup and disaster recovery procedures`,
     },
     {
-      id: "cookies",
-      title: "Cookies and Tracking",
+      id: 'cookies',
+      title: 'Cookies and Tracking',
       icon: Eye,
       content: `We use cookies and similar technologies to:
 
@@ -73,8 +73,8 @@ export default function PrivacyPolicyPage() {
 You can control cookies through your browser settings, but some features may not work properly if disabled.`,
     },
     {
-      id: "file-handling",
-      title: "3D File Data Handling",
+      id: 'file-handling',
+      title: '3D File Data Handling',
       icon: FileText,
       content: `When you upload 3D model files:
 
@@ -86,8 +86,8 @@ You can control cookies through your browser settings, but some features may not
 • You retain all ownership rights to your uploaded content`,
     },
     {
-      id: "your-rights",
-      title: "Your Rights and Choices",
+      id: 'your-rights',
+      title: 'Your Rights and Choices',
       icon: Shield,
       content: `You have the right to:
 
@@ -101,20 +101,20 @@ You can control cookies through your browser settings, but some features may not
 To exercise these rights, contact us at privacy@makrx.store.`,
     },
     {
-      id: "international",
-      title: "International Data Transfers",
+      id: 'international',
+      title: 'International Data Transfers',
       icon: Users,
       content: `If you are located outside the United States, please note that we transfer, store, and process your information in the United States and other countries. We ensure appropriate safeguards are in place for international transfers in compliance with applicable data protection laws.`,
     },
     {
-      id: "children",
+      id: 'children',
       title: "Children's Privacy",
       icon: Shield,
       content: `Our services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information, please contact us immediately.`,
     },
     {
-      id: "changes",
-      title: "Changes to This Policy",
+      id: 'changes',
+      title: 'Changes to This Policy',
       icon: Calendar,
       content: `We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date. We encourage you to review this policy periodically.`,
     },
@@ -128,12 +128,10 @@ To exercise these rights, contact us at privacy@makrx.store.`,
           <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mx-auto mb-6">
             <Shield className="h-8 w-8 text-blue-600" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Privacy Policy
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-4">
-            Your privacy is important to us. This policy explains how we
-            collect, use, and protect your information.
+            Your privacy is important to us. This policy explains how we collect, use, and protect
+            your information.
           </p>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
@@ -142,9 +140,7 @@ To exercise these rights, contact us at privacy@makrx.store.`,
       {/* Table of Contents */}
       <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Table of Contents
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Table of Contents</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sections.map((section, index) => {
               const Icon = section.icon;
@@ -183,9 +179,7 @@ To exercise these rights, contact us at privacy@makrx.store.`,
                     <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg mr-4">
                       <Icon className="h-5 w-5 text-blue-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      {section.title}
-                    </h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{section.title}</h2>
                   </div>
                   <div className="prose prose-gray max-w-none">
                     <div className="whitespace-pre-line text-gray-700 leading-relaxed">
@@ -202,12 +196,10 @@ To exercise these rights, contact us at privacy@makrx.store.`,
       {/* Contact Section */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Questions About Your Privacy?
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Questions About Your Privacy?</h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            If you have any questions about this Privacy Policy or our privacy
-            practices, please don't hesitate to contact us.
+            If you have any questions about this Privacy Policy or our privacy practices, please
+            don't hesitate to contact us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -225,15 +217,10 @@ To exercise these rights, contact us at privacy@makrx.store.`,
           </div>
 
           <div className="mt-12 p-6 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-gray-900 mb-2">
-              Data Protection Officer
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-2">Data Protection Officer</h3>
             <p className="text-gray-600 text-sm">
               For EU residents, you can contact our Data Protection Officer at:
-              <a
-                href="mailto:dpo@makrx.store"
-                className="text-blue-600 hover:text-blue-700 ml-1"
-              >
+              <a href="mailto:dpo@makrx.store" className="text-blue-600 hover:text-blue-700 ml-1">
                 dpo@makrx.store
               </a>
             </p>

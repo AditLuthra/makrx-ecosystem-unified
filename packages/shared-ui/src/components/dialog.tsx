@@ -9,7 +9,7 @@ const Dialog = React.forwardRef<
     ref={ref}
     className={cn(
       "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80",
-      className
+      className,
     )}
     {...props}
   />
@@ -24,7 +24,7 @@ const DialogContent = React.forwardRef<
     ref={ref}
     className={cn(
       "relative bg-background rounded-lg shadow-lg max-w-md w-full p-6",
-      className
+      className,
     )}
     {...props}
   />
@@ -39,7 +39,7 @@ const DialogHeader = React.forwardRef<
     ref={ref}
     className={cn(
       "flex flex-col space-y-1.5 text-center sm:text-left",
-      className
+      className,
     )}
     {...props}
   />
@@ -54,7 +54,7 @@ const DialogTitle = React.forwardRef<
     ref={ref}
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
-      className
+      className,
     )}
     {...props}
   />

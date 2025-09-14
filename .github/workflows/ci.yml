@@ -2,13 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 env:
-  NODE_VERSION: '18'
-  PYTHON_VERSION: '3.11'
+  NODE_VERSION: "18"
+  PYTHON_VERSION: "3.11"
 
 jobs:
   # Job 1: Code Quality and Linting
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -44,7 +44,14 @@ jobs:
     needs: quality
     strategy:
       matrix:
-        app: [gateway-frontend, gateway-frontend-hacker, makrcave, makrx-store, makrx-events]
+        app:
+          [
+            gateway-frontend,
+            gateway-frontend-hacker,
+            makrcave,
+            makrx-store,
+            makrx-events,
+          ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,7 +60,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -90,7 +97,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-      
+
       redis:
         image: redis:7-alpine
         options: >-
@@ -142,7 +149,14 @@ jobs:
     needs: [test-unit, test-backend]
     strategy:
       matrix:
-        app: [gateway-frontend, gateway-frontend-hacker, makrcave, makrx-store, makrx-events]
+        app:
+          [
+            gateway-frontend,
+            gateway-frontend-hacker,
+            makrcave,
+            makrx-store,
+            makrx-events,
+          ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -151,7 +165,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -207,7 +221,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -247,7 +261,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -282,15 +296,15 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Audit npm packages
         run: npm audit --audit-level=high
@@ -303,7 +317,14 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     strategy:
       matrix:
-        app: [gateway-frontend, gateway-frontend-hacker, makrcave, makrx-store, makrx-events]
+        app:
+          [
+            gateway-frontend,
+            gateway-frontend-hacker,
+            makrcave,
+            makrx-store,
+            makrx-events,
+          ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -356,7 +377,7 @@ jobs:
         run: |
           echo "Deploying to staging environment..."
           # Add your staging deployment commands here
-          
+
   # Job 10: Deploy to Production
   deploy-production:
     name: Deploy to Production
@@ -384,7 +405,7 @@ jobs:
         if: ${{ needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success' }}
         run: |
           echo "🎉 Deployment successful!"
-          
+
       - name: Notify failure
         if: ${{ needs.deploy-staging.result == 'failure' || needs.deploy-production.result == 'failure' }}
         run: |

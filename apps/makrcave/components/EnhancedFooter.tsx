@@ -2,9 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  MapPin, Phone, Mail, Globe, Twitter, Linkedin, Instagram, 
-  Youtube, Github, ArrowRight, Heart, ExternalLink
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+  Github,
+  ArrowRight,
+  Heart,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -31,7 +41,7 @@ export function EnhancedFooter() {
         { name: 'MakrX Store', href: 'https://makrx.store', description: 'Tools & materials' },
         { name: '3D Store', href: 'https://3d.makrx.store', description: 'Custom printing' },
         { name: 'Service Providers', href: '/service-providers', description: 'Freelance makers' },
-      ]
+      ],
     },
     {
       title: 'Resources',
@@ -40,7 +50,7 @@ export function EnhancedFooter() {
         { name: 'Learning Hub', href: '/learning-center', description: 'Courses & tutorials' },
         { name: 'Events', href: '/events', description: 'Workshops & meetups' },
         { name: 'Community', href: '/community', description: 'Connect with makers' },
-      ]
+      ],
     },
     {
       title: 'Support',
@@ -49,7 +59,7 @@ export function EnhancedFooter() {
         { name: 'Contact Us', href: '/contact', description: 'Get in touch' },
         { name: 'Safety Guidelines', href: '/safety', description: 'Stay safe' },
         { name: 'System Health', href: '/system-health', description: 'Platform status' },
-      ]
+      ],
     },
     {
       title: 'Company',
@@ -58,16 +68,41 @@ export function EnhancedFooter() {
         { name: 'Careers', href: '/careers', description: 'Join our team' },
         { name: 'Partners', href: '/partners', description: 'Collaboration' },
         { name: 'Blog', href: '/blog', description: 'Latest updates' },
-      ]
-    }
+      ],
+    },
   ];
 
   const socialLinks = [
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/makrx', color: 'hover:text-blue-400' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/makrx', color: 'hover:text-blue-400' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/makrx', color: 'hover:text-purple-400' },
-    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@makrx', color: 'hover:text-red-400' },
-    { name: 'GitHub', icon: Github, href: 'https://github.com/makrx', color: 'hover:text-blue-400' },
+    {
+      name: 'Twitter',
+      icon: Twitter,
+      href: 'https://twitter.com/makrx',
+      color: 'hover:text-blue-400',
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      href: 'https://linkedin.com/company/makrx',
+      color: 'hover:text-blue-400',
+    },
+    {
+      name: 'Instagram',
+      icon: Instagram,
+      href: 'https://instagram.com/makrx',
+      color: 'hover:text-purple-400',
+    },
+    {
+      name: 'YouTube',
+      icon: Youtube,
+      href: 'https://youtube.com/@makrx',
+      color: 'hover:text-red-400',
+    },
+    {
+      name: 'GitHub',
+      icon: Github,
+      href: 'https://github.com/makrx',
+      color: 'hover:text-blue-400',
+    },
   ];
 
   const legalLinks = [
@@ -82,7 +117,7 @@ export function EnhancedFooter() {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-      
+
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10">
         {/* Top Section with Company Info */}
@@ -100,10 +135,11 @@ export function EnhancedFooter() {
                 </div>
               </Link>
             </div>
-            
+
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Advanced makerspace management platform connecting creators, innovators, and entrepreneurs 
-              through premium makerspaces, cutting-edge tools, and comprehensive learning resources.
+              Advanced makerspace management platform connecting creators, innovators, and
+              entrepreneurs through premium makerspaces, cutting-edge tools, and comprehensive
+              learning resources.
             </p>
 
             <div className="space-y-3 text-sm text-gray-400">
@@ -146,9 +182,7 @@ export function EnhancedFooter() {
                           <span className="font-medium group-hover:text-white transition-colors">
                             {link.name}
                           </span>
-                          <span className="text-xs text-gray-500 mt-1">
-                            {link.description}
-                          </span>
+                          <span className="text-xs text-gray-500 mt-1">{link.description}</span>
                         </Link>
                       </li>
                     ))}
@@ -164,9 +198,13 @@ export function EnhancedFooter() {
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-bold mb-4 text-blue-400">Stay Updated with MakrCave</h3>
             <p className="text-gray-300 mb-6">
-              Get the latest maker news, workshop announcements, and exclusive insights delivered to your inbox.
+              Get the latest maker news, workshop announcements, and exclusive insights delivered to
+              your inbox.
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <form
+              onSubmit={handleNewsletterSubmit}
+              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+            >
               <input
                 type="email"
                 value={newsletterEmail}
@@ -236,9 +274,7 @@ export function EnhancedFooter() {
                   >
                     {link.name}
                   </Link>
-                  {index < legalLinks.length - 1 && (
-                    <span className="text-blue-500">|</span>
-                  )}
+                  {index < legalLinks.length - 1 && <span className="text-blue-500">|</span>}
                 </React.Fragment>
               ))}
             </div>

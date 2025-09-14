@@ -4,6 +4,7 @@ from datetime import datetime, date
 from enum import Enum
 import uuid
 
+
 class MetricType(str, Enum):
     USAGE = "usage"
     UTILIZATION = "utilization"
@@ -11,6 +12,7 @@ class MetricType(str, Enum):
     ENGAGEMENT = "engagement"
     PERFORMANCE = "performance"
     EFFICIENCY = "efficiency"
+
 
 class AggregationPeriod(str, Enum):
     HOURLY = "hourly"
@@ -20,17 +22,20 @@ class AggregationPeriod(str, Enum):
     QUARTERLY = "quarterly"
     YEARLY = "yearly"
 
+
 class TrendDirection(str, Enum):
     UP = "up"
     DOWN = "down"
     STABLE = "stable"
     VOLATILE = "volatile"
 
+
 class AlertSeverity(str, Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
 
 # Enhanced Usage Metrics Schemas
 class EnhancedUsageMetricsCreate(BaseModel):
@@ -71,6 +76,7 @@ class EnhancedUsageMetricsCreate(BaseModel):
     top_equipment_categories: Optional[List[Dict[str, Any]]] = None
     popular_project_types: Optional[List[Dict[str, Any]]] = None
 
+
 class EnhancedUsageMetricsResponse(EnhancedUsageMetricsCreate):
     id: uuid.UUID
     makerspace_id: uuid.UUID
@@ -80,6 +86,7 @@ class EnhancedUsageMetricsResponse(EnhancedUsageMetricsCreate):
 
     class Config:
         from_attributes = True
+
 
 # Equipment Utilization Schemas
 class EquipmentUtilizationMetricsCreate(BaseModel):
@@ -111,6 +118,7 @@ class EquipmentUtilizationMetricsCreate(BaseModel):
     wear_level_percentage: float = Field(0.0, ge=0, le=100)
     replacement_priority_score: float = Field(0.0, ge=0, le=100)
 
+
 class EquipmentUtilizationMetricsResponse(EquipmentUtilizationMetricsCreate):
     id: uuid.UUID
     makerspace_id: uuid.UUID
@@ -118,6 +126,7 @@ class EquipmentUtilizationMetricsResponse(EquipmentUtilizationMetricsCreate):
 
     class Config:
         from_attributes = True
+
 
 # Enhanced Revenue Analytics Schemas
 class RevenueAnalyticsEnhancedCreate(BaseModel):
@@ -159,6 +168,7 @@ class RevenueAnalyticsEnhancedCreate(BaseModel):
     geographical_breakdown: Optional[Dict[str, float]] = None
     seasonal_factors: Optional[Dict[str, float]] = None
 
+
 class RevenueAnalyticsEnhancedResponse(RevenueAnalyticsEnhancedCreate):
     id: uuid.UUID
     makerspace_id: uuid.UUID
@@ -166,6 +176,7 @@ class RevenueAnalyticsEnhancedResponse(RevenueAnalyticsEnhancedCreate):
 
     class Config:
         from_attributes = True
+
 
 # Member Engagement Schemas
 class MemberEngagementMetricsCreate(BaseModel):
@@ -212,6 +223,7 @@ class MemberEngagementMetricsCreate(BaseModel):
     interest_categories: Optional[List[str]] = None
     recommendation_acceptance_rate: float = Field(0.0, ge=0, le=100)
 
+
 class MemberEngagementMetricsResponse(MemberEngagementMetricsCreate):
     id: uuid.UUID
     makerspace_id: uuid.UUID
@@ -219,6 +231,7 @@ class MemberEngagementMetricsResponse(MemberEngagementMetricsCreate):
 
     class Config:
         from_attributes = True
+
 
 # Analytics Alert Schemas
 class AnalyticsAlertCreate(BaseModel):
@@ -233,11 +246,13 @@ class AnalyticsAlertCreate(BaseModel):
     related_resource_type: Optional[str] = None
     actions_taken: Optional[List[Dict[str, Any]]] = None
 
+
 class AnalyticsAlertUpdate(BaseModel):
     is_active: Optional[bool] = None
     acknowledged_by: Optional[uuid.UUID] = None
     resolution_notes: Optional[str] = None
     actions_taken: Optional[List[Dict[str, Any]]] = None
+
 
 class AnalyticsAlertResponse(AnalyticsAlertCreate):
     id: uuid.UUID
@@ -255,6 +270,7 @@ class AnalyticsAlertResponse(AnalyticsAlertCreate):
     class Config:
         from_attributes = True
 
+
 # Performance Benchmark Schemas
 class PerformanceBenchmarkCreate(BaseModel):
     benchmark_name: str = Field(..., max_length=100)
@@ -268,6 +284,7 @@ class PerformanceBenchmarkCreate(BaseModel):
     measurement_date: datetime
     measurement_method: Optional[str] = None
     notes: Optional[str] = None
+
 
 class PerformanceBenchmarkResponse(PerformanceBenchmarkCreate):
     id: uuid.UUID
@@ -284,6 +301,7 @@ class PerformanceBenchmarkResponse(PerformanceBenchmarkCreate):
     class Config:
         from_attributes = True
 
+
 # Analytics Report Schemas
 class AnalyticsReportCreate(BaseModel):
     report_name: str = Field(..., max_length=200)
@@ -299,6 +317,7 @@ class AnalyticsReportCreate(BaseModel):
     is_public: bool = False
     access_permissions: Optional[List[str]] = None
     expires_at: Optional[datetime] = None
+
 
 class AnalyticsReportResponse(AnalyticsReportCreate):
     id: uuid.UUID
@@ -319,6 +338,7 @@ class AnalyticsReportResponse(AnalyticsReportCreate):
 
     class Config:
         from_attributes = True
+
 
 # Analytics Configuration Schemas
 class AnalyticsConfigurationCreate(BaseModel):
@@ -342,6 +362,7 @@ class AnalyticsConfigurationCreate(BaseModel):
     gdpr_compliant: bool = True
     audit_trail_enabled: bool = True
 
+
 class AnalyticsConfigurationResponse(AnalyticsConfigurationCreate):
     id: uuid.UUID
     makerspace_id: uuid.UUID
@@ -350,6 +371,7 @@ class AnalyticsConfigurationResponse(AnalyticsConfigurationCreate):
 
     class Config:
         from_attributes = True
+
 
 # Comprehensive Dashboard Schemas
 class KPIMetric(BaseModel):
@@ -362,12 +384,14 @@ class KPIMetric(BaseModel):
     unit: Optional[str] = None
     target: Optional[Union[int, float]] = None
 
+
 class ChartDataPoint(BaseModel):
     label: str
     value: Union[int, float]
     date: Optional[datetime] = None
     category: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+
 
 class AnalyticsChart(BaseModel):
     chart_id: str
@@ -379,6 +403,7 @@ class AnalyticsChart(BaseModel):
     color_scheme: Optional[List[str]] = None
     annotations: Optional[List[Dict[str, Any]]] = None
 
+
 class DashboardSection(BaseModel):
     section_id: str
     title: str
@@ -389,6 +414,7 @@ class DashboardSection(BaseModel):
     last_updated: datetime
     refresh_interval: int = 300  # seconds
 
+
 class ComprehensiveDashboardResponse(BaseModel):
     makerspace_id: uuid.UUID
     dashboard_title: str
@@ -398,6 +424,7 @@ class ComprehensiveDashboardResponse(BaseModel):
     cache_expires_at: datetime
     data_freshness: Dict[str, datetime]
     performance_score: float = Field(..., ge=0, le=100)
+
 
 # Analytics Query and Filter Schemas
 class AnalyticsQuery(BaseModel):
@@ -411,6 +438,7 @@ class AnalyticsQuery(BaseModel):
     sort_by: Optional[str] = None
     sort_order: str = Field("desc", regex="^(asc|desc)$")
 
+
 class AnalyticsQueryResult(BaseModel):
     query: AnalyticsQuery
     results: List[Dict[str, Any]]
@@ -419,6 +447,7 @@ class AnalyticsQueryResult(BaseModel):
     data_sources: List[str]
     cache_hit: bool
     metadata: Optional[Dict[str, Any]] = None
+
 
 # Predictive Analytics Schemas
 class ForecastRequest(BaseModel):
@@ -429,6 +458,7 @@ class ForecastRequest(BaseModel):
     trend: bool = True
     include_holidays: bool = False
 
+
 class ForecastResult(BaseModel):
     metric: str
     forecast_data: List[ChartDataPoint]
@@ -438,6 +468,7 @@ class ForecastResult(BaseModel):
     forecast_quality: str  # excellent, good, fair, poor
     warnings: List[str] = []
 
+
 # Export and Import Schemas
 class AnalyticsExportRequest(BaseModel):
     export_type: str = Field(..., regex="^(dashboard|metrics|reports|all)$")
@@ -446,6 +477,7 @@ class AnalyticsExportRequest(BaseModel):
     filters: Optional[Dict[str, Any]] = None
     include_raw_data: bool = False
     include_visualizations: bool = True
+
 
 class AnalyticsExportResponse(BaseModel):
     export_id: uuid.UUID

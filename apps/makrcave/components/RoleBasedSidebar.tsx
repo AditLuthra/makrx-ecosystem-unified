@@ -15,7 +15,7 @@ import {
   LogOut,
   UserCog,
   Package,
-  FolderOpen
+  FolderOpen,
 } from 'lucide-react';
 
 function AdminSidebar() {
@@ -28,26 +28,26 @@ function AdminSidebar() {
       name: 'Global Dashboard',
       href: '/portal/dashboard',
       icon: LayoutDashboard,
-      active: isActive('/portal/dashboard')
+      active: isActive('/portal/dashboard'),
     },
     {
       name: 'User Management',
       href: '/portal/admin/users',
       icon: Users,
-      active: isActive('/portal/admin/users')
+      active: isActive('/portal/admin/users'),
     },
     {
       name: 'Role Management',
       href: '/portal/admin/roles',
       icon: UserCog,
-      active: isActive('/portal/admin/roles')
+      active: isActive('/portal/admin/roles'),
     },
     {
       name: 'Analytics',
       href: '/portal/analytics',
       icon: BarChart3,
-      active: isActive('/portal/analytics')
-    }
+      active: isActive('/portal/analytics'),
+    },
   ];
 
   return (
@@ -145,7 +145,9 @@ function ServiceProviderSidebar() {
             <Settings className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
           </div>
           <div className="min-w-0">
-            <h2 className="font-bold text-base sm:text-lg text-purple-700 truncate">Service Provider</h2>
+            <h2 className="font-bold text-base sm:text-lg text-purple-700 truncate">
+              Service Provider
+            </h2>
             <p className="text-xs text-purple-600 truncate">Job Management Portal</p>
           </div>
         </div>

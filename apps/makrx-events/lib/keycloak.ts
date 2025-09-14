@@ -10,26 +10,26 @@ import { users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 if (!process.env.KEYCLOAK_BASE_URL) {
-  throw new Error("Environment variable KEYCLOAK_BASE_URL not provided");
+  throw new Error('Environment variable KEYCLOAK_BASE_URL not provided');
 }
 
 if (!process.env.KEYCLOAK_REALM) {
-  throw new Error("Environment variable KEYCLOAK_REALM not provided");
+  throw new Error('Environment variable KEYCLOAK_REALM not provided');
 }
 
 if (!process.env.KEYCLOAK_CLIENT_ID) {
-  throw new Error("Environment variable KEYCLOAK_CLIENT_ID not provided");
+  throw new Error('Environment variable KEYCLOAK_CLIENT_ID not provided');
 }
 
 if (!process.env.KEYCLOAK_CLIENT_SECRET) {
-  throw new Error("Environment variable KEYCLOAK_CLIENT_SECRET not provided");
+  throw new Error('Environment variable KEYCLOAK_CLIENT_SECRET not provided');
 }
 
 const getKeycloakConfig = memoize(
   async () => {
     const issuerUrl = `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}`;
     console.log('Discovering Keycloak issuer at:', issuerUrl);
-    
+
     return {
       issuer: issuerUrl,
       authorizationURL: `${issuerUrl}/protocol/openid-connect/auth`,
@@ -40,7 +40,7 @@ const getKeycloakConfig = memoize(
       callbackURL: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'}/api/auth/callback`,
     };
   },
-  { maxAge: 3600 * 1000 }
+  { maxAge: 3600 * 1000 },
 );
 
 export function getSession() {
@@ -50,7 +50,7 @@ export function getSession() {
     conString: process.env.DATABASE_URL,
     createTableIfMissing: false,
     ttl: sessionTtl,
-    tableName: "sessions",
+    tableName: 'sessions',
   });
   return session({
     secret: process.env.SESSION_SECRET!,
@@ -81,7 +81,7 @@ async function upsertUser(keycloakUser: KeycloakUser) {
     // Determine role from Keycloak roles
     const roles = keycloakUser.realm_access?.roles || [];
     let role = 'user'; // default
-    
+
     if (roles.includes('super_admin')) {
       role = 'super_admin';
     } else if (roles.includes('event_admin')) {
@@ -109,7 +109,7 @@ async function upsertUser(keycloakUser: KeycloakUser) {
         })
         .where(eq(users.keycloakId, keycloakUser.sub))
         .returning();
-      
+
       return updatedUser;
     } else {
       // Create new user
@@ -125,7 +125,7 @@ async function upsertUser(keycloakUser: KeycloakUser) {
           status: 'active',
         })
         .returning();
-      
+
       return newUser;
     }
   } catch (error) {
@@ -135,7 +135,7 @@ async function upsertUser(keycloakUser: KeycloakUser) {
 }
 
 export async function setupKeycloakAuth(app: Express) {
-  app.set("trust proxy", 1);
+  app.set('trust proxy', 1);
   app.use(getSession());
   app.use(passport.initialize());
   app.use(passport.session());
@@ -160,7 +160,7 @@ export async function setupKeycloakAuth(app: Express) {
       } catch (error) {
         done(error, null);
       }
-    }
+    },
   );
 
   passport.use('openidconnect', strategy);
@@ -171,12 +171,8 @@ export async function setupKeycloakAuth(app: Express) {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, id))
-        .limit(1);
-      
+      const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+
       done(null, user);
     } catch (error) {
       done(error, null);
@@ -186,17 +182,20 @@ export async function setupKeycloakAuth(app: Express) {
   // Auth routes
   app.get('/api/auth/login', passport.authenticate('openidconnect'));
 
-  app.get('/api/auth/callback', 
-    passport.authenticate('openidconnect', { 
+  app.get(
+    '/api/auth/callback',
+    passport.authenticate('openidconnect', {
       successRedirect: '/',
-      failureRedirect: '/login?error=auth_failed'
-    })
+      failureRedirect: '/login?error=auth_failed',
+    }),
   );
 
   app.get('/api/auth/logout', (req, res) => {
     const logoutUrl = `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/logout`;
-    const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'}/`);
-    
+    const redirectUri = encodeURIComponent(
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'}/`,
+    );
+
     req.logout(() => {
       res.redirect(`${logoutUrl}?redirect_uri=${redirectUri}`);
     });
@@ -215,12 +214,12 @@ export const requireRole = (role: string): RequestHandler => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const user = req.user as any;
     if (!user || user.role !== role) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
-    
+
     next();
   };
 };
@@ -230,12 +229,12 @@ export const requireRoles = (roles: string[]): RequestHandler => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const user = req.user as any;
     if (!user || !roles.includes(user.role)) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
-    
+
     next();
   };
 };

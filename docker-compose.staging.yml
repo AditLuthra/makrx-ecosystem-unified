@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Infrastructure services (same as development but with staging config)
@@ -10,14 +10,14 @@ services:
       POSTGRES_USER: makrx_staging
       POSTGRES_PASSWORD: makrx_staging_password
     ports:
-      - '5434:5432'
+      - "5434:5432"
     volumes:
       - postgres_staging_data:/var/lib/postgresql/data
       - ./services/postgres/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - makrx-staging-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U makrx_staging -d makrx_staging']
+      test: ["CMD-SHELL", "pg_isready -U makrx_staging -d makrx_staging"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -26,13 +26,13 @@ services:
     image: redis:7-alpine
     container_name: makrx-staging-redis
     ports:
-      - '6381:6379'
+      - "6381:6379"
     volumes:
       - redis_staging_data:/data
     networks:
       - makrx-staging-network
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -41,8 +41,8 @@ services:
     image: minio/minio:latest
     container_name: makrx-staging-minio
     ports:
-      - '9004:9000'
-      - '9005:9001'
+      - "9004:9000"
+      - "9005:9001"
     environment:
       MINIO_ROOT_USER: makrxstaging
       MINIO_ROOT_PASSWORD: makrxstaging123
@@ -52,7 +52,7 @@ services:
       - makrx-staging-network
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -71,7 +71,7 @@ services:
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT_HTTPS: "false"
     ports:
-      - '8082:8080'
+      - "8082:8080"
     depends_on:
       postgres-staging:
         condition: service_healthy
@@ -79,9 +79,9 @@ services:
       - makrx-staging-network
     volumes:
       - ./services/keycloak/realm-config:/opt/keycloak/data/import
-    command: ['start-dev', '--import-realm']
+    command: ["start-dev", "--import-realm"]
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health/ready']
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -92,17 +92,17 @@ services:
     image: prom/prometheus:latest
     container_name: makrx-staging-prometheus
     ports:
-      - '9091:9090'
+      - "9091:9090"
     volumes:
       - ./monitoring/prometheus:/etc/prometheus
       - prometheus_staging_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
     networks:
       - makrx-staging-network
 

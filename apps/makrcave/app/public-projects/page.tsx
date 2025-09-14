@@ -1,12 +1,18 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Search,
   Filter,
   Grid3X3,
@@ -27,7 +33,7 @@ import {
   ShoppingCart,
   Lightbulb,
   Wrench,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import EnhancedProjectCard from '@/components/EnhancedProjectCard';
@@ -47,14 +53,14 @@ interface PublicProject {
   is_featured: boolean;
   created_at: string;
   updated_at: string;
-  
+
   // Collaboration stats
   collaborator_count: number;
   bom_items_count: number;
   files_count: number;
   milestones_count: number;
   completed_milestones_count: number;
-  
+
   // Public project features
   difficulty_level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   estimated_duration?: string;
@@ -64,12 +70,12 @@ interface PublicProject {
   required_equipment: string[];
   space_requirements?: string;
   safety_considerations?: string;
-  
+
   // Engagement metrics
   view_count: number;
   fork_count: number;
   like_count: number;
-  
+
   // Integration
   github_repo_url?: string;
   enable_github_integration?: boolean;
@@ -82,7 +88,7 @@ const PublicProjects: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  
+
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
@@ -92,20 +98,46 @@ const PublicProjects: React.FC = () => {
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [hasBOM, setHasBOM] = useState<boolean | null>(null);
   const [hasFiles, setHasFiles] = useState<boolean | null>(null);
-  const [sortBy, setSortBy] = useState<'updated_at' | 'created_at' | 'like_count' | 'view_count' | 'name'>('updated_at');
+  const [sortBy, setSortBy] = useState<
+    'updated_at' | 'created_at' | 'like_count' | 'view_count' | 'name'
+  >('updated_at');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   // Available filter options
   const availableSkills = [
-    '3D Printing', 'Arduino', 'CAD Design', 'Electronics', 'Programming',
-    'Laser Cutting', 'CNC Machining', 'Woodworking', 'Metalworking', 'Soldering',
-    'PCB Design', 'IoT', 'Robotics', 'AI/ML', 'Web Development'
+    '3D Printing',
+    'Arduino',
+    'CAD Design',
+    'Electronics',
+    'Programming',
+    'Laser Cutting',
+    'CNC Machining',
+    'Woodworking',
+    'Metalworking',
+    'Soldering',
+    'PCB Design',
+    'IoT',
+    'Robotics',
+    'AI/ML',
+    'Web Development',
   ];
 
   const availableEquipment = [
-    '3D Printer', 'Laser Cutter', 'CNC Machine', 'Soldering Station', 'Oscilloscope',
-    'Multimeter', 'Power Supply', 'Hot Air Station', 'Drill Press', 'Band Saw',
-    'Hand Tools', 'Arduino', 'Raspberry Pi', 'Breadboard', 'PCB'
+    '3D Printer',
+    'Laser Cutter',
+    'CNC Machine',
+    'Soldering Station',
+    'Oscilloscope',
+    'Multimeter',
+    'Power Supply',
+    'Hot Air Station',
+    'Drill Press',
+    'Band Saw',
+    'Hand Tools',
+    'Arduino',
+    'Raspberry Pi',
+    'Breadboard',
+    'PCB',
   ];
 
   // Mock data for development
@@ -113,7 +145,8 @@ const PublicProjects: React.FC = () => {
     {
       project_id: 'pub-1',
       name: 'Smart Plant Watering System',
-      description: 'IoT-based automatic plant watering system using Arduino and soil moisture sensors. Perfect for beginners learning IoT and plant care automation.',
+      description:
+        'IoT-based automatic plant watering system using Arduino and soil moisture sensors. Perfect for beginners learning IoT and plant care automation.',
       owner_id: 'maker-1',
       owner_name: 'Sarah Green',
       owner_avatar: '/avatars/sarah.jpg',
@@ -133,7 +166,11 @@ const PublicProjects: React.FC = () => {
       difficulty_level: 'beginner',
       estimated_duration: '2-3 weeks',
       required_skills: ['Arduino', 'Basic Electronics', 'Programming'],
-      learning_objectives: ['Learn sensor interfacing', 'Understand IoT basics', 'Practice Arduino programming'],
+      learning_objectives: [
+        'Learn sensor interfacing',
+        'Understand IoT basics',
+        'Practice Arduino programming',
+      ],
       license_type: 'cc-by-sa',
       required_equipment: ['Arduino', 'Breadboard', 'Soldering Station'],
       space_requirements: 'Basic workbench with power outlet',
@@ -142,12 +179,13 @@ const PublicProjects: React.FC = () => {
       fork_count: 23,
       like_count: 156,
       github_repo_url: 'https://github.com/sarahgreen/smart-plant-watering',
-      enable_github_integration: true
+      enable_github_integration: true,
     },
     {
       project_id: 'pub-2',
       name: 'Laser Cut Mechanical Keyboard',
-      description: 'Custom mechanical keyboard with laser-cut case, hand-wired switches, and QMK firmware. Advanced project for keyboard enthusiasts.',
+      description:
+        'Custom mechanical keyboard with laser-cut case, hand-wired switches, and QMK firmware. Advanced project for keyboard enthusiasts.',
       owner_id: 'maker-2',
       owner_name: 'Alex Chen',
       owner_avatar: '/avatars/alex.jpg',
@@ -175,12 +213,13 @@ const PublicProjects: React.FC = () => {
       fork_count: 12,
       like_count: 89,
       github_repo_url: 'https://github.com/alexchen/laser-keyboard',
-      enable_github_integration: true
+      enable_github_integration: true,
     },
     {
       project_id: 'pub-3',
       name: 'Weather Station with Display',
-      description: 'Complete weather monitoring station with outdoor sensors and indoor display. Great introduction to sensor networks and data visualization.',
+      description:
+        'Complete weather monitoring station with outdoor sensors and indoor display. Great introduction to sensor networks and data visualization.',
       owner_id: 'maker-3',
       owner_name: 'Dr. Maria Rodriguez',
       owner_avatar: '/avatars/maria.jpg',
@@ -205,8 +244,8 @@ const PublicProjects: React.FC = () => {
       view_count: 672,
       fork_count: 18,
       like_count: 124,
-      enable_github_integration: false
-    }
+      enable_github_integration: false,
+    },
   ];
 
   // Fetch public projects
@@ -219,7 +258,7 @@ const PublicProjects: React.FC = () => {
         skip: '0',
         limit: '50',
         sort_by: sortBy,
-        sort_direction: sortDirection
+        sort_direction: sortDirection,
       });
 
       if (searchTerm) params.append('search', searchTerm);
@@ -228,12 +267,12 @@ const PublicProjects: React.FC = () => {
       if (featuredOnly) params.append('featured_only', 'true');
       if (hasBOM !== null) params.append('has_bom', hasBOM.toString());
       if (hasFiles !== null) params.append('has_files', hasFiles.toString());
-      
+
       // Add skill filters
-      skillsFilter.forEach(skill => params.append('required_skills', skill));
-      
+      skillsFilter.forEach((skill) => params.append('required_skills', skill));
+
       // Add equipment filters
-      equipmentFilter.forEach(equipment => params.append('required_equipment', equipment));
+      equipmentFilter.forEach((equipment) => params.append('required_equipment', equipment));
 
       const response = await fetch(`/api/v1/enhanced-projects/public?${params.toString()}`, {
         headers: {
@@ -259,7 +298,18 @@ const PublicProjects: React.FC = () => {
 
   useEffect(() => {
     fetchProjects();
-  }, [searchTerm, difficultyFilter, skillsFilter, equipmentFilter, licenseFilter, featuredOnly, hasBOM, hasFiles, sortBy, sortDirection]);
+  }, [
+    searchTerm,
+    difficultyFilter,
+    skillsFilter,
+    equipmentFilter,
+    licenseFilter,
+    featuredOnly,
+    hasBOM,
+    hasFiles,
+    sortBy,
+    sortDirection,
+  ]);
 
   const handleLike = async (projectId: string) => {
     if (!user) {
@@ -299,7 +349,7 @@ const PublicProjects: React.FC = () => {
         body: JSON.stringify({
           original_project_id: projectId,
           new_project_name: projectName,
-          fork_reason: 'Personal modification and learning'
+          fork_reason: 'Personal modification and learning',
         }),
       });
 
@@ -319,11 +369,16 @@ const PublicProjects: React.FC = () => {
 
   const getDifficultyIcon = (level: string) => {
     switch (level) {
-      case 'beginner': return <BookOpen className="h-4 w-4" />;
-      case 'intermediate': return <Zap className="h-4 w-4" />;
-      case 'advanced': return <Award className="h-4 w-4" />;
-      case 'expert': return <Shield className="h-4 w-4" />;
-      default: return <BookOpen className="h-4 w-4" />;
+      case 'beginner':
+        return <BookOpen className="h-4 w-4" />;
+      case 'intermediate':
+        return <Zap className="h-4 w-4" />;
+      case 'advanced':
+        return <Award className="h-4 w-4" />;
+      case 'expert':
+        return <Shield className="h-4 w-4" />;
+      default:
+        return <BookOpen className="h-4 w-4" />;
     }
   };
 
@@ -348,7 +403,10 @@ const PublicProjects: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => window.location.href = '/portal/projects/create'}>
+          <Button
+            variant="outline"
+            onClick={() => (window.location.href = '/portal/projects/create')}
+          >
             Share Your Project
           </Button>
         </div>
@@ -367,14 +425,14 @@ const PublicProjects: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <Star className="h-5 w-5 text-yellow-600" />
               <div>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {projects.filter(p => p.is_featured).length}
+                  {projects.filter((p) => p.is_featured).length}
                 </p>
                 <p className="text-sm text-gray-600">Featured</p>
               </div>
@@ -506,7 +564,7 @@ const PublicProjects: React.FC = () => {
                 <Star className="h-3 w-3 mr-1" />
                 Featured Only
               </Button>
-              
+
               <Button
                 variant={hasBOM === true ? 'default' : 'outline'}
                 size="sm"
@@ -515,7 +573,7 @@ const PublicProjects: React.FC = () => {
                 <Package className="h-3 w-3 mr-1" />
                 Has BOM
               </Button>
-              
+
               <Button
                 variant={hasFiles === true ? 'default' : 'outline'}
                 size="sm"
@@ -541,25 +599,29 @@ const PublicProjects: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Try adjusting your filters or search terms to discover more projects.
               </p>
-              <Button onClick={() => {
-                setSearchTerm('');
-                setDifficultyFilter('all');
-                setLicenseFilter('all');
-                setFeaturedOnly(false);
-                setHasBOM(null);
-                setHasFiles(null);
-              }}>
+              <Button
+                onClick={() => {
+                  setSearchTerm('');
+                  setDifficultyFilter('all');
+                  setLicenseFilter('all');
+                  setFeaturedOnly(false);
+                  setHasBOM(null);
+                  setHasFiles(null);
+                }}
+              >
                 Clear All Filters
               </Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className={
-          viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-        }>
+        <div
+          className={
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+              : 'space-y-4'
+          }
+        >
           {projects.map((project) => (
             <EnhancedProjectCard
               key={project.project_id}

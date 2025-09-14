@@ -7,16 +7,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const mockMicrosites = [
     {
       slug: 'makerfest-2024',
-      updatedAt: '2024-02-01T10:00:00Z'
+      updatedAt: '2024-02-01T10:00:00Z',
     },
     {
       slug: 'techcon-spring',
-      updatedAt: '2024-02-01T12:00:00Z'
+      updatedAt: '2024-02-01T12:00:00Z',
     },
     {
       slug: 'innovation-expo',
-      updatedAt: '2024-02-01T14:00:00Z'
-    }
+      updatedAt: '2024-02-01T14:00:00Z',
+    },
   ];
 
   const staticRoutes = [
@@ -43,11 +43,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
-    }
+    },
   ];
 
   // Add microsite routes
-  const micrositeRoutes = mockMicrosites.flatMap(microsite => [
+  const micrositeRoutes = mockMicrosites.flatMap((microsite) => [
     {
       url: `${baseUrl}/m/${microsite.slug}`,
       lastModified: new Date(microsite.updatedAt),
@@ -65,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(microsite.updatedAt),
       changeFrequency: 'weekly' as const,
       priority: 0.6,
-    }
+    },
   ]);
 
   return [...staticRoutes, ...micrositeRoutes];

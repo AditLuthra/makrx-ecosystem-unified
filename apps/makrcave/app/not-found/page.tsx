@@ -1,16 +1,27 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Zap, AlertTriangle, Settings, Monitor, Wrench, Home, MapPin, RotateCcw } from 'lucide-react';
+import {
+  ArrowLeft,
+  Zap,
+  AlertTriangle,
+  Settings,
+  Monitor,
+  Wrench,
+  Home,
+  MapPin,
+  RotateCcw,
+} from 'lucide-react';
 import Link from 'next/link';
 
 // Sound effect simulation through visual feedback
 const playClickSound = () => {
   // Visual feedback for click (simulates sound)
   const clickFeedback = document.createElement('div');
-  clickFeedback.className = 'fixed top-4 right-4 bg-cyan-500 text-white px-3 py-1 rounded-md text-sm z-50 animate-bounce';
+  clickFeedback.className =
+    'fixed top-4 right-4 bg-cyan-500 text-white px-3 py-1 rounded-md text-sm z-50 animate-bounce';
   clickFeedback.textContent = '🔊 *BEEP*';
   document.body.appendChild(clickFeedback);
   setTimeout(() => {
@@ -21,7 +32,8 @@ const playClickSound = () => {
 const playSuccessSound = () => {
   // Visual feedback for success
   const successFeedback = document.createElement('div');
-  successFeedback.className = 'fixed top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-md text-sm z-50 animate-pulse';
+  successFeedback.className =
+    'fixed top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-md text-sm z-50 animate-pulse';
   successFeedback.textContent = '🔊 *SUCCESS*';
   document.body.appendChild(successFeedback);
   setTimeout(() => {
@@ -30,7 +42,13 @@ const playSuccessSound = () => {
 };
 
 // Glitch text component
-const GlitchText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+const GlitchText = ({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const [isGlitching, setIsGlitching] = useState(false);
 
   useEffect(() => {
@@ -45,14 +63,24 @@ const GlitchText = ({ children, className = '' }: { children: React.ReactNode; c
   }, []);
 
   return (
-    <span className={`${className} ${isGlitching ? 'glitch-effect text-red-400 screen-flicker' : ''} transition-all duration-200`}>
+    <span
+      className={`${className} ${isGlitching ? 'glitch-effect text-red-400 screen-flicker' : ''} transition-all duration-200`}
+    >
       {children}
     </span>
   );
 };
 
 // Broken machine component
-const BrokenMachine = ({ name, status, sparks = false }: { name: string; status: string; sparks?: boolean }) => {
+const BrokenMachine = ({
+  name,
+  status,
+  sparks = false,
+}: {
+  name: string;
+  status: string;
+  sparks?: boolean;
+}) => {
   const [isFlickering, setIsFlickering] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -95,9 +123,7 @@ const BrokenMachine = ({ name, status, sparks = false }: { name: string; status:
       <div className="mt-2 bg-gray-800 h-2 rounded-full overflow-hidden">
         <div className="h-full bg-red-500 animate-pulse" style={{ width: '0%' }}></div>
       </div>
-      {clicked && (
-        <div className="absolute inset-0 bg-red-500/20 rounded-lg animate-ping"></div>
-      )}
+      {clicked && <div className="absolute inset-0 bg-red-500/20 rounded-lg animate-ping"></div>}
     </div>
   );
 };
@@ -116,20 +142,20 @@ const ReviveLabGame = ({ onGameComplete }: { onGameComplete: () => void }) => {
     'Initializing safety protocols...',
     'Recompiling firmware...',
     'Connecting to network...',
-    'Lab revival complete!'
+    'Lab revival complete!',
   ];
 
   const handleReviveClick = useCallback(() => {
     if (isCompleted) return;
 
     playClickSound();
-    setClicks(prev => prev + 1);
+    setClicks((prev) => prev + 1);
 
     const newProgress = Math.min(progress + (Math.random() * 15 + 5), 100);
     setProgress(newProgress);
 
     if (newProgress >= 100 && gameStage < tasks.length - 1) {
-      setGameStage(prev => prev + 1);
+      setGameStage((prev) => prev + 1);
       setProgress(0);
       playSuccessSound();
     } else if (newProgress >= 100 && gameStage === tasks.length - 1) {
@@ -152,7 +178,7 @@ const ReviveLabGame = ({ onGameComplete }: { onGameComplete: () => void }) => {
           <h3 className="text-2xl font-bold text-cyan-400 mb-2">🔧 Lab Revival Protocol</h3>
           <p className="text-gray-300 text-sm">Click the power button rapidly to revive the lab!</p>
         </div>
-        
+
         <div className="mb-6">
           <div className="flex justify-between text-sm text-gray-400 mb-2">
             <span>{currentTask}</span>
@@ -170,15 +196,16 @@ const ReviveLabGame = ({ onGameComplete }: { onGameComplete: () => void }) => {
             disabled={isCompleted}
             className={`
               w-24 h-24 rounded-full text-2xl font-bold transition-all duration-200 transform
-              ${isCompleted 
-                ? 'bg-green-600 hover:bg-green-600 text-white cursor-default scale-110' 
-                : 'bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white hover:scale-105 active:scale-95'
+              ${
+                isCompleted
+                  ? 'bg-green-600 hover:bg-green-600 text-white cursor-default scale-110'
+                  : 'bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white hover:scale-105 active:scale-95'
               }
             `}
           >
             {isCompleted ? '✓' : <Zap className="h-8 w-8" />}
           </Button>
-          
+
           <div className="mt-4 text-center">
             <div className="text-cyan-400 text-sm">Power Level: {Math.round(progress)}%</div>
             <div className="text-gray-500 text-xs">Clicks: {clicks}</div>
@@ -243,7 +270,7 @@ const NotFound = () => {
               Excellent work, engineer! The lab is now fully operational.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-4">
               <Monitor className="h-8 w-8 text-green-400 mx-auto mb-2" />
@@ -266,9 +293,7 @@ const NotFound = () => {
                 Return to MakrCave
               </Button>
             </Link>
-            <div className="text-gray-400 text-sm">
-              Thanks for helping us get back online! 🚀
-            </div>
+            <div className="text-gray-400 text-sm">Thanks for helping us get back online! 🚀</div>
           </div>
         </div>
       </div>
@@ -289,17 +314,27 @@ const NotFound = () => {
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4">
             <div className="text-gray-400 text-xs sm:text-sm font-mono">
-              <span className="text-red-400">SYSTEM</span> {'>'} <span className="text-yellow-400">LAB_404</span> {'>'} <span className="text-white">ERROR_STATE</span>
+              <span className="text-red-400">SYSTEM</span> {'>'}{' '}
+              <span className="text-yellow-400">LAB_404</span> {'>'}{' '}
+              <span className="text-white">ERROR_STATE</span>
             </div>
             <div className="flex items-center space-x-2">
               <Link href="/">
-                <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-800 text-xs sm:text-sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-800 text-xs sm:text-sm"
+                >
                   <Home className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Home
                 </Button>
               </Link>
               <Link href="/portal">
-                <Button variant="outline" size="sm" className="border-blue-600 text-blue-300 hover:bg-blue-900/20 text-xs sm:text-sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-600 text-blue-300 hover:bg-blue-900/20 text-xs sm:text-sm"
+                >
                   <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Portal
                 </Button>
@@ -332,20 +367,44 @@ const NotFound = () => {
               <Card className="bg-black/80 border border-red-500/50 mb-8 backdrop-blur-md">
                 <CardContent className="p-6">
                   <div className="text-left font-mono text-sm text-gray-300 space-y-1">
-                    <div><span className="text-red-400">ERROR:</span> <GlitchText>ResourceNotFoundException</GlitchText></div>
-                    <div><span className="text-yellow-400">WARN:</span> Power systems at 12% capacity</div>
-                    <div><span className="text-red-400">FATAL:</span> <GlitchText>Equipment array disconnected</GlitchText></div>
-                    <div><span className="text-blue-400">INFO:</span> Attempting auto-recovery...</div>
-                    <div><span className="text-red-400">ERROR:</span> <GlitchText>Recovery protocol failed</GlitchText></div>
-                    <div className="text-red-500 animate-pulse">{'>>> MANUAL INTERVENTION REQUIRED <<<'}</div>
+                    <div>
+                      <span className="text-red-400">ERROR:</span>{' '}
+                      <GlitchText>ResourceNotFoundException</GlitchText>
+                    </div>
+                    <div>
+                      <span className="text-yellow-400">WARN:</span> Power systems at 12% capacity
+                    </div>
+                    <div>
+                      <span className="text-red-400">FATAL:</span>{' '}
+                      <GlitchText>Equipment array disconnected</GlitchText>
+                    </div>
+                    <div>
+                      <span className="text-blue-400">INFO:</span> Attempting auto-recovery...
+                    </div>
+                    <div>
+                      <span className="text-red-400">ERROR:</span>{' '}
+                      <GlitchText>Recovery protocol failed</GlitchText>
+                    </div>
+                    <div className="text-red-500 animate-pulse">
+                      {'>>> MANUAL INTERVENTION REQUIRED <<<'}
+                    </div>
 
                     {diagnosticRunning && (
                       <>
                         <div className="border-t border-gray-700 my-2"></div>
-                        <div className="text-cyan-400 animate-pulse">RUNNING DIAGNOSTIC SCAN...</div>
-                        <div className="text-gray-400">Scanning equipment status... <span className="animate-pulse">████████░░</span></div>
-                        <div className="text-gray-400">Checking power levels... <span className="animate-pulse">██████████</span></div>
-                        <div className="text-gray-400">Analyzing error logs... <span className="animate-pulse">████░░░░░░</span></div>
+                        <div className="text-cyan-400 animate-pulse">
+                          RUNNING DIAGNOSTIC SCAN...
+                        </div>
+                        <div className="text-gray-400">
+                          Scanning equipment status...{' '}
+                          <span className="animate-pulse">████████░░</span>
+                        </div>
+                        <div className="text-gray-400">
+                          Checking power levels... <span className="animate-pulse">██████████</span>
+                        </div>
+                        <div className="text-gray-400">
+                          Analyzing error logs... <span className="animate-pulse">████░░░░░░</span>
+                        </div>
                       </>
                     )}
 
@@ -353,8 +412,11 @@ const NotFound = () => {
                       <>
                         <div className="border-t border-green-700 my-2"></div>
                         <div className="text-green-400">DIAGNOSTIC COMPLETE</div>
-                        <div className="text-yellow-400">SOLUTION:</div> <span className="text-cyan-400">Emergency revival protocol available</span>
-                        <div className="text-green-500 animate-pulse">{'>>> REVIVAL SYSTEM ACTIVATED <<<'}</div>
+                        <div className="text-yellow-400">SOLUTION:</div>{' '}
+                        <span className="text-cyan-400">Emergency revival protocol available</span>
+                        <div className="text-green-500 animate-pulse">
+                          {'>>> REVIVAL SYSTEM ACTIVATED <<<'}
+                        </div>
                       </>
                     )}
                   </div>
@@ -375,33 +437,27 @@ const NotFound = () => {
 
               {/* Responsive Broken Machines Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                <BrokenMachine 
-                  name="3D Printer Array" 
+                <BrokenMachine
+                  name="3D Printer Array"
                   status="OFFLINE - Extruder jam detected"
                   sparks={true}
                 />
-                <BrokenMachine 
-                  name="CNC Router" 
-                  status="ERROR - Spindle motor failure"
-                />
-                <BrokenMachine 
-                  name="Laser Cutter" 
+                <BrokenMachine name="CNC Router" status="ERROR - Spindle motor failure" />
+                <BrokenMachine
+                  name="Laser Cutter"
                   status="FAULT - Cooling system down"
                   sparks={true}
                 />
-                <BrokenMachine 
-                  name="Soldering Station" 
+                <BrokenMachine
+                  name="Soldering Station"
                   status="OFFLINE - Temperature sensor fail"
                 />
-                <BrokenMachine 
-                  name="Power Supply" 
+                <BrokenMachine
+                  name="Power Supply"
                   status="CRITICAL - Voltage instability"
                   sparks={true}
                 />
-                <BrokenMachine 
-                  name="Network Hub" 
-                  status="DISCONNECTED - No signal"
-                />
+                <BrokenMachine name="Network Hub" status="DISCONNECTED - No signal" />
               </div>
 
               {/* Responsive Navigation Options */}
@@ -425,7 +481,10 @@ const NotFound = () => {
                 {/* Alternative Options */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center max-w-md sm:max-w-none mx-auto">
                   <Link href="/makrverse" className="flex-1 sm:flex-none">
-                    <Button variant="outline" className="w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-sm">
+                    <Button
+                      variant="outline"
+                      className="w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-sm"
+                    >
                       <MapPin className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                       Explore MakrVerse
                     </Button>
@@ -450,9 +509,7 @@ const NotFound = () => {
                       <Wrench className="mr-2 h-4 w-4" />
                       Emergency Revive Lab
                     </Button>
-                    <div className="text-xs text-gray-500 mt-2">
-                      ⚡ Hidden protocol detected
-                    </div>
+                    <div className="text-xs text-gray-500 mt-2">⚡ Hidden protocol detected</div>
                   </div>
                 )}
               </div>

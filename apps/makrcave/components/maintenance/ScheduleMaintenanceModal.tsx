@@ -9,15 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from '../ui/switch';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { 
-  CalendarIcon, 
-  Clock, 
-  Repeat, 
-  Users,
-  Wrench,
-  AlertTriangle,
-  Info
-} from 'lucide-react';
+import { CalendarIcon, Clock, Repeat, Users, Wrench, AlertTriangle, Info } from 'lucide-react';
 import { format, addDays, addWeeks, addMonths } from 'date-fns';
 
 interface ScheduleMaintenanceModalProps {
@@ -39,7 +31,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
   isOpen,
   onClose,
   schedule,
-  onSave
+  onSave,
 }) => {
   const getHeaders = useAuthHeaders();
   const [formData, setFormData] = useState({
@@ -57,7 +49,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
     auto_create_work_order: true,
     requires_shutdown: false,
     safety_requirements: '',
-    notes: ''
+    notes: '',
   });
 
   const [equipment, setEquipment] = useState<Equipment[]>([]);
@@ -67,7 +59,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       loadEquipment();
-      
+
       if (schedule) {
         // Editing existing schedule
         setFormData({
@@ -85,7 +77,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
           auto_create_work_order: schedule.auto_create_work_order ?? true,
           requires_shutdown: schedule.requires_shutdown || false,
           safety_requirements: schedule.safety_requirements || '',
-          notes: schedule.notes || ''
+          notes: schedule.notes || '',
         });
       } else {
         // Reset form for new schedule
@@ -104,7 +96,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
           auto_create_work_order: true,
           requires_shutdown: false,
           safety_requirements: '',
-          notes: ''
+          notes: '',
         });
       }
     }
@@ -135,18 +127,48 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/v1/equipment', { headers });
-      
+
       if (response.ok) {
         const equipmentData = await response.json();
         setEquipment(equipmentData);
       } else {
         // Mock data
         setEquipment([
-          { id: 'eq-1', name: '3D Printer Pro', type: '3D Printer', location: 'Station A1', current_status: 'available' },
-          { id: 'eq-2', name: 'Laser Cutter X1', type: 'Laser Cutter', location: 'Station B2', current_status: 'available' },
-          { id: 'eq-3', name: 'CNC Mill Pro', type: 'CNC Machine', location: 'Station C1', current_status: 'maintenance_scheduled' },
-          { id: 'eq-4', name: 'Soldering Station', type: 'Workstation', location: 'Electronics Lab', current_status: 'available' },
-          { id: 'eq-5', name: 'Oscilloscope Pro', type: 'Testing Equipment', location: 'Electronics Lab', current_status: 'available' }
+          {
+            id: 'eq-1',
+            name: '3D Printer Pro',
+            type: '3D Printer',
+            location: 'Station A1',
+            current_status: 'available',
+          },
+          {
+            id: 'eq-2',
+            name: 'Laser Cutter X1',
+            type: 'Laser Cutter',
+            location: 'Station B2',
+            current_status: 'available',
+          },
+          {
+            id: 'eq-3',
+            name: 'CNC Mill Pro',
+            type: 'CNC Machine',
+            location: 'Station C1',
+            current_status: 'maintenance_scheduled',
+          },
+          {
+            id: 'eq-4',
+            name: 'Soldering Station',
+            type: 'Workstation',
+            location: 'Electronics Lab',
+            current_status: 'available',
+          },
+          {
+            id: 'eq-5',
+            name: 'Oscilloscope Pro',
+            type: 'Testing Equipment',
+            location: 'Electronics Lab',
+            current_status: 'available',
+          },
         ]);
       }
     } catch (error) {
@@ -161,7 +183,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
     try {
       const submitData = {
         ...formData,
-        estimated_duration: formData.estimated_duration ? parseInt(formData.estimated_duration) : null,
+        estimated_duration: formData.estimated_duration
+          ? parseInt(formData.estimated_duration)
+          : null,
         start_date: formData.start_date.toISOString(),
         next_due_date: nextMaintenanceDate?.toISOString(),
       };
@@ -175,25 +199,69 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
   };
 
   const maintenanceTypes = [
-    { value: 'preventive_cleaning', label: '🧹 Preventive Cleaning', description: 'Regular cleaning and inspection' },
-    { value: 'calibration', label: '⚖️ Calibration', description: 'Precision adjustment and verification' },
+    {
+      value: 'preventive_cleaning',
+      label: '🧹 Preventive Cleaning',
+      description: 'Regular cleaning and inspection',
+    },
+    {
+      value: 'calibration',
+      label: '⚖️ Calibration',
+      description: 'Precision adjustment and verification',
+    },
     { value: 'lubrication', label: '🛢️ Lubrication', description: 'Moving parts maintenance' },
-    { value: 'filter_replacement', label: '🔄 Filter Replacement', description: 'Air/fluid filter changes' },
-    { value: 'software_update', label: '💻 Software Update', description: 'Firmware and software updates' },
-    { value: 'safety_inspection', label: '🛡️ Safety Inspection', description: 'Safety systems check' },
-    { value: 'performance_check', label: '📊 Performance Check', description: 'Performance testing and optimization' },
-    { value: 'wear_inspection', label: '🔍 Wear Inspection', description: 'Check for wear and tear' },
-    { value: 'electrical_check', label: '⚡ Electrical Check', description: 'Electrical systems inspection' },
-    { value: 'custom', label: '🔧 Custom Maintenance', description: 'Custom maintenance procedure' }
+    {
+      value: 'filter_replacement',
+      label: '🔄 Filter Replacement',
+      description: 'Air/fluid filter changes',
+    },
+    {
+      value: 'software_update',
+      label: '💻 Software Update',
+      description: 'Firmware and software updates',
+    },
+    {
+      value: 'safety_inspection',
+      label: '🛡️ Safety Inspection',
+      description: 'Safety systems check',
+    },
+    {
+      value: 'performance_check',
+      label: '📊 Performance Check',
+      description: 'Performance testing and optimization',
+    },
+    {
+      value: 'wear_inspection',
+      label: '🔍 Wear Inspection',
+      description: 'Check for wear and tear',
+    },
+    {
+      value: 'electrical_check',
+      label: '⚡ Electrical Check',
+      description: 'Electrical systems inspection',
+    },
+    {
+      value: 'custom',
+      label: '🔧 Custom Maintenance',
+      description: 'Custom maintenance procedure',
+    },
   ];
 
   const teams = [
     { value: 'tech_team', label: 'Tech Team', specialization: 'General maintenance' },
     { value: 'laser_specialists', label: 'Laser Specialists', specialization: 'Laser equipment' },
-    { value: 'electronics_team', label: 'Electronics Team', specialization: 'Electronic equipment' },
+    {
+      value: 'electronics_team',
+      label: 'Electronics Team',
+      specialization: 'Electronic equipment',
+    },
     { value: 'mechanical_team', label: 'Mechanical Team', specialization: 'Mechanical systems' },
     { value: 'software_team', label: 'Software Team', specialization: 'Software and firmware' },
-    { value: 'external_contractor', label: 'External Contractor', specialization: 'Specialized services' }
+    {
+      value: 'external_contractor',
+      label: 'External Contractor',
+      specialization: 'Specialized services',
+    },
   ];
 
   return (
@@ -213,7 +281,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               <Label htmlFor="equipment_id">Equipment *</Label>
               <Select
                 value={formData.equipment_id}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, equipment_id: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, equipment_id: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select equipment" />
@@ -223,7 +291,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                     <SelectItem key={eq.id} value={eq.id}>
                       <div>
                         <div className="font-medium">{eq.name}</div>
-                        <div className="text-sm text-gray-500">{eq.type} - {eq.location}</div>
+                        <div className="text-sm text-gray-500">
+                          {eq.type} - {eq.location}
+                        </div>
                       </div>
                     </SelectItem>
                   ))}
@@ -235,7 +305,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               <Label htmlFor="maintenance_type">Maintenance Type *</Label>
               <Select
                 value={formData.maintenance_type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, maintenance_type: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, maintenance_type: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select maintenance type" />
@@ -260,7 +332,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="Detailed description of the maintenance procedure..."
               rows={3}
               required
@@ -273,7 +345,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               <Repeat className="h-5 w-5" />
               Schedule Configuration
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Repeat Every</Label>
@@ -282,12 +354,19 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                     type="number"
                     min="1"
                     value={formData.interval_value}
-                    onChange={(e) => setFormData(prev => ({ ...prev, interval_value: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        interval_value: parseInt(e.target.value) || 1,
+                      }))
+                    }
                     className="w-20"
                   />
                   <Select
                     value={formData.interval_type}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, interval_type: value }))}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, interval_type: value }))
+                    }
                   >
                     <SelectTrigger className="flex-1">
                       <SelectValue />
@@ -310,14 +389,16 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                       className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(formData.start_date, "PPP")}
+                      {format(formData.start_date, 'PPP')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
                       selected={formData.start_date}
-                      onSelect={(date) => date && setFormData(prev => ({ ...prev, start_date: date }))}
+                      onSelect={(date) =>
+                        date && setFormData((prev) => ({ ...prev, start_date: date }))
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -328,7 +409,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                 <Label>Next Due Date</Label>
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm font-medium text-blue-800">
-                    {nextMaintenanceDate ? format(nextMaintenanceDate, "PPP") : 'Not calculated'}
+                    {nextMaintenanceDate ? format(nextMaintenanceDate, 'PPP') : 'Not calculated'}
                   </p>
                   <p className="text-xs text-blue-600">
                     Automatically calculated based on interval
@@ -344,7 +425,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               <Label htmlFor="responsible_team">Responsible Team *</Label>
               <Select
                 value={formData.responsible_team}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, responsible_team: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, responsible_team: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select team" />
@@ -369,7 +452,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -394,7 +477,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                   id="estimated_duration"
                   type="number"
                   value={formData.estimated_duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, estimated_duration: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, estimated_duration: e.target.value }))
+                  }
                   placeholder="120"
                   className="pl-10"
                 />
@@ -408,7 +493,12 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                 type="number"
                 min="0"
                 value={formData.notification_days_before}
-                onChange={(e) => setFormData(prev => ({ ...prev, notification_days_before: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    notification_days_before: parseInt(e.target.value) || 0,
+                  }))
+                }
                 placeholder="3"
               />
             </div>
@@ -417,7 +507,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
           {/* Settings Switches */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Settings</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -428,7 +518,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                   <Switch
                     id="is_active"
                     checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, is_active: checked }))
+                    }
                   />
                 </div>
 
@@ -440,7 +532,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                   <Switch
                     id="auto_create_work_order"
                     checked={formData.auto_create_work_order}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, auto_create_work_order: checked }))}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, auto_create_work_order: checked }))
+                    }
                   />
                 </div>
               </div>
@@ -454,7 +548,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                   <Switch
                     id="requires_shutdown"
                     checked={formData.requires_shutdown}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, requires_shutdown: checked }))}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, requires_shutdown: checked }))
+                    }
                   />
                 </div>
               </div>
@@ -467,7 +563,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
             <Textarea
               id="safety_requirements"
               value={formData.safety_requirements}
-              onChange={(e) => setFormData(prev => ({ ...prev, safety_requirements: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, safety_requirements: e.target.value }))
+              }
               placeholder="Safety precautions, PPE requirements, lockout procedures..."
               rows={2}
             />
@@ -479,7 +577,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
             <Textarea
               id="notes"
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="Additional instructions, special considerations..."
               rows={3}
             />
@@ -493,9 +591,9 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
                 <div>
                   <h4 className="font-medium text-blue-800">Schedule Preview</h4>
                   <p className="text-sm text-blue-700 mt-1">
-                    This maintenance will repeat every {formData.interval_value} {formData.interval_type}, 
-                    starting from {format(formData.start_date, "PPP")}. 
-                    The next maintenance is scheduled for {format(nextMaintenanceDate, "PPP")}.
+                    This maintenance will repeat every {formData.interval_value}{' '}
+                    {formData.interval_type}, starting from {format(formData.start_date, 'PPP')}.
+                    The next maintenance is scheduled for {format(nextMaintenanceDate, 'PPP')}.
                   </p>
                   {formData.requires_shutdown && (
                     <p className="text-sm text-orange-700 mt-2 flex items-center gap-1">
@@ -514,7 +612,7 @@ const ScheduleMaintenanceModal: React.FC<ScheduleMaintenanceModalProps> = ({
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : (schedule ? 'Update Schedule' : 'Create Schedule')}
+              {loading ? 'Saving...' : schedule ? 'Update Schedule' : 'Create Schedule'}
             </Button>
           </div>
         </form>

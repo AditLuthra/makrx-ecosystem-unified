@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/Button";
-import WriteReviewModal, { ReviewData } from "@/components/WriteReviewModal";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import Layout from '@/components/layout/Layout';
+import { Button } from '@/components/ui/Button';
+import WriteReviewModal, { ReviewData } from '@/components/WriteReviewModal';
 import {
   Package,
   Truck,
@@ -22,15 +22,15 @@ import {
   Star,
   MessageCircle,
   ExternalLink,
-} from "lucide-react";
-import { products } from "@/data/products";
+} from 'lucide-react';
+import { products } from '@/data/products';
 
 interface Order {
   id: string;
   number: string;
   date: string;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  type: "product" | "service";
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  type: 'product' | 'service';
   total: number;
   items: Array<{
     id: string;
@@ -47,8 +47,8 @@ interface Order {
 }
 
 export default function AccountOrdersPage() {
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -65,11 +65,11 @@ export default function AccountOrdersPage() {
   // Handle review submission
   const handleReviewSubmit = async (reviewData: ReviewData) => {
     // In real app, this would submit to API
-    console.log("Submitting review:", reviewData);
+    console.log('Submitting review:', reviewData);
 
     // Add to submitted reviews set
     const reviewKey = `${reviewData.orderId}-${reviewData.itemId}`;
-    setSubmittedReviews(prev => new Set([...prev, reviewKey]));
+    setSubmittedReviews((prev) => new Set([...prev, reviewKey]));
 
     // Close modal
     setIsReviewModalOpen(false);
@@ -91,15 +91,15 @@ export default function AccountOrdersPage() {
   // Mock orders data - mix of product and service orders
   const allOrders: Order[] = [
     {
-      id: "1",
-      number: "ORD-2024-001",
-      date: "2024-01-15T10:30:00Z",
-      status: "delivered",
-      type: "product",
+      id: '1',
+      number: 'ORD-2024-001',
+      date: '2024-01-15T10:30:00Z',
+      status: 'delivered',
+      type: 'product',
       total: 1299.99,
       items: [
         {
-          id: "1",
+          id: '1',
           name: products[0].name,
           image: products[0].images[0],
           quantity: 1,
@@ -107,38 +107,38 @@ export default function AccountOrdersPage() {
           sku: products[0].sku,
         },
       ],
-      trackingNumber: "TRK123456789",
-      estimatedDelivery: "2024-01-18",
+      trackingNumber: 'TRK123456789',
+      estimatedDelivery: '2024-01-18',
     },
     {
-      id: "2",
-      number: "SRV-2024-002",
-      date: "2024-01-12T14:20:00Z",
-      status: "processing",
-      type: "service",
+      id: '2',
+      number: 'SRV-2024-002',
+      date: '2024-01-12T14:20:00Z',
+      status: 'processing',
+      type: 'service',
       total: 45.99,
       items: [
         {
-          id: "2",
-          name: "3D Printing Service - custom-bracket.stl",
-          image: "https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Service",
+          id: '2',
+          name: '3D Printing Service - custom-bracket.stl',
+          image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Service',
           quantity: 1,
           price: 45.99,
         },
       ],
-      serviceProvider: "MakerLab SF",
-      estimatedDelivery: "2024-01-16",
+      serviceProvider: 'MakerLab SF',
+      estimatedDelivery: '2024-01-16',
     },
     {
-      id: "3",
-      number: "ORD-2024-003",
-      date: "2024-01-10T09:15:00Z",
-      status: "shipped",
-      type: "product",
+      id: '3',
+      number: 'ORD-2024-003',
+      date: '2024-01-10T09:15:00Z',
+      status: 'shipped',
+      type: 'product',
       total: 187.48,
       items: [
         {
-          id: "3",
+          id: '3',
           name: products[3].name,
           image: products[3].images[0],
           quantity: 3,
@@ -146,7 +146,7 @@ export default function AccountOrdersPage() {
           sku: products[3].sku,
         },
         {
-          id: "4",
+          id: '4',
           name: products[4].name,
           image: products[4].images[0],
           quantity: 2,
@@ -154,19 +154,19 @@ export default function AccountOrdersPage() {
           sku: products[4].sku,
         },
       ],
-      trackingNumber: "TRK987654321",
-      estimatedDelivery: "2024-01-14",
+      trackingNumber: 'TRK987654321',
+      estimatedDelivery: '2024-01-14',
     },
     {
-      id: "4",
-      number: "ORD-2024-004",
-      date: "2024-01-08T16:45:00Z",
-      status: "delivered",
-      type: "product",
+      id: '4',
+      number: 'ORD-2024-004',
+      date: '2024-01-08T16:45:00Z',
+      status: 'delivered',
+      type: 'product',
       total: 89.99,
       items: [
         {
-          id: "5",
+          id: '5',
           name: products[4].name,
           image: products[4].images[0],
           quantity: 1,
@@ -174,37 +174,37 @@ export default function AccountOrdersPage() {
           sku: products[4].sku,
         },
       ],
-      trackingNumber: "TRK456789123",
+      trackingNumber: 'TRK456789123',
     },
     {
-      id: "5",
-      number: "SRV-2024-005",
-      date: "2024-01-05T11:30:00Z",
-      status: "delivered",
-      type: "service",
+      id: '5',
+      number: 'SRV-2024-005',
+      date: '2024-01-05T11:30:00Z',
+      status: 'delivered',
+      type: 'service',
       total: 125.0,
       items: [
         {
-          id: "6",
-          name: "CNC Machining Service - aluminum-part.step",
-          image: "https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Service",
+          id: '6',
+          name: 'CNC Machining Service - aluminum-part.step',
+          image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Service',
           quantity: 1,
           price: 125.0,
         },
       ],
-      serviceProvider: "Precision Works",
-      estimatedDelivery: "2024-01-09",
+      serviceProvider: 'Precision Works',
+      estimatedDelivery: '2024-01-09',
     },
     {
-      id: "6",
-      number: "ORD-2024-006",
-      date: "2024-01-02T13:20:00Z",
-      status: "cancelled",
-      type: "product",
+      id: '6',
+      number: 'ORD-2024-006',
+      date: '2024-01-02T13:20:00Z',
+      status: 'cancelled',
+      type: 'product',
       total: 299.99,
       items: [
         {
-          id: "7",
+          id: '7',
           name: products[2].name,
           image: products[2].images[0],
           quantity: 1,
@@ -218,17 +218,15 @@ export default function AccountOrdersPage() {
   // Filter orders
   const filteredOrders = allOrders.filter((order) => {
     const matchesFilter =
-      selectedFilter === "all" ||
-      (selectedFilter === "products" && order.type === "product") ||
-      (selectedFilter === "services" && order.type === "service") ||
+      selectedFilter === 'all' ||
+      (selectedFilter === 'products' && order.type === 'product') ||
+      (selectedFilter === 'services' && order.type === 'service') ||
       order.status === selectedFilter;
 
     const matchesSearch =
-      searchQuery === "" ||
+      searchQuery === '' ||
       order.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.items.some((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      order.items.some((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesFilter && matchesSearch;
   });
@@ -236,66 +234,63 @@ export default function AccountOrdersPage() {
   // Pagination
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
   const filterOptions = [
-    { value: "all", label: "All Orders", count: allOrders.length },
+    { value: 'all', label: 'All Orders', count: allOrders.length },
     {
-      value: "products",
-      label: "Products",
-      count: allOrders.filter((o) => o.type === "product").length,
+      value: 'products',
+      label: 'Products',
+      count: allOrders.filter((o) => o.type === 'product').length,
     },
     {
-      value: "services",
-      label: "Services",
-      count: allOrders.filter((o) => o.type === "service").length,
+      value: 'services',
+      label: 'Services',
+      count: allOrders.filter((o) => o.type === 'service').length,
     },
     {
-      value: "delivered",
-      label: "Delivered",
-      count: allOrders.filter((o) => o.status === "delivered").length,
+      value: 'delivered',
+      label: 'Delivered',
+      count: allOrders.filter((o) => o.status === 'delivered').length,
     },
     {
-      value: "shipped",
-      label: "Shipped",
-      count: allOrders.filter((o) => o.status === "shipped").length,
+      value: 'shipped',
+      label: 'Shipped',
+      count: allOrders.filter((o) => o.status === 'shipped').length,
     },
     {
-      value: "processing",
-      label: "Processing",
-      count: allOrders.filter((o) => o.status === "processing").length,
+      value: 'processing',
+      label: 'Processing',
+      count: allOrders.filter((o) => o.status === 'processing').length,
     },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "delivered":
-        return "text-green-800 bg-green-100";
-      case "shipped":
-        return "text-blue-800 bg-blue-100";
-      case "processing":
-        return "text-yellow-800 bg-yellow-100";
-      case "pending":
-        return "text-gray-800 bg-gray-100";
-      case "cancelled":
-        return "text-red-800 bg-red-100";
+      case 'delivered':
+        return 'text-green-800 bg-green-100';
+      case 'shipped':
+        return 'text-blue-800 bg-blue-100';
+      case 'processing':
+        return 'text-yellow-800 bg-yellow-100';
+      case 'pending':
+        return 'text-gray-800 bg-gray-100';
+      case 'cancelled':
+        return 'text-red-800 bg-red-100';
       default:
-        return "text-gray-800 bg-gray-100";
+        return 'text-gray-800 bg-gray-100';
     }
   };
 
   const getTypeIcon = (type: string) => {
-    return type === "service" ? "⚡" : "📦";
+    return type === 'service' ? '⚡' : '📦';
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -319,12 +314,10 @@ export default function AccountOrdersPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-store-text">
-                Your Orders
-              </h1>
+              <h1 className="text-3xl font-bold text-store-text">Your Orders</h1>
               <p className="text-store-text-muted mt-1">
                 {filteredOrders.length} order
-                {filteredOrders.length !== 1 ? "s" : ""} found
+                {filteredOrders.length !== 1 ? 's' : ''} found
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -366,8 +359,8 @@ export default function AccountOrdersPage() {
                     onClick={() => setSelectedFilter(option.value)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedFilter === option.value
-                        ? "bg-store-primary text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        ? 'bg-store-primary text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     {option.label} ({option.count})
@@ -381,12 +374,10 @@ export default function AccountOrdersPage() {
           {paginatedOrders.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
               <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-store-text mb-2">
-                No orders found
-              </h3>
+              <h3 className="text-xl font-semibold text-store-text mb-2">No orders found</h3>
               <p className="text-store-text-muted mb-6">
                 {searchQuery
-                  ? "Try adjusting your search criteria."
+                  ? 'Try adjusting your search criteria.'
                   : "You haven't placed any orders yet."}
               </p>
               <Link href="/catalog">
@@ -408,27 +399,20 @@ export default function AccountOrdersPage() {
                       <div className="text-2xl">{getTypeIcon(order.type)}</div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-store-text">
-                            {order.number}
-                          </h3>
+                          <h3 className="font-semibold text-store-text">{order.number}</h3>
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}
                           >
-                            {order.status.charAt(0).toUpperCase() +
-                              order.status.slice(1)}
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </span>
                         </div>
                         <div className="text-sm text-store-text-muted mt-1">
                           <Calendar className="h-4 w-4 inline mr-1" />
                           Ordered {formatDate(order.date)}
                           {order.estimatedDelivery &&
-                            order.status !== "delivered" &&
-                            order.status !== "cancelled" && (
-                              <span>
-                                {" "}
-                                • Est. delivery{" "}
-                                {formatDate(order.estimatedDelivery)}
-                              </span>
+                            order.status !== 'delivered' &&
+                            order.status !== 'cancelled' && (
+                              <span> • Est. delivery {formatDate(order.estimatedDelivery)}</span>
                             )}
                         </div>
                       </div>
@@ -440,7 +424,7 @@ export default function AccountOrdersPage() {
                       </div>
                       <div className="text-sm text-store-text-muted">
                         {order.items.length} item
-                        {order.items.length !== 1 ? "s" : ""}
+                        {order.items.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
@@ -459,9 +443,7 @@ export default function AccountOrdersPage() {
                             {item.name}
                           </div>
                           {item.sku && (
-                            <div className="text-xs text-store-text-muted">
-                              SKU: {item.sku}
-                            </div>
+                            <div className="text-xs text-store-text-muted">SKU: {item.sku}</div>
                           )}
                           <div className="text-xs text-store-text-muted">
                             Qty: {item.quantity} × ${item.price.toFixed(2)}
@@ -469,7 +451,7 @@ export default function AccountOrdersPage() {
                         </div>
 
                         {/* Individual Review Button for Delivered Items */}
-                        {order.status === "delivered" && order.type === "product" && (
+                        {order.status === 'delivered' && order.type === 'product' && (
                           <div className="flex-shrink-0">
                             {hasUserReviewed(order.id, item.id) ? (
                               <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
@@ -497,8 +479,7 @@ export default function AccountOrdersPage() {
                   {order.serviceProvider && (
                     <div className="mb-4 p-3 bg-purple-50 rounded-lg">
                       <div className="text-sm text-purple-800">
-                        <strong>Service Provider:</strong>{" "}
-                        {order.serviceProvider}
+                        <strong>Service Provider:</strong> {order.serviceProvider}
                       </div>
                     </div>
                   )}
@@ -539,7 +520,7 @@ export default function AccountOrdersPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {order.status === "delivered" && (
+                      {order.status === 'delivered' && (
                         <Button variant="outline" size="sm">
                           <RefreshCw className="h-4 w-4 mr-1" />
                           Reorder
@@ -572,7 +553,7 @@ export default function AccountOrdersPage() {
                 return (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
+                    variant={currentPage === page ? 'default' : 'outline'}
                     onClick={() => setCurrentPage(page)}
                     size="sm"
                   >
@@ -583,9 +564,7 @@ export default function AccountOrdersPage() {
 
               <Button
                 variant="outline"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >
                 <ArrowRight className="h-4 w-4" />

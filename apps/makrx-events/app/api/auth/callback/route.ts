@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
           code,
           redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
         }),
-      }
+      },
     );
 
     if (!tokenResponse.ok) {

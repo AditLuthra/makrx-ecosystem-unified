@@ -5,7 +5,7 @@ import MakerSidebar from './MakerSidebar';
 
 export default function Sidebar() {
   const { user, hasRole } = useKeycloak();
-  
+
   // Render role-specific sidebar based on Keycloak roles
   if (hasRole('super_admin')) {
     return <SuperAdminSidebar />;

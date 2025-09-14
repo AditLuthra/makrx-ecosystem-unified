@@ -7,16 +7,7 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
 import { useToast } from '../../hooks/use-toast';
-import {
-  Building2,
-  MapPin,
-  Globe,
-  Users,
-  Settings,
-  Mail,
-  Phone,
-  Clock
-} from 'lucide-react';
+import { Building2, MapPin, Globe, Users, Settings, Mail, Phone, Clock } from 'lucide-react';
 
 interface Makerspace {
   id: string;
@@ -45,13 +36,29 @@ interface MakerspaceFormModalProps {
 }
 
 const AVAILABLE_MODULES = [
-  { key: 'inventory', name: 'Inventory Management', description: 'Track and manage materials and supplies' },
+  {
+    key: 'inventory',
+    name: 'Inventory Management',
+    description: 'Track and manage materials and supplies',
+  },
   { key: 'projects', name: 'Project Management', description: 'Create and manage member projects' },
-  { key: 'reservations', name: 'Equipment Reservations', description: 'Book and schedule equipment usage' },
+  {
+    key: 'reservations',
+    name: 'Equipment Reservations',
+    description: 'Book and schedule equipment usage',
+  },
   { key: 'billing', name: 'Billing & Payments', description: 'Handle memberships and payments' },
   { key: 'analytics', name: 'Analytics & Reports', description: 'Usage statistics and insights' },
-  { key: 'maintenance', name: 'Maintenance Tracking', description: 'Equipment maintenance schedules' },
-  { key: 'skill_management', name: 'Skill Management', description: 'Member certifications and training' }
+  {
+    key: 'maintenance',
+    name: 'Maintenance Tracking',
+    description: 'Equipment maintenance schedules',
+  },
+  {
+    key: 'skill_management',
+    name: 'Skill Management',
+    description: 'Member certifications and training',
+  },
 ];
 
 const TIMEZONES = [
@@ -65,7 +72,7 @@ const TIMEZONES = [
   'Europe/Berlin',
   'Asia/Tokyo',
   'Asia/Shanghai',
-  'Australia/Sydney'
+  'Australia/Sydney',
 ];
 
 const COUNTRIES = [
@@ -76,24 +83,26 @@ const COUNTRIES = [
   'France',
   'Japan',
   'Australia',
-  'Other'
+  'Other',
 ];
 
 const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
-  makerspace
+  makerspace,
 }) => {
   const getHeaders = useAuthHeaders();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [availableAdmins, setAvailableAdmins] = useState<Array<{
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  }>>([]);
+  const [availableAdmins, setAvailableAdmins] = useState<
+    Array<{
+      id: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+    }>
+  >([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -109,7 +118,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
     maxUsers: 100,
     maxEquipment: 20,
     modules: ['inventory', 'projects', 'reservations'],
-    adminIds: [] as string[]
+    adminIds: [] as string[],
   });
 
   useEffect(() => {
@@ -128,7 +137,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
         maxUsers: makerspace.maxUsers || 100,
         maxEquipment: makerspace.maxEquipment || 20,
         modules: makerspace.modules,
-        adminIds: makerspace.adminIds
+        adminIds: makerspace.adminIds,
       });
     } else {
       // Reset form for new makerspace
@@ -146,7 +155,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
         maxUsers: 100,
         maxEquipment: 20,
         modules: ['inventory', 'projects', 'reservations'],
-        adminIds: []
+        adminIds: [],
       });
     }
   }, [makerspace]);
@@ -172,71 +181,70 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
   };
 
   const generateSlug = (name: string) => {
-    return name.toLowerCase()
+    return name
+      .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .trim();
   };
 
   const handleNameChange = (name: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       name,
-      slug: prev.slug === '' ? generateSlug(name) : prev.slug
+      slug: prev.slug === '' ? generateSlug(name) : prev.slug,
     }));
   };
 
   const handleModuleToggle = (moduleKey: string, checked: boolean) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      modules: checked 
-        ? [...prev.modules, moduleKey]
-        : prev.modules.filter(m => m !== moduleKey)
+      modules: checked ? [...prev.modules, moduleKey] : prev.modules.filter((m) => m !== moduleKey),
     }));
   };
 
   const handleAdminToggle = (adminId: string, checked: boolean) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      adminIds: checked 
+      adminIds: checked
         ? [...prev.adminIds, adminId]
-        : prev.adminIds.filter(id => id !== adminId)
+        : prev.adminIds.filter((id) => id !== adminId),
     }));
   };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Makerspace name is required",
-        variant: "destructive",
+        title: 'Validation Error',
+        description: 'Makerspace name is required',
+        variant: 'destructive',
       });
       return false;
     }
 
     if (!formData.slug.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Slug is required",
-        variant: "destructive",
+        title: 'Validation Error',
+        description: 'Slug is required',
+        variant: 'destructive',
       });
       return false;
     }
 
     if (!formData.location.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Location is required",
-        variant: "destructive",
+        title: 'Validation Error',
+        description: 'Location is required',
+        variant: 'destructive',
       });
       return false;
     }
 
     if (!formData.address.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Address is required",
-        variant: "destructive",
+        title: 'Validation Error',
+        description: 'Address is required',
+        variant: 'destructive',
       });
       return false;
     }
@@ -246,21 +254,19 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setLoading(true);
     try {
-      const url = makerspace 
-        ? `/api/v1/makerspaces/${makerspace.id}`
-        : '/api/v1/makerspaces';
-      
+      const url = makerspace ? `/api/v1/makerspaces/${makerspace.id}` : '/api/v1/makerspaces';
+
       const method = makerspace ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -268,25 +274,25 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: makerspace 
-            ? "Makerspace updated successfully"
-            : "Makerspace created successfully",
+          title: 'Success',
+          description: makerspace
+            ? 'Makerspace updated successfully'
+            : 'Makerspace created successfully',
         });
         onSuccess();
       } else {
         const errorData = await response.json();
         toast({
-          title: "Error",
-          description: errorData.detail || "Failed to save makerspace",
-          variant: "destructive",
+          title: 'Error',
+          description: errorData.detail || 'Failed to save makerspace',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save makerspace",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save makerspace',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -321,7 +327,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
               <Input
                 id="slug"
                 value={formData.slug}
-                onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                 placeholder="downtown"
                 required
               />
@@ -336,7 +342,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
                   placeholder="San Francisco, CA"
                   className="pl-10"
                   required
@@ -348,12 +354,14 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
               <select
                 id="country"
                 value={formData.country}
-                onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 required
               >
-                {COUNTRIES.map(country => (
-                  <option key={country} value={country}>{country}</option>
+                {COUNTRIES.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
                 ))}
               </select>
             </div>
@@ -364,7 +372,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
             <Textarea
               id="address"
               value={formData.address}
-              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
               placeholder="123 Mission St, San Francisco, CA 94105"
               rows={2}
               required
@@ -381,7 +389,9 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                   id="contactEmail"
                   type="email"
                   value={formData.contactEmail}
-                  onChange={(e) => setFormData(prev => ({ ...prev, contactEmail: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, contactEmail: e.target.value }))
+                  }
                   placeholder="info@downtown.makrcave.com"
                   className="pl-10"
                 />
@@ -394,7 +404,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
                   placeholder="+1-415-555-0123"
                   className="pl-10"
                 />
@@ -411,12 +421,14 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                 <select
                   id="timezone"
                   value={formData.timezone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timezone: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, timezone: e.target.value }))}
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md"
                   required
                 >
-                  {TIMEZONES.map(tz => (
-                    <option key={tz} value={tz}>{tz}</option>
+                  {TIMEZONES.map((tz) => (
+                    <option key={tz} value={tz}>
+                      {tz}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -427,7 +439,9 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                 id="maxUsers"
                 type="number"
                 value={formData.maxUsers}
-                onChange={(e) => setFormData(prev => ({ ...prev, maxUsers: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, maxUsers: parseInt(e.target.value) || 0 }))
+                }
                 min="1"
               />
             </div>
@@ -437,7 +451,9 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                 id="maxEquipment"
                 type="number"
                 value={formData.maxEquipment}
-                onChange={(e) => setFormData(prev => ({ ...prev, maxEquipment: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, maxEquipment: parseInt(e.target.value) || 0 }))
+                }
                 min="1"
               />
             </div>
@@ -450,7 +466,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
               <Input
                 id="subdomain"
                 value={formData.subdomain}
-                onChange={(e) => setFormData(prev => ({ ...prev, subdomain: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, subdomain: e.target.value }))}
                 placeholder="downtown.makrcave.com"
                 className="pl-10"
               />
@@ -462,7 +478,7 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="A brief description of the makerspace..."
               rows={3}
             />
@@ -480,7 +496,9 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                   <Checkbox
                     id={module.key}
                     checked={formData.modules.includes(module.key)}
-                    onCheckedChange={(checked) => handleModuleToggle(module.key, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleModuleToggle(module.key, checked as boolean)
+                    }
                   />
                   <div className="flex-1">
                     <Label htmlFor={module.key} className="font-medium cursor-pointer">
@@ -529,8 +547,10 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                   {makerspace ? 'Updating...' : 'Creating...'}
                 </div>
+              ) : makerspace ? (
+                'Update Makerspace'
               ) : (
-                makerspace ? 'Update Makerspace' : 'Create Makerspace'
+                'Create Makerspace'
               )}
             </Button>
           </div>

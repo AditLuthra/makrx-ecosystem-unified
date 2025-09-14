@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Head from 'next/head';
 import { useEffect } from 'react';
@@ -39,9 +39,9 @@ export default function SEOMetaTags({
   prevPage,
   nextPage,
 }: SEOMetaTagsProps) {
-  const siteName = "MakrX Store";
-  const defaultImage = "/og-image.jpg";
-  
+  const siteName = 'MakrX Store';
+  const defaultImage = '/og-image.jpg';
+
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const ogImageUrl = ogImage || defaultImage;
   const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href : '');
@@ -179,7 +179,6 @@ export default function SEOMetaTags({
         document.head.appendChild(link);
       }
     }
-
   }, [
     fullTitle,
     description,
@@ -229,7 +228,7 @@ export function ProductSEO({ product, slug }: ProductSEOProps) {
   const title = `${product.name} - ${formattedPrice}`;
   const description = `${product.description.slice(0, 150)}... | ${product.brand ? `${product.brand} | ` : ''}${formattedPrice} | Free shipping available | MakrX Store`;
   const canonical = `${typeof window !== 'undefined' ? window.location.origin : ''}/p/${slug}`;
-  
+
   const keywords = [
     product.name,
     ...(product.brand ? [product.brand] : []),
@@ -237,7 +236,7 @@ export function ProductSEO({ product, slug }: ProductSEOProps) {
     ...product.tags,
     '3D printing',
     'maker supplies',
-    'MakrX'
+    'MakrX',
   ];
 
   return (
@@ -267,34 +266,39 @@ interface CategorySEOProps {
   totalPages?: number;
 }
 
-export function CategorySEO({ category, productCount, currentPage = 1, totalPages = 1 }: CategorySEOProps) {
-  const pageTitle = currentPage > 1 
-    ? `${category.name} - Page ${currentPage}`
-    : category.name;
-  
+export function CategorySEO({
+  category,
+  productCount,
+  currentPage = 1,
+  totalPages = 1,
+}: CategorySEOProps) {
+  const pageTitle = currentPage > 1 ? `${category.name} - Page ${currentPage}` : category.name;
+
   const title = `${pageTitle} | ${productCount} Products | MakrX Store`;
-  const description = category.description 
+  const description = category.description
     ? `${category.description} | Browse ${productCount} products in ${category.name}. Free shipping available.`
     : `Shop ${category.name} at MakrX Store. Browse ${productCount} high-quality products with free shipping available.`;
-  
+
   const canonical = `${typeof window !== 'undefined' ? window.location.origin : ''}/c/${category.path}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
-  
+
   const keywords = [
     category.name,
     '3D printing',
     'maker supplies',
     'MakrX Store',
     'buy online',
-    'free shipping'
+    'free shipping',
   ];
 
-  const prevPage = currentPage > 1 
-    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/c/${category.path}${currentPage > 2 ? `?page=${currentPage - 1}` : ''}`
-    : undefined;
-  
-  const nextPage = currentPage < totalPages 
-    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/c/${category.path}?page=${currentPage + 1}`
-    : undefined;
+  const prevPage =
+    currentPage > 1
+      ? `${typeof window !== 'undefined' ? window.location.origin : ''}/c/${category.path}${currentPage > 2 ? `?page=${currentPage - 1}` : ''}`
+      : undefined;
+
+  const nextPage =
+    currentPage < totalPages
+      ? `${typeof window !== 'undefined' ? window.location.origin : ''}/c/${category.path}?page=${currentPage + 1}`
+      : undefined;
 
   return (
     <SEOMetaTags
@@ -320,7 +324,7 @@ export function SearchSEO({ query, resultCount, currentPage = 1 }: SearchSEOProp
   const title = `Search results for "${query}" | ${resultCount} results | MakrX Store`;
   const description = `Found ${resultCount} products for "${query}". Shop high-quality 3D printing supplies and maker tools at MakrX Store.`;
   const canonical = `${typeof window !== 'undefined' ? window.location.origin : ''}/search?q=${encodeURIComponent(query)}${currentPage > 1 ? `&page=${currentPage}` : ''}`;
-  
+
   const robots = resultCount === 0 ? 'noindex, follow' : 'index, follow';
 
   return (

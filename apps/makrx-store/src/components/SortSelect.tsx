@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface SortOption {
   value: string;
@@ -12,19 +12,15 @@ interface SortSelectProps {
 }
 
 const defaultOptions: SortOption[] = [
-  { value: "relevance", label: "Relevance" },
-  { value: "newest", label: "Newest" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "rating", label: "Highest Rated" },
-  { value: "popularity", label: "Most Popular" },
+  { value: 'relevance', label: 'Relevance' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
+  { value: 'popularity', label: 'Most Popular' },
 ];
 
-export default function SortSelect({
-  value,
-  onChange,
-  options = defaultOptions,
-}: SortSelectProps) {
+export default function SortSelect({ value, onChange, options = defaultOptions }: SortSelectProps) {
   return (
     <select
       value={value}

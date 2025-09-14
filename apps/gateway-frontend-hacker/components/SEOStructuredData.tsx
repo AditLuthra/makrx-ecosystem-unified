@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Script from 'next/script';
 
 type SEOType = 'organization' | 'website' | 'article' | 'product';
@@ -25,4 +25,3 @@ export function SEOStructuredData({ type, data = {} }: Props) {
     />
   );
 }
-

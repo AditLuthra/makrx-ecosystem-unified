@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 
 # Colors for output
 RED='\033[0;31m'
-GREEN='\033[0;32m'  
+GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
@@ -30,9 +30,9 @@ echo ""
 # Check prerequisites
 print_step "Checking prerequisites..."
 
-if ! command -v docker &> /dev/null; then
-    print_error "Docker is not installed"
-    exit 1
+if ! command -v docker &>/dev/null; then
+	print_error "Docker is not installed"
+	exit 1
 fi
 
 print_success "Docker is available"
@@ -40,7 +40,7 @@ print_success "Docker is available"
 # Create staging-specific docker-compose
 print_step "Creating staging deployment configuration..."
 
-cat > docker-compose.staging.yml << 'EOF'
+cat >docker-compose.staging.yml <<'EOF'
 version: '3.8'
 
 services:
@@ -181,24 +181,24 @@ sleep 15
 print_step "Checking infrastructure health..."
 
 # Check PostgreSQL
-if docker-compose -f docker-compose.staging.yml exec -T postgres-staging pg_isready -U makrx_staging -d makrx_staging > /dev/null 2>&1; then
-    print_success "✅ Staging PostgreSQL: Ready"
+if docker-compose -f docker-compose.staging.yml exec -T postgres-staging pg_isready -U makrx_staging -d makrx_staging >/dev/null 2>&1; then
+	print_success "✅ Staging PostgreSQL: Ready"
 else
-    print_warning "⚠️  Staging PostgreSQL: Not ready yet"
+	print_warning "⚠️  Staging PostgreSQL: Not ready yet"
 fi
 
 # Check Redis
 if docker-compose -f docker-compose.staging.yml exec -T redis-staging redis-cli ping 2>/dev/null | grep -q PONG; then
-    print_success "✅ Staging Redis: Ready"
+	print_success "✅ Staging Redis: Ready"
 else
-    print_warning "⚠️  Staging Redis: Not ready yet"
+	print_warning "⚠️  Staging Redis: Not ready yet"
 fi
 
 # Check MinIO
-if curl -f http://localhost:9004/minio/health/live > /dev/null 2>&1; then
-    print_success "✅ Staging MinIO: Ready"
+if curl -f http://localhost:9004/minio/health/live >/dev/null 2>&1; then
+	print_success "✅ Staging MinIO: Ready"
 else
-    print_warning "⚠️  Staging MinIO: Not ready yet"
+	print_warning "⚠️  Staging MinIO: Not ready yet"
 fi
 
 # Start Keycloak
@@ -248,7 +248,7 @@ echo "   docker-compose -f docker-compose.staging.yml down"
 echo ""
 
 # Create staging validation script
-cat > validate-staging.sh << 'EOF'
+cat >validate-staging.sh <<'EOF'
 #!/bin/bash
 
 echo "🧪 Validating Staging Environment"

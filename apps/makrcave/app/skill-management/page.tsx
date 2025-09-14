@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import {
   Star,
   Wrench,
   Eye,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '../../hooks/use-toast';
@@ -59,7 +59,7 @@ interface UserSkill {
 const SkillManagement: React.FC = () => {
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
-  
+
   // All hooks must be at the top
   const [activeTab, setActiveTab] = useState('certifications');
   const [searchTerm, setSearchTerm] = useState('');
@@ -82,12 +82,12 @@ const SkillManagement: React.FC = () => {
   // Mock data for members and equipment
   const mockMembers = [
     { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
-    { id: 'user-2', firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com' }
+    { id: 'user-2', firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com' },
   ];
 
   const mockEquipment = [
     { id: 'eq-1', name: '3D Printer Pro', type: 'printer_3d' },
-    { id: 'eq-2', name: 'Laser Cutter X1', type: 'laser_cutter' }
+    { id: 'eq-2', name: 'Laser Cutter X1', type: 'laser_cutter' },
   ];
 
   const mockSkills = [
@@ -100,8 +100,8 @@ const SkillManagement: React.FC = () => {
       equipment_ids: ['eq-1'],
       requirements: ['Complete safety training'],
       created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2023-01-01T00:00:00Z'
-    }
+      updated_at: '2023-01-01T00:00:00Z',
+    },
   ];
 
   const mockUserSkills = [
@@ -113,8 +113,8 @@ const SkillManagement: React.FC = () => {
       certifiedAt: '2023-06-01T10:00:00Z',
       expiresAt: '2024-06-01T10:00:00Z',
       certifiedBy: 'Tech Lead',
-      notes: 'Needs recertification'
-    }
+      notes: 'Needs recertification',
+    },
   ];
 
   useEffect(() => {
@@ -142,10 +142,14 @@ const SkillManagement: React.FC = () => {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'intermediate': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'advanced': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'beginner':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'intermediate':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'advanced':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -193,11 +197,11 @@ const SkillManagement: React.FC = () => {
       beginner: { color: 'bg-blue-100 text-blue-800', icon: '★' },
       intermediate: { color: 'bg-yellow-100 text-yellow-800', icon: '★★' },
       advanced: { color: 'bg-orange-100 text-orange-800', icon: '★★★' },
-      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' }
+      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' },
     };
-    
+
     const config = levelConfig[level as keyof typeof levelConfig] || levelConfig.beginner;
-    
+
     return (
       <Badge variant="outline" className={config.color}>
         {config.icon} {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -213,7 +217,7 @@ const SkillManagement: React.FC = () => {
   };
 
   const handleCertifyUser = (userSkillId: string) => {
-    const userSkill = userSkills.find(us => `${us.userId}-${us.skillId}` === userSkillId);
+    const userSkill = userSkills.find((us) => `${us.userId}-${us.skillId}` === userSkillId);
     if (userSkill) {
       setSelectedUserSkill(userSkill);
       setCertifyModalOpen(true);
@@ -221,7 +225,7 @@ const SkillManagement: React.FC = () => {
   };
 
   const handleRevokeSkill = (userSkillId: string) => {
-    const userSkill = userSkills.find(us => `${us.userId}-${us.skillId}` === userSkillId);
+    const userSkill = userSkills.find((us) => `${us.userId}-${us.skillId}` === userSkillId);
     if (userSkill) {
       setSelectedUserSkill(userSkill);
       setRevokeModalOpen(true);
@@ -242,16 +246,17 @@ const SkillManagement: React.FC = () => {
     setSkillRequirementsModalOpen(true);
   };
 
-  const filteredUserSkills = userSkills.filter(us => 
-    us.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    us.skillName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUserSkills = userSkills.filter(
+    (us) =>
+      us.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      us.skillName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const stats = {
     totalSkills: skills.length,
-    activeSkills: skills.filter(s => s.status === 'active').length,
-    certifiedUsers: userSkills.filter(us => us.status === 'certified').length,
-    pendingCertifications: userSkills.filter(us => us.status === 'pending').length
+    activeSkills: skills.filter((s) => s.status === 'active').length,
+    certifiedUsers: userSkills.filter((us) => us.status === 'certified').length,
+    pendingCertifications: userSkills.filter((us) => us.status === 'pending').length,
   };
 
   return (
@@ -266,11 +271,19 @@ const SkillManagement: React.FC = () => {
           <p className="text-gray-600">Manage member certifications and skill levels</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-2" onClick={handleOpenEquipmentRequirements}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={handleOpenEquipmentRequirements}
+          >
             <Wrench className="h-4 w-4" />
             Equipment Requirements
           </Button>
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => setAddSkillModalOpen(true)}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => setAddSkillModalOpen(true)}
+          >
             <Plus className="h-4 w-4" />
             Add Skill
           </Button>
@@ -374,17 +387,32 @@ const SkillManagement: React.FC = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b">
                     <tr>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">Member</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">Skill</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">Certified Date</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">Expires</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-gray-900">Actions</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">
+                        Member
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">
+                        Skill
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">
+                        Status
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">
+                        Certified Date
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-900">
+                        Expires
+                      </th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-gray-900">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {filteredUserSkills.map((userSkill, index) => (
-                      <tr key={`${userSkill.userId}-${userSkill.skillId}`} className="hover:bg-gray-50">
+                      <tr
+                        key={`${userSkill.userId}-${userSkill.skillId}`}
+                        className="hover:bg-gray-50"
+                      >
                         <td className="py-3 px-4">
                           <div>
                             <div className="font-medium text-gray-900">{userSkill.userName}</div>
@@ -397,12 +425,12 @@ const SkillManagement: React.FC = () => {
                             <div className="text-sm text-gray-600">{userSkill.notes}</div>
                           )}
                         </td>
-                        <td className="py-3 px-4">
-                          {getStatusBadge(userSkill.status)}
-                        </td>
+                        <td className="py-3 px-4">{getStatusBadge(userSkill.status)}</td>
                         <td className="py-3 px-4">
                           <div className="text-sm text-gray-900">
-                            {userSkill.certifiedAt ? new Date(userSkill.certifiedAt).toLocaleDateString() : '-'}
+                            {userSkill.certifiedAt
+                              ? new Date(userSkill.certifiedAt).toLocaleDateString()
+                              : '-'}
                           </div>
                           {userSkill.certifiedBy && (
                             <div className="text-xs text-gray-600">by {userSkill.certifiedBy}</div>
@@ -410,7 +438,9 @@ const SkillManagement: React.FC = () => {
                         </td>
                         <td className="py-3 px-4">
                           <div className="text-sm text-gray-900">
-                            {userSkill.expiresAt ? new Date(userSkill.expiresAt).toLocaleDateString() : '-'}
+                            {userSkill.expiresAt
+                              ? new Date(userSkill.expiresAt).toLocaleDateString()
+                              : '-'}
                           </div>
                         </td>
                         <td className="py-3 px-4">
@@ -418,7 +448,9 @@ const SkillManagement: React.FC = () => {
                             {userSkill.status === 'pending' && (
                               <Button
                                 size="sm"
-                                onClick={() => handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)}
+                                onClick={() =>
+                                  handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)
+                                }
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
                                 Approve
@@ -428,7 +460,9 @@ const SkillManagement: React.FC = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)}
+                                onClick={() =>
+                                  handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)
+                                }
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <XCircle className="h-4 w-4 mr-1" />
@@ -439,7 +473,9 @@ const SkillManagement: React.FC = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)}
+                                onClick={() =>
+                                  handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)
+                                }
                               >
                                 <Award className="h-4 w-4 mr-1" />
                                 Recertify
@@ -456,7 +492,10 @@ const SkillManagement: React.FC = () => {
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
                 {filteredUserSkills.map((userSkill, index) => (
-                  <div key={`${userSkill.userId}-${userSkill.skillId}`} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div
+                    key={`${userSkill.userId}-${userSkill.skillId}`}
+                    className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-gray-900 truncate">{userSkill.userName}</h4>
@@ -466,7 +505,9 @@ const SkillManagement: React.FC = () => {
                         {userSkill.status === 'pending' && (
                           <Button
                             size="sm"
-                            onClick={() => handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)}
+                            onClick={() =>
+                              handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)
+                            }
                             className="text-xs"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
@@ -477,7 +518,9 @@ const SkillManagement: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)}
+                            onClick={() =>
+                              handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)
+                            }
                             className="text-red-600 hover:text-red-700 text-xs"
                           >
                             <XCircle className="h-3 w-3 mr-1" />
@@ -488,7 +531,9 @@ const SkillManagement: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)}
+                            onClick={() =>
+                              handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)
+                            }
                             className="text-xs"
                           >
                             <Award className="h-3 w-3 mr-1" />
@@ -497,7 +542,7 @@ const SkillManagement: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500 text-xs font-medium mb-1">Skill</p>
@@ -511,12 +556,14 @@ const SkillManagement: React.FC = () => {
                         {getStatusBadge(userSkill.status)}
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm mt-3 pt-3 border-t border-gray-100">
                       <div>
                         <p className="text-gray-500 text-xs font-medium mb-1">Certified</p>
                         <p className="text-gray-900 text-xs">
-                          {userSkill.certifiedAt ? new Date(userSkill.certifiedAt).toLocaleDateString() : '-'}
+                          {userSkill.certifiedAt
+                            ? new Date(userSkill.certifiedAt).toLocaleDateString()
+                            : '-'}
                         </p>
                         {userSkill.certifiedBy && (
                           <p className="text-gray-600 text-xs">by {userSkill.certifiedBy}</p>
@@ -525,7 +572,9 @@ const SkillManagement: React.FC = () => {
                       <div className="text-right">
                         <p className="text-gray-500 text-xs font-medium mb-1">Expires</p>
                         <p className="text-gray-900 text-xs">
-                          {userSkill.expiresAt ? new Date(userSkill.expiresAt).toLocaleDateString() : '-'}
+                          {userSkill.expiresAt
+                            ? new Date(userSkill.expiresAt).toLocaleDateString()
+                            : '-'}
                         </p>
                       </div>
                     </div>
@@ -552,7 +601,7 @@ const SkillManagement: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">{skill.description}</p>
-                  
+
                   {skill.prerequisites.length > 0 && (
                     <div className="mb-3">
                       <h4 className="text-sm font-medium text-gray-900 mb-2">Prerequisites:</h4>
@@ -565,10 +614,12 @@ const SkillManagement: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   {skill.equipment.length > 0 && (
                     <div className="mb-3">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">Required Equipment:</h4>
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                        Required Equipment:
+                      </h4>
                       <div className="flex flex-wrap gap-1">
                         {skill.equipment.map((equip, index) => (
                           <Badge key={index} variant="outline" className="text-xs bg-blue-50">
@@ -578,12 +629,16 @@ const SkillManagement: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="flex justify-between items-center pt-3 border-t">
                     <Badge variant={skill.status === 'active' ? 'default' : 'secondary'}>
                       {skill.status}
                     </Badge>
-                    <Button size="sm" variant="outline" onClick={() => handleViewSkillDetails(skill)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleViewSkillDetails(skill)}
+                    >
                       <Eye className="h-4 w-4 mr-1" />
                       View Details
                     </Button>
@@ -603,9 +658,12 @@ const SkillManagement: React.FC = () => {
             <CardContent>
               <div className="space-y-4">
                 {userSkills
-                  .filter(us => us.status === 'pending')
+                  .filter((us) => us.status === 'pending')
                   .map((userSkill, index) => (
-                    <div key={`${userSkill.userId}-${userSkill.skillId}`} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={`${userSkill.userId}-${userSkill.skillId}`}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                           <User className="h-5 w-5 text-blue-600" />
@@ -623,7 +681,9 @@ const SkillManagement: React.FC = () => {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          onClick={() => handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)}
+                          onClick={() =>
+                            handleCertifyUser(`${userSkill.userId}-${userSkill.skillId}`)
+                          }
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Approve
@@ -631,7 +691,9 @@ const SkillManagement: React.FC = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)}
+                          onClick={() =>
+                            handleRevokeSkill(`${userSkill.userId}-${userSkill.skillId}`)
+                          }
                           className="text-red-600 hover:text-red-700"
                         >
                           <XCircle className="h-4 w-4 mr-1" />
@@ -652,13 +714,17 @@ const SkillManagement: React.FC = () => {
         onOpenChange={setCertifyModalOpen}
         members={mockMembers}
         skills={skills}
-        existingCertification={selectedUserSkill ? {
-          userId: selectedUserSkill.userId,
-          skillId: selectedUserSkill.skillId,
-          userName: selectedUserSkill.userName,
-          skillName: selectedUserSkill.skillName,
-          status: selectedUserSkill.status
-        } : undefined}
+        existingCertification={
+          selectedUserSkill
+            ? {
+                userId: selectedUserSkill.userId,
+                skillId: selectedUserSkill.skillId,
+                userName: selectedUserSkill.userName,
+                skillName: selectedUserSkill.skillName,
+                status: selectedUserSkill.status,
+              }
+            : undefined
+        }
       />
 
       <SkillRequirementsModal
@@ -693,16 +759,16 @@ const SkillManagement: React.FC = () => {
             setSkillDetailsModalOpen(false);
             // You could open an edit modal here
             toast({
-              title: "Edit Feature",
-              description: "Edit functionality would be implemented here",
+              title: 'Edit Feature',
+              description: 'Edit functionality would be implemented here',
             });
           }}
           onDelete={() => {
             setSkillDetailsModalOpen(false);
             toast({
-              title: "Skill Deleted",
+              title: 'Skill Deleted',
               description: `${selectedSkill.name} has been removed`,
-              variant: "destructive",
+              variant: 'destructive',
             });
           }}
         />

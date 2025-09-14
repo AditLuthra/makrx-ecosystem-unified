@@ -7,6 +7,7 @@ Provides:
 - Optional Redis-backed rate limiting
 - Optional CSRF protection for browser-originated POST/PUT/PATCH/DELETE
 """
+
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -33,13 +34,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         # Only limit authenticated-modifying calls by default; allow toggling via env
-        methods = os.getenv("RATE_LIMIT_METHODS", "POST,PUT,PATCH,DELETE").split(",")
-        if request.method.upper() not in [m.strip().upper() for m in methods if m.strip()]:
+        methods = os.getenv(
+            "RATE_LIMIT_METHODS", "POST,PUT,PATCH,DELETE"
+        ).split(",")
+        if request.method.upper() not in [
+            m.strip().upper() for m in methods if m.strip()
+        ]:
             return await call_next(request)
 
-        ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or (
-            request.client.host if request.client else "unknown"
-        )
+        ip = request.headers.get("X-Forwarded-For", "").split(",")[
+            0
+        ].strip() or (request.client.host if request.client else "unknown")
         key_raw = f"rl:{ip}:{int(time.time() // self.window) * self.window}"
         key = hashlib.sha256(key_raw.encode()).hexdigest()
 
@@ -77,20 +82,32 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 class CSRFProtectionMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: FastAPI):
         super().__init__(app)
-        self.exempt = {"/webhooks/", "/api/auth/", "/health", "/api/health", "/api/readyz", "/metrics"}
+        self.exempt = {
+            "/webhooks/",
+            "/api/auth/",
+            "/health",
+            "/api/health",
+            "/api/readyz",
+            "/metrics",
+        }
 
     def _is_exempt(self, path: str) -> bool:
         return any(seg in path for seg in self.exempt)
 
     async def dispatch(self, request: Request, call_next):
-        if request.method in ("GET", "HEAD", "OPTIONS") or self._is_exempt(request.url.path):
+        if request.method in ("GET", "HEAD", "OPTIONS") or self._is_exempt(
+            request.url.path
+        ):
             return await call_next(request)
         # Only enforce for browser origins
         if request.headers.get("Origin"):
             token = request.headers.get("X-CSRF-Token")
             cookie_token = request.cookies.get("csrf_token")
             if not token or not cookie_token or token != cookie_token:
-                return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": "CSRF token missing or invalid"})
+                return JSONResponse(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    content={"detail": "CSRF token missing or invalid"},
+                )
         response = await call_next(request)
         if not request.cookies.get("csrf_token"):
             import secrets
@@ -159,7 +176,7 @@ def add_security_middleware(app: FastAPI) -> None:
         "testserver",  # FastAPI TestClient host
     ]
     if os.getenv("ENVIRONMENT", "development") != "production":
-        trusted.extend(["localhost", "127.0.0.1"]) 
+        trusted.extend(["localhost", "127.0.0.1"])
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=trusted)
 
     # Optional rate limiting + CSRF

@@ -116,9 +116,7 @@ export default function BrandPage() {
                 </div>
               ) : (
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-3xl font-bold">
-                    {brand.name.charAt(0)}
-                  </span>
+                  <span className="text-white text-3xl font-bold">{brand.name.charAt(0)}</span>
                 </div>
               )}
             </div>
@@ -128,20 +126,14 @@ export default function BrandPage() {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
                 {brand.name}
               </h1>
-              
+
               {brand.description && (
-                <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">
-                  {brand.description}
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">{brand.description}</p>
               )}
 
               <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                {brand.founded && (
-                  <span>Founded: {brand.founded}</span>
-                )}
-                {brand.headquarters && (
-                  <span>Headquarters: {brand.headquarters}</span>
-                )}
+                {brand.founded && <span>Founded: {brand.founded}</span>}
+                {brand.headquarters && <span>Headquarters: {brand.headquarters}</span>}
                 <span>{brand.product_count} products</span>
               </div>
 
@@ -173,7 +165,12 @@ export default function BrandPage() {
                   >
                     Visit Website
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
                     </svg>
                   </a>
                 </div>
@@ -197,10 +194,7 @@ export default function BrandPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <SortSelect
-              value={sort}
-              onChange={setSort}
-            />
+            <SortSelect value={sort} onChange={setSort} />
           </div>
         </div>
 
@@ -216,9 +210,7 @@ export default function BrandPage() {
 
         {products && products.products.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">
-              No products found for this brand.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">No products found for this brand.</p>
           </div>
         )}
       </div>
@@ -261,9 +253,7 @@ function BrandNotFound() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Brand Not Found
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Brand Not Found</h1>
         <p className="text-gray-600 dark:text-gray-300 mb-8">
           The brand you're looking for doesn't exist or has been removed.
         </p>

@@ -17,7 +17,7 @@ import {
   Calendar,
   Filter,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/use-toast';
@@ -73,7 +73,7 @@ interface AnalyticsDashboard {
 const Analytics: React.FC = () => {
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
-  
+
   // All hooks must be at the top
   const [activeTab, setActiveTab] = useState('overview');
   const [dashboardData, setDashboardData] = useState<AnalyticsDashboard | null>(null);
@@ -94,23 +94,23 @@ const Analytics: React.FC = () => {
         setLastRefresh(new Date());
       } else if (response.status === 403) {
         toast({
-          title: "Access Denied",
+          title: 'Access Denied',
           description: "You don't have permission to view analytics",
-          variant: "destructive",
+          variant: 'destructive',
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load analytics data",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load analytics data',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching analytics:', error);
       toast({
-        title: "Error",
-        description: "Failed to load analytics data",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load analytics data',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ const Analytics: React.FC = () => {
   const context = {
     isAssignedMakerspace: user?.assignedMakerspaces && user.assignedMakerspaces.length > 0,
     isOwnResource: false,
-    isCertified: false
+    isCertified: false,
   };
 
   if (!hasPermission('analytics', 'view', context)) {
@@ -146,8 +146,8 @@ const Analytics: React.FC = () => {
     try {
       await fetchDashboardData();
       toast({
-        title: "Success",
-        description: "Analytics data refreshed",
+        title: 'Success',
+        description: 'Analytics data refreshed',
       });
     } finally {
       setRefreshing(false);
@@ -201,7 +201,9 @@ const Analytics: React.FC = () => {
             <BarChart3 className="h-6 w-6" />
             Analytics & Reports
           </h1>
-          <p className="text-gray-600">Monitor usage, performance, and insights across your makerspace</p>
+          <p className="text-gray-600">
+            Monitor usage, performance, and insights across your makerspace
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {lastRefresh && (
@@ -211,11 +213,7 @@ const Analytics: React.FC = () => {
             </Badge>
           )}
 
-          <Button 
-            onClick={refreshData} 
-            disabled={refreshing}
-            variant="outline"
-          >
+          <Button onClick={refreshData} disabled={refreshing} variant="outline">
             {refreshing ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
@@ -236,9 +234,7 @@ const Analytics: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Users</p>
                 <p className="text-2xl font-bold text-gray-900">{overview.total_users}</p>
-                <p className="text-xs text-gray-500">
-                  {overview.active_users_today} active today
-                </p>
+                <p className="text-xs text-gray-500">{overview.active_users_today} active today</p>
               </div>
               <Users className="h-8 w-8 text-blue-600" />
             </div>
@@ -251,9 +247,7 @@ const Analytics: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Projects</p>
                 <p className="text-2xl font-bold text-gray-900">{overview.total_projects}</p>
-                <p className="text-xs text-green-600">
-                  {overview.active_projects} active
-                </p>
+                <p className="text-xs text-green-600">{overview.active_projects} active</p>
               </div>
               <Package className="h-8 w-8 text-green-600" />
             </div>
@@ -266,9 +260,7 @@ const Analytics: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Equipment</p>
                 <p className="text-2xl font-bold text-gray-900">{overview.total_equipment}</p>
-                <p className="text-xs text-orange-600">
-                  {overview.equipment_in_use} in use
-                </p>
+                <p className="text-xs text-orange-600">{overview.equipment_in_use} in use</p>
               </div>
               <Wrench className="h-8 w-8 text-orange-600" />
             </div>
@@ -372,13 +364,11 @@ const Analytics: React.FC = () => {
                           <div key={key} className="text-center">
                             <p className="text-gray-600 capitalize">{key.replace('_', ' ')}</p>
                             <p className="font-semibold">
-                              {typeof value === 'number' ? 
-                                (key.includes('revenue') || key.includes('cost') ? 
-                                  formatCurrency(value) : 
-                                  value.toLocaleString()
-                                ) : 
-                                String(value)
-                              }
+                              {typeof value === 'number'
+                                ? key.includes('revenue') || key.includes('cost')
+                                  ? formatCurrency(value)
+                                  : value.toLocaleString()
+                                : String(value)}
                             </p>
                           </div>
                         ))}
@@ -416,8 +406,6 @@ const Analytics: React.FC = () => {
           <DataExports />
         </TabsContent>
       </Tabs>
-
-
     </div>
   );
 };

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, ExternalLink, Grid3X3, User, LogOut } from "lucide-react";
-import { ThemeToggle } from "../lib/theme-clean";
-import { useKeycloak } from "@makrx/auth";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Menu, X, ExternalLink, Grid3X3, User, LogOut } from 'lucide-react';
+import { ThemeToggle } from '../lib/theme-clean';
+import { useKeycloak } from '@makrx/auth';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,42 +17,42 @@ export default function Header() {
   const isActive = (path: string) => pathname === path;
 
   const navigation = [
-    { name: "Ecosystem", href: "/ecosystem" },
-    { name: "Makerspaces", href: "/makerspaces" },
-    { name: "Store", href: "/store" },
-    { name: "Events", href: "/events" },
-    { name: "Blog", href: "/blog" },
-    { name: "Docs", href: "/docs" },
+    { name: 'Ecosystem', href: '/ecosystem' },
+    { name: 'Makerspaces', href: '/makerspaces' },
+    { name: 'Store', href: '/store' },
+    { name: 'Events', href: '/events' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Docs', href: '/docs' },
   ];
 
   const launcherApps = [
     {
-      name: "MakrCave",
-      description: "Makerspace Management",
-      url: "https://makrcave.com",
-      bgColor: "bg-blue-100 dark:bg-blue-900",
-      iconColor: "bg-blue-500 dark:bg-blue-400",
+      name: 'MakrCave',
+      description: 'Makerspace Management',
+      url: 'https://makrcave.com',
+      bgColor: 'bg-blue-100 dark:bg-blue-900',
+      iconColor: 'bg-blue-500 dark:bg-blue-400',
     },
     {
-      name: "MakrX.Store",
-      description: "Tools & Components",
-      url: "https://makrx.store",
-      bgColor: "bg-green-100 dark:bg-green-900",
-      iconColor: "bg-green-500 dark:bg-green-400",
+      name: 'MakrX.Store',
+      description: 'Tools & Components',
+      url: 'https://makrx.store',
+      bgColor: 'bg-green-100 dark:bg-green-900',
+      iconColor: 'bg-green-500 dark:bg-green-400',
     },
     {
-      name: "3D.MakrX.Store",
-      description: "Custom Fabrication",
-      url: "https://3d.makrx.store",
-      bgColor: "bg-purple-100 dark:bg-purple-900",
-      iconColor: "bg-purple-500 dark:bg-purple-400",
+      name: '3D.MakrX.Store',
+      description: 'Custom Fabrication',
+      url: 'https://3d.makrx.store',
+      bgColor: 'bg-purple-100 dark:bg-purple-900',
+      iconColor: 'bg-purple-500 dark:bg-purple-400',
     },
     {
-      name: "Provider Panel",
-      description: "Service Providers",
-      url: "https://providers.makrx.org",
-      bgColor: "bg-orange-100 dark:bg-orange-900",
-      iconColor: "bg-orange-500 dark:bg-orange-400",
+      name: 'Provider Panel',
+      description: 'Service Providers',
+      url: 'https://providers.makrx.org',
+      bgColor: 'bg-orange-100 dark:bg-orange-900',
+      iconColor: 'bg-orange-500 dark:bg-orange-400',
     },
   ];
 
@@ -78,8 +78,8 @@ export default function Header() {
                 href={item.href}
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.href)
-                    ? "text-makrx-blue dark:!text-makrx-yellow"
-                    : "text-gray-600 dark:!text-gray-100 hover:text-gray-900 dark:hover:!text-white"
+                    ? 'text-makrx-blue dark:!text-makrx-yellow'
+                    : 'text-gray-600 dark:!text-gray-100 hover:text-gray-900 dark:hover:!text-white'
                 }`}
               >
                 {item.name}
@@ -170,7 +170,9 @@ export default function Header() {
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-950 rounded-xl shadow-xl border border-gray-200 dark:border-slate-800 py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-200 dark:border-slate-800">
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
+                        {user.firstName && user.lastName
+                          ? `${user.firstName} ${user.lastName}`
+                          : user.email}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                     </div>
@@ -222,8 +224,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block text-sm font-medium transition-colors ${
                     isActive(item.href)
-                      ? "text-makrx-blue dark:text-makrx-yellow"
-                      : "text-gray-600 dark:text-gray-100 hover:text-gray-900 dark:hover:text-white"
+                      ? 'text-makrx-blue dark:text-makrx-yellow'
+                      : 'text-gray-600 dark:text-gray-100 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   {item.name}
@@ -247,9 +249,7 @@ export default function Header() {
                       <div
                         className={`w-6 h-6 ${app.bgColor} rounded flex items-center justify-center transition-colors`}
                       >
-                        <div
-                          className={`w-3 h-3 ${app.iconColor} rounded transition-colors`}
-                        ></div>
+                        <div className={`w-3 h-3 ${app.iconColor} rounded transition-colors`}></div>
                       </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -273,7 +273,7 @@ export default function Header() {
                   </span>
                   <ThemeToggle showLabel />
                 </div>
-                
+
                 {isAuthenticated && user ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-2 bg-gray-50 dark:bg-slate-900 rounded-lg">
@@ -284,7 +284,9 @@ export default function Header() {
                       </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email?.split('@')[0]}
+                          {user.firstName && user.lastName
+                            ? `${user.firstName} ${user.lastName}`
+                            : user.email?.split('@')[0]}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{user.email}</div>
                       </div>

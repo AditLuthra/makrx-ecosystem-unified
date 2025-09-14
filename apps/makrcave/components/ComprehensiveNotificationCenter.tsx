@@ -9,13 +9,49 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Switch } from './ui/switch';
 import { Textarea } from './ui/textarea';
-import { 
-  Bell, BellOff, Settings, Filter, Search, MoreVertical, Check, X,
-  Mail, MessageSquare, Smartphone, Globe, Zap, AlertTriangle,
-  Clock, User, Users, Wrench, Package, CreditCard, FileText,
-  Eye, EyeOff, Trash2, RefreshCw, Send, TestTube, Download,
-  Volume2, VolumeX, Moon, Sun, Calendar, Star, Archive,
-  CheckCircle, XCircle, AlertCircle, Info, Megaphone, Plus, Edit
+import {
+  Bell,
+  BellOff,
+  Settings,
+  Filter,
+  Search,
+  MoreVertical,
+  Check,
+  X,
+  Mail,
+  MessageSquare,
+  Smartphone,
+  Globe,
+  Zap,
+  AlertTriangle,
+  Clock,
+  User,
+  Users,
+  Wrench,
+  Package,
+  CreditCard,
+  FileText,
+  Eye,
+  EyeOff,
+  Trash2,
+  RefreshCw,
+  Send,
+  TestTube,
+  Download,
+  Volume2,
+  VolumeX,
+  Moon,
+  Sun,
+  Calendar,
+  Star,
+  Archive,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Info,
+  Megaphone,
+  Plus,
+  Edit,
 } from 'lucide-react';
 
 interface Notification {
@@ -107,7 +143,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [rules, setRules] = useState<NotificationRule[]>([]);
   const [stats, setStats] = useState<NotificationStats | null>(null);
-  
+
   // UI state
   const [activeTab, setActiveTab] = useState('notifications');
   const [loading, setLoading] = useState(false);
@@ -116,14 +152,14 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  
+
   // Modal states
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
   const [showCreateNotificationModal, setShowCreateNotificationModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showRuleModal, setShowRuleModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
-  
+
   // Real-time connection
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -140,13 +176,15 @@ const ComprehensiveNotificationCenter: React.FC = () => {
       if (filterType !== 'all') params.append('notification_types', filterType);
       if (filterStatus !== 'all') params.append('statuses', filterStatus);
       if (filterPriority !== 'all') params.append('priorities', filterPriority);
-      
-      const response = await fetch(`/api/notifications/?${params}`, { headers: await getHeaders() });
-      
+
+      const response = await fetch(`/api/notifications/?${params}`, {
+        headers: await getHeaders(),
+      });
+
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
-        
+
         // Update unread count
         const unread = data.filter((n: Notification) => !n.read_at).length;
         setUnreadCount(unread);
@@ -158,11 +196,12 @@ const ComprehensiveNotificationCenter: React.FC = () => {
     }
   }, [showUnreadOnly, filterType, filterStatus, filterPriority, getHeaders]);
 
-
   const loadPreferences = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/preferences/', { headers: await getHeaders() });
-      
+      const response = await fetch('/api/notifications/preferences/', {
+        headers: await getHeaders(),
+      });
+
       if (response.ok) {
         const data = await response.json();
         setPreferences(data);
@@ -175,7 +214,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const loadStats = useCallback(async () => {
     try {
       const response = await fetch('/api/notifications/stats', { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -187,8 +226,10 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const loadTemplates = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/templates/', { headers: await getHeaders() });
-      
+      const response = await fetch('/api/notifications/templates/', {
+        headers: await getHeaders(),
+      });
+
       if (response.ok) {
         const data = await response.json();
         setTemplates(data);
@@ -201,7 +242,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const loadRules = useCallback(async () => {
     try {
       const response = await fetch('/api/notifications/rules/', { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const data = await response.json();
         setRules(data);
@@ -233,36 +274,36 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
     wsRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
+
       if (data.type === 'notification') {
         // Add new notification to the list
-        setNotifications(prev => [data.notification, ...prev]);
-        setUnreadCount(prev => prev + 1);
-        
+        setNotifications((prev) => [data.notification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+
         // Show browser notification if enabled
         if (preferences?.push_enabled && 'Notification' in window) {
           new Notification(data.notification.title, {
             body: data.notification.message,
-            icon: '/notification-icon.png'
+            icon: '/notification-icon.png',
           });
         }
       } else if (data.type === 'notification_read') {
         // Update notification status
-        setNotifications(prev => 
-          prev.map(n => 
-            n.id === data.notification_id 
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === data.notification_id
               ? { ...n, read_at: new Date().toISOString(), status: 'read' }
-              : n
-          )
+              : n,
+          ),
         );
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     };
 
     wsRef.current.onclose = () => {
       setIsConnected(false);
       console.log('WebSocket disconnected');
-      
+
       // Reconnect after a delay
       setTimeout(connectWebSocket, 5000);
     };
@@ -284,7 +325,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   // Connect WebSocket
   useEffect(() => {
     connectWebSocket();
-    
+
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
@@ -300,16 +341,16 @@ const ComprehensiveNotificationCenter: React.FC = () => {
         method: 'POST',
         headers,
       });
-      
+
       if (response.ok) {
-        setNotifications(prev =>
-          prev.map(n =>
+        setNotifications((prev) =>
+          prev.map((n) =>
             n.id === notificationId
               ? { ...n, read_at: new Date().toISOString(), status: 'read' }
-              : n
-          )
+              : n,
+          ),
         );
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
       console.error('Failed to mark as read:', error);
@@ -323,10 +364,10 @@ const ComprehensiveNotificationCenter: React.FC = () => {
         method: 'POST',
         headers,
       });
-      
+
       if (response.ok) {
-        setNotifications(prev =>
-          prev.map(n => ({ ...n, read_at: new Date().toISOString(), status: 'read' }))
+        setNotifications((prev) =>
+          prev.map((n) => ({ ...n, read_at: new Date().toISOString(), status: 'read' })),
         );
         setUnreadCount(0);
       }
@@ -342,9 +383,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
         method: 'DELETE',
         headers,
       });
-      
+
       if (response.ok) {
-        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
       }
     } catch (error) {
       console.error('Failed to delete notification:', error);
@@ -357,9 +398,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
       const response = await fetch('/api/notifications/preferences/', {
         method: 'PUT',
         headers,
-        body: JSON.stringify(updates)
+        body: JSON.stringify(updates),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setPreferences(data);
@@ -394,36 +435,50 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'urgent': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'high': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'normal': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'low': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'urgent':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'high':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'normal':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'low':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'read': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'delivered': return <Check className="w-4 h-4 text-blue-500" />;
-      case 'failed': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'pending': return <Clock className="w-4 h-4 text-yellow-500" />;
-      default: return <AlertCircle className="w-4 h-4 text-gray-500" />;
+      case 'read':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'delivered':
+        return <Check className="w-4 h-4 text-blue-500" />;
+      case 'failed':
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'pending':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-gray-500" />;
     }
   };
 
-  const filteredNotifications = notifications.filter(notification => {
-    const matchesSearch = 
+  const filteredNotifications = notifications.filter((notification) => {
+    const matchesSearch =
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notification.message.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesSearch;
   });
 
   // Render notification card
   const renderNotificationCard = (notification: Notification) => (
-    <Card key={notification.id} className={`mb-3 ${!notification.read_at ? 'border-l-4 border-l-blue-500 bg-blue-50' : ''}`}>
+    <Card
+      key={notification.id}
+      className={`mb-3 ${!notification.read_at ? 'border-l-4 border-l-blue-500 bg-blue-50' : ''}`}
+    >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -435,16 +490,18 @@ const ComprehensiveNotificationCenter: React.FC = () => {
               </Badge>
               {getStatusIcon(notification.status)}
             </div>
-            
+
             <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
-            
+
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span>{new Date(notification.created_at).toLocaleString()}</span>
               <span>•</span>
-              <span className="capitalize">{notification.notification_type.replace(/_/g, ' ')}</span>
+              <span className="capitalize">
+                {notification.notification_type.replace(/_/g, ' ')}
+              </span>
               <span>•</span>
               <div className="flex items-center gap-1">
-                {notification.channels.map(channel => (
+                {notification.channels.map((channel) => (
                   <Badge key={channel} variant="outline" className="text-xs">
                     {channel === 'email' && <Mail className="w-3 h-3 mr-1" />}
                     {channel === 'sms' && <MessageSquare className="w-3 h-3 mr-1" />}
@@ -455,11 +512,11 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             {notification.action_url && notification.action_text && (
               <div className="mt-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => window.open(notification.action_url, '_blank')}
                 >
@@ -468,18 +525,14 @@ const ComprehensiveNotificationCenter: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2 ml-4">
             {!notification.read_at && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleMarkAsRead(notification.id)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleMarkAsRead(notification.id)}>
                 <Check className="w-4 h-4" />
               </Button>
             )}
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -509,7 +562,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold">Notification Center</h1>
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <div
+                className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+              ></div>
               <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
               {stats && (
                 <>
@@ -522,31 +577,25 @@ const ComprehensiveNotificationCenter: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowPreferencesModal(true)}
-          >
+          <Button variant="outline" onClick={() => setShowPreferencesModal(true)}>
             <Settings className="w-4 h-4 mr-2" />
             Preferences
           </Button>
-          
-          <Button
-            variant="outline"
-            onClick={() => setShowTestModal(true)}
-          >
+
+          <Button variant="outline" onClick={() => setShowTestModal(true)}>
             <TestTube className="w-4 h-4 mr-2" />
             Test
           </Button>
-          
+
           {unreadCount > 0 && (
             <Button onClick={handleMarkAllAsRead}>
               <Check className="w-4 h-4 mr-2" />
               Mark All Read
             </Button>
           )}
-          
+
           <Button onClick={loadNotifications} disabled={loading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -577,7 +626,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                     className="w-64"
                   />
                 </div>
-                
+
                 <Select value={filterType} onValueChange={setFilterType}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="All Types" />
@@ -591,7 +640,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                     <SelectItem value="announcement">Announcements</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="All Status" />
@@ -605,7 +654,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                     <SelectItem value="failed">Failed</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <Select value={filterPriority} onValueChange={setFilterPriority}>
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="All Priority" />
@@ -619,12 +668,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                     <SelectItem value="low">Low</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={showUnreadOnly}
-                    onCheckedChange={setShowUnreadOnly}
-                  />
+                  <Switch checked={showUnreadOnly} onCheckedChange={setShowUnreadOnly} />
                   <label className="text-sm">Unread only</label>
                 </div>
               </div>
@@ -670,21 +716,27 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                         </div>
                         <Switch
                           checked={preferences.global_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ global_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ global_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div>
                           <label className="font-medium">Quiet Hours</label>
-                          <p className="text-sm text-gray-600">Suppress notifications during specified hours</p>
+                          <p className="text-sm text-gray-600">
+                            Suppress notifications during specified hours
+                          </p>
                         </div>
                         <Switch
                           checked={preferences.quiet_hours_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ quiet_hours_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ quiet_hours_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       {preferences.quiet_hours_enabled && (
                         <div className="grid grid-cols-2 gap-4 ml-4">
                           <div>
@@ -692,7 +744,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                             <Input
                               type="time"
                               value={preferences.quiet_hours_start}
-                              onChange={(e) => handleUpdatePreferences({ quiet_hours_start: e.target.value })}
+                              onChange={(e) =>
+                                handleUpdatePreferences({ quiet_hours_start: e.target.value })
+                              }
                             />
                           </div>
                           <div>
@@ -700,7 +754,9 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                             <Input
                               type="time"
                               value={preferences.quiet_hours_end}
-                              onChange={(e) => handleUpdatePreferences({ quiet_hours_end: e.target.value })}
+                              onChange={(e) =>
+                                handleUpdatePreferences({ quiet_hours_end: e.target.value })
+                              }
                             />
                           </div>
                         </div>
@@ -722,10 +778,12 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                         </div>
                         <Switch
                           checked={preferences.email_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ email_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ email_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <MessageSquare className="w-4 h-4" />
@@ -736,35 +794,45 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                         </div>
                         <Switch
                           checked={preferences.sms_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ sms_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ sms_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Smartphone className="w-4 h-4" />
                           <div>
                             <label className="font-medium">Push Notifications</label>
-                            <p className="text-sm text-gray-600">Receive browser push notifications</p>
+                            <p className="text-sm text-gray-600">
+                              Receive browser push notifications
+                            </p>
                           </div>
                         </div>
                         <Switch
                           checked={preferences.push_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ push_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ push_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Bell className="w-4 h-4" />
                           <div>
                             <label className="font-medium">In-App Notifications</label>
-                            <p className="text-sm text-gray-600">Show notifications in the application</p>
+                            <p className="text-sm text-gray-600">
+                              Show notifications in the application
+                            </p>
                           </div>
                         </div>
                         <Switch
                           checked={preferences.in_app_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ in_app_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ in_app_enabled: enabled })
+                          }
                         />
                       </div>
                     </div>
@@ -777,22 +845,30 @@ const ComprehensiveNotificationCenter: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <label className="font-medium">Daily Digest</label>
-                          <p className="text-sm text-gray-600">Receive a daily summary of notifications</p>
+                          <p className="text-sm text-gray-600">
+                            Receive a daily summary of notifications
+                          </p>
                         </div>
                         <Switch
                           checked={preferences.daily_digest_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ daily_digest_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ daily_digest_enabled: enabled })
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div>
                           <label className="font-medium">Weekly Digest</label>
-                          <p className="text-sm text-gray-600">Receive a weekly summary of notifications</p>
+                          <p className="text-sm text-gray-600">
+                            Receive a weekly summary of notifications
+                          </p>
                         </div>
                         <Switch
                           checked={preferences.weekly_digest_enabled}
-                          onCheckedChange={(enabled) => handleUpdatePreferences({ weekly_digest_enabled: enabled })}
+                          onCheckedChange={(enabled) =>
+                            handleUpdatePreferences({ weekly_digest_enabled: enabled })
+                          }
                         />
                       </div>
                     </div>
@@ -818,7 +894,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {templates.map(template => (
+                {templates.map((template) => (
                   <Card key={template.id} className="p-4">
                     <div className="flex items-start justify-between">
                       <div>
@@ -859,7 +935,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {rules.map(rule => (
+                {rules.map((rule) => (
                   <Card key={rule.id} className="p-4">
                     <div className="flex items-start justify-between">
                       <div>

@@ -8,17 +8,13 @@ interface AddCreditsButtonProps {
   size?: 'sm' | 'default' | 'lg';
 }
 
-const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({ 
-  onAddCredits, 
+const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({
+  onAddCredits,
   variant = 'default',
-  size = 'default'
+  size = 'default',
 }) => {
   return (
-    <Button 
-      onClick={onAddCredits}
-      variant={variant}
-      size={size}
-    >
+    <Button onClick={onAddCredits} variant={variant} size={size}>
       <Zap className="h-4 w-4 mr-2" />
       Add Credits
     </Button>

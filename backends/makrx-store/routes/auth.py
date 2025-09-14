@@ -12,21 +12,23 @@ from schemas.admin import MessageResponse
 
 router = APIRouter()
 
+
 @router.get("/me")
 async def get_current_user_info(
-    current_user: AuthUser = Depends(get_current_user)
+    current_user: AuthUser = Depends(get_current_user),
 ):
     """Get current user information"""
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    
+
     return {
         "user_id": current_user.user_id,
         "email": current_user.email,
         "name": current_user.name,
         "roles": current_user.roles,
-        "email_verified": current_user.email_verified
+        "email_verified": current_user.email_verified,
     }
+
 
 @router.post("/logout", response_model=MessageResponse)
 async def logout():

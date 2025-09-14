@@ -1,20 +1,20 @@
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  root: Element | null = null
-  rootMargin: string = ''
-  thresholds: ReadonlyArray<number> = []
-  
+  root: Element | null = null;
+  rootMargin: string = '';
+  thresholds: ReadonlyArray<number> = [];
+
   constructor() {}
   disconnect() {}
   observe() {}
   unobserve() {}
   takeRecords(): IntersectionObserverEntry[] {
-    return []
+    return [];
   }
-} as any
+} as any;
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -22,12 +22,12 @@ global.ResizeObserver = class ResizeObserver {
   disconnect() {}
   observe() {}
   unobserve() {}
-}
+};
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -37,10 +37,10 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
 
 // Mock environment variables for tests
-vi.stubEnv('VITE_COMPANY_NAME', 'Test Company')
-vi.stubEnv('VITE_SUPPORT_EMAIL', 'test@example.com')
-vi.stubEnv('VITE_MAKRCAVE_URL', 'https://makrcave.com')
-vi.stubEnv('VITE_STORE_URL', 'https://makrx.store')
+vi.stubEnv('VITE_COMPANY_NAME', 'Test Company');
+vi.stubEnv('VITE_SUPPORT_EMAIL', 'test@example.com');
+vi.stubEnv('VITE_MAKRCAVE_URL', 'https://makrcave.com');
+vi.stubEnv('VITE_STORE_URL', 'https://makrx.store');

@@ -64,30 +64,30 @@ export default function CustomMDX({ content, variant = 'default', theme }: Custo
       <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${getMaxWidthClass()}`}>
         <div className={getTextAlignClass()}>
           {content.title && (
-            <h2 className="text-4xl font-bold text-foreground mb-8">
-              {content.title}
-            </h2>
+            <h2 className="text-4xl font-bold text-foreground mb-8">{content.title}</h2>
           )}
-          
-          <div 
+
+          <div
             className={`prose prose-lg max-w-none ${getTextAlignClass()}`}
-            style={{
-              '--tw-prose-body': 'var(--foreground)',
-              '--tw-prose-headings': 'var(--foreground)',
-              '--tw-prose-links': theme?.tokens?.primary || '#3B82F6',
-              '--tw-prose-bold': 'var(--foreground)',
-              '--tw-prose-counters': 'var(--muted-foreground)',
-              '--tw-prose-bullets': 'var(--muted-foreground)',
-              '--tw-prose-hr': 'var(--border)',
-              '--tw-prose-quotes': 'var(--muted-foreground)',
-              '--tw-prose-quote-borders': 'var(--border)',
-              '--tw-prose-captions': 'var(--muted-foreground)',
-              '--tw-prose-code': 'var(--foreground)',
-              '--tw-prose-pre-code': 'var(--muted-foreground)',
-              '--tw-prose-pre-bg': 'var(--muted)',
-              '--tw-prose-th-borders': 'var(--border)',
-              '--tw-prose-td-borders': 'var(--border)',
-            } as React.CSSProperties}
+            style={
+              {
+                '--tw-prose-body': 'var(--foreground)',
+                '--tw-prose-headings': 'var(--foreground)',
+                '--tw-prose-links': theme?.tokens?.primary || '#3B82F6',
+                '--tw-prose-bold': 'var(--foreground)',
+                '--tw-prose-counters': 'var(--muted-foreground)',
+                '--tw-prose-bullets': 'var(--muted-foreground)',
+                '--tw-prose-hr': 'var(--border)',
+                '--tw-prose-quotes': 'var(--muted-foreground)',
+                '--tw-prose-quote-borders': 'var(--border)',
+                '--tw-prose-captions': 'var(--muted-foreground)',
+                '--tw-prose-code': 'var(--foreground)',
+                '--tw-prose-pre-code': 'var(--muted-foreground)',
+                '--tw-prose-pre-bg': 'var(--muted)',
+                '--tw-prose-th-borders': 'var(--border)',
+                '--tw-prose-td-borders': 'var(--border)',
+              } as React.CSSProperties
+            }
             dangerouslySetInnerHTML={{ __html: content.content }}
           />
         </div>

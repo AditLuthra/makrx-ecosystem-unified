@@ -29,7 +29,7 @@ export default function Register() {
         </div>
         <h1 className="text-2xl font-bold">Redirecting to Registration...</h1>
         <p className="text-gray-300">You will be redirected to the MakrCave registration page.</p>
-        
+
         <div className="flex justify-center mb-6">
           <div className="w-8 h-8 border-4 border-gray-300/30 border-t-blue-400 rounded-full animate-spin" />
         </div>

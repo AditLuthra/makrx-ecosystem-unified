@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
-import { 
+import {
   CheckCircle2,
   Clock,
   Award,
@@ -18,7 +18,7 @@ import {
   AlertCircle,
   BookOpen,
   Users,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 
 interface Question {
@@ -54,11 +54,7 @@ interface SkillAssessmentProps {
   onClose?: () => void;
 }
 
-const SkillAssessment: React.FC<SkillAssessmentProps> = ({ 
-  assessment, 
-  onComplete,
-  onClose 
-}) => {
+const SkillAssessment: React.FC<SkillAssessmentProps> = ({ assessment, onComplete, onClose }) => {
   const [currentStep, setCurrentStep] = useState<'overview' | 'assessment' | 'results'>('overview');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -95,7 +91,8 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
         correctAnswer: 0,
         difficulty: 'easy',
         category: 'Materials',
-        explanation: 'PLA (Polylactic Acid) is the most commonly used material for FDM printing due to its ease of use and low printing temperature.'
+        explanation:
+          'PLA (Polylactic Acid) is the most commonly used material for FDM printing due to its ease of use and low printing temperature.',
       },
       {
         id: 'q2',
@@ -104,24 +101,19 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
           'The total height of the print',
           'The thickness of each individual layer',
           'The height of the print bed',
-          'The height of the nozzle'
+          'The height of the nozzle',
         ],
         correctAnswer: 1,
         difficulty: 'easy',
-        category: 'Fundamentals'
+        category: 'Fundamentals',
       },
       {
         id: 'q3',
         question: 'Which support structure type is best for overhangs greater than 45 degrees?',
-        options: [
-          'No supports needed',
-          'Tree supports',
-          'Grid supports',
-          'Linear supports'
-        ],
+        options: ['No supports needed', 'Tree supports', 'Grid supports', 'Linear supports'],
         correctAnswer: 1,
         difficulty: 'medium',
-        category: 'Advanced Techniques'
+        category: 'Advanced Techniques',
       },
       {
         id: 'q4',
@@ -129,7 +121,7 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
         options: ['40-50°C', '60-80°C', '90-110°C', '120-140°C'],
         correctAnswer: 2,
         difficulty: 'medium',
-        category: 'Materials'
+        category: 'Materials',
       },
       {
         id: 'q5',
@@ -137,9 +129,9 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
         options: ['Sanding', 'Chemical smoothing', 'Heat treatment', 'Painting'],
         correctAnswer: 1,
         difficulty: 'hard',
-        category: 'Post-Processing'
-      }
-    ]
+        category: 'Post-Processing',
+      },
+    ],
   };
 
   const currentAssessment = assessment || mockAssessment;
@@ -147,7 +139,7 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
   React.useEffect(() => {
     if (isTimerActive && timeRemaining > 0) {
       const timer = setTimeout(() => {
-        setTimeRemaining(prev => prev - 1);
+        setTimeRemaining((prev) => prev - 1);
       }, 1000);
       return () => clearTimeout(timer);
     } else if (isTimerActive && timeRemaining === 0) {
@@ -164,55 +156,55 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
   };
 
   const handleAnswerSelect = (questionId: string, answerIndex: number) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      [questionId]: answerIndex
+      [questionId]: answerIndex,
     }));
   };
 
   const nextQuestion = () => {
     if (currentQuestion < currentAssessment.questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
     }
   };
 
   const previousQuestion = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1);
+      setCurrentQuestion((prev) => prev - 1);
     }
   };
 
   const handleSubmitAssessment = () => {
     setIsTimerActive(false);
-    
+
     // Calculate results
     let correctAnswers = 0;
     const categoryScores: Record<string, { correct: number; total: number }> = {};
-    
-    currentAssessment.questions.forEach(question => {
+
+    currentAssessment.questions.forEach((question) => {
       const userAnswer = answers[question.id];
       const isCorrect = userAnswer === question.correctAnswer;
-      
+
       if (isCorrect) correctAnswers++;
-      
+
       if (!categoryScores[question.category]) {
         categoryScores[question.category] = { correct: 0, total: 0 };
       }
       categoryScores[question.category].total++;
       if (isCorrect) categoryScores[question.category].correct++;
     });
-    
+
     const score = Math.round((correctAnswers / currentAssessment.questions.length) * 100);
     const passed = score >= currentAssessment.passingScore;
-    
+
     setResults({
       score,
       passed,
       correctAnswers,
       totalQuestions: currentAssessment.questions.length,
-      categoryScores
+      categoryScores,
     });
-    
+
     setCurrentStep('results');
     onComplete?.(score, passed);
   };
@@ -225,10 +217,17 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner': case 'easy': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Intermediate': case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Advanced': case 'hard': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Beginner':
+      case 'easy':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Intermediate':
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Advanced':
+      case 'hard':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -248,7 +247,7 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
               </Badge>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
             {/* Assessment Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -269,7 +268,9 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
               </div>
               <div className="text-center p-4 border rounded-lg">
                 <RotateCcw className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <div className="font-semibold">{currentAssessment.attempts}/{currentAssessment.maxAttempts}</div>
+                <div className="font-semibold">
+                  {currentAssessment.attempts}/{currentAssessment.maxAttempts}
+                </div>
                 <div className="text-sm text-gray-600">Attempts</div>
               </div>
             </div>
@@ -312,7 +313,8 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
                 </li>
                 <li className="flex items-start">
                   <Award className="h-4 w-4 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
-                  {currentAssessment.certificateEligible && 'Earn a certificate by scoring 80% or higher'}
+                  {currentAssessment.certificateEligible &&
+                    'Earn a certificate by scoring 80% or higher'}
                 </li>
               </ul>
             </div>
@@ -368,20 +370,16 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between">
-              <CardTitle className="text-xl">
-                {currentQ.question}
-              </CardTitle>
+              <CardTitle className="text-xl">{currentQ.question}</CardTitle>
               <div className="flex space-x-2">
                 <Badge className={getDifficultyColor(currentQ.difficulty)}>
                   {currentQ.difficulty}
                 </Badge>
-                <Badge variant="outline">
-                  {currentQ.category}
-                </Badge>
+                <Badge variant="outline">{currentQ.category}</Badge>
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <RadioGroup
               value={answers[currentQ.id]?.toString()}
@@ -403,14 +401,10 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Button
-                variant="outline"
-                onClick={previousQuestion}
-                disabled={currentQuestion === 0}
-              >
+              <Button variant="outline" onClick={previousQuestion} disabled={currentQuestion === 0}>
                 Previous
               </Button>
-              
+
               <div className="flex space-x-2">
                 {currentAssessment.questions.map((_, index) => (
                   <button
@@ -420,15 +414,15 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
                       index === currentQuestion
                         ? 'bg-blue-600 text-white'
                         : answers[currentAssessment.questions[index].id] !== undefined
-                        ? 'bg-green-100 text-green-800 border border-green-300'
-                        : 'bg-gray-100 text-gray-600 border border-gray-300'
+                          ? 'bg-green-100 text-green-800 border border-green-300'
+                          : 'bg-gray-100 text-gray-600 border border-gray-300'
                     }`}
                   >
                     {index + 1}
                   </button>
                 ))}
               </div>
-              
+
               {currentQuestion === currentAssessment.questions.length - 1 ? (
                 <Button
                   onClick={handleSubmitAssessment}
@@ -437,10 +431,7 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
                   Submit Assessment
                 </Button>
               ) : (
-                <Button
-                  onClick={nextQuestion}
-                  disabled={answers[currentQ.id] === undefined}
-                >
+                <Button onClick={nextQuestion} disabled={answers[currentQ.id] === undefined}>
                   Next
                 </Button>
               )}
@@ -470,12 +461,9 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
             <p className="text-gray-600 mb-4">
               {results.passed
                 ? 'You have successfully passed the assessment!'
-                : `You need ${currentAssessment.passingScore}% to pass. Keep learning and try again!`
-              }
+                : `You need ${currentAssessment.passingScore}% to pass. Keep learning and try again!`}
             </p>
-            <div className="text-4xl font-bold text-blue-600 mb-2">
-              {results.score}%
-            </div>
+            <div className="text-4xl font-bold text-blue-600 mb-2">{results.score}%</div>
             <div className="text-gray-600">
               {results.correctAnswers} out of {results.totalQuestions} questions correct
             </div>
@@ -499,7 +487,9 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
                   <div key={category}>
                     <div className="flex justify-between text-sm mb-2">
                       <span>{category}</span>
-                      <span>{scores.correct}/{scores.total} ({percentage}%)</span>
+                      <span>
+                        {scores.correct}/{scores.total} ({percentage}%)
+                      </span>
                     </div>
                     <Progress value={percentage} />
                   </div>
@@ -555,11 +545,10 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({
                   <h5 className="font-medium">Study Recommendations:</h5>
                   <ul className="text-sm text-gray-600 space-y-1">
                     {Object.entries(results.categoryScores)
-                      .filter(([, scores]) => (scores.correct / scores.total) < 0.7)
+                      .filter(([, scores]) => scores.correct / scores.total < 0.7)
                       .map(([category]) => (
                         <li key={category}>• Review {category} concepts and materials</li>
-                      ))
-                    }
+                      ))}
                     <li>• Take additional practice quizzes</li>
                     <li>• Join study groups or forums</li>
                   </ul>

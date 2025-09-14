@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '20250913_add_status_indexes'
-down_revision = 'add_gin_indexes_products_jsonb'
+revision = "20250913_add_status_indexes"
+down_revision = "add_gin_indexes_products_jsonb"
 branch_labels = None
 depends_on = None
 
@@ -19,20 +19,21 @@ depends_on = None
 def upgrade() -> None:
     # btree indexes to speed up product listings
     op.create_index(
-        'ix_store_products_status',
-        'store_products',
-        ['status'],
+        "ix_store_products_status",
+        "store_products",
+        ["status"],
         unique=False,
     )
     op.create_index(
-        'ix_store_products_status_category',
-        'store_products',
-        ['status', 'category_id'],
+        "ix_store_products_status_category",
+        "store_products",
+        ["status", "category_id"],
         unique=False,
     )
 
 
 def downgrade() -> None:
-    op.drop_index('ix_store_products_status_category', table_name='store_products')
-    op.drop_index('ix_store_products_status', table_name='store_products')
-
+    op.drop_index(
+        "ix_store_products_status_category", table_name="store_products"
+    )
+    op.drop_index("ix_store_products_status", table_name="store_products")

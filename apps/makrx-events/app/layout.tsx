@@ -16,48 +16,49 @@ const authConfig = {
   clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-events',
 };
 
-
 const authConfig = {
   url: process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'http://localhost:8081',
   realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx',
   clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-events',
 };
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        queryFn: async ({ queryKey }) => {
-          const [url] = queryKey as string[];
-          
-          if (url.startsWith("/api/")) {
-            const res = await fetch(url, {
-              credentials: "include",
-            });
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            queryFn: async ({ queryKey }) => {
+              const [url] = queryKey as string[];
 
-            if (!res.ok) {
-              const error = await res.text();
-              throw new Error(`${res.status}: ${error}`);
-            }
+              if (url.startsWith('/api/')) {
+                const res = await fetch(url, {
+                  credentials: 'include',
+                });
 
-            return res.json();
-          }
+                if (!res.ok) {
+                  const error = await res.text();
+                  throw new Error(`${res.status}: ${error}`);
+                }
 
-          throw new Error(`Unsupported query: ${url}`);
+                return res.json();
+              }
+
+              throw new Error(`Unsupported query: ${url}`);
+            },
+            staleTime: 5 * 60 * 1000, // 5 minutes
+          },
         },
-        staleTime: 5 * 60 * 1000, // 5 minutes
-      },
-    },
-  }));
+      }),
+  );
 
   return (
     <html lang="en">
       <head>
         <title>MakrX.events - Global Maker Event Platform</title>
-        <meta name="description" content="Discover and create maker events, workshops, competitions, and exhibitions worldwide" />
+        <meta
+          name="description"
+          content="Discover and create maker events, workshops, competitions, and exhibitions worldwide"
+        />
       </head>
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>

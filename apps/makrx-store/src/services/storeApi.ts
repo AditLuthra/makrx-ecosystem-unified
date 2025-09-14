@@ -47,7 +47,7 @@ class StoreApiClient {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     try {
       const response = await fetch(url, {
         headers: {
@@ -77,7 +77,7 @@ class StoreApiClient {
     featured?: boolean;
   }): Promise<{ products: Product[]; pagination: any }> {
     const searchParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -98,17 +98,20 @@ class StoreApiClient {
     return this.getProducts({ featured: true, limit });
   }
 
-  // Category methods  
+  // Category methods
   async getCategories(): Promise<{ categories: Category[] }> {
     return this.request<{ categories: Category[] }>('/api/categories');
   }
 
-  async getCategoryProducts(categoryId: number, params?: {
-    skip?: number;
-    limit?: number;
-  }): Promise<{ category: Category; products: Product[]; pagination: any }> {
+  async getCategoryProducts(
+    categoryId: number,
+    params?: {
+      skip?: number;
+      limit?: number;
+    },
+  ): Promise<{ category: Category; products: Product[]; pagination: any }> {
     const searchParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined) {

@@ -4,13 +4,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import {
-  X,
-  ShoppingCart,
-  Package,
-  DollarSign,
-  AlertTriangle
-} from 'lucide-react';
+import { X, ShoppingCart, Package, DollarSign, AlertTriangle } from 'lucide-react';
 
 interface InventoryReorderModalProps {
   isOpen: boolean;
@@ -21,7 +15,7 @@ interface InventoryReorderModalProps {
 const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [orderData, setOrderData] = useState({
     productId: '',
@@ -32,7 +26,7 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
     supplier: 'makrx',
     priority: 'normal',
     notes: '',
-    estimatedDelivery: ''
+    estimatedDelivery: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -43,22 +37,22 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
     { id: 'abs-black-1kg', name: 'ABS Filament - Black (1kg)', price: 30, category: 'filament' },
     { id: 'resin-clear-1l', name: 'Clear Resin (1L)', price: 45, category: 'resin' },
     { id: 'sandpaper-set', name: 'Sandpaper Assortment Set', price: 15, category: 'tools' },
-    { id: 'screws-m3', name: 'M3 Screws Pack (100pcs)', price: 8, category: 'hardware' }
+    { id: 'screws-m3', name: 'M3 Screws Pack (100pcs)', price: 8, category: 'hardware' },
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setOrderData(prev => ({ ...prev, [field]: value }));
+    setOrderData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleProductSelect = (productId: string) => {
-    const product = availableProducts.find(p => p.id === productId);
+    const product = availableProducts.find((p) => p.id === productId);
     if (product) {
-      setOrderData(prev => ({
+      setOrderData((prev) => ({
         ...prev,
         productId,
         productName: product.name,
         category: product.category,
-        unitPrice: product.price.toString()
+        unitPrice: product.price.toString(),
       }));
     }
   };
@@ -76,10 +70,10 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
         totalCost,
         orderId: `RO-${Date.now()}`,
         status: 'pending',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Mock API call
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock API call
       onSubmit(submitData);
     } catch (error) {
       console.error('Error submitting reorder:', error);
@@ -88,9 +82,10 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
     }
   };
 
-  const totalCost = orderData.quantity && orderData.unitPrice 
-    ? parseFloat(orderData.unitPrice) * parseInt(orderData.quantity) 
-    : 0;
+  const totalCost =
+    orderData.quantity && orderData.unitPrice
+      ? parseFloat(orderData.unitPrice) * parseInt(orderData.quantity)
+      : 0;
 
   if (!isOpen) return null;
 
@@ -103,10 +98,7 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
             <ShoppingCart className="h-5 w-5" />
             <h2 className="text-xl font-semibold">Inventory Reorder</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -168,8 +160,8 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Supplier</Label>
-                  <Select 
-                    value={orderData.supplier} 
+                  <Select
+                    value={orderData.supplier}
                     onValueChange={(value) => handleInputChange('supplier', value)}
                   >
                     <SelectTrigger>
@@ -184,8 +176,8 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
 
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority</Label>
-                  <Select 
-                    value={orderData.priority} 
+                  <Select
+                    value={orderData.priority}
                     onValueChange={(value) => handleInputChange('priority', value)}
                   >
                     <SelectTrigger>
@@ -260,7 +252,10 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
                     <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
                     <div className="text-sm">
                       <p className="font-medium text-yellow-800">External Supplier</p>
-                      <p className="text-yellow-700">Orders from external suppliers may require additional approval and have longer delivery times.</p>
+                      <p className="text-yellow-700">
+                        Orders from external suppliers may require additional approval and have
+                        longer delivery times.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -274,8 +269,8 @@ const InventoryReorderModal: React.FC<InventoryReorderModalProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             onClick={handleSubmit}
             disabled={!orderData.productId || !orderData.quantity || loading}
           >

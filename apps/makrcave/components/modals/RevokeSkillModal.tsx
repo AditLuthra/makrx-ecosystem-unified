@@ -27,15 +27,11 @@ interface RevokeSkillModalProps {
   userSkill: UserSkill;
 }
 
-const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
-  open,
-  onOpenChange,
-  userSkill
-}) => {
+const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({ open, onOpenChange, userSkill }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     reason: '',
     revokeReason: 'safety_violation', // safety_violation, skill_expired, policy_violation, request, other
@@ -51,13 +47,17 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
     { value: 'skill_expired', label: 'Skill/Certification Expired', color: 'text-yellow-600' },
     { value: 'policy_violation', label: 'Policy Violation', color: 'text-red-600' },
     { value: 'equipment_damage', label: 'Equipment Damage', color: 'text-red-600' },
-    { value: 'insufficient_knowledge', label: 'Insufficient Knowledge Demonstrated', color: 'text-orange-600' },
+    {
+      value: 'insufficient_knowledge',
+      label: 'Insufficient Knowledge Demonstrated',
+      color: 'text-orange-600',
+    },
     { value: 'request', label: 'User/Admin Request', color: 'text-blue-600' },
-    { value: 'other', label: 'Other', color: 'text-gray-600' }
+    { value: 'other', label: 'Other', color: 'text-gray-600' },
   ];
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
@@ -66,7 +66,10 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
       setError('Please provide a reason for revocation');
       return false;
     }
-    if (formData.blockReapplication && (!formData.blockReapplicationDays || parseInt(formData.blockReapplicationDays) < 1)) {
+    if (
+      formData.blockReapplication &&
+      (!formData.blockReapplicationDays || parseInt(formData.blockReapplicationDays) < 1)
+    ) {
       setError('Please specify valid number of days for reapplication block');
       return false;
     }
@@ -75,7 +78,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -83,14 +86,14 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       toast({
-        title: "Certification Revoked",
+        title: 'Certification Revoked',
         description: `${userSkill.skillName} certification has been revoked for ${userSkill.userName}`,
-        variant: "destructive",
+        variant: 'destructive',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to revoke certification');
@@ -114,7 +117,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
   };
 
   const getReasonData = () => {
-    return revocationReasons.find(r => r.value === formData.revokeReason);
+    return revocationReasons.find((r) => r.value === formData.revokeReason);
   };
 
   const getStatusBadge = (status: string) => {
@@ -137,7 +140,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
             Revoke Skill Certification
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -153,10 +156,12 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
             <div className="flex items-start">
               <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-3" />
               <div>
-                <h4 className="text-sm font-medium text-red-800">Warning: Certification Revocation</h4>
+                <h4 className="text-sm font-medium text-red-800">
+                  Warning: Certification Revocation
+                </h4>
                 <p className="text-sm text-red-700 mt-1">
-                  This action will immediately remove the user's access to equipment that requires this skill.
-                  This action can be undone, but may require re-certification.
+                  This action will immediately remove the user's access to equipment that requires
+                  this skill. This action can be undone, but may require re-certification.
                 </p>
               </div>
             </div>
@@ -176,7 +181,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
                   <div className="text-gray-600">{userSkill.userEmail}</div>
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="h-4 w-4 text-gray-600" />
@@ -220,8 +225,8 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
           {/* Revocation Reason */}
           <div>
             <Label htmlFor="revokeReason">Revocation Category *</Label>
-            <Select 
-              value={formData.revokeReason} 
+            <Select
+              value={formData.revokeReason}
               onValueChange={(value) => handleInputChange('revokeReason', value)}
             >
               <SelectTrigger className="mt-1">
@@ -261,7 +266,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
           {/* Revocation Options */}
           <div className="space-y-4">
             <h4 className="font-medium text-gray-900">Revocation Options</h4>
-            
+
             <div className="space-y-3">
               <label className="flex items-start space-x-3">
                 <input
@@ -275,7 +280,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
                   <p className="text-xs text-gray-600">Remove access immediately (recommended)</p>
                 </div>
               </label>
-              
+
               <label className="flex items-start space-x-3">
                 <input
                   type="checkbox"
@@ -288,7 +293,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
                   <p className="text-xs text-gray-600">Send email notification to the user</p>
                 </div>
               </label>
-              
+
               <label className="flex items-start space-x-3">
                 <input
                   type="checkbox"
@@ -306,8 +311,8 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
             {formData.blockReapplication && (
               <div className="ml-6 mt-2">
                 <Label htmlFor="blockDays">Block Period (days)</Label>
-                <Select 
-                  value={formData.blockReapplicationDays} 
+                <Select
+                  value={formData.blockReapplicationDays}
                   onValueChange={(value) => handleInputChange('blockReapplicationDays', value)}
                 >
                   <SelectTrigger className="mt-1 w-48">
@@ -344,11 +349,7 @@ const RevokeSkillModal: React.FC<RevokeSkillModalProps> = ({
             <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              variant="destructive"
-            >
+            <Button type="submit" disabled={isLoading} variant="destructive">
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />

@@ -10,10 +10,22 @@ import NotificationWidget from './NotificationWidget';
 import AnalyticsWidget from './AnalyticsWidget';
 import ServiceProviderDashboard from './ServiceProviderDashboard';
 import {
-  Crown, Shield, Wrench, Settings, UserCheck,
-  BarChart3, Users, Building2, Package,
-  FolderOpen, Calendar, AlertTriangle, Activity,
-  Zap, TrendingUp, DollarSign
+  Crown,
+  Shield,
+  Wrench,
+  Settings,
+  UserCheck,
+  BarChart3,
+  Users,
+  Building2,
+  Package,
+  FolderOpen,
+  Calendar,
+  AlertTriangle,
+  Activity,
+  Zap,
+  TrendingUp,
+  DollarSign,
 } from 'lucide-react';
 
 // Import feature flag components
@@ -23,7 +35,7 @@ import {
   NavLinkGuard,
   KillSwitchGuard,
   ButtonGuard,
-  AdminGuard
+  AdminGuard,
 } from '../../../packages/feature-flags/src/components/FlagGuard';
 
 import {
@@ -31,23 +43,23 @@ import {
   useModuleFlag,
   useSpaceFlag,
   useIsInternalUser,
-  useConfigFlag
+  useConfigFlag,
 } from '../../../packages/feature-flags/src/hooks/useFeatureFlags';
 
 // Enhanced Super Admin Dashboard with Feature Flags
 function EnhancedSuperAdminDashboard() {
   const { user } = useAuth();
   const { currentMakerspace } = useMakerspaceContext();
-  
+
   // Feature flags
   const analyticsEnabled = useBooleanFlag('cave.analytics.enabled');
   const providerEarningsEnabled = useBooleanFlag('cave.analytics.provider_earnings');
   const maintenanceEnabled = useBooleanFlag('cave.maintenance.enabled');
   const notificationsEnabled = useBooleanFlag('cave.notifications.enabled');
-  
+
   // Config flags
   const defaultHourlyRate = useConfigFlag('cave.reservations.hourly_rate', 100);
-  
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-700 dark:to-purple-800 rounded-lg p-6 text-white">
@@ -55,7 +67,9 @@ function EnhancedSuperAdminDashboard() {
           <Crown className="w-12 h-12" />
           <div>
             <h1 className="text-2xl font-bold">Super Admin Console</h1>
-            <p className="text-purple-100">Welcome back, {user?.firstName}! You have full system access.</p>
+            <p className="text-purple-100">
+              Welcome back, {user?.firstName}! You have full system access.
+            </p>
           </div>
         </div>
       </div>
@@ -71,7 +85,7 @@ function EnhancedSuperAdminDashboard() {
             <Building2 className="w-8 h-8 text-purple-600" />
           </div>
         </div>
-        
+
         <div className="makrcave-card">
           <div className="flex items-center justify-between">
             <div>
@@ -81,7 +95,7 @@ function EnhancedSuperAdminDashboard() {
             <Users className="w-8 h-8 text-blue-600" />
           </div>
         </div>
-        
+
         <div className="makrcave-card">
           <div className="flex items-center justify-between">
             <div>
@@ -91,7 +105,7 @@ function EnhancedSuperAdminDashboard() {
             <Wrench className="w-8 h-8 text-green-600" />
           </div>
         </div>
-        
+
         <div className="makrcave-card">
           <div className="flex items-center justify-between">
             <div>
@@ -118,10 +132,7 @@ function EnhancedSuperAdminDashboard() {
         </div>
 
         {/* Provider earnings - sub-feature flag */}
-        <FlagGuard
-          flagKey="cave.analytics.provider_earnings"
-          showComingSoon={true}
-        >
+        <FlagGuard flagKey="cave.analytics.provider_earnings" showComingSoon={true}>
           <div className="makrcave-card">
             <div className="flex items-center gap-3 mb-4">
               <DollarSign className="w-6 h-6 text-green-600" />
@@ -146,10 +157,7 @@ function EnhancedSuperAdminDashboard() {
       </ModuleGuard>
 
       {/* Maintenance module - feature flagged */}
-      <ModuleGuard
-        flagKey="cave.maintenance.enabled"
-        moduleName="Maintenance Management"
-      >
+      <ModuleGuard flagKey="cave.maintenance.enabled" moduleName="Maintenance Management">
         <div className="makrcave-card">
           <div className="flex items-center gap-3 mb-4">
             <AlertTriangle className="w-6 h-6 text-orange-600" />
@@ -177,10 +185,11 @@ function EnhancedSuperAdminDashboard() {
         <div className="makrcave-card">
           <h3 className="text-lg font-semibold mb-4">System Overview</h3>
           <p className="text-muted-foreground mb-4">
-            As a Super Admin, you have complete control over the MakrX ecosystem including creating/deleting makerspaces,
-            managing all users, viewing system logs, and configuring feature flags.
+            As a Super Admin, you have complete control over the MakrX ecosystem including
+            creating/deleting makerspaces, managing all users, viewing system logs, and configuring
+            feature flags.
           </p>
-          
+
           {/* Feature flag status indicators */}
           <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <h4 className="text-sm font-medium mb-2">Active Features</h4>
@@ -202,11 +211,7 @@ function EnhancedSuperAdminDashboard() {
             </div>
           }
         >
-          <NotificationWidget
-            category="system"
-            title="System Notifications"
-            maxItems={3}
-          />
+          <NotificationWidget category="system" title="System Notifications" maxItems={3} />
         </FlagGuard>
       </div>
     </div>
@@ -217,14 +222,14 @@ function EnhancedSuperAdminDashboard() {
 function EnhancedMakerspaceAdminDashboard() {
   const { user } = useAuth();
   const { currentMakerspace } = useMakerspaceContext();
-  
+
   // Space-specific flags
   const equipmentEnabled = useSpaceFlag('cave.equipment.enabled', currentMakerspace?.id);
   const reservationsEnabled = useSpaceFlag('cave.reservations.enabled', currentMakerspace?.id);
   const inventoryEnabled = useSpaceFlag('cave.inventory.enabled', currentMakerspace?.id);
   const projectsEnabled = useSpaceFlag('cave.projects.enabled', currentMakerspace?.id);
   const paidReservations = useSpaceFlag('cave.reservations.paid_usage', currentMakerspace?.id);
-  
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-lg p-6 text-white">
@@ -265,9 +270,7 @@ function EnhancedMakerspaceAdminDashboard() {
               <p className="text-sm font-medium text-muted-foreground">
                 {paidReservations.enabled ? 'Revenue Today' : 'Bookings Today'}
               </p>
-              <p className="text-2xl font-bold">
-                {paidReservations.enabled ? '₹2,340' : '12'}
-              </p>
+              <p className="text-2xl font-bold">{paidReservations.enabled ? '₹2,340' : '12'}</p>
             </div>
             <Calendar className="w-8 h-8 text-green-600" />
           </div>
@@ -358,10 +361,10 @@ function FeatureBadge({ enabled, label }: { enabled: boolean; label: string }) {
 // Enhanced Role Dashboard with Feature Flags
 export default function FeatureFlaggedRoleDashboard() {
   const { user } = useAuth();
-  
+
   // Kill switches for critical features
   const systemEnabled = useBooleanFlag('cave.jobs.publish_enabled');
-  
+
   if (!systemEnabled) {
     return (
       <KillSwitchGuard

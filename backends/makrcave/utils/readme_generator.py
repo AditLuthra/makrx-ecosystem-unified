@@ -3,9 +3,10 @@ from datetime import datetime
 from models.project import Project
 from crud.project import get_project
 
+
 def generate_project_readme(project: Project) -> str:
     """Generate a comprehensive README.md file for a project"""
-    
+
     readme_content = f"""# {project.name}
 
 {project.description or 'A MakrCave project for collaborative making and innovation.'}
@@ -41,40 +42,54 @@ def generate_project_readme(project: Project) -> str:
         readme_content += "## 👥 Team\n\n"
         readme_content += "| Member | Role | Joined |\n"
         readme_content += "|--------|------|--------|\n"
-        
+
         for collaborator in project.collaborators:
             join_date = collaborator.accepted_at or collaborator.invited_at
-            join_date_str = join_date.strftime('%B %d, %Y') if join_date else 'Pending'
+            join_date_str = (
+                join_date.strftime("%B %d, %Y") if join_date else "Pending"
+            )
             readme_content += f"| {collaborator.user_id} | {collaborator.role.title()} | {join_date_str} |\n"
         readme_content += "\n"
 
     # Add milestones if available
     if project.milestones:
         readme_content += "## 🎯 Milestones\n\n"
-        
-        completed_milestones = [m for m in project.milestones if m.is_completed]
-        pending_milestones = [m for m in project.milestones if not m.is_completed]
-        
+
+        completed_milestones = [
+            m for m in project.milestones if m.is_completed
+        ]
+        pending_milestones = [
+            m for m in project.milestones if not m.is_completed
+        ]
+
         if completed_milestones:
             readme_content += "### ✅ Completed\n\n"
             for milestone in completed_milestones:
-                completion_date = milestone.completion_date.strftime('%B %d, %Y') if milestone.completion_date else 'Unknown'
+                completion_date = (
+                    milestone.completion_date.strftime("%B %d, %Y")
+                    if milestone.completion_date
+                    else "Unknown"
+                )
                 readme_content += f"- **{milestone.title}** - Completed on {completion_date}\n"
                 if milestone.description:
                     readme_content += f"  - {milestone.description}\n"
             readme_content += "\n"
-        
+
         if pending_milestones:
             readme_content += "### 🔄 In Progress\n\n"
             for milestone in pending_milestones:
                 priority_emoji = {
-                    'critical': '🔴',
-                    'high': '🟠', 
-                    'medium': '🟡',
-                    'low': '🟢'
-                }.get(milestone.priority, '⚪')
-                
-                target_date = milestone.target_date.strftime('%B %d, %Y') if milestone.target_date else 'No deadline'
+                    "critical": "🔴",
+                    "high": "🟠",
+                    "medium": "🟡",
+                    "low": "🟢",
+                }.get(milestone.priority, "⚪")
+
+                target_date = (
+                    milestone.target_date.strftime("%B %d, %Y")
+                    if milestone.target_date
+                    else "No deadline"
+                )
                 readme_content += f"- {priority_emoji} **{milestone.title}** - Target: {target_date}\n"
                 if milestone.description:
                     readme_content += f"  - {milestone.description}\n"
@@ -85,22 +100,24 @@ def generate_project_readme(project: Project) -> str:
         readme_content += "## 📦 Bill of Materials (BOM)\n\n"
         readme_content += "| Item | Type | Quantity | Status | Critical |\n"
         readme_content += "|------|------|----------|--------|---------|\n"
-        
+
         for bom_item in project.bom_items:
             critical_marker = "⚠️" if bom_item.is_critical else ""
             status_emoji = {
-                'needed': '❌',
-                'ordered': '⏳',
-                'received': '✅',
-                'reserved': '🔒'
-            }.get(bom_item.procurement_status, '❓')
-            
+                "needed": "❌",
+                "ordered": "⏳",
+                "received": "✅",
+                "reserved": "🔒",
+            }.get(bom_item.procurement_status, "❓")
+
             readme_content += f"| {bom_item.item_name} | {bom_item.item_type.replace('_', ' ').title()} | {bom_item.quantity} | {status_emoji} {bom_item.procurement_status.title()} | {critical_marker} |\n"
-        
+
         # Add cost summary if available
         total_cost = sum([item.total_cost or 0 for item in project.bom_items])
         if total_cost > 0:
-            readme_content += f"\n**Total Estimated Cost**: ${total_cost:.2f}\n\n"
+            readme_content += (
+                f"\n**Total Estimated Cost**: ${total_cost:.2f}\n\n"
+            )
         else:
             readme_content += "\n"
 
@@ -109,19 +126,23 @@ def generate_project_readme(project: Project) -> str:
         readme_content += "## 🔧 Equipment Reservations\n\n"
         readme_content += "| Equipment | Status | Start Date | End Date |\n"
         readme_content += "|-----------|--------|------------|----------|\n"
-        
+
         for reservation in project.equipment_reservations:
             status_emoji = {
-                'requested': '⏳',
-                'confirmed': '✅',
-                'in_use': '🔄',
-                'completed': '✅',
-                'cancelled': '❌'
-            }.get(reservation.status, '❓')
-            
-            start_date = datetime.fromisoformat(reservation.requested_start.replace('Z', '+00:00')).strftime('%B %d, %Y')
-            end_date = datetime.fromisoformat(reservation.requested_end.replace('Z', '+00:00')).strftime('%B %d, %Y')
-            
+                "requested": "⏳",
+                "confirmed": "✅",
+                "in_use": "🔄",
+                "completed": "✅",
+                "cancelled": "❌",
+            }.get(reservation.status, "❓")
+
+            start_date = datetime.fromisoformat(
+                reservation.requested_start.replace("Z", "+00:00")
+            ).strftime("%B %d, %Y")
+            end_date = datetime.fromisoformat(
+                reservation.requested_end.replace("Z", "+00:00")
+            ).strftime("%B %d, %Y")
+
             readme_content += f"| {reservation.equipment_id} | {status_emoji} {reservation.status.title()} | {start_date} | {end_date} |\n"
         readme_content += "\n"
 
@@ -135,16 +156,20 @@ def generate_project_readme(project: Project) -> str:
         readme_content += "├── README.md          # This file\n"
         readme_content += "├── docs/              # Project documentation\n"
         readme_content += "├── src/               # Source code\n"
-        readme_content += "├── hardware/          # Hardware designs, CAD files\n"
+        readme_content += (
+            "├── hardware/          # Hardware designs, CAD files\n"
+        )
         readme_content += "├── software/          # Software components\n"
-        readme_content += "├── assets/            # Images, videos, resources\n"
+        readme_content += (
+            "├── assets/            # Images, videos, resources\n"
+        )
         readme_content += "└── LICENSE            # Project license\n"
         readme_content += "```\n\n"
 
     # Add files overview if available
     if project.files:
         readme_content += "## 📁 Project Files\n\n"
-        
+
         # Group files by type
         file_types = {}
         for file in project.files:
@@ -152,9 +177,11 @@ def generate_project_readme(project: Project) -> str:
             if file_type not in file_types:
                 file_types[file_type] = []
             file_types[file_type].append(file)
-        
+
         for file_type, files in file_types.items():
-            readme_content += f"### {file_type.replace('_', ' ').title()} Files\n\n"
+            readme_content += (
+                f"### {file_type.replace('_', ' ').title()} Files\n\n"
+            )
             for file in files:
                 visibility = "🌐" if file.is_public else "🔒"
                 readme_content += f"- {visibility} **{file.original_filename}** (v{file.version})\n"
@@ -221,9 +248,10 @@ For technical support or questions about this project, contact the project owner
 
     return readme_content
 
+
 def generate_makerspace_readme() -> str:
     """Generate a general README for the MakrCave Project Management System"""
-    
+
     readme_content = """# MakrCave Project Management System
 
 A comprehensive project management platform designed specifically for makerspaces, fabrication labs, and collaborative making environments.
@@ -403,30 +431,31 @@ A comprehensive project management platform designed specifically for makerspace
 
     return readme_content
 
+
 def create_github_readme(db, project_id: str, user_id: str) -> bool:
     """Create and commit a README.md file to the connected GitHub repository"""
     from .github_service import GitHubService
     from crud.project import get_project
-    
+
     project = get_project(db, project_id, user_id)
     if not project or not project.github_integration_enabled:
         return False
-    
+
     github_service = GitHubService(project.github_access_token)
     readme_content = generate_project_readme(project)
-    
+
     # Check if README.md already exists
     existing_readme = github_service.get_file_content(
-        project.github_repo_url, 
-        "README.md", 
-        project.github_default_branch
+        project.github_repo_url, "README.md", project.github_default_branch
     )
-    
+
     if existing_readme:
         # Update existing README
-        files = github_service.get_repository_files(project.github_repo_url, "", project.github_default_branch)
+        files = github_service.get_repository_files(
+            project.github_repo_url, "", project.github_default_branch
+        )
         readme_file = next((f for f in files if f.name == "README.md"), None)
-        
+
         if readme_file:
             success = github_service.update_file(
                 project.github_repo_url,
@@ -434,7 +463,7 @@ def create_github_readme(db, project_id: str, user_id: str) -> bool:
                 readme_content,
                 f"Update project README - Generated by MakrCave",
                 readme_file.sha,
-                project.github_default_branch
+                project.github_default_branch,
             )
         else:
             success = False
@@ -445,7 +474,7 @@ def create_github_readme(db, project_id: str, user_id: str) -> bool:
             "README.md",
             readme_content,
             f"Add project README - Generated by MakrCave",
-            project.github_default_branch
+            project.github_default_branch,
         )
-    
+
     return success

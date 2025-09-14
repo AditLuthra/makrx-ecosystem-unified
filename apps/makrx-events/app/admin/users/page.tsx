@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 // Using div-based table for now - will be replaced with proper table component
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -14,17 +14,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { 
-  Users, 
-  UserCheck, 
-  UserX, 
-  Search, 
-  Filter,
-  Shield,
-  Crown,
-  User
-} from 'lucide-react';
+} from '@/components/ui/select';
+import { Users, UserCheck, UserX, Search, Filter, Shield, Crown, User } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -83,14 +74,15 @@ export default function UserManagement() {
     },
   });
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      searchTerm === '' ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -159,12 +151,10 @@ export default function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              All registered users
-            </p>
+            <p className="text-xs text-muted-foreground">All registered users</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
@@ -172,9 +162,7 @@ export default function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.activeUsers || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Currently active
-            </p>
+            <p className="text-xs text-muted-foreground">Currently active</p>
           </CardContent>
         </Card>
 
@@ -185,9 +173,7 @@ export default function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.eventAdmins || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Admin users
-            </p>
+            <p className="text-xs text-muted-foreground">Admin users</p>
           </CardContent>
         </Card>
 
@@ -198,9 +184,7 @@ export default function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.pendingApplications || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting review
-            </p>
+            <p className="text-xs text-muted-foreground">Awaiting review</p>
           </CardContent>
         </Card>
       </div>
@@ -216,7 +200,7 @@ export default function UserManagement() {
             className="pl-10"
           />
         </div>
-        
+
         <Select value={roleFilter} onValueChange={setRoleFilter}>
           <SelectTrigger className="w-48">
             <Filter className="h-4 w-4 mr-2" />
@@ -278,10 +262,9 @@ export default function UserManagement() {
                           {getRoleIcon(user.role)}
                           <div>
                             <div className="font-medium">
-                              {user.firstName || user.lastName 
+                              {user.firstName || user.lastName
                                 ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
-                                : 'No name'
-                              }
+                                : 'No name'}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               ID: {user.id.slice(0, 8)}...
@@ -296,17 +279,13 @@ export default function UserManagement() {
                         </Badge>
                       </td>
                       <td className="p-4">
-                        <Badge className={getStatusColor(user.status)}>
-                          {user.status}
-                        </Badge>
+                        <Badge className={getStatusColor(user.status)}>{user.status}</Badge>
                       </td>
-                      <td className="p-4">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
+                      <td className="p-4">{new Date(user.createdAt).toLocaleDateString()}</td>
                       <td className="p-4">
                         <div className="flex gap-2">
-                          <Select 
-                            value={user.role} 
+                          <Select
+                            value={user.role}
                             onValueChange={(newRole) => handleRoleChange(user.id, newRole)}
                           >
                             <SelectTrigger className="w-32">
@@ -319,8 +298,8 @@ export default function UserManagement() {
                             </SelectContent>
                           </Select>
 
-                          <Select 
-                            value={user.status} 
+                          <Select
+                            value={user.status}
                             onValueChange={(newStatus) => handleStatusChange(user.id, newStatus)}
                           >
                             <SelectTrigger className="w-32">

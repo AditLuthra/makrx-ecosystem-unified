@@ -26,11 +26,18 @@ jwks_cache_expiry: Optional[datetime] = None
 async def get_jwks() -> dict:
     """Fetch JWKS from Keycloak with simple caching."""
     global jwks_cache, jwks_cache_expiry
-    if jwks_cache and jwks_cache_expiry and datetime.utcnow() < jwks_cache_expiry:
+    if (
+        jwks_cache
+        and jwks_cache_expiry
+        and datetime.utcnow() < jwks_cache_expiry
+    ):
         return jwks_cache
 
     async with httpx.AsyncClient() as client:
-        jwks_url = settings.KEYCLOAK_JWKS_URL or f"{settings.KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
+        jwks_url = (
+            settings.KEYCLOAK_JWKS_URL
+            or f"{settings.KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
+        )
         response = await client.get(jwks_url)
         response.raise_for_status()
         jwks_cache = response.json()
@@ -44,7 +51,9 @@ async def decode_token(token: str, request_id: Optional[str] = None) -> dict:
         header = jwt.get_unverified_header(token)
         kid = header.get("kid")
         jwks = await get_jwks()
-        key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
+        key = next(
+            (k for k in jwks.get("keys", []) if k.get("kid") == kid), None
+        )
         if not key:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -114,7 +123,9 @@ async def get_current_user(
 
     try:
         request_id = get_request_id(request)
-        payload = await decode_token(credentials.credentials, request_id=request_id)
+        payload = await decode_token(
+            credentials.credentials, request_id=request_id
+        )
         roles = payload.get("realm_access", {}).get("roles", [])
         return AuthUser(
             user_id=payload.get("sub"),

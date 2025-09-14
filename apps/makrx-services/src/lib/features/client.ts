@@ -2,19 +2,20 @@
  * Feature flags API client for frontend
  */
 
-import { 
-  FeatureAvailabilityResponse, 
-  UserAccessibleFeatures, 
+import {
+  FeatureAvailabilityResponse,
+  UserAccessibleFeatures,
   FeatureAccessContext,
   FeatureFlag,
   FeatureFlagConfiguration,
-  AccessLevel
-} from './types';
+  AccessLevel,
+} from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 class FeatureFlagsClient {
-  private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
+  private cache: Map<string, { data: any; timestamp: number; ttl: number }> =
+    new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes default TTL
 
   /**
@@ -22,39 +23,42 @@ class FeatureFlagsClient {
    */
   async checkFeatureAvailability(
     featureKey: string,
-    context?: Partial<FeatureAccessContext>
+    context?: Partial<FeatureAccessContext>,
   ): Promise<FeatureAvailabilityResponse> {
     const cacheKey = `check-${featureKey}-${JSON.stringify(context)}`;
     const cached = this.getCachedData(cacheKey);
-    
+
     if (cached) {
       return cached;
     }
 
     const params = new URLSearchParams();
-    if (context?.user_id) params.append('user_id', context.user_id);
-    if (context?.feature_password) params.append('password', context.feature_password);
+    if (context?.user_id) params.append("user_id", context.user_id);
+    if (context?.feature_password)
+      params.append("password", context.feature_password);
 
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (context?.feature_password) {
-      headers['X-Feature-Password'] = context.feature_password;
+      headers["X-Feature-Password"] = context.feature_password;
     }
 
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/check/${featureKey}?${params}`,
-      { headers }
+      { headers },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to check feature availability: ${response.statusText}`);
+      throw new Error(
+        `Failed to check feature availability: ${response.statusText}`,
+      );
     }
 
     const data = await response.json();
     this.setCachedData(cacheKey, data, 2 * 60 * 1000); // 2 minutes for availability checks
-    
+
     return data;
   }
 
@@ -63,40 +67,43 @@ class FeatureFlagsClient {
    */
   async getAvailableFeatures(
     context?: Partial<FeatureAccessContext>,
-    tags?: string[]
+    tags?: string[],
   ): Promise<UserAccessibleFeatures> {
-    const cacheKey = `available-${JSON.stringify(context)}-${tags?.join(',')}`;
+    const cacheKey = `available-${JSON.stringify(context)}-${tags?.join(",")}`;
     const cached = this.getCachedData(cacheKey);
-    
+
     if (cached) {
       return cached;
     }
 
     const params = new URLSearchParams();
-    if (context?.user_id) params.append('user_id', context.user_id);
-    if (context?.feature_password) params.append('password', context.feature_password);
-    if (tags && tags.length > 0) params.append('tags', tags.join(','));
+    if (context?.user_id) params.append("user_id", context.user_id);
+    if (context?.feature_password)
+      params.append("password", context.feature_password);
+    if (tags && tags.length > 0) params.append("tags", tags.join(","));
 
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (context?.feature_password) {
-      headers['X-Feature-Password'] = context.feature_password;
+      headers["X-Feature-Password"] = context.feature_password;
     }
 
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/available?${params}`,
-      { headers }
+      { headers },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to get available features: ${response.statusText}`);
+      throw new Error(
+        `Failed to get available features: ${response.statusText}`,
+      );
     }
 
     const data = await response.json();
     this.setCachedData(cacheKey, data);
-    
+
     return data;
   }
 
@@ -109,22 +116,26 @@ class FeatureFlagsClient {
     by_tag: Record<string, number>;
     public_features: Array<{ key: string; name: string; tags: string[] }>;
   }> {
-    const cacheKey = 'public-summary';
+    const cacheKey = "public-summary";
     const cached = this.getCachedData(cacheKey, 10 * 60 * 1000); // 10 minutes for public data
-    
+
     if (cached) {
       return cached;
     }
 
-    const response = await fetch(`${API_BASE}/api/v1/feature-flags/public/summary`);
+    const response = await fetch(
+      `${API_BASE}/api/v1/feature-flags/public/summary`,
+    );
 
     if (!response.ok) {
-      throw new Error(`Failed to get public features summary: ${response.statusText}`);
+      throw new Error(
+        `Failed to get public features summary: ${response.statusText}`,
+      );
     }
 
     const data = await response.json();
     this.setCachedData(cacheKey, data, 10 * 60 * 1000);
-    
+
     return data;
   }
 
@@ -138,12 +149,12 @@ class FeatureFlagsClient {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/test-access`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(context),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -158,19 +169,20 @@ class FeatureFlagsClient {
   /**
    * Get all feature flags with full details (admin only)
    */
-  async getAllFeatureFlags(authToken: string): Promise<{ flags: FeatureFlag[] }> {
-    const response = await fetch(
-      `${API_BASE}/api/v1/feature-flags/admin/all`,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+  async getAllFeatureFlags(
+    authToken: string,
+  ): Promise<{ flags: FeatureFlag[] }> {
+    const response = await fetch(`${API_BASE}/api/v1/feature-flags/admin/all`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to get all feature flags: ${response.statusText}`);
+      throw new Error(
+        `Failed to get all feature flags: ${response.statusText}`,
+      );
     }
 
     return response.json();
@@ -180,8 +192,8 @@ class FeatureFlagsClient {
    * Get detailed information about a specific feature flag
    */
   async getFeatureFlagDetails(
-    featureKey: string, 
-    authToken: string
+    featureKey: string,
+    authToken: string,
   ): Promise<{
     flag: FeatureFlag;
     is_override: boolean;
@@ -191,14 +203,16 @@ class FeatureFlagsClient {
       `${API_BASE}/api/v1/feature-flags/admin/${featureKey}`,
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to get feature flag details: ${response.statusText}`);
+      throw new Error(
+        `Failed to get feature flag details: ${response.statusText}`,
+      );
     }
 
     return response.json();
@@ -218,18 +232,18 @@ class FeatureFlagsClient {
       password?: string;
       tags?: string[];
     },
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string; flag: FeatureFlag }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/create`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(flagData),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -238,7 +252,7 @@ class FeatureFlagsClient {
 
     // Clear cache after modification
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -256,18 +270,18 @@ class FeatureFlagsClient {
       password: string;
       tags: string[];
     }>,
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string; flag: FeatureFlag }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/${featureKey}`,
       {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updates),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -275,7 +289,7 @@ class FeatureFlagsClient {
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -284,26 +298,28 @@ class FeatureFlagsClient {
    */
   async bulkUpdateFeatureFlags(
     flagsWithLevels: Record<string, AccessLevel>,
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string; updated_flags: string[] }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/bulk-update`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ flags: flagsWithLevels }),
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to bulk update feature flags: ${response.statusText}`);
+      throw new Error(
+        `Failed to bulk update feature flags: ${response.statusText}`,
+      );
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -313,26 +329,28 @@ class FeatureFlagsClient {
   async createRuntimeOverride(
     featureKey: string,
     accessLevel: AccessLevel,
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string; override: FeatureFlag }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/${featureKey}/override`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(accessLevel),
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to create runtime override: ${response.statusText}`);
+      throw new Error(
+        `Failed to create runtime override: ${response.statusText}`,
+      );
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -341,25 +359,27 @@ class FeatureFlagsClient {
    */
   async removeRuntimeOverride(
     featureKey: string,
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/${featureKey}/override`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to remove runtime override: ${response.statusText}`);
+      throw new Error(
+        `Failed to remove runtime override: ${response.statusText}`,
+      );
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -368,17 +388,17 @@ class FeatureFlagsClient {
    */
   async deleteFeatureFlag(
     featureKey: string,
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/${featureKey}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -386,7 +406,7 @@ class FeatureFlagsClient {
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -397,9 +417,9 @@ class FeatureFlagsClient {
     analytics: any;
     summary: any;
   }> {
-    const cacheKey = 'analytics';
+    const cacheKey = "analytics";
     const cached = this.getCachedData(cacheKey, 60 * 1000); // 1 minute cache for analytics
-    
+
     if (cached) {
       return cached;
     }
@@ -408,10 +428,10 @@ class FeatureFlagsClient {
       `${API_BASE}/api/v1/feature-flags/admin/analytics`,
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -420,7 +440,7 @@ class FeatureFlagsClient {
 
     const data = await response.json();
     this.setCachedData(cacheKey, data, 60 * 1000);
-    
+
     return data;
   }
 
@@ -429,20 +449,20 @@ class FeatureFlagsClient {
    */
   async exportConfiguration(
     authToken: string,
-    includeAnalytics: boolean = false
+    includeAnalytics: boolean = false,
   ): Promise<FeatureFlagConfiguration> {
     const params = new URLSearchParams();
-    if (includeAnalytics) params.append('include_analytics', 'true');
+    if (includeAnalytics) params.append("include_analytics", "true");
 
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/export?${params}`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -458,21 +478,21 @@ class FeatureFlagsClient {
   async importConfiguration(
     configData: FeatureFlagConfiguration,
     authToken: string,
-    merge: boolean = true
+    merge: boolean = true,
   ): Promise<{ message: string; summary: any }> {
     const params = new URLSearchParams();
-    if (!merge) params.append('merge', 'false');
+    if (!merge) params.append("merge", "false");
 
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/import?${params}`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(configData),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -480,7 +500,7 @@ class FeatureFlagsClient {
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 
@@ -490,18 +510,18 @@ class FeatureFlagsClient {
   async grantBetaAccess(
     userId: string,
     featureKeys: string[],
-    authToken: string
+    authToken: string,
   ): Promise<{ message: string; features: string[] }> {
     const response = await fetch(
       `${API_BASE}/api/v1/feature-flags/admin/beta-access`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(userId, featureKeys),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -509,7 +529,7 @@ class FeatureFlagsClient {
     }
 
     this.clearCache();
-    
+
     return response.json();
   }
 

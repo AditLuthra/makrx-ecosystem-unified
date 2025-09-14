@@ -1,7 +1,17 @@
 import { useState } from 'react';
-import { 
-  X, QrCode, Download, Upload, Edit, Trash2, Package, 
-  ShoppingCart, AlertTriangle, CheckCircle, Printer, FileText
+import {
+  X,
+  QrCode,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Package,
+  ShoppingCart,
+  AlertTriangle,
+  CheckCircle,
+  Printer,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,14 +25,14 @@ interface BulkOperationsModalProps {
   onBulkReorder: (items: any[]) => void;
 }
 
-export default function BulkOperationsModal({ 
-  isOpen, 
-  onClose, 
+export default function BulkOperationsModal({
+  isOpen,
+  onClose,
   selectedItems,
   onBulkUpdate,
   onBulkDelete,
   onGenerateQR,
-  onBulkReorder
+  onBulkReorder,
 }: BulkOperationsModalProps) {
   const { user } = useAuth();
   const [activeOperation, setActiveOperation] = useState<string>('');
@@ -31,7 +41,7 @@ export default function BulkOperationsModal({
     location: '',
     restrictedAccessLevel: '',
     minThreshold: '',
-    supplier: ''
+    supplier: '',
   });
 
   const operations = [
@@ -42,7 +52,7 @@ export default function BulkOperationsModal({
       icon: QrCode,
       color: 'text-purple-600 bg-purple-100',
       permission: 'admin', // Only for super admin and admin
-      available: selectedItems.length > 0
+      available: selectedItems.length > 0,
     },
     {
       id: 'bulk_update',
@@ -51,7 +61,7 @@ export default function BulkOperationsModal({
       icon: Edit,
       color: 'text-blue-600 bg-blue-100',
       permission: 'edit',
-      available: selectedItems.length > 0
+      available: selectedItems.length > 0,
     },
     {
       id: 'bulk_reorder',
@@ -60,7 +70,9 @@ export default function BulkOperationsModal({
       icon: ShoppingCart,
       color: 'text-green-600 bg-green-100',
       permission: 'edit',
-      available: selectedItems.filter(item => item.supplierType === 'makrx' && item.productCode).length > 0
+      available:
+        selectedItems.filter((item) => item.supplierType === 'makrx' && item.productCode).length >
+        0,
     },
     {
       id: 'export_data',
@@ -69,7 +81,7 @@ export default function BulkOperationsModal({
       icon: Download,
       color: 'text-orange-600 bg-orange-100',
       permission: 'view',
-      available: selectedItems.length > 0
+      available: selectedItems.length > 0,
     },
     {
       id: 'print_labels',
@@ -78,7 +90,7 @@ export default function BulkOperationsModal({
       icon: Printer,
       color: 'text-indigo-600 bg-indigo-100',
       permission: 'view',
-      available: selectedItems.length > 0
+      available: selectedItems.length > 0,
     },
     {
       id: 'bulk_delete',
@@ -87,8 +99,8 @@ export default function BulkOperationsModal({
       icon: Trash2,
       color: 'text-red-600 bg-red-100',
       permission: 'delete',
-      available: selectedItems.length > 0
-    }
+      available: selectedItems.length > 0,
+    },
   ];
 
   const canPerformOperation = (operation: any) => {
@@ -96,7 +108,11 @@ export default function BulkOperationsModal({
       case 'admin':
         return user?.role === 'super_admin' || user?.role === 'admin';
       case 'edit':
-        return user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'service_provider';
+        return (
+          user?.role === 'super_admin' ||
+          user?.role === 'makerspace_admin' ||
+          user?.role === 'service_provider'
+        );
       case 'delete':
         return user?.role === 'super_admin' || user?.role === 'makerspace_admin';
       case 'view':
@@ -107,9 +123,9 @@ export default function BulkOperationsModal({
 
   const handleBulkUpdate = () => {
     const updates = Object.fromEntries(
-      Object.entries(bulkUpdates).filter(([_, value]) => value !== '')
+      Object.entries(bulkUpdates).filter(([_, value]) => value !== ''),
     );
-    
+
     if (Object.keys(updates).length === 0) {
       alert('Please select at least one field to update');
       return;
@@ -122,17 +138,17 @@ export default function BulkOperationsModal({
 
   const handleGenerateQR = () => {
     // Generate QR codes for all selected items
-    const qrData = selectedItems.map(item => ({
+    const qrData = selectedItems.map((item) => ({
       id: item.id,
       name: item.name,
       code: item.productCode || `INTERNAL-${item.id}`,
       location: item.location,
-      category: item.category
+      category: item.category,
     }));
 
     // In a real implementation, this would generate a PDF with QR codes
     console.log('Generating QR codes for:', qrData);
-    
+
     // Mock QR code generation
     const qrWindow = window.open('', '_blank');
     qrWindow?.document.write(`
@@ -153,7 +169,9 @@ export default function BulkOperationsModal({
           <h1>MakrCave Inventory QR Codes</h1>
           <p class="no-print">Generated on ${new Date().toLocaleDateString()} for ${selectedItems.length} items</p>
           <div class="qr-grid">
-            ${qrData.map(item => `
+            ${qrData
+              .map(
+                (item) => `
               <div class="qr-item">
                 <div class="qr-code">${item.code}</div>
                 <div class="item-name">${item.name}</div>
@@ -163,7 +181,9 @@ export default function BulkOperationsModal({
                   ID: ${item.id}
                 </div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join('')}
           </div>
           <script>
             window.onload = function() {
@@ -181,12 +201,23 @@ export default function BulkOperationsModal({
 
   const handleExportData = () => {
     const csvHeaders = [
-      'ID', 'Name', 'Category', 'Subcategory', 'Quantity', 'Unit', 
-      'Min Threshold', 'Location', 'Status', 'Supplier Type', 
-      'Product Code', 'Price', 'Supplier', 'Description'
+      'ID',
+      'Name',
+      'Category',
+      'Subcategory',
+      'Quantity',
+      'Unit',
+      'Min Threshold',
+      'Location',
+      'Status',
+      'Supplier Type',
+      'Product Code',
+      'Price',
+      'Supplier',
+      'Description',
     ];
 
-    const csvData = selectedItems.map(item => [
+    const csvData = selectedItems.map((item) => [
       item.id,
       item.name,
       item.category,
@@ -200,11 +231,11 @@ export default function BulkOperationsModal({
       item.productCode || '',
       item.price || '',
       item.supplier || '',
-      item.description || ''
+      item.description || '',
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
-      .map(row => row.map(field => `"${field}"`).join(','))
+      .map((row) => row.map((field) => `"${field}"`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -233,7 +264,7 @@ export default function BulkOperationsModal({
                 <label className="block text-sm font-medium mb-2">Status</label>
                 <select
                   value={bulkUpdates.status}
-                  onChange={(e) => setBulkUpdates({...bulkUpdates, status: e.target.value})}
+                  onChange={(e) => setBulkUpdates({ ...bulkUpdates, status: e.target.value })}
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal"
                 >
                   <option value="">-- No Change --</option>
@@ -249,7 +280,9 @@ export default function BulkOperationsModal({
                 <label className="block text-sm font-medium mb-2">Access Level</label>
                 <select
                   value={bulkUpdates.restrictedAccessLevel}
-                  onChange={(e) => setBulkUpdates({...bulkUpdates, restrictedAccessLevel: e.target.value})}
+                  onChange={(e) =>
+                    setBulkUpdates({ ...bulkUpdates, restrictedAccessLevel: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal"
                 >
                   <option value="">-- No Change --</option>
@@ -264,7 +297,7 @@ export default function BulkOperationsModal({
                 <input
                   type="text"
                   value={bulkUpdates.location}
-                  onChange={(e) => setBulkUpdates({...bulkUpdates, location: e.target.value})}
+                  onChange={(e) => setBulkUpdates({ ...bulkUpdates, location: e.target.value })}
                   placeholder="e.g., Shelf A-"
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal"
                 />
@@ -275,7 +308,7 @@ export default function BulkOperationsModal({
                 <input
                   type="text"
                   value={bulkUpdates.supplier}
-                  onChange={(e) => setBulkUpdates({...bulkUpdates, supplier: e.target.value})}
+                  onChange={(e) => setBulkUpdates({ ...bulkUpdates, supplier: e.target.value })}
                   placeholder="e.g., New Supplier Name"
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal"
                 />
@@ -289,10 +322,7 @@ export default function BulkOperationsModal({
               >
                 Cancel
               </button>
-              <button
-                onClick={handleBulkUpdate}
-                className="flex-1 makrcave-btn-primary"
-              >
+              <button onClick={handleBulkUpdate} className="flex-1 makrcave-btn-primary">
                 <Edit className="w-4 h-4 mr-2" />
                 Update Items
               </button>
@@ -301,22 +331,26 @@ export default function BulkOperationsModal({
         );
 
       case 'bulk_reorder':
-        const reorderableItems = selectedItems.filter(item => 
-          item.supplierType === 'makrx' && item.productCode
+        const reorderableItems = selectedItems.filter(
+          (item) => item.supplierType === 'makrx' && item.productCode,
         );
-        
+
         return (
           <div className="space-y-4">
             <h3 className="font-semibold">Bulk Reorder from MakrX Store</h3>
-            
+
             <div className="bg-makrx-teal/10 p-4 rounded-lg">
               <p className="text-sm mb-3">
-                {reorderableItems.length} of {selectedItems.length} selected items can be reordered from MakrX Store.
+                {reorderableItems.length} of {selectedItems.length} selected items can be reordered
+                from MakrX Store.
               </p>
-              
+
               <div className="space-y-2 max-h-48 overflow-y-auto">
-                {reorderableItems.map(item => (
-                  <div key={item.id} className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded border">
+                {reorderableItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded border"
+                  >
                     <div>
                       <span className="font-medium">{item.name}</span>
                       <span className="text-sm text-muted-foreground ml-2">
@@ -358,16 +392,19 @@ export default function BulkOperationsModal({
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-6 h-6 text-red-500" />
-              <h3 className="font-semibold text-red-800 dark:text-red-200">Delete {selectedItems.length} Items</h3>
+              <h3 className="font-semibold text-red-800 dark:text-red-200">
+                Delete {selectedItems.length} Items
+              </h3>
             </div>
-            
+
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
               <p className="text-sm text-red-800 dark:text-red-200 mb-3">
-                <strong>Warning:</strong> This action cannot be undone. The following items will be permanently deleted:
+                <strong>Warning:</strong> This action cannot be undone. The following items will be
+                permanently deleted:
               </p>
-              
+
               <div className="space-y-1 max-h-32 overflow-y-auto">
-                {selectedItems.map(item => (
+                {selectedItems.map((item) => (
                   <div key={item.id} className="text-sm">
                     • {item.name} ({item.quantity} {item.unit})
                   </div>
@@ -384,8 +421,12 @@ export default function BulkOperationsModal({
               </button>
               <button
                 onClick={() => {
-                  if (confirm(`Are you sure you want to delete ${selectedItems.length} items? This cannot be undone.`)) {
-                    onBulkDelete(selectedItems.map(item => item.id));
+                  if (
+                    confirm(
+                      `Are you sure you want to delete ${selectedItems.length} items? This cannot be undone.`,
+                    )
+                  ) {
+                    onBulkDelete(selectedItems.map((item) => item.id));
                     onClose();
                   }
                 }}
@@ -409,9 +450,7 @@ export default function BulkOperationsModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-card p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">
-            Bulk Operations ({selectedItems.length} items)
-          </h2>
+          <h2 className="text-xl font-semibold">Bulk Operations ({selectedItems.length} items)</h2>
           <button onClick={onClose} className="p-2 hover:bg-accent rounded-lg">
             <X className="w-5 h-5" />
           </button>
@@ -426,11 +465,11 @@ export default function BulkOperationsModal({
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {operations.map(operation => {
+              {operations.map((operation) => {
                 const Icon = operation.icon;
                 const canPerform = canPerformOperation(operation);
                 const isAvailable = operation.available;
-                
+
                 return (
                   <button
                     key={operation.id}
@@ -458,14 +497,10 @@ export default function BulkOperationsModal({
                           {operation.description}
                         </p>
                         {!canPerform && (
-                          <p className="text-xs text-red-600 mt-1">
-                            Insufficient permissions
-                          </p>
+                          <p className="text-xs text-red-600 mt-1">Insufficient permissions</p>
                         )}
                         {!isAvailable && canPerform && (
-                          <p className="text-xs text-amber-600 mt-1">
-                            No eligible items selected
-                          </p>
+                          <p className="text-xs text-amber-600 mt-1">No eligible items selected</p>
                         )}
                       </div>
                     </div>

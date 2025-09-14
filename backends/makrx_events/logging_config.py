@@ -29,4 +29,3 @@ def configure_logging() -> None:
         stream=sys.stdout,
         level=level,
     )
-

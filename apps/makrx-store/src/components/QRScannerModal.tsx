@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Camera, AlertCircle, CheckCircle, Package, Scan } from 'lucide-react';
@@ -19,16 +19,16 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
     try {
       setIsScanning(true);
       setError('');
-      
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-      
+
       // Mock QR detection for demo - replace with actual QR scanner library
       simulateQRDetection();
     } catch (err) {
@@ -41,7 +41,7 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
     setIsScanning(false);
     if (videoRef.current?.srcObject) {
       const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+      tracks.forEach((track) => track.stop());
       videoRef.current.srcObject = null;
     }
   };
@@ -62,13 +62,13 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
             category: 'electronics',
             price: 24.99,
             brand: 'Arduino',
-            model: 'Uno R3'
+            model: 'Uno R3',
           },
           warehouse: true,
           billing: true,
-          inventory: true
+          inventory: true,
         };
-        
+
         setScanResult(mockQRData);
         setIsScanning(false);
         stopScanning();
@@ -111,9 +111,7 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
         {!isScanning && !scanResult && !error && (
           <div className="text-center py-8">
             <Scan className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 mb-4">
-              Scan MakrX QR codes to access product data
-            </p>
+            <p className="text-gray-600 mb-4">Scan MakrX QR codes to access product data</p>
             <button
               onClick={startScanning}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto"
@@ -143,10 +141,7 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
                 <Scan className="h-4 w-4 animate-pulse" />
                 Scanning for QR codes...
               </div>
-              <button
-                onClick={stopScanning}
-                className="mt-3 text-gray-600 hover:text-gray-800"
-              >
+              <button onClick={stopScanning} className="mt-3 text-gray-600 hover:text-gray-800">
                 Stop Scanning
               </button>
             </div>
@@ -178,7 +173,7 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
                 <Package className="h-4 w-4" />
                 Product Information
               </div>
-              
+
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Name:</span>

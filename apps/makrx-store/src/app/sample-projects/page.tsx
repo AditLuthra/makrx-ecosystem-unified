@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   Download,
   Eye,
@@ -22,7 +22,7 @@ import {
   Zap,
   Award,
   TrendingUp,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Project {
   id: string;
@@ -30,7 +30,7 @@ interface Project {
   description: string;
   creator: string;
   category: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   timeToComplete: string;
   likes: number;
   downloads: number;
@@ -44,168 +44,179 @@ interface Project {
 }
 
 export default function SampleProjectsPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("popular");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('popular');
 
   const categories = [
-    "all",
-    "Home & Garden",
-    "Toys & Games",
-    "Electronics",
-    "Art & Design",
-    "Tools & Gadgets",
-    "Fashion & Jewelry",
-    "Educational",
-    "Prototypes",
+    'all',
+    'Home & Garden',
+    'Toys & Games',
+    'Electronics',
+    'Art & Design',
+    'Tools & Gadgets',
+    'Fashion & Jewelry',
+    'Educational',
+    'Prototypes',
   ];
 
   const projects: Project[] = [
     {
-      id: "1",
-      title: "Modular Desk Organizer",
+      id: '1',
+      title: 'Modular Desk Organizer',
       description:
-        "A customizable desk organizer system with interchangeable compartments for pens, papers, and gadgets.",
-      creator: "DesignMaster",
-      category: "Home & Garden",
-      difficulty: "Beginner",
-      timeToComplete: "2-3 hours",
+        'A customizable desk organizer system with interchangeable compartments for pens, papers, and gadgets.',
+      creator: 'DesignMaster',
+      category: 'Home & Garden',
+      difficulty: 'Beginner',
+      timeToComplete: '2-3 hours',
       likes: 1250,
       downloads: 3420,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["functional", "office", "modular", "organizer"],
-      materials: ["PLA", "PETG"],
-      tools: ["3D Printer", "Sandpaper"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['functional', 'office', 'modular', 'organizer'],
+      materials: ['PLA', 'PETG'],
+      tools: ['3D Printer', 'Sandpaper'],
       featured: true,
       tutorial: true,
-      createdAt: "2024-01-15",
+      createdAt: '2024-01-15',
     },
     {
-      id: "2",
-      title: "Articulated Dragon",
+      id: '2',
+      title: 'Articulated Dragon',
       description:
-        "A fully articulated dragon model that moves and poses beautifully. Perfect for decoration or gifts.",
-      creator: "MythMaker",
-      category: "Toys & Games",
-      difficulty: "Advanced",
-      timeToComplete: "8-10 hours",
+        'A fully articulated dragon model that moves and poses beautifully. Perfect for decoration or gifts.',
+      creator: 'MythMaker',
+      category: 'Toys & Games',
+      difficulty: 'Advanced',
+      timeToComplete: '8-10 hours',
       likes: 2840,
       downloads: 5120,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["articulated", "dragon", "decorative", "complex"],
-      materials: ["PLA", "TPU"],
-      tools: ["3D Printer", "Support removal tools"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['articulated', 'dragon', 'decorative', 'complex'],
+      materials: ['PLA', 'TPU'],
+      tools: ['3D Printer', 'Support removal tools'],
       featured: true,
       tutorial: false,
-      createdAt: "2024-01-20",
+      createdAt: '2024-01-20',
     },
     {
-      id: "3",
-      title: "Smart Phone Stand with Wireless Charging",
+      id: '3',
+      title: 'Smart Phone Stand with Wireless Charging',
       description:
-        "An elegant phone stand with built-in wireless charging capability and adjustable viewing angles.",
-      creator: "TechCrafter",
-      category: "Electronics",
-      difficulty: "Intermediate",
-      timeToComplete: "4-5 hours",
+        'An elegant phone stand with built-in wireless charging capability and adjustable viewing angles.',
+      creator: 'TechCrafter',
+      category: 'Electronics',
+      difficulty: 'Intermediate',
+      timeToComplete: '4-5 hours',
       likes: 980,
       downloads: 2340,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["phone", "wireless", "charging", "stand"],
-      materials: ["PETG", "ABS"],
-      tools: ["3D Printer", "Wireless charging coil", "Soldering iron"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['phone', 'wireless', 'charging', 'stand'],
+      materials: ['PETG', 'ABS'],
+      tools: ['3D Printer', 'Wireless charging coil', 'Soldering iron'],
       featured: false,
       tutorial: true,
-      createdAt: "2024-02-01",
+      createdAt: '2024-02-01',
     },
     {
-      id: "4",
-      title: "Geometric Wall Art",
-      description:
-        "Modern geometric wall art pieces that can be arranged in countless patterns.",
-      creator: "ArtisticVision",
-      category: "Art & Design",
-      difficulty: "Beginner",
-      timeToComplete: "1-2 hours",
+      id: '4',
+      title: 'Geometric Wall Art',
+      description: 'Modern geometric wall art pieces that can be arranged in countless patterns.',
+      creator: 'ArtisticVision',
+      category: 'Art & Design',
+      difficulty: 'Beginner',
+      timeToComplete: '1-2 hours',
       likes: 750,
       downloads: 1890,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["wall art", "geometric", "modern", "decorative"],
-      materials: ["PLA", "Wood PLA"],
-      tools: ["3D Printer", "Wall mounting hardware"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['wall art', 'geometric', 'modern', 'decorative'],
+      materials: ['PLA', 'Wood PLA'],
+      tools: ['3D Printer', 'Wall mounting hardware'],
       featured: false,
       tutorial: false,
-      createdAt: "2024-02-10",
+      createdAt: '2024-02-10',
     },
     {
-      id: "5",
-      title: "Multi-tool Key Organizer",
+      id: '5',
+      title: 'Multi-tool Key Organizer',
       description:
-        "Compact key organizer with built-in tools including bottle opener, screwdriver, and ruler.",
-      creator: "UtilityPro",
-      category: "Tools & Gadgets",
-      difficulty: "Intermediate",
-      timeToComplete: "3-4 hours",
+        'Compact key organizer with built-in tools including bottle opener, screwdriver, and ruler.',
+      creator: 'UtilityPro',
+      category: 'Tools & Gadgets',
+      difficulty: 'Intermediate',
+      timeToComplete: '3-4 hours',
       likes: 1450,
       downloads: 2780,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["keys", "tools", "edc", "utility"],
-      materials: ["PETG", "TPU"],
-      tools: ["3D Printer", "Metal inserts", "Assembly tools"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['keys', 'tools', 'edc', 'utility'],
+      materials: ['PETG', 'TPU'],
+      tools: ['3D Printer', 'Metal inserts', 'Assembly tools'],
       featured: true,
       tutorial: true,
-      createdAt: "2024-02-15",
+      createdAt: '2024-02-15',
     },
     {
-      id: "6",
-      title: "Customizable Jewelry Box",
-      description:
-        "Elegant jewelry box with customizable compartments and soft-close hinges.",
-      creator: "JewelCraft",
-      category: "Fashion & Jewelry",
-      difficulty: "Advanced",
-      timeToComplete: "6-8 hours",
+      id: '6',
+      title: 'Customizable Jewelry Box',
+      description: 'Elegant jewelry box with customizable compartments and soft-close hinges.',
+      creator: 'JewelCraft',
+      category: 'Fashion & Jewelry',
+      difficulty: 'Advanced',
+      timeToComplete: '6-8 hours',
       likes: 890,
       downloads: 1560,
-      images: ["https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project", "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project"],
-      tags: ["jewelry", "box", "storage", "elegant"],
-      materials: ["Wood PLA", "Silk PLA"],
-      tools: ["3D Printer", "Hinges", "Felt lining"],
+      images: [
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+        'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Project',
+      ],
+      tags: ['jewelry', 'box', 'storage', 'elegant'],
+      materials: ['Wood PLA', 'Silk PLA'],
+      tools: ['3D Printer', 'Hinges', 'Felt lining'],
       featured: false,
       tutorial: true,
-      createdAt: "2024-02-20",
+      createdAt: '2024-02-20',
     },
   ];
 
   const filteredProjects = projects.filter((project) => {
-    const matchesCategory =
-      selectedCategory === "all" || project.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory;
     const matchesDifficulty =
-      selectedDifficulty === "all" || project.difficulty === selectedDifficulty;
+      selectedDifficulty === 'all' || project.difficulty === selectedDifficulty;
     const matchesSearch =
-      searchQuery === "" ||
+      searchQuery === '' ||
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.tags.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      project.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesCategory && matchesDifficulty && matchesSearch;
   });
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     switch (sortBy) {
-      case "popular":
+      case 'popular':
         return b.likes - a.likes;
-      case "downloads":
+      case 'downloads':
         return b.downloads - a.downloads;
-      case "newest":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      case "title":
+      case 'newest':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'title':
         return a.title.localeCompare(b.title);
       default:
         return 0;
@@ -214,14 +225,14 @@ export default function SampleProjectsPage() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Beginner":
-        return "bg-green-100 text-green-800";
-      case "Intermediate":
-        return "bg-yellow-100 text-yellow-800";
-      case "Advanced":
-        return "bg-red-100 text-red-800";
+      case 'Beginner':
+        return 'bg-green-100 text-green-800';
+      case 'Intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Advanced':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -230,13 +241,10 @@ export default function SampleProjectsPage() {
       {/* Header */}
       <section className="bg-gradient-to-br from-purple-50 to-indigo-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Sample Projects
-          </h1>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">Sample Projects</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Discover amazing 3D printing projects created by our community.
-            Download models, follow tutorials, and get inspired for your next
-            creation.
+            Discover amazing 3D printing projects created by our community. Download models, follow
+            tutorials, and get inspired for your next creation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -304,9 +312,7 @@ export default function SampleProjectsPage() {
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                       {project.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {project.description}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{project.description}</p>
                     <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                       <span className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
@@ -357,14 +363,14 @@ export default function SampleProjectsPage() {
             <div className="flex items-center space-x-4">
               <div className="flex bg-white rounded-lg p-1 border border-gray-200">
                 <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded ${viewMode === "grid" ? "bg-purple-100 text-purple-600" : "text-gray-600 hover:bg-gray-100"}`}
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded ${viewMode === 'grid' ? 'bg-purple-100 text-purple-600' : 'text-gray-600 hover:bg-gray-100'}`}
                 >
                   <Grid className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 rounded ${viewMode === "list" ? "bg-purple-100 text-purple-600" : "text-gray-600 hover:bg-gray-100"}`}
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded ${viewMode === 'list' ? 'bg-purple-100 text-purple-600' : 'text-gray-600 hover:bg-gray-100'}`}
                 >
                   <List className="h-4 w-4" />
                 </button>
@@ -394,7 +400,7 @@ export default function SampleProjectsPage() {
             >
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category === "all" ? "All Categories" : category}
+                  {category === 'all' ? 'All Categories' : category}
                 </option>
               ))}
             </select>
@@ -425,7 +431,7 @@ export default function SampleProjectsPage() {
           </div>
 
           {/* Projects Grid/List */}
-          {viewMode === "grid" ? (
+          {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedProjects.map((project) => (
                 <div
@@ -459,9 +465,7 @@ export default function SampleProjectsPage() {
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                       {project.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {project.description}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{project.description}</p>
                     <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                       <span className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
@@ -526,9 +530,7 @@ export default function SampleProjectsPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-gray-600 mb-3 line-clamp-2">
-                            {project.description}
-                          </p>
+                          <p className="text-gray-600 mb-3 line-clamp-2">{project.description}</p>
                           <div className="flex items-center space-x-6 text-sm text-gray-500">
                             <span className="flex items-center">
                               <User className="h-4 w-4 mr-1" />
@@ -580,12 +582,8 @@ export default function SampleProjectsPage() {
           {sortedProjects.length === 0 && (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No projects found
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Try adjusting your search or filter criteria.
-              </p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
+              <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria.</p>
               <Link
                 href="/upload"
                 className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
@@ -600,9 +598,7 @@ export default function SampleProjectsPage() {
       {/* Call to Action */}
       <section className="py-16 bg-gradient-to-r from-purple-600 to-indigo-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Share Your Creations
-          </h2>
+          <h2 className="text-3xl font-bold text-white mb-4">Share Your Creations</h2>
           <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
             Join our community of makers and inspire others with your projects
           </p>

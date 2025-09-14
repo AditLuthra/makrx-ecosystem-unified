@@ -18,14 +18,18 @@ if config.config_file_name is not None:
 
 # Patch sys.path to allow import from parent directory
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
 from base import Base  # noqa: E402
-# Ensure models are imported so metadata includes all tables for autogenerate
 import models.commerce  # noqa: F401
 import models.services  # noqa: F401
 import models.admin  # noqa: F401
 import models.reviews  # noqa: F401
 import models.subscriptions  # noqa: F401
+import models.providers  # noqa: F401
+
 target_metadata = Base.metadata
 
 

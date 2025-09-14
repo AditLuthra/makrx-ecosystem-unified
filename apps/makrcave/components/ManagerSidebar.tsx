@@ -22,7 +22,7 @@ import {
   BookOpen,
   Shield,
   MessageSquare,
-  Zap
+  Zap,
 } from 'lucide-react';
 
 export default function ManagerSidebar() {
@@ -31,9 +31,8 @@ export default function ManagerSidebar() {
   const location = useLocation();
 
   // Find the makerspace this manager is assigned to
-  const managedMakerspace = allMakerspaces.find(ms =>
-    user?.assignedMakerspaces?.includes(ms.id)
-  ) || currentMakerspace;
+  const managedMakerspace =
+    allMakerspaces.find((ms) => user?.assignedMakerspaces?.includes(ms.id)) || currentMakerspace;
 
   const isActive = (path: string) => location.pathname.startsWith(path);
 
@@ -42,92 +41,92 @@ export default function ManagerSidebar() {
       name: 'Dashboard',
       href: '/portal/dashboard',
       icon: LayoutDashboard,
-      active: isActive('/portal/dashboard')
+      active: isActive('/portal/dashboard'),
     },
     {
       name: 'Inventory',
       href: '/portal/inventory',
       icon: Package,
-      active: isActive('/portal/inventory')
+      active: isActive('/portal/inventory'),
     },
     {
       name: 'Smart Inventory',
       href: '/portal/smart-inventory',
       icon: Package,
-      active: isActive('/portal/smart-inventory')
+      active: isActive('/portal/smart-inventory'),
     },
     {
       name: 'Equipment',
       href: '/portal/equipment',
       icon: Wrench,
-      active: isActive('/portal/equipment')
+      active: isActive('/portal/equipment'),
     },
     {
       name: 'Projects',
       href: '/portal/projects',
       icon: FolderOpen,
-      active: isActive('/portal/projects')
+      active: isActive('/portal/projects'),
     },
     {
       name: 'Project Showcase',
       href: '/portal/showcase',
       icon: Sparkles,
-      active: isActive('/portal/showcase')
+      active: isActive('/portal/showcase'),
     },
     {
       name: 'Reservations',
       href: '/portal/reservations',
       icon: Calendar,
-      active: isActive('/portal/reservations')
+      active: isActive('/portal/reservations'),
     },
     {
       name: 'Maintenance',
       href: '/portal/maintenance',
       icon: Settings,
-      active: isActive('/portal/maintenance')
+      active: isActive('/portal/maintenance'),
     },
     {
       name: 'Advanced Maintenance',
       href: '/portal/advanced-maintenance',
       icon: Shield,
-      active: isActive('/portal/advanced-maintenance')
+      active: isActive('/portal/advanced-maintenance'),
     },
     {
       name: 'Analytics & Reports',
       href: '/portal/analytics',
       icon: BarChart3,
-      active: isActive('/portal/analytics')
+      active: isActive('/portal/analytics'),
     },
     {
       name: 'Capacity Planning',
       href: '/portal/capacity-planning',
       icon: TrendingUp,
-      active: isActive('/portal/capacity-planning')
+      active: isActive('/portal/capacity-planning'),
     },
     {
       name: 'Learning Center',
       href: '/portal/learning',
       icon: BookOpen,
-      active: isActive('/portal/learning')
+      active: isActive('/portal/learning'),
     },
     {
       name: 'Community',
       href: '/portal/community',
       icon: MessageSquare,
-      active: isActive('/portal/community')
+      active: isActive('/portal/community'),
     },
     {
       name: 'Integrations',
       href: '/portal/integrations',
       icon: Zap,
-      active: isActive('/portal/integrations')
+      active: isActive('/portal/integrations'),
     },
     {
       name: 'Notifications Center',
       href: '/portal/notifications',
       icon: Bell,
-      active: isActive('/portal/notifications')
-    }
+      active: isActive('/portal/notifications'),
+    },
   ];
 
   const managementNavigation = [
@@ -135,27 +134,27 @@ export default function ManagerSidebar() {
       name: 'Member Management',
       href: '/portal/members',
       icon: Users,
-      active: isActive('/portal/members')
+      active: isActive('/portal/members'),
     },
     {
       name: 'Skill Management',
       href: '/portal/skills',
       icon: GraduationCap,
-      active: isActive('/portal/skills')
+      active: isActive('/portal/skills'),
     },
     {
       name: 'Billing & Payments',
       href: '/portal/billing',
       icon: DollarSign,
-      active: isActive('/portal/billing')
+      active: isActive('/portal/billing'),
     },
 
     {
       name: 'Makerspace Settings',
       href: '/portal/settings',
       icon: Settings,
-      active: isActive('/portal/settings')
-    }
+      active: isActive('/portal/settings'),
+    },
   ];
 
   return (

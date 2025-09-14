@@ -7,9 +7,16 @@ class Settings(BaseSettings):
     """Configuration for MakrCave backend (unified)."""
 
     # Store integration
-    STORE_API_URL: str = Field("http://localhost:8000", description="Store backend URL")
-    STORE_API_KEY: str = Field("cave-to-store-api-key", description="Service-to-service auth key")
-    SERVICE_JWT: str = Field(default_factory=lambda: secrets.token_urlsafe(32), description="JWT for service auth")
+    STORE_API_URL: str = Field(
+        "http://localhost:8000", description="Store backend URL"
+    )
+    STORE_API_KEY: str = Field(
+        "cave-to-store-api-key", description="Service-to-service auth key"
+    )
+    SERVICE_JWT: str = Field(
+        default_factory=lambda: secrets.token_urlsafe(32),
+        description="JWT for service auth",
+    )
 
     # Service job processing
     AUTO_ASSIGN_JOBS: bool = True
@@ -22,4 +29,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

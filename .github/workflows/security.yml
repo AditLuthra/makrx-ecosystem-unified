@@ -2,12 +2,12 @@ name: Security Scan
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
     # Run security scans daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
 
 jobs:
   # Dependency vulnerability scanning
@@ -21,8 +21,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -63,7 +63,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [gateway-frontend, gateway-frontend-hacker, makrcave, makrx-store, makrx-events]
+        image:
+          [
+            gateway-frontend,
+            gateway-frontend-hacker,
+            makrcave,
+            makrx-store,
+            makrx-events,
+          ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,15 +87,15 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ matrix.image }}:test'
-          format: 'sarif'
-          output: 'trivy-${{ matrix.image }}.sarif'
+          image-ref: "${{ matrix.image }}:test"
+          format: "sarif"
+          output: "trivy-${{ matrix.image }}.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
-          sarif_file: 'trivy-${{ matrix.image }}.sarif'
+          sarif_file: "trivy-${{ matrix.image }}.sarif"
 
   # Infrastructure as Code security scanning
   iac-scan:
@@ -148,8 +155,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -171,8 +178,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -199,28 +206,28 @@ jobs:
       - name: Check for security configurations
         run: |
           echo "🔍 Checking security configurations..."
-          
+
           # Check for security headers in Next.js config
           if find apps/ -name "next.config.js" -o -name "next.config.mjs" | xargs grep -l "headers" > /dev/null; then
             echo "✅ Security headers found in Next.js config"
           else
             echo "⚠️ No security headers found in Next.js config"
           fi
-          
+
           # Check for CSP (Content Security Policy)
           if find . -name "*.js" -o -name "*.ts" -o -name "*.json" | xargs grep -l "Content-Security-Policy" > /dev/null; then
             echo "✅ Content Security Policy found"
           else
             echo "⚠️ No Content Security Policy found"
           fi
-          
+
           # Check for HTTPS redirect
           if find . -name "*.js" -o -name "*.ts" | xargs grep -l "https" > /dev/null; then
             echo "✅ HTTPS configuration found"
           else
             echo "⚠️ No HTTPS configuration found"
           fi
-          
+
           # Check for secure cookies
           if find . -name "*.js" -o -name "*.ts" | xargs grep -l "secure.*cookie\|httpOnly" > /dev/null; then
             echo "✅ Secure cookie configuration found"
@@ -247,7 +254,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -255,8 +262,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies and start application
         run: |
@@ -269,15 +276,23 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.7.0
         with:
-          target: 'http://localhost:3000'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
+          target: "http://localhost:3000"
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
 
   # Generate security report
   security-report:
     name: Generate Security Report
     runs-on: ubuntu-latest
-    needs: [dependency-scan, secret-scan, container-scan, iac-scan, sast-scan, license-scan]
+    needs:
+      [
+        dependency-scan,
+        secret-scan,
+        container-scan,
+        iac-scan,
+        sast-scan,
+        license-scan,
+      ]
     if: always()
     steps:
       - name: Generate security summary

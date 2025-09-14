@@ -71,13 +71,15 @@ class EmailService {
     }
   }
 
-  async queueEmail(emailData: EmailData & { 
-    eventId?: string;
-    userId?: string;
-    templateId?: string;
-    priority?: number;
-    scheduledFor?: Date;
-  }): Promise<string> {
+  async queueEmail(
+    emailData: EmailData & {
+      eventId?: string;
+      userId?: string;
+      templateId?: string;
+      priority?: number;
+      scheduledFor?: Date;
+    },
+  ): Promise<string> {
     try {
       const [queuedEmail] = await db
         .insert(emailQueue)
@@ -156,7 +158,7 @@ class EmailService {
     userName: string,
     eventTitle: string,
     eventDate: string,
-    registrationDetails: any
+    registrationDetails: any,
   ): Promise<boolean> {
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -196,7 +198,7 @@ class EmailService {
     userName: string,
     eventTitle: string,
     eventDate: string,
-    hoursUntilEvent: number
+    hoursUntilEvent: number,
   ): Promise<boolean> {
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -234,7 +236,7 @@ class EmailService {
     subject: string,
     htmlContent: string,
     textContent?: string,
-    eventId?: string
+    eventId?: string,
   ): Promise<{ sent: number; failed: number }> {
     let sent = 0;
     let failed = 0;
@@ -242,7 +244,7 @@ class EmailService {
     // Process in batches of 50 to avoid overwhelming the email server
     const batchSize = 50;
     const batches = [];
-    
+
     for (let i = 0; i < recipients.length; i += batchSize) {
       batches.push(recipients.slice(i, i + batchSize));
     }
@@ -263,7 +265,7 @@ class EmailService {
       }
 
       // Wait between batches to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     return { sent, failed };
@@ -279,7 +281,10 @@ class EmailService {
     return template;
   }
 
-  async renderTemplate(templateId: string, variables: Record<string, any>): Promise<{
+  async renderTemplate(
+    templateId: string,
+    variables: Record<string, any>,
+  ): Promise<{
     subject: string;
     html: string;
     text: string;

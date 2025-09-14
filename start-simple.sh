@@ -13,7 +13,7 @@ NC='\033[0m'
 
 # Load environment variables
 if [ -f .env ]; then
-    source .env
+	source .env
 fi
 
 # Create logs directory
@@ -32,16 +32,16 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep makrx
 
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
-    echo -e "${BLUE}📦 Installing dependencies...${NC}"
-    npm install --silent
+	echo -e "${BLUE}📦 Installing dependencies...${NC}"
+	npm install --silent
 fi
 
 # Array of apps to start
 declare -A APPS
-APPS[gateway-frontend]=3000
+APPS[gateway - frontend]=3000
 APPS[makrcave]=3002
-APPS[makrx-store]=3003
-APPS[makrx-events]=3004
+APPS[makrx - store]=3003
+APPS[makrx - events]=3004
 
 # Start applications
 echo -e "${BLUE}🚀 Starting applications...${NC}"
@@ -49,25 +49,25 @@ echo -e "${BLUE}🚀 Starting applications...${NC}"
 PIDS=()
 
 for app in "${!APPS[@]}"; do
-    port=${APPS[$app]}
-    
-    if [ -d "apps/$app" ]; then
-        echo -e "${GREEN}   Starting $app on port $port...${NC}"
-        cd "apps/$app"
-        
-        # Start in background
-        PORT=$port npm run dev > "../../logs/${app}.log" 2>&1 &
-        pid=$!
-        PIDS+=($pid)
-        
-        # Store PID for cleanup
-        echo $pid > "../../.${app}.pid"
-        
-        cd ../..
-        sleep 2
-    else
-        echo -e "${YELLOW}   Skipping $app (not found)${NC}"
-    fi
+	port=${APPS[$app]}
+
+	if [ -d "apps/$app" ]; then
+		echo -e "${GREEN}   Starting $app on port $port...${NC}"
+		cd "apps/$app"
+
+		# Start in background
+		PORT=$port npm run dev >"../../logs/${app}.log" 2>&1 &
+		pid=$!
+		PIDS+=($pid)
+
+		# Store PID for cleanup
+		echo $pid >"../../.${app}.pid"
+
+		cd ../..
+		sleep 2
+	else
+		echo -e "${YELLOW}   Skipping $app (not found)${NC}"
+	fi
 done
 
 echo ""
@@ -95,27 +95,27 @@ echo "============================="
 
 # Function to cleanup on exit
 cleanup() {
-    echo ""
-    echo -e "${YELLOW}🛑 Shutting down MakrX Ecosystem...${NC}"
-    
-    # Kill application processes
-    for app in "${!APPS[@]}"; do
-        if [ -f ".${app}.pid" ]; then
-            pid=$(cat ".${app}.pid")
-            if kill -0 $pid 2>/dev/null; then
-                echo -e "${BLUE}   Stopping $app...${NC}"
-                kill $pid
-            fi
-            rm -f ".${app}.pid"
-        fi
-    done
-    
-    # Stop Docker services
-    echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
-    docker-compose down
-    
-    echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
-    exit 0
+	echo ""
+	echo -e "${YELLOW}🛑 Shutting down MakrX Ecosystem...${NC}"
+
+	# Kill application processes
+	for app in "${!APPS[@]}"; do
+		if [ -f ".${app}.pid" ]; then
+			pid=$(cat ".${app}.pid")
+			if kill -0 $pid 2>/dev/null; then
+				echo -e "${BLUE}   Stopping $app...${NC}"
+				kill $pid
+			fi
+			rm -f ".${app}.pid"
+		fi
+	done
+
+	# Stop Docker services
+	echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
+	docker-compose down
+
+	echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
+	exit 0
 }
 
 # Set up signal handlers

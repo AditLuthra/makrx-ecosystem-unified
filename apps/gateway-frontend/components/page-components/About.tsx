@@ -2,11 +2,26 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  Users, Target, Award, Heart, Globe, Zap, Shield, 
-  TrendingUp, Building2, ShoppingCart, GraduationCap,
-  ArrowRight, Star, CheckCircle, Lightbulb, Rocket,
-  MapPin, Calendar, ExternalLink
+import {
+  Users,
+  Target,
+  Award,
+  Heart,
+  Globe,
+  Zap,
+  Shield,
+  TrendingUp,
+  Building2,
+  ShoppingCart,
+  GraduationCap,
+  ArrowRight,
+  Star,
+  CheckCircle,
+  Lightbulb,
+  Rocket,
+  MapPin,
+  Calendar,
+  ExternalLink,
 } from 'lucide-react';
 
 interface ValueCardProps {
@@ -71,9 +86,12 @@ export default function About() {
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-to-br from-makrx-blue via-makrx-blue/90 to-purple-900 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
@@ -92,8 +110,9 @@ export default function About() {
           </h1>
 
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
-            We&apos;re on a mission to democratize innovation by making world-class fabrication tools, 
-            learning resources, and collaborative spaces accessible to every creator in India.
+            We&apos;re on a mission to democratize innovation by making world-class fabrication
+            tools, learning resources, and collaborative spaces accessible to every creator in
+            India.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -129,20 +148,24 @@ export default function About() {
             <div>
               <div className="bg-makrx-blue/5 dark:bg-makrx-blue/10 rounded-3xl p-8 mb-8">
                 <Target className="w-12 h-12 text-makrx-blue mb-6" />
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Mission</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Our Mission
+                </h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  To democratize access to digital fabrication tools and knowledge, 
-                  enabling creators across India to turn their ideas into reality through 
-                  our network of makerspaces, educational resources, and collaborative community.
+                  To democratize access to digital fabrication tools and knowledge, enabling
+                  creators across India to turn their ideas into reality through our network of
+                  makerspaces, educational resources, and collaborative community.
                 </p>
               </div>
 
               <div className="bg-makrx-yellow/5 dark:bg-makrx-yellow/10 rounded-3xl p-8">
                 <Lightbulb className="w-12 h-12 text-makrx-yellow mb-6" />
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Vision</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Our Vision
+                </h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  A future where geographical boundaries don&apos;t limit innovation potential. 
-                  Where every student, entrepreneur, and creator has access to world-class 
+                  A future where geographical boundaries don&apos;t limit innovation potential.
+                  Where every student, entrepreneur, and creator has access to world-class
                   fabrication facilities and a supportive community to bring their visions to life.
                 </p>
               </div>
@@ -281,9 +304,7 @@ export default function About() {
       {/* Impact & Numbers */}
       <section className="py-24 bg-makrx-blue">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Our Impact
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Our Impact</h2>
           <p className="text-xl text-white/90 mb-16 max-w-3xl mx-auto">
             Measurable results from our commitment to the maker community
           </p>
@@ -332,8 +353,8 @@ export default function About() {
             Join the Revolution
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-12">
-            Be part of India&apos;s fastest-growing maker community. Start creating, learning, 
-            and innovating with like-minded individuals across the country.
+            Be part of India&apos;s fastest-growing maker community. Start creating, learning, and
+            innovating with like-minded individuals across the country.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

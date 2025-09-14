@@ -1,14 +1,10 @@
-'use client';
+import React from 'react';
 
-import dynamicImport from 'next/dynamic';
-
-export const dynamic = 'force-dynamic';
-
-const Status = dynamicImport(() => import('../../components/page-components/PlaceholderPage').then(mod => ({ default: mod.Status })), {
-  ssr: false,
-  loading: () => <div className="min-h-screen py-20 flex items-center justify-center">Loading...</div>
-});
-
-export default function StatusPage() {
-  return <Status />;
+export default function ComingSoonPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-4xl font-bold">Coming Soon!</h1>
+      <p className="mt-3 text-xl">We're working hard to bring you this page.</p>
+    </div>
+  );
 }

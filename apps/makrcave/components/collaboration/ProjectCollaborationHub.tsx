@@ -4,13 +4,13 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { 
-  Users, 
-  MessageCircle, 
-  Video, 
-  Share2, 
-  Eye, 
-  Edit3, 
+import {
+  Users,
+  MessageCircle,
+  Video,
+  Share2,
+  Eye,
+  Edit3,
   Activity,
   MousePointer2,
   Clock,
@@ -25,7 +25,7 @@ import {
   PinOff,
   Coffee,
   Lightbulb,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
 import { useAuthHeaders } from '@makrx/auth';
@@ -62,7 +62,7 @@ interface ProjectCollaborationHubProps {
 const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
   projectId,
   isVisible,
-  onToggle
+  onToggle,
 }) => {
   const { user } = useAuth();
   const { addEventListener, isConnected } = useRealTimeUpdates();
@@ -101,17 +101,17 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
             message: event.payload.message,
             timestamp: new Date(event.payload.timestamp),
             type: event.payload.type || 'message',
-            metadata: event.payload.metadata
+            metadata: event.payload.metadata,
           };
-          setMessages(prev => [...prev, newMessage]);
+          setMessages((prev) => [...prev, newMessage]);
         }
       }),
 
       // User presence updates
       addEventListener('collaboration.presence', (event) => {
         if (event.payload.project_id === projectId) {
-          setActiveCollaborators(prev => {
-            const updated = prev.filter(c => c.user_id !== event.payload.user_id);
+          setActiveCollaborators((prev) => {
+            const updated = prev.filter((c) => c.user_id !== event.payload.user_id);
             if (event.payload.status !== 'offline') {
               updated.push({
                 user_id: event.payload.user_id,
@@ -121,7 +121,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
                 current_view: event.payload.current_view || 'overview',
                 status: event.payload.status,
                 cursor_position: event.payload.cursor_position,
-                current_editing: event.payload.current_editing
+                current_editing: event.payload.current_editing,
               });
             }
             return updated;
@@ -132,12 +132,12 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       // Cursor tracking
       addEventListener('collaboration.cursor', (event) => {
         if (event.payload.project_id === projectId && event.payload.user_id !== user?.id) {
-          setActiveCollaborators(prev => 
-            prev.map(c => 
-              c.user_id === event.payload.user_id 
+          setActiveCollaborators((prev) =>
+            prev.map((c) =>
+              c.user_id === event.payload.user_id
                 ? { ...c, cursor_position: event.payload.position }
-                : c
-            )
+                : c,
+            ),
           );
         }
       }),
@@ -145,19 +145,19 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       // Editing indicators
       addEventListener('collaboration.editing', (event) => {
         if (event.payload.project_id === projectId) {
-          setActiveCollaborators(prev => 
-            prev.map(c => 
-              c.user_id === event.payload.user_id 
+          setActiveCollaborators((prev) =>
+            prev.map((c) =>
+              c.user_id === event.payload.user_id
                 ? { ...c, current_editing: event.payload.element }
-                : c
-            )
+                : c,
+            ),
           );
         }
-      })
+      }),
     ];
 
     return () => {
-      removeListeners.forEach(remove => remove());
+      removeListeners.forEach((remove) => remove());
     };
   }, [isConnected, projectId, addEventListener, user?.id]);
 
@@ -171,7 +171,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       user_name: user.name || user.email,
       message: newMessage.trim(),
       timestamp: new Date().toISOString(),
-      type: 'message'
+      type: 'message',
     };
 
     try {
@@ -179,7 +179,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       await fetch('/api/v1/collaboration/messages', {
         method: 'POST',
         headers,
-        body: JSON.stringify(messageData)
+        body: JSON.stringify(messageData),
       });
 
       setNewMessage('');
@@ -199,7 +199,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       // Start call
       setIsVideoCallActive(true);
       // In real implementation, this would initialize WebRTC
-      
+
       // Send system message about call start
       const systemMessage = {
         project_id: projectId,
@@ -207,7 +207,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
         user_name: user?.name || user?.email || '',
         message: 'started a video call',
         timestamp: new Date().toISOString(),
-        type: 'system'
+        type: 'system',
       };
 
       try {
@@ -215,7 +215,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
         await fetch('/api/v1/collaboration/messages', {
           method: 'POST',
           headers,
-          body: JSON.stringify(systemMessage)
+          body: JSON.stringify(systemMessage),
         });
       } catch (error) {
         console.error('Failed to send system message:', error);
@@ -225,7 +225,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
 
   // Pin/unpin message
   const handlePinMessage = (messageId: string) => {
-    setPinnedMessages(prev => {
+    setPinnedMessages((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(messageId)) {
         newSet.delete(messageId);
@@ -246,7 +246,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       user_name: user.name || user.email,
       message: reaction,
       timestamp: new Date().toISOString(),
-      type: 'system'
+      type: 'system',
     };
 
     try {
@@ -254,7 +254,7 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
       await fetch('/api/v1/collaboration/messages', {
         method: 'POST',
         headers,
-        body: JSON.stringify(reactionMessage)
+        body: JSON.stringify(reactionMessage),
       });
     } catch (error) {
       console.error('Failed to send reaction:', error);
@@ -263,18 +263,25 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-400';
-      case 'idle': return 'bg-yellow-400';
-      case 'away': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'active':
+        return 'bg-green-400';
+      case 'idle':
+        return 'bg-yellow-400';
+      case 'away':
+        return 'bg-gray-400';
+      default:
+        return 'bg-gray-400';
     }
   };
 
   const getMessageIcon = (type: string) => {
     switch (type) {
-      case 'system': return <Activity className="h-3 w-3 text-blue-500" />;
-      case 'annotation': return <Pin className="h-3 w-3 text-purple-500" />;
-      default: return <MessageCircle className="h-3 w-3 text-gray-500" />;
+      case 'system':
+        return <Activity className="h-3 w-3 text-blue-500" />;
+      case 'annotation':
+        return <Pin className="h-3 w-3 text-purple-500" />;
+      default:
+        return <MessageCircle className="h-3 w-3 text-gray-500" />;
     }
   };
 
@@ -318,15 +325,19 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
             </span>
             <div className="flex space-x-1">
               <Button
-                variant={isVideoCallActive ? "destructive" : "outline"}
+                variant={isVideoCallActive ? 'destructive' : 'outline'}
                 size="sm"
                 onClick={handleVideoCall}
               >
-                {isVideoCallActive ? <PhoneOff className="h-3 w-3" /> : <Video className="h-3 w-3" />}
+                {isVideoCallActive ? (
+                  <PhoneOff className="h-3 w-3" />
+                ) : (
+                  <Video className="h-3 w-3" />
+                )}
               </Button>
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-1">
             {/* Current user */}
             <div className="relative">
@@ -335,9 +346,11 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
                   {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </AvatarFallback>
               </Avatar>
-              <div className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white ${getStatusColor(currentUserStatus)}`} />
+              <div
+                className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white ${getStatusColor(currentUserStatus)}`}
+              />
             </div>
-            
+
             {/* Other collaborators */}
             {activeCollaborators.map((collaborator) => (
               <div key={collaborator.user_id} className="relative group">
@@ -346,13 +359,15 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
                     {collaborator.user_name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white ${getStatusColor(collaborator.status)}`} />
-                
+                <div
+                  className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white ${getStatusColor(collaborator.status)}`}
+                />
+
                 {/* Editing indicator */}
                 {collaborator.current_editing && (
                   <Edit3 className="absolute -top-1 -right-1 h-3 w-3 text-blue-500 bg-white rounded-full p-0.5" />
                 )}
-                
+
                 {/* Tooltip */}
                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                   {collaborator.user_name}
@@ -372,14 +387,14 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
               <span className="text-sm font-medium text-blue-800">Video Call Active</span>
               <div className="flex space-x-1">
                 <Button
-                  variant={isMicMuted ? "destructive" : "outline"}
+                  variant={isMicMuted ? 'destructive' : 'outline'}
                   size="sm"
                   onClick={() => setIsMicMuted(!isMicMuted)}
                 >
                   {isMicMuted ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
                 </Button>
                 <Button
-                  variant={isCameraOff ? "destructive" : "outline"}
+                  variant={isCameraOff ? 'destructive' : 'outline'}
                   size="sm"
                   onClick={() => setIsCameraOff(!isCameraOff)}
                 >
@@ -433,19 +448,19 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
           <div className="space-y-2">
             {messages.map((message) => (
               <div key={message.id} className="group">
-                <div className={`flex items-start space-x-2 ${message.user_id === user?.id ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div
+                  className={`flex items-start space-x-2 ${message.user_id === user?.id ? 'flex-row-reverse space-x-reverse' : ''}`}
+                >
                   <Avatar className="h-6 w-6 flex-shrink-0">
                     <AvatarFallback className="text-xs">
                       {message.user_name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  
+
                   <div className={`flex-1 ${message.user_id === user?.id ? 'text-right' : ''}`}>
                     <div className="flex items-center gap-1 mb-1">
                       {getMessageIcon(message.type)}
-                      <span className="text-xs font-medium text-gray-600">
-                        {message.user_name}
-                      </span>
+                      <span className="text-xs font-medium text-gray-600">{message.user_name}</span>
                       <span className="text-xs text-gray-400">
                         {formatDistanceToNow(message.timestamp, { addSuffix: true })}
                       </span>
@@ -462,14 +477,16 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
                         )}
                       </Button>
                     </div>
-                    
-                    <div className={`text-sm bg-white border rounded-lg px-3 py-2 ${
-                      message.user_id === user?.id 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : message.type === 'system'
-                        ? 'bg-gray-100 text-gray-600 border-gray-200 italic'
-                        : 'bg-white border-gray-200'
-                    } ${pinnedMessages.has(message.id) ? 'border-yellow-400 bg-yellow-50' : ''}`}>
+
+                    <div
+                      className={`text-sm bg-white border rounded-lg px-3 py-2 ${
+                        message.user_id === user?.id
+                          ? 'bg-blue-500 text-white border-blue-500'
+                          : message.type === 'system'
+                            ? 'bg-gray-100 text-gray-600 border-gray-200 italic'
+                            : 'bg-white border-gray-200'
+                      } ${pinnedMessages.has(message.id) ? 'border-yellow-400 bg-yellow-50' : ''}`}
+                    >
                       {message.message}
                     </div>
                   </div>
@@ -491,8 +508,8 @@ const ProjectCollaborationHub: React.FC<ProjectCollaborationHubProps> = ({
               className="flex-1"
               disabled={!isConnected}
             />
-            <Button 
-              onClick={handleSendMessage} 
+            <Button
+              onClick={handleSendMessage}
               disabled={!newMessage.trim() || !isConnected}
               size="sm"
             >

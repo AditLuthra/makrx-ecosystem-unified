@@ -21,28 +21,19 @@ interface ProductFormErrors {
   stock?: string;
   sku?: string;
 }
-'use client'
+('use client');
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Layout from '@/components/layout/Layout'
-import { Button } from '@/components/ui/Button'
-import AdminAuth, { isAdminAuthenticated } from '@/components/AdminAuth'
-import { 
-  Save, 
-  ArrowLeft, 
-  Upload, 
-  X,
-  Plus,
-  Minus,
-  Eye,
-  AlertCircle
-} from 'lucide-react'
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Layout from '@/components/layout/Layout';
+import { Button } from '@/components/ui/Button';
+import AdminAuth, { isAdminAuthenticated } from '@/components/AdminAuth';
+import { Save, ArrowLeft, Upload, X, Plus, Minus, Eye, AlertCircle } from 'lucide-react';
 
 export default function AddProductPage() {
-  const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -54,32 +45,35 @@ export default function AddProductPage() {
     brand: '',
     tags: [],
     specifications: [],
-    images: []
-  })
-  const [currentTag, setCurrentTag] = useState<string>('')
-  const [currentSpec, setCurrentSpec] = useState<{ key: string; value: string }>({ key: '', value: '' })
-  const [errors, setErrors] = useState<ProductFormErrors>({})
-  const [isSubmitLoading, setIsSubmitLoading] = useState(false)
+    images: [],
+  });
+  const [currentTag, setCurrentTag] = useState<string>('');
+  const [currentSpec, setCurrentSpec] = useState<{ key: string; value: string }>({
+    key: '',
+    value: '',
+  });
+  const [errors, setErrors] = useState<ProductFormErrors>({});
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   useEffect(() => {
     // Check authentication status on component mount
     const checkAuth = () => {
-      const authenticated = isAdminAuthenticated()
+      const authenticated = isAdminAuthenticated();
       if (!authenticated) {
-        router.push('/admin')
-        return
+        router.push('/admin');
+        return;
       }
-      setIsAuthenticated(authenticated)
-      setIsLoading(false)
-    }
+      setIsAuthenticated(authenticated);
+      setIsLoading(false);
+    };
 
-    checkAuth()
-  }, [router])
+    checkAuth();
+  }, [router]);
 
   const handleAuthenticated = () => {
-    setIsAuthenticated(true)
-    setIsLoading(false)
-  }
+    setIsAuthenticated(true);
+    setIsLoading(false);
+  };
 
   // Show loading state
   if (isLoading) {
@@ -92,12 +86,12 @@ export default function AddProductPage() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   // Show authentication form if not authenticated
   if (!isAuthenticated) {
-    return <AdminAuth onAuthenticated={handleAuthenticated} />
+    return <AdminAuth onAuthenticated={handleAuthenticated} />;
   }
 
   const categories = [
@@ -106,58 +100,60 @@ export default function AddProductPage() {
     { value: 'tools', label: 'Tools & Hardware' },
     { value: 'components', label: 'Components' },
     { value: 'materials', label: 'Materials' },
-    { value: 'kits', label: 'Kits & Bundles' }
-  ]
+    { value: 'kits', label: 'Kits & Bundles' },
+  ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    
+      [name]: value,
+    }));
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const addTag = () => {
     if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, currentTag.trim()]
-      }))
-      setCurrentTag('')
+        tags: [...prev.tags, currentTag.trim()],
+      }));
+      setCurrentTag('');
     }
-  }
+  };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }))
-  }
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
 
   const addSpecification = () => {
     if (currentSpec.key.trim() && currentSpec.value.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        specifications: [...prev.specifications, { ...currentSpec }]
-      }))
-      setCurrentSpec({ key: '', value: '' })
+        specifications: [...prev.specifications, { ...currentSpec }],
+      }));
+      setCurrentSpec({ key: '', value: '' });
     }
-  }
+  };
 
   const removeSpecification = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      specifications: prev.specifications.filter((_, i) => i !== index)
-    }))
-  }
+      specifications: prev.specifications.filter((_, i) => i !== index),
+    }));
+  };
 
   const validateForm = () => {
     const newErrors: ProductFormErrors = {};
@@ -165,42 +161,44 @@ export default function AddProductPage() {
     if (!formData.name.trim()) newErrors.name = 'Product name is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.price || parseFloat(formData.price) <= 0) newErrors.price = 'Valid price is required';
-    if (!formData.stock || parseInt(formData.stock) < 0) newErrors.stock = 'Valid stock quantity is required';
+    if (!formData.price || parseFloat(formData.price) <= 0)
+      newErrors.price = 'Valid price is required';
+    if (!formData.stock || parseInt(formData.stock) < 0)
+      newErrors.stock = 'Valid stock quantity is required';
     if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
+    e.preventDefault();
 
-    setIsSubmitLoading(true)
-    
+    if (!validateForm()) return;
+
+    setIsSubmitLoading(true);
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // In a real app, you would make an API call here
-      console.log('Product data:', formData)
-      
+      console.log('Product data:', formData);
+
       // Redirect to admin portal on success
-      router.push('/admin?success=Product added successfully')
+      router.push('/admin?success=Product added successfully');
     } catch (error) {
-      console.error('Error adding product:', error)
+      console.error('Error adding product:', error);
     } finally {
-      setIsSubmitLoading(false)
+      setIsSubmitLoading(false);
     }
-  }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
+    const files = Array.from(e.target.files || []);
     // In a real app, you would upload these to a cloud storage service
-    console.log('Image files:', files)
-  }
+    console.log('Image files:', files);
+  };
 
   return (
     <Layout>
@@ -210,8 +208,8 @@ export default function AddProductPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => router.back()}
                   className="text-gray-600 hover:text-gray-900"
                 >
@@ -241,7 +239,7 @@ export default function AddProductPage() {
                 {/* Basic Information */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-6">Basic Information</h2>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -275,7 +273,9 @@ export default function AddProductPage() {
                         onChange={handleInputChange}
                         rows={4}
                         className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.description ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                          errors.description
+                            ? 'border-red-300 bg-red-50'
+                            : 'border-gray-300 bg-white'
                         }`}
                         placeholder="Enter product description"
                       />
@@ -297,7 +297,9 @@ export default function AddProductPage() {
                           value={formData.category}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                            errors.category ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                            errors.category
+                              ? 'border-red-300 bg-red-50'
+                              : 'border-gray-300 bg-white'
                           }`}
                         >
                           <option value="">Select a category</option>
@@ -335,14 +337,16 @@ export default function AddProductPage() {
                 {/* Pricing & Inventory */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-6">Pricing & Inventory</h2>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Price *
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           name="price"
@@ -369,7 +373,9 @@ export default function AddProductPage() {
                         Original Price
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           name="originalPrice"
@@ -407,9 +413,7 @@ export default function AddProductPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        SKU *
-                      </label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
                       <input
                         type="text"
                         name="sku"
@@ -433,11 +437,13 @@ export default function AddProductPage() {
                 {/* Product Images */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-6">Product Images</h2>
-                  
+
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Images</h3>
-                    <p className="text-gray-500 mb-4">Drag and drop or click to upload product images</p>
+                    <p className="text-gray-500 mb-4">
+                      Drag and drop or click to upload product images
+                    </p>
                     <input
                       type="file"
                       multiple
@@ -460,7 +466,7 @@ export default function AddProductPage() {
                 {/* Tags */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
-                  
+
                   <div className="space-y-4">
                     <div className="flex gap-2">
                       <input
@@ -471,8 +477,8 @@ export default function AddProductPage() {
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
                         placeholder="Add tag"
                       />
-                      <Button 
-                        type="button" 
+                      <Button
+                        type="button"
                         onClick={addTag}
                         size="sm"
                         className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -480,10 +486,10 @@ export default function AddProductPage() {
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-2">
                       {formData.tags.map((tag, index) => (
-                        <span 
+                        <span
                           key={index}
                           className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
                         >
@@ -504,26 +510,30 @@ export default function AddProductPage() {
                 {/* Specifications */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
-                  
+
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="text"
                         value={currentSpec.key}
-                        onChange={(e) => setCurrentSpec(prev => ({ ...prev, key: e.target.value }))}
+                        onChange={(e) =>
+                          setCurrentSpec((prev) => ({ ...prev, key: e.target.value }))
+                        }
                         className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
                         placeholder="Key"
                       />
                       <input
                         type="text"
                         value={currentSpec.value}
-                        onChange={(e) => setCurrentSpec(prev => ({ ...prev, value: e.target.value }))}
+                        onChange={(e) =>
+                          setCurrentSpec((prev) => ({ ...prev, value: e.target.value }))
+                        }
                         className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
                         placeholder="Value"
                       />
                     </div>
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       onClick={addSpecification}
                       size="sm"
                       variant="outline"
@@ -532,10 +542,13 @@ export default function AddProductPage() {
                       <Plus className="h-4 w-4 mr-2" />
                       Add Specification
                     </Button>
-                    
+
                     <div className="space-y-2">
                       {formData.specifications.map((spec, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
                           <div className="text-sm">
                             <span className="font-medium text-gray-900">{spec.key}:</span>{' '}
                             <span className="text-gray-600">{spec.value}</span>
@@ -571,5 +584,5 @@ export default function AddProductPage() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }

@@ -8,11 +8,11 @@ import { Badge } from './ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
-import { 
-  DollarSign, 
-  Clock, 
-  Shield, 
-  Users, 
+import {
+  DollarSign,
+  Clock,
+  Shield,
+  Users,
   CreditCard,
   AlertCircle,
   CheckCircle,
@@ -22,7 +22,7 @@ import {
   Wallet,
   Crown,
   Lock,
-  Unlock
+  Unlock,
 } from 'lucide-react';
 import { useMakerspace } from '../contexts/MakerspaceContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,7 +32,9 @@ interface EquipmentAccessPricingManagerProps {
   className?: string;
 }
 
-const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps> = ({ className = '' }) => {
+const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps> = ({
+  className = '',
+}) => {
   const { equipment } = useMakerspace();
   const { user } = useAuth();
   const [policies, setPolicies] = useState<EquipmentAccessPolicy[]>([]);
@@ -43,24 +45,31 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
   // Mock data initialization
   const initializePolicies = useCallback(() => {
-    const mockPolicies: EquipmentAccessPolicy[] = equipment.map(eq => ({
+    const mockPolicies: EquipmentAccessPolicy[] = equipment.map((eq) => ({
       id: `policy-${eq.id}`,
       equipment_id: eq.id,
-      access_type: eq.type === 'workstation' ? 'free' : eq.type === 'printer_3d' ? 'subscription_only' : 'pay_per_use',
+      access_type:
+        eq.type === 'workstation'
+          ? 'free'
+          : eq.type === 'printer_3d'
+            ? 'subscription_only'
+            : 'pay_per_use',
       membership_required: eq.type !== 'workstation',
-      price_per_unit: eq.type === 'laser_cutter' ? 150 : eq.type === 'cnc_machine' ? 200 : undefined,
+      price_per_unit:
+        eq.type === 'laser_cutter' ? 150 : eq.type === 'cnc_machine' ? 200 : undefined,
       cost_unit: eq.type === 'laser_cutter' || eq.type === 'cnc_machine' ? 'hour' : undefined,
-      minimum_billing_time: eq.type === 'laser_cutter' ? 15 : eq.type === 'cnc_machine' ? 30 : undefined,
+      minimum_billing_time:
+        eq.type === 'laser_cutter' ? 15 : eq.type === 'cnc_machine' ? 30 : undefined,
       grace_period_minutes: 5,
       max_daily_cap: eq.type === 'laser_cutter' ? 500 : eq.type === 'cnc_machine' ? 800 : undefined,
       overuse_penalty_flat: 50,
       overuse_penalty_percent: 10,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      created_by: user?.id || 'admin'
+      created_by: user?.id || 'admin',
     }));
     setPolicies(mockPolicies);
-    
+
     if (mockPolicies.length > 0) {
       setSelectedEquipment(mockPolicies[0].equipment_id);
       setCurrentPolicy(mockPolicies[0]);
@@ -73,7 +82,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
   useEffect(() => {
     if (selectedEquipment) {
-      const policy = policies.find(p => p.equipment_id === selectedEquipment);
+      const policy = policies.find((p) => p.equipment_id === selectedEquipment);
       setCurrentPolicy(policy || null);
       setHasUnsavedChanges(false);
     }
@@ -81,7 +90,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
   const updatePolicy = (updates: Partial<EquipmentAccessPolicy>) => {
     if (!currentPolicy) return;
-    
+
     const updatedPolicy = { ...currentPolicy, ...updates };
     setCurrentPolicy(updatedPolicy);
     setHasUnsavedChanges(true);
@@ -89,14 +98,14 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
   const savePolicy = async () => {
     if (!currentPolicy) return;
-    
+
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setPolicies(prev => prev.map(p => 
-        p.equipment_id === currentPolicy.equipment_id ? currentPolicy : p
-      ));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setPolicies((prev) =>
+        prev.map((p) => (p.equipment_id === currentPolicy.equipment_id ? currentPolicy : p)),
+      );
       setHasUnsavedChanges(false);
       alert('Access policy saved successfully!');
     } catch (error) {
@@ -111,7 +120,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
     const chargeableMinutes = Math.max(0, durationMinutes - gracePeriod);
     const minimumBilling = currentPolicy.minimum_billing_time || 0;
     const actualChargeableMinutes = Math.max(chargeableMinutes, minimumBilling);
-    
+
     let baseCost = 0;
     if (currentPolicy.cost_unit === 'hour') {
       baseCost = (actualChargeableMinutes / 60) * (currentPolicy.price_per_unit || 0);
@@ -124,11 +133,11 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
       `Grace period: ${gracePeriod} minutes (free)`,
       `Chargeable: ${chargeableMinutes} minutes`,
       `Minimum billing: ${minimumBilling} minutes`,
-      `Rate: ₹${currentPolicy.price_per_unit}/${currentPolicy.cost_unit}`
+      `Rate: ₹${currentPolicy.price_per_unit}/${currentPolicy.cost_unit}`,
     ];
 
     const estimate: CostEstimate = {
-      equipment_name: equipment.find(e => e.id === currentPolicy.equipment_id)?.name || 'Unknown',
+      equipment_name: equipment.find((e) => e.id === currentPolicy.equipment_id)?.name || 'Unknown',
       duration_minutes: durationMinutes,
       base_cost: baseCost,
       grace_period_applied: gracePeriod > 0,
@@ -136,7 +145,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
       currency: 'INR',
       breakdown,
       daily_usage_so_far: 0,
-      daily_cap_reached: false
+      daily_cap_reached: false,
     };
 
     return estimate;
@@ -144,19 +153,27 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
   const getAccessTypeColor = (type: string) => {
     switch (type) {
-      case 'free': return 'bg-green-100 text-green-800 border-green-200';
-      case 'subscription_only': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'pay_per_use': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'free':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'subscription_only':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pay_per_use':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getAccessTypeIcon = (type: string) => {
     switch (type) {
-      case 'free': return <Unlock className="h-4 w-4" />;
-      case 'subscription_only': return <Crown className="h-4 w-4" />;
-      case 'pay_per_use': return <CreditCard className="h-4 w-4" />;
-      default: return <Lock className="h-4 w-4" />;
+      case 'free':
+        return <Unlock className="h-4 w-4" />;
+      case 'subscription_only':
+        return <Crown className="h-4 w-4" />;
+      case 'pay_per_use':
+        return <CreditCard className="h-4 w-4" />;
+      default:
+        return <Lock className="h-4 w-4" />;
     }
   };
 
@@ -213,10 +230,12 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   <SelectValue placeholder="Choose equipment to configure" />
                 </SelectTrigger>
                 <SelectContent>
-                  {equipment.map(eq => (
+                  {equipment.map((eq) => (
                     <SelectItem key={eq.id} value={eq.id}>
                       <div className="flex items-center gap-2">
-                        {getAccessTypeIcon(policies.find(p => p.equipment_id === eq.id)?.access_type || 'free')}
+                        {getAccessTypeIcon(
+                          policies.find((p) => p.equipment_id === eq.id)?.access_type || 'free',
+                        )}
                         {eq.name} ({eq.type.replace('_', ' ')})
                       </div>
                     </SelectItem>
@@ -228,7 +247,9 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
               <Label className="text-sm text-gray-600">Current Access</Label>
               <Badge className={getAccessTypeColor(currentPolicy.access_type)}>
                 {getAccessTypeIcon(currentPolicy.access_type)}
-                <span className="ml-1 capitalize">{currentPolicy.access_type.replace('_', ' ')}</span>
+                <span className="ml-1 capitalize">
+                  {currentPolicy.access_type.replace('_', ' ')}
+                </span>
               </Badge>
             </div>
           </div>
@@ -270,16 +291,20 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                             {type.replace('_', ' ')}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {type === 'free' && 'Any logged-in user can reserve and use without cost'}
-                            {type === 'subscription_only' && 'Only users with active paid subscription can reserve'}
+                            {type === 'free' &&
+                              'Any logged-in user can reserve and use without cost'}
+                            {type === 'subscription_only' &&
+                              'Only users with active paid subscription can reserve'}
                             {type === 'pay_per_use' && 'Users pay based on actual usage time'}
                           </div>
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          currentPolicy.access_type === type
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-gray-300'
-                        }`}>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 ${
+                            currentPolicy.access_type === type
+                              ? 'border-blue-500 bg-blue-500'
+                              : 'border-gray-300'
+                          }`}
+                        >
                           {currentPolicy.access_type === type && (
                             <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
                           )}
@@ -296,7 +321,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   <Label className="font-medium">Membership Required</Label>
                   <p className="text-sm text-gray-600">Require any form of membership to access</p>
                 </div>
-                <Switch 
+                <Switch
                   checked={currentPolicy.membership_required}
                   onCheckedChange={(checked) => updatePolicy({ membership_required: checked })}
                 />
@@ -310,9 +335,11 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label>Cost Unit</Label>
-                      <Select 
+                      <Select
                         value={currentPolicy.cost_unit || 'minute'}
-                        onValueChange={(value: 'minute' | 'hour') => updatePolicy({ cost_unit: value })}
+                        onValueChange={(value: 'minute' | 'hour') =>
+                          updatePolicy({ cost_unit: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -326,11 +353,13 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
                     <div>
                       <Label>Price per {currentPolicy.cost_unit || 'minute'} (₹)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         value={currentPolicy.price_per_unit || 0}
-                        onChange={(e) => updatePolicy({ price_per_unit: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          updatePolicy({ price_per_unit: parseFloat(e.target.value) || 0 })
+                        }
                         placeholder="0.00"
                       />
                     </div>
@@ -339,14 +368,16 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   {/* Billing Rules */}
                   <Separator />
                   <h3 className="text-lg font-semibold">Billing Rules</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label>Minimum Billing Time (minutes)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         value={currentPolicy.minimum_billing_time || 0}
-                        onChange={(e) => updatePolicy({ minimum_billing_time: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          updatePolicy({ minimum_billing_time: parseInt(e.target.value) || 0 })
+                        }
                         placeholder="0"
                       />
                       <p className="text-xs text-gray-500 mt-1">
@@ -356,10 +387,12 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
 
                     <div>
                       <Label>Grace Period (minutes)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         value={currentPolicy.grace_period_minutes || 0}
-                        onChange={(e) => updatePolicy({ grace_period_minutes: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          updatePolicy({ grace_period_minutes: parseInt(e.target.value) || 0 })
+                        }
                         placeholder="0"
                       />
                       <p className="text-xs text-gray-500 mt-1">
@@ -371,37 +404,47 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   {/* Daily Caps and Penalties */}
                   <Separator />
                   <h3 className="text-lg font-semibold">Caps & Penalties</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                       <Label>Max Daily Cap (₹)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         value={currentPolicy.max_daily_cap || ''}
-                        onChange={(e) => updatePolicy({ max_daily_cap: parseFloat(e.target.value) || undefined })}
+                        onChange={(e) =>
+                          updatePolicy({ max_daily_cap: parseFloat(e.target.value) || undefined })
+                        }
                         placeholder="Optional"
                       />
                     </div>
 
                     <div>
                       <Label>Overuse Penalty - Flat (₹)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         value={currentPolicy.overuse_penalty_flat || ''}
-                        onChange={(e) => updatePolicy({ overuse_penalty_flat: parseFloat(e.target.value) || undefined })}
+                        onChange={(e) =>
+                          updatePolicy({
+                            overuse_penalty_flat: parseFloat(e.target.value) || undefined,
+                          })
+                        }
                         placeholder="Optional"
                       />
                     </div>
 
                     <div>
                       <Label>Overuse Penalty - % Extra</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={currentPolicy.overuse_penalty_percent || ''}
-                        onChange={(e) => updatePolicy({ overuse_penalty_percent: parseFloat(e.target.value) || undefined })}
+                        onChange={(e) =>
+                          updatePolicy({
+                            overuse_penalty_percent: parseFloat(e.target.value) || undefined,
+                          })
+                        }
                         placeholder="Optional"
                       />
                     </div>
@@ -413,7 +456,8 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                   <h3 className="text-lg font-semibold mb-2">No Pricing Configuration</h3>
                   <p>
                     {currentPolicy.access_type === 'free' && 'This equipment is free to use'}
-                    {currentPolicy.access_type === 'subscription_only' && 'This equipment is included with membership plans'}
+                    {currentPolicy.access_type === 'subscription_only' &&
+                      'This equipment is included with membership plans'}
                   </p>
                 </div>
               )}
@@ -425,7 +469,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="md:col-span-1">
                     <Label>Duration (minutes)</Label>
-                    <Input 
+                    <Input
                       type="number"
                       placeholder="60"
                       onChange={(e) => {
@@ -479,18 +523,25 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                       <div>
                         <h5 className="font-semibold mb-2">Access Configuration</h5>
                         <div className="space-y-1 text-sm">
-                          <div>Access Type: <Badge className={getAccessTypeColor(currentPolicy.access_type)}>
-                            {currentPolicy.access_type.replace('_', ' ')}
-                          </Badge></div>
-                          <div>Membership Required: {currentPolicy.membership_required ? 'Yes' : 'No'}</div>
+                          <div>
+                            Access Type:{' '}
+                            <Badge className={getAccessTypeColor(currentPolicy.access_type)}>
+                              {currentPolicy.access_type.replace('_', ' ')}
+                            </Badge>
+                          </div>
+                          <div>
+                            Membership Required: {currentPolicy.membership_required ? 'Yes' : 'No'}
+                          </div>
                         </div>
                       </div>
-                      
+
                       {currentPolicy.access_type === 'pay_per_use' && (
                         <div>
                           <h5 className="font-semibold mb-2">Pricing Configuration</h5>
                           <div className="space-y-1 text-sm">
-                            <div>Rate: ₹{currentPolicy.price_per_unit}/{currentPolicy.cost_unit}</div>
+                            <div>
+                              Rate: ₹{currentPolicy.price_per_unit}/{currentPolicy.cost_unit}
+                            </div>
                             <div>Minimum billing: {currentPolicy.minimum_billing_time} minutes</div>
                             <div>Grace period: {currentPolicy.grace_period_minutes} minutes</div>
                             {currentPolicy.max_daily_cap && (

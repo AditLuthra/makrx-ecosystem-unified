@@ -2,6 +2,7 @@
 MakrX Events Backend - FastAPI Application
 Migrated to unified ecosystem (Keycloak, Postgres, Alembic)
 """
+
 import os
 import sys
 import time
@@ -16,13 +17,24 @@ from .logging_config import configure_logging
 
 from backends.makrx_events.database import init_db
 from backends.makrx_events.routes import health, events, auth
-from backends.makrx_events.routes import teams, tournaments, sponsors, sponsors_global, microsites, sub_events, ws
+from backends.makrx_events.routes import (
+    teams,
+    tournaments,
+    sponsors,
+    sponsors_global,
+    microsites,
+    sub_events,
+    ws,
+)
 from backends.makrx_events.middleware.error_handling import (
     ErrorHandlingMiddleware,
     http_exception_handler,
     validation_exception_handler,
 )
-from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
+from fastapi.exceptions import (
+    RequestValidationError,
+    HTTPException as FastAPIHTTPException,
+)
 
 # Configure structured logging
 configure_logging()
@@ -37,6 +49,7 @@ app = FastAPI(
 
 try:
     from prometheus_fastapi_instrumentator import Instrumentator  # type: ignore
+
     Instrumentator().instrument(app).expose(app, include_in_schema=False)
     logger.info("metrics_enabled")
 except Exception as e:
@@ -44,11 +57,14 @@ except Exception as e:
 
 try:
     import sentry_sdk  # type: ignore
+
     dsn = os.getenv("SENTRY_DSN")
     if dsn:
         sentry_sdk.init(
             dsn=dsn,
-            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+            traces_sample_rate=float(
+                os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")
+            ),
             environment=os.getenv("ENVIRONMENT", "development"),
         )
         logger.info("sentry_initialized")
@@ -56,12 +72,14 @@ except Exception as e:
     logger.info(f"sentry_not_enabled: {e}")
 
 from .middleware.security import add_security_middleware
+
 add_security_middleware(app)
 app.add_middleware(ErrorHandlingMiddleware)
 
 # Register exception handlers to ensure standardized envelope for handled errors
 app.add_exception_handler(FastAPIHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
+
 
 @app.middleware("http")
 async def request_middleware(request: Request, call_next):
@@ -79,7 +97,6 @@ async def request_middleware(request: Request, call_next):
     return response
 
 
-
 # Include routers (versioned and legacy for compatibility)
 # Unversioned health for liveness
 app.include_router(health.router, tags=["Health"])  # /health, /readyz
@@ -93,7 +110,9 @@ app.include_router(sponsors.router, prefix="/api/v1", tags=["Sponsors"])
 app.include_router(sponsors_global.router, prefix="/api/v1", tags=["Sponsors"])
 app.include_router(microsites.router, prefix="/api/v1", tags=["Microsites"])
 app.include_router(sub_events.router, prefix="/api/v1", tags=["Microsites"])
-app.include_router(health.router, prefix="/api/v1", tags=["Health"])  # /api/v1/health, /api/v1/readyz
+app.include_router(
+    health.router, prefix="/api/v1", tags=["Health"]
+)  # /api/v1/health, /api/v1/readyz
 
 # Legacy mount at /api for backward compatibility (tests expect /api/health)
 app.include_router(auth.router, prefix="/api", tags=["Auth"])
@@ -104,7 +123,9 @@ app.include_router(sponsors.router, prefix="/api", tags=["Sponsors"])
 app.include_router(sponsors_global.router, prefix="/api", tags=["Sponsors"])
 app.include_router(microsites.router, prefix="/api", tags=["Microsites"])
 app.include_router(sub_events.router, prefix="/api", tags=["Microsites"])
-app.include_router(health.router, prefix="/api", tags=["Health"])  # /api/health, /api/readyz
+app.include_router(
+    health.router, prefix="/api", tags=["Health"]
+)  # /api/health, /api/readyz
 
 # WebSocket (no prefix)
 app.include_router(ws.router)
@@ -131,5 +152,6 @@ def root():
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", "5000"))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

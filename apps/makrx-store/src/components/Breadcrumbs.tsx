@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 interface BreadcrumbItem {
   name: string;
@@ -12,10 +12,7 @@ interface BreadcrumbsProps {
   className?: string;
 }
 
-export default function Breadcrumbs({
-  items,
-  className = "",
-}: BreadcrumbsProps) {
+export default function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
   if (!items || items.length === 0) {
     return null;
   }
@@ -93,16 +90,14 @@ export default function Breadcrumbs({
 }
 
 // Mobile-friendly breadcrumbs that show only parent and current
-export function MobileBreadcrumbs({ items, className = "" }: BreadcrumbsProps) {
+export function MobileBreadcrumbs({ items, className = '' }: BreadcrumbsProps) {
   if (!items || items.length === 0) {
     return null;
   }
 
   // For mobile, show only the parent and current item if there are more than 2 items
   const displayItems =
-    items.length > 2
-      ? [items[items.length - 2], items[items.length - 1]]
-      : items;
+    items.length > 2 ? [items[items.length - 2], items[items.length - 1]] : items;
 
   return (
     <nav className={`flex md:hidden ${className}`} aria-label="Breadcrumb">
@@ -114,12 +109,7 @@ export function MobileBreadcrumbs({ items, className = "" }: BreadcrumbsProps) {
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
               aria-label="Go back"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -135,12 +125,7 @@ export function MobileBreadcrumbs({ items, className = "" }: BreadcrumbsProps) {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </li>
         )}
@@ -196,23 +181,19 @@ export function MobileBreadcrumbs({ items, className = "" }: BreadcrumbsProps) {
 }
 
 // Structured data for SEO
-export function BreadcrumbsStructuredData({
-  items,
-}: {
-  items: BreadcrumbItem[];
-}) {
+export function BreadcrumbsStructuredData({ items }: { items: BreadcrumbItem[] }) {
   if (!items || items.length === 0) {
     return null;
   }
 
   const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
     itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
+      '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `${typeof window !== "undefined" ? window.location.origin : ""}${item.href}`,
+      item: `${typeof window !== 'undefined' ? window.location.origin : ''}${item.href}`,
     })),
   };
 

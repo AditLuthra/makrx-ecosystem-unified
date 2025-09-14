@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { useToast } from '../../hooks/use-toast';
-import { 
+import {
   Upload,
   FileText,
   QrCode,
@@ -20,7 +20,7 @@ import {
   Scan,
   FileSpreadsheet,
   Eye,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 
 interface InventoryItem {
@@ -52,7 +52,7 @@ interface ImportInventoryModalProps {
 const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
   open,
   onOpenChange,
-  onImport
+  onImport,
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -70,13 +70,13 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
   const csvTemplate = [
     'name',
     'sku',
-    'category', 
+    'category',
     'quantity',
     'unit',
     'location',
     'cost',
     'supplier',
-    'description'
+    'description',
   ];
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,22 +90,22 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
   const parseCsvFile = (file: File) => {
     setLoading(true);
     const reader = new FileReader();
-    
+
     reader.onload = (e) => {
       try {
         const text = e.target?.result as string;
         const lines = text.split('\n');
-        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-        
+        const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
+
         const items: InventoryItem[] = [];
         const errors: Array<{ row: number; message: string; data?: any }> = [];
-        
+
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i].trim();
           if (!line) continue;
-          
+
           const values = line.split(',');
-          
+
           try {
             const item: InventoryItem = {
               name: getValue(values, headers, 'name') || '',
@@ -116,15 +116,15 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
               location: getValue(values, headers, 'location') || '',
               cost: parseFloat(getValue(values, headers, 'cost') || '0'),
               supplier: getValue(values, headers, 'supplier') || '',
-              description: getValue(values, headers, 'description') || ''
+              description: getValue(values, headers, 'description') || '',
             };
-            
+
             // Validate required fields
             if (!item.name || !item.sku) {
               errors.push({
                 row: i + 1,
                 message: 'Missing required fields (name, sku)',
-                data: item
+                data: item,
               });
             } else {
               items.push(item);
@@ -133,35 +133,35 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
             errors.push({
               row: i + 1,
               message: 'Invalid data format',
-              data: values
+              data: values,
             });
           }
         }
-        
+
         setCsvData(items);
         if (errors.length > 0) {
           toast({
-            title: "Import Warnings",
+            title: 'Import Warnings',
             description: `${errors.length} rows had issues. Check the preview for details.`,
-            variant: "destructive",
+            variant: 'destructive',
           });
         }
       } catch (error) {
         toast({
-          title: "File Parse Error",
-          description: "Failed to parse CSV file. Please check the format.",
-          variant: "destructive",
+          title: 'File Parse Error',
+          description: 'Failed to parse CSV file. Please check the format.',
+          variant: 'destructive',
         });
       } finally {
         setLoading(false);
       }
     };
-    
+
     reader.readAsText(file);
   };
 
   const getValue = (values: string[], headers: string[], field: string): string => {
-    const index = headers.findIndex(h => h.includes(field));
+    const index = headers.findIndex((h) => h.includes(field));
     return index >= 0 ? values[index]?.trim().replace(/"/g, '') || '' : '';
   };
 
@@ -170,9 +170,9 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
       csvTemplate.join(','),
       'Sample Widget,WID-001,Electronics,50,pcs,Shelf A-1,2.50,ACME Corp,Basic electronic component',
       'Arduino Uno,ARD-UNO,Microcontrollers,25,pcs,Cabinet B-3,15.99,Arduino LLC,Development board',
-      'Resistor Pack,RES-PACK,Electronics,100,pack,Drawer C-2,5.00,DigiKey,Assorted resistor values'
+      'Resistor Pack,RES-PACK,Electronics,100,pack,Drawer C-2,5.00,DigiKey,Assorted resistor values',
     ].join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -185,22 +185,22 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
   const startQrScanning = async () => {
     try {
       setQrScanning(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-      
+
       // Start QR detection
       detectQrCode();
     } catch (error) {
       toast({
-        title: "Camera Error",
-        description: "Failed to access camera. Please check permissions.",
-        variant: "destructive",
+        title: 'Camera Error',
+        description: 'Failed to access camera. Please check permissions.',
+        variant: 'destructive',
       });
       setQrScanning(false);
     }
@@ -210,7 +210,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
     setQrScanning(false);
     if (videoRef.current?.srcObject) {
       const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+      tracks.forEach((track) => track.stop());
       videoRef.current.srcObject = null;
     }
   };
@@ -228,16 +228,16 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
           unit: 'pcs',
           location: 'Unknown',
           cost: 0,
-          description: 'Item added via QR scan'
+          description: 'Item added via QR scan',
         };
-        
-        setScannedItems(prev => [...prev, mockItem]);
+
+        setScannedItems((prev) => [...prev, mockItem]);
         toast({
-          title: "QR Code Detected",
+          title: 'QR Code Detected',
           description: `Added: ${mockItem.name}`,
         });
       }
-      
+
       if (qrScanning) {
         detectQrCode();
       }
@@ -246,42 +246,41 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
 
   const handleImport = async () => {
     const itemsToImport = activeTab === 'csv' ? csvData : scannedItems;
-    
+
     if (itemsToImport.length === 0) {
       toast({
-        title: "No Items",
-        description: "No items to import. Please add items first.",
-        variant: "destructive",
+        title: 'No Items',
+        description: 'No items to import. Please add items first.',
+        variant: 'destructive',
       });
       return;
     }
 
     setLoading(true);
-    
+
     try {
       // Simulate import process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const result: ImportResult = {
         success: true,
         imported: itemsToImport.length,
         skipped: 0,
-        errors: []
+        errors: [],
       };
-      
+
       setImportResult(result);
       onImport?.(itemsToImport);
-      
+
       toast({
-        title: "Import Successful",
+        title: 'Import Successful',
         description: `Successfully imported ${result.imported} items.`,
       });
-      
     } catch (error) {
       toast({
-        title: "Import Failed",
-        description: "Failed to import items. Please try again.",
-        variant: "destructive",
+        title: 'Import Failed',
+        description: 'Failed to import items. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -299,7 +298,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
   };
 
   const removeScannedItem = (index: number) => {
-    setScannedItems(prev => prev.filter((_, i) => i !== index));
+    setScannedItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -311,7 +310,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
             Import Inventory
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-y-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
@@ -335,7 +334,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                   <p className="text-gray-600 mb-4">
                     Upload a CSV file containing your inventory data
                   </p>
-                  
+
                   <div className="flex items-center justify-center gap-4">
                     <Button
                       variant="outline"
@@ -345,7 +344,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                       <Upload className="h-4 w-4" />
                       Choose File
                     </Button>
-                    
+
                     <Button
                       variant="outline"
                       onClick={downloadTemplate}
@@ -355,7 +354,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                       Download Template
                     </Button>
                   </div>
-                  
+
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -363,7 +362,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  
+
                   {csvFile && (
                     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg inline-flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-600" />
@@ -400,7 +399,9 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                             <td className="p-3">{item.name}</td>
                             <td className="p-3">{item.sku}</td>
                             <td className="p-3">{item.category}</td>
-                            <td className="p-3">{item.quantity} {item.unit}</td>
+                            <td className="p-3">
+                              {item.quantity} {item.unit}
+                            </td>
                             <td className="p-3">{item.location}</td>
                             <td className="p-3">${item.cost.toFixed(2)}</td>
                           </tr>
@@ -424,7 +425,7 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                 <div className="space-y-4">
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <h3 className="font-medium text-gray-900 mb-4">QR Code Scanner</h3>
-                    
+
                     {!qrScanning ? (
                       <div className="text-center py-8">
                         <QrCode className="h-16 w-16 mx-auto text-gray-400 mb-4" />
@@ -449,16 +450,12 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                           <canvas ref={canvasRef} className="hidden" />
                           <div className="absolute inset-0 border-2 border-white border-dashed opacity-50"></div>
                           <div className="absolute top-2 right-2">
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={stopQrScanning}
-                            >
+                            <Button size="sm" variant="secondary" onClick={stopQrScanning}>
                               <X className="h-4 w-4" />
                             </Button>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                           <Scan className="h-4 w-4 animate-pulse" />
                           Scanning for QR codes...
@@ -472,7 +469,9 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                 <div className="space-y-4">
                   <div className="bg-white border border-gray-200 rounded-lg">
                     <div className="p-4 border-b border-gray-200 bg-gray-50">
-                      <h3 className="font-medium text-gray-900">Scanned Items ({scannedItems.length})</h3>
+                      <h3 className="font-medium text-gray-900">
+                        Scanned Items ({scannedItems.length})
+                      </h3>
                     </div>
                     <div className="p-4">
                       {scannedItems.length === 0 ? (
@@ -484,10 +483,15 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
                       ) : (
                         <div className="space-y-3 max-h-64 overflow-y-auto">
                           {scannedItems.map((item, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            >
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-sm truncate">{item.name}</p>
-                                <p className="text-xs text-gray-600">{item.sku} • {item.category}</p>
+                                <p className="text-xs text-gray-600">
+                                  {item.sku} • {item.category}
+                                </p>
                               </div>
                               <button
                                 onClick={() => removeScannedItem(index)}
@@ -537,14 +541,16 @@ const ImportInventoryModal: React.FC<ImportInventoryModalProps> = ({
               </>
             )}
           </div>
-          
+
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button 
-              onClick={handleImport} 
-              disabled={loading || (activeTab === 'csv' ? csvData.length === 0 : scannedItems.length === 0)}
+            <Button
+              onClick={handleImport}
+              disabled={
+                loading || (activeTab === 'csv' ? csvData.length === 0 : scannedItems.length === 0)
+              }
             >
               {loading ? (
                 <>

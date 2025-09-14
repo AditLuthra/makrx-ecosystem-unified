@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { eventRegistrations, teamMembers, teams } from '@shared/schema';
 import { eq, count, and } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     // Get total registered participants
     const [totalRegistrations] = await db
@@ -21,8 +18,8 @@ export async function GET(
       .where(
         and(
           eq(eventRegistrations.eventId, params.eventId),
-          eq(eventRegistrations.status, 'confirmed')
-        )
+          eq(eventRegistrations.status, 'confirmed'),
+        ),
       );
 
     // Get team participants
@@ -55,9 +52,6 @@ export async function GET(
     return NextResponse.json(audienceStats);
   } catch (error) {
     console.error('Error fetching audience stats:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch audience stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch audience stats' }, { status: 500 });
   }
 }

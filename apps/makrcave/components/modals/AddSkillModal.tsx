@@ -33,12 +33,12 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
   open,
   onOpenChange,
   equipment = [],
-  existingSkills = []
+  existingSkills = [],
 }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -55,7 +55,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
     minimumPassingScore: '80',
     instructorRequired: false,
     maxRetakes: '3',
-    status: 'active' as 'active' | 'draft' | 'disabled'
+    status: 'active' as 'active' | 'draft' | 'disabled',
   });
 
   const [newPrerequisite, setNewPrerequisite] = useState('');
@@ -74,46 +74,46 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
     'General',
     'Textiles',
     'Ceramics',
-    'Other'
+    'Other',
   ];
 
   const handleInputChange = (field: string, value: string | boolean | string[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
   const addPrerequisite = () => {
     if (newPrerequisite.trim() && !formData.prerequisites.includes(newPrerequisite.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        prerequisites: [...prev.prerequisites, newPrerequisite.trim()]
+        prerequisites: [...prev.prerequisites, newPrerequisite.trim()],
       }));
       setNewPrerequisite('');
     }
   };
 
   const removePrerequisite = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      prerequisites: prev.prerequisites.filter((_, i) => i !== index)
+      prerequisites: prev.prerequisites.filter((_, i) => i !== index),
     }));
   };
 
   const addEquipment = () => {
     if (newEquipment && !formData.equipmentAccess.includes(newEquipment)) {
-      const equipmentName = equipment.find(eq => eq.id === newEquipment)?.name || newEquipment;
-      setFormData(prev => ({
+      const equipmentName = equipment.find((eq) => eq.id === newEquipment)?.name || newEquipment;
+      setFormData((prev) => ({
         ...prev,
-        equipmentAccess: [...prev.equipmentAccess, equipmentName]
+        equipmentAccess: [...prev.equipmentAccess, equipmentName],
       }));
       setNewEquipment('');
     }
   };
 
   const removeEquipment = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      equipmentAccess: prev.equipmentAccess.filter((_, i) => i !== index)
+      equipmentAccess: prev.equipmentAccess.filter((_, i) => i !== index),
     }));
   };
 
@@ -138,7 +138,10 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
       setError('Assessment criteria are required');
       return false;
     }
-    if (parseInt(formData.minimumPassingScore) < 0 || parseInt(formData.minimumPassingScore) > 100) {
+    if (
+      parseInt(formData.minimumPassingScore) < 0 ||
+      parseInt(formData.minimumPassingScore) > 100
+    ) {
       setError('Minimum passing score must be between 0 and 100');
       return false;
     }
@@ -150,10 +153,10 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
       setError('Expiration period must be at least 1 day');
       return false;
     }
-    
+
     // Check if skill name already exists
     const existingSkill = existingSkills.find(
-      skill => skill.name.toLowerCase() === formData.name.toLowerCase()
+      (skill) => skill.name.toLowerCase() === formData.name.toLowerCase(),
     );
     if (existingSkill) {
       setError('A skill with this name already exists');
@@ -165,7 +168,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -173,13 +176,13 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       toast({
-        title: "Skill Created",
+        title: 'Skill Created',
         description: `${formData.name} has been added to the skill system`,
       });
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -197,9 +200,9 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
         minimumPassingScore: '80',
         instructorRequired: false,
         maxRetakes: '3',
-        status: 'active'
+        status: 'active',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create skill');
@@ -225,7 +228,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
       minimumPassingScore: '80',
       instructorRequired: false,
       maxRetakes: '3',
-      status: 'active'
+      status: 'active',
     });
     setNewPrerequisite('');
     setNewEquipment('');
@@ -238,11 +241,11 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
       beginner: { color: 'bg-blue-100 text-blue-800', icon: '★' },
       intermediate: { color: 'bg-yellow-100 text-yellow-800', icon: '★★' },
       advanced: { color: 'bg-orange-100 text-orange-800', icon: '★★★' },
-      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' }
+      expert: { color: 'bg-red-100 text-red-800', icon: '★★★★' },
     };
-    
+
     const config = levelConfig[level as keyof typeof levelConfig] || levelConfig.beginner;
-    
+
     return (
       <Badge variant="outline" className={config.color}>
         {config.icon} {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -259,7 +262,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
             Add New Skill
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -287,8 +290,8 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
 
               <div>
                 <Label htmlFor="category">Category *</Label>
-                <Select 
-                  value={formData.category} 
+                <Select
+                  value={formData.category}
                   onValueChange={(value) => handleInputChange('category', value)}
                 >
                   <SelectTrigger className="mt-1">
@@ -306,8 +309,8 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
 
               <div>
                 <Label htmlFor="level">Skill Level *</Label>
-                <Select 
-                  value={formData.level} 
+                <Select
+                  value={formData.level}
                   onValueChange={(value) => handleInputChange('level', value as any)}
                 >
                   <SelectTrigger className="mt-1">
@@ -320,17 +323,15 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
                     <SelectItem value="expert">Expert</SelectItem>
                   </SelectContent>
                 </Select>
-                <div className="mt-2">
-                  {getLevelBadge(formData.level)}
-                </div>
+                <div className="mt-2">{getLevelBadge(formData.level)}</div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
                 <Label htmlFor="status">Status</Label>
-                <Select 
-                  value={formData.status} 
+                <Select
+                  value={formData.status}
                   onValueChange={(value) => handleInputChange('status', value as any)}
                 >
                   <SelectTrigger className="mt-1">
@@ -473,7 +474,11 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
               {formData.equipmentAccess.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {formData.equipmentAccess.map((equip, index) => (
-                    <Badge key={index} variant="outline" className="flex items-center gap-1 bg-blue-50">
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="flex items-center gap-1 bg-blue-50"
+                    >
                       <Wrench className="h-3 w-3" />
                       {equip}
                       <button
@@ -496,7 +501,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
               <Book className="h-4 w-4" />
               Assessment Settings
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <h5 className="text-sm font-medium text-gray-700">Required Tests</h5>
@@ -510,7 +515,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
                     />
                     <span className="text-sm text-gray-700">Safety Test</span>
                   </label>
-                  
+
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
@@ -520,7 +525,7 @@ const AddSkillModal: React.FC<AddSkillModalProps> = ({
                     />
                     <span className="text-sm text-gray-700">Theory Test</span>
                   </label>
-                  
+
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"

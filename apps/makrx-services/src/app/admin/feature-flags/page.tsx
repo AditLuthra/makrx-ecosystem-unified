@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useKeycloak } from '@makrx/auth';
-import { 
-  AccessLevel, 
-  FEATURE_FLAGS, 
+import React, { useState, useEffect } from "react";
+import { useKeycloak } from "@makrx/auth";
+import {
+  AccessLevel,
+  FEATURE_FLAGS,
   FEATURE_TAGS,
   SERVICE_FEATURES,
   ADMIN_FEATURES,
-  EXPERIMENTAL_FEATURES 
-} from '@/lib/features/types';
-import { useAdminFeatures } from '@/lib/features/context';
-import { useAdminFeatureFlags } from '@/lib/features/hooks';
-import { featureFlagsClient } from '@/lib/features/client';
+  EXPERIMENTAL_FEATURES,
+} from "@/lib/features/types";
+import { useAdminFeatures } from "@/lib/features/context";
+import { useAdminFeatureFlags } from "@/lib/features/hooks";
+import { featureFlagsClient } from "@/lib/features/client";
 
 interface FeatureFlagRowProps {
   flag: any;
@@ -21,9 +21,14 @@ interface FeatureFlagRowProps {
   onRemoveOverride: (key: string) => void;
 }
 
-function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: FeatureFlagRowProps) {
+function FeatureFlagRow({
+  flag,
+  onUpdate,
+  onCreateOverride,
+  onRemoveOverride,
+}: FeatureFlagRowProps) {
   const [isUpdating, setIsUpdating] = useState(false);
-  
+
   const handleLevelChange = async (newLevel: AccessLevel) => {
     setIsUpdating(true);
     try {
@@ -34,8 +39,9 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
   };
 
   const getStatusBadge = (level: AccessLevel, isOverride: boolean) => {
-    const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
-    
+    const baseClasses =
+      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
+
     let colorClasses = "";
     switch (level) {
       case AccessLevel.ENABLED:
@@ -59,7 +65,7 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
 
     return (
       <span className={`${baseClasses} ${colorClasses}`}>
-        {level.replace('_', ' ').toUpperCase()}
+        {level.replace("_", " ").toUpperCase()}
         {isOverride && " (O)"}
       </span>
     );
@@ -84,7 +90,7 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <div className="flex flex-wrap gap-1">
           {flag.tags.slice(0, 3).map((tag: string) => (
-            <span 
+            <span
               key={tag}
               className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-800"
             >
@@ -92,7 +98,9 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
             </span>
           ))}
           {flag.tags.length > 3 && (
-            <span className="text-xs text-gray-400">+{flag.tags.length - 3}</span>
+            <span className="text-xs text-gray-400">
+              +{flag.tags.length - 3}
+            </span>
           )}
         </div>
       </td>
@@ -106,13 +114,13 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
           disabled={isUpdating}
           className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          {Object.values(AccessLevel).map(level => (
+          {Object.values(AccessLevel).map((level) => (
             <option key={level} value={level}>
-              {level.replace('_', ' ').toUpperCase()}
+              {level.replace("_", " ").toUpperCase()}
             </option>
           ))}
         </select>
-        
+
         {flag.is_override ? (
           <button
             onClick={() => onRemoveOverride(flag.key)}
@@ -135,30 +143,36 @@ function FeatureFlagRow({ flag, onUpdate, onCreateOverride, onRemoveOverride }: 
 
 export default function FeatureFlagsAdminPage() {
   const { canManageFeatureFlags } = useAdminFeatures();
-  const [authToken, setAuthToken] = useState<string>('');
+  const [authToken, setAuthToken] = useState<string>("");
   const { isAuthenticated, keycloak } = useKeycloak();
-  const [selectedTab, setSelectedTab] = useState<'all' | 'services' | 'admin' | 'experimental'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterLevel, setFilterLevel] = useState<AccessLevel | 'all'>('all');
-  const [bulkAction, setBulkAction] = useState<AccessLevel>(AccessLevel.ENABLED);
+  const [selectedTab, setSelectedTab] = useState<
+    "all" | "services" | "admin" | "experimental"
+  >("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterLevel, setFilterLevel] = useState<AccessLevel | "all">("all");
+  const [bulkAction, setBulkAction] = useState<AccessLevel>(
+    AccessLevel.ENABLED,
+  );
   const [selectedFlags, setSelectedFlags] = useState<Set<string>>(new Set());
 
-  const { 
-    allFlags, 
-    analytics, 
-    isLoading, 
-    error, 
-    updateFlag, 
-    createOverride, 
-    removeOverride, 
-    bulkUpdate, 
-    refresh 
+  const {
+    allFlags,
+    analytics,
+    isLoading,
+    error,
+    updateFlag,
+    createOverride,
+    removeOverride,
+    bulkUpdate,
+    refresh,
   } = useAdminFeatureFlags(authToken);
 
   useEffect(() => {
     const loadToken = async () => {
-      try { await keycloak?.updateToken?.(30); } catch {}
-      const token = keycloak?.getToken?.() || '';
+      try {
+        await keycloak?.updateToken?.(30);
+      } catch {}
+      const token = keycloak?.getToken?.() || "";
       setAuthToken(token);
     };
     loadToken();
@@ -168,46 +182,53 @@ export default function FeatureFlagsAdminPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
-          <p className="text-gray-600">You don't have permission to manage feature flags.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Access Denied
+          </h2>
+          <p className="text-gray-600">
+            You don't have permission to manage feature flags.
+          </p>
         </div>
       </div>
     );
   }
 
-  const filteredFlags = allFlags?.filter(flag => {
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      if (!flag.key.toLowerCase().includes(query) && 
-          !flag.name.toLowerCase().includes(query)) {
+  const filteredFlags =
+    allFlags?.filter((flag) => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (
+          !flag.key.toLowerCase().includes(query) &&
+          !flag.name.toLowerCase().includes(query)
+        ) {
+          return false;
+        }
+      }
+
+      // Level filter
+      if (filterLevel !== "all" && flag.access_level !== filterLevel) {
         return false;
       }
-    }
 
-    // Level filter
-    if (filterLevel !== 'all' && flag.access_level !== filterLevel) {
-      return false;
-    }
-
-    // Tab filter
-    switch (selectedTab) {
-      case 'services':
-        return Object.values(SERVICE_FEATURES).flat().includes(flag.key);
-      case 'admin':
-        return ADMIN_FEATURES.includes(flag.key);
-      case 'experimental':
-        return EXPERIMENTAL_FEATURES.includes(flag.key);
-      default:
-        return true;
-    }
-  }) || [];
+      // Tab filter
+      switch (selectedTab) {
+        case "services":
+          return Object.values(SERVICE_FEATURES).flat().includes(flag.key);
+        case "admin":
+          return ADMIN_FEATURES.includes(flag.key);
+        case "experimental":
+          return EXPERIMENTAL_FEATURES.includes(flag.key);
+        default:
+          return true;
+      }
+    }) || [];
 
   const handleBulkAction = async () => {
     if (selectedFlags.size === 0) return;
 
     const updates: Record<string, AccessLevel> = {};
-    selectedFlags.forEach(key => {
+    selectedFlags.forEach((key) => {
       updates[key] = bulkAction;
     });
 
@@ -216,7 +237,7 @@ export default function FeatureFlagsAdminPage() {
       setSelectedFlags(new Set());
       // Show success message
     } catch (error) {
-      console.error('Bulk update failed:', error);
+      console.error("Bulk update failed:", error);
       // Show error message
     }
   };
@@ -225,7 +246,7 @@ export default function FeatureFlagsAdminPage() {
     if (selectedFlags.size === filteredFlags.length) {
       setSelectedFlags(new Set());
     } else {
-      setSelectedFlags(new Set(filteredFlags.map(flag => flag.key)));
+      setSelectedFlags(new Set(filteredFlags.map((flag) => flag.key)));
     }
   };
 
@@ -282,12 +303,16 @@ export default function FeatureFlagsAdminPage() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
-                        <span className="text-green-600 text-sm font-medium">EN</span>
+                        <span className="text-green-600 text-sm font-medium">
+                          EN
+                        </span>
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Enabled</dt>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          Enabled
+                        </dt>
                         <dd className="text-lg font-medium text-gray-900">
                           {analytics.summary?.by_access_level?.enabled || 0}
                         </dd>
@@ -302,12 +327,16 @@ export default function FeatureFlagsAdminPage() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
-                        <span className="text-blue-600 text-sm font-medium">β</span>
+                        <span className="text-blue-600 text-sm font-medium">
+                          β
+                        </span>
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Beta</dt>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          Beta
+                        </dt>
                         <dd className="text-lg font-medium text-gray-900">
                           {analytics.summary?.by_access_level?.beta || 0}
                         </dd>
@@ -322,14 +351,19 @@ export default function FeatureFlagsAdminPage() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-yellow-100 rounded-md flex items-center justify-center">
-                        <span className="text-yellow-600 text-sm font-medium">🔒</span>
+                        <span className="text-yellow-600 text-sm font-medium">
+                          🔒
+                        </span>
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Password</dt>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          Password
+                        </dt>
                         <dd className="text-lg font-medium text-gray-900">
-                          {analytics.summary?.by_access_level?.password_only || 0}
+                          {analytics.summary?.by_access_level?.password_only ||
+                            0}
                         </dd>
                       </dl>
                     </div>
@@ -342,12 +376,16 @@ export default function FeatureFlagsAdminPage() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center">
-                        <span className="text-gray-600 text-sm font-medium">OFF</span>
+                        <span className="text-gray-600 text-sm font-medium">
+                          OFF
+                        </span>
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Disabled</dt>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          Disabled
+                        </dt>
                         <dd className="text-lg font-medium text-gray-900">
                           {analytics.summary?.by_access_level?.disabled || 0}
                         </dd>
@@ -378,18 +416,18 @@ export default function FeatureFlagsAdminPage() {
               <div className="hidden sm:block">
                 <nav className="-mb-px flex space-x-8">
                   {[
-                    { key: 'all', label: 'All Features' },
-                    { key: 'services', label: 'Services' },
-                    { key: 'admin', label: 'Admin' },
-                    { key: 'experimental', label: 'Experimental' },
-                  ].map(tab => (
+                    { key: "all", label: "All Features" },
+                    { key: "services", label: "Services" },
+                    { key: "admin", label: "Admin" },
+                    { key: "experimental", label: "Experimental" },
+                  ].map((tab) => (
                     <button
                       key={tab.key}
                       onClick={() => setSelectedTab(tab.key as any)}
                       className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
                         selectedTab === tab.key
-                          ? 'border-indigo-500 text-indigo-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? "border-indigo-500 text-indigo-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                       }`}
                     >
                       {tab.label}
@@ -410,8 +448,18 @@ export default function FeatureFlagsAdminPage() {
                       placeholder="Search features..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      <svg
+                        className="h-5 w-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -424,9 +472,9 @@ export default function FeatureFlagsAdminPage() {
                     className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="all">All Levels</option>
-                    {Object.values(AccessLevel).map(level => (
+                    {Object.values(AccessLevel).map((level) => (
                       <option key={level} value={level}>
-                        {level.replace('_', ' ').toUpperCase()}
+                        {level.replace("_", " ").toUpperCase()}
                       </option>
                     ))}
                   </select>
@@ -443,12 +491,14 @@ export default function FeatureFlagsAdminPage() {
                     <div className="flex items-center space-x-3">
                       <select
                         value={bulkAction}
-                        onChange={(e) => setBulkAction(e.target.value as AccessLevel)}
+                        onChange={(e) =>
+                          setBulkAction(e.target.value as AccessLevel)
+                        }
                         className="border border-gray-300 rounded px-3 py-1 text-sm"
                       >
-                        {Object.values(AccessLevel).map(level => (
+                        {Object.values(AccessLevel).map((level) => (
                           <option key={level} value={level}>
-                            {level.replace('_', ' ').toUpperCase()}
+                            {level.replace("_", " ").toUpperCase()}
                           </option>
                         ))}
                       </select>
@@ -478,7 +528,10 @@ export default function FeatureFlagsAdminPage() {
                     <th className="px-6 py-3 text-left">
                       <input
                         type="checkbox"
-                        checked={selectedFlags.size === filteredFlags.length && filteredFlags.length > 0}
+                        checked={
+                          selectedFlags.size === filteredFlags.length &&
+                          filteredFlags.length > 0
+                        }
                         onChange={handleSelectAll}
                         className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                       />
@@ -504,7 +557,7 @@ export default function FeatureFlagsAdminPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredFlags.map(flag => (
+                  {filteredFlags.map((flag) => (
                     <tr key={flag.key}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
@@ -528,7 +581,9 @@ export default function FeatureFlagsAdminPage() {
 
             {filteredFlags.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">No feature flags found matching your criteria.</p>
+                <p className="text-gray-500">
+                  No feature flags found matching your criteria.
+                </p>
               </div>
             )}
           </div>

@@ -112,14 +112,10 @@ export default function CollectionPage() {
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                       {collection.name}
                     </h1>
-                    <p className="text-xl text-gray-200 mb-4">
-                      {collection.description}
-                    </p>
+                    <p className="text-xl text-gray-200 mb-4">{collection.description}</p>
                     <div className="flex items-center gap-4 text-sm text-gray-300">
                       <span>{collection.product_count} products</span>
-                      {collection.curator_name && (
-                        <span>Curated by {collection.curator_name}</span>
-                      )}
+                      {collection.curator_name && <span>Curated by {collection.curator_name}</span>}
                       <span>Updated {new Date(collection.updated_at).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -153,9 +149,7 @@ export default function CollectionPage() {
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                 <span>{collection.product_count} products</span>
-                {collection.curator_name && (
-                  <span>Curated by {collection.curator_name}</span>
-                )}
+                {collection.curator_name && <span>Curated by {collection.curator_name}</span>}
                 <span>Updated {new Date(collection.updated_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -171,7 +165,8 @@ export default function CollectionPage() {
                   About the Curator
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  <span className="font-medium">{collection.curator_name}:</span> {collection.curator_bio}
+                  <span className="font-medium">{collection.curator_name}:</span>{' '}
+                  {collection.curator_bio}
                 </p>
               </div>
             </div>
@@ -259,8 +254,18 @@ export default function CollectionPage() {
         <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 mb-8">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center">
-              <svg className="w-4 h-4 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              <svg
+                className="w-4 h-4 text-purple-600 dark:text-purple-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                />
               </svg>
             </div>
             <div>
@@ -268,8 +273,8 @@ export default function CollectionPage() {
                 Curated Collection
               </h3>
               <p className="text-purple-700 dark:text-purple-200 text-sm">
-                This collection has been carefully curated to bring you the best products for your specific needs. 
-                Each item is hand-picked based on quality, compatibility, and value.
+                This collection has been carefully curated to bring you the best products for your
+                specific needs. Each item is hand-picked based on quality, compatibility, and value.
               </p>
             </div>
           </div>
@@ -287,9 +292,7 @@ export default function CollectionPage() {
 
         {products && products.products.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">
-              No products in this collection yet.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">No products in this collection yet.</p>
           </div>
         )}
       </div>
@@ -299,31 +302,34 @@ export default function CollectionPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "CollectionPage",
-            "name": collection.seo_title || collection.name,
-            "description": collection.seo_description || collection.description,
-            "url": `${window.location.origin}/collections/${collection.slug}`,
-            "creator": collection.curator_name ? {
-              "@type": "Person",
-              "name": collection.curator_name
-            } : undefined,
-            "dateCreated": collection.created_at,
-            "dateModified": collection.updated_at,
-            "mainEntity": {
-              "@type": "ItemList",
-              "numberOfItems": collection.product_count,
-              "itemListElement": products?.products.map((product, index) => ({
-                "@type": "ListItem",
-                "position": index + 1,
-                "item": {
-                  "@type": "Product",
-                  "name": product.name,
-                  "url": `${window.location.origin}/p/${product.slug}`
+            '@context': 'https://schema.org/',
+            '@type': 'CollectionPage',
+            name: collection.seo_title || collection.name,
+            description: collection.seo_description || collection.description,
+            url: `${window.location.origin}/collections/${collection.slug}`,
+            creator: collection.curator_name
+              ? {
+                  '@type': 'Person',
+                  name: collection.curator_name,
                 }
-              })) || []
-            }
-          })
+              : undefined,
+            dateCreated: collection.created_at,
+            dateModified: collection.updated_at,
+            mainEntity: {
+              '@type': 'ItemList',
+              numberOfItems: collection.product_count,
+              itemListElement:
+                products?.products.map((product, index) => ({
+                  '@type': 'ListItem',
+                  position: index + 1,
+                  item: {
+                    '@type': 'Product',
+                    name: product.name,
+                    url: `${window.location.origin}/p/${product.slug}`,
+                  },
+                })) || [],
+            },
+          }),
         }}
       />
     </div>

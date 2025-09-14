@@ -3,12 +3,29 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import {
-  Users, Clock, Calendar, TrendingUp, Activity,
-  LogIn, UserPlus, FolderPlus, RefreshCw
+  Users,
+  Clock,
+  Calendar,
+  TrendingUp,
+  Activity,
+  LogIn,
+  UserPlus,
+  FolderPlus,
+  RefreshCw,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -50,7 +67,7 @@ const UsageDashboard: React.FC = () => {
       // Fetch usage statistics
       const statsResponse = await fetch(`/api/analytics/usage?period=${selectedPeriod}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -63,7 +80,7 @@ const UsageDashboard: React.FC = () => {
       // Fetch recent events
       const eventsResponse = await fetch('/api/analytics/events?limit=50', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -74,13 +91,12 @@ const UsageDashboard: React.FC = () => {
         generateTimelineData(events);
         generateActivityData(events);
       }
-
     } catch (error) {
       console.error('Error fetching usage data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load usage analytics",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load usage analytics',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -98,18 +114,18 @@ const UsageDashboard: React.FC = () => {
         logins: 0,
         projects: 0,
         equipment: 0,
-        total: 0
+        total: 0,
       };
     });
 
-    events.forEach(event => {
+    events.forEach((event) => {
       const eventTime = new Date(event.timestamp);
       const hourIndex = Math.floor((now.getTime() - eventTime.getTime()) / (1000 * 60 * 60));
-      
+
       if (hourIndex >= 0 && hourIndex < 24) {
         const dataPoint = hours[23 - hourIndex];
         dataPoint.total++;
-        
+
         switch (event.event_type) {
           case 'login':
             dataPoint.logins++;
@@ -130,22 +146,35 @@ const UsageDashboard: React.FC = () => {
 
   const generateActivityData = (events: UsageEvent[]) => {
     // Count event types
-    const eventCounts = events.reduce((acc, event) => {
-      const type = event.event_type;
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const eventCounts = events.reduce(
+      (acc, event) => {
+        const type = event.event_type;
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     const activityTypes = [
       { name: 'Logins', value: eventCounts.login || 0, color: '#3B82F6' },
       { name: 'Projects', value: eventCounts.project_created || 0, color: '#10B981' },
-      { name: 'Equipment', value: (eventCounts.equipment_reserved || 0) + (eventCounts.equipment_used || 0), color: '#F59E0B' },
+      {
+        name: 'Equipment',
+        value: (eventCounts.equipment_reserved || 0) + (eventCounts.equipment_used || 0),
+        color: '#F59E0B',
+      },
       { name: 'Inventory', value: eventCounts.inventory_consumed || 0, color: '#EF4444' },
-      { name: 'Other', value: Object.values(eventCounts).reduce((sum, count) => sum + count, 0) - 
-        (eventCounts.login || 0) - (eventCounts.project_created || 0) - 
-        ((eventCounts.equipment_reserved || 0) + (eventCounts.equipment_used || 0)) - 
-        (eventCounts.inventory_consumed || 0), color: '#8B5CF6' }
-    ].filter(item => item.value > 0);
+      {
+        name: 'Other',
+        value:
+          Object.values(eventCounts).reduce((sum, count) => sum + count, 0) -
+          (eventCounts.login || 0) -
+          (eventCounts.project_created || 0) -
+          ((eventCounts.equipment_reserved || 0) + (eventCounts.equipment_used || 0)) -
+          (eventCounts.inventory_consumed || 0),
+        color: '#8B5CF6',
+      },
+    ].filter((item) => item.value > 0);
 
     setActivityData(activityTypes);
   };
@@ -164,9 +193,10 @@ const UsageDashboard: React.FC = () => {
   };
 
   const formatEventType = (eventType: string) => {
-    return eventType.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    return eventType
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   if (loading) {
@@ -229,7 +259,9 @@ const UsageDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Projects Created</p>
-                  <p className="text-2xl font-bold text-purple-600">{usageStats.project_creations}</p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {usageStats.project_creations}
+                  </p>
                 </div>
                 <FolderPlus className="h-8 w-8 text-purple-600" />
               </div>
@@ -241,7 +273,9 @@ const UsageDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Equipment Hours</p>
-                  <p className="text-2xl font-bold text-orange-600">{usageStats.equipment_hours.toFixed(1)}</p>
+                  <p className="text-2xl font-bold text-orange-600">
+                    {usageStats.equipment_hours.toFixed(1)}
+                  </p>
                 </div>
                 <Clock className="h-8 w-8 text-orange-600" />
               </div>
@@ -342,9 +376,7 @@ const UsageDashboard: React.FC = () => {
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {recentEvents.slice(0, 20).map((event) => (
               <div key={event.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="flex-shrink-0">
-                  {getEventIcon(event.event_type)}
-                </div>
+                <div className="flex-shrink-0">{getEventIcon(event.event_type)}</div>
                 <div className="flex-grow">
                   <p className="text-sm font-medium text-gray-900">
                     {formatEventType(event.event_type)}
@@ -352,9 +384,7 @@ const UsageDashboard: React.FC = () => {
                   <p className="text-xs text-gray-500">
                     {new Date(event.timestamp).toLocaleString()}
                     {event.duration_minutes && (
-                      <span className="ml-2">
-                        • Duration: {event.duration_minutes} min
-                      </span>
+                      <span className="ml-2">• Duration: {event.duration_minutes} min</span>
                     )}
                   </p>
                 </div>

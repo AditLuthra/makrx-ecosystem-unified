@@ -5,10 +5,16 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Progress } from '../../components/ui/progress';
-import { 
+import {
   Zap,
   Globe,
   Code,
@@ -65,7 +71,7 @@ import {
   Target,
   Layers,
   Box,
-  Puzzle
+  Puzzle,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -73,7 +79,15 @@ interface Integration {
   id: string;
   name: string;
   description: string;
-  category: 'productivity' | 'communication' | 'development' | 'analytics' | 'payment' | 'automation' | 'design' | 'storage';
+  category:
+    | 'productivity'
+    | 'communication'
+    | 'development'
+    | 'analytics'
+    | 'payment'
+    | 'automation'
+    | 'design'
+    | 'storage';
   icon: string;
   provider: string;
   status: 'connected' | 'available' | 'pending' | 'error';
@@ -152,7 +166,8 @@ const Integrations: React.FC = () => {
       {
         id: 'slack-001',
         name: 'Slack',
-        description: 'Get instant notifications about equipment status, maintenance alerts, and project updates in your Slack channels.',
+        description:
+          'Get instant notifications about equipment status, maintenance alerts, and project updates in your Slack channels.',
         category: 'communication',
         icon: 'slack',
         provider: 'Slack Technologies',
@@ -160,7 +175,12 @@ const Integrations: React.FC = () => {
         popularity: 95,
         rating: 4.8,
         reviews: 12450,
-        features: ['Real-time notifications', 'Custom channels', 'Equipment alerts', 'Project updates'],
+        features: [
+          'Real-time notifications',
+          'Custom channels',
+          'Equipment alerts',
+          'Project updates',
+        ],
         pricing: 'freemium',
         setupComplexity: 'easy',
         lastSync: '2024-12-18 14:30:00',
@@ -170,12 +190,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/slack',
         webhook: true,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'github-001',
         name: 'GitHub',
-        description: 'Sync project repositories, track issues, and manage code for your maker projects directly from MakrCave.',
+        description:
+          'Sync project repositories, track issues, and manage code for your maker projects directly from MakrCave.',
         category: 'development',
         icon: 'github',
         provider: 'GitHub Inc.',
@@ -193,12 +214,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/github',
         webhook: true,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'stripe-001',
         name: 'Stripe',
-        description: 'Accept payments for maker services, equipment rentals, and course fees with secure payment processing.',
+        description:
+          'Accept payments for maker services, equipment rentals, and course fees with secure payment processing.',
         category: 'payment',
         icon: 'credit-card',
         provider: 'Stripe Inc.',
@@ -212,12 +234,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/stripe',
         webhook: true,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'zapier-001',
         name: 'Zapier',
-        description: 'Automate workflows between MakrCave and 5000+ apps. Create powerful automations without coding.',
+        description:
+          'Automate workflows between MakrCave and 5000+ apps. Create powerful automations without coding.',
         category: 'automation',
         icon: 'zap',
         provider: 'Zapier Inc.',
@@ -225,18 +248,24 @@ const Integrations: React.FC = () => {
         popularity: 85,
         rating: 4.6,
         reviews: 7834,
-        features: ['Workflow automation', '5000+ app connections', 'Trigger actions', 'No-code setup'],
+        features: [
+          'Workflow automation',
+          '5000+ app connections',
+          'Trigger actions',
+          'No-code setup',
+        ],
         pricing: 'freemium',
         setupComplexity: 'easy',
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/zapier',
         webhook: true,
-        oauth: false
+        oauth: false,
       },
       {
         id: 'google-analytics-001',
         name: 'Google Analytics',
-        description: 'Track user engagement, equipment usage patterns, and optimize your makerspace operations.',
+        description:
+          'Track user engagement, equipment usage patterns, and optimize your makerspace operations.',
         category: 'analytics',
         icon: 'bar-chart',
         provider: 'Google LLC',
@@ -254,12 +283,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/google-analytics',
         webhook: false,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'figma-001',
         name: 'Figma',
-        description: 'Import design files and prototypes directly into your maker projects for seamless design-to-build workflows.',
+        description:
+          'Import design files and prototypes directly into your maker projects for seamless design-to-build workflows.',
         category: 'design',
         icon: 'palette',
         provider: 'Figma Inc.',
@@ -273,12 +303,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/figma',
         webhook: true,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'aws-001',
         name: 'Amazon Web Services',
-        description: 'Store project files, backup data, and leverage cloud computing power for complex simulations.',
+        description:
+          'Store project files, backup data, and leverage cloud computing power for complex simulations.',
         category: 'storage',
         icon: 'cloud',
         provider: 'Amazon Web Services',
@@ -292,12 +323,13 @@ const Integrations: React.FC = () => {
         isOfficial: true,
         documentation: 'https://docs.makrcave.com/integrations/aws',
         webhook: true,
-        oauth: true
+        oauth: true,
       },
       {
         id: 'discord-001',
         name: 'Discord',
-        description: 'Create maker communities, host virtual events, and collaborate in real-time with voice and text chat.',
+        description:
+          'Create maker communities, host virtual events, and collaborate in real-time with voice and text chat.',
         category: 'communication',
         icon: 'message-square',
         provider: 'Discord Inc.',
@@ -311,8 +343,8 @@ const Integrations: React.FC = () => {
         isOfficial: false,
         documentation: 'https://docs.makrcave.com/integrations/discord',
         webhook: true,
-        oauth: true
-      }
+        oauth: true,
+      },
     ];
 
     // Mock API keys
@@ -328,7 +360,7 @@ const Integrations: React.FC = () => {
         rateLimit: 1000,
         status: 'active',
         environment: 'production',
-        description: 'Main production API key for web application'
+        description: 'Main production API key for web application',
       },
       {
         id: 'key-002',
@@ -341,7 +373,7 @@ const Integrations: React.FC = () => {
         rateLimit: 500,
         status: 'active',
         environment: 'production',
-        description: 'API key for mobile application access'
+        description: 'API key for mobile application access',
       },
       {
         id: 'key-003',
@@ -354,8 +386,8 @@ const Integrations: React.FC = () => {
         rateLimit: 100,
         status: 'active',
         environment: 'development',
-        description: 'Development and testing environment key'
-      }
+        description: 'Development and testing environment key',
+      },
     ];
 
     // Mock webhooks
@@ -371,7 +403,7 @@ const Integrations: React.FC = () => {
         successRate: 98.5,
         secret: 'whsec_****************************',
         retryAttempts: 3,
-        timeout: 30
+        timeout: 30,
       },
       {
         id: 'webhook-002',
@@ -384,7 +416,7 @@ const Integrations: React.FC = () => {
         successRate: 99.2,
         secret: 'whsec_****************************',
         retryAttempts: 3,
-        timeout: 30
+        timeout: 30,
       },
       {
         id: 'webhook-003',
@@ -397,14 +429,14 @@ const Integrations: React.FC = () => {
         successRate: 85.2,
         secret: 'whsec_****************************',
         retryAttempts: 5,
-        timeout: 30
-      }
+        timeout: 30,
+      },
     ];
 
     // Mock analytics
     const mockAnalytics: AnalyticsData = {
       totalIntegrations: mockIntegrations.length,
-      activeConnections: mockIntegrations.filter(i => i.status === 'connected').length,
+      activeConnections: mockIntegrations.filter((i) => i.status === 'connected').length,
       apiCalls: 125456,
       webhookDeliveries: 8932,
       uptime: 99.8,
@@ -414,8 +446,8 @@ const Integrations: React.FC = () => {
         { name: 'Slack', usage: 45 },
         { name: 'GitHub', usage: 32 },
         { name: 'Google Analytics', usage: 28 },
-        { name: 'Stripe', usage: 18 }
-      ]
+        { name: 'Stripe', usage: 18 },
+      ],
     };
 
     setIntegrations(mockIntegrations);
@@ -426,41 +458,65 @@ const Integrations: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'connected': case 'active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'available': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'error': case 'failed': case 'revoked': return 'bg-red-100 text-red-800 border-red-200';
-      case 'expired': case 'inactive': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'connected':
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'available':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'error':
+      case 'failed':
+      case 'revoked':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'expired':
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
-      case 'easy': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'hard': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'easy':
+        return 'bg-green-100 text-green-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'hard':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case 'slack': return <MessageSquare className="h-6 w-6" />;
-      case 'github': return <Github className="h-6 w-6" />;
-      case 'credit-card': return <CreditCard className="h-6 w-6" />;
-      case 'zap': return <Zap className="h-6 w-6" />;
-      case 'bar-chart': return <BarChart3 className="h-6 w-6" />;
-      case 'palette': return <Palette className="h-6 w-6" />;
-      case 'cloud': return <Cloud className="h-6 w-6" />;
-      case 'message-square': return <MessageSquare className="h-6 w-6" />;
-      default: return <Box className="h-6 w-6" />;
+      case 'slack':
+        return <MessageSquare className="h-6 w-6" />;
+      case 'github':
+        return <Github className="h-6 w-6" />;
+      case 'credit-card':
+        return <CreditCard className="h-6 w-6" />;
+      case 'zap':
+        return <Zap className="h-6 w-6" />;
+      case 'bar-chart':
+        return <BarChart3 className="h-6 w-6" />;
+      case 'palette':
+        return <Palette className="h-6 w-6" />;
+      case 'cloud':
+        return <Cloud className="h-6 w-6" />;
+      case 'message-square':
+        return <MessageSquare className="h-6 w-6" />;
+      default:
+        return <Box className="h-6 w-6" />;
     }
   };
 
-  const filteredIntegrations = integrations.filter(integration => {
-    const matchesSearch = integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         integration.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredIntegrations = integrations.filter((integration) => {
+    const matchesSearch =
+      integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      integration.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || integration.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -523,7 +579,9 @@ const Integrations: React.FC = () => {
                   <Webhook className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{analytics.webhookDeliveries.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    {analytics.webhookDeliveries.toLocaleString()}
+                  </p>
                   <p className="text-sm text-gray-600">Webhooks</p>
                 </div>
               </div>
@@ -596,7 +654,10 @@ const Integrations: React.FC = () => {
           {/* Integration Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredIntegrations.map((integration) => (
-              <Card key={integration.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card
+                key={integration.id}
+                className="overflow-hidden hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4 mb-4">
                     <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -619,7 +680,9 @@ const Integrations: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">{integration.description}</p>
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
+                    {integration.description}
+                  </p>
 
                   {/* Features */}
                   <div className="mb-4">
@@ -656,9 +719,14 @@ const Integrations: React.FC = () => {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                        <span>{integration.rating} ({integration.reviews})</span>
+                        <span>
+                          {integration.rating} ({integration.reviews})
+                        </span>
                       </div>
-                      <Badge className={getComplexityColor(integration.setupComplexity)} variant="outline">
+                      <Badge
+                        className={getComplexityColor(integration.setupComplexity)}
+                        variant="outline"
+                      >
                         {integration.setupComplexity}
                       </Badge>
                     </div>
@@ -758,16 +826,14 @@ const Integrations: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="font-semibold">{key.name}</h3>
-                        <Badge className={getStatusColor(key.status)}>
-                          {key.status}
-                        </Badge>
+                        <Badge className={getStatusColor(key.status)}>{key.status}</Badge>
                         <Badge variant="outline" className="capitalize">
                           {key.environment}
                         </Badge>
                       </div>
-                      
+
                       <p className="text-gray-600 text-sm mb-3">{key.description}</p>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-gray-500">Created:</span>
@@ -786,20 +852,16 @@ const Integrations: React.FC = () => {
                           <div className="font-medium">{key.rateLimit}/min</div>
                         </div>
                       </div>
-                      
+
                       <div className="mt-4">
                         <div className="flex items-center space-x-2">
-                          <Input 
-                            value={key.key} 
-                            readOnly 
-                            className="font-mono text-sm"
-                          />
+                          <Input value={key.key} readOnly className="font-mono text-sm" />
                           <Button size="sm" variant="outline">
                             <Copy className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
-                      
+
                       <div className="mt-3">
                         <span className="text-sm text-gray-500">Permissions: </span>
                         {key.permissions.map((permission, index) => (
@@ -809,7 +871,7 @@ const Integrations: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline">
                         <Edit className="h-4 w-4" />
@@ -846,11 +908,9 @@ const Integrations: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="font-semibold">{webhook.name}</h3>
-                        <Badge className={getStatusColor(webhook.status)}>
-                          {webhook.status}
-                        </Badge>
+                        <Badge className={getStatusColor(webhook.status)}>{webhook.status}</Badge>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
                         <div>
                           <span className="text-gray-500">URL:</span>
@@ -869,7 +929,7 @@ const Integrations: React.FC = () => {
                           <div className="font-medium">{webhook.successRate}%</div>
                         </div>
                       </div>
-                      
+
                       <div className="mb-3">
                         <span className="text-sm text-gray-500">Events: </span>
                         {webhook.events.map((event, index) => (
@@ -878,7 +938,7 @@ const Integrations: React.FC = () => {
                           </Badge>
                         ))}
                       </div>
-                      
+
                       <div className="mb-3">
                         <div className="flex justify-between text-sm mb-1">
                           <span>Success Rate</span>
@@ -887,7 +947,7 @@ const Integrations: React.FC = () => {
                         <Progress value={webhook.successRate} className="h-2" />
                       </div>
                     </div>
-                    
+
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline">
                         <RefreshCw className="h-4 w-4" />
@@ -943,7 +1003,7 @@ const Integrations: React.FC = () => {
                         <span className="font-medium">{integration.name}</span>
                         <div className="flex items-center space-x-2">
                           <div className="w-20 bg-gray-200 rounded-full h-2">
-                            <div 
+                            <div
                               className="bg-blue-500 h-2 rounded-full"
                               style={{ width: `${integration.usage}%` }}
                             />
@@ -993,17 +1053,25 @@ const Integrations: React.FC = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {[
-                      { event: 'Slack integration connected', time: '2 minutes ago', type: 'success' },
+                      {
+                        event: 'Slack integration connected',
+                        time: '2 minutes ago',
+                        type: 'success',
+                      },
                       { event: 'API key created', time: '1 hour ago', type: 'info' },
                       { event: 'Webhook delivery failed', time: '3 hours ago', type: 'error' },
-                      { event: 'GitHub sync completed', time: '6 hours ago', type: 'success' }
+                      { event: 'GitHub sync completed', time: '6 hours ago', type: 'success' },
                     ].map((activity, index) => (
                       <div key={index} className="flex items-center space-x-3 text-sm">
-                        <div className={`w-2 h-2 rounded-full ${
-                          activity.type === 'success' ? 'bg-green-500' :
-                          activity.type === 'error' ? 'bg-red-500' :
-                          'bg-blue-500'
-                        }`} />
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            activity.type === 'success'
+                              ? 'bg-green-500'
+                              : activity.type === 'error'
+                                ? 'bg-red-500'
+                                : 'bg-blue-500'
+                          }`}
+                        />
                         <span className="flex-1">{activity.event}</span>
                         <span className="text-gray-500">{activity.time}</span>
                       </div>

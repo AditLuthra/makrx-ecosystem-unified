@@ -17,13 +17,13 @@ interface InviteMemberModalProps {
 const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   open,
   onOpenChange,
-  membershipPlans
+  membershipPlans,
 }) => {
   const { sendInvite } = useMember();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     role: 'user',
@@ -32,14 +32,14 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
     setSuccess(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.membership_plan_id) {
       setError('Please fill in all required fields');
       return;
@@ -59,9 +59,9 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
         role: formData.role,
         membership_plan_id: formData.membership_plan_id,
       });
-      
+
       setSuccess(true);
-      
+
       // Reset form after a delay
       setTimeout(() => {
         setFormData({
@@ -73,7 +73,6 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
         setSuccess(false);
         onOpenChange(false);
       }, 2000);
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send invite');
     } finally {
@@ -93,7 +92,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     onOpenChange(false);
   };
 
-  const selectedPlan = membershipPlans.find(p => p.id === formData.membership_plan_id);
+  const selectedPlan = membershipPlans.find((p) => p.id === formData.membership_plan_id);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -104,7 +103,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             Send Member Invite
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -143,8 +142,8 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
 
           <div>
             <Label htmlFor="invite-role">Role *</Label>
-            <Select 
-              value={formData.role} 
+            <Select
+              value={formData.role}
               onValueChange={(value) => handleInputChange('role', value)}
               disabled={isLoading || success}
             >
@@ -162,8 +161,8 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
 
           <div>
             <Label htmlFor="invite-plan">Membership Plan *</Label>
-            <Select 
-              value={formData.membership_plan_id} 
+            <Select
+              value={formData.membership_plan_id}
               onValueChange={(value) => handleInputChange('membership_plan_id', value)}
               disabled={isLoading || success}
             >
@@ -188,7 +187,10 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
               <div className="text-xs text-blue-600">
                 <p>Duration: {selectedPlan.duration_days} days</p>
                 <p>Price: ${selectedPlan.price}</p>
-                <p>Features: {selectedPlan.features.slice(0, 2).join(', ')}{selectedPlan.features.length > 2 ? '...' : ''}</p>
+                <p>
+                  Features: {selectedPlan.features.slice(0, 2).join(', ')}
+                  {selectedPlan.features.length > 2 ? '...' : ''}
+                </p>
               </div>
             </div>
           )}

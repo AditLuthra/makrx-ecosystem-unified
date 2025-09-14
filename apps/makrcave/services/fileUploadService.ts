@@ -8,4 +8,3 @@ export async function uploadProfileImage(
   onProgress?.(100);
   return { success: true, url: '/placeholder.svg' };
 }
-

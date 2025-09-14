@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
+import {
   Play,
   Pause,
   SkipForward,
@@ -34,7 +34,7 @@ import {
   Award,
   Code,
   Image as ImageIcon,
-  Video
+  Video,
 } from 'lucide-react';
 
 interface Lesson {
@@ -87,12 +87,7 @@ interface CoursePlayerProps {
   onClose?: () => void;
 }
 
-const CoursePlayer: React.FC<CoursePlayerProps> = ({
-  course,
-  onComplete,
-  onProgress,
-  onClose
-}) => {
+const CoursePlayer: React.FC<CoursePlayerProps> = ({ course, onComplete, onProgress, onClose }) => {
   const [currentLesson, setCurrentLesson] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -123,12 +118,12 @@ const CoursePlayer: React.FC<CoursePlayerProps> = ({
         completed: true,
         progress: 100,
         content: {
-          videoUrl: 'https://example.com/lesson1.mp4'
+          videoUrl: 'https://example.com/lesson1.mp4',
         },
         resources: [
           { title: 'Course Slides', type: 'pdf', url: '/resources/lesson1-slides.pdf' },
-          { title: 'Additional Reading', type: 'link', url: 'https://example.com/reading' }
-        ]
+          { title: 'Additional Reading', type: 'link', url: 'https://example.com/reading' },
+        ],
       },
       {
         id: 'lesson-002',
@@ -142,25 +137,32 @@ const CoursePlayer: React.FC<CoursePlayerProps> = ({
           slides: [
             {
               title: 'Fused Deposition Modeling (FDM)',
-              content: 'FDM is the most common type of 3D printing technology. It works by heating thermoplastic filament and extruding it layer by layer to build objects.',
-              image: '/api/placeholder/600/400'
+              content:
+                'FDM is the most common type of 3D printing technology. It works by heating thermoplastic filament and extruding it layer by layer to build objects.',
+              image: '/api/placeholder/600/400',
             },
             {
               title: 'Stereolithography (SLA)',
-              content: 'SLA uses a laser to cure liquid resin into solid plastic. It offers high precision and smooth surface finishes.',
-              image: '/api/placeholder/600/400'
+              content:
+                'SLA uses a laser to cure liquid resin into solid plastic. It offers high precision and smooth surface finishes.',
+              image: '/api/placeholder/600/400',
             },
             {
               title: 'Selective Laser Sintering (SLS)',
-              content: 'SLS uses a laser to fuse powdered material together. It can work with various materials including plastics, metals, and ceramics.',
-              image: '/api/placeholder/600/400'
-            }
-          ]
+              content:
+                'SLS uses a laser to fuse powdered material together. It can work with various materials including plastics, metals, and ceramics.',
+              image: '/api/placeholder/600/400',
+            },
+          ],
         },
         resources: [
-          { title: 'Technology Comparison Chart', type: 'pdf', url: '/resources/tech-comparison.pdf' },
-          { title: 'Video: SLA vs FDM', type: 'link', url: 'https://youtube.com/watch?v=example' }
-        ]
+          {
+            title: 'Technology Comparison Chart',
+            type: 'pdf',
+            url: '/resources/tech-comparison.pdf',
+          },
+          { title: 'Video: SLA vs FDM', type: 'link', url: 'https://youtube.com/watch?v=example' },
+        ],
       },
       {
         id: 'lesson-003',
@@ -202,12 +204,12 @@ Thermoplastics are the most common materials used in FDM printing:
 
 ## Safety Considerations
 Always ensure proper ventilation when printing with ABS or resins. Use appropriate personal protective equipment when handling uncured resins.
-          `
+          `,
         },
         resources: [
           { title: 'Material Properties Database', type: 'link', url: '/materials-database' },
-          { title: 'Safety Data Sheets', type: 'pdf', url: '/resources/sds-materials.pdf' }
-        ]
+          { title: 'Safety Data Sheets', type: 'pdf', url: '/resources/sds-materials.pdf' },
+        ],
       },
       {
         id: 'lesson-004',
@@ -222,7 +224,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
             {
               question: 'Which material is best for beginners?',
               options: ['PLA', 'ABS', 'PETG', 'TPU'],
-              correctAnswer: 0
+              correctAnswer: 0,
             },
             {
               question: 'What does FDM stand for?',
@@ -230,15 +232,15 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                 'Fast Direct Manufacturing',
                 'Fused Deposition Modeling',
                 'Flexible Design Method',
-                'Final Dimensional Measurement'
+                'Final Dimensional Measurement',
               ],
-              correctAnswer: 1
-            }
-          ]
+              correctAnswer: 1,
+            },
+          ],
         },
-        resources: []
-      }
-    ]
+        resources: [],
+      },
+    ],
   };
 
   const activeCourse = course || mockCourse;
@@ -256,14 +258,14 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
 
   const nextLesson = () => {
     if (currentLesson < activeCourse.lessons.length - 1) {
-      setCurrentLesson(prev => prev + 1);
+      setCurrentLesson((prev) => prev + 1);
       setCurrentSlide(0);
     }
   };
 
   const previousLesson = () => {
     if (currentLesson > 0) {
-      setCurrentLesson(prev => prev - 1);
+      setCurrentLesson((prev) => prev - 1);
       setCurrentSlide(0);
     }
   };
@@ -278,13 +280,13 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
 
   const nextSlide = () => {
     if (activeLesson.content.slides && currentSlide < activeLesson.content.slides.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const previousSlide = () => {
     if (currentSlide > 0) {
-      setCurrentSlide(prev => prev - 1);
+      setCurrentSlide((prev) => prev - 1);
     }
   };
 
@@ -293,7 +295,10 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
       case 'video':
         return (
           <div className="space-y-4">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            <div
+              className="relative bg-black rounded-lg overflow-hidden"
+              style={{ aspectRatio: '16/9' }}
+            >
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-white text-center">
                   <Video className="h-16 w-16 mx-auto mb-4" />
@@ -301,7 +306,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   <p className="text-sm opacity-75">Click to start video</p>
                 </div>
               </div>
-              
+
               {/* Video Controls */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                 <div className="flex items-center space-x-4">
@@ -313,11 +318,11 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   >
                     {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   </Button>
-                  
+
                   <div className="flex-1">
                     <Progress value={videoProgress} className="h-2" />
                   </div>
-                  
+
                   <Button
                     size="sm"
                     variant="ghost"
@@ -326,14 +331,18 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   >
                     {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                   </Button>
-                  
+
                   <Button
                     size="sm"
                     variant="ghost"
                     className="text-white hover:bg-white/20"
                     onClick={() => setIsFullscreen(!isFullscreen)}
                   >
-                    {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                    {isFullscreen ? (
+                      <Minimize className="h-4 w-4" />
+                    ) : (
+                      <Maximize className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -368,17 +377,13 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   </div>
                 </CardContent>
               </Card>
-              
+
               <div className="flex items-center justify-between">
-                <Button
-                  variant="outline"
-                  onClick={previousSlide}
-                  disabled={currentSlide === 0}
-                >
+                <Button variant="outline" onClick={previousSlide} disabled={currentSlide === 0}>
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Previous
                 </Button>
-                
+
                 <div className="flex space-x-2">
                   {activeLesson.content.slides.map((_, index) => (
                     <button
@@ -390,7 +395,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                     />
                   ))}
                 </div>
-                
+
                 <Button
                   onClick={nextSlide}
                   disabled={currentSlide === activeLesson.content.slides.length - 1}
@@ -409,9 +414,11 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
           <Card>
             <CardContent className="p-6">
               <div className="prose max-w-none">
-                <div dangerouslySetInnerHTML={{ 
-                  __html: activeLesson.content.textContent?.replace(/\n/g, '<br>') || '' 
-                }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: activeLesson.content.textContent?.replace(/\n/g, '<br>') || '',
+                  }}
+                />
               </div>
             </CardContent>
           </Card>
@@ -488,7 +495,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
               </Button>
             </div>
           </div>
-          
+
           {/* Course Progress */}
           <div className="mt-6">
             <div className="flex justify-between text-sm mb-2">
@@ -525,7 +532,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   )}
                 </div>
               </div>
-              
+
               {/* Lesson Progress */}
               <div className="mt-4">
                 <div className="flex justify-between text-sm mb-2">
@@ -548,7 +555,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
 
             <TabsContent value="content" className="space-y-6">
               {renderLessonContent()}
-              
+
               {/* Lesson Navigation */}
               <Card>
                 <CardContent className="p-4">
@@ -561,14 +568,14 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                       <ChevronLeft className="h-4 w-4 mr-2" />
                       Previous Lesson
                     </Button>
-                    
+
                     {!activeLesson.completed && (
                       <Button onClick={markLessonComplete}>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
                         Mark Complete
                       </Button>
                     )}
-                    
+
                     <Button
                       onClick={nextLesson}
                       disabled={currentLesson === activeCourse.lessons.length - 1}
@@ -590,15 +597,26 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                   <div className="space-y-3">
                     {activeLesson.resources.length > 0 ? (
                       activeLesson.resources.map((resource, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 border rounded-lg"
+                        >
                           <div className="flex items-center space-x-3">
-                            {resource.type === 'pdf' && <FileText className="h-5 w-5 text-red-500" />}
+                            {resource.type === 'pdf' && (
+                              <FileText className="h-5 w-5 text-red-500" />
+                            )}
                             {resource.type === 'link' && <Eye className="h-5 w-5 text-blue-500" />}
-                            {resource.type === 'code' && <Code className="h-5 w-5 text-green-500" />}
-                            {resource.type === 'image' && <ImageIcon className="h-5 w-5 text-purple-500" />}
+                            {resource.type === 'code' && (
+                              <Code className="h-5 w-5 text-green-500" />
+                            )}
+                            {resource.type === 'image' && (
+                              <ImageIcon className="h-5 w-5 text-purple-500" />
+                            )}
                             <div>
                               <div className="font-medium">{resource.title}</div>
-                              <div className="text-sm text-gray-600 capitalize">{resource.type}</div>
+                              <div className="text-sm text-gray-600 capitalize">
+                                {resource.type}
+                              </div>
                             </div>
                           </div>
                           <Button size="sm" variant="outline">
@@ -608,7 +626,9 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-600 text-center py-8">No additional resources for this lesson.</p>
+                      <p className="text-gray-600 text-center py-8">
+                        No additional resources for this lesson.
+                      </p>
                     )}
                   </div>
                 </CardContent>
@@ -628,9 +648,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                       placeholder="Take notes for this lesson..."
                       className="w-full h-40 p-3 border rounded-lg resize-none"
                     />
-                    <Button onClick={handleSaveNotes}>
-                      Save Notes
-                    </Button>
+                    <Button onClick={handleSaveNotes}>Save Notes</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -653,11 +671,12 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                             <span className="font-medium">John Doe</span>
                             <span className="text-sm text-gray-500">2 hours ago</span>
                           </div>
-                          <p className="text-sm">Great explanation of FDM technology! The visual aids really helped.</p>
+                          <p className="text-sm">
+                            Great explanation of FDM technology! The visual aids really helped.
+                          </p>
                           <div className="flex items-center space-x-4 mt-2">
                             <Button size="sm" variant="ghost">
-                              <ThumbsUp className="h-4 w-4 mr-1" />
-                              5
+                              <ThumbsUp className="h-4 w-4 mr-1" />5
                             </Button>
                             <Button size="sm" variant="ghost">
                               Reply
@@ -666,7 +685,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="border-t pt-4">
                       <textarea
                         placeholder="Add to the discussion..."

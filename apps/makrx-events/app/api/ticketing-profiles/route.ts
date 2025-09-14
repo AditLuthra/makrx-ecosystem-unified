@@ -16,13 +16,14 @@ export async function GET(request: NextRequest) {
         micrositeId: '1',
         subEventId: '2', // 3D Printing Workshop
         currency: 'USD',
-        refundPolicy: 'Full refund up to 48 hours before event. 50% refund up to 24 hours. No refund after.',
+        refundPolicy:
+          'Full refund up to 48 hours before event. 50% refund up to 24 hours. No refund after.',
         notes: 'All materials included. Bring laptop if you have one.',
         tiers: [
           {
             id: 'tier_1',
             name: 'Early Bird',
-            price: 75.00,
+            price: 75.0,
             currency: 'USD',
             quota: 15,
             sold: 15,
@@ -30,12 +31,12 @@ export async function GET(request: NextRequest) {
             salesStart: '2024-01-15T00:00:00Z',
             salesEnd: '2024-02-15T23:59:59Z',
             isActive: false,
-            description: 'Limited early bird pricing'
+            description: 'Limited early bird pricing',
           },
           {
             id: 'tier_2',
             name: 'Regular',
-            price: 100.00,
+            price: 100.0,
             currency: 'USD',
             quota: 10,
             sold: 8,
@@ -43,8 +44,8 @@ export async function GET(request: NextRequest) {
             salesStart: '2024-02-16T00:00:00Z',
             salesEnd: '2024-03-14T23:59:59Z',
             isActive: true,
-            description: 'Standard workshop admission'
-          }
+            description: 'Standard workshop admission',
+          },
         ],
         coupons: [
           {
@@ -56,11 +57,11 @@ export async function GET(request: NextRequest) {
             usageCount: 12,
             expiresAt: '2024-03-14T23:59:59Z',
             appliesToTierIds: ['tier_1', 'tier_2'],
-            isActive: true
-          }
+            isActive: true,
+          },
         ],
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-15T14:20:00Z'
+        updatedAt: '2024-02-15T14:20:00Z',
       },
       {
         id: 'tp_2',
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
           {
             id: 'tier_3',
             name: 'VIP Pass',
-            price: 299.00,
+            price: 299.0,
             currency: 'USD',
             quota: 25,
             sold: 8,
@@ -81,36 +82,33 @@ export async function GET(request: NextRequest) {
             salesStart: '2024-01-15T00:00:00Z',
             salesEnd: '2024-03-15T00:00:00Z',
             isActive: true,
-            description: 'Access to all events plus VIP perks'
-          }
+            description: 'Access to all events plus VIP perks',
+          },
         ],
         coupons: [],
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T09:15:00Z'
-      }
+        updatedAt: '2024-02-01T09:15:00Z',
+      },
     ];
 
     // Apply filters
     let filteredProfiles = mockProfiles;
-    
+
     if (micrositeId) {
-      filteredProfiles = filteredProfiles.filter(p => p.micrositeId === micrositeId);
+      filteredProfiles = filteredProfiles.filter((p) => p.micrositeId === micrositeId);
     }
-    
+
     if (subEventId) {
-      filteredProfiles = filteredProfiles.filter(p => p.subEventId === subEventId);
+      filteredProfiles = filteredProfiles.filter((p) => p.subEventId === subEventId);
     }
 
     return NextResponse.json({
       data: filteredProfiles,
-      count: filteredProfiles.length
+      count: filteredProfiles.length,
     });
   } catch (error) {
     console.error('Error fetching ticketing profiles:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch ticketing profiles' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch ticketing profiles' }, { status: 500 });
   }
 }
 
@@ -133,25 +131,22 @@ export async function POST(request: NextRequest) {
       tiers: [], // Created separately
       coupons: [], // Created separately
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(newProfile, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error creating ticketing profile:', error);
-    return NextResponse.json(
-      { error: 'Failed to create ticketing profile' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create ticketing profile' }, { status: 500 });
   }
 }

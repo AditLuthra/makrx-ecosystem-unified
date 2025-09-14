@@ -4,12 +4,33 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, RadialBarChart, RadialBar
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  RadialBarChart,
+  RadialBar,
 } from 'recharts';
 import {
-  Wrench, Clock, Activity, AlertTriangle, CheckCircle, Calendar,
-  Zap, TrendingUp, Settings, RefreshCw, Gauge
+  Wrench,
+  Clock,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Calendar,
+  Zap,
+  TrendingUp,
+  Settings,
+  RefreshCw,
+  Gauge,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -45,7 +66,7 @@ const EquipmentMetrics: React.FC = () => {
     try {
       const response = await fetch('/api/analytics/equipment', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -59,17 +80,17 @@ const EquipmentMetrics: React.FC = () => {
         }
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load equipment metrics",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load equipment metrics',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching equipment metrics:', error);
       toast({
-        title: "Error",
-        description: "Failed to load equipment metrics",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load equipment metrics',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -78,20 +99,24 @@ const EquipmentMetrics: React.FC = () => {
 
   const processChartData = (data: EquipmentMetric[]) => {
     // Usage hours chart data
-    const usageChart = data.map(equipment => ({
+    const usageChart = data.map((equipment) => ({
       name: equipment.equipment_name,
       hours: equipment.total_usage_hours,
       reservations: equipment.reservation_count,
-      equipment_id: equipment.equipment_id
+      equipment_id: equipment.equipment_id,
     }));
     setUsageData(usageChart);
 
     // Uptime percentage chart data
-    const uptimeChart = data.map(equipment => ({
+    const uptimeChart = data.map((equipment) => ({
       name: equipment.equipment_name,
       uptime: equipment.uptime_percentage,
-      fill: equipment.uptime_percentage >= 90 ? '#10B981' : 
-            equipment.uptime_percentage >= 70 ? '#F59E0B' : '#EF4444'
+      fill:
+        equipment.uptime_percentage >= 90
+          ? '#10B981'
+          : equipment.uptime_percentage >= 70
+            ? '#F59E0B'
+            : '#EF4444',
     }));
     setUptimeData(uptimeChart);
 
@@ -99,14 +124,14 @@ const EquipmentMetrics: React.FC = () => {
     const maintenanceChart = [
       {
         name: 'Up to Date',
-        value: data.filter(eq => !eq.maintenance_overdue).length,
-        fill: '#10B981'
+        value: data.filter((eq) => !eq.maintenance_overdue).length,
+        fill: '#10B981',
       },
       {
         name: 'Overdue',
-        value: data.filter(eq => eq.maintenance_overdue).length,
-        fill: '#EF4444'
-      }
+        value: data.filter((eq) => eq.maintenance_overdue).length,
+        fill: '#EF4444',
+      },
     ];
     setMaintenanceData(maintenanceChart);
   };
@@ -123,8 +148,9 @@ const EquipmentMetrics: React.FC = () => {
     return { label: 'Poor', variant: 'destructive' as const };
   };
 
-  const selectedEquipmentData = selectedEquipment ? 
-    metrics.find(m => m.equipment_id === selectedEquipment) : null;
+  const selectedEquipmentData = selectedEquipment
+    ? metrics.find((m) => m.equipment_id === selectedEquipment)
+    : null;
 
   if (loading) {
     return (
@@ -148,7 +174,7 @@ const EquipmentMetrics: React.FC = () => {
 
   const totalHours = metrics.reduce((sum, m) => sum + m.total_usage_hours, 0);
   const averageUptime = metrics.reduce((sum, m) => sum + m.uptime_percentage, 0) / metrics.length;
-  const overdueCount = metrics.filter(m => m.maintenance_overdue).length;
+  const overdueCount = metrics.filter((m) => m.maintenance_overdue).length;
   const totalReservations = metrics.reduce((sum, m) => sum + m.reservation_count, 0);
 
   return (
@@ -218,7 +244,7 @@ const EquipmentMetrics: React.FC = () => {
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
-            <span className="font-medium">{overdueCount} equipment(s)</span> require maintenance. 
+            <span className="font-medium">{overdueCount} equipment(s)</span> require maintenance.
             Schedule maintenance to prevent downtime and ensure optimal performance.
           </AlertDescription>
         </Alert>
@@ -240,7 +266,7 @@ const EquipmentMetrics: React.FC = () => {
                   onClick={() => setSelectedEquipment(equipment.equipment_id)}
                   className="flex items-center gap-2"
                 >
-                  <div 
+                  <div
                     className={`w-2 h-2 rounded-full ${
                       equipment.maintenance_overdue ? 'bg-red-500' : 'bg-green-500'
                     }`}
@@ -267,10 +293,10 @@ const EquipmentMetrics: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
                       `${Number(value).toFixed(1)} ${name === 'hours' ? 'hours' : 'reservations'}`,
-                      name === 'hours' ? 'Usage Hours' : 'Reservations'
+                      name === 'hours' ? 'Usage Hours' : 'Reservations',
                     ]}
                   />
                   <Bar dataKey="hours" fill="#3B82F6" />
@@ -319,7 +345,7 @@ const EquipmentMetrics: React.FC = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, value, percent }) => 
+                    label={({ name, value, percent }) =>
                       value > 0 ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
                     }
                   >
@@ -349,7 +375,9 @@ const EquipmentMetrics: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [`${Number(value).toFixed(1)} hours`, 'Usage']} />
+                    <Tooltip
+                      formatter={(value) => [`${Number(value).toFixed(1)} hours`, 'Usage']}
+                    />
                     <Line type="monotone" dataKey="hours" stroke="#3B82F6" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -400,9 +428,7 @@ const EquipmentMetrics: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Reservations</p>
-                  <p className="text-lg font-bold text-green-600">
-                    {equipment.reservation_count}
-                  </p>
+                  <p className="text-lg font-bold text-green-600">{equipment.reservation_count}</p>
                 </div>
               </div>
 
@@ -410,15 +436,20 @@ const EquipmentMetrics: React.FC = () => {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <p className="text-sm text-gray-600">Uptime</p>
-                  <p className={`text-sm font-medium ${getUptimeColor(equipment.uptime_percentage)}`}>
+                  <p
+                    className={`text-sm font-medium ${getUptimeColor(equipment.uptime_percentage)}`}
+                  >
                     {equipment.uptime_percentage.toFixed(1)}%
                   </p>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                  <div
                     className={`h-2 rounded-full ${
-                      equipment.uptime_percentage >= 90 ? 'bg-green-500' :
-                      equipment.uptime_percentage >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                      equipment.uptime_percentage >= 90
+                        ? 'bg-green-500'
+                        : equipment.uptime_percentage >= 70
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
                     }`}
                     style={{ width: `${equipment.uptime_percentage}%` }}
                   />
@@ -456,7 +487,8 @@ const EquipmentMetrics: React.FC = () => {
                 <h4 className="font-medium text-blue-900">Schedule Maintenance</h4>
               </div>
               <p className="text-sm text-blue-800">
-                Proactive maintenance scheduling based on usage patterns can improve uptime and extend equipment life.
+                Proactive maintenance scheduling based on usage patterns can improve uptime and
+                extend equipment life.
               </p>
             </div>
 
@@ -466,7 +498,8 @@ const EquipmentMetrics: React.FC = () => {
                 <h4 className="font-medium text-green-900">Optimize Usage</h4>
               </div>
               <p className="text-sm text-green-800">
-                Distribute reservations across peak and off-peak hours to maximize equipment utilization.
+                Distribute reservations across peak and off-peak hours to maximize equipment
+                utilization.
               </p>
             </div>
 

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, Dict, List, Any
 from datetime import datetime
 
+
 # Message schemas
 class MessageBase(BaseModel):
     project_id: str
@@ -9,16 +10,19 @@ class MessageBase(BaseModel):
     type: str = "message"
     metadata: Optional[Dict[str, Any]] = None
 
+
 class MessageCreate(MessageBase):
     pass
+
 
 class MessageResponse(MessageBase):
     id: str
     user_id: str
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Cursor and editing schemas
 class CursorUpdate(BaseModel):
@@ -28,10 +32,12 @@ class CursorUpdate(BaseModel):
     selection_start: Optional[int] = None
     selection_end: Optional[int] = None
 
+
 class EditingStatus(BaseModel):
     project_id: str
     element: Optional[str] = None
     is_editing: bool = True
+
 
 # Document collaboration schemas
 class DocumentChangeCreate(BaseModel):
@@ -41,11 +47,13 @@ class DocumentChangeCreate(BaseModel):
     position: int
     content: str
 
+
 class DocumentVersionCreate(BaseModel):
     document_id: str
     project_id: str
     content: str
     comment: Optional[str] = None
+
 
 class DocumentVersionResponse(BaseModel):
     id: str
@@ -57,15 +65,17 @@ class DocumentVersionResponse(BaseModel):
     author_name: str
     comment: Optional[str] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Whiteboard schemas
 class WhiteboardActionCreate(BaseModel):
     project_id: str
     type: str  # draw, erase, shape, text, note
     data: Dict[str, Any]
+
 
 class WhiteboardActionResponse(BaseModel):
     id: str
@@ -74,9 +84,10 @@ class WhiteboardActionResponse(BaseModel):
     action_type: str
     action_data: Dict[str, Any]
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # User presence schemas
 class UserPresenceUpdate(BaseModel):
@@ -85,6 +96,7 @@ class UserPresenceUpdate(BaseModel):
     current_view: Optional[str] = None
     current_editing: Optional[str] = None
     cursor_position: Optional[Dict[str, Any]] = None
+
 
 class UserPresenceResponse(BaseModel):
     id: str
@@ -96,15 +108,17 @@ class UserPresenceResponse(BaseModel):
     current_editing: Optional[str] = None
     cursor_position: Optional[Dict[str, Any]] = None
     last_seen: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Collaboration session schemas
 class CollaborationSessionCreate(BaseModel):
     project_id: str
     session_type: str  # video_call, screen_share, whiteboard_session
     session_data: Optional[Dict[str, Any]] = None
+
 
 class CollaborationSessionResponse(BaseModel):
     id: str
@@ -117,9 +131,10 @@ class CollaborationSessionResponse(BaseModel):
     is_active: bool
     started_at: datetime
     ended_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
+
 
 # Comment schemas
 class ProjectCommentCreate(BaseModel):
@@ -129,6 +144,7 @@ class ProjectCommentCreate(BaseModel):
     element_id: Optional[str] = None
     element_type: Optional[str] = None
     position: Optional[Dict[str, Any]] = None
+
 
 class ProjectCommentResponse(BaseModel):
     id: str
@@ -146,9 +162,10 @@ class ProjectCommentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     child_comments: List["ProjectCommentResponse"] = []
-    
+
     class Config:
         from_attributes = True
+
 
 # File sharing schemas
 class SharedFileCreate(BaseModel):
@@ -163,6 +180,7 @@ class SharedFileCreate(BaseModel):
     is_collaborative: bool = False
     is_public: bool = False
     access_level: str = "team"
+
 
 class SharedFileResponse(BaseModel):
     id: str
@@ -185,9 +203,10 @@ class SharedFileResponse(BaseModel):
     uploaded_by_name: str
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Real-time editing schemas
 class RealTimeEditCreate(BaseModel):
@@ -196,6 +215,7 @@ class RealTimeEditCreate(BaseModel):
     element_type: str
     edit_type: str  # focus, blur, change
     edit_data: Optional[Dict[str, Any]] = None
+
 
 class RealTimeEditResponse(BaseModel):
     id: str
@@ -207,15 +227,17 @@ class RealTimeEditResponse(BaseModel):
     edit_type: str
     edit_data: Optional[Dict[str, Any]] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # WebSocket message schemas
 class WebSocketMessage(BaseModel):
     type: str
     payload: Dict[str, Any]
     timestamp: Optional[str] = None
+
 
 class CursorBroadcast(BaseModel):
     type: str = "cursor_update"
@@ -226,6 +248,7 @@ class CursorBroadcast(BaseModel):
     y: float
     element: Optional[str] = None
 
+
 class EditingBroadcast(BaseModel):
     type: str = "editing_status"
     project_id: str
@@ -233,6 +256,7 @@ class EditingBroadcast(BaseModel):
     user_name: str
     element: Optional[str] = None
     is_editing: bool
+
 
 class PresenceBroadcast(BaseModel):
     type: str = "presence_update"
@@ -243,6 +267,7 @@ class PresenceBroadcast(BaseModel):
     current_view: Optional[str] = None
     current_editing: Optional[str] = None
 
+
 # Collaboration statistics schemas
 class CollaborationStats(BaseModel):
     project_id: str
@@ -252,6 +277,7 @@ class CollaborationStats(BaseModel):
     total_document_versions: int
     total_whiteboard_actions: int
     last_activity: Optional[datetime] = None
+
 
 class ProjectCollaborationSummary(BaseModel):
     project_id: str

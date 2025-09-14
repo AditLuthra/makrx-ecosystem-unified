@@ -7,7 +7,13 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import {
   Wrench,
   Plus,
@@ -26,7 +32,7 @@ import {
   Star,
   BarChart3,
   TrendingUp,
-  Zap
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -119,11 +125,11 @@ const EnhancedEquipment: React.FC = () => {
     loadStats();
   }, [loadEquipment, loadStats]);
 
-
   // Note: no mock generators; show empty states when API has no data
 
-  const filteredEquipment = equipment.filter(item => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredEquipment = equipment.filter((item) => {
+    const matchesSearch =
+      searchTerm === '' ||
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.equipment_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.manufacturer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,21 +143,31 @@ const EnhancedEquipment: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_use': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'under_maintenance': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'offline': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'available':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_use':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'under_maintenance':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'offline':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'available': return <CheckCircle className="h-4 w-4" />;
-      case 'in_use': return <Clock className="h-4 w-4" />;
-      case 'under_maintenance': return <Wrench className="h-4 w-4" />;
-      case 'offline': return <AlertTriangle className="h-4 w-4" />;
-      default: return <CheckCircle className="h-4 w-4" />;
+      case 'available':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'in_use':
+        return <Clock className="h-4 w-4" />;
+      case 'under_maintenance':
+        return <Wrench className="h-4 w-4" />;
+      case 'offline':
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <CheckCircle className="h-4 w-4" />;
     }
   };
 
@@ -162,7 +178,7 @@ const EnhancedEquipment: React.FC = () => {
     { value: 'cnc_machine', label: 'CNC Machines' },
     { value: 'testing_tool', label: 'Testing Tools' },
     { value: 'soldering_station', label: 'Soldering Stations' },
-    { value: 'workstation', label: 'Workstations' }
+    { value: 'workstation', label: 'Workstations' },
   ];
 
   const statuses = [
@@ -170,7 +186,7 @@ const EnhancedEquipment: React.FC = () => {
     { value: 'available', label: 'Available' },
     { value: 'in_use', label: 'In Use' },
     { value: 'under_maintenance', label: 'Maintenance' },
-    { value: 'offline', label: 'Offline' }
+    { value: 'offline', label: 'Offline' },
   ];
 
   if (loading) {
@@ -193,7 +209,7 @@ const EnhancedEquipment: React.FC = () => {
             Comprehensive equipment reservation system with cost rules and skill gating
           </p>
         </div>
-        
+
         {canManageEquipment && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -224,7 +240,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Utilization Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.utilization_rate.toFixed(1)}%</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.utilization_rate.toFixed(1)}%
+                  </p>
                 </div>
                 <div className="p-2 bg-green-100 rounded-lg">
                   <TrendingUp className="h-6 w-6 text-green-600" />
@@ -238,7 +256,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Today's Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">${stats.revenue_today.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${stats.revenue_today.toFixed(2)}
+                  </p>
                 </div>
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <DollarSign className="h-6 w-6 text-purple-600" />
@@ -252,7 +272,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Today's Reservations</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total_reservations_today}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.total_reservations_today}
+                  </p>
                 </div>
                 <div className="p-2 bg-orange-100 rounded-lg">
                   <Calendar className="h-6 w-6 text-orange-600" />
@@ -285,13 +307,13 @@ const EnhancedEquipment: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(category => (
+                {categories.map((category) => (
                   <SelectItem key={category.value} value={category.value}>
                     {category.label}
                   </SelectItem>
@@ -304,7 +326,7 @@ const EnhancedEquipment: React.FC = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                {statuses.map(status => (
+                {statuses.map((status) => (
                   <SelectItem key={status.value} value={status.value}>
                     {status.label}
                   </SelectItem>
@@ -331,7 +353,9 @@ const EnhancedEquipment: React.FC = () => {
           </div>
 
           {/* Equipment Grid */}
-          <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+          <div
+            className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
+          >
             {filteredEquipment.map((item) => (
               <Card key={item.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
@@ -361,7 +385,9 @@ const EnhancedEquipment: React.FC = () => {
                     )}
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Usage:</span>
-                      <span>{item.total_usage_hours.toFixed(1)}h ({item.usage_count} sessions)</span>
+                      <span>
+                        {item.total_usage_hours.toFixed(1)}h ({item.usage_count} sessions)
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm items-center">
                       <span className="text-gray-600">Rating:</span>
@@ -404,7 +430,9 @@ const EnhancedEquipment: React.FC = () => {
               <CardTitle>Equipment Reservations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Reservation management interface will be available here.</p>
+              <p className="text-gray-600">
+                Reservation management interface will be available here.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -417,24 +445,31 @@ const EnhancedEquipment: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {['available', 'in_use', 'under_maintenance', 'offline'].map(status => {
-                    const count = filteredEquipment.filter(eq => eq.status === status).length;
-                    const percentage = filteredEquipment.length > 0 ? (count / filteredEquipment.length) * 100 : 0;
+                  {['available', 'in_use', 'under_maintenance', 'offline'].map((status) => {
+                    const count = filteredEquipment.filter((eq) => eq.status === status).length;
+                    const percentage =
+                      filteredEquipment.length > 0 ? (count / filteredEquipment.length) * 100 : 0;
                     const statusColors = {
                       available: 'bg-green-500',
                       in_use: 'bg-blue-500',
                       under_maintenance: 'bg-yellow-500',
-                      offline: 'bg-red-500'
+                      offline: 'bg-red-500',
                     };
 
                     return (
                       <div key={status} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}></div>
-                          <span className="text-sm font-medium capitalize">{status.replace('_', ' ')}</span>
+                          <div
+                            className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
+                          ></div>
+                          <span className="text-sm font-medium capitalize">
+                            {status.replace('_', ' ')}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600">{count} ({percentage.toFixed(0)}%)</span>
+                          <span className="text-sm text-gray-600">
+                            {count} ({percentage.toFixed(0)}%)
+                          </span>
                           <div className="w-20 h-2 bg-gray-200 rounded-full">
                             <div
                               className={`h-2 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
@@ -460,32 +495,35 @@ const EnhancedEquipment: React.FC = () => {
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500 fill-current" />
                       <span className="font-medium">
-                        {equipment.length > 0 ? 
-                          (equipment.reduce((sum, eq) => sum + eq.average_rating, 0) / equipment.length).toFixed(1) : 
-                          '0.0'
-                        }
+                        {equipment.length > 0
+                          ? (
+                              equipment.reduce((sum, eq) => sum + eq.average_rating, 0) /
+                              equipment.length
+                            ).toFixed(1)
+                          : '0.0'}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Usage Hours</span>
                     <span className="font-medium">
                       {equipment.reduce((sum, eq) => sum + eq.total_usage_hours, 0).toFixed(1)}h
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Sessions</span>
                     <span className="font-medium">
                       {equipment.reduce((sum, eq) => sum + eq.usage_count, 0)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Certification Required</span>
                     <span className="font-medium">
-                      {equipment.filter(eq => eq.requires_certification).length} / {equipment.length}
+                      {equipment.filter((eq) => eq.requires_certification).length} /{' '}
+                      {equipment.length}
                     </span>
                   </div>
                 </div>

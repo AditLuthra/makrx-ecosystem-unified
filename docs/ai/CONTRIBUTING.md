@@ -3,6 +3,7 @@
 Thanks for helping improve the MakrX ecosystem! This guide covers how we work and what we expect from contributions.
 
 ## Scope & Structure
+
 - Review the [architecture overview](docs/ARCHITECTURE.md) for how services fit together.
 - Each application maintains its own README with details:
   - [Makrcave Backend](backends/makrcave/README.md)
@@ -28,21 +29,23 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
 3. Move the service out of `/experimental` and update [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
+
 - Node.js 20.x
 - Python 3.11
 - Docker 20+
 - JavaScript package manager: `npm`
 - Environment template: `.env.production.template` in repo root (service-specific `.env.example` files live in each app)
 
-| Service | Node version | Python version | Selection command |
-| --- | --- | --- | --- |
-| Gateway Frontend | 20 | - | `nvm use` |
-| Makrcave Frontend | 20 | - | `nvm use` |
-| MakrX Store Frontend | 20 | - | `nvm use` |
-| Makrcave Backend | - | 3.11 | `pyenv local 3.11` |
-| MakrX Store Backend | - | 3.11 | `pyenv local 3.11` |
+| Service              | Node version | Python version | Selection command  |
+| -------------------- | ------------ | -------------- | ------------------ |
+| Gateway Frontend     | 20           | -              | `nvm use`          |
+| Makrcave Frontend    | 20           | -              | `nvm use`          |
+| MakrX Store Frontend | 20           | -              | `nvm use`          |
+| Makrcave Backend     | -            | 3.11           | `pyenv local 3.11` |
+| MakrX Store Backend  | -            | 3.11           | `pyenv local 3.11` |
 
 ## Local Development
+
 1. `cp .env.production.template .env`
 2. `docker-compose up -d postgres keycloak`
 3. Start a backend (example):
@@ -70,13 +73,15 @@ Never include the following in Docker build contexts:
 `.dockerignore` files are audited quarterly to keep images lean. For how build contexts are used in automation, see the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline).
 
 ## Branching Model
+
 - `feature/<topic>` for new features
 - `fix/<bug>` for bug fixes
 - `chore/<task>` for tooling or maintenance
 - `docs/<change>` for documentation
-Always branch from `main` and keep in sync via `git fetch origin` and `git rebase origin/main` (or merge if preferred).
+  Always branch from `main` and keep in sync via `git fetch origin` and `git rebase origin/main` (or merge if preferred).
 
 ## Commits & Pull Requests
+
 - Use [Conventional Commits](https://www.conventionalcommits.org/)
 - Review the [PR review checklist](docs/PR_REVIEW_CHECKLIST.md) before submitting.
 - PR checklist:
@@ -94,22 +99,26 @@ We maintain a root [`CHANGELOG.md`](CHANGELOG.md) using the [Keep a Changelog](h
 Include an entry under the **Unreleased** section for any user-facing change in your pull request. During release tagging, entries are moved to a new version heading.
 
 ## Coding Standards
+
 - Use a 4-space indent for all languages.
 - **TypeScript/JavaScript**: ESLint + Prettier
 - **Python**: Black + flake8
 
 ## Testing & Migrations
+
 - Run `npm test` for JS/TS packages
 - Run backend test suites (`pytest` where available)
 - Apply DB migrations with Alembic: `alembic upgrade head`
 - Create new migrations with `alembic revision --autogenerate -m "msg"`
 
 ## API Contracts
+
 - Canonical contract lives in [docs/API.md](docs/API.md)
 - Each backend exposes `/openapi.json`
 - Version APIs using `/api/v{n}` and bump the major version for breaking changes
 
 ## Issue Triage & Security
+
 - Triage issues with labels (`bug`, `feature`, `docs`, etc.)
 - Report security concerns per [SECURITY.md](docs/SECURITY.md)
 - Architectural decisions: record ADRs under [docs/adr/](docs/adr/README.md) using `YYYYMMDD-short-title.md`

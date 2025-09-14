@@ -2,13 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import {
-  FileText,
-  Download,
-  Eye,
-  Calendar,
-  DollarSign
-} from 'lucide-react';
+import { FileText, Download, Eye, Calendar, DollarSign } from 'lucide-react';
 
 interface Invoice {
   id: string;
@@ -26,11 +20,16 @@ interface InvoiceCardProps {
 const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      case 'cancelled': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      case 'cancelled':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -56,9 +55,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
               <p className="text-sm text-gray-600">{invoice.description}</p>
             </div>
           </div>
-          <Badge className={getStatusColor(invoice.status)}>
-            {invoice.status}
-          </Badge>
+          <Badge className={getStatusColor(invoice.status)}>{invoice.status}</Badge>
         </div>
 
         <div className="space-y-2 mb-4">
@@ -69,7 +66,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
               <span>{new Date(invoice.date).toLocaleDateString()}</span>
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Amount:</span>
             <div className="flex items-center gap-1">
@@ -80,23 +77,13 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
         </div>
 
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1"
-            onClick={handleView}
-          >
+          <Button variant="outline" size="sm" className="flex-1" onClick={handleView}>
             <Eye className="h-4 w-4 mr-1" />
             View
           </Button>
-          
+
           {invoice.status === 'paid' && (
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="flex-1"
-              onClick={handleDownload}
-            >
+            <Button variant="default" size="sm" className="flex-1" onClick={handleDownload}>
               <Download className="h-4 w-4 mr-1" />
               Download
             </Button>

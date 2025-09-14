@@ -10,6 +10,7 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+
 class EmailService:
     def __init__(self):
         self.smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
@@ -18,76 +19,78 @@ class EmailService:
         self.smtp_password = os.getenv("SMTP_PASSWORD")
         self.from_email = os.getenv("FROM_EMAIL", self.smtp_username)
         self.from_name = os.getenv("FROM_NAME", "MakrCave")
-        
+
     def send_email(
-        self, 
-        to_email: str, 
-        subject: str, 
-        html_body: str, 
+        self,
+        to_email: str,
+        subject: str,
+        html_body: str,
         text_body: Optional[str] = None,
-        attachments: Optional[List[str]] = None
+        attachments: Optional[List[str]] = None,
     ) -> bool:
         """Send an email"""
         try:
             # Create message
-            msg = MIMEMultipart('alternative')
-            msg['From'] = f"{self.from_name} <{self.from_email}>"
-            msg['To'] = to_email
-            msg['Subject'] = subject
-            
+            msg = MIMEMultipart("alternative")
+            msg["From"] = f"{self.from_name} <{self.from_email}>"
+            msg["To"] = to_email
+            msg["Subject"] = subject
+
             # Add text part
             if text_body:
-                text_part = MIMEText(text_body, 'plain')
+                text_part = MIMEText(text_body, "plain")
                 msg.attach(text_part)
-            
+
             # Add HTML part
-            html_part = MIMEText(html_body, 'html')
+            html_part = MIMEText(html_body, "html")
             msg.attach(html_part)
-            
+
             # Add attachments
             if attachments:
                 for file_path in attachments:
                     if os.path.isfile(file_path):
                         with open(file_path, "rb") as attachment:
-                            part = MIMEBase('application', 'octet-stream')
+                            part = MIMEBase("application", "octet-stream")
                             part.set_payload(attachment.read())
-                        
+
                         encoders.encode_base64(part)
                         part.add_header(
-                            'Content-Disposition',
-                            f'attachment; filename= {os.path.basename(file_path)}'
+                            "Content-Disposition",
+                            f"attachment; filename= {os.path.basename(file_path)}",
                         )
                         msg.attach(part)
-            
+
             # Send email
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
                 server.login(self.smtp_username, self.smtp_password)
                 server.send_message(msg)
-            
+
             logger.info(f"Email sent successfully to {to_email}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
             return False
 
+
 # Initialize email service
 email_service = EmailService()
 
+
 def send_member_invite_email(
-    email: str, 
-    invite_token: str, 
-    plan_name: str, 
+    email: str,
+    invite_token: str,
+    plan_name: str,
     makerspace_name: str = "MakrCave",
-    custom_message: Optional[str] = None
+    custom_message: Optional[str] = None,
 ) -> bool:
     """Send member invitation email"""
-    
+
     invite_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/invite/{invite_token}"
-    
+
     subject = f"You're invited to join {makerspace_name}!"
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -150,7 +153,7 @@ def send_member_invite_email(
     </body>
     </html>
     """
-    
+
     text_body = f"""
 You're invited to join {makerspace_name}!
 
@@ -177,19 +180,20 @@ The {makerspace_name} Team
 This invitation was sent to {email}. If you believe you received this email in error, please ignore it.
 © {datetime.now().year} {makerspace_name}. All rights reserved.
     """
-    
+
     return email_service.send_email(email, subject, html_body, text_body)
 
+
 def send_member_welcome_email(
-    email: str, 
-    first_name: str, 
+    email: str,
+    first_name: str,
     plan_name: str,
-    makerspace_name: str = "MakrCave"
+    makerspace_name: str = "MakrCave",
 ) -> bool:
     """Send welcome email to new member"""
-    
+
     subject = f"Welcome to {makerspace_name}, {first_name}!"
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -261,7 +265,7 @@ def send_member_welcome_email(
     </body>
     </html>
     """
-    
+
     text_body = f"""
 Welcome to {makerspace_name}, {first_name}!
 
@@ -297,18 +301,19 @@ The {makerspace_name} Team
 This email was sent to {email} as part of your {makerspace_name} membership.
 © {datetime.now().year} {makerspace_name}. All rights reserved.
     """
-    
+
     return email_service.send_email(email, subject, html_body, text_body)
 
+
 def send_membership_expiry_reminder(
-    email: str, 
-    first_name: str, 
+    email: str,
+    first_name: str,
     days_until_expiry: int,
     plan_name: str,
-    makerspace_name: str = "MakrCave"
+    makerspace_name: str = "MakrCave",
 ) -> bool:
     """Send membership expiry reminder email"""
-    
+
     if days_until_expiry <= 0:
         subject = f"Your {makerspace_name} membership has expired"
         urgency_text = "has expired"
@@ -321,7 +326,7 @@ def send_membership_expiry_reminder(
         subject = f"Reminder: Your {makerspace_name} membership expires soon"
         urgency_text = f"expires in {days_until_expiry} days"
         action_text = "Consider renewing early"
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -386,19 +391,19 @@ def send_membership_expiry_reminder(
     </body>
     </html>
     """
-    
+
     return email_service.send_email(email, subject, html_body)
 
+
 def send_membership_suspended_email(
-    email: str, 
-    first_name: str, 
-    reason: str,
-    makerspace_name: str = "MakrCave"
+    email: str, first_name: str, reason: str, makerspace_name: str = "MakrCave"
 ) -> bool:
     """Send membership suspension notification email"""
-    
-    subject = f"Important: Your {makerspace_name} membership has been suspended"
-    
+
+    subject = (
+        f"Important: Your {makerspace_name} membership has been suspended"
+    )
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -462,5 +467,5 @@ def send_membership_suspended_email(
     </body>
     </html>
     """
-    
+
     return email_service.send_email(email, subject, html_body)

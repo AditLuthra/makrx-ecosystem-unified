@@ -27,7 +27,7 @@ app = FastAPI(
     description="Backend API for MakrCave Inventory Management System",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # CORS middleware configuration - Updated for unified ecosystem
@@ -51,18 +51,20 @@ if env_origins:
 
 # Add environment-specific origins
 if os.getenv("ENVIRONMENT") == "development":
-    allowed_origins.extend([
-        "http://localhost:3000",
-        "http://localhost:3001", 
-        "http://localhost:3002",
-        "http://localhost:3003",
-        "http://localhost:3004",
-        "http://localhost:8000",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-        "http://127.0.0.1:3002",
-        "http://127.0.0.1:8000"
-    ])
+    allowed_origins.extend(
+        [
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://localhost:3002",
+            "http://localhost:3003",
+            "http://localhost:3004",
+            "http://localhost:8000",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3001",
+            "http://127.0.0.1:3002",
+            "http://127.0.0.1:8000",
+        ]
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -86,10 +88,12 @@ if trusted_hosts:
 if os.getenv("TRUST_PROXY", "false").lower() in ("1", "true", "yes"):
     app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "makrcave-backend"}
+
 
 # Startup checks: warm Keycloak JWKS/public key and verify DB connection
 @app.on_event("startup")
@@ -105,6 +109,7 @@ async def on_startup():
         log.info("database_connectivity_ok")
     except Exception as e:
         log.error("database_connectivity_failed", error=str(e))
+
 
 # Include API routes
 # Primary versioned mount
@@ -122,13 +127,16 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=port,
-        reload=os.getenv("ENVIRONMENT") == "development"
+        reload=os.getenv("ENVIRONMENT") == "development",
     )
 # Optional Prometheus metrics
-if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"): 
+if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"):
     try:
         from prometheus_fastapi_instrumentator import Instrumentator
-        Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+
+        Instrumentator().instrument(app).expose(
+            app, endpoint="/metrics", include_in_schema=False
+        )
         log.info("metrics_enabled", endpoint="/metrics")
     except Exception as e:
         log.warning("metrics_not_enabled_missing_dependency", error=str(e))

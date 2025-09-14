@@ -1,7 +1,13 @@
-import { ServiceOrder, Quote, StatusUpdate } from '@/contexts/ServiceOrderContext';
-import { createStoreOrderPayload } from './utils';
+import {
+  ServiceOrder,
+  Quote,
+  StatusUpdate,
+} from "@/contexts/ServiceOrderContext";
+import { createStoreOrderPayload } from "./utils";
 
-type AuthHeaderBuilder = (base?: Record<string, string>) => Promise<Record<string, string>>;
+type AuthHeaderBuilder = (
+  base?: Record<string, string>,
+) => Promise<Record<string, string>>;
 
 class ServicesAPI {
   private baseUrl: string;
@@ -9,17 +15,22 @@ class ServicesAPI {
   private authHeaderBuilder?: AuthHeaderBuilder;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_SERVICES_API_URL || 'http://localhost:3005/api';
-    this.storeApiUrl = process.env.NEXT_PUBLIC_STORE_API_URL || 'http://localhost:3001/api';
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_SERVICES_API_URL || "http://localhost:3005/api";
+    this.storeApiUrl =
+      process.env.NEXT_PUBLIC_STORE_API_URL || "http://localhost:3001/api";
   }
 
   setAuthHeaderBuilder(builder: AuthHeaderBuilder) {
     this.authHeaderBuilder = builder;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<T> {
     let headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers as Record<string, string> | undefined),
     };
 
@@ -40,9 +51,12 @@ class ServicesAPI {
     return response.json();
   }
 
-  private async storeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async storeRequest<T>(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<T> {
     let headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers as Record<string, string> | undefined),
     };
 
@@ -65,35 +79,35 @@ class ServicesAPI {
 
   // Order Management
   async createOrder(orderData: Partial<ServiceOrder>): Promise<ServiceOrder> {
-    const order = await this.request<ServiceOrder>('/orders', {
-      method: 'POST',
+    const order = await this.request<ServiceOrder>("/orders", {
+      method: "POST",
       body: JSON.stringify(orderData),
     });
 
     // Create corresponding order in main store
     try {
       const storeOrderPayload = createStoreOrderPayload(order);
-      const storeOrder = await this.storeRequest('/orders', {
-        method: 'POST',
+      const storeOrder = await this.storeRequest("/orders", {
+        method: "POST",
         body: JSON.stringify(storeOrderPayload),
       });
 
       // Update service order with store order ID
       if (storeOrder.id) {
         await this.request(`/orders/${order.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ 
+          method: "PATCH",
+          body: JSON.stringify({
             store_order_id: storeOrder.id,
-            sync_status: 'synced' 
+            sync_status: "synced",
           }),
         });
       }
     } catch (error) {
-      console.warn('Failed to sync with store:', error);
+      console.warn("Failed to sync with store:", error);
       // Update sync status to error but don't fail the order creation
       await this.request(`/orders/${order.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ sync_status: 'error' }),
+        method: "PATCH",
+        body: JSON.stringify({ sync_status: "error" }),
       });
     }
 
@@ -101,16 +115,19 @@ class ServicesAPI {
   }
 
   async getOrders(): Promise<ServiceOrder[]> {
-    return this.request<ServiceOrder[]>('/orders');
+    return this.request<ServiceOrder[]>("/orders");
   }
 
   async getOrder(id: string): Promise<ServiceOrder> {
     return this.request<ServiceOrder>(`/orders/${id}`);
   }
 
-  async updateOrder(id: string, updates: Partial<ServiceOrder>): Promise<ServiceOrder> {
+  async updateOrder(
+    id: string,
+    updates: Partial<ServiceOrder>,
+  ): Promise<ServiceOrder> {
     const order = await this.request<ServiceOrder>(`/orders/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(updates),
     });
 
@@ -125,27 +142,38 @@ class ServicesAPI {
   // Quote Management
   async requestQuote(orderId: string): Promise<Quote> {
     return this.request<Quote>(`/orders/${orderId}/quote`, {
-      method: 'POST',
+      method: "POST",
     });
   }
 
-  async acceptQuote(quoteId: string): Promise<{ order: ServiceOrder; quote: Quote }> {
-    return this.request<{ order: ServiceOrder; quote: Quote }>(`/quotes/${quoteId}/accept`, {
-      method: 'POST',
-    });
+  async acceptQuote(
+    quoteId: string,
+  ): Promise<{ order: ServiceOrder; quote: Quote }> {
+    return this.request<{ order: ServiceOrder; quote: Quote }>(
+      `/quotes/${quoteId}/accept`,
+      {
+        method: "POST",
+      },
+    );
   }
 
   async getQuotes(orderId?: string): Promise<Quote[]> {
-    const endpoint = orderId ? `/orders/${orderId}/quotes` : '/quotes';
+    const endpoint = orderId ? `/orders/${orderId}/quotes` : "/quotes";
     return this.request<Quote[]>(endpoint);
   }
 
   // Status Updates
-  async addStatusUpdate(orderId: string, update: Omit<StatusUpdate, 'id'>): Promise<StatusUpdate> {
-    const statusUpdate = await this.request<StatusUpdate>(`/orders/${orderId}/status`, {
-      method: 'POST',
-      body: JSON.stringify(update),
-    });
+  async addStatusUpdate(
+    orderId: string,
+    update: Omit<StatusUpdate, "id">,
+  ): Promise<StatusUpdate> {
+    const statusUpdate = await this.request<StatusUpdate>(
+      `/orders/${orderId}/status`,
+      {
+        method: "POST",
+        body: JSON.stringify(update),
+      },
+    );
 
     // Sync with store
     this.syncOrderWithStore({ id: orderId } as ServiceOrder);
@@ -154,23 +182,26 @@ class ServicesAPI {
   }
 
   // File Upload
-  async uploadFile(file: File, orderType: string): Promise<{ url: string; previewUrl?: string }> {
+  async uploadFile(
+    file: File,
+    orderType: string,
+  ): Promise<{ url: string; previewUrl?: string }> {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('orderType', orderType);
+    formData.append("file", file);
+    formData.append("orderType", orderType);
 
     let headers: Record<string, string> = {};
     if (this.authHeaderBuilder) {
       headers = await this.authHeaderBuilder({});
     }
     const response = await fetch(`${this.baseUrl}/upload`, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('File upload failed');
+      throw new Error("File upload failed");
     }
 
     return response.json();
@@ -183,8 +214,8 @@ class ServicesAPI {
     dimensions: { x: number; y: number; z: number };
     complexity_score: number;
   }> {
-    return this.request('/analysis/stl', {
-      method: 'POST',
+    return this.request("/analysis/stl", {
+      method: "POST",
       body: JSON.stringify({ file_url: fileUrl }),
     });
   }
@@ -196,50 +227,58 @@ class ServicesAPI {
     path_length: number;
     complexity_score: number;
   }> {
-    return this.request('/analysis/svg', {
-      method: 'POST',
+    return this.request("/analysis/svg", {
+      method: "POST",
       body: JSON.stringify({ file_url: fileUrl }),
     });
   }
 
   // Material Information
-  async getMaterials(serviceType: 'printing' | 'engraving'): Promise<any[]> {
+  async getMaterials(serviceType: "printing" | "engraving"): Promise<any[]> {
     return this.request(`/materials?type=${serviceType}`);
   }
 
   // Provider Management (for provider dashboard)
   async getAvailableJobs(): Promise<any[]> {
-    return this.request('/provider/jobs/available');
+    return this.request("/provider/jobs/available");
   }
 
   async acceptJob(jobId: string): Promise<void> {
     await this.request(`/provider/jobs/${jobId}/accept`, {
-      method: 'POST',
+      method: "POST",
     });
   }
 
-  async updateJobStatus(jobId: string, status: string, notes?: string): Promise<void> {
+  async updateJobStatus(
+    jobId: string,
+    status: string,
+    notes?: string,
+  ): Promise<void> {
     await this.request(`/provider/jobs/${jobId}/status`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ status, notes }),
     });
   }
 
   async getProviderJobs(): Promise<{ jobs: any[] }> {
-    return this.request('/provider/jobs');
+    return this.request("/provider/jobs");
   }
 
   async getProviderDashboard(): Promise<{ stats: any; notifications: any[] }> {
-    return this.request('/provider/dashboard');
+    return this.request("/provider/dashboard");
   }
 
   async getProviderInventory(): Promise<{ inventory: any[] }> {
-    return this.request('/provider/inventory');
+    return this.request("/provider/inventory");
   }
 
-  async updateProviderInventory(materialId: string, quantity: number, action: 'add' | 'subtract'): Promise<void> {
+  async updateProviderInventory(
+    materialId: string,
+    quantity: number,
+    action: "add" | "subtract",
+  ): Promise<void> {
     await this.request(`/provider/inventory/${materialId}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ quantity, action }),
     });
   }
@@ -247,13 +286,14 @@ class ServicesAPI {
   // Cross-platform synchronization
   private async syncOrderWithStore(order: ServiceOrder | { id: string }) {
     try {
-      if ('status' in order || 'status_updates' in order) {
-        const fullOrder = 'status' in order ? order : await this.getOrder(order.id);
+      if ("status" in order || "status_updates" in order) {
+        const fullOrder =
+          "status" in order ? order : await this.getOrder(order.id);
         const storeOrderPayload = createStoreOrderPayload(fullOrder);
-        
+
         if (fullOrder.store_order_id) {
           await this.storeRequest(`/orders/${fullOrder.store_order_id}`, {
-            method: 'PATCH',
+            method: "PATCH",
             body: JSON.stringify({
               status: storeOrderPayload.status,
               tracking: storeOrderPayload.tracking,
@@ -263,26 +303,30 @@ class ServicesAPI {
         }
       }
     } catch (error) {
-      console.warn('Failed to sync order with store:', error);
+      console.warn("Failed to sync order with store:", error);
     }
   }
 
   // Real-time updates
-  setupWebSocketConnection(onMessage: (message: any) => void): WebSocket | null {
+  setupWebSocketConnection(
+    onMessage: (message: any) => void,
+  ): WebSocket | null {
     try {
-      const wsUrl = this.baseUrl.replace('http', 'ws').replace('/api', '/ws');
+      const wsUrl = this.baseUrl.replace("http", "ws").replace("/api", "/ws");
       const ws = new WebSocket(wsUrl);
-      
+
       ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         // Send authentication token
         const sendAuth = async () => {
           if (this.authHeaderBuilder) {
             const h = await this.authHeaderBuilder({});
-            const auth = h['Authorization'];
-            const token = auth?.startsWith('Bearer ') ? auth.substring(7) : undefined;
+            const auth = h["Authorization"];
+            const token = auth?.startsWith("Bearer ")
+              ? auth.substring(7)
+              : undefined;
             if (token) {
-              ws.send(JSON.stringify({ type: 'auth', token }));
+              ws.send(JSON.stringify({ type: "auth", token }));
             }
           }
         };
@@ -294,16 +338,16 @@ class ServicesAPI {
           const message = JSON.parse(event.data);
           onMessage(message);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error("Failed to parse WebSocket message:", error);
         }
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         // Attempt to reconnect after 5 seconds
         setTimeout(() => {
           this.setupWebSocketConnection(onMessage);
@@ -312,7 +356,7 @@ class ServicesAPI {
 
       return ws;
     } catch (error) {
-      console.error('Failed to setup WebSocket connection:', error);
+      console.error("Failed to setup WebSocket connection:", error);
       return null;
     }
   }
@@ -322,9 +366,9 @@ export const servicesAPI = new ServicesAPI();
 
 // Convenience functions
 export const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
     minimumFractionDigits: 0,
   }).format(price);
 };

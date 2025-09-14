@@ -26,14 +26,92 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
   const [isProcessing, setIsProcessing] = useState(false);
 
   const csvTemplate = [
-    ['name', 'category', 'subcategory', 'quantity', 'unit', 'minThreshold', 'location', 'supplierType', 'productCode', 'price', 'supplier', 'description', 'status', 'restrictedAccessLevel'],
-    ['PLA Filament - Red', 'filament', 'PLA', '5', 'kg', '2', 'Shelf A-1', 'makrx', 'MKX-FIL-PLA-RED-001', '25.99', 'MakrX Store', 'High-quality PLA filament', 'active', 'basic'],
-    ['Arduino Uno R3', 'electronics', 'Microcontroller', '10', 'pcs', '3', 'Drawer B-2', 'external', '', '28.50', 'Arduino Official', 'Arduino Uno microcontroller board', 'active', 'basic'],
-    ['Digital Calipers', 'tools', 'Measuring', '2', 'pcs', '1', 'Tool Cabinet A', 'makrx', 'MKX-TOL-CAL-DIG-001', '45.99', 'MakrX Store', 'Digital precision calipers', 'active', 'certified']
+    [
+      'name',
+      'category',
+      'subcategory',
+      'quantity',
+      'unit',
+      'minThreshold',
+      'location',
+      'supplierType',
+      'productCode',
+      'price',
+      'supplier',
+      'description',
+      'status',
+      'restrictedAccessLevel',
+    ],
+    [
+      'PLA Filament - Red',
+      'filament',
+      'PLA',
+      '5',
+      'kg',
+      '2',
+      'Shelf A-1',
+      'makrx',
+      'MKX-FIL-PLA-RED-001',
+      '25.99',
+      'MakrX Store',
+      'High-quality PLA filament',
+      'active',
+      'basic',
+    ],
+    [
+      'Arduino Uno R3',
+      'electronics',
+      'Microcontroller',
+      '10',
+      'pcs',
+      '3',
+      'Drawer B-2',
+      'external',
+      '',
+      '28.50',
+      'Arduino Official',
+      'Arduino Uno microcontroller board',
+      'active',
+      'basic',
+    ],
+    [
+      'Digital Calipers',
+      'tools',
+      'Measuring',
+      '2',
+      'pcs',
+      '1',
+      'Tool Cabinet A',
+      'makrx',
+      'MKX-TOL-CAL-DIG-001',
+      '45.99',
+      'MakrX Store',
+      'Digital precision calipers',
+      'active',
+      'certified',
+    ],
   ];
 
-  const requiredFields = ['name', 'category', 'quantity', 'unit', 'minThreshold', 'location', 'supplierType'];
-  const validCategories = ['filament', 'resin', 'tools', 'electronics', 'materials', 'machines', 'sensors', 'components', 'consumables'];
+  const requiredFields = [
+    'name',
+    'category',
+    'quantity',
+    'unit',
+    'minThreshold',
+    'location',
+    'supplierType',
+  ];
+  const validCategories = [
+    'filament',
+    'resin',
+    'tools',
+    'electronics',
+    'materials',
+    'machines',
+    'sensors',
+    'components',
+    'consumables',
+  ];
   const validSupplierTypes = ['makrx', 'external'];
   const validStatuses = ['active', 'in_use', 'damaged', 'reserved', 'discontinued'];
   const validAccessLevels = ['basic', 'certified', 'admin_only'];
@@ -52,7 +130,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
@@ -82,10 +160,10 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
   };
 
   const parseCSV = (csv: string) => {
-    const lines = csv.split('\n').filter(line => line.trim());
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    const data = lines.slice(1).map(line => {
-      const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+    const lines = csv.split('\n').filter((line) => line.trim());
+    const headers = lines[0].split(',').map((h) => h.trim().replace(/"/g, ''));
+    const data = lines.slice(1).map((line) => {
+      const values = line.split(',').map((v) => v.trim().replace(/"/g, ''));
       const row: any = {};
       headers.forEach((header, index) => {
         row[header] = values[index] || '';
@@ -107,12 +185,12 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
       let hasErrors = false;
 
       // Check required fields
-      requiredFields.forEach(field => {
+      requiredFields.forEach((field) => {
         if (!row[field] || row[field].toString().trim() === '') {
           errors.push({
             row: rowNumber,
             field,
-            message: `${field} is required`
+            message: `${field} is required`,
           });
           hasErrors = true;
         }
@@ -123,7 +201,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'category',
-          message: `Invalid category. Must be one of: ${validCategories.join(', ')}`
+          message: `Invalid category. Must be one of: ${validCategories.join(', ')}`,
         });
         hasErrors = true;
       }
@@ -133,7 +211,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'supplierType',
-          message: `Invalid supplier type. Must be 'makrx' or 'external'`
+          message: `Invalid supplier type. Must be 'makrx' or 'external'`,
         });
         hasErrors = true;
       }
@@ -143,7 +221,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'status',
-          message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+          message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
         });
         hasErrors = true;
       }
@@ -153,7 +231,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'restrictedAccessLevel',
-          message: `Invalid access level. Must be one of: ${validAccessLevels.join(', ')}`
+          message: `Invalid access level. Must be one of: ${validAccessLevels.join(', ')}`,
         });
         hasErrors = true;
       }
@@ -163,7 +241,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'quantity',
-          message: 'Quantity must be a valid number'
+          message: 'Quantity must be a valid number',
         });
         hasErrors = true;
       }
@@ -172,7 +250,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'minThreshold',
-          message: 'Min threshold must be a valid integer'
+          message: 'Min threshold must be a valid integer',
         });
         hasErrors = true;
       }
@@ -181,7 +259,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'price',
-          message: 'Price must be a valid number'
+          message: 'Price must be a valid number',
         });
         hasErrors = true;
       }
@@ -191,7 +269,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
         errors.push({
           row: rowNumber,
           field: 'productCode',
-          message: 'MakrX items must have a product code'
+          message: 'MakrX items must have a product code',
         });
         hasErrors = true;
       }
@@ -206,16 +284,18 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
           status: row.status || 'active',
           restrictedAccessLevel: row.restrictedAccessLevel || 'basic',
           makerspaceId: user?.assignedMakerspaces?.[0] || 'ms-1',
-          history: [{
-            id: `log-${Date.now()}-${index}`,
-            timestamp: new Date().toISOString(),
-            userId: user?.id || '',
-            userName: `${user?.firstName} ${user?.lastName}` || 'Unknown User',
-            action: 'add',
-            quantityBefore: 0,
-            quantityAfter: parseFloat(row.quantity),
-            reason: 'Bulk CSV import'
-          }]
+          history: [
+            {
+              id: `log-${Date.now()}-${index}`,
+              timestamp: new Date().toISOString(),
+              userId: user?.id || '',
+              userName: `${user?.firstName} ${user?.lastName}` || 'Unknown User',
+              action: 'add',
+              quantityBefore: 0,
+              quantityAfter: parseFloat(row.quantity),
+              reason: 'Bulk CSV import',
+            },
+          ],
         };
         valid.push(transformedRow);
       }
@@ -227,7 +307,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
   };
 
   const downloadTemplate = () => {
-    const csvContent = csvTemplate.map(row => row.join(',')).join('\n');
+    const csvContent = csvTemplate.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -268,7 +348,9 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
           <div className="space-y-6">
             {/* Instructions */}
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-              <h3 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Import Instructions</h3>
+              <h3 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
+                Import Instructions
+              </h3>
               <ol className="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-decimal list-inside">
                 <li>Download the CSV template below</li>
                 <li>Fill in your inventory data following the column headers</li>
@@ -297,8 +379,8 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
             {/* File Upload Area */}
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                dragActive 
-                  ? 'border-makrx-teal bg-makrx-teal/5' 
+                dragActive
+                  ? 'border-makrx-teal bg-makrx-teal/5'
                   : 'border-border hover:border-makrx-teal/50'
               }`}
               onDragEnter={handleDrag}
@@ -356,7 +438,9 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
               <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-green-800 dark:text-green-200">Valid Items</span>
+                  <span className="font-medium text-green-800 dark:text-green-200">
+                    Valid Items
+                  </span>
                 </div>
                 <p className="text-2xl font-bold text-green-600">{validItems.length}</p>
               </div>
@@ -382,9 +466,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
                       <span className="font-medium text-red-700 dark:text-red-300">
                         Row {error.row}, {error.field}:
                       </span>
-                      <span className="text-red-600 dark:text-red-400 ml-2">
-                        {error.message}
-                      </span>
+                      <span className="text-red-600 dark:text-red-400 ml-2">{error.message}</span>
                     </div>
                   ))}
                   {validationErrors.length > 10 && (
@@ -405,7 +487,10 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
                 <div className="max-h-48 overflow-y-auto">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {validItems.slice(0, 6).map((item, index) => (
-                      <div key={index} className="text-sm p-2 bg-white dark:bg-gray-800 rounded border">
+                      <div
+                        key={index}
+                        className="text-sm p-2 bg-white dark:bg-gray-800 rounded border"
+                      >
                         <div className="font-medium">{item.name}</div>
                         <div className="text-muted-foreground">
                           {item.quantity} {item.unit} • {item.category}
@@ -436,7 +521,7 @@ export default function CSVImportModal({ isOpen, onClose, onImport }: CSVImportM
               >
                 Start Over
               </button>
-              
+
               <button
                 onClick={handleImport}
                 disabled={validItems.length === 0}

@@ -23,10 +23,7 @@ export async function POST(request: NextRequest) {
         ]);
         break;
       default:
-        return NextResponse.json(
-          { error: 'Invalid job type' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid job type' }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -35,9 +32,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error processing background jobs:', error);
-    return NextResponse.json(
-      { error: 'Failed to process background jobs' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process background jobs' }, { status: 500 });
   }
 }

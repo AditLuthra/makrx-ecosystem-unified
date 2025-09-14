@@ -1,12 +1,7 @@
-const path = require("path");
+const path = require('path');
 
-const isProduction = process.env.NODE_ENV === "production";
-const experimentalDemosPath = path.join(
-  "..",
-  "experimental",
-  "makrx-store-demos",
-  "**"
-);
+const isProduction = process.env.NODE_ENV === 'production';
+const experimentalDemosPath = path.join('..', 'experimental', 'makrx-store-demos', '**');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -40,7 +35,7 @@ const nextConfig = {
   compiler: {
     removeConsole: isProduction
       ? {
-          exclude: ["error"],
+          exclude: ['error'],
         }
       : false,
   },
@@ -57,22 +52,22 @@ const nextConfig = {
   // Reduce development noise
   logging: {
     fetches: {
-      fullUrl: process.env.NODE_ENV === "development",
+      fullUrl: process.env.NODE_ENV === 'development',
     },
   },
   images: {
-    domains: ["localhost", "makrx.store", "images.unsplash.com"],
+    domains: ['localhost', 'makrx.store', 'images.unsplash.com'],
     unoptimized: true,
   },
   env: {
-    CUSTOM_KEY: "makrx-store",
+    CUSTOM_KEY: 'makrx-store',
   },
   experimental: {
     externalDir: true,
     ...(isProduction
       ? {
           outputFileTracingExcludes: {
-            "*": [experimentalDemosPath],
+            '*': [experimentalDemosPath],
           },
         }
       : {}),
@@ -80,8 +75,8 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@makrx/ui": path.resolve(__dirname, "../packages/ui"),
-      "@makrx/types": path.resolve(__dirname, "../packages/types"),
+      '@makrx/ui': path.resolve(__dirname, '../packages/ui'),
+      '@makrx/types': path.resolve(__dirname, '../packages/types'),
     };
     return config;
   },

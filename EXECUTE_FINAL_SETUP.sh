@@ -17,9 +17,9 @@ echo ""
 
 # Check if we're in the right directory
 if [ ! -f "package.json" ] || [ ! -d "apps" ] || [ ! -d "backends" ]; then
-    echo "❌ Error: Please run this script from the makrx-ecosystem-unified root directory"
-    echo "   Current directory: $(pwd)"
-    exit 1
+	echo "❌ Error: Please run this script from the makrx-ecosystem-unified root directory"
+	echo "   Current directory: $(pwd)"
+	exit 1
 fi
 
 # Make the main script executable and run it
@@ -35,7 +35,7 @@ echo ""
 echo "🏗️  REPOSITORY STRUCTURE"
 echo "   ✅ Clean, production-ready codebase"
 echo "   ✅ 5 Frontend applications (Next.js)"
-echo "   ✅ 3 Backend services (FastAPI + Express)"  
+echo "   ✅ 3 Backend services (FastAPI + Express)"
 echo "   ✅ 3 Shared packages"
 echo "   ✅ Complete infrastructure setup"
 echo ""
@@ -80,9 +80,9 @@ echo ""
 echo "🧪 QUICK VERIFICATION"
 echo "===================="
 if [ -f "./test-setup.sh" ]; then
-    ./test-setup.sh
+	./test-setup.sh
 else
-    echo "✅ Core files verified manually"
+	echo "✅ Core files verified manually"
 fi
 
 echo ""
@@ -149,5 +149,5 @@ echo "  🤝 Community collaboration"
 echo "  💻 Cross-platform development"
 echo ""
 echo "Built with ❤️  by the MakrX Team"
-echo "Made ready for the world with Memex 🚀"
+echo "build by Botness"
 echo ""

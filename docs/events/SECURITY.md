@@ -4,9 +4,9 @@
 
 We actively support and provide security updates for the following versions:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | ✅ Active support  |
+| Version | Supported              |
+| ------- | ---------------------- |
+| 1.x.x   | ✅ Active support      |
 | 0.x.x   | ❌ No longer supported |
 
 ## Reporting a Vulnerability
@@ -27,16 +27,19 @@ Instead, please send an email to [security@makrx.events](mailto:security@makrx.e
 ### What to Include
 
 **Vulnerability Details:**
+
 - Type of vulnerability (e.g., SQL injection, XSS, authentication bypass)
 - Location of the vulnerability in the codebase
 - Any special configuration required to reproduce
 
 **Proof of Concept:**
+
 - Step-by-step instructions to reproduce
 - Screenshots or videos if applicable
 - Sample payloads or exploit code (if safe to share)
 
 **Impact Assessment:**
+
 - What data could be accessed/modified
 - What systems could be compromised
 - Potential business impact
@@ -63,12 +66,14 @@ We follow coordinated disclosure principles:
 ### Responsible Disclosure Guidelines
 
 **Please:**
+
 - Give us reasonable time to fix the issue before public disclosure
 - Avoid accessing or modifying data that doesn't belong to you
 - Don't perform actions that could harm our users or systems
 - Don't spam or flood our systems during testing
 
 **We commit to:**
+
 - Respond promptly to your report
 - Keep you updated on our progress
 - Credit you for the discovery (if desired)
@@ -77,30 +82,35 @@ We follow coordinated disclosure principles:
 ## Security Measures
 
 ### Authentication & Authorization
+
 - **Keycloak Integration**: Enterprise-grade identity management
 - **Role-Based Access Control**: Granular permissions system
 - **Session Management**: Secure session handling with proper expiration
 - **Password Security**: Delegated to Keycloak with configurable policies
 
 ### Data Protection
+
 - **Input Validation**: All user input is validated and sanitized
 - **SQL Injection Prevention**: Parameterized queries using Drizzle ORM
 - **XSS Prevention**: Input sanitization and Content Security Policy
 - **CSRF Protection**: Built-in CSRF tokens for state-changing operations
 
 ### Infrastructure Security
+
 - **HTTPS Enforcement**: TLS encryption for all communications
 - **Environment Isolation**: Separate development and production environments
 - **Database Security**: Encrypted connections and access controls
 - **Secrets Management**: Environment-based secret handling
 
 ### API Security
+
 - **Rate Limiting**: Protection against abuse and DoS attacks
 - **Authentication Required**: Protected endpoints require valid authentication
 - **Input Validation**: Schema-based validation for all API requests
 - **Error Handling**: Secure error responses without information disclosure
 
 ### Development Security
+
 - **Dependency Scanning**: Regular security updates for dependencies
 - **Code Review**: Security-focused code review process
 - **Static Analysis**: Automated security scanning in CI/CD
@@ -109,6 +119,7 @@ We follow coordinated disclosure principles:
 ## Security Best Practices for Contributors
 
 ### Code Security
+
 ```typescript
 // ✅ Good: Parameterized queries
 const user = await db.select().from(users).where(eq(users.id, userId));
@@ -118,6 +129,7 @@ const user = await db.execute(sql`SELECT * FROM users WHERE id = '${userId}'`);
 ```
 
 ### Input Validation
+
 ```typescript
 // ✅ Good: Schema validation
 const schema = z.object({
@@ -131,18 +143,20 @@ const { email, name } = request.body;
 ```
 
 ### Authentication
+
 ```typescript
 // ✅ Good: Proper authentication check
 const user = await getAuthenticatedUser(request);
 if (!user) {
-  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 
 // ❌ Bad: Trusting client-side data
-const userId = request.headers.get('user-id');
+const userId = request.headers.get("user-id");
 ```
 
 ### Error Handling
+
 ```typescript
 // ✅ Good: Safe error messages
 catch (error) {
@@ -165,6 +179,7 @@ catch (error) {
 ## Vulnerability Categories
 
 ### High Priority
+
 - Remote code execution
 - SQL injection
 - Authentication bypass
@@ -172,6 +187,7 @@ catch (error) {
 - Sensitive data exposure
 
 ### Medium Priority
+
 - Cross-site scripting (XSS)
 - Cross-site request forgery (CSRF)
 - Server-side request forgery (SSRF)
@@ -179,6 +195,7 @@ catch (error) {
 - Information disclosure
 
 ### Low Priority
+
 - Denial of service (rate limiting bypass)
 - Clickjacking
 - Missing security headers
@@ -201,7 +218,7 @@ We recognize security researchers who help improve our security:
 <!-- Security researchers who have responsibly disclosed vulnerabilities -->
 <!-- will be listed here with their permission -->
 
-*No vulnerabilities reported yet.*
+_No vulnerabilities reported yet._
 
 ## Contact
 

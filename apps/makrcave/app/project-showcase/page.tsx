@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -6,8 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Search,
   Filter,
   Grid3X3,
@@ -39,7 +45,7 @@ import {
   Layers3,
   Rocket,
   Target,
-  Gauge
+  Gauge,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProjectShowcaseCard from '@/components/showcase/ProjectShowcaseCard';
@@ -66,7 +72,7 @@ interface ShowcaseProject {
   tags: string[];
   skills_required: string[];
   equipment_used: string[];
-  
+
   // Showcase metrics
   view_count: number;
   like_count: number;
@@ -74,12 +80,12 @@ interface ShowcaseProject {
   comment_count: number;
   download_count: number;
   completion_rate: number; // Percentage of people who completed after viewing
-  
+
   // Media and assets
   thumbnail_url?: string;
   gallery_images: string[];
   demo_video_url?: string;
-  
+
   // Project details
   bill_of_materials: Array<{
     name: string;
@@ -88,7 +94,7 @@ interface ShowcaseProject {
     supplier?: string;
   }>;
   total_estimated_cost: number;
-  
+
   // Social features
   is_featured: boolean;
   is_staff_pick: boolean;
@@ -99,19 +105,25 @@ interface ShowcaseProject {
     icon: string;
     awarded_at: string;
   }>;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
   featured_at?: string;
-  
+
   // Interaction flags for current user
   is_liked: boolean;
   is_bookmarked: boolean;
   is_following_owner: boolean;
 }
 
-type SortOption = 'newest' | 'trending' | 'popular' | 'most_liked' | 'most_forked' | 'recently_updated';
+type SortOption =
+  | 'newest'
+  | 'trending'
+  | 'popular'
+  | 'most_liked'
+  | 'most_forked'
+  | 'recently_updated';
 type ViewMode = 'grid' | 'list';
 
 const ProjectShowcase: React.FC = () => {
@@ -121,7 +133,7 @@ const ProjectShowcase: React.FC = () => {
   const [filteredProjects, setFilteredProjects] = useState<ShowcaseProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  
+
   // Search and filtering
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -129,17 +141,17 @@ const ProjectShowcase: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>('trending');
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Filter options
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
-  
+
   const difficultyLevels = [
     { value: 'beginner', label: 'Beginner', icon: '🟢', description: 'New to making' },
     { value: 'intermediate', label: 'Intermediate', icon: '🟡', description: 'Some experience' },
     { value: 'advanced', label: 'Advanced', icon: '🟠', description: 'Very experienced' },
-    { value: 'expert', label: 'Expert', icon: '🔴', description: 'Professional level' }
+    { value: 'expert', label: 'Expert', icon: '🔴', description: 'Professional level' },
   ];
 
   // Load projects and filter data
@@ -186,9 +198,37 @@ const ProjectShowcase: React.FC = () => {
         setAvailableSkills(data.skills);
       } else {
         // Mock filter options
-        setAvailableCategories(['3D Printing', 'Electronics', 'Woodworking', 'Robotics', 'IoT', 'Art & Design', 'Automation', 'Tools']);
-        setAvailableTags(['Arduino', 'Raspberry Pi', 'CAD', 'LED', 'Sensors', 'Motors', 'WiFi', 'Bluetooth', '3D Printed', 'Open Source']);
-        setAvailableSkills(['Soldering', '3D Modeling', 'Programming', 'Circuit Design', 'Woodworking', 'CAD Design', 'Electronics']);
+        setAvailableCategories([
+          '3D Printing',
+          'Electronics',
+          'Woodworking',
+          'Robotics',
+          'IoT',
+          'Art & Design',
+          'Automation',
+          'Tools',
+        ]);
+        setAvailableTags([
+          'Arduino',
+          'Raspberry Pi',
+          'CAD',
+          'LED',
+          'Sensors',
+          'Motors',
+          'WiFi',
+          'Bluetooth',
+          '3D Printed',
+          'Open Source',
+        ]);
+        setAvailableSkills([
+          'Soldering',
+          '3D Modeling',
+          'Programming',
+          'Circuit Design',
+          'Woodworking',
+          'CAD Design',
+          'Electronics',
+        ]);
       }
     } catch (error) {
       console.error('Error loading filter options:', error);
@@ -201,29 +241,30 @@ const ProjectShowcase: React.FC = () => {
     // Search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(project => 
-        project.name.toLowerCase().includes(query) ||
-        project.description?.toLowerCase().includes(query) ||
-        project.tags.some(tag => tag.toLowerCase().includes(query)) ||
-        project.skills_required.some(skill => skill.toLowerCase().includes(query)) ||
-        project.owner_name.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (project) =>
+          project.name.toLowerCase().includes(query) ||
+          project.description?.toLowerCase().includes(query) ||
+          project.tags.some((tag) => tag.toLowerCase().includes(query)) ||
+          project.skills_required.some((skill) => skill.toLowerCase().includes(query)) ||
+          project.owner_name.toLowerCase().includes(query),
       );
     }
 
     // Category filter
     if (selectedCategory) {
-      filtered = filtered.filter(project => project.category === selectedCategory);
+      filtered = filtered.filter((project) => project.category === selectedCategory);
     }
 
     // Difficulty filter
     if (selectedDifficulty) {
-      filtered = filtered.filter(project => project.difficulty_level === selectedDifficulty);
+      filtered = filtered.filter((project) => project.difficulty_level === selectedDifficulty);
     }
 
     // Tags filter
     if (selectedTags.length > 0) {
-      filtered = filtered.filter(project => 
-        selectedTags.every(tag => project.tags.includes(tag))
+      filtered = filtered.filter((project) =>
+        selectedTags.every((tag) => project.tags.includes(tag)),
       );
     }
 
@@ -233,7 +274,12 @@ const ProjectShowcase: React.FC = () => {
         case 'newest':
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case 'trending':
-          return (b.like_count + b.view_count + b.fork_count) - (a.like_count + a.view_count + a.fork_count);
+          return (
+            b.like_count +
+            b.view_count +
+            b.fork_count -
+            (a.like_count + a.view_count + a.fork_count)
+          );
         case 'popular':
           return b.view_count - a.view_count;
         case 'most_liked':
@@ -251,10 +297,8 @@ const ProjectShowcase: React.FC = () => {
   };
 
   const handleTagSelect = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   };
 
@@ -268,11 +312,16 @@ const ProjectShowcase: React.FC = () => {
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'advanced': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'expert': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'expert':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -296,11 +345,10 @@ const ProjectShowcase: React.FC = () => {
               <Sparkles className="h-4 w-4" />
               <span>Discover Amazing Maker Projects</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold">
-              Project Showcase
-            </h1>
+            <h1 className="text-4xl md:text-6xl font-bold">Project Showcase</h1>
             <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-              Explore incredible projects from makers around the world. Get inspired, learn new skills, and share your own creations.
+              Explore incredible projects from makers around the world. Get inspired, learn new
+              skills, and share your own creations.
             </p>
             <div className="flex items-center justify-center space-x-6 pt-4">
               <div className="text-center">
@@ -322,10 +370,10 @@ const ProjectShowcase: React.FC = () => {
 
       <div className="container mx-auto px-6 py-8 space-y-8">
         {/* Featured Projects Carousel */}
-        <FeaturedProjectCarousel projects={projects.filter(p => p.is_featured)} />
+        <FeaturedProjectCarousel projects={projects.filter((p) => p.is_featured)} />
 
         {/* Quick Categories */}
-        <ProjectCategoryExplorer 
+        <ProjectCategoryExplorer
           categories={availableCategories}
           onCategorySelect={setSelectedCategory}
           selectedCategory={selectedCategory}
@@ -354,8 +402,10 @@ const ProjectShowcase: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">All Categories</SelectItem>
-                    {availableCategories.map(category => (
-                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    {availableCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -366,7 +416,7 @@ const ProjectShowcase: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">All Levels</SelectItem>
-                    {difficultyLevels.map(level => (
+                    {difficultyLevels.map((level) => (
                       <SelectItem key={level.value} value={level.value}>
                         <div className="flex items-center space-x-2">
                           <span>{level.icon}</span>
@@ -449,9 +499,11 @@ const ProjectShowcase: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Tags */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Technologies</label>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Technologies
+                    </label>
                     <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                      {availableTags.map(tag => (
+                      {availableTags.map((tag) => (
                         <Badge
                           key={tag}
                           variant={selectedTags.includes(tag) ? 'default' : 'outline'}
@@ -459,9 +511,7 @@ const ProjectShowcase: React.FC = () => {
                           onClick={() => handleTagSelect(tag)}
                         >
                           {tag}
-                          {selectedTags.includes(tag) && (
-                            <X className="h-3 w-3 ml-1" />
-                          )}
+                          {selectedTags.includes(tag) && <X className="h-3 w-3 ml-1" />}
                         </Badge>
                       ))}
                     </div>
@@ -469,9 +519,11 @@ const ProjectShowcase: React.FC = () => {
 
                   {/* Skills */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Skills Required</label>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Skills Required
+                    </label>
                     <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                      {availableSkills.map(skill => (
+                      {availableSkills.map((skill) => (
                         <Badge
                           key={skill}
                           variant="secondary"
@@ -485,19 +537,23 @@ const ProjectShowcase: React.FC = () => {
 
                   {/* Difficulty Levels */}
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Difficulty Level</label>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Difficulty Level
+                    </label>
                     <div className="space-y-2">
-                      {difficultyLevels.map(level => (
-                        <div 
+                      {difficultyLevels.map((level) => (
+                        <div
                           key={level.value}
                           className={`p-2 rounded-lg border cursor-pointer transition-colors ${
-                            selectedDifficulty === level.value 
+                            selectedDifficulty === level.value
                               ? getDifficultyColor(level.value)
                               : 'border-gray-200 hover:bg-gray-50'
                           }`}
-                          onClick={() => setSelectedDifficulty(
-                            selectedDifficulty === level.value ? '' : level.value
-                          )}
+                          onClick={() =>
+                            setSelectedDifficulty(
+                              selectedDifficulty === level.value ? '' : level.value,
+                            )
+                          }
                         >
                           <div className="flex items-center space-x-2">
                             <span>{level.icon}</span>
@@ -529,7 +585,7 @@ const ProjectShowcase: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            <TrendingProjectsWidget projects={projects.filter(p => p.is_trending)} />
+            <TrendingProjectsWidget projects={projects.filter((p) => p.is_trending)} />
             <MakerSpotlight />
           </div>
 
@@ -544,19 +600,17 @@ const ProjectShowcase: React.FC = () => {
                     </div>
                     <h3 className="text-lg font-semibold text-gray-700">No projects found</h3>
                     <p className="text-gray-600">Try adjusting your search criteria or filters</p>
-                    <Button onClick={clearFilters}>
-                      Clear Filters
-                    </Button>
+                    <Button onClick={clearFilters}>Clear Filters</Button>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
-                  : 'grid-cols-1'
-              }`}>
-                {filteredProjects.map(project => (
+              <div
+                className={`grid gap-6 ${
+                  viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'
+                }`}
+              >
+                {filteredProjects.map((project) => (
                   <ProjectShowcaseCard
                     key={project.project_id}
                     project={project}
@@ -578,7 +632,8 @@ const generateMockShowcaseProjects = (): ShowcaseProject[] => {
     {
       project_id: '1',
       name: 'Smart Home IoT Dashboard',
-      description: 'A comprehensive IoT dashboard for monitoring and controlling smart home devices with beautiful visualizations.',
+      description:
+        'A comprehensive IoT dashboard for monitoring and controlling smart home devices with beautiful visualizations.',
       owner_id: 'user1',
       owner_name: 'Alex Chen',
       owner_avatar: '/avatars/alex.jpg',
@@ -604,22 +659,22 @@ const generateMockShowcaseProjects = (): ShowcaseProject[] => {
       demo_video_url: '/videos/iot-demo.mp4',
       bill_of_materials: [
         { name: 'Arduino Uno', quantity: 1, estimated_cost: 25, supplier: 'MakrX Store' },
-        { name: 'DHT22 Sensor', quantity: 2, estimated_cost: 15, supplier: 'MakrX Store' }
+        { name: 'DHT22 Sensor', quantity: 2, estimated_cost: 15, supplier: 'MakrX Store' },
       ],
       total_estimated_cost: 75,
       is_featured: true,
       is_staff_pick: false,
       is_trending: true,
       awards: [
-        { type: 'featured', name: 'Featured Project', icon: '⭐', awarded_at: '2024-01-15' }
+        { type: 'featured', name: 'Featured Project', icon: '⭐', awarded_at: '2024-01-15' },
       ],
       created_at: '2024-01-10T00:00:00Z',
       updated_at: '2024-01-20T00:00:00Z',
       featured_at: '2024-01-15T00:00:00Z',
       is_liked: false,
       is_bookmarked: false,
-      is_following_owner: false
-    }
+      is_following_owner: false,
+    },
     // Add more mock projects...
   ];
 };

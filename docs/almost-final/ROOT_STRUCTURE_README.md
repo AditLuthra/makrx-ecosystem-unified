@@ -5,6 +5,7 @@ This document provides a comprehensive overview of every file and folder in the 
 ## 📁 Directory Structure Overview
 
 The MakrX ecosystem is organized into several main sections:
+
 - **Frontend Applications** (`frontend/`, `makrx-store-frontend/`)
 - **Backend Services** (`backends/`, `backends/makrcave/`, `backends/makrx-store/`)
 - **Shared Packages** (`packages/`)
@@ -17,6 +18,7 @@ The MakrX ecosystem is organized into several main sections:
 ### Configuration Files
 
 #### `package.json`
+
 - **Purpose**: Root workspace configuration for the entire monorepo
 - **Key Parameters**:
   - `workspaces`: Defines which directories are part of the workspace
@@ -26,6 +28,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by npm/yarn for workspace management
 
 #### `tsconfig.json`
+
 - **Purpose**: TypeScript configuration for the entire workspace
 - **Key Parameters**:
   - `compilerOptions`: TypeScript compilation settings
@@ -35,6 +38,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by TypeScript compiler and IDEs
 
 #### `tailwind.config.ts`
+
 - **Purpose**: Global Tailwind CSS configuration
 - **Key Parameters**:
   - `content`: Paths to scan for class names
@@ -44,6 +48,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by Tailwind CSS compiler and PostCSS
 
 #### `postcss.config.js`
+
 - **Purpose**: PostCSS configuration for CSS processing
 - **Key Parameters**:
   - `plugins`: CSS processing plugins (Tailwind, autoprefixer)
@@ -51,6 +56,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used during build process for CSS optimization
 
 #### `vite.config.ts` & `vite.config.server.ts`
+
 - **Purpose**: Vite build tool configuration
 - **Key Parameters**:
   - `server`: Development server settings
@@ -60,6 +66,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by Vite for bundling and serving applications
 
 #### `.prettierrc`
+
 - **Purpose**: Code formatting configuration
 - **Key Parameters**:
   - `semi`: Semicolon preferences
@@ -69,6 +76,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by Prettier formatter and IDE integrations
 
 #### `.npmrc`
+
 - **Purpose**: npm configuration
 - **Key Parameters**:
   - Registry settings
@@ -80,6 +88,7 @@ The MakrX ecosystem is organized into several main sections:
 ### Environment & Deployment
 
 #### `.env.production.template`
+
 - **Purpose**: Template for production environment variables
 - **Key Parameters**:
   - Database connection strings
@@ -89,6 +98,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Template for creating actual `.env.production` files
 
 #### `docker-compose.yml` & `docker-compose.prod.yml`
+
 - **Purpose**: Docker orchestration for development and production
 - **Key Parameters**:
   - `services`: Application containers
@@ -98,6 +108,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by Docker Compose for container orchestration
 
 #### `deploy.sh`
+
 - **Purpose**: Deployment automation script
 - **Key Parameters**:
   - Build commands
@@ -107,6 +118,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Executed during CI/CD pipeline or manual deployments
 
 #### `netlify.toml`
+
 - **Purpose**: Netlify deployment configuration
 - **Key Parameters**:
   - Build commands
@@ -118,42 +130,49 @@ The MakrX ecosystem is organized into several main sections:
 ### Documentation Files
 
 #### `README.md`
+
 - **Purpose**: Main project documentation and getting started guide
 - **Content**: Project overview, setup instructions, architecture
 - **Impact**: Primary entry point for new developers
 - **Usage**: Displayed on repository homepage
 
 #### `AGENTS.md`
+
 - **Purpose**: AI agent integration guidelines and configuration
 - **Content**: Agent behavior rules, coding standards, project context
 - **Impact**: Guides AI-assisted development and code generation
 - **Usage**: Reference for AI tools and assistants
 
 #### `DEPLOYMENT_GUIDE.md`
+
 - **Purpose**: Comprehensive deployment instructions
 - **Content**: Step-by-step deployment procedures for different environments
 - **Impact**: Ensures consistent and reliable deployments
 - **Usage**: Reference during deployment processes
 
 #### `IMPLEMENTATION_GUIDE.md` & `IMPLEMENTATION_READY_GUIDE.md`
+
 - **Purpose**: Development implementation guidelines
 - **Content**: Best practices, architecture decisions, implementation patterns
 - **Impact**: Ensures consistent development practices
 - **Usage**: Reference during feature development
 
 #### `SECURITY_COMPLIANCE_DOCUMENTATION.md`
+
 - **Purpose**: Security guidelines and compliance requirements
 - **Content**: Security protocols, data protection, compliance measures
 - **Impact**: Ensures security standards are maintained
 - **Usage**: Reference for security implementations and audits
 
 #### `SERVER_MAINTENANCE_GUIDE.md`
+
 - **Purpose**: Server maintenance procedures and troubleshooting
 - **Content**: Maintenance tasks, monitoring, troubleshooting steps
 - **Impact**: Ensures system reliability and uptime
 - **Usage**: Reference for operations and DevOps teams
 
 #### `GITHUB_INTEGRATION_README.md`
+
 - **Purpose**: GitHub integration setup and workflow documentation
 - **Content**: CI/CD setup, GitHub Actions, integration procedures
 - **Impact**: Defines development workflow and automation
@@ -162,6 +181,7 @@ The MakrX ecosystem is organized into several main sections:
 ### Build & Development Files
 
 #### `components.json`
+
 - **Purpose**: Component library configuration (likely for shadcn/ui)
 - **Key Parameters**:
   - Component paths
@@ -171,6 +191,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by component CLI tools
 
 #### `.gitignore`
+
 - **Purpose**: Git ignore patterns
 - **Key Parameters**:
   - Node modules
@@ -180,6 +201,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Usage**: Used by Git for version control
 
 #### `.dockerignore`
+
 - **Purpose**: Docker ignore patterns
 - **Key Parameters**:
   - Files to exclude from Docker context
@@ -191,67 +213,86 @@ The MakrX ecosystem is organized into several main sections:
 ## 📁 Main Directory Structure
 
 ### `frontend/`
+
 Contains the main frontend applications:
+
 - Gateway frontend (React + Vite)
 - MakrCave frontend (React + Vite)
 
 ### `makrx-store-frontend/`
+
 Next.js-based e-commerce frontend application
 
 ### `backends/`
+
 Shared backend services (auth, events)
 
 ### `backends/makrcave/`
+
 FastAPI backend for MakrCave functionality
 
 ### `makrx-store-backend/`
+
 FastAPI backend for e-commerce functionality
 
 ### `packages/`
+
 Shared packages and utilities used across applications
 
 ### `docs/`
+
 Comprehensive project documentation
 
 ### `nginx/`
+
 Reverse proxy configuration
 
 ### `services/`
+
 Additional services (Keycloak, etc.)
 
 ### `netlify/`
+
 Netlify-specific functions and configuration
 
 ### `shared/`
+
 Shared utilities and types
 
 ### `server/`
+
 Development server configuration
 
 ### `public/`
+
 Static assets
 
 ## 🔧 Key Configuration Impact Areas
 
 ### Development Experience
+
 - `vite.config.ts`: Hot reload, dev server, build optimization
 - `tsconfig.json`: Type checking, IDE support
 - `.prettierrc`: Code formatting consistency
 
 ### Build & Deployment
+
 - `docker-compose.yml`: Local development environment
 - `docker-compose.prod.yml`: Production deployment
 - `deploy.sh`: Automated deployment process
 
 ### Styling & UI
+
 - `tailwind.config.ts`: Design system tokens and utilities
 - `postcss.config.js`: CSS processing pipeline
 
 ### Package Management
+
 - `package.json`: Dependencies and workspace configuration
 - `.npmrc`: Package registry and installation settings
 
 ### Security & Compliance
+
 - Environment templates: Secure configuration management
 - Documentation: Security guidelines and procedures
 

@@ -10,7 +10,11 @@ from backends.makrcave.main import app
 from backends.makrcave.dependencies import CurrentUser, get_current_user
 from backends.makrcave.database import init_db, get_db_session
 from backends.makrcave.models.inventory import Makerspace
-from backends.makrcave.models.membership_plans import MembershipPlan, PlanType, BillingCycle
+from backends.makrcave.models.membership_plans import (
+    MembershipPlan,
+    PlanType,
+    BillingCycle,
+)
 
 
 @pytest.fixture(scope="session")
@@ -69,4 +73,3 @@ def auth_override(fake_admin_user):
     app.dependency_overrides[get_current_user] = _override
     yield
     app.dependency_overrides = {}
-

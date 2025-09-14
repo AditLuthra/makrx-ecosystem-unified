@@ -1,12 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
-import { 
-  ChevronLeft, ChevronRight, Calendar, Clock, User, 
-  Check, X, AlertTriangle, Lock, Plus
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Clock,
+  User,
+  Check,
+  X,
+  AlertTriangle,
+  Lock,
+  Plus,
 } from 'lucide-react';
 
 interface TimeSlot {
   start: string; // HH:MM format
-  end: string;   // HH:MM format
+  end: string; // HH:MM format
   available: boolean;
   reserved?: boolean;
   user_name?: string;
@@ -41,7 +49,7 @@ export default function AvailabilityCalendar({
   onReservationClick,
   userRole,
   canReserve,
-  selectedSlots = []
+  selectedSlots = [],
 }: AvailabilityCalendarProps) {
   const [currentWeek, setCurrentWeek] = useState(startDate);
   const [availabilityData, setAvailabilityData] = useState<DayAvailability[]>([]);
@@ -54,7 +62,7 @@ export default function AvailabilityCalendar({
     const dates = [];
     const startOfWeek = new Date(currentWeek);
     startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay()); // Start from Sunday
-    
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
@@ -86,7 +94,7 @@ export default function AvailabilityCalendar({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return weekDates.map(date => {
+    return weekDates.map((date) => {
       const dateStr = date.toISOString().split('T')[0];
       const dayOfWeek = date.getDay();
       const isPast = date < today;
@@ -97,11 +105,11 @@ export default function AvailabilityCalendar({
       for (let hour = 9; hour < 18; hour++) {
         const start = `${hour.toString().padStart(2, '0')}:00`;
         const end = `${(hour + 1).toString().padStart(2, '0')}:00`;
-        
+
         // Mock some reservations and availability
         const isReserved = Math.random() < 0.3; // 30% chance of being reserved
-        const isAvailable = !isPast && !isReserved && (dayOfWeek !== 0 && dayOfWeek !== 6); // No weekends
-        
+        const isAvailable = !isPast && !isReserved && dayOfWeek !== 0 && dayOfWeek !== 6; // No weekends
+
         slots.push({
           start,
           end,
@@ -109,7 +117,7 @@ export default function AvailabilityCalendar({
           reserved: isReserved,
           user_name: isReserved ? 'John Doe' : undefined,
           reservation_id: isReserved ? `res-${Math.random().toString(36).substr(2, 9)}` : undefined,
-          status: isReserved ? (Math.random() < 0.8 ? 'approved' : 'pending') : undefined
+          status: isReserved ? (Math.random() < 0.8 ? 'approved' : 'pending') : undefined,
         });
       }
 
@@ -118,7 +126,7 @@ export default function AvailabilityCalendar({
         dayOfWeek,
         slots,
         isToday,
-        isPast
+        isPast,
       };
     });
   };
@@ -138,35 +146,40 @@ export default function AvailabilityCalendar({
   };
 
   const isSlotSelected = (date: string, slot: TimeSlot) => {
-    return selectedSlots.some(selected => 
-      selected.date === date && 
-      selected.slot.start === slot.start && 
-      selected.slot.end === slot.end
+    return selectedSlots.some(
+      (selected) =>
+        selected.date === date &&
+        selected.slot.start === slot.start &&
+        selected.slot.end === slot.end,
     );
   };
 
   const getSlotClassName = (slot: TimeSlot, isSelected: boolean, isPastDay: boolean) => {
-    const baseClasses = "p-2 text-xs rounded border cursor-pointer transition-colors min-h-[2.5rem] flex flex-col justify-center";
-    
+    const baseClasses =
+      'p-2 text-xs rounded border cursor-pointer transition-colors min-h-[2.5rem] flex flex-col justify-center';
+
     if (isPastDay) {
       return `${baseClasses} bg-gray-100 text-gray-400 cursor-not-allowed`;
     }
-    
+
     if (slot.reserved) {
-      const statusColor = slot.status === 'pending' ? 'bg-yellow-100 border-yellow-300 text-yellow-800' :
-                         slot.status === 'active' ? 'bg-blue-100 border-blue-300 text-blue-800' :
-                         'bg-red-100 border-red-300 text-red-800';
+      const statusColor =
+        slot.status === 'pending'
+          ? 'bg-yellow-100 border-yellow-300 text-yellow-800'
+          : slot.status === 'active'
+            ? 'bg-blue-100 border-blue-300 text-blue-800'
+            : 'bg-red-100 border-red-300 text-red-800';
       return `${baseClasses} ${statusColor}`;
     }
-    
+
     if (isSelected) {
       return `${baseClasses} bg-makrx-blue text-white border-makrx-blue`;
     }
-    
+
     if (slot.available) {
       return `${baseClasses} bg-green-50 border-green-200 text-green-800 hover:bg-green-100`;
     }
-    
+
     return `${baseClasses} bg-gray-100 border-gray-200 text-gray-500 cursor-not-allowed`;
   };
 
@@ -188,13 +201,25 @@ export default function AvailabilityCalendar({
   };
 
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                     'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   const formatDateRange = () => {
     const start = weekDates[0];
     const end = weekDates[6];
-    
+
     if (start.getMonth() === end.getMonth()) {
       return `${monthNames[start.getMonth()]} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`;
     } else {
@@ -203,7 +228,7 @@ export default function AvailabilityCalendar({
   };
 
   if (viewMode === 'day' && selectedDay) {
-    const dayData = availabilityData.find(d => d.date === selectedDay);
+    const dayData = availabilityData.find((d) => d.date === selectedDay);
     if (!dayData) return null;
 
     return (
@@ -211,11 +236,12 @@ export default function AvailabilityCalendar({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
-              {equipmentName} - {new Date(selectedDay).toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              {equipmentName} -{' '}
+              {new Date(selectedDay).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })}
             </h3>
           </div>
@@ -236,21 +262,17 @@ export default function AvailabilityCalendar({
               disabled={dayData.isPast || (!slot.available && !slot.reserved)}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="font-medium">{slot.start} - {slot.end}</span>
+                <span className="font-medium">
+                  {slot.start} - {slot.end}
+                </span>
                 {getStatusIcon(slot)}
               </div>
-              
+
               {slot.reserved && slot.user_name && (
-                <div className="text-xs truncate">
-                  Reserved by {slot.user_name}
-                </div>
+                <div className="text-xs truncate">Reserved by {slot.user_name}</div>
               )}
-              
-              {slot.available && !slot.reserved && (
-                <div className="text-xs">
-                  Available
-                </div>
-              )}
+
+              {slot.available && !slot.reserved && <div className="text-xs">Available</div>}
             </button>
           ))}
         </div>
@@ -266,7 +288,7 @@ export default function AvailabilityCalendar({
           <h3 className="text-lg font-semibold text-gray-900">{equipmentName} Availability</h3>
           <p className="text-sm text-gray-600">{formatDateRange()}</p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={() => navigateWeek('prev')}
@@ -274,14 +296,14 @@ export default function AvailabilityCalendar({
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
-          
+
           <button
             onClick={() => setCurrentWeek(new Date())}
             className="px-3 py-1 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
           >
             Today
           </button>
-          
+
           <button
             onClick={() => navigateWeek('next')}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -321,16 +343,16 @@ export default function AvailabilityCalendar({
           {/* Day Headers */}
           {weekDates.map((date, index) => (
             <div key={index} className="text-center p-3 border-b border-gray-200">
-              <div className="text-sm font-medium text-gray-900">
-                {dayNames[date.getDay()]}
-              </div>
-              <div className={`text-lg font-semibold ${
-                availabilityData[index]?.isToday 
-                  ? 'text-makrx-blue' 
-                  : availabilityData[index]?.isPast 
-                    ? 'text-gray-400' 
-                    : 'text-gray-900'
-              }`}>
+              <div className="text-sm font-medium text-gray-900">{dayNames[date.getDay()]}</div>
+              <div
+                className={`text-lg font-semibold ${
+                  availabilityData[index]?.isToday
+                    ? 'text-makrx-blue'
+                    : availabilityData[index]?.isPast
+                      ? 'text-gray-400'
+                      : 'text-gray-900'
+                }`}
+              >
                 {date.getDate()}
               </div>
             </div>
@@ -343,19 +365,19 @@ export default function AvailabilityCalendar({
                 <button
                   key={slotIndex}
                   onClick={() => handleSlotClick(dayData.date, slot)}
-                  className={getSlotClassName(slot, isSlotSelected(dayData.date, slot), dayData.isPast)}
+                  className={getSlotClassName(
+                    slot,
+                    isSlotSelected(dayData.date, slot),
+                    dayData.isPast,
+                  )}
                   disabled={dayData.isPast || (!slot.available && !slot.reserved)}
                   title={`${slot.start} - ${slot.end}${slot.reserved ? ` (${slot.user_name})` : ''}`}
                 >
-                  <div className="flex items-center justify-center">
-                    {getStatusIcon(slot)}
-                  </div>
-                  <div className="text-center">
-                    {slot.start}
-                  </div>
+                  <div className="flex items-center justify-center">{getStatusIcon(slot)}</div>
+                  <div className="text-center">{slot.start}</div>
                 </button>
               ))}
-              
+
               {/* View Day Button */}
               <button
                 onClick={() => {
@@ -375,11 +397,10 @@ export default function AvailabilityCalendar({
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <span>
-            {selectedSlots.length > 0 && `${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} selected`}
+            {selectedSlots.length > 0 &&
+              `${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} selected`}
           </span>
-          <span>
-            Click available slots to reserve or view reservations
-          </span>
+          <span>Click available slots to reserve or view reservations</span>
         </div>
       </div>
     </div>

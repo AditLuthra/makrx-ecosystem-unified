@@ -9,18 +9,18 @@ const API_DOCUMENTATION = {
     contact: {
       name: 'MakrX.events Support',
       email: 'support@makrx.events',
-      url: 'https://makrx.events'
+      url: 'https://makrx.events',
     },
     license: {
       name: 'MIT',
-      url: 'https://opensource.org/licenses/MIT'
-    }
+      url: 'https://opensource.org/licenses/MIT',
+    },
   },
   servers: [
     {
       url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000',
-      description: 'Development server'
-    }
+      description: 'Development server',
+    },
   ],
   paths: {
     '/api/health': {
@@ -45,13 +45,13 @@ const API_DOCUMENTATION = {
                         websocket: { type: 'string', example: 'active' },
                         email: { type: 'string', example: 'configured' },
                         payments: { type: 'string', example: 'configured' },
-                        auth: { type: 'string', example: 'configured' }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        auth: { type: 'string', example: 'configured' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           503: {
             description: 'Application is unhealthy',
@@ -61,14 +61,14 @@ const API_DOCUMENTATION = {
                   type: 'object',
                   properties: {
                     status: { type: 'string', example: 'unhealthy' },
-                    error: { type: 'string' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    error: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     '/api/auth/user': {
       get: {
@@ -90,15 +90,15 @@ const API_DOCUMENTATION = {
                     lastName: { type: 'string' },
                     profileImageUrl: { type: 'string', nullable: true },
                     role: { type: 'string', enum: ['user', 'event_admin', 'super_admin'] },
-                    status: { type: 'string', enum: ['active', 'pending', 'suspended'] }
-                  }
-                }
-              }
-            }
+                    status: { type: 'string', enum: ['active', 'pending', 'suspended'] },
+                  },
+                },
+              },
+            },
           },
-          401: { description: 'Authentication required' }
-        }
-      }
+          401: { description: 'Authentication required' },
+        },
+      },
     },
     '/api/events': {
       get: {
@@ -110,20 +110,20 @@ const API_DOCUMENTATION = {
             name: 'status',
             in: 'query',
             schema: { type: 'string', enum: ['upcoming', 'past', 'live'] },
-            description: 'Filter events by status'
+            description: 'Filter events by status',
           },
           {
             name: 'type',
             in: 'query',
             schema: { type: 'string' },
-            description: 'Filter events by type'
+            description: 'Filter events by type',
           },
           {
             name: 'location',
             in: 'query',
             schema: { type: 'string' },
-            description: 'Filter events by location'
-          }
+            description: 'Filter events by location',
+          },
         ],
         responses: {
           200: {
@@ -143,14 +143,14 @@ const API_DOCUMENTATION = {
                       endDate: { type: 'string', format: 'date-time' },
                       registrationFee: { type: 'string' },
                       maxAttendees: { type: 'integer' },
-                      status: { type: 'string' }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      status: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
         summary: 'Create event',
@@ -171,18 +171,18 @@ const API_DOCUMENTATION = {
                   startDate: { type: 'string', format: 'date-time' },
                   endDate: { type: 'string', format: 'date-time' },
                   registrationFee: { type: 'string' },
-                  maxAttendees: { type: 'integer' }
-                }
-              }
-            }
-          }
+                  maxAttendees: { type: 'integer' },
+                },
+              },
+            },
+          },
         },
         responses: {
           201: { description: 'Event created successfully' },
           400: { description: 'Invalid input data' },
-          401: { description: 'Authentication required' }
-        }
-      }
+          401: { description: 'Authentication required' },
+        },
+      },
     },
     '/api/my-registrations': {
       get: {
@@ -210,18 +210,18 @@ const API_DOCUMENTATION = {
                           id: { type: 'string' },
                           title: { type: 'string' },
                           startDate: { type: 'string', format: 'date-time' },
-                          location: { type: 'string' }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                          location: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
-          401: { description: 'Authentication required' }
-        }
-      }
+          401: { description: 'Authentication required' },
+        },
+      },
     },
     '/api/platform-stats': {
       get: {
@@ -239,14 +239,14 @@ const API_DOCUMENTATION = {
                     activeEvents: { type: 'string' },
                     globalCities: { type: 'string' },
                     registeredMakers: { type: 'string' },
-                    totalWorkshops: { type: 'string' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    totalWorkshops: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     '/api/featured-events': {
       get: {
@@ -272,16 +272,16 @@ const API_DOCUMENTATION = {
                       price: { type: 'string' },
                       featuredImage: { type: 'string' },
                       registrations: { type: 'integer' },
-                      type: { type: 'string' }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                      type: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     securitySchemes: {
@@ -289,17 +289,17 @@ const API_DOCUMENTATION = {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        description: 'Keycloak JWT token'
-      }
-    }
+        description: 'Keycloak JWT token',
+      },
+    },
   },
   tags: [
     { name: 'System', description: 'System health and monitoring' },
     { name: 'Authentication', description: 'User authentication and authorization' },
     { name: 'Events', description: 'Event management operations' },
     { name: 'Registrations', description: 'Event registration management' },
-    { name: 'Analytics', description: 'Platform analytics and statistics' }
-  ]
+    { name: 'Analytics', description: 'Platform analytics and statistics' },
+  ],
 };
 
 export async function GET() {

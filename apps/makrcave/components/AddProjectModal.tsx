@@ -24,7 +24,7 @@ import {
   Loader2,
   Github,
   GitBranch,
-  ExternalLink
+  ExternalLink,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '../contexts/AuthContext';
@@ -89,15 +89,19 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
   const [showEndCalendar, setShowEndCalendar] = useState(false);
 
   // New state for step 3
-  const [newMilestone, setNewMilestone] = useState<Partial<ProjectMilestone>>({ priority: 'medium' });
-  const [newCollaborator, setNewCollaborator] = useState<Partial<ProjectCollaborator>>({ role: 'viewer' });
+  const [newMilestone, setNewMilestone] = useState<Partial<ProjectMilestone>>({
+    priority: 'medium',
+  });
+  const [newCollaborator, setNewCollaborator] = useState<Partial<ProjectCollaborator>>({
+    role: 'viewer',
+  });
   const [showMilestoneTargetCalendar, setShowMilestoneTargetCalendar] = useState(false);
 
   const steps = [
     { id: 1, title: 'Basic Info', description: 'Project name, type and description' },
     { id: 2, title: 'Settings', description: 'Visibility and timeline' },
     { id: 3, title: 'Team Setup', description: 'Add collaborators and milestones' },
-    { id: 4, title: 'Tags & Review', description: 'Add tags and review' }
+    { id: 4, title: 'Tags & Review', description: 'Add tags and review' },
   ];
 
   const resetForm = () => {
@@ -160,7 +164,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
     if (newTag.trim() && !projectData.tags.includes(newTag.trim())) {
       setProjectData({
         ...projectData,
-        tags: [...projectData.tags, newTag.trim()]
+        tags: [...projectData.tags, newTag.trim()],
       });
       setNewTag('');
     }
@@ -169,7 +173,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
   const removeTag = (tagToRemove: string) => {
     setProjectData({
       ...projectData,
-      tags: projectData.tags.filter(tag => tag !== tagToRemove)
+      tags: projectData.tags.filter((tag) => tag !== tagToRemove),
     });
   };
 
@@ -196,12 +200,15 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
     if (newMilestone.title && newMilestone.title.trim()) {
       setProjectData({
         ...projectData,
-        initial_milestones: [...projectData.initial_milestones, {
-          title: newMilestone.title.trim(),
-          description: newMilestone.description?.trim() || undefined,
-          target_date: newMilestone.target_date,
-          priority: newMilestone.priority || 'medium'
-        }]
+        initial_milestones: [
+          ...projectData.initial_milestones,
+          {
+            title: newMilestone.title.trim(),
+            description: newMilestone.description?.trim() || undefined,
+            target_date: newMilestone.target_date,
+            priority: newMilestone.priority || 'medium',
+          },
+        ],
       });
       setNewMilestone({ priority: 'medium' });
     }
@@ -210,7 +217,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
   const removeMilestone = (index: number) => {
     setProjectData({
       ...projectData,
-      initial_milestones: projectData.initial_milestones.filter((_, i) => i !== index)
+      initial_milestones: projectData.initial_milestones.filter((_, i) => i !== index),
     });
   };
 
@@ -218,18 +225,22 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
     if (newCollaborator.user_id && newCollaborator.user_id.trim()) {
       // Check if collaborator already exists
       const exists = projectData.initial_collaborators.some(
-        collab => collab.user_id === newCollaborator.user_id?.trim() ||
-                  collab.email === newCollaborator.email?.trim()
+        (collab) =>
+          collab.user_id === newCollaborator.user_id?.trim() ||
+          collab.email === newCollaborator.email?.trim(),
       );
 
       if (!exists) {
         setProjectData({
           ...projectData,
-          initial_collaborators: [...projectData.initial_collaborators, {
-            user_id: newCollaborator.user_id.trim(),
-            email: newCollaborator.email?.trim(),
-            role: newCollaborator.role || 'viewer'
-          }]
+          initial_collaborators: [
+            ...projectData.initial_collaborators,
+            {
+              user_id: newCollaborator.user_id.trim(),
+              email: newCollaborator.email?.trim(),
+              role: newCollaborator.role || 'viewer',
+            },
+          ],
         });
         setNewCollaborator({ role: 'viewer' });
       }
@@ -239,7 +250,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
   const removeCollaborator = (index: number) => {
     setProjectData({
       ...projectData,
-      initial_collaborators: projectData.initial_collaborators.filter((_, i) => i !== index)
+      initial_collaborators: projectData.initial_collaborators.filter((_, i) => i !== index),
     });
   };
 
@@ -265,11 +276,11 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
         end_date: projectData.end_date?.toISOString() || null,
         tags: projectData.tags,
         makerspace_id: currentMakerspace?.id || null,
-        initial_milestones: projectData.initial_milestones.map(m => ({
+        initial_milestones: projectData.initial_milestones.map((m) => ({
           ...m,
-          target_date: m.target_date?.toISOString() || null
+          target_date: m.target_date?.toISOString() || null,
         })),
-        initial_collaborators: projectData.initial_collaborators
+        initial_collaborators: projectData.initial_collaborators,
       };
 
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
@@ -292,7 +303,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
 
       const createdProject = await response.json();
       console.log('Project created successfully:', createdProject);
-      
+
       onProjectCreated();
       handleClose();
     } catch (err) {
@@ -330,20 +341,29 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-gray-100 text-gray-800';
-      case 'medium': return 'bg-blue-100 text-blue-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'critical': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'low':
+        return 'bg-gray-100 text-gray-800';
+      case 'medium':
+        return 'bg-blue-100 text-blue-800';
+      case 'high':
+        return 'bg-orange-100 text-orange-800';
+      case 'critical':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'owner': return 'bg-purple-100 text-purple-800';
-      case 'editor': return 'bg-green-100 text-green-800';
-      case 'viewer': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'owner':
+        return 'bg-purple-100 text-purple-800';
+      case 'editor':
+        return 'bg-green-100 text-green-800';
+      case 'viewer':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -371,11 +391,13 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
         <div className="flex items-center justify-between mb-6 overflow-x-auto">
           {steps.map((step, index) => (
             <div key={step.id} className="flex items-center flex-shrink-0">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-                currentStep >= step.id
-                  ? 'bg-blue-600 border-blue-600 text-white'
-                  : 'border-gray-300 text-gray-400'
-              }`}>
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
+                  currentStep >= step.id
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'border-gray-300 text-gray-400'
+                }`}
+              >
                 {currentStep > step.id ? (
                   <CheckCircle className="h-4 w-4" />
                 ) : (
@@ -383,17 +405,21 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                 )}
               </div>
               <div className="ml-3 hidden sm:block min-w-0">
-                <p className={`text-sm font-medium ${
-                  currentStep >= step.id ? 'text-blue-600' : 'text-gray-500'
-                }`}>
+                <p
+                  className={`text-sm font-medium ${
+                    currentStep >= step.id ? 'text-blue-600' : 'text-gray-500'
+                  }`}
+                >
                   {step.title}
                 </p>
                 <p className="text-xs text-gray-400">{step.description}</p>
               </div>
               {index < steps.length - 1 && (
-                <div className={`flex-1 h-0.5 mx-4 min-w-[20px] ${
-                  currentStep > step.id ? 'bg-blue-600' : 'bg-gray-200'
-                }`} />
+                <div
+                  className={`flex-1 h-0.5 mx-4 min-w-[20px] ${
+                    currentStep > step.id ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
+                />
               )}
             </div>
           ))}
@@ -433,9 +459,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
 
               {/* Project Type */}
               <div>
-                <Label className="text-sm font-medium mb-3 block">
-                  Project Type *
-                </Label>
+                <Label className="text-sm font-medium mb-3 block">Project Type *</Label>
                 <div className="space-y-3">
                   {(['internal', 'open-collab', 'sponsored'] as const).map((type) => (
                     <div
@@ -456,11 +480,13 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                             {getProjectTypeDescription(type)}
                           </div>
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          projectData.project_type === type
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-gray-300'
-                        }`}>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 ${
+                            projectData.project_type === type
+                              ? 'border-blue-500 bg-blue-500'
+                              : 'border-gray-300'
+                          }`}
+                        >
                           {projectData.project_type === type && (
                             <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
                           )}
@@ -495,9 +521,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
             <div className="space-y-6">
               {/* Visibility */}
               <div>
-                <Label className="text-sm font-medium mb-3 block">
-                  Project Visibility
-                </Label>
+                <Label className="text-sm font-medium mb-3 block">Project Visibility</Label>
                 <div className="space-y-3">
                   {(['public', 'team-only', 'private'] as const).map((visibility) => (
                     <div
@@ -519,11 +543,13 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                             {getVisibilityDescription(visibility)}
                           </div>
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          projectData.visibility === visibility
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-gray-300'
-                        }`}>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 ${
+                            projectData.visibility === visibility
+                              ? 'border-blue-500 bg-blue-500'
+                              : 'border-gray-300'
+                          }`}
+                        >
                           {projectData.visibility === visibility && (
                             <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
                           )}
@@ -551,7 +577,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {projectData.start_date ? (
-                            format(projectData.start_date, "PPP")
+                            format(projectData.start_date, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -582,7 +608,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {projectData.end_date ? (
-                            format(projectData.end_date, "PPP")
+                            format(projectData.end_date, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -597,7 +623,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                             setShowEndCalendar(false);
                           }}
                           initialFocus
-                          disabled={(date) => 
+                          disabled={(date) =>
                             projectData.start_date ? date < projectData.start_date : false
                           }
                         />
@@ -605,11 +631,11 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                     </Popover>
                   </div>
                 </div>
-                {projectData.start_date && projectData.end_date && projectData.end_date <= projectData.start_date && (
-                  <p className="text-xs text-red-600 mt-1">
-                    End date must be after start date
-                  </p>
-                )}
+                {projectData.start_date &&
+                  projectData.end_date &&
+                  projectData.end_date <= projectData.start_date && (
+                    <p className="text-xs text-red-600 mt-1">End date must be after start date</p>
+                  )}
               </div>
 
               {/* GitHub Integration */}
@@ -639,7 +665,9 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                           <Input
                             id="github_repo_url"
                             value={projectData.github_repo_url || ''}
-                            onChange={(e) => setProjectData({ ...projectData, github_repo_url: e.target.value })}
+                            onChange={(e) =>
+                              setProjectData({ ...projectData, github_repo_url: e.target.value })
+                            }
                             placeholder="https://github.com/username/repository"
                             className="pl-10"
                           />
@@ -658,7 +686,9 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                           <Input
                             id="github_branch"
                             value={projectData.github_branch || 'main'}
-                            onChange={(e) => setProjectData({ ...projectData, github_branch: e.target.value })}
+                            onChange={(e) =>
+                              setProjectData({ ...projectData, github_branch: e.target.value })
+                            }
                             placeholder="main"
                             className="pl-10"
                           />
@@ -674,10 +704,12 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                           <div className="text-sm">
                             <p className="font-medium text-blue-800">GitHub Features</p>
                             <p className="text-blue-700 mt-1">
-                              • View latest commits and repository activity<br/>
-                              • Browse and download project files<br/>
-                              • Track development progress<br/>
-                              • Link issues and pull requests
+                              • View latest commits and repository activity
+                              <br />
+                              • Browse and download project files
+                              <br />
+                              • Track development progress
+                              <br />• Link issues and pull requests
                             </p>
                           </div>
                         </div>
@@ -702,14 +734,18 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                     <div className="md:col-span-4">
                       <Input
                         value={newMilestone.title || ''}
-                        onChange={(e) => setNewMilestone({ ...newMilestone, title: e.target.value })}
+                        onChange={(e) =>
+                          setNewMilestone({ ...newMilestone, title: e.target.value })
+                        }
                         placeholder="Milestone title"
                       />
                     </div>
                     <div className="md:col-span-3">
                       <Select
                         value={newMilestone.priority || 'medium'}
-                        onValueChange={(value: any) => setNewMilestone({ ...newMilestone, priority: value })}
+                        onValueChange={(value: any) =>
+                          setNewMilestone({ ...newMilestone, priority: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Priority" />
@@ -723,7 +759,10 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                       </Select>
                     </div>
                     <div className="md:col-span-3">
-                      <Popover open={showMilestoneTargetCalendar} onOpenChange={setShowMilestoneTargetCalendar}>
+                      <Popover
+                        open={showMilestoneTargetCalendar}
+                        onOpenChange={setShowMilestoneTargetCalendar}
+                      >
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
@@ -731,7 +770,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {newMilestone.target_date ? (
-                              format(newMilestone.target_date, "MMM d")
+                              format(newMilestone.target_date, 'MMM d')
                             ) : (
                               <span className="text-gray-400">Target</span>
                             )}
@@ -751,7 +790,11 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                       </Popover>
                     </div>
                     <div className="md:col-span-2">
-                      <Button type="button" onClick={addMilestone} disabled={!newMilestone.title?.trim()}>
+                      <Button
+                        type="button"
+                        onClick={addMilestone}
+                        disabled={!newMilestone.title?.trim()}
+                      >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
@@ -760,7 +803,10 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                   {projectData.initial_milestones.length > 0 && (
                     <div className="space-y-2">
                       {projectData.initial_milestones.map((milestone, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{milestone.title}</span>
@@ -769,7 +815,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                               </Badge>
                               {milestone.target_date && (
                                 <span className="text-sm text-gray-500">
-                                  Due {format(milestone.target_date, "MMM d, yyyy")}
+                                  Due {format(milestone.target_date, 'MMM d, yyyy')}
                                 </span>
                               )}
                             </div>
@@ -802,14 +848,18 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                     <div className="md:col-span-4">
                       <Input
                         value={newCollaborator.user_id || ''}
-                        onChange={(e) => setNewCollaborator({ ...newCollaborator, user_id: e.target.value })}
+                        onChange={(e) =>
+                          setNewCollaborator({ ...newCollaborator, user_id: e.target.value })
+                        }
                         placeholder="Username or ID"
                       />
                     </div>
                     <div className="md:col-span-4">
                       <Input
                         value={newCollaborator.email || ''}
-                        onChange={(e) => setNewCollaborator({ ...newCollaborator, email: e.target.value })}
+                        onChange={(e) =>
+                          setNewCollaborator({ ...newCollaborator, email: e.target.value })
+                        }
                         placeholder="Email (optional)"
                         type="email"
                       />
@@ -817,7 +867,9 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                     <div className="md:col-span-2">
                       <Select
                         value={newCollaborator.role || 'viewer'}
-                        onValueChange={(value: any) => setNewCollaborator({ ...newCollaborator, role: value })}
+                        onValueChange={(value: any) =>
+                          setNewCollaborator({ ...newCollaborator, role: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Role" />
@@ -830,7 +882,11 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                       </Select>
                     </div>
                     <div className="md:col-span-2">
-                      <Button type="button" onClick={addCollaborator} disabled={!newCollaborator.user_id?.trim()}>
+                      <Button
+                        type="button"
+                        onClick={addCollaborator}
+                        disabled={!newCollaborator.user_id?.trim()}
+                      >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
@@ -839,7 +895,10 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                   {projectData.initial_collaborators.length > 0 && (
                     <div className="space-y-2">
                       {projectData.initial_collaborators.map((collaborator, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{collaborator.user_id}</span>
                             {collaborator.email && (
@@ -871,9 +930,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
             <div className="space-y-6">
               {/* Tags */}
               <div>
-                <Label className="text-sm font-medium mb-3 block">
-                  Project Tags (Optional)
-                </Label>
+                <Label className="text-sm font-medium mb-3 block">Project Tags (Optional)</Label>
                 <div className="space-y-3">
                   <div className="flex space-x-2">
                     <Input
@@ -915,7 +972,8 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                     <span className="font-medium">Name:</span> {projectData.name}
                   </div>
                   <div>
-                    <span className="font-medium">Type:</span> {projectData.project_type.replace('-', ' ')}
+                    <span className="font-medium">Type:</span>{' '}
+                    {projectData.project_type.replace('-', ' ')}
                   </div>
                   {projectData.description && (
                     <div>
@@ -925,14 +983,17 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                   <div className="flex items-center">
                     <span className="font-medium mr-2">Visibility:</span>
                     {getVisibilityIcon(projectData.visibility)}
-                    <span className="ml-1 capitalize">{projectData.visibility.replace('-', ' ')}</span>
+                    <span className="ml-1 capitalize">
+                      {projectData.visibility.replace('-', ' ')}
+                    </span>
                   </div>
                   {(projectData.start_date || projectData.end_date) && (
                     <div>
                       <span className="font-medium">Timeline:</span>
-                      {projectData.start_date && ` ${format(projectData.start_date, "MMM d, yyyy")}`}
-                      {projectData.start_date && projectData.end_date && " - "}
-                      {projectData.end_date && ` ${format(projectData.end_date, "MMM d, yyyy")}`}
+                      {projectData.start_date &&
+                        ` ${format(projectData.start_date, 'MMM d, yyyy')}`}
+                      {projectData.start_date && projectData.end_date && ' - '}
+                      {projectData.end_date && ` ${format(projectData.end_date, 'MMM d, yyyy')}`}
                     </div>
                   )}
                   {projectData.tags.length > 0 && (
@@ -942,12 +1003,14 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onPr
                   )}
                   {projectData.initial_milestones.length > 0 && (
                     <div>
-                      <span className="font-medium">Milestones:</span> {projectData.initial_milestones.length} planned
+                      <span className="font-medium">Milestones:</span>{' '}
+                      {projectData.initial_milestones.length} planned
                     </div>
                   )}
                   {projectData.initial_collaborators.length > 0 && (
                     <div>
-                      <span className="font-medium">Team:</span> {projectData.initial_collaborators.length + 1} members
+                      <span className="font-medium">Team:</span>{' '}
+                      {projectData.initial_collaborators.length + 1} members
                     </div>
                   )}
                   {projectData.enable_github_integration && projectData.github_repo_url && (

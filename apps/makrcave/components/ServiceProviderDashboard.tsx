@@ -4,10 +4,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { 
-  TrendingUp, DollarSign, Package, Clock, 
-  Star, MapPin, Phone, Mail, ExternalLink,
-  CheckCircle, AlertCircle, Settings
+import {
+  TrendingUp,
+  DollarSign,
+  Package,
+  Clock,
+  Star,
+  MapPin,
+  Phone,
+  Mail,
+  ExternalLink,
+  CheckCircle,
+  AlertCircle,
+  Settings,
 } from 'lucide-react';
 
 interface ServiceRequest {
@@ -45,7 +54,9 @@ export default function ServiceProviderDashboard() {
     responseTime: 2.4,
   });
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'pending' | 'in_progress' | 'completed'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'pending' | 'in_progress' | 'completed'
+  >('all');
 
   // Mock data for demonstration
   const mockRequests: ServiceRequest[] = [
@@ -91,47 +102,49 @@ export default function ServiceProviderDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredRequests = requests.filter(request => 
-    selectedFilter === 'all' || request.status === selectedFilter
+  const filteredRequests = requests.filter(
+    (request) => selectedFilter === 'all' || request.status === selectedFilter,
   );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case 'urgent':
+        return 'bg-red-500';
+      case 'high':
+        return 'bg-orange-500';
+      case 'medium':
+        return 'bg-yellow-500';
+      case 'low':
+        return 'bg-green-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
   const handleAcceptRequest = useCallback((requestId: string) => {
-    setRequests(prev => 
-      prev.map(req => 
-        req.id === requestId 
-          ? { ...req, status: 'in_progress' as const }
-          : req
-      )
+    setRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: 'in_progress' as const } : req)),
     );
   }, []);
 
   const handleCompleteRequest = useCallback((requestId: string) => {
-    setRequests(prev => 
-      prev.map(req => 
-        req.id === requestId 
-          ? { ...req, status: 'completed' as const }
-          : req
-      )
+    setRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: 'completed' as const } : req)),
     );
   }, []);
 
@@ -167,9 +180,7 @@ export default function ServiceProviderDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹{metrics.totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              +12.5% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+12.5% from last month</p>
           </CardContent>
         </Card>
 
@@ -180,9 +191,7 @@ export default function ServiceProviderDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.activeRequests}</div>
-            <p className="text-xs text-muted-foreground">
-              3 pending review
-            </p>
+            <p className="text-xs text-muted-foreground">3 pending review</p>
           </CardContent>
         </Card>
 
@@ -193,9 +202,7 @@ export default function ServiceProviderDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.completedServices}</div>
-            <p className="text-xs text-muted-foreground">
-              +18 this month
-            </p>
+            <p className="text-xs text-muted-foreground">+18 this month</p>
           </CardContent>
         </Card>
 
@@ -206,9 +213,7 @@ export default function ServiceProviderDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.averageRating}</div>
-            <p className="text-xs text-muted-foreground">
-              Based on 89 reviews
-            </p>
+            <p className="text-xs text-muted-foreground">Based on 89 reviews</p>
           </CardContent>
         </Card>
 
@@ -219,9 +224,7 @@ export default function ServiceProviderDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.responseTime}h</div>
-            <p className="text-xs text-muted-foreground">
-              -0.5h from last week
-            </p>
+            <p className="text-xs text-muted-foreground">-0.5h from last week</p>
           </CardContent>
         </Card>
       </div>
@@ -232,9 +235,7 @@ export default function ServiceProviderDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Service Requests</CardTitle>
-              <CardDescription>
-                Manage and track your service requests
-              </CardDescription>
+              <CardDescription>Manage and track your service requests</CardDescription>
             </div>
             <div className="flex gap-2">
               {(['all', 'pending', 'in_progress', 'completed'] as const).map((filter) => (
@@ -273,17 +274,15 @@ export default function ServiceProviderDashboard() {
                         {request.status.replace('_', ' ')}
                       </Badge>
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground">
-                      {request.description}
-                    </p>
-                    
+
+                    <p className="text-sm text-muted-foreground">{request.description}</p>
+
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>₹{request.estimatedCost.toLocaleString()}</span>
                       <span>Due: {request.dueDate.toLocaleDateString()}</span>
                       <span>{request.customer.name}</span>
                     </div>
-                    
+
                     <div className="flex gap-1">
                       {request.tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-xs">
@@ -292,13 +291,10 @@ export default function ServiceProviderDashboard() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 ml-4">
                     {request.status === 'pending' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleAcceptRequest(request.id)}
-                      >
+                      <Button size="sm" onClick={() => handleAcceptRequest(request.id)}>
                         Accept
                       </Button>
                     )}

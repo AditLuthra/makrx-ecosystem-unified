@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -27,7 +27,7 @@ interface ProductGridProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   loading?: boolean;
-  viewMode?: "grid" | "list";
+  viewMode?: 'grid' | 'list';
 }
 
 export default function ProductGrid({
@@ -36,7 +36,7 @@ export default function ProductGrid({
   totalPages,
   onPageChange,
   loading = false,
-  viewMode = "grid",
+  viewMode = 'grid',
 }: ProductGridProps) {
   const [wishlist, setWishlist] = useState<Set<number>>(new Set());
 
@@ -84,7 +84,7 @@ export default function ProductGrid({
   return (
     <div className="space-y-6">
       {/* Products */}
-      {viewMode === "grid" ? (
+      {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard
@@ -110,11 +110,7 @@ export default function ProductGrid({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-        />
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );
@@ -133,10 +129,8 @@ function ProductCard({
   const originalPrice = product.price;
   const isOnSale = product.sale_price && product.sale_price < product.price;
   const savings = isOnSale ? originalPrice - effectivePrice : 0;
-  const savingsPercentage = isOnSale
-    ? Math.round((savings / originalPrice) * 100)
-    : 0;
-  const currency = product.currency === "INR" ? "₹" : "$";
+  const savingsPercentage = isOnSale ? Math.round((savings / originalPrice) * 100) : 0;
+  const currency = product.currency === 'INR' ? '₹' : '$';
   const isWishlisted = wishlist.has(product.id);
 
   return (
@@ -145,13 +139,13 @@ function ProductCard({
       <div className="relative aspect-square rounded-t-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
         <Link href={`/p/${product.slug}`}>
           <Image
-            src={product.images[0] || "/placeholder.svg"}
+            src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-200"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             onError={(e) => {
-              e.currentTarget.src = "/placeholder.svg";
+              e.currentTarget.src = '/placeholder.svg';
             }}
           />
         </Link>
@@ -180,16 +174,10 @@ function ProductCard({
           <button
             onClick={() => onToggleWishlist(product.id)}
             className="p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg transition-shadow"
-            aria-label={
-              isWishlisted ? "Remove from wishlist" : "Add to wishlist"
-            }
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             {isWishlisted ? (
-              <svg
-                className="w-4 h-4 text-red-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
+              <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
@@ -263,7 +251,7 @@ function ProductCard({
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? "text-yellow-400" : "text-gray-300"}`}
+                  className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -296,12 +284,7 @@ function ProductCard({
           disabled={!product.in_stock}
           className="w-full py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -309,7 +292,7 @@ function ProductCard({
               d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 2.5M7 13l2.5 2.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
             />
           </svg>
-          {product.in_stock ? "Add to Cart" : "Out of Stock"}
+          {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
         </button>
       </div>
     </div>
@@ -331,7 +314,7 @@ function ProductListItem({
   const savingsPercentage = isOnSale
     ? Math.round(((originalPrice - effectivePrice) / originalPrice) * 100)
     : 0;
-  const currency = product.currency === "INR" ? "₹" : "$";
+  const currency = product.currency === 'INR' ? '₹' : '$';
   const isWishlisted = wishlist.has(product.id);
 
   return (
@@ -340,7 +323,7 @@ function ProductListItem({
       <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
         <Link href={`/p/${product.slug}`}>
           <Image
-            src={product.images[0] || "/placeholder.svg"}
+            src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
             fill
             className="object-cover"
@@ -370,7 +353,7 @@ function ProductListItem({
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? "text-yellow-400" : "text-gray-300"}`}
+                      className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -391,11 +374,7 @@ function ProductListItem({
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
             >
               {isWishlisted ? (
-                <svg
-                  className="w-5 h-5 text-red-500"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
@@ -444,12 +423,7 @@ function ProductListItem({
             disabled={!product.in_stock}
             className="py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -457,7 +431,7 @@ function ProductListItem({
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 2.5M7 13l2.5 2.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
               />
             </svg>
-            {product.in_stock ? "Add to Cart" : "Out of Stock"}
+            {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>
@@ -516,8 +490,8 @@ function Pagination({
           onClick={() => onPageChange(page)}
           className={`px-3 py-2 text-sm font-medium rounded-md ${
             page === currentPage
-              ? "text-white bg-blue-600 border-blue-600"
-              : "text-gray-700 bg-white border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              ? 'text-white bg-blue-600 border-blue-600'
+              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
           }`}
         >
           {page}
@@ -547,8 +521,8 @@ function Pagination({
   );
 }
 
-function ProductGridSkeleton({ viewMode }: { viewMode: "grid" | "list" }) {
-  if (viewMode === "list") {
+function ProductGridSkeleton({ viewMode }: { viewMode: 'grid' | 'list' }) {
+  if (viewMode === 'list') {
     return (
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (

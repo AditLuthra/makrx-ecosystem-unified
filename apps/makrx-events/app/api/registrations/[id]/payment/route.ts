@@ -12,10 +12,7 @@ const paymentUpdateSchema = z.object({
 });
 
 // POST /api/registrations/[id]/payment - Update payment status
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -31,10 +28,7 @@ export async function POST(
       .limit(1);
 
     if (!registration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     // Update registration with payment information
@@ -57,10 +51,7 @@ export async function POST(
       };
     }
 
-    await db
-      .update(registrations)
-      .set(updateData)
-      .where(eq(registrations.id, id));
+    await db.update(registrations).set(updateData).where(eq(registrations.id, id));
 
     return NextResponse.json({
       success: true,
@@ -68,33 +59,26 @@ export async function POST(
         id: registration.id,
         status: updateData.status,
         paidAt: updateData.paidAt,
-      }
+      },
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Payment update error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update payment status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update payment status' }, { status: 500 });
   }
 }
 
 // GET /api/registrations/[id]/payment - Get payment status
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -111,10 +95,7 @@ export async function GET(
       .limit(1);
 
     if (!registration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -125,14 +106,10 @@ export async function GET(
         paidAt: registration.paidAt,
         isPaid: registration.status === 'confirmed' || registration.status === 'paid',
         paymentMethod: registration.metadata?.paymentMethod,
-      }
+      },
     });
-
   } catch (error) {
     console.error('Error fetching payment status:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch payment status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch payment status' }, { status: 500 });
   }
 }

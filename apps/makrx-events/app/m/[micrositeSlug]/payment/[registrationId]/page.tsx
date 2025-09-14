@@ -1,23 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import StripePaymentForm from '@/components/payment/StripePaymentForm';
-import { 
-  CreditCard, 
-  Clock, 
+import {
+  CreditCard,
+  Clock,
   Calendar,
   MapPin,
   Users,
   ArrowLeft,
   CheckCircle,
   AlertTriangle,
-  Loader2
-} from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+  Loader2,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 
 interface Registration {
   id: string;
@@ -36,7 +36,7 @@ export default function PaymentPage() {
   const router = useRouter();
   const micrositeSlug = params.micrositeSlug as string;
   const registrationId = params.registrationId as string;
-  
+
   const [registration, setRegistration] = useState<Registration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,12 +80,11 @@ export default function PaymentPage() {
       }
 
       setPaymentCompleted(true);
-      
+
       // Redirect to success page after a delay
       setTimeout(() => {
         router.push(`/m/${micrositeSlug}/registration-success/${registrationId}`);
       }, 2000);
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment confirmation failed');
     }
@@ -190,7 +189,7 @@ export default function PaymentPage() {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </div>
                     <div className="flex items-center">
@@ -241,7 +240,8 @@ export default function PaymentPage() {
                 <div className="text-sm">
                   <p className="font-medium text-blue-900">Secure Payment</p>
                   <p className="text-blue-700">
-                    Your payment is processed securely through Stripe. We never store your credit card information.
+                    Your payment is processed securely through Stripe. We never store your credit
+                    card information.
                   </p>
                 </div>
               </div>
@@ -268,9 +268,7 @@ export default function PaymentPage() {
                       The payment window for this registration has expired. Please register again.
                     </p>
                     <Button asChild>
-                      <Link href={`/m/${micrositeSlug}`}>
-                        Register Again
-                      </Link>
+                      <Link href={`/m/${micrositeSlug}`}>Register Again</Link>
                     </Button>
                   </div>
                 </CardContent>

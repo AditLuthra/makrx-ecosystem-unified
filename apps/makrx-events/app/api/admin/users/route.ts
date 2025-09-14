@@ -14,13 +14,10 @@ export async function GET(request: NextRequest) {
     }
 
     const user = (request as AuthenticatedRequest).user;
-    
+
     // Check if user has admin privileges
     if (!user?.roles?.includes('super_admin') && !user?.roles?.includes('event_admin')) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     }
 
     // Get all users for super admins, or limited view for event admins
@@ -41,9 +38,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(allUsers);
   } catch (error) {
     console.error('Error fetching users:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

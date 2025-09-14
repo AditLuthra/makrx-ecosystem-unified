@@ -2,13 +2,20 @@ from pydantic import BaseModel, Field, validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
-from models.project import ProjectStatus, ProjectVisibility, CollaboratorRole, ActivityType
+from models.project import (
+    ProjectStatus,
+    ProjectVisibility,
+    CollaboratorRole,
+    ActivityType,
+)
+
 
 # Project type enum
 class ProjectType(str, enum.Enum):
     INTERNAL = "internal"
     OPEN_COLLAB = "open-collab"
     SPONSORED = "sponsored"
+
 
 # Base schemas
 class ProjectBase(BaseModel):
@@ -21,14 +28,19 @@ class ProjectBase(BaseModel):
     tags: Optional[List[str]] = []
 
     # Enhanced public project fields
-    difficulty_level: str = Field("beginner", regex="^(beginner|intermediate|advanced|expert)$")
+    difficulty_level: str = Field(
+        "beginner", regex="^(beginner|intermediate|advanced|expert)$"
+    )
     estimated_duration: Optional[str] = None
     required_skills: Optional[List[str]] = []
     learning_objectives: Optional[List[str]] = []
-    license_type: str = Field("cc-by-sa", regex="^(cc-by-sa|cc-by|cc-by-nc|mit|apache|proprietary)$")
+    license_type: str = Field(
+        "cc-by-sa", regex="^(cc-by-sa|cc-by|cc-by-nc|mit|apache|proprietary)$"
+    )
     required_equipment: Optional[List[str]] = []
     space_requirements: Optional[str] = None
     safety_considerations: Optional[str] = None
+
 
 # Initial milestone schema for project creation
 class InitialMilestone(BaseModel):
@@ -36,6 +48,7 @@ class InitialMilestone(BaseModel):
     description: Optional[str] = None
     target_date: Optional[datetime] = None
     priority: str = Field("medium", regex="^(low|medium|high|critical)$")
+
 
 # Enhanced collaborator schema for project creation
 class InitialCollaborator(BaseModel):
@@ -47,11 +60,13 @@ class InitialCollaborator(BaseModel):
     responsibilities: Optional[List[str]] = []
     is_external: bool = False
 
+
 class ProjectCreate(ProjectBase):
     project_id: str = Field(..., min_length=1, max_length=100)
     makerspace_id: Optional[str] = None
     initial_milestones: Optional[List[InitialMilestone]] = []
     initial_collaborators: Optional[List[InitialCollaborator]] = []
+
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=200)
@@ -64,6 +79,7 @@ class ProjectUpdate(BaseModel):
     tags: Optional[List[str]] = None
     github_repo_url: Optional[str] = None
     github_integration_enabled: Optional[bool] = None
+
 
 # Response schemas
 class ProjectCollaboratorResponse(BaseModel):
@@ -87,6 +103,7 @@ class ProjectCollaboratorResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectBOMResponse(BaseModel):
     id: int
     item_type: str
@@ -109,6 +126,7 @@ class ProjectBOMResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectEquipmentReservationResponse(BaseModel):
     id: int
     equipment_id: str
@@ -124,6 +142,7 @@ class ProjectEquipmentReservationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class ProjectFileResponse(BaseModel):
     id: int
@@ -141,6 +160,7 @@ class ProjectFileResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectMilestoneResponse(BaseModel):
     id: int
     title: str
@@ -157,6 +177,7 @@ class ProjectMilestoneResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectActivityLogResponse(BaseModel):
     id: int
     activity_type: ActivityType
@@ -169,6 +190,7 @@ class ProjectActivityLogResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class ProjectResponse(BaseModel):
     project_id: str
@@ -191,7 +213,7 @@ class ProjectResponse(BaseModel):
     github_repo_name: Optional[str] = None
     github_integration_enabled: bool = False
     github_default_branch: str = "main"
-    
+
     # Related data
     collaborators: List[ProjectCollaboratorResponse] = []
     bom_items: List[ProjectBOMResponse] = []
@@ -202,6 +224,7 @@ class ProjectResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class ProjectSummaryResponse(BaseModel):
     project_id: str
@@ -217,7 +240,7 @@ class ProjectSummaryResponse(BaseModel):
     is_featured: bool = False
     created_at: datetime
     updated_at: datetime
-    
+
     # Summary counts
     collaborator_count: int = 0
     bom_items_count: int = 0
@@ -228,13 +251,16 @@ class ProjectSummaryResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Collaborator schemas
 class CollaboratorAdd(BaseModel):
     user_id: str = Field(..., min_length=1)
     role: CollaboratorRole = CollaboratorRole.VIEWER
 
+
 class CollaboratorUpdate(BaseModel):
     role: CollaboratorRole
+
 
 # BOM schemas
 class BOMAlternative(BaseModel):
@@ -242,8 +268,11 @@ class BOMAlternative(BaseModel):
     item_name: str = Field(..., min_length=1, max_length=200)
     part_code: Optional[str] = None
     unit_cost: Optional[float] = Field(None, ge=0)
-    availability_status: str = Field("unknown", regex="^(in-stock|low-stock|out-of-stock|unknown)$")
+    availability_status: str = Field(
+        "unknown", regex="^(in-stock|low-stock|out-of-stock|unknown)$"
+    )
     compatibility_notes: Optional[str] = None
+
 
 class BOMItemCreate(BaseModel):
     item_type: str = Field(..., regex="^(inventory|makrx_store)$")
@@ -266,6 +295,7 @@ class BOMItemCreate(BaseModel):
     specifications: Optional[Dict[str, Any]] = None
     compatibility_notes: Optional[str] = None
 
+
 class BOMItemUpdate(BaseModel):
     part_code: Optional[str] = None
     quantity: Optional[int] = Field(None, gt=0)
@@ -278,6 +308,7 @@ class BOMItemUpdate(BaseModel):
     stock_level: Optional[int] = None
     reorder_point: Optional[int] = None
 
+
 # Equipment reservation schemas
 class EquipmentReservationCreate(BaseModel):
     equipment_id: str = Field(..., min_length=1)
@@ -285,17 +316,19 @@ class EquipmentReservationCreate(BaseModel):
     requested_end: datetime
     usage_notes: Optional[str] = None
 
-    @validator('requested_end')
+    @validator("requested_end")
     def end_after_start(cls, v, values):
-        if 'requested_start' in values and v <= values['requested_start']:
-            raise ValueError('End time must be after start time')
+        if "requested_start" in values and v <= values["requested_start"]:
+            raise ValueError("End time must be after start time")
         return v
+
 
 class EquipmentReservationUpdate(BaseModel):
     requested_start: Optional[datetime] = None
     requested_end: Optional[datetime] = None
     status: Optional[str] = None
     usage_notes: Optional[str] = None
+
 
 # File schemas
 class FileUpload(BaseModel):
@@ -305,12 +338,14 @@ class FileUpload(BaseModel):
     is_public: bool = False
     version: str = "1.0"
 
+
 # Milestone schemas
 class MilestoneCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
     target_date: Optional[datetime] = None
     priority: str = Field("medium", regex="^(low|medium|high|critical)$")
+
 
 class MilestoneUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
@@ -320,12 +355,14 @@ class MilestoneUpdate(BaseModel):
     is_completed: Optional[bool] = None
     order_index: Optional[int] = None
 
+
 # Activity log schemas
 class ActivityLogCreate(BaseModel):
     activity_type: ActivityType
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+
 
 # Search and filter schemas
 class ProjectFilter(BaseModel):
@@ -337,16 +374,23 @@ class ProjectFilter(BaseModel):
     is_featured: Optional[bool] = None
     search: Optional[str] = None  # Search in name and description
 
+
 class ProjectSort(BaseModel):
-    field: str = Field("updated_at", regex="^(name|created_at|updated_at|start_date|end_date)$")
+    field: str = Field(
+        "updated_at",
+        regex="^(name|created_at|updated_at|start_date|end_date)$",
+    )
     direction: str = Field("desc", regex="^(asc|desc)$")
+
 
 # Batch operation schemas
 class ProjectStatusUpdate(BaseModel):
     status: ProjectStatus
 
+
 class ProjectBulkDelete(BaseModel):
     project_ids: List[str] = Field(..., min_items=1)
+
 
 # Analytics schemas
 class ProjectStatistics(BaseModel):
@@ -358,6 +402,7 @@ class ProjectStatistics(BaseModel):
     average_project_duration: Optional[float] = None  # In days
     top_tags: List[Dict[str, Any]] = []
 
+
 class UserProjectStatistics(BaseModel):
     owned_projects: int
     collaborated_projects: int
@@ -365,11 +410,15 @@ class UserProjectStatistics(BaseModel):
     active_projects: int
     favorite_tags: List[str] = []
 
+
 # GitHub Integration Schemas
 class GitHubRepoConnect(BaseModel):
-    repo_url: str = Field(..., regex=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$")
+    repo_url: str = Field(
+        ..., regex=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$"
+    )
     access_token: Optional[str] = None  # For private repos
     default_branch: str = "main"
+
 
 class GitHubRepoInfo(BaseModel):
     name: str
@@ -386,6 +435,7 @@ class GitHubRepoInfo(BaseModel):
     updated_at: datetime
     pushed_at: datetime
 
+
 class GitHubCommit(BaseModel):
     sha: str
     message: str
@@ -400,6 +450,7 @@ class GitHubCommit(BaseModel):
     modified_files: List[str] = []
     removed_files: List[str] = []
 
+
 class GitHubFile(BaseModel):
     name: str
     path: str
@@ -412,6 +463,7 @@ class GitHubFile(BaseModel):
     encoding: Optional[str] = None
     content: Optional[str] = None  # Base64 encoded for files
 
+
 class GitHubActivity(BaseModel):
     type: str  # commit, pull_request, issue, release, etc.
     action: Optional[str] = None  # opened, closed, merged, etc.
@@ -422,12 +474,14 @@ class GitHubActivity(BaseModel):
     url: str
     metadata: Optional[Dict[str, Any]] = None
 
+
 # Enhanced project management schemas
 class ProjectForkCreate(BaseModel):
     original_project_id: str = Field(..., min_length=1)
     new_project_name: str = Field(..., min_length=1, max_length=200)
     fork_reason: Optional[str] = None
     modifications_planned: Optional[str] = None
+
 
 class ProjectForkResponse(BaseModel):
     id: int
@@ -441,6 +495,7 @@ class ProjectForkResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectLikeResponse(BaseModel):
     id: int
     project_id: str
@@ -450,11 +505,13 @@ class ProjectLikeResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectCommentCreate(BaseModel):
     comment_text: str = Field(..., min_length=1, max_length=1000)
     is_question: bool = False
     is_suggestion: bool = False
     parent_comment_id: Optional[int] = None
+
 
 class ProjectCommentResponse(BaseModel):
     id: int
@@ -469,18 +526,21 @@ class ProjectCommentResponse(BaseModel):
     flagged_reason: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    replies: List['ProjectCommentResponse'] = []
+    replies: List["ProjectCommentResponse"] = []
 
     class Config:
         from_attributes = True
 
+
 # Update to handle recursive comments
 ProjectCommentResponse.model_rebuild()
+
 
 class BOMOrderCreate(BaseModel):
     bom_item_id: int = Field(..., gt=0)
     quantity_ordered: int = Field(..., gt=0)
     notes: Optional[str] = None
+
 
 class BOMOrderResponse(BaseModel):
     id: int
@@ -500,11 +560,13 @@ class BOMOrderResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProjectTeamRoleCreate(BaseModel):
     user_id: str = Field(..., min_length=1)
     role_name: str = Field(..., min_length=1, max_length=100)
     role_description: Optional[str] = None
     permissions: Optional[List[str]] = []
+
 
 class ProjectTeamRoleResponse(BaseModel):
     id: int
@@ -520,11 +582,15 @@ class ProjectTeamRoleResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ResourceSharingCreate(BaseModel):
     target_project_id: str = Field(..., min_length=1)
-    resource_type: str = Field(..., regex="^(bom_item|file|milestone_template|equipment_config)$")
+    resource_type: str = Field(
+        ..., regex="^(bom_item|file|milestone_template|equipment_config)$"
+    )
     resource_id: str = Field(..., min_length=1)
     sharing_notes: Optional[str] = None
+
 
 class ResourceSharingResponse(BaseModel):
     id: int
@@ -542,6 +608,7 @@ class ResourceSharingResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class PublicProjectsFilter(BaseModel):
     difficulty_level: Optional[str] = None
     required_skills: Optional[List[str]] = None
@@ -551,6 +618,7 @@ class PublicProjectsFilter(BaseModel):
     featured_only: bool = False
     has_bom: Optional[bool] = None
     has_files: Optional[bool] = None
+
 
 class EnhancedProjectSummaryResponse(ProjectSummaryResponse):
     # Additional fields for public project discovery

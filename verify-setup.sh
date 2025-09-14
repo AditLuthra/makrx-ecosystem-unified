@@ -10,19 +10,19 @@ echo ""
 
 echo "Checking each app's dependencies:"
 for app in gateway-frontend gateway-frontend-hacker makrcave makrx-events makrx-store; do
-    echo -n "  $app: "
-    if [ -d "apps/$app/node_modules" ]; then
-        count=$(find "apps/$app/node_modules" -maxdepth 1 -type d | wc -l)
-        echo "✅ ($count packages)"
-    else
-        echo "❌ No node_modules"
-        echo "    Trying to install..."
-        cd "apps/$app"
-        npm install --legacy-peer-deps >/dev/null 2>&1 &
-        install_pid=$!
-        cd ../..
-        echo "    Installation started (PID: $install_pid)"
-    fi
+	echo -n "  $app: "
+	if [ -d "apps/$app/node_modules" ]; then
+		count=$(find "apps/$app/node_modules" -maxdepth 1 -type d | wc -l)
+		echo "✅ ($count packages)"
+	else
+		echo "❌ No node_modules"
+		echo "    Trying to install..."
+		cd "apps/$app"
+		npm install --legacy-peer-deps >/dev/null 2>&1 &
+		install_pid=$!
+		cd ../..
+		echo "    Installation started (PID: $install_pid)"
+	fi
 done
 
 echo ""

@@ -1,45 +1,45 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import Header from "@/components/header";
-import { Calendar, MapPin, Users, Plus, BarChart3, Settings, Eye } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Header from '@/components/header';
+import { Calendar, MapPin, Users, Plus, BarChart3, Settings, Eye } from 'lucide-react';
+import Link from 'next/link';
 
 export default function OrganizerDashboard() {
   const myEvents = [
     {
-      id: "arduino-workshop-march",
-      title: "Arduino Basics Workshop",
-      status: "published",
-      date: "March 20, 2024",
-      location: "TechHub Austin",
+      id: 'arduino-workshop-march',
+      title: 'Arduino Basics Workshop',
+      status: 'published',
+      date: 'March 20, 2024',
+      location: 'TechHub Austin',
       registrations: 35,
       capacity: 50,
-      revenue: "$1,750"
+      revenue: '$1,750',
     },
     {
-      id: "robotics-comp-april",
-      title: "Spring Robotics Competition",
-      status: "draft",
-      date: "April 15, 2024",
-      location: "University Lab",
+      id: 'robotics-comp-april',
+      title: 'Spring Robotics Competition',
+      status: 'draft',
+      date: 'April 15, 2024',
+      location: 'University Lab',
       registrations: 0,
       capacity: 100,
-      revenue: "$0"
-    }
+      revenue: '$0',
+    },
   ];
 
   const stats = {
     totalEvents: 12,
     totalAttendees: 450,
-    totalRevenue: "$8,500",
-    avgRating: 4.7
+    totalRevenue: '$8,500',
+    avgRating: 4.7,
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -117,7 +117,7 @@ export default function OrganizerDashboard() {
                   <div key={event.id} className="border rounded-lg p-4 hover:bg-gray-50">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-semibold text-lg">{event.title}</h3>
-                      <Badge 
+                      <Badge
                         variant={event.status === 'published' ? 'default' : 'secondary'}
                         className={event.status === 'published' ? 'bg-green-600' : ''}
                       >
@@ -140,7 +140,8 @@ export default function OrganizerDashboard() {
                     </div>
                     <div className="flex justify-between items-center">
                       <div className="text-sm">
-                        <span className="font-medium">Revenue: </span>{event.revenue}
+                        <span className="font-medium">Revenue: </span>
+                        {event.revenue}
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline">
@@ -177,7 +178,8 @@ export default function OrganizerDashboard() {
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <div className="text-sm">
-                    <span className="font-medium">Mike Rodriguez</span> registered for Arduino Workshop
+                    <span className="font-medium">Mike Rodriguez</span> registered for Arduino
+                    Workshop
                   </div>
                   <div className="text-xs text-gray-500">4 hours ago</div>
                 </div>

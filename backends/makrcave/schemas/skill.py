@@ -3,11 +3,13 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+
 class SkillLevel(str, Enum):
     beginner = "beginner"
     intermediate = "intermediate"
     advanced = "advanced"
     expert = "expert"
+
 
 class SkillStatus(str, Enum):
     pending = "pending"
@@ -15,10 +17,12 @@ class SkillStatus(str, Enum):
     expired = "expired"
     revoked = "revoked"
 
+
 class RequestStatus(str, Enum):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
+
 
 # Base Skill Schemas
 class SkillBase(BaseModel):
@@ -28,10 +32,12 @@ class SkillBase(BaseModel):
     description: Optional[str] = None
     status: str = "active"
 
+
 class SkillCreate(SkillBase):
     makerspace_id: str
     prerequisite_ids: List[str] = []
     equipment_ids: List[str] = []
+
 
 class SkillUpdate(BaseModel):
     name: Optional[str] = None
@@ -42,19 +48,22 @@ class SkillUpdate(BaseModel):
     prerequisite_ids: Optional[List[str]] = None
     equipment_ids: Optional[List[str]] = None
 
+
 class Skill(SkillBase):
     id: str
     makerspace_id: str
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
+
 
 class SkillWithRelations(Skill):
     prerequisites: List[Skill] = []
     equipment_ids: List[str] = []
     user_count: int = 0  # Number of users with this skill
+
 
 # User Skill Schemas
 class UserSkillBase(BaseModel):
@@ -62,10 +71,12 @@ class UserSkillBase(BaseModel):
     notes: Optional[str] = None
     quiz_score: Optional[str] = None
 
+
 class UserSkillCreate(UserSkillBase):
     user_id: str
     skill_id: str
     certified_by: Optional[str] = None
+
 
 class UserSkillUpdate(BaseModel):
     status: Optional[SkillStatus] = None
@@ -73,6 +84,7 @@ class UserSkillUpdate(BaseModel):
     quiz_score: Optional[str] = None
     certified_by: Optional[str] = None
     expires_at: Optional[datetime] = None
+
 
 class UserSkill(UserSkillBase):
     id: str
@@ -83,9 +95,10 @@ class UserSkill(UserSkillBase):
     certified_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
+
 
 class UserSkillWithDetails(UserSkill):
     skill_name: str
@@ -95,18 +108,22 @@ class UserSkillWithDetails(UserSkill):
     user_email: str
     certifier_name: Optional[str] = None
 
+
 # Skill Request Schemas
 class SkillRequestBase(BaseModel):
     reason: Optional[str] = None
     notes: Optional[str] = None
 
+
 class SkillRequestCreate(SkillRequestBase):
     skill_id: str
+
 
 class SkillRequestUpdate(BaseModel):
     status: Optional[RequestStatus] = None
     notes: Optional[str] = None
     reviewed_by: Optional[str] = None
+
 
 class SkillRequest(SkillRequestBase):
     id: str
@@ -117,9 +134,10 @@ class SkillRequest(SkillRequestBase):
     reviewed_at: Optional[datetime] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
+
 
 class SkillRequestWithDetails(SkillRequest):
     skill_name: str
@@ -128,6 +146,7 @@ class SkillRequestWithDetails(SkillRequest):
     user_name: str
     user_email: str
     reviewer_name: Optional[str] = None
+
 
 # Equipment Skill Requirements
 class EquipmentSkillRequirement(BaseModel):
@@ -138,10 +157,12 @@ class EquipmentSkillRequirement(BaseModel):
     category: str
     is_required: bool = True
 
+
 class EquipmentSkillRequirements(BaseModel):
     equipment_id: str
     equipment_name: str
     required_skills: List[EquipmentSkillRequirement]
+
 
 # User Skill Summary
 class UserSkillSummary(BaseModel):
@@ -155,6 +176,7 @@ class UserSkillSummary(BaseModel):
     accessible_equipment_count: int
     skills: List[UserSkillWithDetails] = []
 
+
 # Skill Analytics
 class SkillAnalytics(BaseModel):
     skill_id: str
@@ -167,6 +189,7 @@ class SkillAnalytics(BaseModel):
     success_rate: float
     avg_approval_time_days: Optional[float] = None
 
+
 class MakerspaceSkillOverview(BaseModel):
     makerspace_id: str
     makerspace_name: str
@@ -177,6 +200,7 @@ class MakerspaceSkillOverview(BaseModel):
     level_distribution: Dict[str, int]  # level -> count
     skills: List[SkillAnalytics] = []
 
+
 # Access Control
 class EquipmentAccessCheck(BaseModel):
     equipment_id: str
@@ -186,10 +210,12 @@ class EquipmentAccessCheck(BaseModel):
     reason: Optional[str] = None
     user_skills: List[str] = []  # Skills the user has for this equipment
 
+
 class BulkAccessCheck(BaseModel):
     user_id: str
     equipment_access: List[EquipmentAccessCheck]
     summary: Dict[str, Any]  # Total accessible, total equipment, etc.
+
 
 # Audit Log
 class SkillAuditLog(BaseModel):
@@ -201,9 +227,10 @@ class SkillAuditLog(BaseModel):
     reason: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 class SkillAuditLogWithDetails(SkillAuditLog):
     user_name: str

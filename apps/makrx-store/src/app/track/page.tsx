@@ -1,7 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Package, Truck, CheckCircle, Clock, MapPin, Phone, Mail, AlertCircle } from 'lucide-react';
+import {
+  Search,
+  Package,
+  Truck,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Phone,
+  Mail,
+  AlertCircle,
+} from 'lucide-react';
 
 interface TrackingUpdate {
   timestamp: string;
@@ -37,56 +47,56 @@ const mockOrderStatus: OrderStatus = {
       status: 'Order Placed',
       location: 'Online',
       description: 'Your order has been received and is being processed.',
-      completed: true
+      completed: true,
     },
     {
       timestamp: '2024-01-21T14:30:00Z',
       status: 'In Production',
       location: 'Austin, TX Facility',
       description: '3D printing started for custom parts.',
-      completed: true
+      completed: true,
     },
     {
       timestamp: '2024-01-22T16:45:00Z',
       status: 'Quality Check',
       location: 'Austin, TX Facility',
       description: 'Parts completed and passed quality inspection.',
-      completed: true
+      completed: true,
     },
     {
       timestamp: '2024-01-23T10:20:00Z',
       status: 'Shipped',
       location: 'Austin, TX',
       description: 'Package has been picked up by carrier and is in transit.',
-      completed: true
+      completed: true,
     },
     {
       timestamp: '2024-01-24T08:15:00Z',
       status: 'In Transit',
       location: 'Dallas, TX',
       description: 'Package is on its way to the destination.',
-      completed: true
+      completed: true,
     },
     {
       timestamp: '2024-01-25T12:00:00Z',
       status: 'Out for Delivery',
       location: 'Houston, TX',
       description: 'Package is out for delivery and will arrive today.',
-      completed: false
-    }
+      completed: false,
+    },
   ],
   products: [
     {
       name: 'Custom Phone Case - iPhone 15 Pro',
       quantity: 2,
-      image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Product'
+      image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Product',
     },
     {
       name: 'Precision Bracket - Aluminum',
       quantity: 1,
-      image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Product'
-    }
-  ]
+      image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Product',
+    },
+  ],
 };
 
 export default function TrackOrderPage() {
@@ -101,14 +111,18 @@ export default function TrackOrderPage() {
 
     setLoading(true);
     setError('');
-    
+
     // Simulate API call
     setTimeout(() => {
-      if (trackingInput.toLowerCase().includes('mx-2024-001234') || 
-          trackingInput.toLowerCase().includes('1z9999w99999999999')) {
+      if (
+        trackingInput.toLowerCase().includes('mx-2024-001234') ||
+        trackingInput.toLowerCase().includes('1z9999w99999999999')
+      ) {
         setOrderStatus(mockOrderStatus);
       } else {
-        setError('Order not found. Please check your order number or tracking number and try again.');
+        setError(
+          'Order not found. Please check your order number or tracking number and try again.',
+        );
         setOrderStatus(null);
       }
       setLoading(false);
@@ -117,21 +131,31 @@ export default function TrackOrderPage() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'processing': return 'text-yellow-600 bg-yellow-100';
-      case 'manufacturing': return 'text-blue-600 bg-blue-100';
-      case 'shipped': return 'text-purple-600 bg-purple-100';
-      case 'delivered': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'processing':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'manufacturing':
+        return 'text-blue-600 bg-blue-100';
+      case 'shipped':
+        return 'text-purple-600 bg-purple-100';
+      case 'delivered':
+        return 'text-green-600 bg-green-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'processing': return <Clock className="w-5 h-5" />;
-      case 'manufacturing': return <Package className="w-5 h-5" />;
-      case 'shipped': return <Truck className="w-5 h-5" />;
-      case 'delivered': return <CheckCircle className="w-5 h-5" />;
-      default: return <Package className="w-5 h-5" />;
+      case 'processing':
+        return <Clock className="w-5 h-5" />;
+      case 'manufacturing':
+        return <Package className="w-5 h-5" />;
+      case 'shipped':
+        return <Truck className="w-5 h-5" />;
+      case 'delivered':
+        return <CheckCircle className="w-5 h-5" />;
+      default:
+        return <Package className="w-5 h-5" />;
     }
   };
 
@@ -156,7 +180,10 @@ export default function TrackOrderPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-8">
           <form onSubmit={handleTrack} className="space-y-4">
             <div>
-              <label htmlFor="tracking" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="tracking"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Order Number or Tracking Number
               </label>
               <div className="relative">
@@ -172,7 +199,7 @@ export default function TrackOrderPage() {
                 />
               </div>
             </div>
-            
+
             <button
               type="submit"
               disabled={loading}
@@ -193,10 +220,22 @@ export default function TrackOrderPage() {
           </form>
 
           <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Demo Tracking Numbers:</h3>
+            <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">
+              Demo Tracking Numbers:
+            </h3>
             <div className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
-              <p>Order Number: <code className="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">MX-2024-001234</code></p>
-              <p>Tracking Number: <code className="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">1Z9999W99999999999</code></p>
+              <p>
+                Order Number:{' '}
+                <code className="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">
+                  MX-2024-001234
+                </code>
+              </p>
+              <p>
+                Tracking Number:{' '}
+                <code className="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">
+                  1Z9999W99999999999
+                </code>
+              </p>
             </div>
           </div>
         </div>
@@ -220,7 +259,9 @@ export default function TrackOrderPage() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   Order {orderStatus.orderId}
                 </h2>
-                <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(orderStatus.status)}`}>
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(orderStatus.status)}`}
+                >
                   <div className="flex items-center gap-2">
                     {getStatusIcon(orderStatus.status)}
                     {orderStatus.status.charAt(0).toUpperCase() + orderStatus.status.slice(1)}
@@ -255,7 +296,9 @@ export default function TrackOrderPage() {
 
               {/* Products */}
               <div className="border-t dark:border-gray-600 pt-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Items in this order:</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  Items in this order:
+                </h3>
                 <div className="space-y-3">
                   {orderStatus.products.map((product, index) => (
                     <div key={index} className="flex items-center gap-3">
@@ -266,7 +309,9 @@ export default function TrackOrderPage() {
                       />
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{product.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Quantity: {product.quantity}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Quantity: {product.quantity}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -276,41 +321,51 @@ export default function TrackOrderPage() {
 
             {/* Tracking Timeline */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Tracking History</h3>
-              
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                Tracking History
+              </h3>
+
               <div className="space-y-4">
                 {orderStatus.updates.map((update, index) => (
                   <div key={index} className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className={`w-3 h-3 rounded-full ${
-                        update.completed ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                      }`} />
-                      {index < orderStatus.updates.length - 1 && (
-                        <div className={`w-0.5 h-8 ${
+                      <div
+                        className={`w-3 h-3 rounded-full ${
                           update.completed ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                        }`} />
+                        }`}
+                      />
+                      {index < orderStatus.updates.length - 1 && (
+                        <div
+                          className={`w-0.5 h-8 ${
+                            update.completed ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          }`}
+                        />
                       )}
                     </div>
-                    
+
                     <div className="flex-1 pb-4">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className={`font-semibold ${
-                          update.completed ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'
-                        }`}>
+                        <h4
+                          className={`font-semibold ${
+                            update.completed
+                              ? 'text-gray-900 dark:text-white'
+                              : 'text-gray-500 dark:text-gray-400'
+                          }`}
+                        >
                           {update.status}
                         </h4>
                         <span className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(update.timestamp).toLocaleString()}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 mb-2">
                         <MapPin className="w-4 h-4 text-gray-400" />
                         <span className="text-sm text-gray-600 dark:text-gray-300">
                           {update.location}
                         </span>
                       </div>
-                      
+
                       <p className="text-sm text-gray-600 dark:text-gray-300">
                         {update.description}
                       </p>
@@ -350,35 +405,35 @@ export default function TrackOrderPage() {
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
             Frequently Asked Questions
           </h3>
-          
+
           <div className="space-y-4">
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                 How long does manufacturing take?
               </h4>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                3D printing typically takes 1-3 business days, while CNC machining takes 3-7 business days. 
-                Complex orders may take longer.
+                3D printing typically takes 1-3 business days, while CNC machining takes 3-7
+                business days. Complex orders may take longer.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Can I modify my order after it's placed?
               </h4>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                Orders can be modified within 2 hours of placement if manufacturing hasn't started. 
+                Orders can be modified within 2 hours of placement if manufacturing hasn't started.
                 Contact our support team immediately.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                 What if my tracking shows no updates?
               </h4>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                Tracking information may take 24-48 hours to appear after shipping. If you don't see updates 
-                after this time, please contact our support team.
+                Tracking information may take 24-48 hours to appear after shipping. If you don't see
+                updates after this time, please contact our support team.
               </p>
             </div>
           </div>

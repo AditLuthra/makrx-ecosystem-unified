@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -16,7 +16,7 @@ interface STLPreviewProps {
   }) => void;
 }
 
-export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", onAnalysis }) => {
+export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = '', onAnalysis }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene>();
   const rendererRef = useRef<THREE.WebGLRenderer>();
@@ -40,7 +40,7 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
       75,
       mountRef.current.clientWidth / mountRef.current.clientHeight,
       0.1,
-      1000
+      1000,
     );
     cameraRef.current = camera;
 
@@ -104,7 +104,7 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
 
   const loadSTLFile = async () => {
     if (!sceneRef.current) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -116,7 +116,7 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
       // Calculate analysis data
       geometry.computeBoundingBox();
       geometry.computeVertexNormals();
-      
+
       const boundingBox = geometry.boundingBox!;
       const dimensions = {
         x: Math.round((boundingBox.max.x - boundingBox.min.x) * 100) / 100,
@@ -126,10 +126,11 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
 
       // Calculate volume (approximation using bounding box)
       const volume_mm3 = Math.round(dimensions.x * dimensions.y * dimensions.z);
-      
+
       // Calculate surface area (approximation)
       const surface_area_mm2 = Math.round(
-        2 * (dimensions.x * dimensions.y + dimensions.y * dimensions.z + dimensions.z * dimensions.x)
+        2 *
+          (dimensions.x * dimensions.y + dimensions.y * dimensions.z + dimensions.z * dimensions.x),
       );
 
       const analysisData = {
@@ -142,12 +143,12 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
       onAnalysis?.(analysisData);
 
       // Create material and mesh
-      const material = new THREE.MeshLambertMaterial({ 
+      const material = new THREE.MeshLambertMaterial({
         color: 0x0099ff,
         transparent: true,
-        opacity: 0.9
+        opacity: 0.9,
       });
-      
+
       const mesh = new THREE.Mesh(geometry, material);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -190,7 +191,7 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
     const maxDim = Math.max(analysis.dimensions.x, analysis.dimensions.y, analysis.dimensions.z);
     const fov = cameraRef.current.fov * (Math.PI / 180);
     const cameraDistance = Math.abs(maxDim / (2 * Math.tan(fov / 2))) * 1.5;
-    
+
     cameraRef.current.position.set(cameraDistance, cameraDistance, cameraDistance);
     cameraRef.current.lookAt(0, 0, 0);
     controlsRef.current.target.set(0, 0, 0);
@@ -199,7 +200,9 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
 
   const changeColor = (color: string) => {
     if (!meshRef.current) return;
-    (meshRef.current.material as THREE.MeshLambertMaterial).color.setHex(parseInt(color.replace('#', '0x')));
+    (meshRef.current.material as THREE.MeshLambertMaterial).color.setHex(
+      parseInt(color.replace('#', '0x')),
+    );
   };
 
   return (
@@ -244,7 +247,9 @@ export const STLPreview: React.FC<STLPreviewProps> = ({ file, className = "", on
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Dimensions:</span>
-              <p className="font-mono">{analysis.dimensions.x} × {analysis.dimensions.y} × {analysis.dimensions.z} mm</p>
+              <p className="font-mono">
+                {analysis.dimensions.x} × {analysis.dimensions.y} × {analysis.dimensions.z} mm
+              </p>
             </div>
             <div>
               <span className="text-gray-600">Volume:</span>

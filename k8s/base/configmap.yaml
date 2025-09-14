@@ -7,25 +7,25 @@ data:
   # Database configuration
   POSTGRES_DB: "makrx_ecosystem"
   POSTGRES_USER: "makrx"
-  
+
   # Redis configuration
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
-  
+
   # Keycloak configuration
   KEYCLOAK_REALM: "makrx"
   KEYCLOAK_HOST: "keycloak"
   KEYCLOAK_PORT: "8080"
-  
+
   # MinIO configuration
   MINIO_HOST: "minio"
   MINIO_PORT: "9000"
   MINIO_CONSOLE_PORT: "9001"
-  
+
   # Application configuration
   NODE_ENV: "production"
   LOG_LEVEL: "info"
-  
+
   # Frontend URLs
   GATEWAY_FRONTEND_URL: "https://app.makrx.com"
   HACKER_FRONTEND_URL: "https://hacker.makrx.com"

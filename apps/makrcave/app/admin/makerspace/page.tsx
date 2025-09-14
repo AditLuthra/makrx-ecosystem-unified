@@ -23,24 +23,24 @@ export default function AdminMakerspace() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Makerspace Name</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 defaultValue="Downtown MakrSpace"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-blue"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Location</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 defaultValue="123 Maker Street, Tech City, TC 12345"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-blue"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Contact Email</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 defaultValue="info@makrspace.local"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-blue"
               />
@@ -68,9 +68,7 @@ export default function AdminMakerspace() {
               <span className="text-sm font-medium">12:00 PM - 6:00 PM</span>
             </div>
           </div>
-          <button className="makrcave-btn-secondary text-sm mt-4">
-            Edit Hours
-          </button>
+          <button className="makrcave-btn-secondary text-sm mt-4">Edit Hours</button>
         </div>
 
         {/* Pricing & Policies */}
@@ -82,16 +80,16 @@ export default function AdminMakerspace() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Daily Access Fee</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 defaultValue="15"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-blue"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">3D Printer Rate (per hour)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 defaultValue="5"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-blue"
               />
@@ -138,7 +136,9 @@ export default function AdminMakerspace() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">Auto-approve Reservations</p>
-                <p className="text-xs text-muted-foreground">Automatically approve member bookings</p>
+                <p className="text-xs text-muted-foreground">
+                  Automatically approve member bookings
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" />
@@ -151,9 +151,7 @@ export default function AdminMakerspace() {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <button className="makrcave-btn-primary">
-          Save Settings
-        </button>
+        <button className="makrcave-btn-primary">Save Settings</button>
       </div>
     </div>
   );

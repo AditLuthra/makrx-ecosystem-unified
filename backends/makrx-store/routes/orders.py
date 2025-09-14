@@ -16,11 +16,13 @@ from models.commerce import Order, OrderItem, Product, Cart, CartItem
 
 router = APIRouter()
 
+
 class CheckoutRequest(BaseModel):
     shipping_address: dict
     billing_address: Optional[dict] = None
     payment_method: str = "stripe"
     notes: Optional[str] = None
+
 
 class CheckoutResponse(BaseModel):
     order_id: int
@@ -29,22 +31,26 @@ class CheckoutResponse(BaseModel):
     currency: str = "USD"
     payment_required: bool = True
 
+
 @router.get("/api/orders")
 async def get_user_orders(
     user_id: Optional[str] = None,  # From JWT token
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Get user's order history"""
     if not user_id:
         user_id = "demo_user"  # For demo purposes
-    
-    query = select(Order).options(
-        selectinload(Order.items).selectinload(OrderItem.product)
-    ).where(Order.user_id == user_id).order_by(Order.created_at.desc())
-    
+
+    query = (
+        select(Order)
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
+        .where(Order.user_id == user_id)
+        .order_by(Order.created_at.desc())
+    )
+
     result = await db.execute(query)
     orders = result.scalars().all()
-    
+
     return {
         "orders": [
             {
@@ -57,42 +63,51 @@ async def get_user_orders(
                 "tax_amount": float(order.tax_amount),
                 "shipping_amount": float(order.shipping_amount),
                 "items_count": len(order.items),
-                "created_at": order.created_at.isoformat() if order.created_at else None,
+                "created_at": (
+                    order.created_at.isoformat() if order.created_at else None
+                ),
                 "items": [
                     {
-                        "product_name": item.product.name if item.product else "Unknown Product",
+                        "product_name": (
+                            item.product.name
+                            if item.product
+                            else "Unknown Product"
+                        ),
                         "quantity": item.quantity,
                         "price": float(item.price_at_time),
-                        "total": float(item.total_price)
+                        "total": float(item.total_price),
                     }
                     for item in order.items
-                ]
+                ],
             }
             for order in orders
         ],
-        "total": len(orders)
+        "total": len(orders),
     }
+
 
 @router.get("/api/orders/{order_id}")
 async def get_order_details(
     order_id: int,
     user_id: Optional[str] = None,  # From JWT token
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Get detailed order information"""
     if not user_id:
         user_id = "demo_user"
-    
-    query = select(Order).options(
-        selectinload(Order.items).selectinload(OrderItem.product)
-    ).where(Order.id == order_id, Order.user_id == user_id)
-    
+
+    query = (
+        select(Order)
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
+        .where(Order.id == order_id, Order.user_id == user_id)
+    )
+
     result = await db.execute(query)
     order = result.scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
     return {
         "order": {
             "id": order.id,
@@ -108,59 +123,78 @@ async def get_order_details(
             "shipping_address": order.shipping_address,
             "billing_address": order.billing_address,
             "notes": order.notes,
-            "created_at": order.created_at.isoformat() if order.created_at else None,
-            "updated_at": order.updated_at.isoformat() if order.updated_at else None,
+            "created_at": (
+                order.created_at.isoformat() if order.created_at else None
+            ),
+            "updated_at": (
+                order.updated_at.isoformat() if order.updated_at else None
+            ),
             "items": [
                 {
                     "id": item.id,
-                    "product": {
-                        "id": item.product.id,
-                        "name": item.product.name,
-                        "slug": item.product.slug,
-                        "featured_image": item.product.featured_image
-                    } if item.product else None,
+                    "product": (
+                        {
+                            "id": item.product.id,
+                            "name": item.product.name,
+                            "slug": item.product.slug,
+                            "featured_image": item.product.featured_image,
+                        }
+                        if item.product
+                        else None
+                    ),
                     "quantity": item.quantity,
                     "price_at_time": float(item.price_at_time),
                     "total_price": float(item.total_price),
-                    "created_at": item.created_at.isoformat() if item.created_at else None
+                    "created_at": (
+                        item.created_at.isoformat()
+                        if item.created_at
+                        else None
+                    ),
                 }
                 for item in order.items
-            ]
+            ],
         }
     }
+
 
 @router.post("/api/orders/checkout")
 async def checkout(
     request: CheckoutRequest,
     user_id: Optional[str] = None,  # From JWT token
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Process checkout and create order from cart"""
     if not user_id:
         user_id = "demo_user"
-    
+
     try:
         # Get user's cart
-        cart_query = select(Cart).options(
-            selectinload(Cart.items).selectinload(CartItem.product)
-        ).where(Cart.user_id == user_id, Cart.status == 'active')
-        
+        cart_query = (
+            select(Cart)
+            .options(selectinload(Cart.items).selectinload(CartItem.product))
+            .where(Cart.user_id == user_id, Cart.status == "active")
+        )
+
         cart_result = await db.execute(cart_query)
         cart = cart_result.scalar_one_or_none()
-        
+
         if not cart or not cart.items:
             raise HTTPException(status_code=400, detail="Cart is empty")
-        
+
         # Calculate totals
-        subtotal = sum(float(item.price_at_time) * item.quantity for item in cart.items)
+        subtotal = sum(
+            float(item.price_at_time) * item.quantity for item in cart.items
+        )
         tax_rate = 0.08  # 8% tax (configurable)
         tax_amount = subtotal * tax_rate
-        shipping_amount = 10.00 if subtotal < 100 else 0.00  # Free shipping over $100
+        shipping_amount = (
+            10.00 if subtotal < 100 else 0.00
+        )  # Free shipping over $100
         total_amount = subtotal + tax_amount + shipping_amount
-        
+
         # Generate order number
         order_number = f"MX-{datetime.utcnow().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
-        
+
         # Create order
         new_order = Order(
             order_number=order_number,
@@ -169,17 +203,19 @@ async def checkout(
             tax_amount=tax_amount,
             shipping_amount=shipping_amount,
             total_amount=total_amount,
-            customer_email=user_id + "@demo.com",  # Would come from user profile
+            customer_email=user_id
+            + "@demo.com",  # Would come from user profile
             shipping_address=request.shipping_address,
-            billing_address=request.billing_address or request.shipping_address,
+            billing_address=request.billing_address
+            or request.shipping_address,
             notes=request.notes,
             status="pending",
-            payment_status="pending"
+            payment_status="pending",
         )
-        
+
         db.add(new_order)
         await db.flush()  # Get order ID
-        
+
         # Create order items from cart items
         for cart_item in cart.items:
             order_item = OrderItem(
@@ -187,122 +223,136 @@ async def checkout(
                 product_id=cart_item.product_id,
                 quantity=cart_item.quantity,
                 price_at_time=cart_item.price_at_time,
-                total_price=cart_item.price_at_time * cart_item.quantity
+                total_price=cart_item.price_at_time * cart_item.quantity,
             )
             db.add(order_item)
-        
+
         # Clear cart (mark as converted)
-        cart.status = 'converted'
-        
+        cart.status = "converted"
+
         await db.commit()
-        
+
         # In a real implementation, this would integrate with payment gateway
         return CheckoutResponse(
             order_id=new_order.id,
             order_number=new_order.order_number,
             total=float(total_amount),
             currency="USD",
-            payment_required=True
+            payment_required=True,
         )
-        
+
     except Exception as e:
         await db.rollback()
         raise HTTPException(
-            status_code=500,
-            detail=f"Checkout failed: {str(e)}"
+            status_code=500, detail=f"Checkout failed: {str(e)}"
         )
+
 
 @router.put("/api/orders/{order_id}/status")
 async def update_order_status(
     order_id: int,
     status_data: dict,
     user_id: Optional[str] = None,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Update order status (for admin use)"""
     query = select(Order).where(Order.id == order_id)
     result = await db.execute(query)
     order = result.scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
     try:
         new_status = status_data.get("status")
         new_payment_status = status_data.get("payment_status")
-        
+
         if new_status:
             order.status = new_status
         if new_payment_status:
             order.payment_status = new_payment_status
-        
+
         order.updated_at = datetime.utcnow()
         await db.commit()
-        
+
         return {"message": "Order status updated successfully"}
-        
+
     except Exception as e:
         await db.rollback()
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to update order status: {str(e)}"
+            status_code=500, detail=f"Failed to update order status: {str(e)}"
         )
+
 
 @router.get("/api/orders/{order_id}/tracking")
 async def get_order_tracking(
     order_id: int,
     user_id: Optional[str] = None,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Get order tracking information"""
     if not user_id:
         user_id = "demo_user"
-    
+
     query = select(Order).where(Order.id == order_id, Order.user_id == user_id)
     result = await db.execute(query)
     order = result.scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
     # Mock tracking data - in real implementation, this would integrate with shipping providers
     tracking_events = [
         {
             "status": "order_placed",
             "description": "Order placed successfully",
-            "timestamp": order.created_at.isoformat() if order.created_at else None,
-            "location": "Online Store"
+            "timestamp": (
+                order.created_at.isoformat() if order.created_at else None
+            ),
+            "location": "Online Store",
         }
     ]
-    
+
     if order.status in ["processing", "shipped", "delivered"]:
-        tracking_events.append({
-            "status": "processing",
-            "description": "Order is being processed",
-            "timestamp": order.updated_at.isoformat() if order.updated_at else None,
-            "location": "Fulfillment Center"
-        })
-    
+        tracking_events.append(
+            {
+                "status": "processing",
+                "description": "Order is being processed",
+                "timestamp": (
+                    order.updated_at.isoformat() if order.updated_at else None
+                ),
+                "location": "Fulfillment Center",
+            }
+        )
+
     if order.status in ["shipped", "delivered"]:
-        tracking_events.append({
-            "status": "shipped",
-            "description": "Order has been shipped",
-            "timestamp": order.updated_at.isoformat() if order.updated_at else None,
-            "location": "Shipping Partner"
-        })
-    
+        tracking_events.append(
+            {
+                "status": "shipped",
+                "description": "Order has been shipped",
+                "timestamp": (
+                    order.updated_at.isoformat() if order.updated_at else None
+                ),
+                "location": "Shipping Partner",
+            }
+        )
+
     if order.status == "delivered":
-        tracking_events.append({
-            "status": "delivered",
-            "description": "Order delivered successfully",
-            "timestamp": order.updated_at.isoformat() if order.updated_at else None,
-            "location": "Destination"
-        })
-    
+        tracking_events.append(
+            {
+                "status": "delivered",
+                "description": "Order delivered successfully",
+                "timestamp": (
+                    order.updated_at.isoformat() if order.updated_at else None
+                ),
+                "location": "Destination",
+            }
+        )
+
     return {
         "order_id": order.id,
         "order_number": order.order_number,
         "current_status": order.status,
         "tracking_events": tracking_events,
-        "estimated_delivery": None  # Would calculate based on shipping method
+        "estimated_delivery": None,  # Would calculate based on shipping method
     }

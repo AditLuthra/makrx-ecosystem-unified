@@ -11,7 +11,7 @@ import {
   Truck,
   Clock,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 
 interface ReorderItem {
@@ -45,7 +45,7 @@ const ReorderHistoryTable: React.FC = () => {
       priority: 'normal',
       orderDate: '2024-01-15',
       estimatedDelivery: '2024-01-20',
-      actualDelivery: '2024-01-19'
+      actualDelivery: '2024-01-19',
     },
     {
       id: 'ro-002',
@@ -58,7 +58,7 @@ const ReorderHistoryTable: React.FC = () => {
       status: 'shipped',
       priority: 'high',
       orderDate: '2024-01-18',
-      estimatedDelivery: '2024-01-23'
+      estimatedDelivery: '2024-01-23',
     },
     {
       id: 'ro-003',
@@ -71,39 +71,56 @@ const ReorderHistoryTable: React.FC = () => {
       status: 'pending',
       priority: 'urgent',
       orderDate: '2024-01-20',
-      estimatedDelivery: '2024-01-28'
-    }
+      estimatedDelivery: '2024-01-28',
+    },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'delivered': return 'bg-green-100 text-green-800';
-      case 'shipped': return 'bg-blue-100 text-blue-800';
-      case 'approved': return 'bg-purple-100 text-purple-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'shipped':
+        return 'bg-blue-100 text-blue-800';
+      case 'approved':
+        return 'bg-purple-100 text-purple-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'delivered': return <CheckCircle className="h-4 w-4" />;
-      case 'shipped': return <Truck className="h-4 w-4" />;
-      case 'approved': return <CheckCircle className="h-4 w-4" />;
-      case 'pending': return <Clock className="h-4 w-4" />;
-      case 'cancelled': return <AlertTriangle className="h-4 w-4" />;
-      default: return <Package className="h-4 w-4" />;
+      case 'delivered':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'shipped':
+        return <Truck className="h-4 w-4" />;
+      case 'approved':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'pending':
+        return <Clock className="h-4 w-4" />;
+      case 'cancelled':
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Package className="h-4 w-4" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'normal': return 'bg-blue-100 text-blue-800';
-      case 'low': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'urgent':
+        return 'bg-red-100 text-red-800';
+      case 'high':
+        return 'bg-orange-100 text-orange-800';
+      case 'normal':
+        return 'bg-blue-100 text-blue-800';
+      case 'low':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 

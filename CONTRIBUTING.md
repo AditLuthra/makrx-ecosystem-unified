@@ -84,7 +84,7 @@ npm run dev           # Start frontend apps only
 Once running, access the applications at:
 
 - **Gateway Frontend**: http://localhost:3000
-- **Gateway Frontend Hacker**: http://localhost:3001  
+- **Gateway Frontend Hacker**: http://localhost:3001
 - **MakrCave**: http://localhost:3002
 - **MakrX Store**: http://localhost:3003
 - **MakrX Events**: http://localhost:3004
@@ -137,6 +137,7 @@ type(scope): description
 ```
 
 Examples:
+
 - `feat(auth): add OAuth2 integration`
 - `fix(store): resolve payment processing error`
 - `docs(readme): update setup instructions`
@@ -192,9 +193,11 @@ Before submitting:
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
@@ -202,11 +205,13 @@ Brief description of changes
 - [ ] Performance improvement
 
 ## Testing
+
 - [ ] Tests pass locally
 - [ ] New tests added for new functionality
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows project conventions
 - [ ] Self-review completed
 - [ ] Documentation updated
@@ -269,16 +274,19 @@ Brief description of changes
 ### Common Issues
 
 **Environment Setup Problems:**
+
 - Check Docker is running: `docker --version`
 - Verify Node.js version: `node --version` (should be 20+)
 - Clear node_modules: `rm -rf node_modules && npm install`
 
 **Database Connection Issues:**
+
 - Ensure PostgreSQL service is running: `docker-compose ps`
 - Check database credentials in `.env`
 - Verify port 5433 is available: `lsof -i :5433`
 
 **Frontend Build Issues:**
+
 - Clear Next.js cache: `rm -rf .next`
 - Update dependencies: `npm update`
 - Check for TypeScript errors: `npm run type-check`
@@ -286,6 +294,7 @@ Brief description of changes
 ## Recognition
 
 Contributors will be recognized in:
+
 - GitHub contributors list
 - Release notes for significant contributions
 - Project documentation for major features

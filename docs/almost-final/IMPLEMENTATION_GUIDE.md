@@ -20,6 +20,7 @@ This comprehensive guide covers implementing the complete MakrCave Skill Managem
 The skill management system requires several new database tables:
 
 #### Core Models Created:
+
 - **`skills`** - Skill definitions with categories and levels
 - **`user_skills`** - User skill certifications and status
 - **`skill_requests`** - Skill certification requests
@@ -47,35 +48,38 @@ python -c "from database import engine; print([table for table in engine.table_n
 
 #### Skill Management Routes (`/api/v1/skills/*`)
 
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `POST` | `/skills/` | Create new skill | Admin Only |
-| `GET` | `/skills/` | List all skills | All Users |
-| `GET` | `/skills/{id}` | Get skill details | All Users |
-| `PUT` | `/skills/{id}` | Update skill | Admin Only |
-| `DELETE` | `/skills/{id}` | Delete/disable skill | Admin Only |
+| Method   | Endpoint       | Description          | Access Level |
+| -------- | -------------- | -------------------- | ------------ |
+| `POST`   | `/skills/`     | Create new skill     | Admin Only   |
+| `GET`    | `/skills/`     | List all skills      | All Users    |
+| `GET`    | `/skills/{id}` | Get skill details    | All Users    |
+| `PUT`    | `/skills/{id}` | Update skill         | Admin Only   |
+| `DELETE` | `/skills/{id}` | Delete/disable skill | Admin Only   |
 
 #### User Skill Routes
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `POST` | `/skills/user-skills` | Grant skill to user | Admin Only |
-| `GET` | `/skills/user-skills` | Get user skills | User/Admin |
-| `PUT` | `/skills/user-skills/{id}` | Update skill status | Admin Only |
-| `POST` | `/skills/user-skills/{id}/revoke` | Revoke user skill | Admin Only |
+
+| Method | Endpoint                          | Description         | Access Level |
+| ------ | --------------------------------- | ------------------- | ------------ |
+| `POST` | `/skills/user-skills`             | Grant skill to user | Admin Only   |
+| `GET`  | `/skills/user-skills`             | Get user skills     | User/Admin   |
+| `PUT`  | `/skills/user-skills/{id}`        | Update skill status | Admin Only   |
+| `POST` | `/skills/user-skills/{id}/revoke` | Revoke user skill   | Admin Only   |
 
 #### Skill Request Routes
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `POST` | `/skills/requests` | Request skill certification | All Users |
-| `GET` | `/skills/requests` | Get skill requests | User/Admin |
-| `PUT` | `/skills/requests/{id}` | Approve/reject request | Admin Only |
+
+| Method | Endpoint                | Description                 | Access Level |
+| ------ | ----------------------- | --------------------------- | ------------ |
+| `POST` | `/skills/requests`      | Request skill certification | All Users    |
+| `GET`  | `/skills/requests`      | Get skill requests          | User/Admin   |
+| `PUT`  | `/skills/requests/{id}` | Approve/reject request      | Admin Only   |
 
 #### Equipment Access Routes
-| Method | Endpoint | Description | Access Level |
-|--------|----------|-------------|--------------|
-| `GET` | `/skills/access/equipment/{id}` | Check equipment access | All Users |
-| `GET` | `/skills/access/equipment` | Bulk access check | All Users |
-| `GET` | `/skills/equipment-requirements` | Get equipment skill requirements | All Users |
+
+| Method | Endpoint                         | Description                      | Access Level |
+| ------ | -------------------------------- | -------------------------------- | ------------ |
+| `GET`  | `/skills/access/equipment/{id}`  | Check equipment access           | All Users    |
+| `GET`  | `/skills/access/equipment`       | Bulk access check                | All Users    |
+| `GET`  | `/skills/equipment-requirements` | Get equipment skill requirements | All Users    |
 
 ### 3. **Backend Configuration**
 
@@ -128,12 +132,14 @@ In `frontend/makrcave-frontend/App.tsx`:
 #### Equipment Page Enhancement
 
 The Equipment page now includes two tabs:
+
 - **Equipment List** - Original equipment management
 - **Skill Requirements** - NEW comprehensive skill-to-equipment mapping
 
 #### Skill Management Integration
 
 New pages and components implemented:
+
 - `pages/SkillManagement.tsx` - Admin skill management interface
 - `pages/NotificationsCenter.tsx` - Centralized notification system
 - `components/EquipmentSkillRequirements.tsx` - Equipment skill requirements view
@@ -143,12 +149,14 @@ New pages and components implemented:
 #### Manager Sidebar
 
 Updated to include:
+
 - **Skill Management** (`/portal/skills`)
 - **Notifications Center** (`/portal/notifications`)
 
 #### Route Configuration
 
 New routes added to `App.tsx`:
+
 ```typescript
 <Route path="skills" element={<SkillManagement />} />
 <Route path="notifications" element={<NotificationsCenter />} />
@@ -179,11 +187,13 @@ print(f'Skill tables created: {skill_tables}')
 ### 2. **Default Data Population**
 
 The migration automatically creates:
+
 - **6 default skills** across different categories
 - **Skill prerequisite relationships**
 - **Equipment-skill mappings**
 
 #### Default Skills Created:
+
 1. **3D Printer Operation** (Beginner, Digital Fabrication)
 2. **Laser Cutter Safety** (Beginner, Laser Cutting)
 3. **CNC Operation** (Advanced, Machining)
@@ -194,6 +204,7 @@ The migration automatically creates:
 ### 3. **Database Indexes**
 
 Key indexes are automatically created for:
+
 - User skill lookups by user_id
 - Equipment access checks by equipment_id
 - Skill request filtering by status
@@ -211,18 +222,18 @@ The `SkillContext` provides:
 
 ```typescript
 // Core skill checking functions
-const { 
+const {
   hasSkill,
-  hasSkillForEquipment, 
+  hasSkillForEquipment,
   canAccessEquipment,
   requestSkill,
-  getRequiredSkillsForEquipment
+  getRequiredSkillsForEquipment,
 } = useSkills();
 
 // Equipment access check
-const accessCheck = canAccessEquipment('equipment-123');
+const accessCheck = canAccessEquipment("equipment-123");
 if (!accessCheck.canAccess) {
-  console.log(`Missing skills: ${accessCheck.missingSkills.join(', ')}`);
+  console.log(`Missing skills: ${accessCheck.missingSkills.join(", ")}`);
 }
 ```
 
@@ -243,6 +254,7 @@ const { canAccess, missingSkills } = canAccessEquipment(equipment.id);
 ### 2. **Mock API Server Updates**
 
 Enhanced mock server includes:
+
 - **Equipment skill requirements endpoint**
 - **Skill verification responses**
 - **Mock user skill data**
@@ -256,6 +268,7 @@ Located in: `frontend/makrcave-frontend/mock-api-server.js`
 ### 1. **Backend Testing**
 
 #### Unit Tests
+
 ```bash
 # Install testing dependencies
 pip install pytest pytest-asyncio httpx
@@ -263,11 +276,12 @@ pip install pytest pytest-asyncio httpx
 # Run skill API tests
 pytest tests/test_skill_api.py -v
 
-# Run skill CRUD tests  
+# Run skill CRUD tests
 pytest tests/test_skill_crud.py -v
 ```
 
 #### Integration Tests
+
 ```bash
 # Test skill-equipment integration
 pytest tests/test_equipment_access.py -v
@@ -279,6 +293,7 @@ pytest tests/test_skill_requests.py -v
 ### 2. **Frontend Testing**
 
 #### Component Tests
+
 ```bash
 cd frontend/makrcave-frontend
 
@@ -293,6 +308,7 @@ npm test -- --testPathPattern=equipment
 ```
 
 #### E2E Testing
+
 ```bash
 # Install Playwright
 npm install --save-dev @playwright/test
@@ -304,6 +320,7 @@ npx playwright test skill-management.spec.ts
 ### 3. **Deployment Steps**
 
 #### Backend Deployment
+
 ```bash
 # 1. Build Docker image
 docker build -t makrcave-backend:latest .
@@ -319,6 +336,7 @@ docker exec -it <container-id> python migrations/create_skill_tables.py
 ```
 
 #### Frontend Deployment
+
 ```bash
 # 1. Build production bundle
 cd frontend/makrcave-frontend
@@ -355,6 +373,7 @@ Control skill system behavior through admin interface:
 #### Makerspace-Level Settings
 
 Each makerspace can configure:
+
 - Which skills are required vs. optional
 - Skill approval workflow (manual vs. automatic)
 - Equipment access enforcement level
@@ -364,13 +383,13 @@ Each makerspace can configure:
 
 #### Permission Matrix
 
-| Feature | Maker | Makerspace Admin | Admin | Super Admin |
-|---------|-------|------------------|-------|-------------|
-| View Skills | ✅ | ✅ | ✅ | ✅ |
-| Request Skills | ✅ | ✅ | ❌ | ❌ |
-| Approve Skills | ❌ | ✅ (local) | ✅ (assigned) | ✅ (all) |
-| Create Skills | ❌ | ❌ | ✅ | ✅ |
-| Equipment Override | ❌ | ✅ (emergency) | ✅ | ✅ |
+| Feature            | Maker | Makerspace Admin | Admin         | Super Admin |
+| ------------------ | ----- | ---------------- | ------------- | ----------- |
+| View Skills        | ✅    | ✅               | ✅            | ✅          |
+| Request Skills     | ✅    | ✅               | ❌            | ❌          |
+| Approve Skills     | ❌    | ✅ (local)       | ✅ (assigned) | ✅ (all)    |
+| Create Skills      | ❌    | ❌               | ✅            | ✅          |
+| Equipment Override | ❌    | ✅ (emergency)   | ✅            | ✅          |
 
 ### 3. **Equipment Integration Settings**
 
@@ -387,7 +406,7 @@ Each makerspace can configure:
       required: true
     },
     {
-      skillId: "safety-protocols", 
+      skillId: "safety-protocols",
       level: "beginner",
       required: true
     }
@@ -402,13 +421,15 @@ Each makerspace can configure:
 ## 🎯 Quick Start Checklist
 
 ### Backend Setup
+
 - [ ] Install Python dependencies
 - [ ] Configure database connection
 - [ ] Run skill table migrations
 - [ ] Start FastAPI server
 - [ ] Verify skill API endpoints
 
-### Frontend Setup  
+### Frontend Setup
+
 - [ ] Install Node.js dependencies
 - [ ] Add SkillProvider to App
 - [ ] Configure API endpoints
@@ -416,6 +437,7 @@ Each makerspace can configure:
 - [ ] Verify equipment access control
 
 ### System Integration
+
 - [ ] Create test skills and users
 - [ ] Test skill request workflow
 - [ ] Verify equipment access blocking
@@ -423,6 +445,7 @@ Each makerspace can configure:
 - [ ] Validate audit logging
 
 ### Production Deployment
+
 - [ ] Configure environment variables
 - [ ] Set up monitoring and logging
 - [ ] Deploy backend with SSL
@@ -436,16 +459,19 @@ Each makerspace can configure:
 ### Common Issues
 
 #### **Equipment Access Not Working**
+
 1. Verify SkillProvider is properly wrapped around App
 2. Check API endpoint responses in browser dev tools
 3. Ensure equipment-skill mappings exist in database
 
 #### **Skill Requests Not Appearing**
+
 1. Check user permissions for skill request creation
 2. Verify admin role assignments
 3. Check backend logs for API errors
 
 #### **Database Migration Errors**
+
 1. Ensure database connection is properly configured
 2. Check for existing table conflicts
 3. Run migration with detailed logging enabled

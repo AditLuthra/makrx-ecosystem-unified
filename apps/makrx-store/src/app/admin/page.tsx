@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/Button";
-import { withAuth } from "@/contexts/AuthContext";
-import { api, type Product, type Category, type AdminStats, formatPrice } from "@/lib/api";
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Layout from '@/components/layout/Layout';
+import { Button } from '@/components/ui/Button';
+import { withAuth } from '@/contexts/AuthContext';
+import { api, type Product, type Category, type AdminStats, formatPrice } from '@/lib/api';
 import {
   Package,
   Plus,
@@ -20,14 +20,14 @@ import {
   Eye,
   Settings,
   AlertTriangle,
-} from "lucide-react";
+} from 'lucide-react';
 
 function AdminPortal() {
   const [products, setProducts] = useState<Product[]>([]);
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [statsNotice, setStatsNotice] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +50,7 @@ function AdminPortal() {
       } catch (e) {
         setStats(null);
         setStatsNotice(
-          'Admin statistics are not available yet. This section will appear once the backend endpoint is implemented.'
+          'Admin statistics are not available yet. This section will appear once the backend endpoint is implemented.',
         );
       }
 
@@ -66,7 +66,7 @@ function AdminPortal() {
 
       if (searchQuery) filters.q = searchQuery;
 
-      if (selectedCategory !== "all") {
+      if (selectedCategory !== 'all') {
         const cat = categoriesData.find((c) => c.slug === selectedCategory);
         if (cat) filters.category_id = cat.id;
       }
@@ -75,15 +75,15 @@ function AdminPortal() {
       setProducts(productsData.products);
       setTotalPages(Math.ceil(productsData.total / 20));
     } catch (err) {
-      console.error("Failed to load admin data:", err);
-      setError("Failed to load admin data");
+      console.error('Failed to load admin data:', err);
+      setError('Failed to load admin data');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteProduct = async (productId: number) => {
-    if (!confirm("Are you sure you want to delete this product?")) {
+    if (!confirm('Are you sure you want to delete this product?')) {
       return;
     }
 
@@ -91,8 +91,8 @@ function AdminPortal() {
       await api.deleteProduct(productId);
       setProducts(products.filter((p) => p.id !== productId));
     } catch (err) {
-      console.error("Failed to delete product:", err);
-      alert("Failed to delete product");
+      console.error('Failed to delete product:', err);
+      alert('Failed to delete product');
     }
   };
 
@@ -127,55 +127,55 @@ function AdminPortal() {
   }
 
   const categoryOptions = [
-    { value: "all", label: "All Categories" },
+    { value: 'all', label: 'All Categories' },
     ...categories.map((cat) => ({ value: cat.slug, label: cat.name })),
   ];
 
   const getProductStatus = (product: Product) => {
     if (!product.in_stock)
       return {
-        status: "out-of-stock",
-        text: "Out of Stock",
-        color: "text-red-800 bg-red-100",
+        status: 'out-of-stock',
+        text: 'Out of Stock',
+        color: 'text-red-800 bg-red-100',
       };
     if (product.track_inventory && product.stock_qty <= 5)
       return {
-        status: "low-stock",
-        text: "Low Stock",
-        color: "text-yellow-800 bg-yellow-100",
+        status: 'low-stock',
+        text: 'Low Stock',
+        color: 'text-yellow-800 bg-yellow-100',
       };
     return {
-      status: "active",
-      text: "Active",
-      color: "text-green-800 bg-green-100",
+      status: 'active',
+      text: 'Active',
+      color: 'text-green-800 bg-green-100',
     };
   };
 
   const statsData = stats
     ? [
         {
-          title: "Total Products",
+          title: 'Total Products',
           value: stats.total_products.toString(),
           icon: Package,
-          color: "bg-blue-500",
+          color: 'bg-blue-500',
         },
         {
-          title: "Total Revenue",
-          value: formatPrice(stats.total_revenue, "USD"),
+          title: 'Total Revenue',
+          value: formatPrice(stats.total_revenue, 'USD'),
           icon: DollarSign,
-          color: "bg-green-500",
+          color: 'bg-green-500',
         },
         {
-          title: "Active Orders",
+          title: 'Active Orders',
           value: stats.active_orders.toString(),
           icon: ShoppingCart,
-          color: "bg-orange-500",
+          color: 'bg-orange-500',
         },
         {
-          title: "Total Customers",
+          title: 'Total Customers',
           value: stats.total_customers.toString(),
           icon: Users,
-          color: "bg-purple-500",
+          color: 'bg-purple-500',
         },
       ]
     : [];
@@ -188,12 +188,8 @@ function AdminPortal() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Admin Portal
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Manage your MakrX.Store catalog and orders
-                </p>
+                <h1 className="text-3xl font-bold text-gray-900">Admin Portal</h1>
+                <p className="text-gray-600 mt-1">Manage your MakrX.Store catalog and orders</p>
               </div>
               <div className="flex items-center space-x-4">
                 <Link href="/admin/manage">
@@ -253,12 +249,8 @@ function AdminPortal() {
                       <Icon className="h-6 w-6 text-white" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">
-                        {stat.title}
-                      </p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stat.value}
-                      </p>
+                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
                   </div>
                 </div>
@@ -270,9 +262,7 @@ function AdminPortal() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Product Catalog
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900">Product Catalog</h2>
 
                 {/* Search and Filters */}
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -334,7 +324,7 @@ function AdminPortal() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <img
-                              src={product.images[0] || "/placeholder.svg"}
+                              src={product.images[0] || '/placeholder.svg'}
                               alt={product.name}
                               className="h-10 w-10 rounded-lg object-cover"
                             />
@@ -342,38 +332,30 @@ function AdminPortal() {
                               <div className="text-sm font-medium text-gray-900">
                                 {product.name}
                               </div>
-                              <div className="text-sm text-gray-500">
-                                SKU: {product.sku}
-                              </div>
+                              <div className="text-sm text-gray-500">SKU: {product.sku}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900">
-                            {product.category?.name || "Uncategorized"}
+                            {product.category?.name || 'Uncategorized'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <span className="font-medium text-gray-900">
-                              {formatPrice(
-                                product.effective_price,
-                                product.currency,
-                              )}
+                              {formatPrice(product.effective_price, product.currency)}
                             </span>
-                            {product.sale_price &&
-                              product.sale_price < product.price && (
-                                <div className="text-xs text-gray-500 line-through">
-                                  {formatPrice(product.price, product.currency)}
-                                </div>
-                              )}
+                            {product.sale_price && product.sale_price < product.price && (
+                              <div className="text-xs text-gray-500 line-through">
+                                {formatPrice(product.price, product.currency)}
+                              </div>
+                            )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900">
-                            {product.track_inventory
-                              ? `${product.stock_qty} units`
-                              : "Not tracked"}
+                            {product.track_inventory ? `${product.stock_qty} units` : 'Not tracked'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -423,13 +405,11 @@ function AdminPortal() {
             {products.length === 0 && !loading && (
               <div className="text-center py-12">
                 <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No products found
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
                 <p className="text-gray-500 mb-6">
-                  {searchQuery || selectedCategory !== "all"
-                    ? "Try adjusting your search or filter criteria."
-                    : "Get started by adding your first product."}
+                  {searchQuery || selectedCategory !== 'all'
+                    ? 'Try adjusting your search or filter criteria.'
+                    : 'Get started by adding your first product.'}
                 </p>
                 <Link href="/admin/products/new">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -475,4 +455,4 @@ function AdminPortal() {
   );
 }
 
-export default withAuth(AdminPortal, ["admin"]);
+export default withAuth(AdminPortal, ['admin']);

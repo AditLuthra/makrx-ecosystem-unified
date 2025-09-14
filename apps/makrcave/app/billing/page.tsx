@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Calendar,
@@ -10,51 +10,40 @@ import {
   RefreshCw,
   ShoppingCart,
   TrendingUp,
-} from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
+} from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 // Import new billing components
-import AddCreditsButton from "../../components/billing/AddCreditsButton";
-import BillingOverview from "../../components/billing/BillingOverview";
-import CreditBalanceDisplay from "../../components/billing/CreditBalanceDisplay";
-import InventoryReorderModal from "../../components/billing/InventoryReorderModal";
-import InvoiceCard from "../../components/billing/InvoiceCard";
-import MembershipCard from "../../components/billing/MembershipCard";
-import PaymentForm from "../../components/billing/PaymentForm";
-import PricingConfigForm from "../../components/billing/PricingConfigForm";
-import ReorderHistoryTable from "../../components/billing/ReorderHistoryTable";
-import RevenueGraph from "../../components/billing/RevenueGraph";
-import SubscriptionStatus from "../../components/billing/SubscriptionStatus";
-import TransactionHistoryList from "../../components/billing/TransactionHistoryList";
-import UpgradePlanModal from "../../components/billing/UpgradePlanModal";
-import UsageByCategoryPieChart from "../../components/billing/UsageByCategoryPieChart";
+import AddCreditsButton from '../../components/billing/AddCreditsButton';
+import BillingOverview from '../../components/billing/BillingOverview';
+import CreditBalanceDisplay from '../../components/billing/CreditBalanceDisplay';
+import InventoryReorderModal from '../../components/billing/InventoryReorderModal';
+import InvoiceCard from '../../components/billing/InvoiceCard';
+import MembershipCard from '../../components/billing/MembershipCard';
+import PaymentForm from '../../components/billing/PaymentForm';
+import PricingConfigForm from '../../components/billing/PricingConfigForm';
+import ReorderHistoryTable from '../../components/billing/ReorderHistoryTable';
+import RevenueGraph from '../../components/billing/RevenueGraph';
+import SubscriptionStatus from '../../components/billing/SubscriptionStatus';
+import TransactionHistoryList from '../../components/billing/TransactionHistoryList';
+import UpgradePlanModal from '../../components/billing/UpgradePlanModal';
+import UsageByCategoryPieChart from '../../components/billing/UsageByCategoryPieChart';
 
-import { useAuthHeaders } from "@makrx/auth";
-import { useAuth } from "../../contexts/AuthContext";
-import { useToast } from "../../hooks/use-toast";
+import { useAuthHeaders } from '@makrx/auth';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../hooks/use-toast';
 
 const Billing: React.FC = () => {
   const { user, hasPermission, isSuperAdmin, isMakerspaceAdmin } = useAuth();
   const { toast } = useToast();
 
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
   const [showUpgradePlanModal, setShowUpgradePlanModal] = useState(false);
-  const [showInventoryReorderModal, setShowInventoryReorderModal] =
-    useState(false);
+  const [showInventoryReorderModal, setShowInventoryReorderModal] = useState(false);
   const [showAddCreditsModal, setShowAddCreditsModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const getHeaders = useAuthHeaders();
@@ -62,7 +51,7 @@ const Billing: React.FC = () => {
   // Mock data - in real app this would come from API
   type Subscription = {
     plan: string;
-    status: "active" | "expired" | "cancelled";
+    status: 'active' | 'expired' | 'cancelled';
     nextBilling: string;
     amount: number;
     currency: string;
@@ -70,10 +59,10 @@ const Billing: React.FC = () => {
   };
   type Transaction = {
     id: string;
-    type: "subscription" | "credits" | "reorder" | "service";
+    type: 'subscription' | 'credits' | 'reorder' | 'service';
     description: string;
     amount: number;
-    status: "completed" | "pending" | "failed" | "refunded";
+    status: 'completed' | 'pending' | 'failed' | 'refunded';
     date: string;
     invoiceId?: string;
   };
@@ -81,7 +70,7 @@ const Billing: React.FC = () => {
     id: string;
     date: string;
     amount: number;
-    status: "pending" | "overdue" | "cancelled" | "paid";
+    status: 'pending' | 'overdue' | 'cancelled' | 'paid';
     description: string;
     downloadUrl: string;
   };
@@ -99,11 +88,11 @@ const Billing: React.FC = () => {
     };
   }>({
     subscription: {
-      plan: "",
-      status: "active",
-      nextBilling: "",
+      plan: '',
+      status: 'active',
+      nextBilling: '',
       amount: 0,
-      currency: "USD",
+      currency: 'USD',
       features: [],
     },
     credits: { balance: 0, totalSpent: 0, totalPurchased: 0 },
@@ -116,9 +105,7 @@ const Billing: React.FC = () => {
       refundRate: 0,
     },
   });
-  const [revenueSeries, setRevenueSeries] = useState<
-    Array<{ month: string; revenue: number }>
-  >([]);
+  const [revenueSeries, setRevenueSeries] = useState<Array<{ month: string; revenue: number }>>([]);
   const [usageSeries, setUsageSeries] = useState<
     Array<{ name: string; value: number; color: string }>
   >([]);
@@ -126,24 +113,18 @@ const Billing: React.FC = () => {
   const loadBillingData = useCallback(async () => {
     setLoading(true);
     try {
-      const headers = await getHeaders({ "Content-Type": "application/json" });
-      const [
-        subRes,
-        creditsRes,
-        txRes,
-        invRes,
-        analyticsRes,
-        revRes,
-        usageRes,
-      ] = await Promise.all([
-        fetch("/api/v1/billing/subscription", { headers }),
-        fetch("/api/v1/billing/credits", { headers }),
-        fetch("/api/v1/billing/transactions?limit=20", { headers }),
-        fetch("/api/v1/billing/invoices", { headers }),
-        fetch("/api/v1/billing/analytics", { headers }),
-        fetch("/api/v1/billing/revenue-series", { headers }),
-        fetch("/api/v1/billing/usage-by-category", { headers }),
-      ]);
+      const headers = await getHeaders({ 'Content-Type': 'application/json' });
+      const [subRes, creditsRes, txRes, invRes, analyticsRes, revRes, usageRes] = await Promise.all(
+        [
+          fetch('/api/v1/billing/subscription', { headers }),
+          fetch('/api/v1/billing/credits', { headers }),
+          fetch('/api/v1/billing/transactions?limit=20', { headers }),
+          fetch('/api/v1/billing/invoices', { headers }),
+          fetch('/api/v1/billing/analytics', { headers }),
+          fetch('/api/v1/billing/revenue-series', { headers }),
+          fetch('/api/v1/billing/usage-by-category', { headers }),
+        ],
+      );
 
       const sub = subRes.ok ? await subRes.json() : null;
       const credits = creditsRes.ok ? await creditsRes.json() : null;
@@ -157,11 +138,11 @@ const Billing: React.FC = () => {
         ...prev,
         subscription: sub
           ? {
-              plan: sub.plan || "",
-              status: (sub.status as Subscription["status"]) || "active",
-              nextBilling: sub.nextBilling || "",
+              plan: sub.plan || '',
+              status: (sub.status as Subscription['status']) || 'active',
+              nextBilling: sub.nextBilling || '',
               amount: Number(sub.amount || 0),
-              currency: sub.currency || "USD",
+              currency: sub.currency || 'USD',
               features: sub.features || [],
             }
           : prev.subscription,
@@ -188,15 +169,15 @@ const Billing: React.FC = () => {
         Array.isArray(usage)
           ? usage.map((item: any) => ({
               ...item,
-              color: item.color ?? "#8884d8",
+              color: item.color ?? '#8884d8',
             }))
-          : []
+          : [],
       );
     } catch (error: any) {
       toast({
-        title: "Error loading billing data",
-        description: error?.message || "Unknown error",
-        variant: "destructive",
+        title: 'Error loading billing data',
+        description: error?.message || 'Unknown error',
+        variant: 'destructive',
       });
       setRevenueSeries([]);
       setUsageSeries([]);
@@ -210,28 +191,28 @@ const Billing: React.FC = () => {
   }, [loadBillingData]);
 
   const handleUpgradePlan = (planData: any) => {
-    console.log("Upgrading to plan:", planData);
+    console.log('Upgrading to plan:', planData);
     toast({
-      title: "Plan upgrade initiated",
-      description: "You will be redirected to payment processing",
+      title: 'Plan upgrade initiated',
+      description: 'You will be redirected to payment processing',
     });
     setShowUpgradePlanModal(false);
   };
 
   const handleAddCredits = (amount: number) => {
-    console.log("Adding credits:", amount);
+    console.log('Adding credits:', amount);
     toast({
-      title: "Credits purchase initiated",
+      title: 'Credits purchase initiated',
       description: `Processing purchase of ${amount} credits`,
     });
     setShowAddCreditsModal(false);
   };
 
   const handleReorder = (orderData: any) => {
-    console.log("Creating reorder:", orderData);
+    console.log('Creating reorder:', orderData);
     toast({
-      title: "Reorder submitted",
-      description: "Your inventory reorder has been submitted for approval",
+      title: 'Reorder submitted',
+      description: 'Your inventory reorder has been submitted for approval',
     });
     setShowInventoryReorderModal(false);
   };
@@ -264,18 +245,15 @@ const Billing: React.FC = () => {
           </h1>
           <p className="text-gray-600">
             {isSuperAdmin
-              ? "Manage billing across all makerspaces and users"
+              ? 'Manage billing across all makerspaces and users'
               : isMakerspaceAdmin
-                ? "Manage billing for your makerspace and approve purchases"
-                : "Manage your subscriptions, payments, and credits"}
+                ? 'Manage billing for your makerspace and approve purchases'
+                : 'Manage your subscriptions, payments, and credits'}
           </p>
         </div>
         <div className="flex items-center gap-3">
           {canReorderInventory && (
-            <Button
-              variant="outline"
-              onClick={() => setShowInventoryReorderModal(true)}
-            >
+            <Button variant="outline" onClick={() => setShowInventoryReorderModal(true)}>
               <ShoppingCart className="h-4 w-4 mr-2" />
               Reorder Inventory
             </Button>
@@ -304,9 +282,7 @@ const Billing: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    This Month
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">This Month</p>
                   <p className="text-2xl font-bold text-gray-900">₹12,367</p>
                   <p className="text-xs text-green-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
@@ -322,10 +298,7 @@ const Billing: React.FC = () => {
 
       {/* Admin Analytics Overview */}
       {(isSuperAdmin || isMakerspaceAdmin) && (
-        <BillingOverview
-          analytics={billingData.analytics}
-          userRole={user?.role || "user"}
-        />
+        <BillingOverview analytics={billingData.analytics} userRole={user?.role || 'user'} />
       )}
 
       {/* Main Content Tabs */}
@@ -337,15 +310,9 @@ const Billing: React.FC = () => {
           )}
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
           <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          {canReorderInventory && (
-            <TabsTrigger value="reorders">Reorders</TabsTrigger>
-          )}
-          {canViewGlobalAnalytics && (
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          )}
-          {canManagePricing && (
-            <TabsTrigger value="pricing">Pricing</TabsTrigger>
-          )}
+          {canReorderInventory && <TabsTrigger value="reorders">Reorders</TabsTrigger>}
+          {canViewGlobalAnalytics && <TabsTrigger value="analytics">Analytics</TabsTrigger>}
+          {canManagePricing && <TabsTrigger value="pricing">Pricing</TabsTrigger>}
         </TabsList>
 
         {/* Overview Tab */}
@@ -367,37 +334,25 @@ const Billing: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {billingData.recentTransactions
-                      .slice(0, 3)
-                      .map((transaction) => (
-                        <div
-                          key={transaction.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div>
-                            <p className="font-medium text-sm">
-                              {transaction.description}
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              {transaction.date}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold">
-                              ${transaction.amount}
-                            </p>
-                            <Badge
-                              variant={
-                                transaction.status === "completed"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                            >
-                              {transaction.status}
-                            </Badge>
-                          </div>
+                    {billingData.recentTransactions.slice(0, 3).map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium text-sm">{transaction.description}</p>
+                          <p className="text-xs text-gray-600">{transaction.date}</p>
                         </div>
-                      ))}
+                        <div className="text-right">
+                          <p className="font-semibold">${transaction.amount}</p>
+                          <Badge
+                            variant={transaction.status === 'completed' ? 'default' : 'secondary'}
+                          >
+                            {transaction.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -409,7 +364,7 @@ const Billing: React.FC = () => {
               <UsageByCategoryPieChart
                 data={usageSeries.map((item) => ({
                   ...item,
-                  color: (item.color ?? "#8884d8") as string,
+                  color: (item.color ?? '#8884d8') as string,
                 }))}
               />
             </div>
@@ -434,19 +389,14 @@ const Billing: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {billingData.subscription.features.map(
-                        (feature, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-sm">{feature}</span>
-                          </div>
-                        )
-                      )}
+                      {billingData.subscription.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-sm">{feature}</span>
+                        </div>
+                      ))}
                     </div>
-                    <Button
-                      className="w-full mt-4"
-                      onClick={() => setShowUpgradePlanModal(true)}
-                    >
+                    <Button className="w-full mt-4" onClick={() => setShowUpgradePlanModal(true)}>
                       <Crown className="h-4 w-4 mr-2" />
                       Upgrade Plan
                     </Button>
@@ -459,9 +409,7 @@ const Billing: React.FC = () => {
 
         {/* Transactions Tab */}
         <TabsContent value="transactions" className="space-y-6">
-          <TransactionHistoryList
-            transactions={billingData.recentTransactions}
-          />
+          <TransactionHistoryList transactions={billingData.recentTransactions} />
         </TabsContent>
 
         {/* Invoices Tab */}
@@ -495,13 +443,13 @@ const Billing: React.FC = () => {
               <UsageByCategoryPieChart
                 data={usageSeries.map((item) => ({
                   ...item,
-                  color: (item.color ?? "#8884d8") as string,
+                  color: (item.color ?? '#8884d8') as string,
                 }))}
               />
             </div>
             <BillingOverview
               analytics={billingData.analytics}
-              userRole={user?.role || "user"}
+              userRole={user?.role || 'user'}
               detailed={true}
             />
           </TabsContent>

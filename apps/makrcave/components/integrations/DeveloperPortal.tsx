@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
+import {
   Code,
   FileText,
   Terminal,
@@ -56,7 +56,7 @@ import {
   Package,
   Layers,
   Puzzle,
-  Wrench
+  Wrench,
 } from 'lucide-react';
 
 interface APIEndpoint {
@@ -128,17 +128,36 @@ const DeveloperPortal: React.FC = () => {
       description: 'Retrieve a list of all equipment in the makerspace',
       category: 'Equipment',
       parameters: [
-        { name: 'status', type: 'string', required: false, description: 'Filter by equipment status' },
-        { name: 'category', type: 'string', required: false, description: 'Filter by equipment category' },
-        { name: 'limit', type: 'integer', required: false, description: 'Number of items to return (max 100)' }
+        {
+          name: 'status',
+          type: 'string',
+          required: false,
+          description: 'Filter by equipment status',
+        },
+        {
+          name: 'category',
+          type: 'string',
+          required: false,
+          description: 'Filter by equipment category',
+        },
+        {
+          name: 'limit',
+          type: 'integer',
+          required: false,
+          description: 'Number of items to return (max 100)',
+        },
       ],
       responses: [
-        { status: 200, description: 'Successful response', example: '{"equipment": [...], "total": 50}' },
-        { status: 400, description: 'Bad request', example: '{"error": "Invalid parameters"}' }
+        {
+          status: 200,
+          description: 'Successful response',
+          example: '{"equipment": [...], "total": 50}',
+        },
+        { status: 400, description: 'Bad request', example: '{"error": "Invalid parameters"}' },
       ],
       rateLimit: 1000,
       authentication: 'api_key',
-      deprecated: false
+      deprecated: false,
     },
     {
       id: 'create-reservation',
@@ -147,18 +166,36 @@ const DeveloperPortal: React.FC = () => {
       description: 'Create a new equipment reservation',
       category: 'Reservations',
       parameters: [
-        { name: 'equipment_id', type: 'string', required: true, description: 'ID of the equipment to reserve' },
-        { name: 'start_time', type: 'datetime', required: true, description: 'Reservation start time (ISO 8601)' },
-        { name: 'duration', type: 'integer', required: true, description: 'Duration in minutes' }
+        {
+          name: 'equipment_id',
+          type: 'string',
+          required: true,
+          description: 'ID of the equipment to reserve',
+        },
+        {
+          name: 'start_time',
+          type: 'datetime',
+          required: true,
+          description: 'Reservation start time (ISO 8601)',
+        },
+        { name: 'duration', type: 'integer', required: true, description: 'Duration in minutes' },
       ],
       responses: [
-        { status: 201, description: 'Reservation created', example: '{"reservation_id": "res_123", "status": "confirmed"}' },
-        { status: 409, description: 'Equipment unavailable', example: '{"error": "Equipment already reserved"}' }
+        {
+          status: 201,
+          description: 'Reservation created',
+          example: '{"reservation_id": "res_123", "status": "confirmed"}',
+        },
+        {
+          status: 409,
+          description: 'Equipment unavailable',
+          example: '{"error": "Equipment already reserved"}',
+        },
       ],
       rateLimit: 500,
       authentication: 'bearer',
-      deprecated: false
-    }
+      deprecated: false,
+    },
   ];
 
   // Mock SDKs
@@ -172,13 +209,13 @@ const DeveloperPortal: React.FC = () => {
       installation: 'npm install @makrcave/sdk',
       examples: [
         'const makrCave = new MakrCave(apiKey);',
-        'const equipment = await makrCave.equipment.list();'
+        'const equipment = await makrCave.equipment.list();',
       ],
       documentation: 'https://docs.makrcave.com/sdks/javascript',
       repository: 'https://github.com/makrcave/javascript-sdk',
       downloads: 15420,
       lastUpdated: '2024-12-15',
-      status: 'stable'
+      status: 'stable',
     },
     {
       id: 'python-sdk',
@@ -190,13 +227,13 @@ const DeveloperPortal: React.FC = () => {
       examples: [
         'from makrcave import MakrCave',
         'client = MakrCave(api_key=api_key)',
-        'equipment = client.equipment.list()'
+        'equipment = client.equipment.list()',
       ],
       documentation: 'https://docs.makrcave.com/sdks/python',
       repository: 'https://github.com/makrcave/python-sdk',
       downloads: 8932,
       lastUpdated: '2024-12-10',
-      status: 'stable'
+      status: 'stable',
     },
     {
       id: 'react-sdk',
@@ -207,14 +244,14 @@ const DeveloperPortal: React.FC = () => {
       installation: 'npm install @makrcave/react',
       examples: [
         'import { useEquipment } from "@makrcave/react";',
-        'const { equipment, loading } = useEquipment();'
+        'const { equipment, loading } = useEquipment();',
       ],
       documentation: 'https://docs.makrcave.com/sdks/react',
       repository: 'https://github.com/makrcave/react-sdk',
       downloads: 3245,
       lastUpdated: '2024-12-08',
-      status: 'beta'
-    }
+      status: 'beta',
+    },
   ];
 
   // Mock tutorials
@@ -233,12 +270,13 @@ const DeveloperPortal: React.FC = () => {
       lastUpdated: '2024-12-01',
       likes: 89,
       steps: 5,
-      codeExamples: 8
+      codeExamples: 8,
     },
     {
       id: 'webhooks-guide',
       title: 'Setting Up Real-time Webhooks',
-      description: 'Configure webhooks to receive real-time notifications about equipment status changes',
+      description:
+        'Configure webhooks to receive real-time notifications about equipment status changes',
       category: 'Webhooks',
       difficulty: 'intermediate',
       duration: 30,
@@ -249,7 +287,7 @@ const DeveloperPortal: React.FC = () => {
       lastUpdated: '2024-11-20',
       likes: 67,
       steps: 8,
-      codeExamples: 12
+      codeExamples: 12,
     },
     {
       id: 'reservation-system',
@@ -265,37 +303,52 @@ const DeveloperPortal: React.FC = () => {
       lastUpdated: '2024-11-15',
       likes: 134,
       steps: 15,
-      codeExamples: 25
-    }
+      codeExamples: 25,
+    },
   ];
 
   const getMethodColor = (method: string) => {
     switch (method) {
-      case 'GET': return 'bg-green-100 text-green-800';
-      case 'POST': return 'bg-blue-100 text-blue-800';
-      case 'PUT': return 'bg-yellow-100 text-yellow-800';
-      case 'DELETE': return 'bg-red-100 text-red-800';
-      case 'PATCH': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'GET':
+        return 'bg-green-100 text-green-800';
+      case 'POST':
+        return 'bg-blue-100 text-blue-800';
+      case 'PUT':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'DELETE':
+        return 'bg-red-100 text-red-800';
+      case 'PATCH':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'stable': return 'bg-green-100 text-green-800';
-      case 'beta': return 'bg-yellow-100 text-yellow-800';
-      case 'alpha': return 'bg-orange-100 text-orange-800';
-      case 'deprecated': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'stable':
+        return 'bg-green-100 text-green-800';
+      case 'beta':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'alpha':
+        return 'bg-orange-100 text-orange-800';
+      case 'deprecated':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'advanced':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -361,7 +414,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
     "equipment_id": "eq_123",
     "start_time": "2024-12-20T10:00:00Z",
     "duration": 120
-  }'`
+  }'`,
   };
 
   return (
@@ -475,7 +528,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                       <div className="text-sm text-gray-600">Sign up and generate your API key</div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-600">2</span>
@@ -485,7 +538,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                       <div className="text-sm text-gray-600">Choose from our official SDKs</div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-600">3</span>
@@ -496,7 +549,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                     </div>
                   </div>
                 </div>
-                
+
                 <Button className="w-full">
                   <Code className="h-4 w-4 mr-2" />
                   View Quick Start Guide
@@ -515,11 +568,12 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
               <CardContent>
                 <div className="space-y-3">
                   {apiEndpoints.slice(0, 4).map((endpoint) => (
-                    <div key={endpoint.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                    <div
+                      key={endpoint.id}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                    >
                       <div className="flex items-center space-x-3">
-                        <Badge className={getMethodColor(endpoint.method)}>
-                          {endpoint.method}
-                        </Badge>
+                        <Badge className={getMethodColor(endpoint.method)}>{endpoint.method}</Badge>
                         <div>
                           <div className="font-medium text-sm">{endpoint.path}</div>
                           <div className="text-xs text-gray-600">{endpoint.description}</div>
@@ -548,7 +602,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                     <Button
                       key={lang}
                       size="sm"
-                      variant={selectedLanguage === lang ? "default" : "outline"}
+                      variant={selectedLanguage === lang ? 'default' : 'outline'}
                       onClick={() => setSelectedLanguage(lang)}
                     >
                       {lang}
@@ -616,9 +670,9 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
             <div className="lg:w-2/3">
               {selectedEndpoint ? (
                 (() => {
-                  const endpoint = apiEndpoints.find(e => e.id === selectedEndpoint);
+                  const endpoint = apiEndpoints.find((e) => e.id === selectedEndpoint);
                   if (!endpoint) return null;
-                  
+
                   return (
                     <Card>
                       <CardHeader>
@@ -667,7 +721,13 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                             {endpoint.responses.map((response, index) => (
                               <div key={index} className="border rounded-lg p-3">
                                 <div className="flex items-center space-x-2 mb-2">
-                                  <Badge className={response.status === 200 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                                  <Badge
+                                    className={
+                                      response.status === 200
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800'
+                                    }
+                                  >
                                     {response.status}
                                   </Badge>
                                   <span className="font-medium">{response.description}</span>
@@ -685,10 +745,10 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                           <h4 className="font-semibold mb-3">Authentication</h4>
                           <div className="flex items-center space-x-2">
                             <Shield className="h-4 w-4 text-blue-600" />
-                            <span className="capitalize">{endpoint.authentication.replace('_', ' ')}</span>
-                            <Badge variant="outline">
-                              {endpoint.rateLimit} requests/hour
-                            </Badge>
+                            <span className="capitalize">
+                              {endpoint.authentication.replace('_', ' ')}
+                            </span>
+                            <Badge variant="outline">{endpoint.rateLimit} requests/hour</Badge>
                           </div>
                         </div>
                       </CardContent>
@@ -700,7 +760,9 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                   <CardContent className="p-12 text-center">
                     <Code className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Select an endpoint</h3>
-                    <p className="text-gray-600">Choose an endpoint from the list to view its documentation</p>
+                    <p className="text-gray-600">
+                      Choose an endpoint from the list to view its documentation
+                    </p>
                   </CardContent>
                 </Card>
               )}
@@ -721,9 +783,7 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-semibold">{sdk.name}</h3>
-                        <Badge className={getStatusColor(sdk.status)}>
-                          {sdk.status}
-                        </Badge>
+                        <Badge className={getStatusColor(sdk.status)}>{sdk.status}</Badge>
                       </div>
                       <p className="text-sm text-gray-600">v{sdk.version}</p>
                     </div>
@@ -845,7 +905,9 @@ curl -X POST "https://api.makrcave.com/v1/reservations" \\
               <div className="text-center py-12">
                 <Terminal className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Interactive API Testing</h3>
-                <p className="text-gray-600 mb-6">Test API endpoints directly in your browser with real data</p>
+                <p className="text-gray-600 mb-6">
+                  Test API endpoints directly in your browser with real data
+                </p>
                 <Button>
                   <Play className="h-4 w-4 mr-2" />
                   Launch Playground

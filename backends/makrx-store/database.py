@@ -11,12 +11,14 @@ from core.config import settings
 
 # Database URL from environment
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", 
-    "postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem"
+    "DATABASE_URL",
+    "postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem",
 )
 
 # Convert to async URL for SQLAlchemy async support
-ASYNC_DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+ASYNC_DATABASE_URL = DATABASE_URL.replace(
+    "postgresql://", "postgresql+asyncpg://"
+)
 
 # Create async engine
 engine = create_async_engine(
@@ -34,10 +36,12 @@ async_session = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
 )
 
+
 async def create_tables():
     """Create database tables"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
 
 async def get_db():
     """Dependency to get database session"""

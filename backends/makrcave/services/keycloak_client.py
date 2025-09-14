@@ -9,9 +9,13 @@ KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "makrx")
 CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "makrcave-api")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "")
 
+
 @lru_cache()
 def _token_endpoint() -> str:
-    return f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
+    return (
+        f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
+    )
+
 
 async def get_service_token() -> str:
     """Obtain access token using client credentials."""

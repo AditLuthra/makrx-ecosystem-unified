@@ -1,12 +1,5 @@
-import Link from "next/link";
-import {
-  RotateCcw,
-  Package,
-  Shield,
-  Clock,
-  CreditCard,
-  AlertTriangle,
-} from "lucide-react";
+import Link from 'next/link';
+import { RotateCcw, Package, Shield, Clock, CreditCard, AlertTriangle } from 'lucide-react';
 
 export default function ReturnsPolicy() {
   return (
@@ -14,9 +7,7 @@ export default function ReturnsPolicy() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Returns & Exchanges Policy
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Returns & Exchanges Policy</h1>
           <p className="text-xl text-gray-600">
             Hassle-free returns and exchanges for your peace of mind
           </p>
@@ -28,79 +19,62 @@ export default function ReturnsPolicy() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <div className="bg-green-50 p-6 rounded-lg text-center">
                 <Clock className="w-8 h-8 text-green-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  30-Day Returns
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-2">30-Day Returns</h3>
                 <p className="text-sm text-gray-600">For most products</p>
               </div>
               <div className="bg-blue-50 p-6 rounded-lg text-center">
                 <RotateCcw className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Easy Process
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Easy Process</h3>
                 <p className="text-sm text-gray-600">Online return portal</p>
               </div>
               <div className="bg-purple-50 p-6 rounded-lg text-center">
                 <CreditCard className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Quick Refunds
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Quick Refunds</h3>
                 <p className="text-sm text-gray-600">3-5 business days</p>
               </div>
             </div>
 
             {/* Return Timeframes */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Return Timeframes
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Return Timeframes</h2>
 
               <div className="space-y-4">
                 <div className="border border-gray-200 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Standard Products
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Standard Products</h3>
                     <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                       30 Days
                     </span>
                   </div>
                   <p className="text-gray-600">
-                    Filaments, tools, accessories, and most 3D printing supplies
-                    can be returned within 30 days of delivery in unopened,
-                    original condition.
+                    Filaments, tools, accessories, and most 3D printing supplies can be returned
+                    within 30 days of delivery in unopened, original condition.
                   </p>
                 </div>
 
                 <div className="border border-gray-200 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      3D Printers & Equipment
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">3D Printers & Equipment</h3>
                     <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                       45 Days
                     </span>
                   </div>
                   <p className="text-gray-600">
-                    Extended return period for 3D printers and major equipment.
-                    Must be in original packaging with all accessories and
-                    documentation.
+                    Extended return period for 3D printers and major equipment. Must be in original
+                    packaging with all accessories and documentation.
                   </p>
                 </div>
 
                 <div className="border border-gray-200 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Custom 3D Prints
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Custom 3D Prints</h3>
                     <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
                       7 Days
                     </span>
                   </div>
                   <p className="text-gray-600">
-                    Custom printed items can only be returned if there's a
-                    quality issue or manufacturing defect. Returns must be
-                    initiated within 7 days of delivery.
+                    Custom printed items can only be returned if there's a quality issue or
+                    manufacturing defect. Returns must be initiated within 7 days of delivery.
                   </p>
                 </div>
               </div>
@@ -108,9 +82,7 @@ export default function ReturnsPolicy() {
 
             {/* Return Conditions */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Return Conditions
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Return Conditions</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
@@ -147,9 +119,7 @@ export default function ReturnsPolicy() {
 
             {/* Return Process */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Return Process
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Return Process</h2>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -157,13 +127,10 @@ export default function ReturnsPolicy() {
                     1
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Initiate Return
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Initiate Return</h3>
                     <p className="text-gray-600 mb-3">
-                      Log into your account and go to Order History. Click
-                      "Return Items" next to your order to start the return
-                      process.
+                      Log into your account and go to Order History. Click "Return Items" next to
+                      your order to start the return process.
                     </p>
                     <Link
                       href="/account/orders"
@@ -183,9 +150,8 @@ export default function ReturnsPolicy() {
                       Select Items & Reason
                     </h3>
                     <p className="text-gray-600">
-                      Choose which items you want to return and select a reason.
-                      This helps us improve our products and service. Upload
-                      photos if returning due to damage.
+                      Choose which items you want to return and select a reason. This helps us
+                      improve our products and service. Upload photos if returning due to damage.
                     </p>
                   </div>
                 </div>
@@ -195,13 +161,10 @@ export default function ReturnsPolicy() {
                     3
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Print Return Label
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Print Return Label</h3>
                     <p className="text-gray-600">
-                      We'll email you a prepaid return shipping label. For most
-                      returns, shipping is free. For returns due to change of
-                      mind, a ₹497 shipping fee may apply.
+                      We'll email you a prepaid return shipping label. For most returns, shipping is
+                      free. For returns due to change of mind, a ₹497 shipping fee may apply.
                     </p>
                   </div>
                 </div>
@@ -211,13 +174,10 @@ export default function ReturnsPolicy() {
                     4
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Package & Ship
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Package & Ship</h3>
                     <p className="text-gray-600">
-                      Pack items in original packaging when possible. Include
-                      all accessories, manuals, and documentation. Drop off at
-                      any authorized shipping location.
+                      Pack items in original packaging when possible. Include all accessories,
+                      manuals, and documentation. Drop off at any authorized shipping location.
                     </p>
                   </div>
                 </div>
@@ -227,13 +187,10 @@ export default function ReturnsPolicy() {
                     5
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Receive Refund
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Receive Refund</h3>
                     <p className="text-gray-600">
-                      Once we receive and inspect your return, we'll process
-                      your refund within 2-3 business days. Refunds are issued
-                      to the original payment method.
+                      Once we receive and inspect your return, we'll process your refund within 2-3
+                      business days. Refunds are issued to the original payment method.
                     </p>
                   </div>
                 </div>
@@ -242,9 +199,7 @@ export default function ReturnsPolicy() {
 
             {/* Exchanges */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Exchanges
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Exchanges</h2>
 
               <div className="bg-blue-50 p-6 rounded-lg">
                 <div className="flex items-start space-x-4">
@@ -254,9 +209,8 @@ export default function ReturnsPolicy() {
                       Quick Exchange Process
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      Need a different color or size? We offer direct exchanges
-                      to get you the right product faster than a return and new
-                      order.
+                      Need a different color or size? We offer direct exchanges to get you the right
+                      product faster than a return and new order.
                     </p>
 
                     <div className="space-y-3">
@@ -280,9 +234,7 @@ export default function ReturnsPolicy() {
                         <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                           ✓
                         </div>
-                        <span className="text-gray-700">
-                          Cross-ship available for urgent needs
-                        </span>
+                        <span className="text-gray-700">Cross-ship available for urgent needs</span>
                       </div>
                     </div>
                   </div>
@@ -292,20 +244,14 @@ export default function ReturnsPolicy() {
 
             {/* Refund Information */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Refund Information
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Refund Information</h2>
 
               <div className="space-y-6">
                 <div className="border border-gray-200 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Refund Methods
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Refund Methods</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">
-                        Original Payment Method
-                      </h4>
+                      <h4 className="font-medium text-gray-900 mb-2">Original Payment Method</h4>
                       <ul className="text-sm text-gray-600 space-y-1">
                         <li>• Credit/Debit cards: 3-5 business days</li>
                         <li>• PayPal: 1-2 business days</li>
@@ -313,9 +259,7 @@ export default function ReturnsPolicy() {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">
-                        Store Credit
-                      </h4>
+                      <h4 className="font-medium text-gray-900 mb-2">Store Credit</h4>
                       <ul className="text-sm text-gray-600 space-y-1">
                         <li>• Instant credit to account</li>
                         <li>• 10% bonus on store credit refunds</li>
@@ -329,13 +273,10 @@ export default function ReturnsPolicy() {
                   <div className="flex items-start space-x-3">
                     <AlertTriangle className="w-6 h-6 text-yellow-600 mt-0.5" />
                     <div>
-                      <h3 className="font-semibold text-yellow-800 mb-2">
-                        Partial Refunds
-                      </h3>
+                      <h3 className="font-semibold text-yellow-800 mb-2">Partial Refunds</h3>
                       <p className="text-yellow-700 text-sm">
-                        Items returned not in original condition, damaged, or
-                        missing parts may receive a partial refund. We'll
-                        contact you before processing.
+                        Items returned not in original condition, damaged, or missing parts may
+                        receive a partial refund. We'll contact you before processing.
                       </p>
                     </div>
                   </div>
@@ -345,19 +286,14 @@ export default function ReturnsPolicy() {
 
             {/* Special Cases */}
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Special Cases
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Special Cases</h2>
 
               <div className="space-y-6">
                 <div className="border-l-4 border-red-400 pl-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Defective Items
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Defective Items</h3>
                   <p className="text-gray-600 mb-3">
-                    Received a defective or damaged item? We'll make it right
-                    with a full refund or replacement, plus we'll cover all
-                    shipping costs.
+                    Received a defective or damaged item? We'll make it right with a full refund or
+                    replacement, plus we'll cover all shipping costs.
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Free return shipping</li>
@@ -367,12 +303,10 @@ export default function ReturnsPolicy() {
                 </div>
 
                 <div className="border-l-4 border-blue-400 pl-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Wrong Item Shipped
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Wrong Item Shipped</h3>
                   <p className="text-gray-600 mb-3">
-                    Our mistake! We'll send the correct item immediately and
-                    provide a prepaid return label for the wrong item.
+                    Our mistake! We'll send the correct item immediately and provide a prepaid
+                    return label for the wrong item.
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Cross-ship replacement</li>
@@ -382,12 +316,10 @@ export default function ReturnsPolicy() {
                 </div>
 
                 <div className="border-l-4 border-green-400 pl-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Bulk Orders
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Bulk Orders</h3>
                   <p className="text-gray-600 mb-3">
-                    Large quantity orders have special return considerations.
-                    Contact our business sales team for personalized assistance.
+                    Large quantity orders have special return considerations. Contact our business
+                    sales team for personalized assistance.
                   </p>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Dedicated account manager</li>
@@ -400,14 +332,11 @@ export default function ReturnsPolicy() {
 
             {/* Contact Information */}
             <section className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Need Help?
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Need Help?</h2>
 
               <div className="bg-gray-50 p-6 rounded-lg">
                 <p className="text-gray-600 mb-4">
-                  Our customer service team is here to help with any return
-                  questions or concerns.
+                  Our customer service team is here to help with any return questions or concerns.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -415,9 +344,7 @@ export default function ReturnsPolicy() {
                     <div className="bg-blue-100 p-3 rounded-full inline-block mb-3">
                       <Package className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Returns Portal
-                    </h3>
+                    <h3 className="font-medium text-gray-900 mb-1">Returns Portal</h3>
                     <Link
                       href="/account/orders"
                       className="text-blue-600 hover:text-blue-700 text-sm"
@@ -430,21 +357,15 @@ export default function ReturnsPolicy() {
                     <div className="bg-green-100 p-3 rounded-full inline-block mb-3">
                       <CreditCard className="w-6 h-6 text-green-600" />
                     </div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Live Chat
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Available 9 AM - 6 PM EST
-                    </p>
+                    <h3 className="font-medium text-gray-900 mb-1">Live Chat</h3>
+                    <p className="text-gray-600 text-sm">Available 9 AM - 6 PM EST</p>
                   </div>
 
                   <div className="text-center">
                     <div className="bg-purple-100 p-3 rounded-full inline-block mb-3">
                       <Shield className="w-6 h-6 text-purple-600" />
                     </div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Email Support
-                    </h3>
+                    <h3 className="font-medium text-gray-900 mb-1">Email Support</h3>
                     <p className="text-gray-600 text-sm">returns@makrx.store</p>
                   </div>
                 </div>
@@ -454,28 +375,16 @@ export default function ReturnsPolicy() {
             {/* Footer Links */}
             <div className="border-t pt-8">
               <div className="flex flex-wrap gap-4 text-sm">
-                <Link
-                  href="/policies/shipping"
-                  className="text-blue-600 hover:text-blue-700"
-                >
+                <Link href="/policies/shipping" className="text-blue-600 hover:text-blue-700">
                   Shipping Policy
                 </Link>
-                <Link
-                  href="/policies/terms"
-                  className="text-blue-600 hover:text-blue-700"
-                >
+                <Link href="/policies/terms" className="text-blue-600 hover:text-blue-700">
                   Terms of Service
                 </Link>
-                <Link
-                  href="/policies/privacy"
-                  className="text-blue-600 hover:text-blue-700"
-                >
+                <Link href="/policies/privacy" className="text-blue-600 hover:text-blue-700">
                   Privacy Policy
                 </Link>
-                <Link
-                  href="/contact"
-                  className="text-blue-600 hover:text-blue-700"
-                >
+                <Link href="/contact" className="text-blue-600 hover:text-blue-700">
                   Contact Support
                 </Link>
               </div>

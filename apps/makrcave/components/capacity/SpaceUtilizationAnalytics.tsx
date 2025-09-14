@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { 
+import {
   BarChart3,
   TrendingUp,
   Clock,
@@ -15,7 +15,7 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
-  MoreHorizontal
+  MoreHorizontal,
 } from 'lucide-react';
 
 interface SpaceUtilizationAnalyticsProps {
@@ -31,7 +31,7 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
     time: `${hour.hour.toString().padStart(2, '0')}:00`,
     occupancy: hour.occupancy,
     efficiency: hour.efficiency,
-    utilization: (hour.occupancy / metrics.max_capacity) * 100
+    utilization: (hour.occupancy / metrics.max_capacity) * 100,
   }));
 
   // Generate weekly utilization data
@@ -39,7 +39,7 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
     day: day.day,
     avg_occupancy: day.avg_occupancy,
     peak_time: day.peak_time,
-    utilization: (day.avg_occupancy / metrics.max_capacity) * 100
+    utilization: (day.avg_occupancy / metrics.max_capacity) * 100,
   }));
 
   // Calculate zone efficiency scores
@@ -47,13 +47,14 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
     const utilizationRate = (zone.current_occupancy / zone.max_capacity) * 100;
     const sessionEfficiency = Math.min(100, (zone.avg_session_time / 4) * 100); // 4 hours as optimal
     const equipmentRatio = zone.equipment_count / zone.max_capacity;
-    
+
     return {
       ...zone,
       utilization_rate: utilizationRate,
       session_efficiency: sessionEfficiency,
       equipment_efficiency: Math.min(100, equipmentRatio * 50),
-      overall_efficiency: (utilizationRate * 0.4 + sessionEfficiency * 0.4 + equipmentRatio * 50 * 0.2)
+      overall_efficiency:
+        utilizationRate * 0.4 + sessionEfficiency * 0.4 + equipmentRatio * 50 * 0.2,
     };
   });
 
@@ -65,9 +66,12 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
   };
 
   const getEfficiencyBadge = (score: number) => {
-    if (score >= 80) return { label: 'Excellent', color: 'bg-green-100 text-green-800 border-green-200' };
-    if (score >= 60) return { label: 'Good', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' };
-    if (score >= 40) return { label: 'Fair', color: 'bg-orange-100 text-orange-800 border-orange-200' };
+    if (score >= 80)
+      return { label: 'Excellent', color: 'bg-green-100 text-green-800 border-green-200' };
+    if (score >= 60)
+      return { label: 'Good', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' };
+    if (score >= 40)
+      return { label: 'Fair', color: 'bg-orange-100 text-orange-800 border-orange-200' };
     return { label: 'Poor', color: 'bg-red-100 text-red-800 border-red-200' };
   };
 
@@ -118,36 +122,42 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
           {/* Chart Area - Using simple bar representation */}
           <div className="space-y-4">
             <div className="h-64 bg-gray-50 rounded-lg p-4 flex items-end space-x-2">
-              {(timeGranularity === 'weekly' ? weeklyData : hourlyData.slice(0, 12)).map((item: any, index: number) => {
-                const value = selectedMetric === 'occupancy' 
-                  ? (item.occupancy || item.avg_occupancy) 
-                  : selectedMetric === 'efficiency'
-                  ? item.efficiency || 70
-                  : item.utilization;
-                
-                const height = `${Math.max(10, (value / 100) * 200)}px`;
-                const isWeekly = timeGranularity === 'weekly';
-                
-                return (
-                  <div key={index} className="flex-1 flex flex-col items-center">
-                    <div 
-                      className={`w-full rounded-t-md transition-all duration-300 hover:opacity-80 ${
-                        value >= 85 ? 'bg-red-500' :
-                        value >= 70 ? 'bg-orange-500' :
-                        value >= 40 ? 'bg-green-500' :
-                        'bg-blue-500'
-                      }`}
-                      style={{ height }}
-                      title={`${isWeekly ? item.day : item.time}: ${value.toFixed(1)}${selectedMetric === 'occupancy' ? ' people' : '%'}`}
-                    />
-                    <div className="text-xs text-gray-600 mt-1 text-center">
-                      {isWeekly ? item.day : item.time}
+              {(timeGranularity === 'weekly' ? weeklyData : hourlyData.slice(0, 12)).map(
+                (item: any, index: number) => {
+                  const value =
+                    selectedMetric === 'occupancy'
+                      ? item.occupancy || item.avg_occupancy
+                      : selectedMetric === 'efficiency'
+                        ? item.efficiency || 70
+                        : item.utilization;
+
+                  const height = `${Math.max(10, (value / 100) * 200)}px`;
+                  const isWeekly = timeGranularity === 'weekly';
+
+                  return (
+                    <div key={index} className="flex-1 flex flex-col items-center">
+                      <div
+                        className={`w-full rounded-t-md transition-all duration-300 hover:opacity-80 ${
+                          value >= 85
+                            ? 'bg-red-500'
+                            : value >= 70
+                              ? 'bg-orange-500'
+                              : value >= 40
+                                ? 'bg-green-500'
+                                : 'bg-blue-500'
+                        }`}
+                        style={{ height }}
+                        title={`${isWeekly ? item.day : item.time}: ${value.toFixed(1)}${selectedMetric === 'occupancy' ? ' people' : '%'}`}
+                      />
+                      <div className="text-xs text-gray-600 mt-1 text-center">
+                        {isWeekly ? item.day : item.time}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                },
+              )}
             </div>
-            
+
             {/* Legend */}
             <div className="flex items-center justify-center space-x-6 text-sm">
               <div className="flex items-center space-x-2">
@@ -183,7 +193,7 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
           <div className="space-y-4">
             {zoneEfficiency.map((zone: any) => {
               const efficiencyBadge = getEfficiencyBadge(zone.overall_efficiency);
-              
+
               return (
                 <div key={zone.id} className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-3">
@@ -192,7 +202,7 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                       {efficiencyBadge.label} ({zone.overall_efficiency.toFixed(1)}%)
                     </Badge>
                   </div>
-                  
+
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                       <div className="text-lg font-semibold text-blue-600">
@@ -200,45 +210,44 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                       </div>
                       <div className="text-xs text-gray-600">Space Utilization</div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div 
+                        <div
                           className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${Math.min(100, zone.utilization_rate)}%` }}
                         />
                       </div>
                     </div>
-                    
+
                     <div className="text-center">
                       <div className="text-lg font-semibold text-green-600">
                         {zone.session_efficiency.toFixed(1)}%
                       </div>
                       <div className="text-xs text-gray-600">Session Efficiency</div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div 
+                        <div
                           className="bg-green-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${Math.min(100, zone.session_efficiency)}%` }}
                         />
                       </div>
                     </div>
-                    
+
                     <div className="text-center">
                       <div className="text-lg font-semibold text-purple-600">
                         {zone.equipment_efficiency.toFixed(1)}%
                       </div>
                       <div className="text-xs text-gray-600">Equipment Density</div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div 
+                        <div
                           className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${Math.min(100, zone.equipment_efficiency)}%` }}
                         />
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mt-3 pt-3 border-t flex items-center justify-between text-sm text-gray-600">
                     <span>
-                      {zone.current_occupancy}/{zone.max_capacity} people • 
-                      {zone.equipment_count} equipment • 
-                      {zone.avg_session_time}h avg session
+                      {zone.current_occupancy}/{zone.max_capacity} people •{zone.equipment_count}{' '}
+                      equipment •{zone.avg_session_time}h avg session
                     </span>
                   </div>
                 </div>
@@ -256,14 +265,19 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
               <div>
                 <p className="text-sm font-medium text-gray-600">Peak Utilization Hour</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {hourlyData.reduce((max: any, hour: any) => 
-                    hour.utilization > max.utilization ? hour : max
-                  ).time}
+                  {
+                    hourlyData.reduce((max: any, hour: any) =>
+                      hour.utilization > max.utilization ? hour : max,
+                    ).time
+                  }
                 </p>
                 <p className="text-sm text-gray-600">
-                  {hourlyData.reduce((max: any, hour: any) => 
-                    hour.utilization > max.utilization ? hour : max
-                  ).utilization.toFixed(1)}% capacity
+                  {hourlyData
+                    .reduce((max: any, hour: any) =>
+                      hour.utilization > max.utilization ? hour : max,
+                    )
+                    .utilization.toFixed(1)}
+                  % capacity
                 </p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -279,14 +293,19 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
               <div>
                 <p className="text-sm font-medium text-gray-600">Most Efficient Zone</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {zoneEfficiency.reduce((max: any, zone: any) => 
-                    zone.overall_efficiency > max.overall_efficiency ? zone : max
-                  ).name}
+                  {
+                    zoneEfficiency.reduce((max: any, zone: any) =>
+                      zone.overall_efficiency > max.overall_efficiency ? zone : max,
+                    ).name
+                  }
                 </p>
                 <p className="text-sm text-gray-600">
-                  {zoneEfficiency.reduce((max: any, zone: any) => 
-                    zone.overall_efficiency > max.overall_efficiency ? zone : max
-                  ).overall_efficiency.toFixed(1)}% efficiency
+                  {zoneEfficiency
+                    .reduce((max: any, zone: any) =>
+                      zone.overall_efficiency > max.overall_efficiency ? zone : max,
+                    )
+                    .overall_efficiency.toFixed(1)}
+                  % efficiency
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -306,7 +325,11 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                 </p>
                 <div className="flex items-center space-x-1 text-sm">
                   {getTrendIcon(metrics.trends.monthly_growth)}
-                  <span className={metrics.trends.monthly_growth > 0 ? 'text-green-600' : 'text-red-600'}>
+                  <span
+                    className={
+                      metrics.trends.monthly_growth > 0 ? 'text-green-600' : 'text-red-600'
+                    }
+                  >
                     vs last month
                   </span>
                 </div>
@@ -338,9 +361,9 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                 </div>
               ))}
             </div>
-            
+
             {/* Heatmap rows */}
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
               <div key={day} className="grid grid-cols-25 gap-1">
                 <div className="text-xs text-gray-600 py-1 font-medium">{day}</div>
                 {Array.from({ length: 24 }, (_, hour) => {
@@ -348,21 +371,25 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                   const baseUtilization = Math.random() * 80 + 10;
                   const isWeekend = day === 'Sat' || day === 'Sun';
                   const isPeakTime = hour >= 9 && hour <= 18;
-                  const utilization = isWeekend 
-                    ? baseUtilization * 0.6 
-                    : isPeakTime 
-                    ? baseUtilization * 1.2 
-                    : baseUtilization * 0.8;
-                  
+                  const utilization = isWeekend
+                    ? baseUtilization * 0.6
+                    : isPeakTime
+                      ? baseUtilization * 1.2
+                      : baseUtilization * 0.8;
+
                   return (
                     <div
                       key={hour}
                       className={`h-6 rounded ${
-                        utilization >= 80 ? 'bg-red-500' :
-                        utilization >= 60 ? 'bg-orange-400' :
-                        utilization >= 40 ? 'bg-green-400' :
-                        utilization >= 20 ? 'bg-blue-400' :
-                        'bg-gray-200'
+                        utilization >= 80
+                          ? 'bg-red-500'
+                          : utilization >= 60
+                            ? 'bg-orange-400'
+                            : utilization >= 40
+                              ? 'bg-green-400'
+                              : utilization >= 20
+                                ? 'bg-blue-400'
+                                : 'bg-gray-200'
                       }`}
                       title={`${day} ${hour}:00 - ${utilization.toFixed(1)}% utilization`}
                     />
@@ -370,7 +397,7 @@ const SpaceUtilizationAnalytics: React.FC<SpaceUtilizationAnalyticsProps> = ({ m
                 })}
               </div>
             ))}
-            
+
             {/* Legend */}
             <div className="flex items-center justify-center space-x-4 mt-4 text-xs">
               <div className="flex items-center space-x-1">

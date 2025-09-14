@@ -16,22 +16,23 @@ function FeatureFlagsPage() {
   const [showDisabled, setShowDisabled] = useState(true);
 
   const allFlags = getAllFlags();
-  
+
   // Filter flags based on search and role
-  const filteredFlags = allFlags.filter(flag => {
-    const matchesSearch = flag.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         flag.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         flag.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredFlags = allFlags.filter((flag) => {
+    const matchesSearch =
+      flag.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      flag.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      flag.id.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesRole = selectedRole === 'all' || flag.allowedRoles.includes(selectedRole);
-    
+
     const matchesStatus = showDisabled || flag.enabled;
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
   const toggleFlag = (flagId: string) => {
-    const flag = allFlags.find(f => f.id === flagId);
+    const flag = allFlags.find((f) => f.id === flagId);
     if (flag) {
       updateFlag(flagId, { enabled: !flag.enabled });
     }
@@ -43,12 +44,18 @@ function FeatureFlagsPage() {
 
   const getRoleColor = (role: UserRole) => {
     switch (role) {
-      case 'super_admin': return 'bg-purple-100 text-purple-800';
-      case 'admin': return 'bg-blue-100 text-blue-800';
-      case 'makerspace_admin': return 'bg-makrx-blue text-white';
-      case 'service_provider': return 'bg-yellow-100 text-yellow-800';
-      case 'user': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'super_admin':
+        return 'bg-purple-100 text-purple-800';
+      case 'admin':
+        return 'bg-blue-100 text-blue-800';
+      case 'makerspace_admin':
+        return 'bg-makrx-blue text-white';
+      case 'service_provider':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'user':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -131,11 +138,15 @@ function FeatureFlagsPage() {
           <p className="text-sm text-muted-foreground">Total Features</p>
         </div>
         <div className="makrcave-card text-center">
-          <h3 className="text-2xl font-bold text-green-600">{allFlags.filter(f => f.enabled).length}</h3>
+          <h3 className="text-2xl font-bold text-green-600">
+            {allFlags.filter((f) => f.enabled).length}
+          </h3>
           <p className="text-sm text-muted-foreground">Enabled</p>
         </div>
         <div className="makrcave-card text-center">
-          <h3 className="text-2xl font-bold text-red-600">{allFlags.filter(f => !f.enabled).length}</h3>
+          <h3 className="text-2xl font-bold text-red-600">
+            {allFlags.filter((f) => !f.enabled).length}
+          </h3>
           <p className="text-sm text-muted-foreground">Disabled</p>
         </div>
         <div className="makrcave-card text-center">
@@ -147,36 +158,42 @@ function FeatureFlagsPage() {
       {/* Feature Flags List */}
       <div className="space-y-4">
         {filteredFlags.map((flag) => (
-          <div key={flag.id} className={`makrcave-card ${categoryColors[getFeatureCategory(flag.id)] || 'bg-gray-50 border-gray-200'}`}>
+          <div
+            key={flag.id}
+            className={`makrcave-card ${categoryColors[getFeatureCategory(flag.id)] || 'bg-gray-50 border-gray-200'}`}
+          >
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="font-semibold">{flag.name}</h3>
-                  <span className="text-xs font-mono px-2 py-1 bg-gray-100 rounded">
-                    {flag.id}
-                  </span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    flag.enabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className="text-xs font-mono px-2 py-1 bg-gray-100 rounded">{flag.id}</span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      flag.enabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {flag.enabled ? 'Enabled' : 'Disabled'}
                   </span>
                 </div>
-                
+
                 <p className="text-sm text-muted-foreground mb-3">{flag.description}</p>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm font-medium">Roles:</span>
                     <div className="flex gap-1">
                       {flag.allowedRoles.map((role) => (
-                        <span key={role} className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(role)}`}>
+                        <span
+                          key={role}
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(role)}`}
+                        >
                           {role.replace('_', ' ')}
                         </span>
                       ))}
                     </div>
                   </div>
-                  
+
                   {flag.environment && flag.environment !== 'all' && (
                     <div className="flex items-center gap-2">
                       <Info className="w-4 h-4 text-muted-foreground" />
@@ -185,13 +202,13 @@ function FeatureFlagsPage() {
                   )}
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toggleFlag(flag.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
-                    flag.enabled 
-                      ? 'bg-green-100 text-green-800 hover:bg-green-200' 
+                    flag.enabled
+                      ? 'bg-green-100 text-green-800 hover:bg-green-200'
                       : 'bg-red-100 text-red-800 hover:bg-red-200'
                   }`}
                 >
@@ -209,7 +226,7 @@ function FeatureFlagsPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-3 pt-3 border-t border-border/50">
               <div className="text-xs text-muted-foreground">
                 Updated: {new Date(flag.updatedAt).toLocaleString()}

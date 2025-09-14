@@ -2,7 +2,13 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Progress } from '../../components/ui/progress';
 import {
@@ -30,7 +36,7 @@ import {
   ArrowLeft,
   Maximize2,
   Minimize2,
-  Bell
+  Bell,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -55,113 +61,119 @@ interface MakrCave {
 const makrCaves: MakrCave[] = [
   {
     id: 1,
-    name: "Bangalore Innovation Hub",
+    name: 'Bangalore Innovation Hub',
     location: { lat: 12.9716, lng: 77.5946 },
-    country: "India",
-    city: "Bangalore",
+    country: 'India',
+    city: 'Bangalore',
     activeProjects: 24,
     onlineMembers: 45,
     machinesRunning: 12,
-    status: "active",
-    specialization: ["3D Printing", "Electronics", "IoT", "Robotics"],
-    currentProject: "Smart City Sensors",
+    status: 'active',
+    specialization: ['3D Printing', 'Electronics', 'IoT', 'Robotics'],
+    currentProject: 'Smart City Sensors',
     featured: true,
     capacity: 100,
-    utilizationRate: 78
+    utilizationRate: 78,
   },
   {
     id: 2,
-    name: "Mumbai MakerSpace",
-    location: { lat: 19.0760, lng: 72.8777 },
-    country: "India", 
-    city: "Mumbai",
+    name: 'Mumbai MakerSpace',
+    location: { lat: 19.076, lng: 72.8777 },
+    country: 'India',
+    city: 'Mumbai',
     activeProjects: 18,
     onlineMembers: 31,
     machinesRunning: 8,
-    status: "active",
-    specialization: ["Laser Cutting", "CNC", "Product Design"],
-    currentProject: "Sustainable Packaging",
+    status: 'active',
+    specialization: ['Laser Cutting', 'CNC', 'Product Design'],
+    currentProject: 'Sustainable Packaging',
     featured: false,
     capacity: 80,
-    utilizationRate: 65
+    utilizationRate: 65,
   },
   {
     id: 3,
-    name: "Delhi Tech Forge",
-    location: { lat: 28.6139, lng: 77.2090 },
-    country: "India",
-    city: "Delhi",
+    name: 'Delhi Tech Forge',
+    location: { lat: 28.6139, lng: 77.209 },
+    country: 'India',
+    city: 'Delhi',
     activeProjects: 22,
     onlineMembers: 38,
     machinesRunning: 10,
-    status: "active",
-    specialization: ["AI/ML", "Embedded Systems", "Hardware"],
-    currentProject: "Agricultural Automation",
+    status: 'active',
+    specialization: ['AI/ML', 'Embedded Systems', 'Hardware'],
+    currentProject: 'Agricultural Automation',
     featured: true,
     capacity: 120,
-    utilizationRate: 82
+    utilizationRate: 82,
   },
   {
     id: 4,
-    name: "Pune Innovation Lab",
+    name: 'Pune Innovation Lab',
     location: { lat: 18.5204, lng: 73.8567 },
-    country: "India",
-    city: "Pune",
+    country: 'India',
+    city: 'Pune',
     activeProjects: 16,
     onlineMembers: 28,
     machinesRunning: 7,
-    status: "active",
-    specialization: ["Automotive Tech", "Mechanical Design"],
-    currentProject: "Electric Vehicle Components",
+    status: 'active',
+    specialization: ['Automotive Tech', 'Mechanical Design'],
+    currentProject: 'Electric Vehicle Components',
     featured: false,
     capacity: 90,
-    utilizationRate: 71
+    utilizationRate: 71,
   },
   {
     id: 5,
-    name: "Hyderabad Digital Lab",
-    location: { lat: 17.3850, lng: 78.4867 },
-    country: "India",
-    city: "Hyderabad",
+    name: 'Hyderabad Digital Lab',
+    location: { lat: 17.385, lng: 78.4867 },
+    country: 'India',
+    city: 'Hyderabad',
     activeProjects: 20,
     onlineMembers: 35,
     machinesRunning: 9,
-    status: "active",
-    specialization: ["Software", "Blockchain", "Cybersecurity"],
-    currentProject: "Decentralized Identity",
+    status: 'active',
+    specialization: ['Software', 'Blockchain', 'Cybersecurity'],
+    currentProject: 'Decentralized Identity',
     featured: false,
     capacity: 85,
-    utilizationRate: 68
+    utilizationRate: 68,
   },
   {
     id: 6,
-    name: "Chennai Maker Hub",
+    name: 'Chennai Maker Hub',
     location: { lat: 13.0827, lng: 80.2707 },
-    country: "India",
-    city: "Chennai",
+    country: 'India',
+    city: 'Chennai',
     activeProjects: 19,
     onlineMembers: 33,
     machinesRunning: 11,
-    status: "active",
-    specialization: ["Aerospace", "Marine Tech", "Precision Machining"],
-    currentProject: "Drone Navigation System",
+    status: 'active',
+    specialization: ['Aerospace', 'Marine Tech', 'Precision Machining'],
+    currentProject: 'Drone Navigation System',
     featured: true,
     capacity: 110,
-    utilizationRate: 75
-  }
+    utilizationRate: 75,
+  },
 ];
 
 const globalStats = {
   totalMakrCaves: makrCaves.length,
   activeMakers: makrCaves.reduce((sum, cave) => sum + cave.onlineMembers, 0),
   runningProjects: makrCaves.reduce((sum, cave) => sum + cave.activeProjects, 0),
-  activeMachines: makrCaves.reduce((sum, cave) => sum + cave.machinesRunning, 0)
+  activeMachines: makrCaves.reduce((sum, cave) => sum + cave.machinesRunning, 0),
 };
 
 // Real-time activity feed
 const activityTypes = [
-  'Project started', 'Machine activated', 'Member joined', 'Equipment booked',
-  'Project completed', 'Workshop scheduled', 'Collaboration formed', 'Resource shared'
+  'Project started',
+  'Machine activated',
+  'Member joined',
+  'Equipment booked',
+  'Project completed',
+  'Workshop scheduled',
+  'Collaboration formed',
+  'Resource shared',
 ];
 
 const generateActivity = () => {
@@ -172,7 +184,7 @@ const generateActivity = () => {
     cave: cave.name,
     activity,
     timestamp: new Date(),
-    user: `User${Math.floor(Math.random() * 100)}`
+    user: `User${Math.floor(Math.random() * 100)}`,
   };
 };
 
@@ -188,44 +200,49 @@ export default function MakrVersePage() {
   const [showActivityFeed, setShowActivityFeed] = useState(false);
   const mapRef = useRef(null);
 
-  const filteredCaves = makrCaves.filter(cave => {
-    const matchesSearch = cave.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         cave.city.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterSpecialization === 'all' || 
-                         cave.specialization.some(spec => 
-                           spec.toLowerCase().includes(filterSpecialization.toLowerCase())
-                         );
+  const filteredCaves = makrCaves.filter((cave) => {
+    const matchesSearch =
+      cave.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cave.city.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filterSpecialization === 'all' ||
+      cave.specialization.some((spec) =>
+        spec.toLowerCase().includes(filterSpecialization.toLowerCase()),
+      );
     return matchesSearch && matchesFilter;
   });
 
-  const specializations = ['all', ...new Set(makrCaves.flatMap(cave => cave.specialization))];
+  const specializations = ['all', ...new Set(makrCaves.flatMap((cave) => cave.specialization))];
 
   // Initialize map and real-time updates
   useEffect(() => {
     if (typeof window !== 'undefined' && mapRef.current) {
       initializeMap();
     }
-    
+
     // Simulate real-time updates
     const interval = setInterval(() => {
       if (realTimeData) {
         // Add new activity
-        setActivities(prev => [generateActivity(), ...prev.slice(0, 9)]);
-        
+        setActivities((prev) => [generateActivity(), ...prev.slice(0, 9)]);
+
         // Simulate small changes in online members and running machines
-        setSelectedCave(prev => {
+        setSelectedCave((prev) => {
           if (prev) {
             return {
               ...prev,
               onlineMembers: Math.max(1, prev.onlineMembers + Math.floor(Math.random() * 6) - 2),
-              machinesRunning: Math.max(0, prev.machinesRunning + Math.floor(Math.random() * 3) - 1)
+              machinesRunning: Math.max(
+                0,
+                prev.machinesRunning + Math.floor(Math.random() * 3) - 1,
+              ),
             };
           }
           return prev;
         });
       }
     }, 3000);
-    
+
     return () => clearInterval(interval);
   }, [realTimeData]);
 
@@ -249,7 +266,7 @@ export default function MakrVersePage() {
               strokeWidth="1"/>
       </svg>
     `;
-    
+
     if (mapRef.current) {
       (mapRef.current as HTMLElement).innerHTML = svg;
     }
@@ -269,7 +286,10 @@ export default function MakrVersePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              >
                 <ArrowLeft className="w-5 h-5" />
                 <span>Back to Dashboard</span>
               </Link>
@@ -335,7 +355,7 @@ export default function MakrVersePage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-slate-800/50 border-blue-500/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -349,7 +369,7 @@ export default function MakrVersePage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-slate-800/50 border-blue-500/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -363,7 +383,7 @@ export default function MakrVersePage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-slate-800/50 border-blue-500/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -397,7 +417,7 @@ export default function MakrVersePage() {
               onChange={(e) => setFilterSpecialization(e.target.value)}
               className="px-4 py-2 bg-slate-800 border border-blue-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-              {specializations.map(spec => (
+              {specializations.map((spec) => (
                 <option key={spec} value={spec} className="bg-slate-800">
                   {spec === 'all' ? 'All Specializations' : spec}
                 </option>
@@ -416,7 +436,7 @@ export default function MakrVersePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Interactive Map */}
-          <div className={showActivityFeed ? "lg:col-span-1" : "lg:col-span-2"}>
+          <div className={showActivityFeed ? 'lg:col-span-1' : 'lg:col-span-2'}>
             <Card className="bg-slate-800/50 border-blue-500/30 h-96">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -427,7 +447,11 @@ export default function MakrVersePage() {
                     onClick={() => setIsFullscreen(!isFullscreen)}
                     className="text-blue-400 hover:text-blue-300"
                   >
-                    {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                    {isFullscreen ? (
+                      <Minimize2 className="w-4 h-4" />
+                    ) : (
+                      <Maximize2 className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
               </CardHeader>
@@ -439,25 +463,40 @@ export default function MakrVersePage() {
                       {/* Simplified world map */}
                       <defs>
                         <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(59, 130, 246, 0.1)" strokeWidth="1"/>
+                          <path
+                            d="M 20 0 L 0 0 0 20"
+                            fill="none"
+                            stroke="rgba(59, 130, 246, 0.1)"
+                            strokeWidth="1"
+                          />
                         </pattern>
                       </defs>
                       <rect width="100%" height="100%" fill="url(#grid)" />
-                      
+
                       {/* India (detailed) */}
-                      <path 
-                        d="M320 180 L340 160 L380 170 L420 180 L450 200 L470 240 L460 280 L440 320 L400 340 L360 330 L340 310 L320 280 L310 240 Z" 
-                        fill="rgba(59, 130, 246, 0.2)" 
-                        stroke="rgba(59, 130, 246, 0.5)" 
+                      <path
+                        d="M320 180 L340 160 L380 170 L420 180 L450 200 L470 240 L460 280 L440 320 L400 340 L360 330 L340 310 L320 280 L310 240 Z"
+                        fill="rgba(59, 130, 246, 0.2)"
+                        stroke="rgba(59, 130, 246, 0.5)"
                         strokeWidth="2"
                       />
-                      
+
                       {/* Other continents */}
-                      <path d="M100 200 L200 180 L250 220 L200 260 L100 240 Z" fill="rgba(75, 85, 99, 0.1)" stroke="rgba(75, 85, 99, 0.3)" strokeWidth="1"/>
-                      <path d="M600 150 L750 140 L780 200 L750 250 L600 240 Z" fill="rgba(75, 85, 99, 0.1)" stroke="rgba(75, 85, 99, 0.3)" strokeWidth="1"/>
+                      <path
+                        d="M100 200 L200 180 L250 220 L200 260 L100 240 Z"
+                        fill="rgba(75, 85, 99, 0.1)"
+                        stroke="rgba(75, 85, 99, 0.3)"
+                        strokeWidth="1"
+                      />
+                      <path
+                        d="M600 150 L750 140 L780 200 L750 250 L600 240 Z"
+                        fill="rgba(75, 85, 99, 0.1)"
+                        stroke="rgba(75, 85, 99, 0.3)"
+                        strokeWidth="1"
+                      />
                     </svg>
                   </div>
-                  
+
                   {/* MakrCave Markers */}
                   <div className="absolute inset-0">
                     {filteredCaves.map((cave) => {
@@ -469,15 +508,21 @@ export default function MakrVersePage() {
                           style={{ left: `${pos.x}px`, top: `${pos.y}px` }}
                           onClick={() => setSelectedCave(cave)}
                         >
-                          <div className={`relative w-5 h-5 rounded-full border-2 ${
-                            cave.featured 
-                              ? 'bg-yellow-400 border-yellow-300 shadow-yellow-400/50' 
-                              : 'bg-blue-400 border-blue-300 shadow-blue-400/50'
-                          } shadow-lg ${animateMarkers ? 'animate-pulse' : ''} transition-all hover:scale-110`}>
+                          <div
+                            className={`relative w-5 h-5 rounded-full border-2 ${
+                              cave.featured
+                                ? 'bg-yellow-400 border-yellow-300 shadow-yellow-400/50'
+                                : 'bg-blue-400 border-blue-300 shadow-blue-400/50'
+                            } shadow-lg ${animateMarkers ? 'animate-pulse' : ''} transition-all hover:scale-110`}
+                          >
                             {/* Activity indicator */}
-                            <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
-                              cave.status === 'active' ? 'bg-green-400 animate-ping' : 'bg-gray-400'
-                            }`}></div>
+                            <div
+                              className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
+                                cave.status === 'active'
+                                  ? 'bg-green-400 animate-ping'
+                                  : 'bg-gray-400'
+                              }`}
+                            ></div>
                           </div>
                           <div className="absolute top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                             {cave.name}
@@ -517,7 +562,9 @@ export default function MakrVersePage() {
                         className="p-3 rounded-lg bg-slate-700/30 border border-blue-500/10 hover:border-blue-400/30 transition-all"
                       >
                         <div className="flex items-start justify-between mb-1">
-                          <span className="text-sm font-medium text-white">{activity.activity}</span>
+                          <span className="text-sm font-medium text-white">
+                            {activity.activity}
+                          </span>
                           <span className="text-xs text-gray-400">
                             {activity.timestamp.toLocaleTimeString()}
                           </span>
@@ -569,7 +616,7 @@ export default function MakrVersePage() {
                       <span>{selectedCave.utilizationRate}% utilization</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium text-white mb-2">Specializations</h4>
                     <div className="flex flex-wrap gap-1">
@@ -580,25 +627,25 @@ export default function MakrVersePage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium text-white mb-2">Current Focus</h4>
                     <p className="text-sm text-gray-300">{selectedCave.currentProject}</p>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium text-white mb-2">Capacity</h4>
-                    <Progress 
-                      value={selectedCave.utilizationRate} 
-                      className="h-2"
-                    />
+                    <Progress value={selectedCave.utilizationRate} className="h-2" />
                     <p className="text-xs text-gray-400 mt-1">
                       {selectedCave.utilizationRate}% of {selectedCave.capacity} member capacity
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Button className="w-full" onClick={() => window.open(`/makrcave/${selectedCave.id}`, '_blank')}>
+                    <Button
+                      className="w-full"
+                      onClick={() => window.open(`/makrcave/${selectedCave.id}`, '_blank')}
+                    >
                       <Wifi className="w-4 h-4 mr-2" />
                       Connect to MakrCave
                     </Button>
@@ -635,11 +682,16 @@ export default function MakrVersePage() {
                           {cave.featured && <Star className="w-3 h-3 text-yellow-400" />}
                           <span className="font-medium text-white text-sm">{cave.name}</span>
                         </div>
-                        <Badge variant={cave.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                        <Badge
+                          variant={cave.status === 'active' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
                           {cave.status}
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-400 mb-2">{cave.city}, {cave.country}</p>
+                      <p className="text-xs text-gray-400 mb-2">
+                        {cave.city}, {cave.country}
+                      </p>
                       <div className="flex justify-between text-xs text-gray-300">
                         <span>{cave.onlineMembers} online</span>
                         <span>{cave.activeProjects} projects</span>

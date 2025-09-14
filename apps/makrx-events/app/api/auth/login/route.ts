@@ -8,10 +8,7 @@ export async function GET(request: NextRequest) {
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`;
 
   if (!keycloakBaseUrl || !realm || !clientId) {
-    return NextResponse.json(
-      { error: 'Authentication service not configured' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Authentication service not configured' }, { status: 500 });
   }
 
   const authUrl = new URL(`${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/auth`);

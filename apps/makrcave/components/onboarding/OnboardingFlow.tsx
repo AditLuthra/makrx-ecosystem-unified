@@ -8,12 +8,40 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
-import { 
-  ArrowRight, ArrowLeft, CheckCircle, Users, Settings, Zap, Shield, 
-  MapPin, Star, Award, BookOpen, Wrench, Factory, UserCheck, 
-  Globe, Smartphone, Laptop, Monitor, Play, PlusCircle, Target,
-  Lightbulb, Coffee, Rocket, Heart, TrendingUp, Camera, Clock,
-  Building2, GraduationCap, Briefcase, Home, ChevronRight
+import {
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle,
+  Users,
+  Settings,
+  Zap,
+  Shield,
+  MapPin,
+  Star,
+  Award,
+  BookOpen,
+  Wrench,
+  Factory,
+  UserCheck,
+  Globe,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Play,
+  PlusCircle,
+  Target,
+  Lightbulb,
+  Coffee,
+  Rocket,
+  Heart,
+  TrendingUp,
+  Camera,
+  Clock,
+  Building2,
+  GraduationCap,
+  Briefcase,
+  Home,
+  ChevronRight,
 } from 'lucide-react';
 
 interface OnboardingStep {
@@ -65,7 +93,7 @@ const OnboardingFlow: React.FC = () => {
       email: '',
       phone: '',
       location: '',
-      bio: ''
+      bio: '',
     },
     interests: [],
     experience: '',
@@ -73,10 +101,10 @@ const OnboardingFlow: React.FC = () => {
       notifications: true,
       newsletter: true,
       publicProfile: false,
-      mentoring: false
+      mentoring: false,
     },
     skills: [],
-    goals: []
+    goals: [],
   });
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [isVisible, setIsVisible] = useState(false);
@@ -92,7 +120,7 @@ const OnboardingFlow: React.FC = () => {
       description: 'I want to access makerspaces, work on projects, and learn new skills',
       icon: Wrench,
       color: 'from-blue-500 to-cyan-500',
-      features: ['Access equipment', 'Join projects', 'Learn skills', 'Connect with makers']
+      features: ['Access equipment', 'Join projects', 'Learn skills', 'Connect with makers'],
     },
     {
       id: 'admin',
@@ -100,7 +128,7 @@ const OnboardingFlow: React.FC = () => {
       description: 'I manage a makerspace and want to streamline operations',
       icon: Building2,
       color: 'from-purple-500 to-pink-500',
-      features: ['Manage inventory', 'Track usage', 'Handle memberships', 'Monitor equipment']
+      features: ['Manage inventory', 'Track usage', 'Handle memberships', 'Monitor equipment'],
     },
     {
       id: 'provider',
@@ -108,7 +136,7 @@ const OnboardingFlow: React.FC = () => {
       description: 'I offer fabrication services and want to receive job orders',
       icon: Factory,
       color: 'from-green-500 to-emerald-500',
-      features: ['Receive orders', 'Manage queue', 'Track materials', 'Quality control']
+      features: ['Receive orders', 'Manage queue', 'Track materials', 'Quality control'],
     },
     {
       id: 'super_admin',
@@ -116,26 +144,51 @@ const OnboardingFlow: React.FC = () => {
       description: 'I oversee multiple makerspaces and platform operations',
       icon: Shield,
       color: 'from-orange-500 to-red-500',
-      features: ['Global oversight', 'Analytics', 'Policy management', 'System configuration']
-    }
+      features: ['Global oversight', 'Analytics', 'Policy management', 'System configuration'],
+    },
   ];
 
   const interests = [
-    '3D Printing', 'Electronics', 'Woodworking', 'Metalworking', 'Robotics',
-    'IoT Development', 'Prototyping', 'Art & Design', 'Sustainability',
-    'Education', 'Entrepreneurship', 'Research & Development'
+    '3D Printing',
+    'Electronics',
+    'Woodworking',
+    'Metalworking',
+    'Robotics',
+    'IoT Development',
+    'Prototyping',
+    'Art & Design',
+    'Sustainability',
+    'Education',
+    'Entrepreneurship',
+    'Research & Development',
   ];
 
   const skills = [
-    'CAD Design', '3D Printing', 'Arduino/Raspberry Pi', 'Soldering',
-    'CNC Machining', 'Laser Cutting', 'Programming', 'Project Management',
-    'Circuit Design', 'Mechanical Engineering', 'Industrial Design', 'Teaching'
+    'CAD Design',
+    '3D Printing',
+    'Arduino/Raspberry Pi',
+    'Soldering',
+    'CNC Machining',
+    'Laser Cutting',
+    'Programming',
+    'Project Management',
+    'Circuit Design',
+    'Mechanical Engineering',
+    'Industrial Design',
+    'Teaching',
   ];
 
   const goals = [
-    'Learn new technologies', 'Start a business', 'Teach others', 'Build prototypes',
-    'Complete personal projects', 'Collaborate with teams', 'Develop skills',
-    'Create art', 'Solve problems', 'Innovate solutions'
+    'Learn new technologies',
+    'Start a business',
+    'Teach others',
+    'Build prototypes',
+    'Complete personal projects',
+    'Collaborate with teams',
+    'Develop skills',
+    'Create art',
+    'Solve problems',
+    'Innovate solutions',
   ];
 
   // Welcome Step Component
@@ -152,16 +205,16 @@ const OnboardingFlow: React.FC = () => {
           </span>
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          Your journey into the future of making starts here. Let's set up your profile and 
-          connect you with the perfect makerspace community.
+          Your journey into the future of making starts here. Let's set up your profile and connect
+          you with the perfect makerspace community.
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         {[
           { icon: Globe, title: 'Global Network', desc: 'Access 500+ makerspaces worldwide' },
           { icon: Zap, title: 'Smart Tools', desc: 'AI-powered project and inventory management' },
-          { icon: Users, title: 'Community', desc: 'Connect with 10k+ makers globally' }
+          { icon: Users, title: 'Community', desc: 'Connect with 10k+ makers globally' },
         ].map((feature, idx) => (
           <Card key={idx} className="bg-white/10 backdrop-blur-md border-white/20">
             <CardContent className="p-6 text-center">
@@ -178,7 +231,10 @@ const OnboardingFlow: React.FC = () => {
           <Lightbulb className="h-6 w-6 text-yellow-400" />
           <div className="text-left">
             <p className="text-yellow-400 font-medium">Pro Tip</p>
-            <p className="text-gray-300 text-sm">Complete your profile to unlock personalized recommendations and early access features!</p>
+            <p className="text-gray-300 text-sm">
+              Complete your profile to unlock personalized recommendations and early access
+              features!
+            </p>
           </div>
         </div>
       </div>
@@ -190,19 +246,21 @@ const OnboardingFlow: React.FC = () => {
     <div className="space-y-8">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-4">What brings you to MakrCave?</h2>
-        <p className="text-gray-300 text-lg">Choose your primary role to personalize your experience</p>
+        <p className="text-gray-300 text-lg">
+          Choose your primary role to personalize your experience
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {userTypes.map((type) => (
-          <Card 
+          <Card
             key={type.id}
             className={`cursor-pointer transition-all duration-300 border-2 ${
-              userProfile.userType === type.id 
-                ? 'border-blue-500 bg-blue-500/20' 
+              userProfile.userType === type.id
+                ? 'border-blue-500 bg-blue-500/20'
                 : 'border-white/20 bg-white/10 hover:bg-white/15'
             } backdrop-blur-md`}
-            onClick={() => setUserProfile(prev => ({ ...prev, userType: type.id as any }))}
+            onClick={() => setUserProfile((prev) => ({ ...prev, userType: type.id as any }))}
           >
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
@@ -234,33 +292,43 @@ const OnboardingFlow: React.FC = () => {
     <div className="space-y-8 max-w-2xl mx-auto">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-4">Tell us about yourself</h2>
-        <p className="text-gray-300">This helps us connect you with the right community and opportunities</p>
+        <p className="text-gray-300">
+          This helps us connect you with the right community and opportunities
+        </p>
       </div>
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="firstName" className="text-white">First Name *</Label>
+            <Label htmlFor="firstName" className="text-white">
+              First Name *
+            </Label>
             <Input
               id="firstName"
               value={userProfile.personalInfo.firstName}
-              onChange={(e) => setUserProfile(prev => ({
-                ...prev,
-                personalInfo: { ...prev.personalInfo, firstName: e.target.value }
-              }))}
+              onChange={(e) =>
+                setUserProfile((prev) => ({
+                  ...prev,
+                  personalInfo: { ...prev.personalInfo, firstName: e.target.value },
+                }))
+              }
               className="bg-white/10 border-white/20 text-white"
               placeholder="John"
             />
           </div>
           <div>
-            <Label htmlFor="lastName" className="text-white">Last Name *</Label>
+            <Label htmlFor="lastName" className="text-white">
+              Last Name *
+            </Label>
             <Input
               id="lastName"
               value={userProfile.personalInfo.lastName}
-              onChange={(e) => setUserProfile(prev => ({
-                ...prev,
-                personalInfo: { ...prev.personalInfo, lastName: e.target.value }
-              }))}
+              onChange={(e) =>
+                setUserProfile((prev) => ({
+                  ...prev,
+                  personalInfo: { ...prev.personalInfo, lastName: e.target.value },
+                }))
+              }
               className="bg-white/10 border-white/20 text-white"
               placeholder="Smith"
             />
@@ -268,39 +336,49 @@ const OnboardingFlow: React.FC = () => {
         </div>
 
         <div>
-          <Label htmlFor="email" className="text-white">Email Address *</Label>
+          <Label htmlFor="email" className="text-white">
+            Email Address *
+          </Label>
           <Input
             id="email"
             type="email"
             value={userProfile.personalInfo.email}
-            onChange={(e) => setUserProfile(prev => ({
-              ...prev,
-              personalInfo: { ...prev.personalInfo, email: e.target.value }
-            }))}
+            onChange={(e) =>
+              setUserProfile((prev) => ({
+                ...prev,
+                personalInfo: { ...prev.personalInfo, email: e.target.value },
+              }))
+            }
             className="bg-white/10 border-white/20 text-white"
             placeholder="john@example.com"
           />
         </div>
 
         <div>
-          <Label htmlFor="location" className="text-white">Location</Label>
+          <Label htmlFor="location" className="text-white">
+            Location
+          </Label>
           <Input
             id="location"
             value={userProfile.personalInfo.location}
-            onChange={(e) => setUserProfile(prev => ({
-              ...prev,
-              personalInfo: { ...prev.personalInfo, location: e.target.value }
-            }))}
+            onChange={(e) =>
+              setUserProfile((prev) => ({
+                ...prev,
+                personalInfo: { ...prev.personalInfo, location: e.target.value },
+              }))
+            }
             className="bg-white/10 border-white/20 text-white"
             placeholder="San Francisco, CA"
           />
         </div>
 
         <div>
-          <Label htmlFor="experience" className="text-white">Experience Level</Label>
-          <Select 
-            value={userProfile.experience} 
-            onValueChange={(value) => setUserProfile(prev => ({ ...prev, experience: value }))}
+          <Label htmlFor="experience" className="text-white">
+            Experience Level
+          </Label>
+          <Select
+            value={userProfile.experience}
+            onValueChange={(value) => setUserProfile((prev) => ({ ...prev, experience: value }))}
           >
             <SelectTrigger className="bg-white/10 border-white/20 text-white">
               <SelectValue placeholder="Select your experience level" />
@@ -315,14 +393,18 @@ const OnboardingFlow: React.FC = () => {
         </div>
 
         <div>
-          <Label htmlFor="bio" className="text-white">Bio (Optional)</Label>
+          <Label htmlFor="bio" className="text-white">
+            Bio (Optional)
+          </Label>
           <Textarea
             id="bio"
             value={userProfile.personalInfo.bio}
-            onChange={(e) => setUserProfile(prev => ({
-              ...prev,
-              personalInfo: { ...prev.personalInfo, bio: e.target.value }
-            }))}
+            onChange={(e) =>
+              setUserProfile((prev) => ({
+                ...prev,
+                personalInfo: { ...prev.personalInfo, bio: e.target.value },
+              }))
+            }
             className="bg-white/10 border-white/20 text-white"
             placeholder="Tell us about your interests, projects, or goals..."
             rows={4}
@@ -337,7 +419,9 @@ const OnboardingFlow: React.FC = () => {
     <div className="space-y-8 max-w-4xl mx-auto">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-4">What are you passionate about?</h2>
-        <p className="text-gray-300">Select your interests and skills to get personalized recommendations</p>
+        <p className="text-gray-300">
+          Select your interests and skills to get personalized recommendations
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -359,16 +443,16 @@ const OnboardingFlow: React.FC = () => {
                     id={`interest-${interest}`}
                     checked={userProfile.interests.includes(interest)}
                     onCheckedChange={(checked) => {
-                      setUserProfile(prev => ({
+                      setUserProfile((prev) => ({
                         ...prev,
-                        interests: checked 
+                        interests: checked
                           ? [...prev.interests, interest]
-                          : prev.interests.filter(i => i !== interest)
+                          : prev.interests.filter((i) => i !== interest),
                       }));
                     }}
                   />
-                  <Label 
-                    htmlFor={`interest-${interest}`} 
+                  <Label
+                    htmlFor={`interest-${interest}`}
                     className="text-white text-sm cursor-pointer"
                   >
                     {interest}
@@ -397,18 +481,15 @@ const OnboardingFlow: React.FC = () => {
                     id={`skill-${skill}`}
                     checked={userProfile.skills.includes(skill)}
                     onCheckedChange={(checked) => {
-                      setUserProfile(prev => ({
+                      setUserProfile((prev) => ({
                         ...prev,
-                        skills: checked 
+                        skills: checked
                           ? [...prev.skills, skill]
-                          : prev.skills.filter(s => s !== skill)
+                          : prev.skills.filter((s) => s !== skill),
                       }));
                     }}
                   />
-                  <Label 
-                    htmlFor={`skill-${skill}`} 
-                    className="text-white text-sm cursor-pointer"
-                  >
+                  <Label htmlFor={`skill-${skill}`} className="text-white text-sm cursor-pointer">
                     {skill}
                   </Label>
                 </div>
@@ -436,18 +517,13 @@ const OnboardingFlow: React.FC = () => {
                   id={`goal-${goal}`}
                   checked={userProfile.goals.includes(goal)}
                   onCheckedChange={(checked) => {
-                    setUserProfile(prev => ({
+                    setUserProfile((prev) => ({
                       ...prev,
-                      goals: checked 
-                        ? [...prev.goals, goal]
-                        : prev.goals.filter(g => g !== goal)
+                      goals: checked ? [...prev.goals, goal] : prev.goals.filter((g) => g !== goal),
                     }));
                   }}
                 />
-                <Label 
-                  htmlFor={`goal-${goal}`} 
-                  className="text-white text-sm cursor-pointer"
-                >
+                <Label htmlFor={`goal-${goal}`} className="text-white text-sm cursor-pointer">
                   {goal}
                 </Label>
               </div>
@@ -471,14 +547,18 @@ const OnboardingFlow: React.FC = () => {
 
         <div className="space-y-6">
           <div>
-            <Label htmlFor="makerspaceName" className="text-white">Makerspace Name *</Label>
+            <Label htmlFor="makerspaceName" className="text-white">
+              Makerspace Name *
+            </Label>
             <Input
               id="makerspaceName"
               value={userProfile.makerspaceInfo?.name || ''}
-              onChange={(e) => setUserProfile(prev => ({
-                ...prev,
-                makerspaceInfo: { ...prev.makerspaceInfo!, name: e.target.value }
-              }))}
+              onChange={(e) =>
+                setUserProfile((prev) => ({
+                  ...prev,
+                  makerspaceInfo: { ...prev.makerspaceInfo!, name: e.target.value },
+                }))
+              }
               className="bg-white/10 border-white/20 text-white"
               placeholder="TechMaker Hub"
             />
@@ -486,13 +566,17 @@ const OnboardingFlow: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="makerspaceType" className="text-white">Type of Space</Label>
-              <Select 
-                value={userProfile.makerspaceInfo?.type || ''} 
-                onValueChange={(value) => setUserProfile(prev => ({
-                  ...prev,
-                  makerspaceInfo: { ...prev.makerspaceInfo!, type: value }
-                }))}
+              <Label htmlFor="makerspaceType" className="text-white">
+                Type of Space
+              </Label>
+              <Select
+                value={userProfile.makerspaceInfo?.type || ''}
+                onValueChange={(value) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    makerspaceInfo: { ...prev.makerspaceInfo!, type: value },
+                  }))
+                }
               >
                 <SelectTrigger className="bg-white/10 border-white/20 text-white">
                   <SelectValue placeholder="Select space type" />
@@ -508,15 +592,19 @@ const OnboardingFlow: React.FC = () => {
             </div>
 
             <div>
-              <Label htmlFor="capacity" className="text-white">Capacity (People)</Label>
+              <Label htmlFor="capacity" className="text-white">
+                Capacity (People)
+              </Label>
               <Input
                 id="capacity"
                 type="number"
                 value={userProfile.makerspaceInfo?.capacity || ''}
-                onChange={(e) => setUserProfile(prev => ({
-                  ...prev,
-                  makerspaceInfo: { ...prev.makerspaceInfo!, capacity: parseInt(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    makerspaceInfo: { ...prev.makerspaceInfo!, capacity: parseInt(e.target.value) },
+                  }))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 placeholder="50"
               />
@@ -524,28 +612,36 @@ const OnboardingFlow: React.FC = () => {
           </div>
 
           <div>
-            <Label htmlFor="makerspaceLocation" className="text-white">Location *</Label>
+            <Label htmlFor="makerspaceLocation" className="text-white">
+              Location *
+            </Label>
             <Input
               id="makerspaceLocation"
               value={userProfile.makerspaceInfo?.location || ''}
-              onChange={(e) => setUserProfile(prev => ({
-                ...prev,
-                makerspaceInfo: { ...prev.makerspaceInfo!, location: e.target.value }
-              }))}
+              onChange={(e) =>
+                setUserProfile((prev) => ({
+                  ...prev,
+                  makerspaceInfo: { ...prev.makerspaceInfo!, location: e.target.value },
+                }))
+              }
               className="bg-white/10 border-white/20 text-white"
               placeholder="123 Innovation St, Tech City, CA 94000"
             />
           </div>
 
           <div>
-            <Label htmlFor="makerspaceDescription" className="text-white">Description</Label>
+            <Label htmlFor="makerspaceDescription" className="text-white">
+              Description
+            </Label>
             <Textarea
               id="makerspaceDescription"
               value={userProfile.makerspaceInfo?.description || ''}
-              onChange={(e) => setUserProfile(prev => ({
-                ...prev,
-                makerspaceInfo: { ...prev.makerspaceInfo!, description: e.target.value }
-              }))}
+              onChange={(e) =>
+                setUserProfile((prev) => ({
+                  ...prev,
+                  makerspaceInfo: { ...prev.makerspaceInfo!, description: e.target.value },
+                }))
+              }
               className="bg-white/10 border-white/20 text-white"
               placeholder="Describe your makerspace, its mission, and what makes it unique..."
               rows={4}
@@ -562,28 +658,39 @@ const OnboardingFlow: React.FC = () => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  '3D Printers', 'Laser Cutters', 'CNC Machines', 'Soldering Stations',
-                  'Arduino/Raspberry Pi', 'Hand Tools', 'Power Tools', 'Electronics Lab',
-                  'Woodworking Tools', 'Metalworking Tools', 'Sewing Machines', 'Pottery Wheel'
+                  '3D Printers',
+                  'Laser Cutters',
+                  'CNC Machines',
+                  'Soldering Stations',
+                  'Arduino/Raspberry Pi',
+                  'Hand Tools',
+                  'Power Tools',
+                  'Electronics Lab',
+                  'Woodworking Tools',
+                  'Metalworking Tools',
+                  'Sewing Machines',
+                  'Pottery Wheel',
                 ].map((equipment) => (
                   <div key={equipment} className="flex items-center space-x-2">
                     <Checkbox
                       id={`equipment-${equipment}`}
                       checked={userProfile.makerspaceInfo?.equipment?.includes(equipment) || false}
                       onCheckedChange={(checked) => {
-                        setUserProfile(prev => ({
+                        setUserProfile((prev) => ({
                           ...prev,
                           makerspaceInfo: {
                             ...prev.makerspaceInfo!,
-                            equipment: checked 
+                            equipment: checked
                               ? [...(prev.makerspaceInfo?.equipment || []), equipment]
-                              : (prev.makerspaceInfo?.equipment || []).filter(e => e !== equipment)
-                          }
+                              : (prev.makerspaceInfo?.equipment || []).filter(
+                                  (e) => e !== equipment,
+                                ),
+                          },
                         }));
                       }}
                     />
-                    <Label 
-                      htmlFor={`equipment-${equipment}`} 
+                    <Label
+                      htmlFor={`equipment-${equipment}`}
                       className="text-white text-sm cursor-pointer"
                     >
                       {equipment}
@@ -603,7 +710,9 @@ const OnboardingFlow: React.FC = () => {
     <div className="space-y-8 max-w-2xl mx-auto">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-4">Customize your experience</h2>
-        <p className="text-gray-300">Set your preferences for notifications, privacy, and community features</p>
+        <p className="text-gray-300">
+          Set your preferences for notifications, privacy, and community features
+        </p>
       </div>
 
       <div className="space-y-6">
@@ -622,10 +731,12 @@ const OnboardingFlow: React.FC = () => {
               </div>
               <Checkbox
                 checked={userProfile.preferences.notifications}
-                onCheckedChange={(checked) => setUserProfile(prev => ({
-                  ...prev,
-                  preferences: { ...prev.preferences, notifications: checked as boolean }
-                }))}
+                onCheckedChange={(checked) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    preferences: { ...prev.preferences, notifications: checked as boolean },
+                  }))
+                }
               />
             </div>
             <div className="flex items-center justify-between">
@@ -635,10 +746,12 @@ const OnboardingFlow: React.FC = () => {
               </div>
               <Checkbox
                 checked={userProfile.preferences.newsletter}
-                onCheckedChange={(checked) => setUserProfile(prev => ({
-                  ...prev,
-                  preferences: { ...prev.preferences, newsletter: checked as boolean }
-                }))}
+                onCheckedChange={(checked) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    preferences: { ...prev.preferences, newsletter: checked as boolean },
+                  }))
+                }
               />
             </div>
           </CardContent>
@@ -659,10 +772,12 @@ const OnboardingFlow: React.FC = () => {
               </div>
               <Checkbox
                 checked={userProfile.preferences.publicProfile}
-                onCheckedChange={(checked) => setUserProfile(prev => ({
-                  ...prev,
-                  preferences: { ...prev.preferences, publicProfile: checked as boolean }
-                }))}
+                onCheckedChange={(checked) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    preferences: { ...prev.preferences, publicProfile: checked as boolean },
+                  }))
+                }
               />
             </div>
             <div className="flex items-center justify-between">
@@ -672,10 +787,12 @@ const OnboardingFlow: React.FC = () => {
               </div>
               <Checkbox
                 checked={userProfile.preferences.mentoring}
-                onCheckedChange={(checked) => setUserProfile(prev => ({
-                  ...prev,
-                  preferences: { ...prev.preferences, mentoring: checked as boolean }
-                }))}
+                onCheckedChange={(checked) =>
+                  setUserProfile((prev) => ({
+                    ...prev,
+                    preferences: { ...prev.preferences, mentoring: checked as boolean },
+                  }))
+                }
               />
             </div>
           </CardContent>
@@ -698,11 +815,11 @@ const OnboardingFlow: React.FC = () => {
           </span>
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          Your profile is complete! You're now connected to a global community of makers, 
+          Your profile is complete! You're now connected to a global community of makers,
           innovators, and creators.
         </p>
       </div>
-      
+
       <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-6 max-w-2xl mx-auto">
         <h3 className="text-lg font-semibold text-green-400 mb-3">What's Next?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
@@ -742,7 +859,10 @@ const OnboardingFlow: React.FC = () => {
           <Rocket className="mr-2 h-5 w-5" />
           Explore Dashboard
         </Button>
-        <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-3">
+        <Button
+          variant="outline"
+          className="border-white/30 text-white hover:bg-white/10 px-8 py-3"
+        >
           <Users className="mr-2 h-5 w-5" />
           Find Community
         </Button>
@@ -751,13 +871,55 @@ const OnboardingFlow: React.FC = () => {
   );
 
   const steps: OnboardingStep[] = [
-    { id: 'welcome', title: 'Welcome', description: 'Get started with MakrCave', component: WelcomeStep },
-    { id: 'userType', title: 'Your Role', description: 'Choose your user type', component: UserTypeStep, requiredFields: ['userType'] },
-    { id: 'personalInfo', title: 'Personal Info', description: 'Tell us about yourself', component: PersonalInfoStep, requiredFields: ['firstName', 'lastName', 'email'] },
-    { id: 'interests', title: 'Interests & Skills', description: 'Your passions and abilities', component: InterestsSkillsStep },
-    ...(userProfile.userType === 'admin' ? [{ id: 'makerspace', title: 'Makerspace Setup', description: 'Configure your space', component: MakerspaceSetupStep, requiredFields: ['makerspaceInfo.name', 'makerspaceInfo.location'] }] : []),
-    { id: 'preferences', title: 'Preferences', description: 'Customize your experience', component: PreferencesStep },
-    { id: 'completion', title: 'Complete', description: 'Welcome to the community!', component: CompletionStep }
+    {
+      id: 'welcome',
+      title: 'Welcome',
+      description: 'Get started with MakrCave',
+      component: WelcomeStep,
+    },
+    {
+      id: 'userType',
+      title: 'Your Role',
+      description: 'Choose your user type',
+      component: UserTypeStep,
+      requiredFields: ['userType'],
+    },
+    {
+      id: 'personalInfo',
+      title: 'Personal Info',
+      description: 'Tell us about yourself',
+      component: PersonalInfoStep,
+      requiredFields: ['firstName', 'lastName', 'email'],
+    },
+    {
+      id: 'interests',
+      title: 'Interests & Skills',
+      description: 'Your passions and abilities',
+      component: InterestsSkillsStep,
+    },
+    ...(userProfile.userType === 'admin'
+      ? [
+          {
+            id: 'makerspace',
+            title: 'Makerspace Setup',
+            description: 'Configure your space',
+            component: MakerspaceSetupStep,
+            requiredFields: ['makerspaceInfo.name', 'makerspaceInfo.location'],
+          },
+        ]
+      : []),
+    {
+      id: 'preferences',
+      title: 'Preferences',
+      description: 'Customize your experience',
+      component: PreferencesStep,
+    },
+    {
+      id: 'completion',
+      title: 'Complete',
+      description: 'Welcome to the community!',
+      component: CompletionStep,
+    },
   ];
 
   const currentStepData = steps[currentStep];
@@ -765,29 +927,29 @@ const OnboardingFlow: React.FC = () => {
 
   const canProceed = () => {
     if (!currentStepData.requiredFields) return true;
-    
-    return currentStepData.requiredFields.every(field => {
+
+    return currentStepData.requiredFields.every((field) => {
       const fieldPath = field.split('.');
       let value: any = userProfile;
-      
+
       for (const path of fieldPath) {
         value = value?.[path];
       }
-      
+
       return value && value.toString().trim() !== '';
     });
   };
 
   const handleNext = () => {
     if (currentStep < steps.length - 1 && canProceed()) {
-      setCompletedSteps(prev => new Set([...prev, currentStep]));
-      setCurrentStep(prev => prev + 1);
+      setCompletedSteps((prev) => new Set([...prev, currentStep]));
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -809,7 +971,7 @@ const OnboardingFlow: React.FC = () => {
               Step {currentStep + 1} of {steps.length}
             </Badge>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-white font-medium">{currentStepData.title}</span>
@@ -822,7 +984,9 @@ const OnboardingFlow: React.FC = () => {
         {/* Step Content */}
         <Card className="bg-white/10 backdrop-blur-md border-white/20 mb-8">
           <CardContent className="p-8">
-            <div className={`transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div
+              className={`transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            >
               <CurrentStepComponent />
             </div>
           </CardContent>
@@ -845,13 +1009,13 @@ const OnboardingFlow: React.FC = () => {
               <div
                 key={idx}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  idx === currentStep 
-                    ? 'bg-blue-500 scale-125' 
+                  idx === currentStep
+                    ? 'bg-blue-500 scale-125'
                     : completedSteps.has(idx)
-                    ? 'bg-green-500'
-                    : idx < currentStep 
-                    ? 'bg-gray-400' 
-                    : 'bg-gray-600'
+                      ? 'bg-green-500'
+                      : idx < currentStep
+                        ? 'bg-gray-400'
+                        : 'bg-gray-600'
                 }`}
               />
             ))}
@@ -859,7 +1023,7 @@ const OnboardingFlow: React.FC = () => {
 
           {currentStep === steps.length - 1 ? (
             <Button
-              onClick={() => window.location.href = '/dashboard'}
+              onClick={() => (window.location.href = '/dashboard')}
               className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
             >
               <Rocket className="mr-2 h-4 w-4" />

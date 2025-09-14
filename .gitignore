@@ -135,3 +135,4 @@ deploy-key*
 # Local development
 .env.local
 docker-compose.override.yml
+_waste_archive/

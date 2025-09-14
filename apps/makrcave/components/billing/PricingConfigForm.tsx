@@ -15,92 +15,92 @@ import {
   Zap,
   Wrench,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
 const PricingConfigForm: React.FC = () => {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
-  
+
   const [pricingConfig, setPricingConfig] = useState({
     // Subscription Plans
     basicPlan: {
       monthlyPrice: 29,
       annualPrice: 290,
-      enabled: true
+      enabled: true,
     },
     professionalPlan: {
       monthlyPrice: 99,
       annualPrice: 990,
-      enabled: true
+      enabled: true,
     },
     teamPlan: {
       monthlyPrice: 199,
       annualPrice: 1990,
-      enabled: true
+      enabled: true,
     },
-    
+
     // Credit System
-    creditConversionRate: 41.50, // 1 credit = ₹41.50
+    creditConversionRate: 41.5, // 1 credit = ₹41.50
     minimumCreditPurchase: 10,
     creditBonusThresholds: [
       { amount: 100, bonus: 10 },
       { amount: 250, bonus: 25 },
       { amount: 500, bonus: 75 },
-      { amount: 1000, bonus: 200 }
+      { amount: 1000, bonus: 200 },
     ],
-    
+
     // Equipment Usage (Future)
     equipmentPricing: {
-      '3d_printer': { pricePerHour: 5.00, enabled: false },
-      'laser_cutter': { pricePerHour: 8.00, enabled: false },
-      'cnc_mill': { pricePerHour: 12.00, enabled: false },
-      'vinyl_cutter': { pricePerHour: 3.00, enabled: false }
+      '3d_printer': { pricePerHour: 5.0, enabled: false },
+      laser_cutter: { pricePerHour: 8.0, enabled: false },
+      cnc_mill: { pricePerHour: 12.0, enabled: false },
+      vinyl_cutter: { pricePerHour: 3.0, enabled: false },
     },
-    
+
     // Service Pricing
     servicePricing: {
-      '3d_printing': { basePrice: 10.00, pricePerGram: 0.20, enabled: true },
-      'laser_cutting': { basePrice: 15.00, pricePerMinute: 0.50, enabled: true },
-      'consulting': { pricePerHour: 75.00, enabled: true }
+      '3d_printing': { basePrice: 10.0, pricePerGram: 0.2, enabled: true },
+      laser_cutting: { basePrice: 15.0, pricePerMinute: 0.5, enabled: true },
+      consulting: { pricePerHour: 75.0, enabled: true },
     },
-    
+
     // Global Settings
     taxRate: 0.18, // 18% default
     currency: 'USD',
     paymentGateways: {
       stripe: { enabled: true, feeRate: 0.029 },
       razorpay: { enabled: true, feeRate: 0.025 },
-      paypal: { enabled: false, feeRate: 0.035 }
+      paypal: { enabled: false, feeRate: 0.035 },
     },
-    
+
     // Discounts & Promotions
-    studentDiscount: { rate: 0.20, enabled: true },
-    annualDiscount: { rate: 0.20, enabled: true },
-    bulkCreditDiscount: { threshold: 500, rate: 0.15, enabled: true }
+    studentDiscount: { rate: 0.2, enabled: true },
+    annualDiscount: { rate: 0.2, enabled: true },
+    bulkCreditDiscount: { threshold: 500, rate: 0.15, enabled: true },
   });
 
   const handleInputChange = (section: string, field: string, value: any) => {
-    setPricingConfig(prev => ({
+    setPricingConfig((prev) => ({
       ...prev,
       [section]: {
         ...prev[section as keyof typeof prev],
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
   const handleNestedChange = (section: string, subsection: string, field: string, value: any) => {
-    setPricingConfig(prev => ({
+    setPricingConfig((prev) => ({
       ...prev,
       [section]: {
         ...prev[section as keyof typeof prev],
         [subsection]: {
           ...(prev[section as keyof typeof prev] as any)[subsection],
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
@@ -108,17 +108,17 @@ const PricingConfigForm: React.FC = () => {
     setSaving(true);
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       toast({
-        title: "Pricing configuration updated",
-        description: "All pricing changes have been applied successfully"
+        title: 'Pricing configuration updated',
+        description: 'All pricing changes have been applied successfully',
       });
     } catch (error) {
       toast({
-        title: "Error updating pricing",
-        description: "Please try again later",
-        variant: "destructive"
+        title: 'Error updating pricing',
+        description: 'Please try again later',
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -127,17 +127,17 @@ const PricingConfigForm: React.FC = () => {
 
   const validatePricing = () => {
     const warnings = [];
-    
+
     // Check for extremely low prices
-    if (pricingConfig.creditConversionRate < 0.10) {
+    if (pricingConfig.creditConversionRate < 0.1) {
       warnings.push('Credit conversion rate is very low');
     }
-    
+
     // Check for reasonable subscription pricing
     if (pricingConfig.basicPlan.monthlyPrice > pricingConfig.professionalPlan.monthlyPrice) {
       warnings.push('Basic plan is more expensive than Professional plan');
     }
-    
+
     return warnings;
   };
 
@@ -213,7 +213,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.basicPlan.monthlyPrice}
-                onChange={(e) => handleInputChange('basicPlan', 'monthlyPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('basicPlan', 'monthlyPrice', parseFloat(e.target.value))
+                }
               />
             </div>
             <div>
@@ -223,7 +225,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.basicPlan.annualPrice}
-                onChange={(e) => handleInputChange('basicPlan', 'annualPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('basicPlan', 'annualPrice', parseFloat(e.target.value))
+                }
               />
             </div>
           </div>
@@ -235,7 +239,9 @@ const PricingConfigForm: React.FC = () => {
               <div className="flex items-center gap-2 mt-1">
                 <Switch
                   checked={pricingConfig.professionalPlan.enabled}
-                  onCheckedChange={(checked) => handleInputChange('professionalPlan', 'enabled', checked)}
+                  onCheckedChange={(checked) =>
+                    handleInputChange('professionalPlan', 'enabled', checked)
+                  }
                 />
                 <span className="text-sm text-gray-600">
                   {pricingConfig.professionalPlan.enabled ? 'Enabled' : 'Disabled'}
@@ -250,7 +256,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.professionalPlan.monthlyPrice}
-                onChange={(e) => handleInputChange('professionalPlan', 'monthlyPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('professionalPlan', 'monthlyPrice', parseFloat(e.target.value))
+                }
               />
             </div>
             <div>
@@ -260,7 +268,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.professionalPlan.annualPrice}
-                onChange={(e) => handleInputChange('professionalPlan', 'annualPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('professionalPlan', 'annualPrice', parseFloat(e.target.value))
+                }
               />
             </div>
           </div>
@@ -286,7 +296,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.teamPlan.monthlyPrice}
-                onChange={(e) => handleInputChange('teamPlan', 'monthlyPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('teamPlan', 'monthlyPrice', parseFloat(e.target.value))
+                }
               />
             </div>
             <div>
@@ -296,7 +308,9 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.teamPlan.annualPrice}
-                onChange={(e) => handleInputChange('teamPlan', 'annualPrice', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleInputChange('teamPlan', 'annualPrice', parseFloat(e.target.value))
+                }
               />
             </div>
           </div>
@@ -320,7 +334,12 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.creditConversionRate}
-                onChange={(e) => setPricingConfig(prev => ({ ...prev, creditConversionRate: parseFloat(e.target.value) }))}
+                onChange={(e) =>
+                  setPricingConfig((prev) => ({
+                    ...prev,
+                    creditConversionRate: parseFloat(e.target.value),
+                  }))
+                }
               />
               <p className="text-sm text-gray-600 mt-1">
                 1 credit = ${pricingConfig.creditConversionRate}
@@ -332,7 +351,12 @@ const PricingConfigForm: React.FC = () => {
                 id="min-purchase"
                 type="number"
                 value={pricingConfig.minimumCreditPurchase}
-                onChange={(e) => setPricingConfig(prev => ({ ...prev, minimumCreditPurchase: parseInt(e.target.value) }))}
+                onChange={(e) =>
+                  setPricingConfig((prev) => ({
+                    ...prev,
+                    minimumCreditPurchase: parseInt(e.target.value),
+                  }))
+                }
               />
             </div>
           </div>
@@ -351,13 +375,18 @@ const PricingConfigForm: React.FC = () => {
         <CardContent>
           <div className="space-y-4">
             {Object.entries(pricingConfig.equipmentPricing).map(([equipment, config]) => (
-              <div key={equipment} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 border rounded-lg">
+              <div
+                key={equipment}
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 border rounded-lg"
+              >
                 <div>
                   <Label className="capitalize">{equipment.replace('_', ' ')}</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Switch
                       checked={config.enabled}
-                      onCheckedChange={(checked) => handleNestedChange('equipmentPricing', equipment, 'enabled', checked)}
+                      onCheckedChange={(checked) =>
+                        handleNestedChange('equipmentPricing', equipment, 'enabled', checked)
+                      }
                     />
                     <span className="text-sm text-gray-600">
                       {config.enabled ? 'Enabled' : 'Disabled'}
@@ -370,7 +399,14 @@ const PricingConfigForm: React.FC = () => {
                     type="number"
                     step="0.01"
                     value={config.pricePerHour}
-                    onChange={(e) => handleNestedChange('equipmentPricing', equipment, 'pricePerHour', parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        'equipmentPricing',
+                        equipment,
+                        'pricePerHour',
+                        parseFloat(e.target.value),
+                      )
+                    }
                     disabled={!config.enabled}
                   />
                 </div>
@@ -402,12 +438,22 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.taxRate * 100}
-                onChange={(e) => setPricingConfig(prev => ({ ...prev, taxRate: parseFloat(e.target.value) / 100 }))}
+                onChange={(e) =>
+                  setPricingConfig((prev) => ({
+                    ...prev,
+                    taxRate: parseFloat(e.target.value) / 100,
+                  }))
+                }
               />
             </div>
             <div>
               <Label htmlFor="currency">Currency</Label>
-              <Select value={pricingConfig.currency} onValueChange={(value) => setPricingConfig(prev => ({ ...prev, currency: value }))}>
+              <Select
+                value={pricingConfig.currency}
+                onValueChange={(value) =>
+                  setPricingConfig((prev) => ({ ...prev, currency: value }))
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -426,7 +472,14 @@ const PricingConfigForm: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={pricingConfig.studentDiscount.rate * 100}
-                onChange={(e) => handleNestedChange('studentDiscount', 'rate', 'rate', parseFloat(e.target.value) / 100)}
+                onChange={(e) =>
+                  handleNestedChange(
+                    'studentDiscount',
+                    'rate',
+                    'rate',
+                    parseFloat(e.target.value) / 100,
+                  )
+                }
               />
             </div>
           </div>
@@ -441,13 +494,18 @@ const PricingConfigForm: React.FC = () => {
         <CardContent>
           <div className="space-y-4">
             {Object.entries(pricingConfig.paymentGateways).map(([gateway, config]) => (
-              <div key={gateway} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 border rounded-lg">
+              <div
+                key={gateway}
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 border rounded-lg"
+              >
                 <div>
                   <Label className="capitalize">{gateway}</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Switch
                       checked={config.enabled}
-                      onCheckedChange={(checked) => handleNestedChange('paymentGateways', gateway, 'enabled', checked)}
+                      onCheckedChange={(checked) =>
+                        handleNestedChange('paymentGateways', gateway, 'enabled', checked)
+                      }
                     />
                     <span className="text-sm text-gray-600">
                       {config.enabled ? 'Enabled' : 'Disabled'}
@@ -460,7 +518,14 @@ const PricingConfigForm: React.FC = () => {
                     type="number"
                     step="0.001"
                     value={config.feeRate * 100}
-                    onChange={(e) => handleNestedChange('paymentGateways', gateway, 'feeRate', parseFloat(e.target.value) / 100)}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        'paymentGateways',
+                        gateway,
+                        'feeRate',
+                        parseFloat(e.target.value) / 100,
+                      )
+                    }
                     disabled={!config.enabled}
                   />
                 </div>

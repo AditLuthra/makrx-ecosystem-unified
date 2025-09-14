@@ -50,13 +50,9 @@ export default function Speakers({ content, variant = 'grid', theme }: SpeakersP
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            {content.title}
-          </h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4">{content.title}</h2>
           {content.description && (
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {content.description}
-            </p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{content.description}</p>
           )}
         </div>
 
@@ -76,7 +72,10 @@ export default function Speakers({ content, variant = 'grid', theme }: SpeakersP
                   ) : (
                     <div className="w-24 h-24 rounded-full mx-auto bg-muted flex items-center justify-center">
                       <span className="text-2xl font-bold text-muted-foreground">
-                        {speaker.name.split(' ').map(n => n[0]).join('')}
+                        {speaker.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
                       </span>
                     </div>
                   )}
@@ -84,23 +83,15 @@ export default function Speakers({ content, variant = 'grid', theme }: SpeakersP
 
                 {/* Name and Title */}
                 <div className="text-center mb-4">
-                  <h3 className="text-lg font-bold text-foreground mb-1">
-                    {speaker.name}
-                  </h3>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {speaker.title}
-                  </p>
+                  <h3 className="text-lg font-bold text-foreground mb-1">{speaker.name}</h3>
+                  <p className="text-sm font-medium text-muted-foreground">{speaker.title}</p>
                   {speaker.company && (
-                    <p className="text-sm text-muted-foreground">
-                      {speaker.company}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{speaker.company}</p>
                   )}
                 </div>
 
                 {/* Bio */}
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                  {speaker.bio}
-                </p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{speaker.bio}</p>
 
                 {/* Topics */}
                 {speaker.topics && speaker.topics.length > 0 && (
@@ -191,12 +182,8 @@ export default function Speakers({ content, variant = 'grid', theme }: SpeakersP
           <div className="text-center py-12">
             <div className="text-muted-foreground">
               <div className="text-4xl mb-4">🎤</div>
-              <h3 className="text-lg font-medium mb-2">
-                Speakers Coming Soon
-              </h3>
-              <p className="text-sm">
-                We're finalizing our amazing lineup. Check back soon!
-              </p>
+              <h3 className="text-lg font-medium mb-2">Speakers Coming Soon</h3>
+              <p className="text-sm">We're finalizing our amazing lineup. Check back soon!</p>
             </div>
           </div>
         )}

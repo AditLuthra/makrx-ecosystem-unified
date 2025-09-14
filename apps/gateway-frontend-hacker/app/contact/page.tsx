@@ -1,13 +1,19 @@
-"use client";
-import { useState } from "react";
-import Link from "next/link";
+'use client';
+import { useState } from 'react';
+import Link from 'next/link';
 import {
-  Mail, Phone, MapPin, Clock, CheckCircle,
-  Building2, HelpCircle, MessageSquare, ArrowRight
-} from "lucide-react";
-import { ThreeBackground } from "@/components/ThreeBackground";
-import { SEOStructuredData } from "@/components/SEOStructuredData";
-
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  CheckCircle,
+  Building2,
+  HelpCircle,
+  MessageSquare,
+  ArrowRight,
+} from 'lucide-react';
+import { ThreeBackground } from '@/components/ThreeBackground';
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 interface ContactCardProps {
   icon: React.ReactNode;
@@ -24,7 +30,10 @@ const ContactCard = ({ icon, title, description, contact, href }: ContactCardPro
     </div>
     <h3 className="text-xl font-bold text-gradient-cyberpunk mb-3 font-mono">{title}</h3>
     <p className="text-dark-text-secondary mb-4 leading-relaxed font-mono">{description}</p>
-    <a href={href} className="text-makr-blue font-semibold hover:text-makr-yellow transition-colors font-mono">
+    <a
+      href={href}
+      className="text-makr-blue font-semibold hover:text-makr-yellow transition-colors font-mono"
+    >
       {contact}
     </a>
   </div>
@@ -44,10 +53,22 @@ const FAQItem = ({ question, answer }: FAQItemProps) => {
         className="w-full px-6 py-4 text-left hover:bg-makr-blue/5 transition-colors focus:outline-none focus:ring-2 focus:ring-makr-blue/20"
       >
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gradient-cyberpunk pr-8 font-mono">{question}</h3>
-          <div className={`transform transition-transform ${isOpen ? "rotate-180" : ""}`}>
-            <svg className="w-5 h-5 text-makr-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <h3 className="text-lg font-semibold text-gradient-cyberpunk pr-8 font-mono">
+            {question}
+          </h3>
+          <div className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+            <svg
+              className="w-5 h-5 text-makr-blue"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
@@ -63,18 +84,18 @@ const FAQItem = ({ question, answer }: FAQItemProps) => {
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    category: "",
-    message: "",
-    priority: "normal",
+    name: '',
+    email: '',
+    subject: '',
+    category: '',
+    message: '',
+    priority: 'normal',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -89,43 +110,46 @@ export default function ContactPage() {
 
   const faqs = [
     {
-      question: "How do I get access to a makerspace?",
+      question: 'How do I get access to a makerspace?',
       answer:
-        "You can browse available makerspaces on our MakrCave platform, check their schedules, and book time slots directly. Most spaces offer day passes, monthly memberships, or project-based access.",
+        'You can browse available makerspaces on our MakrCave platform, check their schedules, and book time slots directly. Most spaces offer day passes, monthly memberships, or project-based access.',
     },
     {
-      question: "What equipment is available in makerspaces?",
+      question: 'What equipment is available in makerspaces?',
       answer:
-        "Our makerspaces are equipped with 3D printers, laser cutters, CNC machines, electronics workbenches, wood workshops, and more. Each space has a detailed equipment list available on their profile page.",
+        'Our makerspaces are equipped with 3D printers, laser cutters, CNC machines, electronics workbenches, wood workshops, and more. Each space has a detailed equipment list available on their profile page.',
     },
     {
-      question: "Do you offer training and workshops?",
+      question: 'Do you offer training and workshops?',
       answer:
-        "Yes! We have comprehensive learning programs including hands-on workshops, online courses, and certification programs for all skill levels from beginner to advanced.",
+        'Yes! We have comprehensive learning programs including hands-on workshops, online courses, and certification programs for all skill levels from beginner to advanced.',
     },
     {
-      question: "How does the 3D printing service work?",
+      question: 'How does the 3D printing service work?',
       answer:
         "Upload your design file, get an instant quote, choose materials and quality settings, then place your order. We'll match you with the best provider in our network and handle everything from printing to delivery.",
     },
     {
-      question: "What safety measures are in place?",
+      question: 'What safety measures are in place?',
       answer:
-        "All makerspaces follow strict safety protocols including equipment training requirements, protective gear provision, emergency procedures, and certified operator supervision for high-risk equipment.",
+        'All makerspaces follow strict safety protocols including equipment training requirements, protective gear provision, emergency procedures, and certified operator supervision for high-risk equipment.',
     },
     {
-      question: "Can I host events or workshops at makerspaces?",
+      question: 'Can I host events or workshops at makerspaces?',
       answer:
-        "Absolutely! Many of our partner makerspaces offer event hosting services. Contact the specific makerspace or reach out to our team to discuss your requirements and availability.",
+        'Absolutely! Many of our partner makerspaces offer event hosting services. Contact the specific makerspace or reach out to our team to discuss your requirements and availability.',
     },
   ];
 
   return (
     <div className="min-h-screen bg-dark-bg-primary">
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Contact",
-        url: "https://makrx.org/contact"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Contact',
+          url: 'https://makrx.org/contact',
+        }}
+      />
       <ThreeBackground />
 
       <main className="relative z-10">
@@ -136,9 +160,12 @@ export default function ContactPage() {
               <MessageSquare className="w-4 h-4 mr-2" />
               Contact Us
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gradient-cyberpunk mb-6 font-mono">Get in Touch</h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+              Get in Touch
+            </h1>
             <p className="text-xl md:text-2xl text-dark-text-secondary mb-8 max-w-3xl mx-auto font-mono">
-              Have questions? Need support? Want to partner with us? We're here to help you succeed in your maker journey.
+              Have questions? Need support? Want to partner with us? We're here to help you succeed
+              in your maker journey.
             </p>
           </div>
         </section>
@@ -183,7 +210,9 @@ export default function ContactPage() {
         <section className="py-20 bg-dark-bg-primary border-t border-makr-blue/30">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Send Us a Message</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                Send Us a Message
+              </h2>
               <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto font-mono">
                 Fill out the form below and we'll get back to you within 24 hours
               </p>
@@ -192,14 +221,24 @@ export default function ContactPage() {
             {isSubmitted ? (
               <div className="card-cyberpunk p-12 text-center">
                 <CheckCircle className="w-16 h-16 text-terminal-green mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-gradient-cyberpunk mb-4 font-mono">Message Sent!</h3>
+                <h3 className="text-2xl font-bold text-gradient-cyberpunk mb-4 font-mono">
+                  Message Sent!
+                </h3>
                 <p className="text-dark-text-secondary mb-6 font-mono">
-                  Thank you for reaching out. We've received your message and will get back to you within 24 hours.
+                  Thank you for reaching out. We've received your message and will get back to you
+                  within 24 hours.
                 </p>
                 <button
                   onClick={() => {
                     setIsSubmitted(false);
-                    setFormData({ name: "", email: "", subject: "", category: "", message: "", priority: "normal" });
+                    setFormData({
+                      name: '',
+                      email: '',
+                      subject: '',
+                      category: '',
+                      message: '',
+                      priority: 'normal',
+                    });
                   }}
                   className="btn-cyberpunk px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105 font-mono"
                 >
@@ -210,7 +249,12 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="card-cyberpunk p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Full Name *</label>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                    >
+                      Full Name *
+                    </label>
                     <input
                       type="text"
                       id="name"
@@ -223,7 +267,12 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Email Address *</label>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                    >
+                      Email Address *
+                    </label>
                     <input
                       type="email"
                       id="email"
@@ -239,7 +288,12 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label htmlFor="category" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Category *</label>
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                    >
+                      Category *
+                    </label>
                     <select
                       id="category"
                       name="category"
@@ -258,7 +312,12 @@ export default function ContactPage() {
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="priority" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Priority</label>
+                    <label
+                      htmlFor="priority"
+                      className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                    >
+                      Priority
+                    </label>
                     <select
                       id="priority"
                       name="priority"
@@ -274,7 +333,12 @@ export default function ContactPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="subject" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Subject *</label>
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                  >
+                    Subject *
+                  </label>
                   <input
                     type="text"
                     id="subject"
@@ -288,7 +352,12 @@ export default function ContactPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="message" className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono">Message *</label>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-semibold text-dark-text-primary mb-2 font-mono"
+                  >
+                    Message *
+                  </label>
                   <textarea
                     id="message"
                     name="message"
@@ -302,13 +371,15 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-dark-text-muted font-mono">We typically respond within 24 hours.</div>
+                  <div className="text-sm text-dark-text-muted font-mono">
+                    We typically respond within 24 hours.
+                  </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="btn-cyberpunk px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105 font-mono disabled:opacity-60"
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </button>
                 </div>
               </form>
@@ -320,7 +391,9 @@ export default function ContactPage() {
         <section className="py-20 bg-dark-bg-secondary border-t border-makr-blue/30">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Frequently Asked Questions</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                Frequently Asked Questions
+              </h2>
               <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto font-mono">
                 Find quick answers to common questions about MakrX
               </p>
@@ -331,8 +404,13 @@ export default function ContactPage() {
               ))}
             </div>
             <div className="text-center mt-12">
-              <p className="text-dark-text-secondary mb-4 font-mono">Can't find what you're looking for?</p>
-              <Link href="/help" className="inline-flex items-center text-makr-blue font-semibold hover:text-makr-yellow transition-colors font-mono">
+              <p className="text-dark-text-secondary mb-4 font-mono">
+                Can't find what you're looking for?
+              </p>
+              <Link
+                href="/help"
+                className="inline-flex items-center text-makr-blue font-semibold hover:text-makr-yellow transition-colors font-mono"
+              >
                 Visit our Help Center
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
@@ -344,31 +422,63 @@ export default function ContactPage() {
         <section className="py-20 bg-dark-bg-primary border-t border-makr-blue/30">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Visit Our Offices</h2>
-              <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto font-mono">We have offices across major cities in India</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                Visit Our Offices
+              </h2>
+              <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto font-mono">
+                We have offices across major cities in India
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { city: "Bangalore", address: "HSR Layout, Sector 2\nBangalore, Karnataka 560102", phone: "+91 80 4567 8901", email: "bangalore@makrx.org", hours: "Mon-Sat: 9 AM - 8 PM" },
-                { city: "Mumbai", address: "Bandra West, Off SV Road\nMumbai, Maharashtra 400050", phone: "+91 22 4567 8902", email: "mumbai@makrx.org", hours: "Mon-Sat: 9 AM - 8 PM" },
-                { city: "Delhi", address: "Connaught Place\nNew Delhi, Delhi 110001", phone: "+91 11 4567 8903", email: "delhi@makrx.org", hours: "Mon-Sat: 9 AM - 8 PM" },
+                {
+                  city: 'Bangalore',
+                  address: 'HSR Layout, Sector 2\nBangalore, Karnataka 560102',
+                  phone: '+91 80 4567 8901',
+                  email: 'bangalore@makrx.org',
+                  hours: 'Mon-Sat: 9 AM - 8 PM',
+                },
+                {
+                  city: 'Mumbai',
+                  address: 'Bandra West, Off SV Road\nMumbai, Maharashtra 400050',
+                  phone: '+91 22 4567 8902',
+                  email: 'mumbai@makrx.org',
+                  hours: 'Mon-Sat: 9 AM - 8 PM',
+                },
+                {
+                  city: 'Delhi',
+                  address: 'Connaught Place\nNew Delhi, Delhi 110001',
+                  phone: '+91 11 4567 8903',
+                  email: 'delhi@makrx.org',
+                  hours: 'Mon-Sat: 9 AM - 8 PM',
+                },
               ].map((office, index) => (
                 <div key={index} className="card-cyberpunk p-8">
-                  <h3 className="text-2xl font-bold text-gradient-cyberpunk mb-6 font-mono">{office.city}</h3>
+                  <h3 className="text-2xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                    {office.city}
+                  </h3>
                   <div className="space-y-4">
                     <div className="flex items-start">
                       <MapPin className="w-5 h-5 text-makr-blue mr-3 mt-1 flex-shrink-0" />
-                      <p className="text-dark-text-secondary whitespace-pre-line font-mono">{office.address}</p>
+                      <p className="text-dark-text-secondary whitespace-pre-line font-mono">
+                        {office.address}
+                      </p>
                     </div>
                     <div className="flex items-center">
                       <Phone className="w-5 h-5 text-makr-blue mr-3 flex-shrink-0" />
-                      <a href={`tel:${office.phone.replace(/\s/g, "")}`} className="text-dark-text-secondary hover:text-makr-blue transition-colors font-mono">
+                      <a
+                        href={`tel:${office.phone.replace(/\s/g, '')}`}
+                        className="text-dark-text-secondary hover:text-makr-blue transition-colors font-mono"
+                      >
                         {office.phone}
                       </a>
                     </div>
                     <div className="flex items-center">
                       <Mail className="w-5 h-5 text-makr-blue mr-3 flex-shrink-0" />
-                      <a href={`mailto:${office.email}`} className="text-dark-text-secondary hover:text-makr-blue transition-colors font-mono">
+                      <a
+                        href={`mailto:${office.email}`}
+                        className="text-dark-text-secondary hover:text-makr-blue transition-colors font-mono"
+                      >
                         {office.email}
                       </a>
                     </div>

@@ -23,15 +23,28 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '../ui/dropdown-menu';
 
 interface Transaction {
   id: string;
   amount: number;
   currency: string;
-  type: 'membership' | 'credit_purchase' | 'printing_3d' | 'laser_cutting' | 'workshop' | 'materials' | 'refund';
+  type:
+    | 'membership'
+    | 'credit_purchase'
+    | 'printing_3d'
+    | 'laser_cutting'
+    | 'workshop'
+    | 'materials'
+    | 'refund';
   status: 'success' | 'pending' | 'failed' | 'cancelled' | 'refunded';
   description: string;
   gateway: 'razorpay' | 'stripe' | 'credit' | 'bank_transfer';
@@ -63,7 +76,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
   onViewTransaction,
   onDownloadReceipt,
   onRetryPayment,
-  onRefundTransaction
+  onRefundTransaction,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -87,11 +100,11 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       gateway_transaction_id: 'pay_abc123',
       created_at: '2024-01-20T10:30:00Z',
       completed_at: '2024-01-20T10:31:15Z',
-      metadata: { plan_id: 'pro_monthly', user_id: 'user_123' }
+      metadata: { plan_id: 'pro_monthly', user_id: 'user_123' },
     },
     {
       id: 'txn_002',
-      amount: 150.00,
+      amount: 150.0,
       currency: 'INR',
       type: 'credit_purchase',
       status: 'success',
@@ -100,11 +113,11 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       gateway_transaction_id: 'pay_def456',
       created_at: '2024-01-18T14:20:00Z',
       completed_at: '2024-01-18T14:21:05Z',
-      metadata: { credits_purchased: 150 }
+      metadata: { credits_purchased: 150 },
     },
     {
       id: 'txn_003',
-      amount: 45.50,
+      amount: 45.5,
       currency: 'INR',
       type: 'printing_3d',
       status: 'success',
@@ -112,7 +125,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       gateway: 'credit',
       created_at: '2024-01-17T09:15:00Z',
       completed_at: '2024-01-17T09:15:00Z',
-      metadata: { job_id: 'PRT001', credits_used: 45.5 }
+      metadata: { job_id: 'PRT001', credits_used: 45.5 },
     },
     {
       id: 'txn_004',
@@ -123,11 +136,11 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       description: 'Laser Cut Job #LC003',
       gateway: 'razorpay',
       created_at: '2024-01-16T16:45:00Z',
-      failure_reason: 'Insufficient balance in payment method'
+      failure_reason: 'Insufficient balance in payment method',
     },
     {
       id: 'txn_005',
-      amount: 200.00,
+      amount: 200.0,
       currency: 'INR',
       type: 'workshop',
       status: 'pending',
@@ -135,11 +148,11 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       gateway: 'razorpay',
       gateway_transaction_id: 'pay_ghi789',
       created_at: '2024-01-15T11:00:00Z',
-      metadata: { workshop_id: 'ws_arduino_101' }
+      metadata: { workshop_id: 'ws_arduino_101' },
     },
     {
       id: 'txn_006',
-      amount: -50.00,
+      amount: -50.0,
       currency: 'INR',
       type: 'refund',
       status: 'success',
@@ -147,8 +160,8 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       gateway: 'razorpay',
       created_at: '2024-01-14T13:30:00Z',
       completed_at: '2024-01-14T13:35:00Z',
-      metadata: { original_transaction: 'txn_xyz' }
-    }
+      metadata: { original_transaction: 'txn_xyz' },
+    },
   ];
 
   const data = transactions.length > 0 ? transactions : mockTransactions;
@@ -178,9 +191,12 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
       cancelled: 'bg-gray-100 text-gray-800',
       refunded: 'bg-blue-100 text-blue-800',
     };
-    
+
     return (
-      <Badge variant="outline" className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}>
+      <Badge
+        variant="outline"
+        className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -213,10 +229,12 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
     const symbol = transaction.currency === 'INR' ? '₹' : '$';
     const sign = isNegative ? '-' : '+';
     const colorClass = isNegative ? 'text-red-600' : 'text-green-600';
-    
+
     return (
       <span className={`font-medium ${colorClass}`}>
-        {sign}{symbol}{amount.toFixed(2)}
+        {sign}
+        {symbol}
+        {amount.toFixed(2)}
       </span>
     );
   };
@@ -228,28 +246,29 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return 'Invalid date';
     }
   };
 
-  const filteredTransactions = data.filter(transaction => {
-    const matchesSearch = transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         transaction.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         transaction.gateway_transaction_id?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredTransactions = data.filter((transaction) => {
+    const matchesSearch =
+      transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.gateway_transaction_id?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
     const matchesType = typeFilter === 'all' || transaction.type === typeFilter;
     const matchesGateway = gatewayFilter === 'all' || transaction.gateway === gatewayFilter;
-    
+
     // Date filter logic
     let matchesDate = true;
     if (dateFilter !== 'all') {
       const transactionDate = new Date(transaction.created_at);
       const now = new Date();
       const daysDiff = Math.floor((now.getTime() - transactionDate.getTime()) / (1000 * 3600 * 24));
-      
+
       switch (dateFilter) {
         case 'today':
           matchesDate = daysDiff === 0;
@@ -265,13 +284,13 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
           break;
       }
     }
-    
+
     return matchesSearch && matchesStatus && matchesType && matchesGateway && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredTransactions.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
-  const paginatedTransactions = showPagination 
+  const paginatedTransactions = showPagination
     ? filteredTransactions.slice(startIndex, startIndex + pageSize)
     : filteredTransactions;
 
@@ -298,7 +317,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           {/* Search and Filters */}
           {(showSearch || showFilters) && (
@@ -314,7 +333,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                   />
                 </div>
               )}
-              
+
               {showFilters && (
                 <div className="flex flex-wrap gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -330,7 +349,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                       <SelectItem value="refunded">Refunded</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={typeFilter} onValueChange={setTypeFilter}>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Type" />
@@ -346,7 +365,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                       <SelectItem value="refund">Refund</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={gatewayFilter} onValueChange={setGatewayFilter}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Gateway" />
@@ -359,7 +378,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                       <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={dateFilter} onValueChange={setDateFilter}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Date" />
@@ -387,7 +406,10 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
           ) : (
             <div className="space-y-4">
               {paginatedTransactions.map((transaction) => (
-                <div key={transaction.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div
+                  key={transaction.id}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       {getTypeIcon(transaction.type)}
@@ -402,7 +424,9 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                           {transaction.gateway_transaction_id && (
                             <>
                               <span>•</span>
-                              <span className="font-mono text-xs">{transaction.gateway_transaction_id}</span>
+                              <span className="font-mono text-xs">
+                                {transaction.gateway_transaction_id}
+                              </span>
                             </>
                           )}
                         </div>
@@ -411,7 +435,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-lg">{getAmountDisplay(transaction)}</p>
@@ -420,7 +444,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                           {getStatusBadge(transaction.status)}
                         </div>
                       </div>
-                      
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -447,7 +471,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                           {transaction.status === 'success' && transaction.type !== 'refund' && (
                             <>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => onRefundTransaction?.(transaction.id)}
                                 className="text-red-600"
                               >
@@ -469,13 +493,15 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
           {showPagination && totalPages > 1 && (
             <div className="flex items-center justify-between mt-6">
               <p className="text-sm text-gray-600">
-                Showing {startIndex + 1} to {Math.min(startIndex + pageSize, filteredTransactions.length)} of {filteredTransactions.length} transactions
+                Showing {startIndex + 1} to{' '}
+                {Math.min(startIndex + pageSize, filteredTransactions.length)} of{' '}
+                {filteredTransactions.length} transactions
               </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -486,7 +512,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -506,7 +532,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
               Transaction Details
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedTransaction && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -536,7 +562,9 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                 {selectedTransaction.gateway_transaction_id && (
                   <div>
                     <p className="text-sm font-medium text-gray-600">Gateway ID</p>
-                    <p className="font-mono text-sm">{selectedTransaction.gateway_transaction_id}</p>
+                    <p className="font-mono text-sm">
+                      {selectedTransaction.gateway_transaction_id}
+                    </p>
                   </div>
                 )}
                 <div>
@@ -550,7 +578,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                   </div>
                 )}
               </div>
-              
+
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-2">Description</p>
                 <p>{selectedTransaction.description}</p>
@@ -563,19 +591,20 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
                 </div>
               )}
 
-              {selectedTransaction.metadata && Object.keys(selectedTransaction.metadata).length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Additional Details</p>
-                  <div className="bg-gray-50 rounded-md p-3">
-                    {Object.entries(selectedTransaction.metadata).map(([key, value]) => (
-                      <div key={key} className="flex justify-between text-sm">
-                        <span className="text-gray-600 capitalize">{key.replace('_', ' ')}:</span>
-                        <span>{String(value)}</span>
-                      </div>
-                    ))}
+              {selectedTransaction.metadata &&
+                Object.keys(selectedTransaction.metadata).length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-2">Additional Details</p>
+                    <div className="bg-gray-50 rounded-md p-3">
+                      {Object.entries(selectedTransaction.metadata).map(([key, value]) => (
+                        <div key={key} className="flex justify-between text-sm">
+                          <span className="text-gray-600 capitalize">{key.replace('_', ' ')}:</span>
+                          <span>{String(value)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               <div className="flex justify-end space-x-2 pt-4">
                 <Button variant="outline" onClick={() => setShowDetailsModal(false)}>

@@ -5,14 +5,11 @@ const checkInSchema = z.object({
   qrCode: z.string().optional(),
   staffId: z.string().min(1),
   notes: z.string().optional(),
-  location: z.string().optional()
+  location: z.string().optional(),
 });
 
 // POST /api/registrations/[id]/check-in - Check in a participant
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -32,39 +29,30 @@ export async function POST(
       qrCode: 'QR_ABC123',
       participantInfo: {
         name: 'John Smith',
-        email: 'john.smith@example.com'
+        email: 'john.smith@example.com',
       },
-      checkedInAt: null
+      checkedInAt: null,
     };
 
     if (!mockRegistration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     if (mockRegistration.status !== 'confirmed') {
-      return NextResponse.json(
-        { error: 'Registration is not confirmed' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Registration is not confirmed' }, { status: 400 });
     }
 
     if (mockRegistration.checkedInAt) {
       return NextResponse.json({
         message: 'Participant already checked in',
         registration: mockRegistration,
-        checkedInAt: mockRegistration.checkedInAt
+        checkedInAt: mockRegistration.checkedInAt,
       });
     }
 
     // Verify QR code if provided
     if (validatedData.qrCode && validatedData.qrCode !== mockRegistration.qrCode) {
-      return NextResponse.json(
-        { error: 'Invalid QR code' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid QR code' }, { status: 400 });
     }
 
     // Mock check-in update - replace with actual database update
@@ -75,8 +63,8 @@ export async function POST(
         staffId: validatedData.staffId,
         notes: validatedData.notes,
         location: validatedData.location,
-        method: validatedData.qrCode ? 'qr_scan' : 'manual'
-      }
+        method: validatedData.qrCode ? 'qr_scan' : 'manual',
+      },
     };
 
     // TODO: Log check-in event for analytics
@@ -88,38 +76,31 @@ export async function POST(
       registration: checkedInRegistration,
       participant: {
         name: mockRegistration.participantInfo.name,
-        email: mockRegistration.participantInfo.email
+        email: mockRegistration.participantInfo.email,
       },
       event: {
         title: mockRegistration.subEventTitle,
-        slug: mockRegistration.subEventSlug
-      }
+        slug: mockRegistration.subEventSlug,
+      },
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error processing check-in:', error);
-    return NextResponse.json(
-      { error: 'Failed to process check-in' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process check-in' }, { status: 500 });
   }
 }
 
 // GET /api/registrations/[id]/check-in - Get check-in status
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -128,7 +109,7 @@ export async function GET(
       id,
       participantInfo: {
         name: 'John Smith',
-        email: 'john.smith@example.com'
+        email: 'john.smith@example.com',
       },
       subEventTitle: 'Autonomous Robot Competition',
       status: 'confirmed',
@@ -137,27 +118,20 @@ export async function GET(
         staffId: 'staff_456',
         staffName: 'Alice Johnson',
         location: 'Main Entrance',
-        method: 'qr_scan'
-      }
+        method: 'qr_scan',
+      },
     };
 
     if (!mockRegistration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     return NextResponse.json({
       registration: mockRegistration,
-      isCheckedIn: !!mockRegistration.checkedInAt
+      isCheckedIn: !!mockRegistration.checkedInAt,
     });
-
   } catch (error) {
     console.error('Error fetching check-in status:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch check-in status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch check-in status' }, { status: 500 });
   }
 }

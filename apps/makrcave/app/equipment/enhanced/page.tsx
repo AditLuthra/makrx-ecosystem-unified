@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -6,7 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Wrench,
   Plus,
@@ -25,7 +31,7 @@ import {
   Star,
   BarChart3,
   TrendingUp,
-  Zap
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import EnhancedReservationSystem from '@/components/EnhancedReservationSystem';
@@ -129,7 +135,7 @@ const EnhancedEquipment: React.FC = () => {
       category: 'printer_3d',
       status: 'available',
       location: 'Station A1',
-      hourly_rate: 25.00,
+      hourly_rate: 25.0,
       requires_certification: true,
       certification_required: '3D Printing Safety',
       total_usage_hours: 247.5,
@@ -138,7 +144,7 @@ const EnhancedEquipment: React.FC = () => {
       manufacturer: 'Ultimaker',
       model: 'S3',
       description: 'High-precision FDM 3D printer perfect for prototyping',
-      image_url: '/images/ultimaker-s3.jpg'
+      image_url: '/images/ultimaker-s3.jpg',
     },
     {
       id: 'eq-2',
@@ -147,7 +153,7 @@ const EnhancedEquipment: React.FC = () => {
       category: 'laser_cutter',
       status: 'in_use',
       location: 'Station B1',
-      hourly_rate: 35.00,
+      hourly_rate: 35.0,
       requires_certification: true,
       certification_required: 'Laser Safety Certification',
       total_usage_hours: 156.2,
@@ -155,7 +161,7 @@ const EnhancedEquipment: React.FC = () => {
       average_rating: 4.8,
       manufacturer: 'Glowforge',
       model: 'Pro',
-      description: 'Precision laser cutter for wood, acrylic, and fabric'
+      description: 'Precision laser cutter for wood, acrylic, and fabric',
     },
     {
       id: 'eq-3',
@@ -164,7 +170,7 @@ const EnhancedEquipment: React.FC = () => {
       category: 'cnc_machine',
       status: 'under_maintenance',
       location: 'Station C1',
-      hourly_rate: 45.00,
+      hourly_rate: 45.0,
       requires_certification: true,
       certification_required: 'CNC Operation Certificate',
       total_usage_hours: 89.3,
@@ -172,26 +178,27 @@ const EnhancedEquipment: React.FC = () => {
       average_rating: 4.2,
       manufacturer: 'Carbide 3D',
       model: 'Shapeoko 4',
-      description: 'CNC machine for precision cutting and carving'
-    }
+      description: 'CNC machine for precision cutting and carving',
+    },
   ];
 
   const calculateMockStats = (): EquipmentStats => {
     const mockEquip = getMockEquipment();
     return {
       total_equipment: mockEquip.length,
-      available_equipment: mockEquip.filter(eq => eq.status === 'available').length,
-      in_use_equipment: mockEquip.filter(eq => eq.status === 'in_use').length,
-      maintenance_equipment: mockEquip.filter(eq => eq.status === 'under_maintenance').length,
+      available_equipment: mockEquip.filter((eq) => eq.status === 'available').length,
+      in_use_equipment: mockEquip.filter((eq) => eq.status === 'in_use').length,
+      maintenance_equipment: mockEquip.filter((eq) => eq.status === 'under_maintenance').length,
       total_reservations_today: 12,
       utilization_rate: 68.5,
-      revenue_today: 425.50,
-      avg_reservation_duration: 2.8
+      revenue_today: 425.5,
+      avg_reservation_duration: 2.8,
     };
   };
 
-  const filteredEquipment = equipment.filter(item => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredEquipment = equipment.filter((item) => {
+    const matchesSearch =
+      searchTerm === '' ||
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.equipment_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.manufacturer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -205,21 +212,31 @@ const EnhancedEquipment: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_use': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'under_maintenance': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'offline': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'available':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_use':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'under_maintenance':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'offline':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'available': return <CheckCircle className="h-4 w-4" />;
-      case 'in_use': return <Clock className="h-4 w-4" />;
-      case 'under_maintenance': return <Wrench className="h-4 w-4" />;
-      case 'offline': return <AlertTriangle className="h-4 w-4" />;
-      default: return <CheckCircle className="h-4 w-4" />;
+      case 'available':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'in_use':
+        return <Clock className="h-4 w-4" />;
+      case 'under_maintenance':
+        return <Wrench className="h-4 w-4" />;
+      case 'offline':
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <CheckCircle className="h-4 w-4" />;
     }
   };
 
@@ -230,7 +247,7 @@ const EnhancedEquipment: React.FC = () => {
     { value: 'cnc_machine', label: 'CNC Machines' },
     { value: 'testing_tool', label: 'Testing Tools' },
     { value: 'soldering_station', label: 'Soldering Stations' },
-    { value: 'workstation', label: 'Workstations' }
+    { value: 'workstation', label: 'Workstations' },
   ];
 
   const statuses = [
@@ -238,7 +255,7 @@ const EnhancedEquipment: React.FC = () => {
     { value: 'available', label: 'Available' },
     { value: 'in_use', label: 'In Use' },
     { value: 'under_maintenance', label: 'Maintenance' },
-    { value: 'offline', label: 'Offline' }
+    { value: 'offline', label: 'Offline' },
   ];
 
   if (loading) {
@@ -261,7 +278,7 @@ const EnhancedEquipment: React.FC = () => {
             Comprehensive equipment reservation system with cost rules and skill gating
           </p>
         </div>
-        
+
         {canManageEquipment && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -292,7 +309,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Utilization Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.utilization_rate.toFixed(1)}%</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.utilization_rate.toFixed(1)}%
+                  </p>
                 </div>
                 <div className="p-2 bg-green-100 rounded-lg">
                   <TrendingUp className="h-6 w-6 text-green-600" />
@@ -306,7 +325,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Today's Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">${stats.revenue_today.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${stats.revenue_today.toFixed(2)}
+                  </p>
                 </div>
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <DollarSign className="h-6 w-6 text-purple-600" />
@@ -320,7 +341,9 @@ const EnhancedEquipment: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Reservations Today</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total_reservations_today}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.total_reservations_today}
+                  </p>
                 </div>
                 <div className="p-2 bg-orange-100 rounded-lg">
                   <Calendar className="h-6 w-6 text-orange-600" />
@@ -335,7 +358,9 @@ const EnhancedEquipment: React.FC = () => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Equipment Overview</TabsTrigger>
           <TabsTrigger value="reservations">Reservation System</TabsTrigger>
-          <TabsTrigger value="analytics" disabled={!isAdmin}>Analytics</TabsTrigger>
+          <TabsTrigger value="analytics" disabled={!isAdmin}>
+            Analytics
+          </TabsTrigger>
         </TabsList>
 
         {/* Equipment Overview Tab */}
@@ -360,7 +385,7 @@ const EnhancedEquipment: React.FC = () => {
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(category => (
+                      {categories.map((category) => (
                         <SelectItem key={category.value} value={category.value}>
                           {category.label}
                         </SelectItem>
@@ -373,7 +398,7 @@ const EnhancedEquipment: React.FC = () => {
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      {statuses.map(status => (
+                      {statuses.map((status) => (
                         <SelectItem key={status.value} value={status.value}>
                           {status.label}
                         </SelectItem>
@@ -405,7 +430,13 @@ const EnhancedEquipment: React.FC = () => {
           </Card>
 
           {/* Equipment Grid/List */}
-          <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+          <div
+            className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }
+          >
             {filteredEquipment.map((item) => (
               <Card key={item.id} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-4">
@@ -459,8 +490,8 @@ const EnhancedEquipment: React.FC = () => {
 
                   <div className="flex gap-2">
                     {canCreateReservations && item.status === 'available' && (
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         className="flex-1"
                         onClick={() => {
                           setSelectedEquipment(item);
@@ -488,8 +519,7 @@ const EnhancedEquipment: React.FC = () => {
                 <p className="text-gray-600">
                   {searchTerm || categoryFilter !== 'all' || statusFilter !== 'all'
                     ? 'Try adjusting your search or filters'
-                    : 'No equipment available'
-                  }
+                    : 'No equipment available'}
                 </p>
               </CardContent>
             </Card>
@@ -498,7 +528,7 @@ const EnhancedEquipment: React.FC = () => {
 
         {/* Reservation System Tab */}
         <TabsContent value="reservations">
-          <EnhancedReservationSystem 
+          <EnhancedReservationSystem
             equipment={selectedEquipment || undefined}
             mode={isAdmin ? 'admin' : 'user'}
           />
@@ -525,8 +555,8 @@ const EnhancedEquipment: React.FC = () => {
                           <span>{utilizationRate.toFixed(1)}%</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
                             style={{ width: `${Math.min(utilizationRate, 100)}%` }}
                           ></div>
                         </div>
@@ -548,9 +578,13 @@ const EnhancedEquipment: React.FC = () => {
                 <div className="space-y-4">
                   {filteredEquipment.slice(0, 5).map((item) => {
                     const revenue = (item.hourly_rate || 0) * item.total_usage_hours;
-                    const maxRevenue = Math.max(...filteredEquipment.map(eq => (eq.hourly_rate || 0) * eq.total_usage_hours));
+                    const maxRevenue = Math.max(
+                      ...filteredEquipment.map(
+                        (eq) => (eq.hourly_rate || 0) * eq.total_usage_hours,
+                      ),
+                    );
                     const percentage = maxRevenue > 0 ? (revenue / maxRevenue) * 100 : 0;
-                    
+
                     return (
                       <div key={item.id}>
                         <div className="flex justify-between text-sm mb-1">
@@ -558,8 +592,8 @@ const EnhancedEquipment: React.FC = () => {
                           <span>${revenue.toFixed(2)}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-600 h-2 rounded-full" 
+                          <div
+                            className="bg-green-600 h-2 rounded-full"
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -576,24 +610,31 @@ const EnhancedEquipment: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {['available', 'in_use', 'under_maintenance', 'offline'].map(status => {
-                    const count = filteredEquipment.filter(eq => eq.status === status).length;
-                    const percentage = filteredEquipment.length > 0 ? (count / filteredEquipment.length) * 100 : 0;
+                  {['available', 'in_use', 'under_maintenance', 'offline'].map((status) => {
+                    const count = filteredEquipment.filter((eq) => eq.status === status).length;
+                    const percentage =
+                      filteredEquipment.length > 0 ? (count / filteredEquipment.length) * 100 : 0;
                     const statusColors = {
                       available: 'bg-green-500',
                       in_use: 'bg-blue-500',
                       under_maintenance: 'bg-yellow-500',
-                      offline: 'bg-red-500'
+                      offline: 'bg-red-500',
                     };
 
                     return (
                       <div key={status} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}></div>
-                          <span className="text-sm font-medium capitalize">{status.replace('_', ' ')}</span>
+                          <div
+                            className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
+                          ></div>
+                          <span className="text-sm font-medium capitalize">
+                            {status.replace('_', ' ')}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600">{count} ({percentage.toFixed(0)}%)</span>
+                          <span className="text-sm text-gray-600">
+                            {count} ({percentage.toFixed(0)}%)
+                          </span>
                           <div className="w-20 h-2 bg-gray-200 rounded-full">
                             <div
                               className={`h-2 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
@@ -619,32 +660,35 @@ const EnhancedEquipment: React.FC = () => {
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500 fill-current" />
                       <span className="font-medium">
-                        {equipment.length > 0 ? 
-                          (equipment.reduce((sum, eq) => sum + eq.average_rating, 0) / equipment.length).toFixed(1) : 
-                          '0.0'
-                        }
+                        {equipment.length > 0
+                          ? (
+                              equipment.reduce((sum, eq) => sum + eq.average_rating, 0) /
+                              equipment.length
+                            ).toFixed(1)
+                          : '0.0'}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Usage Hours</span>
                     <span className="font-medium">
                       {equipment.reduce((sum, eq) => sum + eq.total_usage_hours, 0).toFixed(1)}h
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Sessions</span>
                     <span className="font-medium">
                       {equipment.reduce((sum, eq) => sum + eq.usage_count, 0)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Certification Required</span>
                     <span className="font-medium">
-                      {equipment.filter(eq => eq.requires_certification).length} / {equipment.length}
+                      {equipment.filter((eq) => eq.requires_certification).length} /{' '}
+                      {equipment.length}
                     </span>
                   </div>
                 </div>

@@ -29,9 +29,15 @@ import {
   Award,
   Zap,
   Shield,
-  BookOpen
+  BookOpen,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 import { useAuth } from '../contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -50,14 +56,14 @@ interface EnhancedProject {
   is_featured: boolean;
   created_at: string;
   updated_at: string;
-  
+
   // Enhanced collaboration fields
   collaborator_count: number;
   bom_items_count: number;
   files_count: number;
   milestones_count: number;
   completed_milestones_count: number;
-  
+
   // Public project features
   difficulty_level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   estimated_duration?: string;
@@ -67,12 +73,12 @@ interface EnhancedProject {
   required_equipment: string[];
   space_requirements?: string;
   safety_considerations?: string;
-  
+
   // Engagement metrics
   view_count: number;
   fork_count: number;
   like_count: number;
-  
+
   // Integration features
   github_repo_url?: string;
   github_branch?: string;
@@ -89,14 +95,14 @@ interface EnhancedProjectCardProps {
   onComment?: (projectId: string) => void;
 }
 
-const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({ 
-  project, 
-  viewMode, 
+const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
+  project,
+  viewMode,
   showPublicFeatures = false,
   onUpdate,
   onLike,
   onFork,
-  onComment
+  onComment,
 }) => {
   const { user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -104,52 +110,78 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'intermediate': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'advanced': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'expert': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'intermediate':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'expert':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getDifficultyIcon = (level: string) => {
     switch (level) {
-      case 'beginner': return <BookOpen className="h-3 w-3" />;
-      case 'intermediate': return <Zap className="h-3 w-3" />;
-      case 'advanced': return <Award className="h-3 w-3" />;
-      case 'expert': return <Shield className="h-3 w-3" />;
-      default: return <AlertCircle className="h-3 w-3" />;
+      case 'beginner':
+        return <BookOpen className="h-3 w-3" />;
+      case 'intermediate':
+        return <Zap className="h-3 w-3" />;
+      case 'advanced':
+        return <Award className="h-3 w-3" />;
+      case 'expert':
+        return <Shield className="h-3 w-3" />;
+      default:
+        return <AlertCircle className="h-3 w-3" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'in-progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'complete': return 'bg-green-100 text-green-800 border-green-200';
-      case 'on-hold': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'draft':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'complete':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'on-hold':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'draft': return <Edit className="h-3 w-3" />;
-      case 'in-progress': return <Clock className="h-3 w-3" />;
-      case 'complete': return <CheckCircle className="h-3 w-3" />;
-      case 'on-hold': return <PauseCircle className="h-3 w-3" />;
-      case 'cancelled': return <XCircle className="h-3 w-3" />;
-      default: return <AlertCircle className="h-3 w-3" />;
+      case 'draft':
+        return <Edit className="h-3 w-3" />;
+      case 'in-progress':
+        return <Clock className="h-3 w-3" />;
+      case 'complete':
+        return <CheckCircle className="h-3 w-3" />;
+      case 'on-hold':
+        return <PauseCircle className="h-3 w-3" />;
+      case 'cancelled':
+        return <XCircle className="h-3 w-3" />;
+      default:
+        return <AlertCircle className="h-3 w-3" />;
     }
   };
 
   const getVisibilityIcon = (visibility: string) => {
     switch (visibility) {
-      case 'public': return '🌐';
-      case 'private': return '🔒';
-      case 'team-only': return '👥';
-      default: return '❓';
+      case 'public':
+        return '🌐';
+      case 'private':
+        return '🔒';
+      case 'team-only':
+        return '👥';
+      default:
+        return '❓';
     }
   };
 
@@ -185,7 +217,9 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
   };
 
   const handleDeleteProject = async () => {
-    if (!window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+    if (
+      !window.confirm('Are you sure you want to delete this project? This action cannot be undone.')
+    ) {
       return;
     }
 
@@ -237,27 +271,23 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               {/* Project Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-lg font-semibold text-gray-900 truncate">
-                    {project.name}
-                  </h3>
-                  {project.is_featured && (
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                  )}
+                  <h3 className="text-lg font-semibold text-gray-900 truncate">{project.name}</h3>
+                  {project.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-current" />}
                   <span className="text-sm text-gray-500">
                     {getVisibilityIcon(project.visibility)}
                   </span>
                   {showPublicFeatures && (
-                    <Badge className={`${getDifficultyColor(project.difficulty_level)} flex items-center gap-1 text-xs`}>
+                    <Badge
+                      className={`${getDifficultyColor(project.difficulty_level)} flex items-center gap-1 text-xs`}
+                    >
                       {getDifficultyIcon(project.difficulty_level)}
                       {project.difficulty_level}
                     </Badge>
                   )}
                 </div>
-                
+
                 {project.description && (
-                  <p className="text-sm text-gray-600 truncate mb-2">
-                    {project.description}
-                  </p>
+                  <p className="text-sm text-gray-600 truncate mb-2">{project.description}</p>
                 )}
 
                 {/* Owner info for public projects */}
@@ -267,7 +297,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                     <span className="font-medium">{project.owner_name}</span>
                   </div>
                 )}
-                
+
                 {/* Tags */}
                 {project.tags && project.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
@@ -307,16 +337,11 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                   {getStatusIcon(project.status)}
                   {project.status}
                 </Badge>
-                
+
                 {project.milestones_count > 0 && (
                   <div className="flex items-center space-x-2">
-                    <Progress 
-                      value={getProgressPercentage()} 
-                      className="w-20"
-                    />
-                    <span className="text-xs text-gray-500">
-                      {getProgressPercentage()}%
-                    </span>
+                    <Progress value={getProgressPercentage()} className="w-20" />
+                    <span className="text-xs text-gray-500">{getProgressPercentage()}%</span>
                   </div>
                 )}
               </div>
@@ -350,9 +375,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               </div>
 
               {/* Updated Time */}
-              <div className="text-xs text-gray-500">
-                Updated {formatDate(project.updated_at)}
-              </div>
+              <div className="text-xs text-gray-500">Updated {formatDate(project.updated_at)}</div>
             </div>
 
             {/* Actions */}
@@ -370,17 +393,17 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                   </Button>
                 </>
               )}
-              
+
               {project.bom_items_count > 0 && (
                 <Button variant="outline" size="sm" onClick={handleOrderFromStore}>
                   <ShoppingCart className="h-4 w-4" />
                 </Button>
               )}
-              
+
               <Button variant="outline" size="sm" onClick={handleViewProject}>
                 <Eye className="h-4 w-4" />
               </Button>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm">
@@ -405,12 +428,16 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                     <Copy className="h-4 w-4 mr-2" />
                     Copy Project ID
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => window.open(`/portal/projects/${project.project_id}`, '_blank')}>
+                  <DropdownMenuItem
+                    onClick={() => window.open(`/portal/projects/${project.project_id}`, '_blank')}
+                  >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Open in New Tab
                   </DropdownMenuItem>
                   {project.enable_github_integration && project.github_repo_url && (
-                    <DropdownMenuItem onClick={() => window.open(project.github_repo_url, '_blank')}>
+                    <DropdownMenuItem
+                      onClick={() => window.open(project.github_repo_url, '_blank')}
+                    >
                       <Github className="h-4 w-4 mr-2" />
                       View on GitHub
                     </DropdownMenuItem>
@@ -418,7 +445,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                   {isOwner && (
                     <>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={handleDeleteProject}
                         className="text-red-600"
                         disabled={isDeleting}
@@ -439,7 +466,10 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
 
   // Grid view
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer group" onClick={handleViewProject}>
+    <Card
+      className="hover:shadow-lg transition-shadow cursor-pointer group"
+      onClick={handleViewProject}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
@@ -447,9 +477,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               <CardTitle className="text-lg font-semibold text-gray-900 truncate">
                 {project.name}
               </CardTitle>
-              {project.is_featured && (
-                <Star className="h-4 w-4 text-yellow-500 fill-current" />
-              )}
+              {project.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-current" />}
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
               <span>{getVisibilityIcon(project.visibility)}</span>
@@ -463,7 +491,9 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               {showPublicFeatures && (
                 <>
                   <span>•</span>
-                  <Badge className={`${getDifficultyColor(project.difficulty_level)} flex items-center gap-1 text-xs`}>
+                  <Badge
+                    className={`${getDifficultyColor(project.difficulty_level)} flex items-center gap-1 text-xs`}
+                  >
                     {getDifficultyIcon(project.difficulty_level)}
                     {project.difficulty_level}
                   </Badge>
@@ -481,33 +511,57 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               </div>
             )}
           </div>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProject(); }}>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewProject();
+                }}
+              >
                 <Eye className="h-4 w-4 mr-2" />
                 View Details
               </DropdownMenuItem>
               {canEdit && (
                 <>
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEditProject(); }}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditProject();
+                    }}
+                  >
                     <Edit className="h-4 w-4 mr-2" />
                     Edit Project
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
               )}
-              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCopyProjectId(); }}>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopyProjectId();
+                }}
+              >
                 <Copy className="h-4 w-4 mr-2" />
                 Copy Project ID
               </DropdownMenuItem>
               {project.enable_github_integration && project.github_repo_url && (
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); window.open(project.github_repo_url, '_blank'); }}>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(project.github_repo_url, '_blank');
+                  }}
+                >
                   <Github className="h-4 w-4 mr-2" />
                   View on GitHub
                 </DropdownMenuItem>
@@ -515,8 +569,11 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
               {isOwner && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={(e) => { e.stopPropagation(); handleDeleteProject(); }}
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject();
+                    }}
                     className="text-red-600"
                     disabled={isDeleting}
                   >
@@ -533,9 +590,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
       <CardContent className="pt-0">
         {/* Description */}
         {project.description && (
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-            {project.description}
-          </p>
+          <p className="text-sm text-gray-600 mb-4 line-clamp-2">{project.description}</p>
         )}
 
         {/* Skills and Equipment for public projects */}
@@ -558,7 +613,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                 </div>
               </div>
             )}
-            
+
             {project.required_equipment.length > 0 && (
               <div className="mb-2">
                 <p className="text-xs text-gray-500 mb-1">Equipment needed:</p>
@@ -594,16 +649,11 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
             {getStatusIcon(project.status)}
             {project.status}
           </Badge>
-          
+
           {project.milestones_count > 0 && (
             <div className="flex items-center space-x-2">
-              <Progress 
-                value={getProgressPercentage()} 
-                className="w-16 h-2"
-              />
-              <span className="text-xs text-gray-500">
-                {getProgressPercentage()}%
-              </span>
+              <Progress value={getProgressPercentage()} className="w-16 h-2" />
+              <span className="text-xs text-gray-500">{getProgressPercentage()}%</span>
             </div>
           )}
         </div>
@@ -660,7 +710,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
                 <span>{project.fork_count}</span>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-1">
               <Button variant="ghost" size="sm" onClick={handleLikeProject}>
                 <Heart className="h-4 w-4" />
@@ -685,17 +735,9 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="flex items-center text-xs text-gray-500">
               <Calendar className="h-3 w-3 mr-1" />
-              {project.start_date && (
-                <span>
-                  Started {formatDate(project.start_date)}
-                </span>
-              )}
+              {project.start_date && <span>Started {formatDate(project.start_date)}</span>}
               {project.start_date && project.end_date && <span className="mx-1">•</span>}
-              {project.end_date && (
-                <span>
-                  Due {formatDate(project.end_date)}
-                </span>
-              )}
+              {project.end_date && <span>Due {formatDate(project.end_date)}</span>}
             </div>
           </div>
         )}

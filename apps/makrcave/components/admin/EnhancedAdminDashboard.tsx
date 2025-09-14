@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, Settings, BarChart3, Shield, Activity, AlertTriangle,
-  Building2, Globe, Database, Server, Monitor, Wifi, Clock,
-  CheckCircle, XCircle, Eye, Edit, Trash2, Plus, Search,
-  Filter, Download, RefreshCw, Bell, UserCheck, UserX,
-  Package, Wrench, Calendar, DollarSign, TrendingUp
+import {
+  Users,
+  Settings,
+  BarChart3,
+  Shield,
+  Activity,
+  AlertTriangle,
+  Building2,
+  Globe,
+  Database,
+  Server,
+  Monitor,
+  Wifi,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Edit,
+  Trash2,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  RefreshCw,
+  Bell,
+  UserCheck,
+  UserX,
+  Package,
+  Wrench,
+  Calendar,
+  DollarSign,
+  TrendingUp,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -61,9 +87,9 @@ interface EnhancedAdminDashboardProps {
   makerspaceId?: string;
 }
 
-const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({ 
-  userRole, 
-  makerspaceId 
+const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
+  userRole,
+  makerspaceId,
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [metrics, setMetrics] = useState<MakerspaceMetrics | null>(null);
@@ -82,8 +108,8 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setMetrics({
         total_members: 342,
         active_members: 267,
@@ -92,7 +118,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
         revenue_monthly: 125000,
         pending_certifications: 23,
         safety_incidents: 2,
-        space_occupancy: 65
+        space_occupancy: 65,
       });
 
       setEquipmentStatus([
@@ -104,7 +130,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
           utilization: 85,
           last_maintenance: '2024-01-01',
           next_maintenance: '2024-02-01',
-          current_user: 'john@example.com'
+          current_user: 'john@example.com',
         },
         {
           id: 'eq_2',
@@ -113,8 +139,8 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
           status: 'maintenance',
           utilization: 0,
           last_maintenance: '2024-01-05',
-          next_maintenance: '2024-01-15'
-        }
+          next_maintenance: '2024-01-15',
+        },
       ]);
 
       setAdminActivities([
@@ -125,8 +151,8 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
           target: 'Bambu Lab X1 Carbon #2',
           timestamp: '2024-01-07T10:30:00Z',
           success: true,
-          details: 'Scheduled maintenance completed'
-        }
+          details: 'Scheduled maintenance completed',
+        },
       ]);
 
       setSafetyAlerts([
@@ -137,7 +163,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
           message: 'CNC Machine requires scheduled maintenance within 48 hours',
           timestamp: '2024-01-07T09:00:00Z',
           resolved: false,
-          assigned_to: 'tech@makrx.cave'
+          assigned_to: 'tech@makrx.cave',
         },
         {
           id: 'alert_2',
@@ -145,8 +171,8 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
           severity: 'high',
           message: 'Safety certification expired for laser cutter operations',
           timestamp: '2024-01-06T14:30:00Z',
-          resolved: false
-        }
+          resolved: false,
+        },
       ]);
     } catch (error) {
       console.error('Failed to load admin dashboard data:', error);
@@ -159,18 +185,26 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
     if (type === 'equipment') {
       const equipmentConfig = {
         operational: { variant: 'default' as const, label: 'Operational', color: 'text-green-600' },
-        maintenance: { variant: 'secondary' as const, label: 'Maintenance', color: 'text-yellow-600' },
+        maintenance: {
+          variant: 'secondary' as const,
+          label: 'Maintenance',
+          color: 'text-yellow-600',
+        },
         offline: { variant: 'destructive' as const, label: 'Offline', color: 'text-red-600' },
-        reserved: { variant: 'secondary' as const, label: 'Reserved', color: 'text-blue-600' }
+        reserved: { variant: 'secondary' as const, label: 'Reserved', color: 'text-blue-600' },
       };
       const config = equipmentConfig[status as keyof typeof equipmentConfig];
-      return <Badge variant={config.variant} className={config.color}>{config.label}</Badge>;
+      return (
+        <Badge variant={config.variant} className={config.color}>
+          {config.label}
+        </Badge>
+      );
     } else {
       const severityConfig = {
         low: { variant: 'secondary' as const, label: 'Low' },
         medium: { variant: 'secondary' as const, label: 'Medium' },
         high: { variant: 'destructive' as const, label: 'High' },
-        critical: { variant: 'destructive' as const, label: 'Critical' }
+        critical: { variant: 'destructive' as const, label: 'Critical' },
       };
       const config = severityConfig[status as keyof typeof severityConfig];
       return <Badge variant={config.variant}>{config.label}</Badge>;
@@ -198,7 +232,9 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
               {isSuperAdmin ? 'Super Admin Dashboard' : 'Makerspace Admin Dashboard'}
             </h1>
             <p className="text-gray-600">
-              {isSuperAdmin ? 'Global makerspace management and monitoring' : 'Manage members, equipment, and operations'}
+              {isSuperAdmin
+                ? 'Global makerspace management and monitoring'
+                : 'Manage members, equipment, and operations'}
             </p>
           </div>
           <div className="flex items-center space-x-4">
@@ -239,7 +275,9 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                   <div>
                     <p className="text-sm font-medium text-gray-600">Equipment Status</p>
                     <p className="text-2xl font-bold text-gray-900">{metrics.equipment_count}</p>
-                    <p className="text-sm text-green-600">{metrics.utilization_rate}% utilization</p>
+                    <p className="text-sm text-green-600">
+                      {metrics.utilization_rate}% utilization
+                    </p>
                   </div>
                   <Package className="h-8 w-8 text-green-600" />
                 </div>
@@ -295,17 +333,24 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-red-500" />
                   Safety Alerts
-                  <Badge variant="destructive">{safetyAlerts.filter(a => !a.resolved).length}</Badge>
+                  <Badge variant="destructive">
+                    {safetyAlerts.filter((a) => !a.resolved).length}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {safetyAlerts.slice(0, 3).map((alert) => (
-                    <div key={alert.id} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div
+                      key={alert.id}
+                      className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200"
+                    >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {getStatusBadge(alert.severity, 'severity')}
-                          <span className="text-sm font-medium capitalize">{alert.type.replace('_', ' ')}</span>
+                          <span className="text-sm font-medium capitalize">
+                            {alert.type.replace('_', ' ')}
+                          </span>
                           <span className="text-sm text-gray-500">
                             {new Date(alert.timestamp).toLocaleString()}
                           </span>
@@ -338,7 +383,10 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                 <CardContent>
                   <div className="space-y-4">
                     {equipmentStatus.slice(0, 5).map((equipment) => (
-                      <div key={equipment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div
+                        key={equipment.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium">{equipment.name}</span>
@@ -346,7 +394,9 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                           </div>
                           <p className="text-sm text-gray-600">{equipment.type}</p>
                           {equipment.current_user && (
-                            <p className="text-xs text-blue-600">In use by: {equipment.current_user}</p>
+                            <p className="text-xs text-blue-600">
+                              In use by: {equipment.current_user}
+                            </p>
                           )}
                         </div>
                         <div className="text-right">
@@ -366,7 +416,10 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                 <CardContent>
                   <div className="space-y-4">
                     {adminActivities.map((activity) => (
-                      <div key={activity.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                      <div
+                        key={activity.id}
+                        className="flex items-center justify-between p-3 bg-blue-50 rounded-lg"
+                      >
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <Badge variant={activity.success ? 'default' : 'destructive'}>
@@ -428,8 +481,12 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
               <CardContent>
                 <div className="text-center py-8">
                   <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Enhanced Member Management</h3>
-                  <p className="text-gray-500">Advanced member search, certification tracking, and activity monitoring...</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    Enhanced Member Management
+                  </h3>
+                  <p className="text-gray-500">
+                    Advanced member search, certification tracking, and activity monitoring...
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -447,7 +504,10 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
               <CardContent>
                 <div className="space-y-4">
                   {equipmentStatus.map((equipment) => (
-                    <div key={equipment.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={equipment.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-medium text-lg">{equipment.name}</span>
@@ -456,10 +516,12 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                         <p className="text-gray-600 mb-1">{equipment.type}</p>
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
                           <div>
-                            <span className="font-medium">Last Maintenance:</span> {equipment.last_maintenance}
+                            <span className="font-medium">Last Maintenance:</span>{' '}
+                            {equipment.last_maintenance}
                           </div>
                           <div>
-                            <span className="font-medium">Next Maintenance:</span> {equipment.next_maintenance}
+                            <span className="font-medium">Next Maintenance:</span>{' '}
+                            {equipment.next_maintenance}
                           </div>
                         </div>
                         {equipment.current_user && (
@@ -471,7 +533,9 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                       <div className="flex items-center gap-4">
                         <div className="text-center">
                           <p className="text-sm font-medium">Utilization</p>
-                          <p className="text-2xl font-bold text-blue-600">{equipment.utilization}%</p>
+                          <p className="text-2xl font-bold text-blue-600">
+                            {equipment.utilization}%
+                          </p>
                           <Progress value={equipment.utilization} className="w-20 h-2 mt-1" />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -505,11 +569,16 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
               <CardContent>
                 <div className="space-y-4">
                   {safetyAlerts.map((alert) => (
-                    <div key={alert.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={alert.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           {getStatusBadge(alert.severity, 'severity')}
-                          <span className="font-medium capitalize">{alert.type.replace('_', ' ')}</span>
+                          <span className="font-medium capitalize">
+                            {alert.type.replace('_', ' ')}
+                          </span>
                           <span className="text-sm text-gray-500">
                             {new Date(alert.timestamp).toLocaleString()}
                           </span>
@@ -526,11 +595,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                         <Button size="sm" variant="outline">
                           Assign
                         </Button>
-                        {!alert.resolved && (
-                          <Button size="sm">
-                            Resolve
-                          </Button>
-                        )}
+                        {!alert.resolved && <Button size="sm">Resolve</Button>}
                       </div>
                     </div>
                   ))}
@@ -555,7 +620,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                       </div>
                       <Progress value={85} className="h-2" />
                     </div>
-                    
+
                     <div>
                       <div className="flex justify-between mb-2">
                         <span className="text-sm font-medium">Member Satisfaction</span>
@@ -563,7 +628,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                       </div>
                       <Progress value={92} className="h-2" />
                     </div>
-                    
+
                     <div>
                       <div className="flex justify-between mb-2">
                         <span className="text-sm font-medium">Equipment Efficiency</span>
@@ -591,7 +656,7 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                       </div>
                       <span className="text-xl font-bold text-green-600">₹15,000</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Users className="h-5 w-5 text-blue-600" />
@@ -621,7 +686,9 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                 <div className="text-center py-8">
                   <Settings className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Advanced Settings</h3>
-                  <p className="text-gray-500">Operating hours, pricing policies, safety protocols, and module management...</p>
+                  <p className="text-gray-500">
+                    Operating hours, pricing policies, safety protocols, and module management...
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -641,7 +708,10 @@ const EnhancedAdminDashboard: React.FC<EnhancedAdminDashboardProps> = ({
                   <div className="text-center py-8">
                     <Globe className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Global Operations</h3>
-                    <p className="text-gray-500">Cross-makerspace analytics, global user management, and system administration...</p>
+                    <p className="text-gray-500">
+                      Cross-makerspace analytics, global user management, and system
+                      administration...
+                    </p>
                   </div>
                 </CardContent>
               </Card>

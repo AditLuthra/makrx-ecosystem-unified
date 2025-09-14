@@ -5,6 +5,7 @@ This document lists all the API endpoints that need to be implemented to support
 ## 🔍 Current Implementation Status
 
 ### ✅ Existing API Routes
+
 - `/api/events` - Event CRUD operations
 - `/api/events/[eventId]/register` - Event registration
 - `/api/events/[eventId]/check-ins` - Check-in management
@@ -19,6 +20,7 @@ This document lists all the API endpoints that need to be implemented to support
 ## 1. Team Management APIs
 
 ### Teams Base Routes
+
 ```
 GET    /api/events/[eventId]/teams
 POST   /api/events/[eventId]/teams
@@ -28,6 +30,7 @@ DELETE /api/events/[eventId]/teams/[teamId]
 ```
 
 ### Team Actions
+
 ```
 POST   /api/events/[eventId]/teams/join
 POST   /api/events/[eventId]/teams/[teamId]/leave
@@ -38,6 +41,7 @@ GET    /api/events/[eventId]/teams/user/[userId]
 **Required by:** `components/team-manager.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface Team {
   id: string;
@@ -68,6 +72,7 @@ interface TeamMember {
 ## 2. Tournament & Bracket APIs
 
 ### Tournament Management
+
 ```
 GET    /api/tournaments/[tournamentId]
 POST   /api/tournaments
@@ -76,6 +81,7 @@ DELETE /api/tournaments/[tournamentId]
 ```
 
 ### Match Management
+
 ```
 POST   /api/tournaments/[tournamentId]/matches/[matchId]/start
 POST   /api/tournaments/[tournamentId]/matches/[matchId]/complete
@@ -83,6 +89,7 @@ GET    /api/tournaments/[tournamentId]/matches
 ```
 
 ### Participants
+
 ```
 GET    /api/tournaments/[tournamentId]/participants
 POST   /api/tournaments/[tournamentId]/participants
@@ -92,6 +99,7 @@ DELETE /api/tournaments/[tournamentId]/participants/[participantId]
 **Required by:** `components/tournament-bracket.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface Tournament {
   id: string;
@@ -120,6 +128,7 @@ interface Match {
 ## 3. Leaderboard APIs
 
 ### Leaderboard Management
+
 ```
 GET    /api/events/[eventId]/leaderboards
 POST   /api/events/[eventId]/leaderboards
@@ -128,6 +137,7 @@ PATCH  /api/events/[eventId]/leaderboards/[leaderboardId]
 ```
 
 ### Leaderboard Entries
+
 ```
 GET    /api/events/[eventId]/leaderboards/[leaderboardId]/entries
 POST   /api/events/[eventId]/leaderboards/[leaderboardId]/entries
@@ -137,6 +147,7 @@ PATCH  /api/events/[eventId]/leaderboards/[leaderboardId]/entries/[entryId]
 **Required by:** `components/leaderboard.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface Leaderboard {
   id: string;
@@ -164,6 +175,7 @@ interface LeaderboardEntry {
 ## 4. Awards & Certificates APIs
 
 ### Awards Management
+
 ```
 GET    /api/events/[eventId]/awards
 POST   /api/events/[eventId]/awards
@@ -173,6 +185,7 @@ DELETE /api/events/[eventId]/awards/[awardId]
 ```
 
 ### Award Recipients
+
 ```
 GET    /api/events/[eventId]/awards/[awardId]/recipients
 POST   /api/events/[eventId]/awards/[awardId]/recipients
@@ -180,12 +193,14 @@ DELETE /api/events/[eventId]/awards/[awardId]/recipients/[recipientId]
 ```
 
 ### Certificate Generation
+
 ```
 POST   /api/events/[eventId]/awards/[awardId]/certificate/[recipientId]
 GET    /api/events/[eventId]/awards/[awardId]/certificate/[recipientId]/download
 ```
 
 ### Participants List
+
 ```
 GET    /api/events/[eventId]/participants
 ```
@@ -193,6 +208,7 @@ GET    /api/events/[eventId]/participants
 **Required by:** `components/awards-manager.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface Award {
   id: string;
@@ -220,6 +236,7 @@ interface AwardRecipient {
 ## 5. Bulk Communications APIs
 
 ### Communication Campaigns
+
 ```
 GET    /api/events/[eventId]/bulk-communications
 POST   /api/events/[eventId]/bulk-communications
@@ -229,6 +246,7 @@ DELETE /api/events/[eventId]/bulk-communications/[campaignId]
 ```
 
 ### Campaign Actions
+
 ```
 POST   /api/events/[eventId]/bulk-communications/[campaignId]/send
 POST   /api/events/[eventId]/bulk-communications/[campaignId]/schedule
@@ -236,6 +254,7 @@ POST   /api/events/[eventId]/bulk-communications/[campaignId]/cancel
 ```
 
 ### Audience & Templates
+
 ```
 GET    /api/events/[eventId]/audience-stats
 GET    /api/email-templates
@@ -245,6 +264,7 @@ POST   /api/email-templates
 **Required by:** `components/bulk-email-manager.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface BulkCommunication {
   id: string;
@@ -273,6 +293,7 @@ interface EmailTemplate {
 ## 6. Export Management APIs
 
 ### Export Jobs
+
 ```
 GET    /api/events/[eventId]/exports
 POST   /api/events/[eventId]/exports
@@ -281,6 +302,7 @@ DELETE /api/events/[eventId]/exports/[exportId]
 ```
 
 ### Export Statistics
+
 ```
 GET    /api/events/[eventId]/export-stats
 ```
@@ -288,6 +310,7 @@ GET    /api/events/[eventId]/export-stats
 **Required by:** `components/export-manager.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface ExportJob {
   id: string;
@@ -308,6 +331,7 @@ interface ExportJob {
 ## 7. Event Templates APIs
 
 ### Template Management
+
 ```
 GET    /api/event-templates
 POST   /api/event-templates
@@ -317,6 +341,7 @@ DELETE /api/event-templates/[templateId]
 ```
 
 ### Template Actions
+
 ```
 POST   /api/event-templates/[templateId]/use
 POST   /api/events/[eventId]/save-template
@@ -326,6 +351,7 @@ GET    /api/my-events
 **Required by:** `components/event-templates.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface EventTemplate {
   id: string;
@@ -345,6 +371,7 @@ interface EventTemplate {
 ## 8. Permissions Management APIs
 
 ### Event Roles
+
 ```
 GET    /api/events/[eventId]/roles
 POST   /api/events/[eventId]/roles
@@ -354,6 +381,7 @@ DELETE /api/events/[eventId]/roles/[roleId]
 ```
 
 ### Available Users
+
 ```
 GET    /api/events/[eventId]/available-users
 ```
@@ -361,6 +389,7 @@ GET    /api/events/[eventId]/available-users
 **Required by:** `components/permissions-manager.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface EventRole {
   id: string;
@@ -379,6 +408,7 @@ interface EventRole {
 ## 9. Payment APIs (Razorpay Integration)
 
 ### Payment Orders
+
 ```
 POST   /api/payments/create-order
 POST   /api/payments/verify
@@ -388,6 +418,7 @@ GET    /api/payments/[paymentId]
 **Required by:** `components/payment-checkout.tsx`
 
 **Expected Data:**
+
 ```typescript
 interface PaymentOrder {
   id: string;
@@ -403,16 +434,19 @@ interface PaymentOrder {
 ## 📋 Implementation Priority
 
 ### High Priority (Core Features)
+
 1. **Team Management APIs** - Essential for team-based events
 2. **Awards APIs** - Critical for competition recognition
 3. **Payment APIs** - Required for paid events
 
-### Medium Priority (Enhanced Features)  
+### Medium Priority (Enhanced Features)
+
 4. **Leaderboard APIs** - Important for live competitions
 5. **Tournament APIs** - Needed for bracket management
 6. **Export APIs** - Valuable for organizers
 
 ### Lower Priority (Advanced Features)
+
 7. **Bulk Communication APIs** - Nice to have for large events
 8. **Template APIs** - Efficiency feature for repeat organizers
 9. **Permissions APIs** - Advanced role management
@@ -420,6 +454,7 @@ interface PaymentOrder {
 ## 🚧 Database Schema Requirements
 
 ### New Tables Needed
+
 ```sql
 -- Teams and members
 CREATE TABLE teams (...);

@@ -21,8 +21,8 @@ export const categoryFilterSets = [
           { value: '0-500', label: '$0 - $500' },
           { value: '500-1000', label: '$500 - $1,000' },
           { value: '1000-2000', label: '$1,000 - $2,000' },
-          { value: '2000+', label: '$2,000+' }
-        ]
+          { value: '2000+', label: '$2,000+' },
+        ],
       },
       {
         id: 'brand',
@@ -31,14 +31,14 @@ export const categoryFilterSets = [
         options: [
           { value: 'prusa', label: 'Prusa' },
           { value: 'ultimaker', label: 'Ultimaker' },
-          { value: 'creality', label: 'Creality' }
-        ]
-      }
-    ]
-  }
+          { value: 'creality', label: 'Creality' },
+        ],
+      },
+    ],
+  },
 ];
 
 export const getAllFiltersForCategory = (category: string): CategoryFilter[] => {
-  const filterSet = categoryFilterSets.find(set => set.category === category);
+  const filterSet = categoryFilterSets.find((set) => set.category === category);
   return filterSet?.filters || [];
 };

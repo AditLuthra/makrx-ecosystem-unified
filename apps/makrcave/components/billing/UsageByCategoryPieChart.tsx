@@ -22,9 +22,7 @@ const UsageByCategoryPieChart: React.FC<UsageByCategoryPieChartProps> = ({ data 
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-semibold">{data.name}</p>
-          <p className="text-sm text-gray-600">
-            {data.value}% of total revenue
-          </p>
+          <p className="text-sm text-gray-600">{data.value}% of total revenue</p>
         </div>
       );
     }
@@ -89,10 +87,7 @@ const UsageByCategoryPieChart: React.FC<UsageByCategoryPieChartProps> = ({ data 
         <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t">
           {data.map((item, index) => (
             <div key={index} className="flex items-center gap-3">
-              <div 
-                className="w-4 h-4 rounded-full" 
-                style={{ backgroundColor: item.color }}
-              />
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">{item.name}</p>
                 <p className="text-xs text-gray-600">{item.value}% of revenue</p>
@@ -110,8 +105,8 @@ const UsageByCategoryPieChart: React.FC<UsageByCategoryPieChartProps> = ({ data 
           <div className="flex items-center justify-between mt-2">
             <span className="text-sm font-medium text-gray-600">Largest Category</span>
             <span className="font-semibold">
-              {data.reduce((max, item) => item.value > max.value ? item : max, data[0])?.name} 
-              ({data.reduce((max, item) => item.value > max.value ? item : max, data[0])?.value}%)
+              {data.reduce((max, item) => (item.value > max.value ? item : max), data[0])?.name}(
+              {data.reduce((max, item) => (item.value > max.value ? item : max), data[0])?.value}%)
             </span>
           </div>
         </div>

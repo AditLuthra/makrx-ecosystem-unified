@@ -3,12 +3,12 @@
  * Implements httpOnly cookies and secure token handling
  */
 
-import Keycloak, { KeycloakInstance } from "keycloak-js";
+import Keycloak, { KeycloakInstance } from 'keycloak-js';
 
 // Configuration
-const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "https://auth.makrx.org";
-const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "makrx";
-const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "makrcave-frontend";
+const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://auth.makrx.org';
+const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx';
+const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrcave-frontend';
 
 export interface SecureUser {
   sub: string;
@@ -65,7 +65,8 @@ class SecureAuthService {
     // Refresh token when it's about to expire (5 minutes before)
     setInterval(async () => {
       try {
-        if (this.keycloak?.isTokenExpired(300)) { // 5 minutes
+        if (this.keycloak?.isTokenExpired(300)) {
+          // 5 minutes
           await this.keycloak.updateToken(300);
           console.log('Token refreshed successfully');
         }
@@ -115,7 +116,7 @@ class SecureAuthService {
     }
 
     const token = this.keycloak.tokenParsed as any;
-    
+
     return {
       sub: token.sub,
       email: token.email || '',
@@ -149,13 +150,13 @@ class SecureAuthService {
 
   hasAnyRole(roles: string[]): boolean {
     const user = this.getUser();
-    return roles.some(role => user?.roles.includes(role)) || false;
+    return roles.some((role) => user?.roles.includes(role)) || false;
   }
 
   // Secure API request helper
   async secureRequest(url: string, options: RequestInit = {}): Promise<Response> {
     const token = await this.getToken();
-    
+
     if (!token) {
       throw new Error('No valid authentication token available');
     }
@@ -164,24 +165,24 @@ class SecureAuthService {
       ...options,
       headers: {
         ...options.headers,
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     };
 
     try {
       const response = await fetch(url, secureOptions);
-      
+
       // Handle 401 Unauthorized - token might be expired
       if (response.status === 401) {
         console.warn('API request unauthorized, attempting to refresh token...');
         await this.keycloak?.updateToken(-1); // Force refresh
-        
+
         const newToken = await this.getToken();
         if (newToken) {
           secureOptions.headers = {
             ...secureOptions.headers,
-            'Authorization': `Bearer ${newToken}`,
+            Authorization: `Bearer ${newToken}`,
           };
           return fetch(url, secureOptions);
         } else {

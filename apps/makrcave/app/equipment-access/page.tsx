@@ -1,6 +1,12 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
@@ -10,9 +16,24 @@ import { useAuthHeaders } from '@makrx/auth';
 import MachineAccessDashboard from '../../components/MachineAccessDashboard';
 import BadgeSystem from '../../components/BadgeSystem';
 import {
-  Shield, Lock, Unlock, Key, QrCode, Smartphone, Clock,
-  CheckCircle, XCircle, AlertTriangle, Trophy, Award,
-  Users, Settings, BarChart3, Activity, Zap, Target
+  Shield,
+  Lock,
+  Unlock,
+  Key,
+  QrCode,
+  Smartphone,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Trophy,
+  Award,
+  Users,
+  Settings,
+  BarChart3,
+  Activity,
+  Zap,
+  Target,
 } from 'lucide-react';
 
 // Types
@@ -113,31 +134,31 @@ const EquipmentAccess: React.FC = () => {
         body: JSON.stringify({
           equipment_id: equipmentId,
           access_method: 'mobile_app',
-          session_duration_hours: 2
-        })
+          session_duration_hours: 2,
+        }),
       });
 
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
           toast({
-            title: "Access Granted!",
+            title: 'Access Granted!',
             description: `You now have access to ${selectedEquipment?.name}`,
           });
         } else {
           toast({
-            title: "Access Denied",
+            title: 'Access Denied',
             description: result.message,
-            variant: "destructive"
+            variant: 'destructive',
           });
         }
       }
     } catch (error) {
       console.error('Failed to request access:', error);
       toast({
-        title: "Error",
-        description: "Failed to request equipment access. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to request equipment access. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -145,11 +166,11 @@ const EquipmentAccess: React.FC = () => {
   // Check if user can access equipment
   const canAccessEquipment = (equip: Equipment): boolean => {
     if (!equip.requires_certification) return true;
-    
-    const relevantCert = userCertifications.find(cert => 
-      cert.skill_id.includes(equip.category) && cert.status === 'active'
+
+    const relevantCert = userCertifications.find(
+      (cert) => cert.skill_id.includes(equip.category) && cert.status === 'active',
     );
-    
+
     return !!relevantCert;
   };
 
@@ -172,11 +193,16 @@ const EquipmentAccess: React.FC = () => {
   // Get access level color
   const getAccessLevelColor = (level?: string) => {
     switch (level) {
-      case 'basic': return 'green';
-      case 'intermediate': return 'blue';
-      case 'advanced': return 'orange';
-      case 'expert': return 'purple';
-      default: return 'gray';
+      case 'basic':
+        return 'green';
+      case 'intermediate':
+        return 'blue';
+      case 'advanced':
+        return 'orange';
+      case 'expert':
+        return 'purple';
+      default:
+        return 'gray';
     }
   };
 
@@ -315,9 +341,12 @@ const EquipmentAccess: React.FC = () => {
               const statusInfo = getEquipmentStatusInfo(equip.status);
               const StatusIcon = statusInfo.icon;
               const hasAccess = canAccessEquipment(equip);
-              
+
               return (
-                <Card key={equip.id} className={`${hasAccess ? '' : 'opacity-75'} hover:shadow-lg transition-shadow`}>
+                <Card
+                  key={equip.id}
+                  className={`${hasAccess ? '' : 'opacity-75'} hover:shadow-lg transition-shadow`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -325,7 +354,10 @@ const EquipmentAccess: React.FC = () => {
                         <p className="text-sm text-muted-foreground">{equip.location}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className={`bg-${statusInfo.color}-100 text-${statusInfo.color}-800`}>
+                        <Badge
+                          variant="secondary"
+                          className={`bg-${statusInfo.color}-100 text-${statusInfo.color}-800`}
+                        >
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {statusInfo.label}
                         </Badge>
@@ -339,7 +371,10 @@ const EquipmentAccess: React.FC = () => {
                           <span className="text-sm font-medium">Certification Required</span>
                         </div>
                         {equip.access_level_required && (
-                          <Badge variant="outline" className={`bg-${getAccessLevelColor(equip.access_level_required)}-100 text-${getAccessLevelColor(equip.access_level_required)}-800`}>
+                          <Badge
+                            variant="outline"
+                            className={`bg-${getAccessLevelColor(equip.access_level_required)}-100 text-${getAccessLevelColor(equip.access_level_required)}-800`}
+                          >
                             {equip.access_level_required} level
                           </Badge>
                         )}
@@ -354,7 +389,8 @@ const EquipmentAccess: React.FC = () => {
                         </div>
                         {equip.estimated_available_at && (
                           <p className="text-xs text-yellow-600 mt-1">
-                            Available at {new Date(equip.estimated_available_at).toLocaleTimeString()}
+                            Available at{' '}
+                            {new Date(equip.estimated_available_at).toLocaleTimeString()}
                           </p>
                         )}
                       </div>
@@ -375,7 +411,7 @@ const EquipmentAccess: React.FC = () => {
 
                       <div className="flex gap-2">
                         {equip.status === 'available' && hasAccess && (
-                          <Button 
+                          <Button
                             size="sm"
                             onClick={() => {
                               setSelectedEquipment(equip);
@@ -386,7 +422,7 @@ const EquipmentAccess: React.FC = () => {
                             Access
                           </Button>
                         )}
-                        
+
                         {!hasAccess && equip.requires_certification && (
                           <Button variant="outline" size="sm">
                             <Target className="h-3 w-3 mr-1" />
@@ -414,12 +450,17 @@ const EquipmentAccess: React.FC = () => {
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="font-medium">{cert.skill_id.replace('_', ' ').toUpperCase()}</h3>
+                          <h3 className="font-medium">
+                            {cert.skill_id.replace('_', ' ').toUpperCase()}
+                          </h3>
                           <p className="text-sm text-muted-foreground">
                             {cert.equipment_id || 'General Skill'}
                           </p>
                         </div>
-                        <Badge variant={cert.status === 'active' ? 'default' : 'secondary'} className={`bg-${getAccessLevelColor(cert.certification_level)}-100 text-${getAccessLevelColor(cert.certification_level)}-800`}>
+                        <Badge
+                          variant={cert.status === 'active' ? 'default' : 'secondary'}
+                          className={`bg-${getAccessLevelColor(cert.certification_level)}-100 text-${getAccessLevelColor(cert.certification_level)}-800`}
+                        >
                           {cert.certification_level}
                         </Badge>
                       </div>
@@ -431,16 +472,20 @@ const EquipmentAccess: React.FC = () => {
                             {cert.status}
                           </Badge>
                         </div>
-                        
+
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Usage Hours:</span>
                           <span>{cert.total_usage_hours.toFixed(1)}h</span>
                         </div>
-                        
+
                         {cert.expires_at && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Expires:</span>
-                            <span className={new Date(cert.expires_at) < new Date() ? 'text-red-600' : ''}>
+                            <span
+                              className={
+                                new Date(cert.expires_at) < new Date() ? 'text-red-600' : ''
+                              }
+                            >
                               {new Date(cert.expires_at).toLocaleDateString()}
                             </span>
                           </div>
@@ -458,7 +503,7 @@ const EquipmentAccess: React.FC = () => {
                     </CardContent>
                   </Card>
                 ))}
-                
+
                 {userCertifications.length === 0 && (
                   <Card className="col-span-full">
                     <CardContent className="p-8 text-center">

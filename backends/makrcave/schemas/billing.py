@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import Enum
 from decimal import Decimal
 
+
 # Enums
 class TransactionType(str, Enum):
     MEMBERSHIP = "membership"
@@ -15,6 +16,7 @@ class TransactionType(str, Enum):
     LASER_CUTTING = "laser_cutting"
     REFUND = "refund"
 
+
 class TransactionStatus(str, Enum):
     PENDING = "pending"
     SUCCESS = "success"
@@ -22,6 +24,7 @@ class TransactionStatus(str, Enum):
     REFUNDED = "refunded"
     PARTIALLY_REFUNDED = "partially_refunded"
     CANCELLED = "cancelled"
+
 
 class PaymentGateway(str, Enum):
     RAZORPAY = "razorpay"
@@ -31,12 +34,14 @@ class PaymentGateway(str, Enum):
     BANK_TRANSFER = "bank_transfer"
     CREDIT = "credit"
 
+
 class InvoiceStatus(str, Enum):
     DRAFT = "draft"
     SENT = "sent"
     PAID = "paid"
     OVERDUE = "overdue"
     CANCELLED = "cancelled"
+
 
 # Transaction schemas
 class TransactionBase(BaseModel):
@@ -48,6 +53,7 @@ class TransactionBase(BaseModel):
     service_id: Optional[str] = None
     service_metadata: Dict[str, Any] = {}
 
+
 class TransactionCreate(TransactionBase):
     user_id: str
     member_id: Optional[str] = None
@@ -58,6 +64,7 @@ class TransactionCreate(TransactionBase):
     billing_period_end: Optional[datetime] = None
     notes: Optional[str] = None
 
+
 class TransactionUpdate(BaseModel):
     status: Optional[TransactionStatus] = None
     gateway_transaction_id: Optional[str] = None
@@ -66,6 +73,7 @@ class TransactionUpdate(BaseModel):
     gateway_signature: Optional[str] = None
     completed_at: Optional[datetime] = None
     notes: Optional[str] = None
+
 
 class TransactionResponse(TransactionBase):
     id: str
@@ -89,6 +97,7 @@ class TransactionResponse(TransactionBase):
     class Config:
         from_attributes = True
 
+
 # Invoice schemas
 class InvoiceLineItem(BaseModel):
     description: str
@@ -98,6 +107,7 @@ class InvoiceLineItem(BaseModel):
     tax_rate: float = 0
     tax_amount: float = 0
 
+
 class InvoiceBase(BaseModel):
     title: str = Field(..., max_length=200)
     description: Optional[str] = None
@@ -106,6 +116,7 @@ class InvoiceBase(BaseModel):
     total_amount: float = Field(..., gt=0)
     currency: str = Field(default="INR", max_length=3)
     line_items: List[InvoiceLineItem] = []
+
 
 class InvoiceCreate(InvoiceBase):
     user_id: str
@@ -120,11 +131,13 @@ class InvoiceCreate(InvoiceBase):
     issue_date: datetime
     due_date: Optional[datetime] = None
 
+
 class InvoiceUpdate(BaseModel):
     status: Optional[InvoiceStatus] = None
     paid_date: Optional[datetime] = None
     email_sent: Optional[bool] = None
     email_sent_at: Optional[datetime] = None
+
 
 class InvoiceResponse(InvoiceBase):
     id: str
@@ -152,6 +165,7 @@ class InvoiceResponse(InvoiceBase):
     class Config:
         from_attributes = True
 
+
 # Credit Wallet schemas
 class CreditWalletResponse(BaseModel):
     id: str
@@ -173,11 +187,13 @@ class CreditWalletResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class CreditWalletUpdate(BaseModel):
     auto_recharge_enabled: Optional[bool] = None
     auto_recharge_threshold: Optional[int] = Field(None, ge=0)
     auto_recharge_amount: Optional[int] = Field(None, gt=0)
     is_active: Optional[bool] = None
+
 
 class CreditTransactionCreate(BaseModel):
     wallet_id: str
@@ -189,6 +205,7 @@ class CreditTransactionCreate(BaseModel):
     service_id: Optional[str] = None
     metadata: Dict[str, Any] = {}
     processed_by: Optional[str] = None
+
 
 class CreditTransactionResponse(BaseModel):
     id: str
@@ -208,6 +225,7 @@ class CreditTransactionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Refund schemas
 class RefundCreate(BaseModel):
     original_transaction_id: str
@@ -216,6 +234,7 @@ class RefundCreate(BaseModel):
     reason: str = Field(..., min_length=1)
     type: str = Field(default="full", regex="^(full|partial)$")
     processed_by: str
+
 
 class RefundResponse(BaseModel):
     id: str
@@ -235,6 +254,7 @@ class RefundResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Payment Method schemas
 class PaymentMethodCreate(BaseModel):
     user_id: str
@@ -250,6 +270,7 @@ class PaymentMethodCreate(BaseModel):
     account_holder_name: Optional[str] = None
     upi_id: Optional[str] = None
     is_default: bool = False
+
 
 class PaymentMethodResponse(BaseModel):
     id: str
@@ -272,6 +293,7 @@ class PaymentMethodResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Checkout schemas
 class CheckoutSessionCreate(BaseModel):
     user_id: str
@@ -288,11 +310,13 @@ class CheckoutSessionCreate(BaseModel):
     return_url: Optional[str] = None
     cancel_url: Optional[str] = None
 
+
 class CheckoutSessionResponse(BaseModel):
     session_id: str
     checkout_url: str
     transaction_id: str
     expires_at: datetime
+
 
 # Analytics schemas
 class BillingAnalytics(BaseModel):
@@ -310,6 +334,7 @@ class BillingAnalytics(BaseModel):
     top_services: List[Dict[str, Any]]
     payment_method_distribution: Dict[str, int]
 
+
 class TransactionFilter(BaseModel):
     user_id: Optional[str] = None
     member_id: Optional[str] = None
@@ -323,25 +348,32 @@ class TransactionFilter(BaseModel):
     end_date: Optional[datetime] = None
     service_type: Optional[str] = None
 
+
 class TransactionSort(BaseModel):
     field: str = "created_at"
     direction: str = "desc"
 
-    @validator('field')
+    @validator("field")
     def validate_field(cls, v):
         allowed_fields = [
-            'created_at', 'updated_at', 'completed_at', 'amount',
-            'status', 'type', 'gateway'
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "amount",
+            "status",
+            "type",
+            "gateway",
         ]
         if v not in allowed_fields:
-            raise ValueError(f'Sort field must be one of: {allowed_fields}')
+            raise ValueError(f"Sort field must be one of: {allowed_fields}")
         return v
 
-    @validator('direction')
+    @validator("direction")
     def validate_direction(cls, v):
-        if v.lower() not in ['asc', 'desc']:
+        if v.lower() not in ["asc", "desc"]:
             raise ValueError('Sort direction must be "asc" or "desc"')
         return v.lower()
+
 
 # Webhook schemas
 class WebhookPayload(BaseModel):
@@ -356,12 +388,14 @@ class WebhookPayload(BaseModel):
     signature: Optional[str] = None
     timestamp: Optional[datetime] = None
 
+
 # Bulk operations
 class BulkRefundRequest(BaseModel):
     transaction_ids: List[str]
     reason: str
     processed_by: str
     refund_amount: Optional[float] = None  # If not provided, full refund
+
 
 class CreditAdjustment(BaseModel):
     user_id: str
@@ -370,8 +404,10 @@ class CreditAdjustment(BaseModel):
     processed_by: str
     type: str = "manual_adjustment"
 
+
 class BulkCreditAdjustment(BaseModel):
     adjustments: List[CreditAdjustment]
+
 
 # Export schemas
 class TransactionExport(BaseModel):
@@ -379,6 +415,7 @@ class TransactionExport(BaseModel):
     filters: Optional[TransactionFilter] = None
     include_fields: Optional[List[str]] = None
     date_range: Optional[Dict[str, datetime]] = None
+
 
 # Service billing schemas
 class ServiceBillingCreate(BaseModel):
@@ -392,6 +429,7 @@ class ServiceBillingCreate(BaseModel):
     description: str
     metadata: Dict[str, Any] = {}
     auto_charge: bool = True  # Auto-charge from credits or payment method
+
 
 class ServiceBillingResponse(BaseModel):
     transaction_id: str

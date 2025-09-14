@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 import {
   Mail,
   Phone,
@@ -14,66 +14,66 @@ import {
   Package,
   Users,
   Shield,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function Footer() {
   const footerLinks = {
     products: [
-      { name: "3D Printers", href: "/catalog/3d-printers" },
-      { name: "Electronics", href: "/catalog/electronics" },
-      { name: "Tools & Hardware", href: "/catalog/tools" },
-      { name: "Materials", href: "/catalog/materials" },
-      { name: "Kits & Bundles", href: "/catalog/kits" },
+      { name: '3D Printers', href: '/catalog/3d-printers' },
+      { name: 'Electronics', href: '/catalog/electronics' },
+      { name: 'Tools & Hardware', href: '/catalog/tools' },
+      { name: 'Materials', href: '/catalog/materials' },
+      { name: 'Kits & Bundles', href: '/catalog/kits' },
     ],
     services: [
-      { name: "3D Printing", href: "/3d-printing" },
-      { name: "CNC Machining", href: "/services/cnc" },
-      { name: "PCB Assembly", href: "/services/pcb" },
-      { name: "Laser Cutting", href: "/services/laser" },
-      { name: "Custom Manufacturing", href: "/services/custom" },
+      { name: '3D Printing', href: '/3d-printing' },
+      { name: 'CNC Machining', href: '/services/cnc' },
+      { name: 'PCB Assembly', href: '/services/pcb' },
+      { name: 'Laser Cutting', href: '/services/laser' },
+      { name: 'Custom Manufacturing', href: '/services/custom' },
     ],
     company: [
-      { name: "About Us", href: "/about" },
-      { name: "MakrX.org", href: "https://makrx.org" },
-      { name: "MakrCave", href: "https://makrcave.com" },
-      { name: "Careers", href: "/careers" },
-      { name: "Contact", href: "/contact" },
+      { name: 'About Us', href: '/about' },
+      { name: 'MakrX.org', href: 'https://makrx.org' },
+      { name: 'MakrCave', href: 'https://makrcave.com' },
+      { name: 'Careers', href: '/careers' },
+      { name: 'Contact', href: '/contact' },
     ],
     support: [
-      { name: "Help Center", href: "/help" },
-      { name: "Shipping Info", href: "/shipping" },
-      { name: "Returns", href: "/returns" },
-      { name: "Size Guide", href: "/size-guide" },
-      { name: "Track Order", href: "/track" },
+      { name: 'Help Center', href: '/help' },
+      { name: 'Shipping Info', href: '/shipping' },
+      { name: 'Returns', href: '/returns' },
+      { name: 'Size Guide', href: '/size-guide' },
+      { name: 'Track Order', href: '/track' },
     ],
     legal: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Cookie Policy", href: "/cookies" },
-      { name: "GDPR", href: "/gdpr" },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' },
+      { name: 'Cookie Policy', href: '/cookies' },
+      { name: 'GDPR', href: '/gdpr' },
     ],
   };
 
   const features = [
     {
       icon: Printer,
-      title: "Instant 3D Printing",
-      description: "Upload STL, get quotes, print locally",
+      title: 'Instant 3D Printing',
+      description: 'Upload STL, get quotes, print locally',
     },
     {
       icon: Package,
-      title: "Quality Products",
-      description: "Curated tools for makers",
+      title: 'Quality Products',
+      description: 'Curated tools for makers',
     },
     {
       icon: Users,
-      title: "Verified Providers",
-      description: "Trusted service network",
+      title: 'Verified Providers',
+      description: 'Trusted service network',
     },
     {
       icon: Shield,
-      title: "Secure Payments",
-      description: "Safe & encrypted transactions",
+      title: 'Secure Payments',
+      description: 'Safe & encrypted transactions',
     },
   ];
 
@@ -90,12 +90,8 @@ export default function Footer() {
                   <div className="w-16 h-16 bg-gradient-to-br from-store-primary to-store-secondary rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Icon className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-400 dark:text-gray-500 text-sm">
-                    {feature.description}
-                  </p>
+                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm">{feature.description}</p>
                 </div>
               );
             })}
@@ -114,13 +110,12 @@ export default function Footer() {
               </div>
               <div>
                 <span className="text-xl font-bold">MakrX</span>
-                <span className="text-xl font-bold text-store-primary">
-                  .Store
-                </span>
+                <span className="text-xl font-bold text-store-primary">.Store</span>
               </div>
             </div>
             <p className="text-gray-400 dark:text-gray-500 mb-4 leading-relaxed">
-              The e-commerce hub of the MakrX ecosystem. Tools, materials, and fabrication services integrated with the global maker community.
+              The e-commerce hub of the MakrX ecosystem. Tools, materials, and fabrication services
+              integrated with the global maker community.
             </p>
             <p className="text-gray-500 dark:text-gray-600 text-sm mb-6">
               MakrX is an initiative by Botness Technologies Pvt. Ltd.
@@ -128,10 +123,7 @@ export default function Footer() {
             <div className="space-y-2 text-sm text-gray-400 dark:text-gray-500">
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-2" />
-                <a
-                  href="mailto:hello@makrx.store"
-                  className="hover:text-white transition-colors"
-                >
+                <a href="mailto:hello@makrx.store" className="hover:text-white transition-colors">
                   hello@makrx.store
                 </a>
               </div>
@@ -221,8 +213,7 @@ export default function Footer() {
             <div className="lg:flex-1">
               <h3 className="text-lg font-semibold mb-2">Stay Updated</h3>
               <p className="text-gray-400 dark:text-gray-500 text-sm">
-                Get the latest products, deals, and maker tips delivered to your
-                inbox.
+                Get the latest products, deals, and maker tips delivered to your inbox.
               </p>
             </div>
             <div className="mt-6 lg:mt-0 lg:ml-8">
@@ -251,11 +242,7 @@ export default function Footer() {
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400 dark:text-gray-500">
               <span>© 2024 MakrX by Botness Technologies Pvt. Ltd. All rights reserved.</span>
               {footerLinks.legal.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.href}
-                  className="hover:text-white transition-colors"
-                >
+                <Link key={index} href={link.href} className="hover:text-white transition-colors">
                   {link.name}
                 </Link>
               ))}

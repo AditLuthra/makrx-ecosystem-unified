@@ -22,10 +22,7 @@ export async function POST(request: NextRequest) {
   try {
     const sponsorData = await request.json();
 
-    const [sponsor] = await db
-      .insert(sponsors)
-      .values(sponsorData)
-      .returning();
+    const [sponsor] = await db.insert(sponsors).values(sponsorData).returning();
 
     return NextResponse.json(sponsor, { status: 201 });
   } catch (error) {

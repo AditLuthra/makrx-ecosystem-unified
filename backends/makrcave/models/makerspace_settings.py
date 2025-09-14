@@ -1,4 +1,14 @@
-from sqlalchemy import Column, String, Boolean, Integer, Float, ForeignKey, JSON, DateTime, Enum as SQLEnum
+from sqlalchemy import (
+    Column,
+    String,
+    Boolean,
+    Integer,
+    Float,
+    ForeignKey,
+    JSON,
+    DateTime,
+    Enum as SQLEnum,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -6,10 +16,12 @@ import uuid
 import enum
 from ..database import Base
 
+
 class ThemeMode(enum.Enum):
     DARK = "dark"
     LIGHT = "light"
     CUSTOM = "custom"
+
 
 class PrintTechnology(enum.Enum):
     FDM = "fdm"
@@ -18,12 +30,18 @@ class PrintTechnology(enum.Enum):
     POLYJET = "polyjet"
     CARBON_FIBER = "carbon_fiber"
 
+
 class MakerspaceSettings(Base):
     __tablename__ = "makerspace_settings"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    makerspace_id = Column(UUID(as_uuid=True), ForeignKey("makerspaces.id"), unique=True, nullable=False)
-    
+    makerspace_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("makerspaces.id"),
+        unique=True,
+        nullable=False,
+    )
+
     # General Information
     makerspace_name = Column(String(255), nullable=True)
     logo_url = Column(String(500), nullable=True)
@@ -34,15 +52,17 @@ class MakerspaceSettings(Base):
     timezone = Column(String(50), default="Asia/Kolkata")
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    operating_hours = Column(JSON, nullable=True)  # Store as JSON: {"monday": {"open": "09:00", "close": "18:00"}, ...}
-    
+    operating_hours = Column(
+        JSON, nullable=True
+    )  # Store as JSON: {"monday": {"open": "09:00", "close": "18:00"}, ...}
+
     # Access Settings
     membership_required = Column(Boolean, default=True)
     public_registration = Column(Boolean, default=False)
     skill_gated_access = Column(Boolean, default=True)
     enable_reservations = Column(Boolean, default=True)
     auto_approve_members = Column(Boolean, default=False)
-    
+
     # Inventory Settings
     filament_deduction_enabled = Column(Boolean, default=True)
     minimum_stock_alerts = Column(Boolean, default=True)
@@ -50,7 +70,7 @@ class MakerspaceSettings(Base):
     allow_personal_consumables = Column(Boolean, default=False)
     store_inventory_sync = Column(Boolean, default=False)
     default_stock_threshold = Column(Integer, default=10)
-    
+
     # Billing Settings
     credit_system_enabled = Column(Boolean, default=False)
     show_job_cost_estimates = Column(Boolean, default=True)
@@ -59,15 +79,17 @@ class MakerspaceSettings(Base):
     razorpay_key_override = Column(String(255), nullable=True)
     stripe_key_override = Column(String(255), nullable=True)
     enable_membership_billing = Column(Boolean, default=True)
-    
+
     # Service Provider Mode
     service_mode_enabled = Column(Boolean, default=False)
     accept_jobs_from_store = Column(Boolean, default=False)
-    allowed_print_technologies = Column(JSON, nullable=True)  # List of PrintTechnology values
+    allowed_print_technologies = Column(
+        JSON, nullable=True
+    )  # List of PrintTechnology values
     delivery_radius_km = Column(Integer, default=10)
     default_service_fee_percent = Column(Float, default=5.0)
     auto_job_assignment = Column(Boolean, default=False)
-    
+
     # Appearance Settings
     theme_mode = Column(SQLEnum(ThemeMode), default=ThemeMode.LIGHT)
     custom_theme_colors = Column(JSON, nullable=True)  # Custom color palette
@@ -76,32 +98,36 @@ class MakerspaceSettings(Base):
     enable_chat_widget = Column(Boolean, default=False)
     enable_help_widget = Column(Boolean, default=True)
     custom_css = Column(String(5000), nullable=True)
-    
+
     # Notification Settings
     email_notifications_enabled = Column(Boolean, default=True)
     sms_notifications_enabled = Column(Boolean, default=False)
     push_notifications_enabled = Column(Boolean, default=True)
     maintenance_reminder_days = Column(Integer, default=7)
-    
+
     # Security Settings
     require_safety_training = Column(Boolean, default=True)
     equipment_access_logging = Column(Boolean, default=True)
     visitor_registration_required = Column(Boolean, default=True)
-    
+
     # Integration Settings
     enable_iot_monitoring = Column(Boolean, default=False)
     enable_rfid_access = Column(Boolean, default=False)
     enable_camera_monitoring = Column(Boolean, default=False)
-    
+
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    updated_by = Column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+
     # Relationships
     makerspace = relationship("Makerspace", back_populates="settings")
     updated_by_user = relationship("User", foreign_keys=[updated_by])
-    
+
     def __repr__(self):
         return f"<MakerspaceSettings(makerspace_id={self.makerspace_id}, name={self.makerspace_name})>"
 
@@ -142,7 +168,9 @@ class MakerspaceSettings(Base):
             "delivery_radius_km": self.delivery_radius_km,
             "default_service_fee_percent": self.default_service_fee_percent,
             "auto_job_assignment": self.auto_job_assignment,
-            "theme_mode": self.theme_mode.value if self.theme_mode else "light",
+            "theme_mode": (
+                self.theme_mode.value if self.theme_mode else "light"
+            ),
             "custom_theme_colors": self.custom_theme_colors,
             "landing_page_cta": self.landing_page_cta,
             "welcome_message": self.welcome_message,
@@ -158,13 +186,19 @@ class MakerspaceSettings(Base):
             "enable_iot_monitoring": self.enable_iot_monitoring,
             "enable_rfid_access": self.enable_rfid_access,
             "enable_camera_monitoring": self.enable_camera_monitoring,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-            "updated_by": str(self.updated_by) if self.updated_by else None
+            "created_at": (
+                self.created_at.isoformat() if self.created_at else None
+            ),
+            "updated_at": (
+                self.updated_at.isoformat() if self.updated_at else None
+            ),
+            "updated_by": str(self.updated_by) if self.updated_by else None,
         }
 
     @classmethod
-    def get_default_settings(cls, makerspace_id: str, makerspace_name: str = None):
+    def get_default_settings(
+        cls, makerspace_id: str, makerspace_name: str = None
+    ):
         """Get default settings for a new makerspace"""
         return {
             "makerspace_id": makerspace_id,
@@ -172,12 +206,28 @@ class MakerspaceSettings(Base):
             "timezone": "Asia/Kolkata",
             "operating_hours": {
                 "monday": {"open": "09:00", "close": "18:00", "closed": False},
-                "tuesday": {"open": "09:00", "close": "18:00", "closed": False},
-                "wednesday": {"open": "09:00", "close": "18:00", "closed": False},
-                "thursday": {"open": "09:00", "close": "18:00", "closed": False},
+                "tuesday": {
+                    "open": "09:00",
+                    "close": "18:00",
+                    "closed": False,
+                },
+                "wednesday": {
+                    "open": "09:00",
+                    "close": "18:00",
+                    "closed": False,
+                },
+                "thursday": {
+                    "open": "09:00",
+                    "close": "18:00",
+                    "closed": False,
+                },
                 "friday": {"open": "09:00", "close": "18:00", "closed": False},
-                "saturday": {"open": "10:00", "close": "17:00", "closed": False},
-                "sunday": {"open": "10:00", "close": "17:00", "closed": True}
+                "saturday": {
+                    "open": "10:00",
+                    "close": "17:00",
+                    "closed": False,
+                },
+                "sunday": {"open": "10:00", "close": "17:00", "closed": True},
             },
             "membership_required": True,
             "public_registration": False,
@@ -214,5 +264,5 @@ class MakerspaceSettings(Base):
             "visitor_registration_required": True,
             "enable_iot_monitoring": False,
             "enable_rfid_access": False,
-            "enable_camera_monitoring": False
+            "enable_camera_monitoring": False,
         }

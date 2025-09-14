@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { FC } from "react";
+import { FC } from 'react';
 
 interface CategorySpecificFiltersProps {
   category: string;
@@ -19,7 +19,7 @@ const CategorySpecificFilters: FC<CategorySpecificFiltersProps> = ({
   onFilterChange,
   onToggle,
   isOpen,
-  className = "",
+  className = '',
   showSavedFilters = true,
   enableQuickSearch = true,
 }) => {

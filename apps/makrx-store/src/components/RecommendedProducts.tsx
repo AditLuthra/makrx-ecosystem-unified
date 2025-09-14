@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 // Using inline SVGs instead of Heroicons
 
 interface RecommendedProduct {
@@ -24,7 +24,7 @@ interface RecommendedProductsProps {
 
 export default function RecommendedProducts({
   products,
-  title = "Recommended Products",
+  title = 'Recommended Products',
 }: RecommendedProductsProps) {
   if (!products || products.length === 0) {
     return null;
@@ -32,9 +32,7 @@ export default function RecommendedProducts({
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-        {title}
-      </h3>
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{title}</h3>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {products.map((product) => (
@@ -55,13 +53,13 @@ function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
       <div className="relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-t-lg overflow-hidden">
         <Link href={`/p/${product.slug}`}>
           <Image
-            src={product.images[0] || "/placeholder.svg"}
+            src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-200"
             sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
             onError={(e) => {
-              e.currentTarget.src = "/placeholder.svg";
+              e.currentTarget.src = '/placeholder.svg';
             }}
           />
         </Link>
@@ -90,7 +88,7 @@ function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? "text-yellow-400" : "text-gray-300"}`}
+                  className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -118,12 +116,7 @@ function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
 
         {/* Quick Add Button */}
         <button className="w-full py-2 px-3 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-1">
-          <svg
-            className="h-3 w-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

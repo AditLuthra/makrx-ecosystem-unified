@@ -10,26 +10,32 @@ const registrationSchema = z.object({
     phone: z.string().optional(),
     organization: z.string().optional(),
     dietaryRestrictions: z.string().optional(),
-    emergencyContact: z.string().optional()
+    emergencyContact: z.string().optional(),
   }),
-  teamInfo: z.object({
-    teamName: z.string().optional(),
-    teamMembers: z.array(z.object({
-      name: z.string(),
-      email: z.string().email(),
-      role: z.string().optional()
-    })).optional()
-  }).optional(),
+  teamInfo: z
+    .object({
+      teamName: z.string().optional(),
+      teamMembers: z
+        .array(
+          z.object({
+            name: z.string(),
+            email: z.string().email(),
+            role: z.string().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
   ticketTierId: z.string().optional(), // For paid events
   quantity: z.number().min(1).max(10).default(1),
   couponCode: z.string().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // POST /api/microsites/[slug]/events/[subSlug]/register - Register for free event
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string; subSlug: string } }
+  { params }: { params: { slug: string; subSlug: string } },
 ) {
   try {
     const { slug, subSlug } = await params;
@@ -47,38 +53,35 @@ export async function POST(
       capacity: 50,
       registrationCount: 23,
       waitlist: true,
-      status: 'published'
+      status: 'published',
     };
 
     if (mockSubEvent.slug !== subSlug) {
-      return NextResponse.json(
-        { error: 'Sub-event not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Sub-event not found' }, { status: 404 });
     }
 
     if (mockSubEvent.status !== 'published') {
       return NextResponse.json(
         { error: 'Registration not available for this event' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (mockSubEvent.registrationType !== 'free') {
       return NextResponse.json(
         { error: 'This is a paid event. Use the checkout endpoint instead.' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Check capacity
-    const isWaitlist = mockSubEvent.capacity && 
-      mockSubEvent.registrationCount >= mockSubEvent.capacity;
+    const isWaitlist =
+      mockSubEvent.capacity && mockSubEvent.registrationCount >= mockSubEvent.capacity;
 
     if (isWaitlist && !mockSubEvent.waitlist) {
       return NextResponse.json(
         { error: 'Event is full and waitlist is not enabled' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,45 +103,46 @@ export async function POST(
         participantInfo: validatedData.participantInfo,
         teamInfo: validatedData.teamInfo,
         registeredVia: 'web',
-        isWaitlist
+        isWaitlist,
       },
-      registeredAt: new Date().toISOString()
+      registeredAt: new Date().toISOString(),
     };
 
     // TODO: Send confirmation email
     // TODO: Update event registration count
     // TODO: Generate calendar invite
 
-    return NextResponse.json({
-      registration: newRegistration,
-      event: {
-        title: mockSubEvent.title,
-        slug: mockSubEvent.slug
+    return NextResponse.json(
+      {
+        registration: newRegistration,
+        event: {
+          title: mockSubEvent.title,
+          slug: mockSubEvent.slug,
+        },
+        message: isWaitlist
+          ? 'You have been added to the waitlist. You will be notified if a spot becomes available.'
+          : 'Registration successful! Your ticket has been generated.',
+        ticket: isWaitlist
+          ? null
+          : {
+              qrCode,
+              downloadUrl: `/api/tickets/${newRegistration.id}/pdf`,
+            },
       },
-      message: isWaitlist 
-        ? 'You have been added to the waitlist. You will be notified if a spot becomes available.'
-        : 'Registration successful! Your ticket has been generated.',
-      ticket: isWaitlist ? null : {
-        qrCode,
-        downloadUrl: `/api/tickets/${newRegistration.id}/pdf`
-      }
-    }, { status: 201 });
-
+      { status: 201 },
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error processing registration:', error);
-    return NextResponse.json(
-      { error: 'Failed to process registration' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process registration' }, { status: 500 });
   }
 }

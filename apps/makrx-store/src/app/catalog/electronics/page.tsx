@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Grid, List, Filter } from "lucide-react";
-import { api, type Product } from "@/lib/api";
-import ProductGrid from "@/components/ProductGrid";
-import EnhancedCategoryFilters, { useFiltersToggle } from "@/components/EnhancedCategoryFilters";
-import SortSelect from "@/components/SortSelect";
-import { getAllFiltersForCategory } from "@/data/categoryFilters";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, Grid, List, Filter } from 'lucide-react';
+import { api, type Product } from '@/lib/api';
+import ProductGrid from '@/components/ProductGrid';
+import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
+import SortSelect from '@/components/SortSelect';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
 
 export default function ElectronicsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("featured");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -26,14 +26,14 @@ export default function ElectronicsPage() {
       try {
         setLoading(true);
         const productsData = await api.getProducts({
-          category: "electronics",
+          category: 'electronics',
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
       } catch (err) {
-        console.error("Failed to load electronics:", err);
-        setError("Failed to load products");
+        console.error('Failed to load electronics:', err);
+        setError('Failed to load products');
       } finally {
         setLoading(false);
       }
@@ -70,7 +70,7 @@ export default function ElectronicsPage() {
             Electronics & Components
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
-            Complete range of electronic components, development boards, sensors, and modules for 
+            Complete range of electronic components, development boards, sensors, and modules for
             prototyping, IoT projects, robotics, and electronic design.
           </p>
         </div>
@@ -90,7 +90,8 @@ export default function ElectronicsPage() {
               Sensors & Modules
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Temperature, humidity, motion, distance sensors and communication modules for IoT projects.
+              Temperature, humidity, motion, distance sensors and communication modules for IoT
+              projects.
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -107,13 +108,14 @@ export default function ElectronicsPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className="flex items-center space-x-4">
             <EnhancedCategoryFilters
-              facets={categoryFilters.map(filter => ({
+              facets={categoryFilters.map((filter) => ({
                 name: filter.id,
-                values: filter.options?.map(opt => ({
-                  id: opt.value,
-                  name: opt.label,
-                  count: opt.count
-                })) || []
+                values:
+                  filter.options?.map((opt) => ({
+                    id: opt.value,
+                    name: opt.label,
+                    count: opt.count,
+                  })) || [],
               }))}
               activeFilters={activeFilters}
               onFilterChange={handleFilterChange}
@@ -122,30 +124,30 @@ export default function ElectronicsPage() {
               className="lg:hidden"
             />
             <p className="text-gray-600 dark:text-gray-400">
-              {loading ? "Loading..." : `${products.length} products found`}
+              {loading ? 'Loading...' : `${products.length} products found`}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
-            
+
             <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
               <button
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={`p-2 ${
-                  viewMode === "grid"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <Grid className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={`p-2 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -158,13 +160,14 @@ export default function ElectronicsPage() {
           {/* Filters Sidebar */}
           <div className="hidden lg:block w-80 flex-shrink-0">
             <EnhancedCategoryFilters
-              facets={categoryFilters.map(filter => ({
+              facets={categoryFilters.map((filter) => ({
                 name: filter.id,
-                values: filter.options?.map(opt => ({
-                  id: opt.value,
-                  name: opt.label,
-                  count: opt.count
-                })) || []
+                values:
+                  filter.options?.map((opt) => ({
+                    id: opt.value,
+                    name: opt.label,
+                    count: opt.count,
+                  })) || [],
               }))}
               activeFilters={activeFilters}
               onFilterChange={handleFilterChange}
@@ -187,11 +190,7 @@ export default function ElectronicsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid 
-                products={products} 
-                loading={loading} 
-                viewMode={viewMode}
-              />
+              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
             )}
           </div>
         </div>
@@ -207,10 +206,18 @@ export default function ElectronicsPage() {
                 Popular Categories
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>��� <strong>Arduino Ecosystem:</strong> Boards, shields, sensors, and accessories</li>
-                <li>• <strong>Raspberry Pi:</strong> Single-board computers and HATs</li>
-                <li>• <strong>IoT & Wireless:</strong> ESP32, WiFi, Bluetooth, LoRa modules</li>
-                <li>• <strong>Displays:</strong> LCD, OLED, TFT displays and touchscreens</li>
+                <li>
+                  ��� <strong>Arduino Ecosystem:</strong> Boards, shields, sensors, and accessories
+                </li>
+                <li>
+                  • <strong>Raspberry Pi:</strong> Single-board computers and HATs
+                </li>
+                <li>
+                  • <strong>IoT & Wireless:</strong> ESP32, WiFi, Bluetooth, LoRa modules
+                </li>
+                <li>
+                  • <strong>Displays:</strong> LCD, OLED, TFT displays and touchscreens
+                </li>
               </ul>
             </div>
             <div>
@@ -218,10 +225,18 @@ export default function ElectronicsPage() {
                 Expert Support
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• <strong>Circuit Design:</strong> Custom PCB design and consultation</li>
-                <li>• <strong>Prototyping:</strong> Breadboarding and testing services</li>
-                <li>• <strong>Programming:</strong> Firmware development and debugging</li>
-                <li>• <strong>Integration:</strong> System integration and testing</li>
+                <li>
+                  • <strong>Circuit Design:</strong> Custom PCB design and consultation
+                </li>
+                <li>
+                  • <strong>Prototyping:</strong> Breadboarding and testing services
+                </li>
+                <li>
+                  • <strong>Programming:</strong> Firmware development and debugging
+                </li>
+                <li>
+                  • <strong>Integration:</strong> System integration and testing
+                </li>
               </ul>
             </div>
           </div>

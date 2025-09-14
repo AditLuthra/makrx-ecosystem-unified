@@ -5,10 +5,7 @@ import { requireAuth } from '@/lib/auth-middleware';
 import { AuthenticatedRequest } from '@/lib/auth-middleware';
 import { eq } from 'drizzle-orm';
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { userId: string } }) {
   try {
     // Require authentication and check for admin role
     const authResult = await requireAuth(request);
@@ -17,12 +14,12 @@ export async function PATCH(
     }
 
     const user = (request as AuthenticatedRequest).user;
-    
+
     // Check if user has super admin privileges (only super admins can modify users)
     if (!user?.roles?.includes('super_admin')) {
       return NextResponse.json(
         { error: 'Insufficient permissions - Super admin required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -32,7 +29,7 @@ export async function PATCH(
     // Validate allowed update fields
     const allowedFields = ['role', 'status'];
     const updates: Record<string, any> = {};
-    
+
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
         updates[field] = body[field];
@@ -40,26 +37,20 @@ export async function PATCH(
     }
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json(
-        { error: 'No valid fields to update' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
     }
 
     // Validate role values
     if (updates.role && !['user', 'event_admin', 'super_admin'].includes(updates.role)) {
-      return NextResponse.json(
-        { error: 'Invalid role value' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid role value' }, { status: 400 });
     }
 
     // Validate status values
-    if (updates.status && !['active', 'pending', 'suspended', 'rejected'].includes(updates.status)) {
-      return NextResponse.json(
-        { error: 'Invalid status value' },
-        { status: 400 }
-      );
+    if (
+      updates.status &&
+      !['active', 'pending', 'suspended', 'rejected'].includes(updates.status)
+    ) {
+      return NextResponse.json({ error: 'Invalid status value' }, { status: 400 });
     }
 
     // Add updatedAt timestamp
@@ -73,10 +64,7 @@ export async function PATCH(
       .returning();
 
     if (!updatedUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -89,13 +77,10 @@ export async function PATCH(
         role: updatedUser.role,
         status: updatedUser.status,
         updatedAt: updatedUser.updatedAt,
-      }
+      },
     });
   } catch (error) {
     console.error('Error updating user:', error);
-    return NextResponse.json(
-      { error: 'Failed to update user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }

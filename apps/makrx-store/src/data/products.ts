@@ -45,9 +45,10 @@ export const products: Product[] = [];
 export const categories: Category[] = [];
 
 export const searchProducts = (query: string): Product[] => {
-  return products.filter(product => 
-    product.name.toLowerCase().includes(query.toLowerCase()) ||
-    product.description.toLowerCase().includes(query.toLowerCase())
+  return products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(query.toLowerCase()) ||
+      product.description.toLowerCase().includes(query.toLowerCase()),
   );
 };
 
@@ -60,5 +61,5 @@ export const sortProducts = (products: Product[], sortBy: string): Product[] => 
 };
 
 export const getProductsByCategory = (category: string): Product[] => {
-  return products.filter(product => product.category === category);
+  return products.filter((product) => product.category === category);
 };

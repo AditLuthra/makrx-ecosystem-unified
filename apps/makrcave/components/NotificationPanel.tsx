@@ -1,19 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, X, Check, AlertTriangle, Info, CheckCircle, XCircle, Package, Wrench, FolderOpen, Settings, ExternalLink } from 'lucide-react';
+import {
+  Bell,
+  X,
+  Check,
+  AlertTriangle,
+  Info,
+  CheckCircle,
+  XCircle,
+  Package,
+  Wrench,
+  FolderOpen,
+  Settings,
+  ExternalLink,
+} from 'lucide-react';
 import { useNotifications, NotificationType } from '../contexts/NotificationContext';
 
 export default function NotificationPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const panelRef = useRef<HTMLDivElement>(null);
-  const { 
-    notifications, 
-    unreadCount, 
-    markAsRead, 
-    markAllAsRead, 
-    removeNotification, 
-    clearAll 
-  } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, clearAll } =
+    useNotifications();
 
   // Close panel when clicking outside
   useEffect(() => {
@@ -31,29 +38,40 @@ export default function NotificationPanel() {
 
   const getNotificationIcon = (type: NotificationType) => {
     switch (type) {
-      case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
-      case 'warning': return <AlertTriangle className="w-5 h-5 text-amber-500" />;
-      case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'inventory': return <Package className="w-5 h-5 text-blue-500" />;
-      case 'equipment': return <Wrench className="w-5 h-5 text-purple-500" />;
-      case 'project': return <FolderOpen className="w-5 h-5 text-makrx-teal" />;
-      case 'system': return <Settings className="w-5 h-5 text-gray-500" />;
-      default: return <Info className="w-5 h-5 text-blue-500" />;
+      case 'error':
+        return <XCircle className="w-5 h-5 text-red-500" />;
+      case 'warning':
+        return <AlertTriangle className="w-5 h-5 text-amber-500" />;
+      case 'success':
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'inventory':
+        return <Package className="w-5 h-5 text-blue-500" />;
+      case 'equipment':
+        return <Wrench className="w-5 h-5 text-purple-500" />;
+      case 'project':
+        return <FolderOpen className="w-5 h-5 text-makrx-teal" />;
+      case 'system':
+        return <Settings className="w-5 h-5 text-gray-500" />;
+      default:
+        return <Info className="w-5 h-5 text-blue-500" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'border-red-500 bg-red-50';
-      case 'high': return 'border-amber-500 bg-amber-50';
-      case 'medium': return 'border-blue-500 bg-blue-50';
-      default: return 'border-gray-300 bg-gray-50';
+      case 'urgent':
+        return 'border-red-500 bg-red-50';
+      case 'high':
+        return 'border-amber-500 bg-amber-50';
+      case 'medium':
+        return 'border-blue-500 bg-blue-50';
+      default:
+        return 'border-gray-300 bg-gray-50';
     }
   };
 
-  const filteredNotifications = filter === 'unread' 
-    ? notifications.filter(n => !n.read)
-    : notifications;
+  const filteredNotifications =
+    filter === 'unread' ? notifications.filter((n) => !n.read) : notifications;
 
   const formatTime = (date: Date) => {
     const now = new Date();
@@ -71,7 +89,7 @@ export default function NotificationPanel() {
   return (
     <div className="relative" ref={panelRef}>
       {/* Notification Bell */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 hover:bg-accent rounded-lg transition-colors"
       >
@@ -90,14 +108,11 @@ export default function NotificationPanel() {
           <div className="p-4 border-b border-border">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Notifications</h3>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-accent rounded"
-              >
+              <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-accent rounded">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            
+
             {/* Filter and Actions */}
             <div className="flex items-center justify-between">
               <div className="flex gap-2">
@@ -118,12 +133,9 @@ export default function NotificationPanel() {
                   Unread ({unreadCount})
                 </button>
               </div>
-              
+
               {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-makrx-teal hover:underline"
-                >
+                <button onClick={markAllAsRead} className="text-xs text-makrx-teal hover:underline">
                   Mark all read
                 </button>
               )}
@@ -148,11 +160,13 @@ export default function NotificationPanel() {
                   >
                     <div className="flex items-start gap-3">
                       {getNotificationIcon(notification.type)}
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            <h4
+                              className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}
+                            >
                               {notification.title}
                             </h4>
                             <p className="text-xs text-muted-foreground mt-1">
@@ -162,16 +176,21 @@ export default function NotificationPanel() {
                               <span className="text-xs text-muted-foreground">
                                 {formatTime(notification.timestamp)}
                               </span>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                notification.priority === 'urgent' ? 'bg-red-100 text-red-700' :
-                                notification.priority === 'high' ? 'bg-amber-100 text-amber-700' :
-                                notification.priority === 'medium' ? 'bg-blue-100 text-blue-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
+                              <span
+                                className={`text-xs px-2 py-0.5 rounded-full ${
+                                  notification.priority === 'urgent'
+                                    ? 'bg-red-100 text-red-700'
+                                    : notification.priority === 'high'
+                                      ? 'bg-amber-100 text-amber-700'
+                                      : notification.priority === 'medium'
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : 'bg-gray-100 text-gray-700'
+                                }`}
+                              >
                                 {notification.priority}
                               </span>
                             </div>
-                            
+
                             {notification.actionUrl && (
                               <div className="mt-2">
                                 <button className="text-xs text-makrx-teal hover:underline flex items-center gap-1">
@@ -181,7 +200,7 @@ export default function NotificationPanel() {
                               </div>
                             )}
                           </div>
-                          
+
                           <div className="flex items-center gap-1 ml-2">
                             {!notification.read && (
                               <button

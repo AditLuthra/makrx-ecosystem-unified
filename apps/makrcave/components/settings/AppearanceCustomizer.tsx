@@ -21,7 +21,7 @@ import {
   Info,
   Eye,
   Paintbrush,
-  Layout
+  Layout,
 } from 'lucide-react';
 
 interface CustomThemeColors {
@@ -62,8 +62,8 @@ const themePresets = [
       background: '#FFFFFF',
       surface: '#F8FAFC',
       text_primary: '#1F2937',
-      text_secondary: '#6B7280'
-    }
+      text_secondary: '#6B7280',
+    },
   },
   {
     name: 'Green Tech',
@@ -74,8 +74,8 @@ const themePresets = [
       background: '#FFFFFF',
       surface: '#F0FDF4',
       text_primary: '#065F46',
-      text_secondary: '#047857'
-    }
+      text_secondary: '#047857',
+    },
   },
   {
     name: 'Orange Maker',
@@ -86,8 +86,8 @@ const themePresets = [
       background: '#FFFFFF',
       surface: '#FFFBEB',
       text_primary: '#92400E',
-      text_secondary: '#A16207'
-    }
+      text_secondary: '#A16207',
+    },
   },
   {
     name: 'Purple Innovation',
@@ -98,16 +98,16 @@ const themePresets = [
       background: '#FFFFFF',
       surface: '#FAF5FF',
       text_primary: '#581C87',
-      text_secondary: '#7C3AED'
-    }
-  }
+      text_secondary: '#7C3AED',
+    },
+  },
 ];
 
 const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
   settings,
   onUpdate,
   onSave,
-  saving
+  saving,
 }) => {
   const [showCssEditor, setShowCssEditor] = useState(false);
 
@@ -123,22 +123,22 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
     const currentColors = settings.custom_theme_colors || {};
     const updatedColors = {
       ...currentColors,
-      [colorKey]: value
+      [colorKey]: value,
     };
     onUpdate({ custom_theme_colors: updatedColors });
   };
 
-  const applyThemePreset = (preset: typeof themePresets[0]) => {
-    onUpdate({ 
+  const applyThemePreset = (preset: (typeof themePresets)[0]) => {
+    onUpdate({
       theme_mode: 'custom',
-      custom_theme_colors: preset.colors 
+      custom_theme_colors: preset.colors,
     });
   };
 
   const resetToDefaultTheme = () => {
-    onUpdate({ 
+    onUpdate({
       theme_mode: 'light',
-      custom_theme_colors: null 
+      custom_theme_colors: null,
     });
   };
 
@@ -150,7 +150,7 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
       welcome_message: settings.welcome_message,
       enable_chat_widget: settings.enable_chat_widget,
       enable_help_widget: settings.enable_help_widget,
-      custom_css: settings.custom_css
+      custom_css: settings.custom_css,
     };
     onSave(appearanceData);
   };
@@ -167,7 +167,7 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
             <div className="text-sm text-pink-800">
               <p className="font-medium">Appearance Customization</p>
               <p className="text-pink-700 mt-1">
-                Customize the look and feel of your makerspace portal including themes, colors, 
+                Customize the look and feel of your makerspace portal including themes, colors,
                 messaging, and user interface elements to match your brand identity.
               </p>
             </div>
@@ -188,9 +188,11 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
           <div className="space-y-3">
             <Label>Theme Mode</Label>
             <div className="grid grid-cols-3 gap-3">
-              <div 
+              <div
                 className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  settings.theme_mode === 'light' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  settings.theme_mode === 'light'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
                 onClick={() => handleInputChange('theme_mode', 'light')}
               >
@@ -203,9 +205,11 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
                 </div>
               </div>
 
-              <div 
+              <div
                 className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  settings.theme_mode === 'dark' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  settings.theme_mode === 'dark'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
                 onClick={() => handleInputChange('theme_mode', 'dark')}
               >
@@ -218,9 +222,11 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
                 </div>
               </div>
 
-              <div 
+              <div
                 className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  settings.theme_mode === 'custom' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  settings.theme_mode === 'custom'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
                 onClick={() => handleInputChange('theme_mode', 'custom')}
               >
@@ -241,26 +247,28 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
               <Label>Theme Presets</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {themePresets.map((preset, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="p-3 border rounded-lg cursor-pointer hover:border-gray-300 transition-all"
                     onClick={() => applyThemePreset(preset)}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div 
+                      <div
                         className="w-4 h-4 rounded-full border"
                         style={{ backgroundColor: preset.colors.primary }}
                       />
                       <span className="text-sm font-medium">{preset.name}</span>
                     </div>
                     <div className="flex gap-1">
-                      {Object.values(preset.colors).slice(0, 4).map((color, i) => (
-                        <div 
-                          key={i}
-                          className="w-3 h-3 rounded border"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
+                      {Object.values(preset.colors)
+                        .slice(0, 4)
+                        .map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-3 h-3 rounded border"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
                     </div>
                   </div>
                 ))}
@@ -413,9 +421,7 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
-                  Enable live chat support widget
-                </p>
+                <p className="text-sm text-gray-600 mt-1">Enable live chat support widget</p>
               </div>
               <Switch
                 id="enable_chat_widget"
@@ -464,12 +470,12 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label>Custom CSS</Label>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowCssEditor(!showCssEditor)}
-              >
-                {showCssEditor ? <Eye className="h-4 w-4 mr-2" /> : <Type className="h-4 w-4 mr-2" />}
+              <Button variant="outline" size="sm" onClick={() => setShowCssEditor(!showCssEditor)}>
+                {showCssEditor ? (
+                  <Eye className="h-4 w-4 mr-2" />
+                ) : (
+                  <Type className="h-4 w-4 mr-2" />
+                )}
                 {showCssEditor ? 'Hide Editor' : 'Show Editor'}
               </Button>
             </div>
@@ -484,7 +490,8 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
                   className="font-mono text-xs"
                 />
                 <p className="text-xs text-gray-500">
-                  Add custom CSS to override default styles. Use CSS variables like --primary-color for theme colors.
+                  Add custom CSS to override default styles. Use CSS variables like --primary-color
+                  for theme colors.
                 </p>
               </div>
             )}
@@ -503,61 +510,62 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
         <CardContent>
           <div className="space-y-4">
             {/* Preview Card */}
-            <div 
+            <div
               className="border rounded-lg p-4"
               style={{
                 backgroundColor: customColors.background || '#FFFFFF',
-                color: customColors.text_primary || '#1F2937'
+                color: customColors.text_primary || '#1F2937',
               }}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 
+                <h3
                   className="font-bold text-lg"
                   style={{ color: customColors.primary || '#3B82F6' }}
                 >
                   Welcome to {settings.makerspace_name || 'Your Makerspace'}
                 </h3>
                 <div className="flex items-center gap-2">
-                  <Button 
+                  <Button
                     size="sm"
-                    style={{ 
+                    style={{
                       backgroundColor: customColors.primary || '#3B82F6',
-                      borderColor: customColors.primary || '#3B82F6'
+                      borderColor: customColors.primary || '#3B82F6',
                     }}
                   >
                     Primary Button
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    style={{ 
+                    style={{
                       borderColor: customColors.secondary || '#64748B',
-                      color: customColors.secondary || '#64748B'
+                      color: customColors.secondary || '#64748B',
                     }}
                   >
                     Secondary
                   </Button>
                 </div>
               </div>
-              
+
               <p style={{ color: customColors.text_secondary || '#6B7280' }}>
-                {settings.welcome_message || 'Welcome to our makerspace! We\'re excited to have you join our community of makers.'}
+                {settings.welcome_message ||
+                  "Welcome to our makerspace! We're excited to have you join our community of makers."}
               </p>
-              
+
               <div className="mt-4 flex items-center gap-2">
-                <Badge 
-                  style={{ 
+                <Badge
+                  style={{
                     backgroundColor: customColors.accent || '#10B981',
-                    color: 'white'
+                    color: 'white',
                   }}
                 >
                   Accent Color
                 </Badge>
-                <Badge 
+                <Badge
                   variant="outline"
-                  style={{ 
+                  style={{
                     borderColor: customColors.secondary || '#64748B',
-                    color: customColors.secondary || '#64748B'
+                    color: customColors.secondary || '#64748B',
                   }}
                 >
                   Secondary Badge
@@ -585,18 +593,19 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
                 <div className="flex items-center justify-between">
                   <span>Theme Mode:</span>
                   <Badge variant="outline">
-                    {settings.theme_mode?.charAt(0).toUpperCase() + settings.theme_mode?.slice(1) || 'Light'}
+                    {settings.theme_mode?.charAt(0).toUpperCase() + settings.theme_mode?.slice(1) ||
+                      'Light'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Custom Colors:</span>
-                  <Badge variant={settings.custom_theme_colors ? "default" : "outline"}>
+                  <Badge variant={settings.custom_theme_colors ? 'default' : 'outline'}>
                     {settings.custom_theme_colors ? 'Applied' : 'Default'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Custom CSS:</span>
-                  <Badge variant={settings.custom_css ? "default" : "outline"}>
+                  <Badge variant={settings.custom_css ? 'default' : 'outline'}>
                     {settings.custom_css ? 'Applied' : 'None'}
                   </Badge>
                 </div>
@@ -608,19 +617,19 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Chat Widget:</span>
-                  <Badge variant={settings.enable_chat_widget ? "default" : "outline"}>
+                  <Badge variant={settings.enable_chat_widget ? 'default' : 'outline'}>
                     {settings.enable_chat_widget ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Help Widget:</span>
-                  <Badge variant={settings.enable_help_widget !== false ? "default" : "outline"}>
+                  <Badge variant={settings.enable_help_widget !== false ? 'default' : 'outline'}>
                     {settings.enable_help_widget !== false ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Welcome Message:</span>
-                  <Badge variant={settings.welcome_message ? "default" : "outline"}>
+                  <Badge variant={settings.welcome_message ? 'default' : 'outline'}>
                     {settings.welcome_message ? 'Custom' : 'Default'}
                   </Badge>
                 </div>

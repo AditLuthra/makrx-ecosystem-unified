@@ -2,10 +2,21 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  Building2, ShoppingCart, GraduationCap, Settings, 
-  ArrowRight, ExternalLink, Users, Wrench, Zap, 
-  Globe, Shield, Star, CheckCircle, Play
+import {
+  Building2,
+  ShoppingCart,
+  GraduationCap,
+  Settings,
+  ArrowRight,
+  ExternalLink,
+  Users,
+  Wrench,
+  Zap,
+  Globe,
+  Shield,
+  Star,
+  CheckCircle,
+  Play,
 } from 'lucide-react';
 
 interface AppCardProps {
@@ -20,22 +31,30 @@ interface AppCardProps {
   isNew?: boolean;
 }
 
-const AppCard: React.FC<AppCardProps> = ({ 
-  name, description, features, cta, href, icon, color, isExternal, isNew 
+const AppCard: React.FC<AppCardProps> = ({
+  name,
+  description,
+  features,
+  cta,
+  href,
+  icon,
+  color,
+  isExternal,
+  isNew,
 }) => (
   <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-slate-700 group hover:scale-105">
     <div className="flex items-center justify-between mb-6">
-      <div className={`w-16 h-16 bg-${color}/10 dark:bg-${color}/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+      <div
+        className={`w-16 h-16 bg-${color}/10 dark:bg-${color}/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}
+      >
         {icon}
       </div>
-      {isNew && (
-        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">New</span>
-      )}
+      {isNew && <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">New</span>}
     </div>
-    
+
     <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{name}</h3>
     <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">{description}</p>
-    
+
     <div className="space-y-2 mb-6">
       {features.map((feature, idx) => (
         <div key={idx} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
@@ -70,63 +89,64 @@ const AppCard: React.FC<AppCardProps> = ({
 export default function Ecosystem() {
   const apps: AppCardProps[] = [
     {
-      name: "MakrCave",
-      description: "Complete makerspace management platform for inventory, bookings, and project collaboration.",
+      name: 'MakrCave',
+      description:
+        'Complete makerspace management platform for inventory, bookings, and project collaboration.',
       features: [
-        "Equipment reservation system",
-        "Real-time inventory tracking", 
-        "Project management tools",
-        "Member billing & analytics"
+        'Equipment reservation system',
+        'Real-time inventory tracking',
+        'Project management tools',
+        'Member billing & analytics',
       ],
-      cta: "Open MakrCave",
-      href: "/makerspaces",
+      cta: 'Open MakrCave',
+      href: '/makerspaces',
       icon: <Building2 className="w-8 h-8 text-makrx-blue" />,
-      color: "makrx-blue"
+      color: 'makrx-blue',
     },
     {
-      name: "MakrX Store",
-      description: "Marketplace for maker products, tools, and custom manufacturing services.",
+      name: 'MakrX Store',
+      description: 'Marketplace for maker products, tools, and custom manufacturing services.',
       features: [
-        "Instant 3D printing quotes",
-        "Global manufacturing network",
-        "Quality guaranteed orders",
-        "Bulk pricing & discounts"
+        'Instant 3D printing quotes',
+        'Global manufacturing network',
+        'Quality guaranteed orders',
+        'Bulk pricing & discounts',
       ],
-      cta: "Browse Store",
-      href: "/store",
+      cta: 'Browse Store',
+      href: '/store',
       icon: <ShoppingCart className="w-8 h-8 text-makrx-yellow" />,
-      color: "makrx-yellow"
+      color: 'makrx-yellow',
     },
     {
-      name: "Learn Platform",
-      description: "Comprehensive learning hub with courses, certifications, and skill tracking.",
+      name: 'Learn Platform',
+      description: 'Comprehensive learning hub with courses, certifications, and skill tracking.',
       features: [
-        "50+ expert-led courses",
-        "Hands-on project tutorials",
-        "Skill badges & certificates",
-        "Community discussions"
+        '50+ expert-led courses',
+        'Hands-on project tutorials',
+        'Skill badges & certificates',
+        'Community discussions',
       ],
-      cta: "Start Learning",
-      href: "/docs",
+      cta: 'Start Learning',
+      href: '/docs',
       icon: <GraduationCap className="w-8 h-8 text-makrx-brown" />,
-      color: "makrx-brown"
+      color: 'makrx-brown',
     },
     {
-      name: "Service Provider Panel",
-      description: "Earn money by fulfilling manufacturing orders through our global network.",
+      name: 'Service Provider Panel',
+      description: 'Earn money by fulfilling manufacturing orders through our global network.',
       features: [
-        "First-to-accept job system",
-        "Automated quality checks",
-        "Payment protection",
-        "Performance analytics"
+        'First-to-accept job system',
+        'Automated quality checks',
+        'Payment protection',
+        'Performance analytics',
       ],
-      cta: "Become Provider",
-      href: "https://providers.makrx.org",
+      cta: 'Become Provider',
+      href: 'https://providers.makrx.org',
       icon: <Settings className="w-8 h-8 text-green-600" />,
-      color: "green-600",
+      color: 'green-600',
       isExternal: true,
-      isNew: true
-    }
+      isNew: true,
+    },
   ];
 
   return (
@@ -135,22 +155,26 @@ export default function Ecosystem() {
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl lg:text-6xl font-display font-bold mb-6">
-            <span className="text-makrx-blue">MakrX</span>{" "}
+            <span className="text-makrx-blue">MakrX</span>{' '}
             <span className="text-gray-900 dark:text-white">Ecosystem</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            A complete suite of interconnected platforms designed to empower makers, 
-            streamline manufacturing, and accelerate innovation worldwide.
+            A complete suite of interconnected platforms designed to empower makers, streamline
+            manufacturing, and accelerate innovation worldwide.
           </p>
         </div>
 
         {/* Ecosystem Flow */}
         <div className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">How It All Works Together</h2>
-            <p className="text-gray-600 dark:text-gray-300">Seamless integration across all platforms</p>
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+              How It All Works Together
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Seamless integration across all platforms
+            </p>
           </div>
-          
+
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-makrx-blue/20 rounded-full flex items-center justify-center">
@@ -159,7 +183,7 @@ export default function Ecosystem() {
               <span className="font-medium text-gray-900 dark:text-white">Join MakrCave</span>
             </div>
             <ArrowRight className="w-6 h-6 text-gray-400 hidden md:block" />
-            
+
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-makrx-yellow/20 rounded-full flex items-center justify-center">
                 <span className="text-makrx-yellow font-bold">2</span>
@@ -167,7 +191,7 @@ export default function Ecosystem() {
               <span className="font-medium text-gray-900 dark:text-white">Order from Store</span>
             </div>
             <ArrowRight className="w-6 h-6 text-gray-400 hidden md:block" />
-            
+
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
                 <span className="text-green-600 font-bold">3</span>
@@ -175,7 +199,7 @@ export default function Ecosystem() {
               <span className="font-medium text-gray-900 dark:text-white">Provider Fulfills</span>
             </div>
             <ArrowRight className="w-6 h-6 text-gray-400 hidden md:block" />
-            
+
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-makrx-brown/20 rounded-full flex items-center justify-center">
                 <span className="text-makrx-brown font-bold">4</span>
@@ -219,7 +243,9 @@ export default function Ecosystem() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="text-center p-6">
             <Zap className="w-12 h-12 text-makrx-yellow mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Unified Experience</h3>
+            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
+              Unified Experience
+            </h3>
             <p className="text-gray-600 dark:text-gray-300">
               Single sign-on across all platforms with synchronized user profiles and preferences.
             </p>
@@ -233,7 +259,9 @@ export default function Ecosystem() {
           </div>
           <div className="text-center p-6">
             <Shield className="w-12 h-12 text-makrx-brown mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Quality Assurance</h3>
+            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
+              Quality Assurance
+            </h3>
             <p className="text-gray-600 dark:text-gray-300">
               End-to-end quality control with verified providers and guaranteed outcomes.
             </p>

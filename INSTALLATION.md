@@ -4,6 +4,8 @@ This guide provides detailed instructions for setting up the MakrX ecosystem on 
 
 ## 📋 System Requirements
 
+**IMPORTANT:** All Python backends require **Python 3.12**. Do NOT use Python 3.13 or higher for venvs or backend servers.
+
 ### Minimum Requirements
 
 - **OS**: Windows 10+, macOS 10.15+, or Ubuntu 18.04+
@@ -34,10 +36,10 @@ cd makrx-ecosystem-unified
 chmod +x scripts/unix/setup.sh
 ./scripts/unix/setup.sh
 
-# (NEW) Set up Python virtual environments and install backend dependencies
+# (NEW) Set up Python 3.12 virtual environments and install backend dependencies
 for d in backends/makrcave backends/makrx-store backends/makrx_events; do
   cd $d
-  python3 -m venv venv
+  python3.12 -m venv venv
   source venv/bin/activate
   pip install --upgrade pip
   pip install -r requirements.txt
@@ -79,10 +81,10 @@ cd makrx-ecosystem-unified
 ```bash
 npm ci --legacy-peer-deps
 
-# (NEW) Set up Python virtual environments and install backend dependencies
+# (NEW) Set up Python 3.12 virtual environments and install backend dependencies
 for d in backends/makrcave backends/makrx-store backends/makrx_events; do
   cd $d
-  python3 -m venv venv
+  python3.12 -m venv venv
   source venv/bin/activate
   pip install --upgrade pip
   pip install -r requirements.txt
@@ -164,7 +166,7 @@ npm run db:migrate
 # Seed with sample data (optional)
 npm run db:seed
 
-# (If you see 'alembic: not found' or 'python: not found', ensure you have activated the correct Python virtual environment in each backend directory.)
+# (If you see 'alembic: not found', 'python: not found', or 'No module named uvicorn', ensure you have activated the correct Python 3.12 virtual environment in each backend directory.)
 ```
 
 #### Step 8: Start Development Servers
@@ -172,6 +174,8 @@ npm run db:seed
 ```bash
 npm run dev
 ```
+
+This will start all infrastructure, frontend, and backend servers. No need to manually activate venvs for development: the script now does it for you.
 
 ## 🔧 Platform-Specific Instructions
 

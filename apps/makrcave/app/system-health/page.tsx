@@ -12,16 +12,16 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import HealthStatusDashboard from '../../components/HealthStatusDashboard';
-import { 
-  Activity, 
-  BarChart3, 
-  Clock, 
-  Download, 
-  Settings, 
+import {
+  Activity,
+  BarChart3,
+  Clock,
+  Download,
+  Settings,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
 } from 'lucide-react';
 import healthCheckService, { SystemHealthStatus } from '../../services/healthCheckService';
 
@@ -30,18 +30,20 @@ export default function SystemHealth() {
   const [quickStatus, setQuickStatus] = useState<{ status: string; message: string } | null>(null);
   const isBrowser = typeof window !== 'undefined';
   const envInfo = {
-    browser: isBrowser ? (window.navigator.userAgent.split(' ')[0] || 'Unknown') : 'Unknown',
-    platform: isBrowser ? (window.navigator.platform || 'Unknown') : 'Unknown',
-    language: isBrowser ? (window.navigator.language || 'Unknown') : 'Unknown',
+    browser: isBrowser ? window.navigator.userAgent.split(' ')[0] || 'Unknown' : 'Unknown',
+    platform: isBrowser ? window.navigator.platform || 'Unknown' : 'Unknown',
+    language: isBrowser ? window.navigator.language || 'Unknown' : 'Unknown',
     online: isBrowser ? (window.navigator.onLine ? 'Yes' : 'No') : 'Unknown',
     screen: isBrowser ? `${window.screen.width}x${window.screen.height}` : 'Unknown',
     timezone: isBrowser ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Unknown',
-    memory: isBrowser && (performance as any)?.memory?.usedJSHeapSize
-      ? `${Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024)}MB`
-      : 'Unknown',
-    connection: isBrowser && (navigator as any)?.connection?.effectiveType
-      ? (navigator as any).connection.effectiveType
-      : 'Unknown',
+    memory:
+      isBrowser && (performance as any)?.memory?.usedJSHeapSize
+        ? `${Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024)}MB`
+        : 'Unknown',
+    connection:
+      isBrowser && (navigator as any)?.connection?.effectiveType
+        ? (navigator as any).connection.effectiveType
+        : 'Unknown',
   };
 
   // ========================================
@@ -67,18 +69,20 @@ export default function SystemHealth() {
 
   const handleExportHealthReport = () => {
     if (healthHistory.length === 0) return;
-    
+
     const latestHealth = healthHistory[0];
     const report = {
       timestamp: new Date().toISOString(),
       systemHealth: latestHealth,
       summary: {
         totalServices: latestHealth.services.length,
-        healthyServices: latestHealth.services.filter(s => s.status === 'healthy').length,
-        degradedServices: latestHealth.services.filter(s => s.status === 'degraded').length,
-        unhealthyServices: latestHealth.services.filter(s => s.status === 'unhealthy').length,
-        averageResponseTime: latestHealth.services.reduce((acc, s) => acc + s.responseTime, 0) / latestHealth.services.length
-      }
+        healthyServices: latestHealth.services.filter((s) => s.status === 'healthy').length,
+        degradedServices: latestHealth.services.filter((s) => s.status === 'degraded').length,
+        unhealthyServices: latestHealth.services.filter((s) => s.status === 'unhealthy').length,
+        averageResponseTime:
+          latestHealth.services.reduce((acc, s) => acc + s.responseTime, 0) /
+          latestHealth.services.length,
+      },
     };
 
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
@@ -109,9 +113,14 @@ export default function SystemHealth() {
             <Activity className="w-5 h-5" />
             Quick Status
           </CardTitle>
-          <Badge 
-            variant={quickStatus?.status === 'healthy' ? 'default' : 
-                    quickStatus?.status === 'degraded' ? 'secondary' : 'destructive'}
+          <Badge
+            variant={
+              quickStatus?.status === 'healthy'
+                ? 'default'
+                : quickStatus?.status === 'degraded'
+                  ? 'secondary'
+                  : 'destructive'
+            }
           >
             {quickStatus?.status || 'Unknown'}
           </Badge>
@@ -185,13 +194,15 @@ export default function SystemHealth() {
           <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-green-800 dark:text-green-300">Optimal Performance</h4>
+              <h4 className="font-medium text-green-800 dark:text-green-300">
+                Optimal Performance
+              </h4>
               <p className="text-sm text-green-700 dark:text-green-400">
                 Keep your browser updated and clear cache regularly for best performance.
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <Info className="w-5 h-5 text-blue-600 mt-0.5" />
             <div>
@@ -248,9 +259,7 @@ export default function SystemHealth() {
 
       {/* Quick Status */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-2">
-          {renderQuickStatusCard()}
-        </div>
+        <div className="md:col-span-2">{renderQuickStatusCard()}</div>
         <div>
           <Card>
             <CardHeader className="pb-3">
@@ -260,12 +269,8 @@ export default function SystemHealth() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
-                {new Date().toLocaleTimeString()}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Auto-refreshes every 30 seconds
-              </p>
+              <p className="text-2xl font-bold">{new Date().toLocaleTimeString()}</p>
+              <p className="text-sm text-muted-foreground">Auto-refreshes every 30 seconds</p>
             </CardContent>
           </Card>
         </div>

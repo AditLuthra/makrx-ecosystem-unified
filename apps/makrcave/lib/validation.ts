@@ -123,7 +123,8 @@ export const isValidPhone = (phone: string): boolean => {
 
 export const isStrongPassword = (password: string): boolean => {
   // At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
-  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const strongPasswordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return strongPasswordRegex.test(password);
 };
 
@@ -137,8 +138,10 @@ export const commonValidations = {
   password: {
     required: true,
     minLength: 8,
-    custom: (value: string) => 
-      isStrongPassword(value) ? null : 'Password must contain at least 8 characters with uppercase, lowercase, number and special character',
+    custom: (value: string) =>
+      isStrongPassword(value)
+        ? null
+        : 'Password must contain at least 8 characters with uppercase, lowercase, number and special character',
   },
   name: {
     required: true,
@@ -148,7 +151,7 @@ export const commonValidations = {
   },
   phone: {
     required: false,
-    custom: (value: string) => 
+    custom: (value: string) =>
       !value || isValidPhone(value) ? null : 'Please enter a valid phone number',
   },
   url: {

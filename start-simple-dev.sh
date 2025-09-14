@@ -18,10 +18,10 @@ echo "📱 Starting frontend applications..."
 
 # Use npm workspaces to start individual apps
 concurrently \
-  --prefix-colors "cyan,magenta,yellow,green" \
-  --prefix "{name}" \
-  --names "gateway,makrcave,events,store" \
-  "cd apps/gateway-frontend && npm run dev" \
-  "cd apps/makrcave && npm run dev" \
-  "cd apps/makrx-events && npm run dev" \
-  "cd apps/makrx-store && npm run dev"
+	--prefix-colors "cyan,magenta,yellow,green" \
+	--prefix "{name}" \
+	--names "gateway,makrcave,events,store" \
+	"cd apps/gateway-frontend && npm run dev" \
+	"cd apps/makrcave && npm run dev" \
+	"cd apps/makrx-events && npm run dev" \
+	"cd apps/makrx-store && npm run dev"

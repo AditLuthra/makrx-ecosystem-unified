@@ -8,7 +8,7 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
     'mailto:contact@makrx.events',
     process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
+    process.env.VAPID_PRIVATE_KEY,
   );
 }
 
@@ -40,7 +40,7 @@ export class PushNotificationService {
       p256dh: string;
       auth: string;
     },
-    userAgent?: string
+    userAgent?: string,
   ) {
     try {
       // Remove existing subscription for this user/endpoint
@@ -49,8 +49,8 @@ export class PushNotificationService {
         .where(
           and(
             eq(pushSubscriptions.userId, userId),
-            eq(pushSubscriptions.endpoint, subscription.endpoint)
-          )
+            eq(pushSubscriptions.endpoint, subscription.endpoint),
+          ),
         );
 
       // Add new subscription
@@ -78,12 +78,7 @@ export class PushNotificationService {
       await db
         .update(pushSubscriptions)
         .set({ isActive: false })
-        .where(
-          and(
-            eq(pushSubscriptions.userId, userId),
-            eq(pushSubscriptions.endpoint, endpoint)
-          )
-        );
+        .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.endpoint, endpoint)));
     } catch (error) {
       console.error('Error unsubscribing user from push notifications:', error);
       throw error;
@@ -94,18 +89,13 @@ export class PushNotificationService {
     return await db
       .select()
       .from(pushSubscriptions)
-      .where(
-        and(
-          eq(pushSubscriptions.userId, userId),
-          eq(pushSubscriptions.isActive, true)
-        )
-      );
+      .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.isActive, true)));
   }
 
   static async sendToUser(userId: string, payload: PushNotificationPayload) {
     try {
       const subscriptions = await this.getUserSubscriptions(userId);
-      
+
       const results = await Promise.allSettled(
         subscriptions.map(async (subscription) => {
           const pushSubscription = {
@@ -116,11 +106,8 @@ export class PushNotificationService {
             },
           };
 
-          return await webpush.sendNotification(
-            pushSubscription,
-            JSON.stringify(payload)
-          );
-        })
+          return await webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+        }),
       );
 
       // Handle failed subscriptions
@@ -132,17 +119,17 @@ export class PushNotificationService {
       // Deactivate failed subscriptions
       if (failedSubscriptions.length > 0) {
         await Promise.all(
-          failedSubscriptions.map(subscription =>
+          failedSubscriptions.map((subscription) =>
             db
               .update(pushSubscriptions)
               .set({ isActive: false })
-              .where(eq(pushSubscriptions.id, subscription.id))
-          )
+              .where(eq(pushSubscriptions.id, subscription.id)),
+          ),
         );
       }
 
       return {
-        sent: results.filter(r => r.status === 'fulfilled').length,
+        sent: results.filter((r) => r.status === 'fulfilled').length,
         failed: failedSubscriptions.length,
       };
     } catch (error) {
@@ -154,7 +141,7 @@ export class PushNotificationService {
   static async sendToEventParticipants(
     eventId: string,
     payload: PushNotificationPayload,
-    targetAudience: 'all' | 'participants' | 'organizers' = 'all'
+    targetAudience: 'all' | 'participants' | 'organizers' = 'all',
   ) {
     try {
       // Get all active subscriptions for event participants
@@ -165,29 +152,24 @@ export class PushNotificationService {
         const registeredUsers = await db
           .select({ userId: eq(userActivities.userId, userActivities.userId) })
           .from(userActivities)
-          .where(
-            and(
-              eq(userActivities.eventId, eventId),
-              eq(userActivities.activity, 'register')
-            )
-          );
-        
-        userIds = [...userIds, ...registeredUsers.map(u => u.userId)];
+          .where(and(eq(userActivities.eventId, eventId), eq(userActivities.activity, 'register')));
+
+        userIds = [...userIds, ...registeredUsers.map((u) => u.userId)];
       }
 
       // Remove duplicates
       userIds = [...new Set(userIds)];
 
       const results = await Promise.allSettled(
-        userIds.map(userId => this.sendToUser(userId, payload))
+        userIds.map((userId) => this.sendToUser(userId, payload)),
       );
 
       const totalSent = results
-        .filter(r => r.status === 'fulfilled')
+        .filter((r) => r.status === 'fulfilled')
         .reduce((sum, r) => sum + (r.value?.sent || 0), 0);
 
       const totalFailed = results
-        .filter(r => r.status === 'fulfilled')
+        .filter((r) => r.status === 'fulfilled')
         .reduce((sum, r) => sum + (r.value?.failed || 0), 0);
 
       return {
@@ -203,7 +185,7 @@ export class PushNotificationService {
 
   static async sendAnnouncementNotification(
     announcementId: string,
-    customPayload?: Partial<PushNotificationPayload>
+    customPayload?: Partial<PushNotificationPayload>,
   ) {
     try {
       // Get announcement details
@@ -252,7 +234,7 @@ export class PushNotificationService {
       return await this.sendToEventParticipants(
         announcement.eventId,
         payload,
-        announcement.targetAudience as 'all' | 'participants' | 'organizers'
+        announcement.targetAudience as 'all' | 'participants' | 'organizers',
       );
     } catch (error) {
       console.error('Error sending announcement notification:', error);

@@ -23,13 +23,13 @@ These conventions are applied to MakrCave and should be mirrored in other backen
 ## Rate Limiting
 
 - Prefer Redis‑backed limiter with in‑memory fallback. Gate via `REDIS_URL`.
- - If running behind reverse proxies, set `TRUST_PROXY=true` and extract client IP from `X-Forwarded-For`.
+- If running behind reverse proxies, set `TRUST_PROXY=true` and extract client IP from `X-Forwarded-For`.
 
 ## Observability
 
 - Structured logs (e.g., structlog) for app logs. Optionally disable duplicated access logs.
 - Optional Prometheus metrics via middleware (e.g., `prometheus_fastapi_instrumentator`).
- - Include `X-Request-ID` on all responses; log this ID in structured logs for correlation.
+- Include `X-Request-ID` on all responses; log this ID in structured logs for correlation.
 
 ## Runtime
 

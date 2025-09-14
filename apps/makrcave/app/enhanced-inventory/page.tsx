@@ -1,19 +1,43 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import {
-  Package, Palette, AlertTriangle, TrendingUp, ShoppingCart, 
-  RefreshCw, Plus, Download, Upload, BarChart3, Scale,
-  Zap, Target, Activity, Clock, Settings
+  Package,
+  Palette,
+  AlertTriangle,
+  TrendingUp,
+  ShoppingCart,
+  RefreshCw,
+  Plus,
+  Download,
+  Upload,
+  BarChart3,
+  Scale,
+  Zap,
+  Target,
+  Activity,
+  Clock,
+  Settings,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/use-toast';
 import { useAuthHeaders } from '@makrx/auth';
 import FilamentTracker from '../../components/FilamentTracker';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 
 interface InventorySummary {
   total_items: number;
@@ -67,9 +91,9 @@ const EnhancedInventory: React.FC = () => {
     } catch (error) {
       console.error('Error fetching summary data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load inventory summary",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load inventory summary',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -80,27 +104,26 @@ const EnhancedInventory: React.FC = () => {
     fetchSummaryData();
   }, [fetchSummaryData]);
 
-
   const formatWeight = (weight: number) => {
     return weight >= 1000 ? `${(weight / 1000).toFixed(1)}kg` : `${weight.toFixed(0)}g`;
   };
 
   const getFilamentMaterialData = () => {
     if (!filamentSummary?.materials_breakdown) return [];
-    
+
     const colors = {
       pla: '#3B82F6',
       abs: '#10B981',
       petg: '#F59E0B',
       tpu: '#8B5CF6',
       wood_pla: '#92400E',
-      carbon_fiber: '#1F2937'
+      carbon_fiber: '#1F2937',
     };
 
     return Object.entries(filamentSummary.materials_breakdown).map(([material, count]) => ({
       name: material.toUpperCase(),
       value: count,
-      color: colors[material as keyof typeof colors] || '#6B7280'
+      color: colors[material as keyof typeof colors] || '#6B7280',
     }));
   };
 
@@ -113,9 +136,7 @@ const EnhancedInventory: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Items</p>
-                <p className="text-2xl font-bold">
-                  {inventorySummary?.total_items || 0}
-                </p>
+                <p className="text-2xl font-bold">{inventorySummary?.total_items || 0}</p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
             </div>
@@ -127,9 +148,7 @@ const EnhancedInventory: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Filament Rolls</p>
-                <p className="text-2xl font-bold">
-                  {filamentSummary?.total_rolls || 0}
-                </p>
+                <p className="text-2xl font-bold">{filamentSummary?.total_rolls || 0}</p>
               </div>
               <Palette className="h-8 w-8 text-purple-600" />
             </div>
@@ -142,7 +161,8 @@ const EnhancedInventory: React.FC = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Low Stock Alerts</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {(inventorySummary?.low_stock_items || 0) + (filamentSummary?.low_stock_rolls || 0)}
+                  {(inventorySummary?.low_stock_items || 0) +
+                    (filamentSummary?.low_stock_rolls || 0)}
                 </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-500" />
@@ -221,7 +241,7 @@ const EnhancedInventory: React.FC = () => {
                   {(inventorySummary?.total_items || 0) - (inventorySummary?.low_stock_items || 0)}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -231,7 +251,7 @@ const EnhancedInventory: React.FC = () => {
                   {inventorySummary?.low_stock_items || 0}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5 text-blue-600" />
@@ -268,7 +288,9 @@ const EnhancedInventory: React.FC = () => {
                 <p className="text-sm text-muted-foreground">Total Weight</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-orange-600">{filamentSummary.low_stock_rolls}</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {filamentSummary.low_stock_rolls}
+                </p>
                 <p className="text-sm text-muted-foreground">Low Stock</p>
               </div>
               <div className="text-center">
@@ -342,7 +364,9 @@ const EnhancedInventory: React.FC = () => {
               <div className="flex items-center gap-2 text-orange-800">
                 <AlertTriangle className="h-5 w-5" />
                 <span className="font-medium">
-                  {(inventorySummary?.low_stock_items || 0) + (filamentSummary?.low_stock_rolls || 0)} items need attention
+                  {(inventorySummary?.low_stock_items || 0) +
+                    (filamentSummary?.low_stock_rolls || 0)}{' '}
+                  items need attention
                 </span>
               </div>
               <div className="flex gap-2">
@@ -393,9 +417,7 @@ const EnhancedInventory: React.FC = () => {
                 Advanced filament management with auto-deduction and reorder integration
               </p>
             </div>
-            <Badge className="bg-blue-100 text-blue-800 px-3 py-1">
-              Auto-Deduction Enabled
-            </Badge>
+            <Badge className="bg-blue-100 text-blue-800 px-3 py-1">Auto-Deduction Enabled</Badge>
           </div>
           <FilamentTracker showHeader={false} />
         </TabsContent>
@@ -409,7 +431,7 @@ const EnhancedInventory: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <Card className="text-center py-12">
             <CardContent>
               <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
@@ -434,7 +456,7 @@ const EnhancedInventory: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>

@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 
 # Colors for output
 RED='\033[0;31m'
-GREEN='\033[0;32m'  
+GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
@@ -25,9 +25,9 @@ echo "🚀 Starting MakrX Ecosystem for CI Testing"
 echo "=========================================="
 
 # Check if Docker is running
-if ! docker info &> /dev/null; then
-    print_error "Docker is not running. Please start Docker first."
-    exit 1
+if ! docker info &>/dev/null; then
+	print_error "Docker is not running. Please start Docker first."
+	exit 1
 fi
 
 print_step "Starting infrastructure services..."
@@ -39,14 +39,14 @@ print_status "Waiting for infrastructure services to be ready..."
 
 # Wait for PostgreSQL
 print_status "Waiting for PostgreSQL..."
-sleep 10  # Give containers time to start
+sleep 10 # Give containers time to start
 
 # First check if container is running
 if ! docker-compose ps postgres | grep -q "Up"; then
-    print_error "PostgreSQL container is not running. Checking logs..."
-    echo "PostgreSQL container logs:"
-    docker-compose logs postgres
-    exit 1
+	print_error "PostgreSQL container is not running. Checking logs..."
+	echo "PostgreSQL container logs:"
+	docker-compose logs postgres
+	exit 1
 fi
 
 # Then check if PostgreSQL is ready
@@ -55,10 +55,10 @@ until docker-compose exec -T postgres pg_isready -U makrx -d makrx_ecosystem > /
     echo "Still waiting for PostgreSQL..."
     sleep 5
 done' || {
-    print_error "PostgreSQL failed to become ready. Checking logs..."
-    echo "PostgreSQL container logs:"
-    docker-compose logs postgres
-    exit 1
+	print_error "PostgreSQL failed to become ready. Checking logs..."
+	echo "PostgreSQL container logs:"
+	docker-compose logs postgres
+	exit 1
 }
 print_success "PostgreSQL is ready"
 
@@ -69,32 +69,32 @@ until docker-compose exec -T redis redis-cli ping 2>/dev/null | grep -q PONG; do
     echo "Still waiting for Redis..."
     sleep 2
 done' || {
-    print_error "Redis failed to start. Checking logs..."
-    echo "Redis container logs:"
-    docker-compose logs redis
-    exit 1
+	print_error "Redis failed to start. Checking logs..."
+	echo "Redis container logs:"
+	docker-compose logs redis
+	exit 1
 }
 print_success "Redis is ready"
 
 # Wait for MinIO
 print_status "Waiting for MinIO..."
 timeout 60 bash -c 'until curl -f http://localhost:9002/minio/health/live > /dev/null 2>&1; do sleep 2; done' || {
-    print_warning "MinIO may not be fully ready, but continuing..."
+	print_warning "MinIO may not be fully ready, but continuing..."
 }
 print_success "MinIO is ready"
 
 # Wait for Keycloak (this takes the longest)
 print_status "Waiting for Keycloak (this may take a few minutes)..."
 timeout 300 bash -c 'until curl -f http://localhost:8081/health/ready > /dev/null 2>&1; do sleep 5; done' || {
-    print_warning "Keycloak may not be fully ready, but continuing..."
+	print_warning "Keycloak may not be fully ready, but continuing..."
 }
 print_success "Keycloak is ready"
 
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
-    print_step "Installing NPM dependencies..."
-    npm ci --legacy-peer-deps
-    print_success "Dependencies installed"
+	print_step "Installing NPM dependencies..."
+	npm ci --legacy-peer-deps
+	print_success "Dependencies installed"
 fi
 
 print_step "Infrastructure services are ready for CI testing!"

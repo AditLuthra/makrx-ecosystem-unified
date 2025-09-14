@@ -1,5 +1,5 @@
-"use client";
-export const dynamic = "force-dynamic";
+'use client';
+export const dynamic = 'force-dynamic';
 
 import {
   AlertCircle,
@@ -15,43 +15,33 @@ import {
   UserPlus,
   Users,
   XCircle,
-} from "lucide-react";
-import React, { useState } from "react";
-import AddMemberModal from "../../components/modals/AddMemberModal";
-import EditMemberModal from "../../components/modals/EditMemberModal";
-import InviteMemberModal from "../../components/modals/InviteMemberModal";
-import MemberDetailsModal from "../../components/modals/MemberDetailsModal";
-import MembershipPlanModal from "../../components/modals/MembershipPlanModal";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+} from 'lucide-react';
+import React, { useState } from 'react';
+import AddMemberModal from '../../components/modals/AddMemberModal';
+import EditMemberModal from '../../components/modals/EditMemberModal';
+import InviteMemberModal from '../../components/modals/InviteMemberModal';
+import MemberDetailsModal from '../../components/modals/MemberDetailsModal';
+import MembershipPlanModal from '../../components/modals/MembershipPlanModal';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
+} from '../../components/ui/dropdown-menu';
+import { Input } from '../../components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
-import { Member, useMembers } from "../../contexts/MemberContext";
+} from '../../components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Member, useMembers } from '../../contexts/MemberContext';
 
 const Members: React.FC = () => {
   const {
@@ -68,17 +58,17 @@ const Members: React.FC = () => {
     filterMembers,
   } = useMembers();
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
-  const [planFilter, setPlanFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [planFilter, setPlanFilter] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [activeTab, setActiveTab] = useState("members");
+  const [activeTab, setActiveTab] = useState('members');
 
   // Apply filters
   const filteredMembers = React.useMemo(() => {
@@ -89,21 +79,13 @@ const Members: React.FC = () => {
     }
 
     result = filterMembers({
-      status: statusFilter === "all" ? undefined : statusFilter,
-      role: roleFilter === "all" ? undefined : roleFilter,
-      plan: planFilter === "all" ? undefined : planFilter,
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      role: roleFilter === 'all' ? undefined : roleFilter,
+      plan: planFilter === 'all' ? undefined : planFilter,
     });
 
     return result;
-  }, [
-    members,
-    searchQuery,
-    statusFilter,
-    roleFilter,
-    planFilter,
-    searchMembers,
-    filterMembers,
-  ]);
+  }, [members, searchQuery, statusFilter, roleFilter, planFilter, searchMembers, filterMembers]);
 
   const handleEditMember = (member: Member) => {
     setSelectedMember(member);
@@ -117,14 +99,12 @@ const Members: React.FC = () => {
 
   const handleSuspendMember = async (member: Member) => {
     if (
-      window.confirm(
-        `Are you sure you want to suspend ${member.firstName} ${member.lastName}?`
-      )
+      window.confirm(`Are you sure you want to suspend ${member.firstName} ${member.lastName}?`)
     ) {
       try {
         await suspendMember(member.id);
       } catch (err) {
-        console.error("Failed to suspend member:", err);
+        console.error('Failed to suspend member:', err);
       }
     }
   };
@@ -133,33 +113,33 @@ const Members: React.FC = () => {
     try {
       await reactivateMember(member.id);
     } catch (err) {
-      console.error("Failed to reactivate member:", err);
+      console.error('Failed to reactivate member:', err);
     }
   };
 
   const handleRemoveMember = async (member: Member) => {
     if (
       window.confirm(
-        `Are you sure you want to permanently remove ${member.firstName} ${member.lastName}? This action cannot be undone.`
+        `Are you sure you want to permanently remove ${member.firstName} ${member.lastName}? This action cannot be undone.`,
       )
     ) {
       try {
         await removeMember(member.id);
       } catch (err) {
-        console.error("Failed to remove member:", err);
+        console.error('Failed to remove member:', err);
       }
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active":
+      case 'active':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case "expired":
+      case 'expired':
         return <XCircle className="h-4 w-4 text-red-600" />;
-      case "pending":
+      case 'pending':
         return <Clock className="h-4 w-4 text-yellow-600" />;
-      case "suspended":
+      case 'suspended':
         return <AlertCircle className="h-4 w-4 text-orange-600" />;
       default:
         return <Clock className="h-4 w-4 text-gray-600" />;
@@ -168,19 +148,16 @@ const Members: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      active: "bg-green-100 text-green-800",
-      expired: "bg-red-100 text-red-800",
-      pending: "bg-yellow-100 text-yellow-800",
-      suspended: "bg-orange-100 text-orange-800",
+      active: 'bg-green-100 text-green-800',
+      expired: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800',
+      suspended: 'bg-orange-100 text-orange-800',
     };
 
     return (
       <Badge
         variant="outline"
-        className={
-          variants[status as keyof typeof variants] ||
-          "bg-gray-100 text-gray-800"
-        }
+        className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}
       >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
@@ -189,23 +166,21 @@ const Members: React.FC = () => {
 
   const getRoleBadge = (role: string) => {
     const variants = {
-      user: "bg-blue-100 text-blue-800",
-      service_provider: "bg-purple-100 text-purple-800",
-      admin: "bg-red-100 text-red-800",
-      makerspace_admin: "bg-yellow-100 text-yellow-800",
+      user: 'bg-blue-100 text-blue-800',
+      service_provider: 'bg-purple-100 text-purple-800',
+      admin: 'bg-red-100 text-red-800',
+      makerspace_admin: 'bg-yellow-100 text-yellow-800',
     };
 
     return (
       <Badge
         variant="outline"
-        className={
-          variants[role as keyof typeof variants] || "bg-gray-100 text-gray-800"
-        }
+        className={variants[role as keyof typeof variants] || 'bg-gray-100 text-gray-800'}
       >
-        {role === "service_provider"
-          ? "Service Provider"
-          : role === "makerspace_admin"
-            ? "Manager"
+        {role === 'service_provider'
+          ? 'Service Provider'
+          : role === 'makerspace_admin'
+            ? 'Manager'
             : role.charAt(0).toUpperCase() + role.slice(1)}
       </Badge>
     );
@@ -227,12 +202,8 @@ const Members: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Member Management
-          </h1>
-          <p className="text-gray-600">
-            Manage makerspace members, plans, and access
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Member Management</h1>
+          <p className="text-gray-600">Manage makerspace members, plans, and access</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => setShowInviteModal(true)}>
@@ -252,12 +223,8 @@ const Members: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Members
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {memberStats.total}
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-2xl font-bold text-gray-900">{memberStats.total}</p>
               </div>
               <Users className="h-8 w-8 text-blue-600" />
             </div>
@@ -269,9 +236,7 @@ const Members: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {memberStats.active}
-                </p>
+                <p className="text-2xl font-bold text-green-600">{memberStats.active}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -283,9 +248,7 @@ const Members: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Expired</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {memberStats.expired}
-                </p>
+                <p className="text-2xl font-bold text-red-600">{memberStats.expired}</p>
               </div>
               <XCircle className="h-8 w-8 text-red-600" />
             </div>
@@ -297,9 +260,7 @@ const Members: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">
-                  {memberStats.pending}
-                </p>
+                <p className="text-2xl font-bold text-yellow-600">{memberStats.pending}</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-600" />
             </div>
@@ -353,9 +314,7 @@ const Members: React.FC = () => {
                     <SelectContent>
                       <SelectItem value="all">All Roles</SelectItem>
                       <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="service_provider">
-                        Service Provider
-                      </SelectItem>
+                      <SelectItem value="service_provider">Service Provider</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                       <SelectItem value="makerspace_admin">Manager</SelectItem>
                     </SelectContent>
@@ -389,9 +348,7 @@ const Members: React.FC = () => {
                 <div className="text-center py-8 text-gray-500">
                   <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No members found</p>
-                  <p className="text-sm">
-                    Try adjusting your search or filters
-                  </p>
+                  <p className="text-sm">Try adjusting your search or filters</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -404,8 +361,8 @@ const Members: React.FC = () => {
                         <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                             <span className="text-lg font-semibold text-blue-700">
-                              {member.firstName?.[0] ?? "?"}
-                              {member.lastName?.[0] ?? "?"}
+                              {member.firstName?.[0] ?? '?'}
+                              {member.lastName?.[0] ?? '?'}
                             </span>
                           </div>
 
@@ -414,10 +371,10 @@ const Members: React.FC = () => {
                               <h3 className="font-semibold text-gray-900">
                                 {member.firstName} {member.lastName}
                               </h3>
-                              {member.role === "admin" && (
+                              {member.role === 'admin' && (
                                 <Crown className="h-4 w-4 text-yellow-600" />
                               )}
-                              {getStatusIcon(member.status ?? "")}
+                              {getStatusIcon(member.status ?? '')}
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                               <span className="flex items-center gap-1">
@@ -432,21 +389,16 @@ const Members: React.FC = () => {
                               )}
                               <span className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
-                                Joined{" "}
+                                Joined{' '}
                                 {member.join_date
-                                  ? new Date(
-                                      member.join_date
-                                    ).toLocaleDateString()
-                                  : "-"}
+                                  ? new Date(member.join_date).toLocaleDateString()
+                                  : '-'}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 mt-2">
-                              {getStatusBadge(member.status ?? "")}
+                              {getStatusBadge(member.status ?? '')}
                               {getRoleBadge(member.role)}
-                              <Badge
-                                variant="outline"
-                                className="bg-gray-100 text-gray-800"
-                              >
+                              <Badge variant="outline" className="bg-gray-100 text-gray-800">
                                 {member.membership_plan_name}
                               </Badge>
                             </div>
@@ -470,27 +422,19 @@ const Members: React.FC = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => handleViewDetails(member)}
-                              >
+                              <DropdownMenuItem onClick={() => handleViewDetails(member)}>
                                 View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleEditMember(member)}
-                              >
+                              <DropdownMenuItem onClick={() => handleEditMember(member)}>
                                 Edit Member
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              {member.status === "suspended" ? (
-                                <DropdownMenuItem
-                                  onClick={() => handleReactivateMember(member)}
-                                >
+                              {member.status === 'suspended' ? (
+                                <DropdownMenuItem onClick={() => handleReactivateMember(member)}>
                                   Reactivate
                                 </DropdownMenuItem>
                               ) : (
-                                <DropdownMenuItem
-                                  onClick={() => handleSuspendMember(member)}
-                                >
+                                <DropdownMenuItem onClick={() => handleSuspendMember(member)}>
                                   Suspend
                                 </DropdownMenuItem>
                               )}
@@ -528,10 +472,7 @@ const Members: React.FC = () => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{plan.name}</CardTitle>
-                    <Badge
-                      variant="outline"
-                      className="bg-green-100 text-green-800"
-                    >
+                    <Badge variant="outline" className="bg-green-100 text-green-800">
                       ${plan.price}
                     </Badge>
                   </div>
@@ -541,21 +482,14 @@ const Members: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Duration:</span>
-                      <span className="font-medium">
-                        {plan.duration_days} days
-                      </span>
+                      <span className="font-medium">{plan.duration_days} days</span>
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-600">
-                        Features:
-                      </p>
+                      <p className="text-sm font-medium text-gray-600">Features:</p>
                       <ul className="text-sm space-y-1">
                         {plan.features.slice(0, 3).map((feature, index) => (
-                          <li
-                            key={index}
-                            className="flex items-center text-gray-700"
-                          >
+                          <li key={index} className="flex items-center text-gray-700">
                             <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
                             {feature}
                           </li>
@@ -570,12 +504,7 @@ const Members: React.FC = () => {
 
                     <div className="flex items-center justify-between pt-2">
                       <span className="text-sm text-gray-600">
-                        {
-                          members.filter(
-                            (m) => m.membership_plan_id === plan.id
-                          ).length
-                        }{" "}
-                        members
+                        {members.filter((m) => m.membership_plan_id === plan.id).length} members
                       </span>
                       <Button variant="outline" size="sm">
                         <Settings className="h-3 w-3 mr-1" />
@@ -605,9 +534,7 @@ const Members: React.FC = () => {
                 <div className="text-center py-8 text-gray-500">
                   <Mail className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No pending invites</p>
-                  <p className="text-sm">
-                    Send invites to new members to join your makerspace
-                  </p>
+                  <p className="text-sm">Send invites to new members to join your makerspace</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -620,25 +547,18 @@ const Members: React.FC = () => {
                             <span>Role: {invite.role}</span>
                             <span>•</span>
                             <span>
-                              Plan:{" "}
+                              Plan:{' '}
                               {
-                                membershipPlans.find(
-                                  (p) => p.id === invite.membership_plan_id
-                                )?.name
+                                membershipPlans.find((p) => p.id === invite.membership_plan_id)
+                                  ?.name
                               }
                             </span>
                             <span>•</span>
-                            <span>
-                              Expires:{" "}
-                              {new Date(invite.expires_at).toLocaleDateString()}
-                            </span>
+                            <span>Expires: {new Date(invite.expires_at).toLocaleDateString()}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className="bg-yellow-100 text-yellow-800"
-                          >
+                          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
                             {invite.status}
                           </Badge>
                           <DropdownMenu>
@@ -679,10 +599,7 @@ const Members: React.FC = () => {
         membershipPlans={membershipPlans}
       />
 
-      <MembershipPlanModal
-        open={showPlanModal}
-        onOpenChange={setShowPlanModal}
-      />
+      <MembershipPlanModal open={showPlanModal} onOpenChange={setShowPlanModal} />
 
       <InviteMemberModal
         open={showInviteModal}
@@ -700,7 +617,7 @@ const Members: React.FC = () => {
 };
 
 export default function MembersPage() {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return null;
   }
   return <Members />;

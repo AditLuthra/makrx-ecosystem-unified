@@ -3,12 +3,14 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+
 # Enums
 class EquipmentStatus(str, Enum):
     AVAILABLE = "available"
     IN_USE = "in_use"
     UNDER_MAINTENANCE = "under_maintenance"
     OFFLINE = "offline"
+
 
 class EquipmentCategory(str, Enum):
     PRINTER_3D = "printer_3d"
@@ -21,12 +23,14 @@ class EquipmentCategory(str, Enum):
     MEASURING_TOOL = "measuring_tool"
     GENERAL_TOOL = "general_tool"
 
+
 class MaintenanceType(str, Enum):
     ROUTINE = "routine"
     REPAIR = "repair"
     CALIBRATION = "calibration"
     CLEANING = "cleaning"
     REPLACEMENT = "replacement"
+
 
 class ReservationStatus(str, Enum):
     PENDING = "pending"
@@ -35,6 +39,7 @@ class ReservationStatus(str, Enum):
     COMPLETED = "completed"
     CANCELLED = "cancelled"
     NO_SHOW = "no_show"
+
 
 # Equipment Rating schemas
 class EquipmentRatingBase(BaseModel):
@@ -48,11 +53,15 @@ class EquipmentRatingBase(BaseModel):
     suggestions: Optional[str] = None
     issues_encountered: Optional[str] = None
     would_recommend: Optional[bool] = None
-    difficulty_level: Optional[str] = Field(None, regex="^(beginner|intermediate|advanced)$")
+    difficulty_level: Optional[str] = Field(
+        None, regex="^(beginner|intermediate|advanced)$"
+    )
+
 
 class EquipmentRatingCreate(EquipmentRatingBase):
     equipment_id: str
     reservation_id: Optional[str] = None
+
 
 class EquipmentRatingUpdate(BaseModel):
     overall_rating: Optional[int] = Field(None, ge=1, le=5)
@@ -64,7 +73,10 @@ class EquipmentRatingUpdate(BaseModel):
     cons: Optional[str] = None
     suggestions: Optional[str] = None
     would_recommend: Optional[bool] = None
-    difficulty_level: Optional[str] = Field(None, regex="^(beginner|intermediate|advanced)$")
+    difficulty_level: Optional[str] = Field(
+        None, regex="^(beginner|intermediate|advanced)$"
+    )
+
 
 class EquipmentRatingResponse(EquipmentRatingBase):
     id: str
@@ -75,9 +87,10 @@ class EquipmentRatingResponse(EquipmentRatingBase):
     is_approved: bool
     is_featured: bool
     admin_response: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
+
 
 # Equipment Maintenance schemas
 class MaintenanceLogBase(BaseModel):
@@ -96,9 +109,11 @@ class MaintenanceLogBase(BaseModel):
     next_maintenance_due: Optional[datetime] = None
     notes: Optional[str] = None
 
+
 class MaintenanceLogCreate(MaintenanceLogBase):
     equipment_id: str
     started_at: datetime = Field(default_factory=datetime.utcnow)
+
 
 class MaintenanceLogUpdate(BaseModel):
     maintenance_type: Optional[MaintenanceType] = None
@@ -116,6 +131,7 @@ class MaintenanceLogUpdate(BaseModel):
     is_completed: Optional[bool] = None
     notes: Optional[str] = None
 
+
 class MaintenanceLogResponse(MaintenanceLogBase):
     id: str
     equipment_id: str
@@ -127,9 +143,10 @@ class MaintenanceLogResponse(MaintenanceLogBase):
     is_completed: bool
     certification_valid: bool
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Equipment Reservation schemas
 class ReservationBase(BaseModel):
@@ -140,14 +157,16 @@ class ReservationBase(BaseModel):
     project_name: Optional[str] = None
     user_notes: Optional[str] = None
 
-    @validator('end_time')
+    @validator("end_time")
     def end_time_after_start_time(cls, v, values):
-        if 'start_time' in values and v <= values['start_time']:
-            raise ValueError('End time must be after start time')
+        if "start_time" in values and v <= values["start_time"]:
+            raise ValueError("End time must be after start time")
         return v
+
 
 class ReservationCreate(ReservationBase):
     equipment_id: str
+
 
 class ReservationUpdate(BaseModel):
     start_time: Optional[datetime] = None
@@ -159,6 +178,7 @@ class ReservationUpdate(BaseModel):
     user_notes: Optional[str] = None
     admin_notes: Optional[str] = None
     issues_reported: Optional[str] = None
+
 
 class ReservationResponse(ReservationBase):
     id: str
@@ -180,9 +200,10 @@ class ReservationResponse(ReservationBase):
     admin_notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Equipment schemas
 class EquipmentBase(BaseModel):
@@ -208,9 +229,11 @@ class EquipmentBase(BaseModel):
     image_url: Optional[str] = Field(None, max_length=500)
     notes: Optional[str] = None
 
+
 class EquipmentCreate(EquipmentBase):
     equipment_id: str = Field(..., min_length=1, max_length=100)
     # created_by is handled by the backend route, not sent from frontend
+
 
 class EquipmentUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
@@ -238,6 +261,7 @@ class EquipmentUpdate(BaseModel):
     notes: Optional[str] = None
     updated_by: str
 
+
 class EquipmentResponse(EquipmentBase):
     id: str
     equipment_id: str
@@ -255,9 +279,10 @@ class EquipmentResponse(EquipmentBase):
     maintenance_logs: List[MaintenanceLogResponse] = []
     reservations: List[ReservationResponse] = []
     ratings: List[EquipmentRatingResponse] = []
-    
+
     class Config:
         from_attributes = True
+
 
 # Usage session schemas
 class UsageSessionBase(BaseModel):
@@ -266,25 +291,32 @@ class UsageSessionBase(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(
+        None, regex="^(excellent|good|fair|poor)$"
+    )
     issues_encountered: Optional[str] = None
     notes: Optional[str] = None
+
 
 class UsageSessionCreate(UsageSessionBase):
     equipment_id: str
     reservation_id: Optional[str] = None
     start_time: datetime = Field(default_factory=datetime.utcnow)
 
+
 class UsageSessionUpdate(BaseModel):
     end_time: Optional[datetime] = None
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(
+        None, regex="^(excellent|good|fair|poor)$"
+    )
     issues_encountered: Optional[str] = None
     power_consumed_kwh: Optional[float] = Field(None, ge=0)
     material_consumed: Optional[List[Dict[str, Any]]] = None
     notes: Optional[str] = None
+
 
 class UsageSessionResponse(UsageSessionBase):
     id: str
@@ -300,9 +332,10 @@ class UsageSessionResponse(UsageSessionBase):
     efficiency_score: Optional[float] = None
     cost_incurred: Optional[float] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 # Filter and analytics schemas
 class EquipmentFilter(BaseModel):
@@ -313,14 +346,15 @@ class EquipmentFilter(BaseModel):
     requires_certification: Optional[bool] = None
     available_only: bool = False
     search: Optional[str] = None
-    
+
     # Pagination
     skip: int = Field(0, ge=0)
     limit: int = Field(100, ge=1, le=1000)
-    
+
     # Sorting
     sort_by: str = "name"
     sort_order: str = Field("asc", regex="^(asc|desc)$")
+
 
 class EquipmentStatsResponse(BaseModel):
     total_equipment: int
@@ -334,11 +368,13 @@ class EquipmentStatsResponse(BaseModel):
     categories: Dict[str, int]
     locations: Dict[str, int]
 
+
 class AvailabilitySlot(BaseModel):
     day_of_week: int  # 0-6 (Monday-Sunday)
-    start_time: str   # HH:MM format
-    end_time: str     # HH:MM format
+    start_time: str  # HH:MM format
+    end_time: str  # HH:MM format
     is_available: bool
+
 
 class AvailabilityResponse(BaseModel):
     equipment_id: str
@@ -346,25 +382,30 @@ class AvailabilityResponse(BaseModel):
     slots: List[AvailabilitySlot]
     reservations: List[ReservationResponse]
 
+
 # Request schemas for specific operations
 class ReservationApprovalRequest(BaseModel):
     approved: bool
     admin_notes: Optional[str] = None
+
 
 class MaintenanceModeRequest(BaseModel):
     enable: bool
     reason: Optional[str] = None
     estimated_completion: Optional[datetime] = None
 
+
 class BulkOperationRequest(BaseModel):
     equipment_ids: List[str]
     action: str  # "maintenance", "offline", "delete", etc.
     reason: Optional[str] = None
 
+
 # Response schemas
 class SuccessResponse(BaseModel):
     message: str
     data: Optional[Dict[str, Any]] = None
+
 
 class ErrorResponse(BaseModel):
     detail: str

@@ -1,18 +1,18 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { 
-  Ticket, 
-  Plus, 
+} from '@/components/ui/dialog';
+import {
+  Ticket,
+  Plus,
   ArrowLeft,
   Search,
   Edit,
@@ -22,10 +22,10 @@ import {
   DollarSign,
   Calendar,
   Percent,
-  Settings
-} from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+  Settings,
+} from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface TicketsPageProps {
   params: {
@@ -37,138 +37,135 @@ interface TicketsPageProps {
 async function getTicketsData(slug: string) {
   const mockData = {
     makerfest2024: {
-      id: "1",
-      slug: "makerfest2024",
-      title: "MakerFest 2024",
+      id: '1',
+      slug: 'makerfest2024',
+      title: 'MakerFest 2024',
       tickets: [
         {
-          id: "tkt_001",
-          name: "General Admission",
-          description: "Access to all workshops and exhibitions",
-          type: "paid",
+          id: 'tkt_001',
+          name: 'General Admission',
+          description: 'Access to all workshops and exhibitions',
+          type: 'paid',
           price: 45,
-          currency: "USD",
+          currency: 'USD',
           quantity: 500,
           sold: 234,
           available: 266,
-          status: "active",
+          status: 'active',
           earlyBird: false,
-          saleStartDate: "2024-01-15T00:00:00Z",
-          saleEndDate: "2024-03-14T23:59:59Z",
+          saleStartDate: '2024-01-15T00:00:00Z',
+          saleEndDate: '2024-03-14T23:59:59Z',
           benefits: [
-            "Access to all workshop sessions",
-            "Exhibition hall access",
-            "Networking lunch included",
-            "Digital certificate"
-          ]
+            'Access to all workshop sessions',
+            'Exhibition hall access',
+            'Networking lunch included',
+            'Digital certificate',
+          ],
         },
         {
-          id: "tkt_002",
-          name: "Student Discount",
-          description: "Discounted ticket for students with valid ID",
-          type: "paid",
+          id: 'tkt_002',
+          name: 'Student Discount',
+          description: 'Discounted ticket for students with valid ID',
+          type: 'paid',
           price: 25,
-          currency: "USD",
+          currency: 'USD',
           quantity: 100,
           sold: 89,
           available: 11,
-          status: "active",
+          status: 'active',
           earlyBird: false,
-          saleStartDate: "2024-01-15T00:00:00Z",
-          saleEndDate: "2024-03-14T23:59:59Z",
+          saleStartDate: '2024-01-15T00:00:00Z',
+          saleEndDate: '2024-03-14T23:59:59Z',
           benefits: [
-            "Access to all workshop sessions",
-            "Exhibition hall access",
-            "Student networking session"
-          ]
+            'Access to all workshop sessions',
+            'Exhibition hall access',
+            'Student networking session',
+          ],
         },
         {
-          id: "tkt_003",
-          name: "VIP Access",
-          description: "Premium experience with exclusive perks",
-          type: "paid",
+          id: 'tkt_003',
+          name: 'VIP Access',
+          description: 'Premium experience with exclusive perks',
+          type: 'paid',
           price: 150,
-          currency: "USD",
+          currency: 'USD',
           quantity: 50,
           sold: 23,
           available: 27,
-          status: "active",
+          status: 'active',
           earlyBird: false,
-          saleStartDate: "2024-01-15T00:00:00Z",
-          saleEndDate: "2024-03-14T23:59:59Z",
+          saleStartDate: '2024-01-15T00:00:00Z',
+          saleEndDate: '2024-03-14T23:59:59Z',
           benefits: [
-            "All General Admission benefits",
-            "Priority seating in workshops",
-            "Exclusive VIP lounge access",
-            "Meet & greet with speakers",
-            "Premium swag bag"
-          ]
+            'All General Admission benefits',
+            'Priority seating in workshops',
+            'Exclusive VIP lounge access',
+            'Meet & greet with speakers',
+            'Premium swag bag',
+          ],
         },
         {
-          id: "tkt_004",
-          name: "Free Community Pass",
-          description: "Limited free tickets for community members",
-          type: "free",
+          id: 'tkt_004',
+          name: 'Free Community Pass',
+          description: 'Limited free tickets for community members',
+          type: 'free',
           price: 0,
-          currency: "USD",
+          currency: 'USD',
           quantity: 50,
           sold: 50,
           available: 0,
-          status: "sold_out",
+          status: 'sold_out',
           earlyBird: false,
-          saleStartDate: "2024-01-15T00:00:00Z",
-          saleEndDate: "2024-03-14T23:59:59Z",
-          benefits: [
-            "Exhibition hall access",
-            "Basic networking opportunities"
-          ]
+          saleStartDate: '2024-01-15T00:00:00Z',
+          saleEndDate: '2024-03-14T23:59:59Z',
+          benefits: ['Exhibition hall access', 'Basic networking opportunities'],
         },
         {
-          id: "tkt_005",
-          name: "Early Bird Special",
-          description: "Limited time early bird pricing",
-          type: "paid",
+          id: 'tkt_005',
+          name: 'Early Bird Special',
+          description: 'Limited time early bird pricing',
+          type: 'paid',
           price: 35,
-          currency: "USD",
+          currency: 'USD',
           quantity: 100,
           sold: 100,
           available: 0,
-          status: "ended",
+          status: 'ended',
           earlyBird: true,
-          saleStartDate: "2024-01-01T00:00:00Z",
-          saleEndDate: "2024-01-31T23:59:59Z",
+          saleStartDate: '2024-01-01T00:00:00Z',
+          saleEndDate: '2024-01-31T23:59:59Z',
           benefits: [
-            "All General Admission benefits",
-            "Early bird pricing",
-            "Priority registration"
-          ]
-        }
+            'All General Admission benefits',
+            'Early bird pricing',
+            'Priority registration',
+          ],
+        },
       ],
       coupons: [
         {
-          id: "cpn_001",
-          code: "MAKER2024",
-          description: "Launch week discount",
-          type: "percentage",
+          id: 'cpn_001',
+          code: 'MAKER2024',
+          description: 'Launch week discount',
+          type: 'percentage',
           value: 20,
           usageLimit: 100,
           used: 45,
-          status: "active",
-          expiryDate: "2024-02-15T23:59:59Z"
+          status: 'active',
+          expiryDate: '2024-02-15T23:59:59Z',
         },
         {
-          id: "cpn_002",
-          code: "STUDENT15",
-          description: "Student additional discount",
-          type: "fixed",
+          id: 'cpn_002',
+          code: 'STUDENT15',
+          description: 'Student additional discount',
+          type: 'fixed',
           value: 15,
           usageLimit: 50,
           used: 23,
-          status: "active",
-          expiryDate: "2024-03-14T23:59:59Z"
-        }
-      ]
-    }
+          status: 'active',
+          expiryDate: '2024-03-14T23:59:59Z',
+        },
+      ],
+    },
   };
 
   return mockData[slug as keyof typeof mockData] || null;
@@ -176,13 +173,27 @@ async function getTicketsData(slug: string) {
 
 const getStatusBadge = (status: string) => {
   const variants = {
-    active: { variant: "default" as const, label: "Active", color: "bg-green-100 text-green-800" },
-    sold_out: { variant: "secondary" as const, label: "Sold Out", color: "bg-red-100 text-red-800" },
-    ended: { variant: "outline" as const, label: "Ended", color: "bg-gray-100 text-gray-800" },
-    paused: { variant: "outline" as const, label: "Paused", color: "bg-yellow-100 text-yellow-800" }
+    active: { variant: 'default' as const, label: 'Active', color: 'bg-green-100 text-green-800' },
+    sold_out: {
+      variant: 'secondary' as const,
+      label: 'Sold Out',
+      color: 'bg-red-100 text-red-800',
+    },
+    ended: { variant: 'outline' as const, label: 'Ended', color: 'bg-gray-100 text-gray-800' },
+    paused: {
+      variant: 'outline' as const,
+      label: 'Paused',
+      color: 'bg-yellow-100 text-yellow-800',
+    },
   };
-  
-  return variants[status as keyof typeof variants] || { variant: "outline" as const, label: status, color: "bg-gray-100 text-gray-800" };
+
+  return (
+    variants[status as keyof typeof variants] || {
+      variant: 'outline' as const,
+      label: status,
+      color: 'bg-gray-100 text-gray-800',
+    }
+  );
 };
 
 export default async function TicketsPage({ params }: TicketsPageProps) {
@@ -193,7 +204,10 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
     notFound();
   }
 
-  const totalRevenue = ticketsData.tickets.reduce((sum, ticket) => sum + (ticket.price * ticket.sold), 0);
+  const totalRevenue = ticketsData.tickets.reduce(
+    (sum, ticket) => sum + ticket.price * ticket.sold,
+    0,
+  );
   const totalSold = ticketsData.tickets.reduce((sum, ticket) => sum + ticket.sold, 0);
   const totalAvailable = ticketsData.tickets.reduce((sum, ticket) => sum + ticket.available, 0);
 
@@ -312,9 +326,7 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
               <Ticket className="h-5 w-5 mr-2" />
               Ticket Types
             </CardTitle>
-            <CardDescription>
-              Manage ticket pricing, quantities, and availability
-            </CardDescription>
+            <CardDescription>Manage ticket pricing, quantities, and availability</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -324,10 +336,7 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <h4 className="text-lg font-semibold">{ticket.name}</h4>
-                        <Badge 
-                          variant="outline" 
-                          className={getStatusBadge(ticket.status).color}
-                        >
+                        <Badge variant="outline" className={getStatusBadge(ticket.status).color}>
                           {getStatusBadge(ticket.status).label}
                         </Badge>
                         {ticket.earlyBird && (
@@ -341,9 +350,9 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <p className="text-gray-600 mb-3">{ticket.description}</p>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
                         <div className="flex items-center text-gray-500">
                           <DollarSign className="h-4 w-4 mr-1" />
@@ -364,8 +373,8 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
 
                       {/* Progress bar */}
                       <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${(ticket.sold / ticket.quantity) * 100}%` }}
                         ></div>
                       </div>
@@ -375,7 +384,10 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                         <p className="text-sm font-medium text-gray-700 mb-1">Includes:</p>
                         <div className="flex flex-wrap gap-1">
                           {ticket.benefits.slice(0, 3).map((benefit, index) => (
-                            <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                            <span
+                              key={index}
+                              className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+                            >
                               {benefit}
                             </span>
                           ))}
@@ -387,7 +399,7 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex space-x-2 ml-4">
                       <Button size="sm" variant="outline">
                         <Edit className="h-4 w-4" />
@@ -398,7 +410,11 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                       <Button size="sm" variant="outline">
                         <Settings className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 hover:text-red-700"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -416,19 +432,14 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
               <Percent className="h-5 w-5 mr-2" />
               Discount Coupons
             </CardTitle>
-            <CardDescription>
-              Manage promotional codes and discounts
-            </CardDescription>
+            <CardDescription>Manage promotional codes and discounts</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
-                  <Input 
-                    placeholder="Search coupons..." 
-                    className="pl-10 w-64"
-                  />
+                  <Input placeholder="Search coupons..." className="pl-10 w-64" />
                 </div>
               </div>
               <Button size="sm">
@@ -439,7 +450,10 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
 
             <div className="space-y-3">
               {ticketsData.coupons.map((coupon) => (
-                <div key={coupon.id} className="border rounded-lg p-4 flex items-center justify-between">
+                <div
+                  key={coupon.id}
+                  className="border rounded-lg p-4 flex items-center justify-between"
+                >
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-1">
                       <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
@@ -452,9 +466,13 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                     <p className="text-sm text-gray-600 mb-2">{coupon.description}</p>
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
                       <span>
-                        {coupon.type === 'percentage' ? `${coupon.value}% off` : `$${coupon.value} off`}
+                        {coupon.type === 'percentage'
+                          ? `${coupon.value}% off`
+                          : `$${coupon.value} off`}
                       </span>
-                      <span>Used: {coupon.used}/{coupon.usageLimit}</span>
+                      <span>
+                        Used: {coupon.used}/{coupon.usageLimit}
+                      </span>
                       <span>Expires: {new Date(coupon.expiryDate).toLocaleDateString()}</span>
                     </div>
                   </div>

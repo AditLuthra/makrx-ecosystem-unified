@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Activity,
@@ -34,33 +34,23 @@ import {
   UserPlus,
   Users,
   Video,
-} from "lucide-react";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Progress } from "../../components/ui/progress";
+} from 'lucide-react';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Progress } from '../../components/ui/progress';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
-import { useAuth } from "../../contexts/AuthContext";
+} from '../../components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface CommunityMember {
   id: string;
@@ -111,7 +101,7 @@ interface CommunityEvent {
   id: string;
   title: string;
   description: string;
-  type: "workshop" | "meetup" | "conference" | "competition" | "social";
+  type: 'workshop' | 'meetup' | 'conference' | 'competition' | 'social';
   date: string;
   time: string;
   duration: number;
@@ -123,7 +113,7 @@ interface CommunityEvent {
   price: number;
   tags: string[];
   image: string;
-  status: "upcoming" | "ongoing" | "completed" | "cancelled";
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 }
 
 interface Project {
@@ -139,7 +129,7 @@ interface Project {
   likes: number;
   views: number;
   progress: number;
-  status: "planning" | "in_progress" | "completed" | "on_hold";
+  status: 'planning' | 'in_progress' | 'completed' | 'on_hold';
   createdAt: string;
   updatedAt: string;
   isOpenForCollaboration: boolean;
@@ -148,13 +138,13 @@ interface Project {
 
 const Community: React.FC = () => {
   const { user } = useAuth();
-  const [selectedTab, setSelectedTab] = useState("feed");
+  const [selectedTab, setSelectedTab] = useState('feed');
   const [members, setMembers] = useState<CommunityMember[]>([]);
   const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
   const [events, setEvents] = useState<CommunityEvent[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterCategory, setFilterCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
 
   useEffect(() => {
     loadCommunityData();
@@ -164,255 +154,255 @@ const Community: React.FC = () => {
     // Mock community members
     const mockMembers: CommunityMember[] = [
       {
-        id: "member-001",
-        name: "Sarah Chen",
-        username: "sarahmaker",
-        avatar: "/api/placeholder/100/100",
-        title: "3D Printing Expert",
-        location: "San Francisco, CA",
-        joinDate: "2023-01-15",
+        id: 'member-001',
+        name: 'Sarah Chen',
+        username: 'sarahmaker',
+        avatar: '/api/placeholder/100/100',
+        title: '3D Printing Expert',
+        location: 'San Francisco, CA',
+        joinDate: '2023-01-15',
         reputation: 4850,
-        skills: ["3D Printing", "CAD Design", "Prototyping"],
-        interests: ["Sustainability", "Medical Devices", "Education"],
+        skills: ['3D Printing', 'CAD Design', 'Prototyping'],
+        interests: ['Sustainability', 'Medical Devices', 'Education'],
         projects: 24,
         connections: 342,
         contributions: 156,
         isOnline: true,
-        bio: "Passionate about using 3D printing for sustainable solutions. PhD in Materials Science, love teaching and sharing knowledge.",
+        bio: 'Passionate about using 3D printing for sustainable solutions. PhD in Materials Science, love teaching and sharing knowledge.',
         badges: [
-          { name: "Expert", icon: "star", color: "yellow" },
-          { name: "Mentor", icon: "user", color: "blue" },
-          { name: "Top Contributor", icon: "trophy", color: "gold" },
+          { name: 'Expert', icon: 'star', color: 'yellow' },
+          { name: 'Mentor', icon: 'user', color: 'blue' },
+          { name: 'Top Contributor', icon: 'trophy', color: 'gold' },
         ],
-        website: "https://sarahchen.dev",
-        github: "sarahchen",
-        twitter: "sarahmaker",
+        website: 'https://sarahchen.dev',
+        github: 'sarahchen',
+        twitter: 'sarahmaker',
       },
       {
-        id: "member-002",
-        name: "Mike Rodriguez",
-        username: "cnc_mike",
-        avatar: "/api/placeholder/100/100",
-        title: "CNC Machinist",
-        location: "Austin, TX",
-        joinDate: "2022-08-20",
+        id: 'member-002',
+        name: 'Mike Rodriguez',
+        username: 'cnc_mike',
+        avatar: '/api/placeholder/100/100',
+        title: 'CNC Machinist',
+        location: 'Austin, TX',
+        joinDate: '2022-08-20',
         reputation: 3720,
-        skills: ["CNC Machining", "CAM Programming", "Quality Control"],
-        interests: ["Automotive", "Aerospace", "Precision Engineering"],
+        skills: ['CNC Machining', 'CAM Programming', 'Quality Control'],
+        interests: ['Automotive', 'Aerospace', 'Precision Engineering'],
         projects: 18,
         connections: 225,
         contributions: 98,
         isOnline: false,
-        bio: "Former Boeing engineer, now freelance machinist and educator. Love creating precise parts and teaching others.",
+        bio: 'Former Boeing engineer, now freelance machinist and educator. Love creating precise parts and teaching others.',
         badges: [
-          { name: "Precision Master", icon: "target", color: "blue" },
-          { name: "Helper", icon: "heart", color: "red" },
+          { name: 'Precision Master', icon: 'target', color: 'blue' },
+          { name: 'Helper', icon: 'heart', color: 'red' },
         ],
-        linkedin: "mike-rodriguez-cnc",
+        linkedin: 'mike-rodriguez-cnc',
       },
       {
-        id: "member-003",
-        name: "Alex Kim",
-        username: "alexcodes",
-        avatar: "/api/placeholder/100/100",
-        title: "Electronics & IoT Developer",
-        location: "Seattle, WA",
-        joinDate: "2023-03-10",
+        id: 'member-003',
+        name: 'Alex Kim',
+        username: 'alexcodes',
+        avatar: '/api/placeholder/100/100',
+        title: 'Electronics & IoT Developer',
+        location: 'Seattle, WA',
+        joinDate: '2023-03-10',
         reputation: 2940,
-        skills: ["Arduino", "Raspberry Pi", "PCB Design", "IoT"],
-        interests: ["Smart Home", "Automation", "Open Source"],
+        skills: ['Arduino', 'Raspberry Pi', 'PCB Design', 'IoT'],
+        interests: ['Smart Home', 'Automation', 'Open Source'],
         projects: 31,
         connections: 189,
         contributions: 145,
         isOnline: true,
-        bio: "Full-stack developer passionate about IoT and maker culture. Building smart solutions for everyday problems.",
+        bio: 'Full-stack developer passionate about IoT and maker culture. Building smart solutions for everyday problems.',
         badges: [
-          { name: "Innovator", icon: "lightbulb", color: "green" },
-          { name: "Open Source", icon: "github", color: "black" },
+          { name: 'Innovator', icon: 'lightbulb', color: 'green' },
+          { name: 'Open Source', icon: 'github', color: 'black' },
         ],
-        github: "alexkim-dev",
-        website: "https://alexkim.io",
+        github: 'alexkim-dev',
+        website: 'https://alexkim.io',
       },
     ];
 
     // Mock forum posts
     const mockForumPosts: ForumPost[] = [
       {
-        id: "post-001",
-        title: "Best filament for outdoor prints?",
+        id: 'post-001',
+        title: 'Best filament for outdoor prints?',
         content:
-          "Looking for recommendations on filaments that can withstand weather conditions. Planning to make some garden planters.",
-        author: "Sarah Chen",
-        authorAvatar: "/api/placeholder/50/50",
-        category: "3D Printing",
-        tags: ["filament", "outdoor", "weatherproof"],
-        createdAt: "2024-12-18T10:30:00Z",
-        updatedAt: "2024-12-18T14:20:00Z",
+          'Looking for recommendations on filaments that can withstand weather conditions. Planning to make some garden planters.',
+        author: 'Sarah Chen',
+        authorAvatar: '/api/placeholder/50/50',
+        category: '3D Printing',
+        tags: ['filament', 'outdoor', 'weatherproof'],
+        createdAt: '2024-12-18T10:30:00Z',
+        updatedAt: '2024-12-18T14:20:00Z',
         likes: 23,
         replies: 8,
         views: 156,
         isPinned: false,
         isSolved: true,
-        lastActivity: "2 hours ago",
+        lastActivity: '2 hours ago',
       },
       {
-        id: "post-002",
-        title: "CNC feeds and speeds calculator?",
+        id: 'post-002',
+        title: 'CNC feeds and speeds calculator?',
         content:
-          "Does anyone have a good calculator or app for determining optimal feeds and speeds for different materials?",
-        author: "Mike Rodriguez",
-        authorAvatar: "/api/placeholder/50/50",
-        category: "CNC",
-        tags: ["cnc", "speeds", "feeds", "calculator"],
-        createdAt: "2024-12-18T09:15:00Z",
-        updatedAt: "2024-12-18T12:45:00Z",
+          'Does anyone have a good calculator or app for determining optimal feeds and speeds for different materials?',
+        author: 'Mike Rodriguez',
+        authorAvatar: '/api/placeholder/50/50',
+        category: 'CNC',
+        tags: ['cnc', 'speeds', 'feeds', 'calculator'],
+        createdAt: '2024-12-18T09:15:00Z',
+        updatedAt: '2024-12-18T12:45:00Z',
         likes: 15,
         replies: 12,
         views: 243,
         isPinned: true,
         isSolved: false,
-        lastActivity: "1 hour ago",
+        lastActivity: '1 hour ago',
       },
       {
-        id: "post-003",
-        title: "Arduino project showcase: Smart greenhouse controller",
+        id: 'post-003',
+        title: 'Arduino project showcase: Smart greenhouse controller',
         content:
-          "Just finished my automated greenhouse project! Controls temperature, humidity, and watering. Happy to share the code.",
-        author: "Alex Kim",
-        authorAvatar: "/api/placeholder/50/50",
-        category: "Electronics",
-        tags: ["arduino", "iot", "greenhouse", "automation"],
-        createdAt: "2024-12-17T16:20:00Z",
-        updatedAt: "2024-12-18T08:30:00Z",
+          'Just finished my automated greenhouse project! Controls temperature, humidity, and watering. Happy to share the code.',
+        author: 'Alex Kim',
+        authorAvatar: '/api/placeholder/50/50',
+        category: 'Electronics',
+        tags: ['arduino', 'iot', 'greenhouse', 'automation'],
+        createdAt: '2024-12-17T16:20:00Z',
+        updatedAt: '2024-12-18T08:30:00Z',
         likes: 45,
         replies: 18,
         views: 387,
         isPinned: false,
         isSolved: false,
-        lastActivity: "30 minutes ago",
+        lastActivity: '30 minutes ago',
       },
     ];
 
     // Mock events
     const mockEvents: CommunityEvent[] = [
       {
-        id: "event-001",
-        title: "Advanced 3D Printing Workshop",
+        id: 'event-001',
+        title: 'Advanced 3D Printing Workshop',
         description:
-          "Learn advanced techniques for multi-material printing, support structures, and post-processing.",
-        type: "workshop",
-        date: "2024-12-25",
-        time: "10:00 AM",
+          'Learn advanced techniques for multi-material printing, support structures, and post-processing.',
+        type: 'workshop',
+        date: '2024-12-25',
+        time: '10:00 AM',
         duration: 4,
-        location: "MakrCave Main Lab",
+        location: 'MakrCave Main Lab',
         isVirtual: false,
-        organizer: "Sarah Chen",
+        organizer: 'Sarah Chen',
         attendees: 12,
         maxAttendees: 15,
         price: 45,
-        tags: ["3D Printing", "Advanced", "Hands-on"],
-        image: "/api/placeholder/400/200",
-        status: "upcoming",
+        tags: ['3D Printing', 'Advanced', 'Hands-on'],
+        image: '/api/placeholder/400/200',
+        status: 'upcoming',
       },
       {
-        id: "event-002",
-        title: "Maker Meetup: Show & Tell",
+        id: 'event-002',
+        title: 'Maker Meetup: Show & Tell',
         description:
-          "Monthly gathering to share projects, get feedback, and network with fellow makers.",
-        type: "meetup",
-        date: "2024-12-28",
-        time: "6:00 PM",
+          'Monthly gathering to share projects, get feedback, and network with fellow makers.',
+        type: 'meetup',
+        date: '2024-12-28',
+        time: '6:00 PM',
         duration: 3,
-        location: "Community Space",
+        location: 'Community Space',
         isVirtual: false,
-        organizer: "MakrCave Team",
+        organizer: 'MakrCave Team',
         attendees: 28,
         maxAttendees: 50,
         price: 0,
-        tags: ["Networking", "Projects", "Community"],
-        image: "/api/placeholder/400/200",
-        status: "upcoming",
+        tags: ['Networking', 'Projects', 'Community'],
+        image: '/api/placeholder/400/200',
+        status: 'upcoming',
       },
       {
-        id: "event-003",
-        title: "Virtual PCB Design Masterclass",
+        id: 'event-003',
+        title: 'Virtual PCB Design Masterclass',
         description:
-          "Online workshop covering PCB design fundamentals, routing techniques, and manufacturing considerations.",
-        type: "workshop",
-        date: "2024-12-30",
-        time: "2:00 PM",
+          'Online workshop covering PCB design fundamentals, routing techniques, and manufacturing considerations.',
+        type: 'workshop',
+        date: '2024-12-30',
+        time: '2:00 PM',
         duration: 6,
-        location: "Online",
+        location: 'Online',
         isVirtual: true,
-        organizer: "Alex Kim",
+        organizer: 'Alex Kim',
         attendees: 45,
         maxAttendees: 100,
         price: 25,
-        tags: ["Electronics", "PCB", "Design"],
-        image: "/api/placeholder/400/200",
-        status: "upcoming",
+        tags: ['Electronics', 'PCB', 'Design'],
+        image: '/api/placeholder/400/200',
+        status: 'upcoming',
       },
     ];
 
     // Mock projects
     const mockProjects: Project[] = [
       {
-        id: "project-001",
-        title: "Smart Home Energy Monitor",
+        id: 'project-001',
+        title: 'Smart Home Energy Monitor',
         description:
-          "IoT device to track home energy consumption with real-time visualization and alerts.",
-        author: "Alex Kim",
-        authorAvatar: "/api/placeholder/50/50",
-        collaborators: ["Sarah Chen", "Mike Rodriguez"],
-        category: "Electronics",
-        tags: ["IoT", "Energy", "Smart Home", "Arduino"],
-        image: "/api/placeholder/300/200",
+          'IoT device to track home energy consumption with real-time visualization and alerts.',
+        author: 'Alex Kim',
+        authorAvatar: '/api/placeholder/50/50',
+        collaborators: ['Sarah Chen', 'Mike Rodriguez'],
+        category: 'Electronics',
+        tags: ['IoT', 'Energy', 'Smart Home', 'Arduino'],
+        image: '/api/placeholder/300/200',
         likes: 67,
         views: 324,
         progress: 75,
-        status: "in_progress",
-        createdAt: "2024-11-15",
-        updatedAt: "2024-12-18",
+        status: 'in_progress',
+        createdAt: '2024-11-15',
+        updatedAt: '2024-12-18',
         isOpenForCollaboration: true,
-        skillsNeeded: ["Mobile App Development", "Data Visualization"],
+        skillsNeeded: ['Mobile App Development', 'Data Visualization'],
       },
       {
-        id: "project-002",
-        title: "Biodegradable 3D Printing Filament",
+        id: 'project-002',
+        title: 'Biodegradable 3D Printing Filament',
         description:
-          "Research project developing eco-friendly filament from agricultural waste materials.",
-        author: "Sarah Chen",
-        authorAvatar: "/api/placeholder/50/50",
-        collaborators: ["Dr. Emma Wilson"],
-        category: "3D Printing",
-        tags: ["Sustainability", "Materials", "Research", "Eco-friendly"],
-        image: "/api/placeholder/300/200",
+          'Research project developing eco-friendly filament from agricultural waste materials.',
+        author: 'Sarah Chen',
+        authorAvatar: '/api/placeholder/50/50',
+        collaborators: ['Dr. Emma Wilson'],
+        category: '3D Printing',
+        tags: ['Sustainability', 'Materials', 'Research', 'Eco-friendly'],
+        image: '/api/placeholder/300/200',
         likes: 89,
         views: 456,
         progress: 60,
-        status: "in_progress",
-        createdAt: "2024-10-01",
-        updatedAt: "2024-12-16",
+        status: 'in_progress',
+        createdAt: '2024-10-01',
+        updatedAt: '2024-12-16',
         isOpenForCollaboration: true,
-        skillsNeeded: ["Chemistry", "Material Testing", "Documentation"],
+        skillsNeeded: ['Chemistry', 'Material Testing', 'Documentation'],
       },
       {
-        id: "project-003",
-        title: "Precision Fixture for Small Parts",
+        id: 'project-003',
+        title: 'Precision Fixture for Small Parts',
         description:
-          "Custom CNC machined fixture for holding small electronic components during assembly.",
-        author: "Mike Rodriguez",
-        authorAvatar: "/api/placeholder/50/50",
+          'Custom CNC machined fixture for holding small electronic components during assembly.',
+        author: 'Mike Rodriguez',
+        authorAvatar: '/api/placeholder/50/50',
         collaborators: [],
-        category: "CNC",
-        tags: ["CNC", "Fixtures", "Precision", "Manufacturing"],
-        image: "/api/placeholder/300/200",
+        category: 'CNC',
+        tags: ['CNC', 'Fixtures', 'Precision', 'Manufacturing'],
+        image: '/api/placeholder/300/200',
         likes: 34,
         views: 178,
         progress: 90,
-        status: "in_progress",
-        createdAt: "2024-12-01",
-        updatedAt: "2024-12-17",
+        status: 'in_progress',
+        createdAt: '2024-12-01',
+        updatedAt: '2024-12-17',
         isOpenForCollaboration: false,
         skillsNeeded: [],
       },
@@ -426,46 +416,46 @@ const Community: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "online":
-        return "bg-green-500";
-      case "away":
-        return "bg-yellow-500";
-      case "busy":
-        return "bg-red-500";
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "in_progress":
-        return "bg-blue-100 text-blue-800";
-      case "planning":
-        return "bg-yellow-100 text-yellow-800";
-      case "on_hold":
-        return "bg-gray-100 text-gray-800";
-      case "upcoming":
-        return "bg-blue-100 text-blue-800";
-      case "ongoing":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'online':
+        return 'bg-green-500';
+      case 'away':
+        return 'bg-yellow-500';
+      case 'busy':
+        return 'bg-red-500';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'planning':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'on_hold':
+        return 'bg-gray-100 text-gray-800';
+      case 'upcoming':
+        return 'bg-blue-100 text-blue-800';
+      case 'ongoing':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getBadgeIcon = (iconName: string) => {
     switch (iconName) {
-      case "star":
+      case 'star':
         return <Star className="h-3 w-3" />;
-      case "user":
+      case 'user':
         return <Users className="h-3 w-3" />;
-      case "trophy":
+      case 'trophy':
         return <Award className="h-3 w-3" />;
-      case "target":
+      case 'target':
         return <Target className="h-3 w-3" />;
-      case "heart":
+      case 'heart':
         return <Heart className="h-3 w-3" />;
-      case "lightbulb":
+      case 'lightbulb':
         return <Lightbulb className="h-3 w-3" />;
-      case "github":
+      case 'github':
         return <Github className="h-3 w-3" />;
       default:
         return <Award className="h-3 w-3" />;
@@ -476,15 +466,12 @@ const Community: React.FC = () => {
     const matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.skills.some((skill) =>
-        skill.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      member.skills.some((skill) => skill.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesSearch;
   });
 
   const filteredPosts = forumPosts.filter((post) => {
-    const matchesCategory =
-      filterCategory === "all" || post.category === filterCategory;
+    const matchesCategory = filterCategory === 'all' || post.category === filterCategory;
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.content.toLowerCase().includes(searchTerm.toLowerCase());
@@ -497,9 +484,7 @@ const Community: React.FC = () => {
     totalPosts: forumPosts.length,
     totalEvents: events.length,
     totalProjects: projects.length,
-    avgReputation: Math.round(
-      members.reduce((sum, m) => sum + m.reputation, 0) / members.length
-    ),
+    avgReputation: Math.round(members.reduce((sum, m) => sum + m.reputation, 0) / members.length),
   };
 
   return (
@@ -508,9 +493,7 @@ const Community: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Community</h1>
-          <p className="text-gray-600">
-            Connect, collaborate, and learn with fellow makers
-          </p>
+          <p className="text-gray-600">Connect, collaborate, and learn with fellow makers</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button variant="outline">
@@ -533,9 +516,7 @@ const Community: React.FC = () => {
                 <Users className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.totalMembers}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.totalMembers}</p>
                 <p className="text-sm text-gray-600">Members</p>
               </div>
             </div>
@@ -549,9 +530,7 @@ const Community: React.FC = () => {
                 <Activity className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.onlineMembers}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.onlineMembers}</p>
                 <p className="text-sm text-gray-600">Online</p>
               </div>
             </div>
@@ -565,9 +544,7 @@ const Community: React.FC = () => {
                 <MessageSquare className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.totalPosts}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.totalPosts}</p>
                 <p className="text-sm text-gray-600">Posts</p>
               </div>
             </div>
@@ -581,9 +558,7 @@ const Community: React.FC = () => {
                 <Calendar className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.totalEvents}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.totalEvents}</p>
                 <p className="text-sm text-gray-600">Events</p>
               </div>
             </div>
@@ -597,9 +572,7 @@ const Community: React.FC = () => {
                 <Lightbulb className="h-6 w-6 text-pink-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.totalProjects}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.totalProjects}</p>
                 <p className="text-sm text-gray-600">Projects</p>
               </div>
             </div>
@@ -613,9 +586,7 @@ const Community: React.FC = () => {
                 <Star className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {communityStats.avgReputation}
-                </p>
+                <p className="text-2xl font-bold">{communityStats.avgReputation}</p>
                 <p className="text-sm text-gray-600">Avg Rep</p>
               </div>
             </div>
@@ -682,38 +653,38 @@ const Community: React.FC = () => {
               {/* Recent Activity Feed */}
               {[
                 {
-                  type: "project_update",
-                  author: "Alex Kim",
-                  avatar: "/api/placeholder/50/50",
-                  action: "updated their project",
-                  target: "Smart Home Energy Monitor",
-                  time: "2 hours ago",
+                  type: 'project_update',
+                  author: 'Alex Kim',
+                  avatar: '/api/placeholder/50/50',
+                  action: 'updated their project',
+                  target: 'Smart Home Energy Monitor',
+                  time: '2 hours ago',
                   content:
-                    "Added new sensor integration and improved the mobile dashboard. Now tracking 12 different metrics!",
+                    'Added new sensor integration and improved the mobile dashboard. Now tracking 12 different metrics!',
                   likes: 15,
                   comments: 3,
                 },
                 {
-                  type: "event_created",
-                  author: "Sarah Chen",
-                  avatar: "/api/placeholder/50/50",
-                  action: "created a new event",
-                  target: "Advanced 3D Printing Workshop",
-                  time: "4 hours ago",
+                  type: 'event_created',
+                  author: 'Sarah Chen',
+                  avatar: '/api/placeholder/50/50',
+                  action: 'created a new event',
+                  target: 'Advanced 3D Printing Workshop',
+                  time: '4 hours ago',
                   content:
-                    "Excited to share advanced 3D printing techniques! Limited spots available.",
+                    'Excited to share advanced 3D printing techniques! Limited spots available.',
                   likes: 28,
                   comments: 7,
                 },
                 {
-                  type: "forum_post",
-                  author: "Mike Rodriguez",
-                  avatar: "/api/placeholder/50/50",
-                  action: "posted in",
-                  target: "CNC Discussion",
-                  time: "6 hours ago",
+                  type: 'forum_post',
+                  author: 'Mike Rodriguez',
+                  avatar: '/api/placeholder/50/50',
+                  action: 'posted in',
+                  target: 'CNC Discussion',
+                  time: '6 hours ago',
                   content:
-                    "Looking for recommendations on feeds and speeds calculators. Any suggestions?",
+                    'Looking for recommendations on feeds and speeds calculators. Any suggestions?',
                   likes: 12,
                   comments: 8,
                 },
@@ -731,16 +702,10 @@ const Community: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <span className="font-medium">{activity.author}</span>
-                          <span className="text-gray-600">
-                            {activity.action}
-                          </span>
-                          <span className="font-medium text-blue-600">
-                            {activity.target}
-                          </span>
+                          <span className="text-gray-600">{activity.action}</span>
+                          <span className="font-medium text-blue-600">{activity.target}</span>
                           <span className="text-gray-500">•</span>
-                          <span className="text-gray-500 text-sm">
-                            {activity.time}
-                          </span>
+                          <span className="text-gray-500 text-sm">{activity.time}</span>
                         </div>
 
                         <p className="text-gray-700 mb-3">{activity.content}</p>
@@ -782,10 +747,7 @@ const Community: React.FC = () => {
                       .filter((m) => m.isOnline)
                       .slice(0, 5)
                       .map((member) => (
-                        <div
-                          key={member.id}
-                          className="flex items-center space-x-3"
-                        >
+                        <div key={member.id} className="flex items-center space-x-3">
                           <div className="relative">
                             <Image
                               src={member.avatar}
@@ -797,12 +759,8 @@ const Community: React.FC = () => {
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium text-sm">
-                              {member.name}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {member.title}
-                            </div>
+                            <div className="font-medium text-sm">{member.name}</div>
+                            <div className="text-xs text-gray-500">{member.title}</div>
                           </div>
                         </div>
                       ))}
@@ -822,9 +780,7 @@ const Community: React.FC = () => {
                   <div className="space-y-3">
                     {events.slice(0, 3).map((event) => (
                       <div key={event.id} className="border rounded-lg p-3">
-                        <div className="font-medium text-sm mb-1">
-                          {event.title}
-                        </div>
+                        <div className="font-medium text-sm mb-1">{event.title}</div>
                         <div className="text-xs text-gray-600 mb-2">
                           {event.date} at {event.time}
                         </div>
@@ -848,14 +804,14 @@ const Community: React.FC = () => {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      "3D Printing",
-                      "Arduino",
-                      "CNC",
-                      "Sustainability",
-                      "IoT",
-                      "Woodworking",
-                      "Electronics",
-                      "CAD",
+                      '3D Printing',
+                      'Arduino',
+                      'CNC',
+                      'Sustainability',
+                      'IoT',
+                      'Woodworking',
+                      'Electronics',
+                      'CAD',
                     ].map((tag) => (
                       <Badge key={tag} variant="outline" className="text-xs">
                         #{tag}
@@ -898,10 +854,7 @@ const Community: React.FC = () => {
           {/* Members Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMembers.map((member) => (
-              <Card
-                key={member.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow"
-              >
+              <Card key={member.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4 mb-4">
                     <div className="relative">
@@ -918,9 +871,7 @@ const Community: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{member.name}</h3>
-                      <p className="text-gray-600 text-sm">
-                        @{member.username}
-                      </p>
+                      <p className="text-gray-600 text-sm">@{member.username}</p>
                       <p className="text-gray-600 text-sm">{member.title}</p>
                       <div className="flex items-center text-gray-500 text-xs mt-1">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -929,28 +880,20 @@ const Community: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                    {member.bio}
-                  </p>
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">{member.bio}</p>
 
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-4 mb-4 text-center">
                     <div>
-                      <div className="font-bold text-blue-600">
-                        {member.projects}
-                      </div>
+                      <div className="font-bold text-blue-600">{member.projects}</div>
                       <div className="text-xs text-gray-600">Projects</div>
                     </div>
                     <div>
-                      <div className="font-bold text-green-600">
-                        {member.connections}
-                      </div>
+                      <div className="font-bold text-green-600">{member.connections}</div>
                       <div className="text-xs text-gray-600">Connections</div>
                     </div>
                     <div>
-                      <div className="font-bold text-purple-600">
-                        {member.reputation}
-                      </div>
+                      <div className="font-bold text-purple-600">{member.reputation}</div>
                       <div className="text-xs text-gray-600">Reputation</div>
                     </div>
                   </div>
@@ -959,11 +902,7 @@ const Community: React.FC = () => {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
                       {member.skills.slice(0, 3).map((skill, index) => (
-                        <Badge
-                          key={index}
-                          variant="outline"
-                          className="text-xs"
-                        >
+                        <Badge key={index} variant="outline" className="text-xs">
                           {skill}
                         </Badge>
                       ))}
@@ -978,23 +917,20 @@ const Community: React.FC = () => {
                   {/* Badges */}
                   <div className="flex space-x-1 mb-4">
                     {member.badges.slice(0, 3).map((badge, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-1 text-xs"
-                      >
+                      <div key={index} className="flex items-center space-x-1 text-xs">
                         <div
                           className={`p-1 rounded-full ${
-                            badge.color === "yellow"
-                              ? "bg-yellow-100 text-yellow-600"
-                              : badge.color === "blue"
-                                ? "bg-blue-100 text-blue-600"
-                                : badge.color === "gold"
-                                  ? "bg-yellow-100 text-yellow-600"
-                                  : badge.color === "red"
-                                    ? "bg-red-100 text-red-600"
-                                    : badge.color === "green"
-                                      ? "bg-green-100 text-green-600"
-                                      : "bg-gray-100 text-gray-600"
+                            badge.color === 'yellow'
+                              ? 'bg-yellow-100 text-yellow-600'
+                              : badge.color === 'blue'
+                                ? 'bg-blue-100 text-blue-600'
+                                : badge.color === 'gold'
+                                  ? 'bg-yellow-100 text-yellow-600'
+                                  : badge.color === 'red'
+                                    ? 'bg-red-100 text-red-600'
+                                    : badge.color === 'green'
+                                      ? 'bg-green-100 text-green-600'
+                                      : 'bg-gray-100 text-gray-600'
                           }`}
                         >
                           {getBadgeIcon(badge.icon)}
@@ -1100,14 +1036,10 @@ const Community: React.FC = () => {
                           <h3 className="font-semibold text-lg hover:text-blue-600 cursor-pointer">
                             {post.title}
                             {post.isPinned && (
-                              <Badge className="ml-2 bg-yellow-100 text-yellow-800">
-                                Pinned
-                              </Badge>
+                              <Badge className="ml-2 bg-yellow-100 text-yellow-800">Pinned</Badge>
                             )}
                             {post.isSolved && (
-                              <Badge className="ml-2 bg-green-100 text-green-800">
-                                Solved
-                              </Badge>
+                              <Badge className="ml-2 bg-green-100 text-green-800">Solved</Badge>
                             )}
                           </h3>
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -1123,17 +1055,11 @@ const Community: React.FC = () => {
                         </Button>
                       </div>
 
-                      <p className="text-gray-700 mb-3 line-clamp-2">
-                        {post.content}
-                      </p>
+                      <p className="text-gray-700 mb-3 line-clamp-2">{post.content}</p>
 
                       <div className="flex flex-wrap gap-1 mb-3">
                         {post.tags.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
+                          <Badge key={index} variant="outline" className="text-xs">
                             #{tag}
                           </Badge>
                         ))}
@@ -1147,9 +1073,7 @@ const Community: React.FC = () => {
                           </div>
                           <div className="flex items-center space-x-1 text-gray-500">
                             <MessageCircle className="h-4 w-4" />
-                            <span className="text-sm">
-                              {post.replies} replies
-                            </span>
+                            <span className="text-sm">{post.replies} replies</span>
                           </div>
                           <div className="flex items-center space-x-1 text-gray-500">
                             <Eye className="h-4 w-4" />
@@ -1177,10 +1101,7 @@ const Community: React.FC = () => {
         <TabsContent value="events" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {events.map((event) => (
-              <Card
-                key={event.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow"
-              >
+              <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative">
                   <Image
                     src={event.image}
@@ -1190,25 +1111,19 @@ const Community: React.FC = () => {
                     className="w-full h-48 object-cover"
                   />
                   <div className="absolute top-4 right-4">
-                    <Badge className={getStatusColor(event.status)}>
-                      {event.status}
-                    </Badge>
+                    <Badge className={getStatusColor(event.status)}>{event.status}</Badge>
                   </div>
                   <div className="absolute top-4 left-4">
                     <Badge className="bg-white text-gray-900">
-                      {event.isVirtual ? "Virtual" : "In-Person"}
+                      {event.isVirtual ? 'Virtual' : 'In-Person'}
                     </Badge>
                   </div>
                 </div>
 
                 <CardContent className="p-6">
                   <div className="mb-4">
-                    <h3 className="font-semibold text-lg mb-2">
-                      {event.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">
-                      {event.description}
-                    </p>
+                    <h3 className="font-semibold text-lg mb-2">{event.title}</h3>
+                    <p className="text-gray-600 text-sm line-clamp-2">{event.description}</p>
                   </div>
 
                   <div className="space-y-2 mb-4 text-sm">
@@ -1240,7 +1155,7 @@ const Community: React.FC = () => {
 
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-green-600">
-                      {event.price === 0 ? "Free" : `$${event.price}`}
+                      {event.price === 0 ? 'Free' : `$${event.price}`}
                     </div>
                     <div className="flex space-x-2">
                       <Button size="sm">Join Event</Button>
@@ -1259,10 +1174,7 @@ const Community: React.FC = () => {
         <TabsContent value="projects" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {projects.map((project) => (
-              <Card
-                key={project.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow"
-              >
+              <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative">
                   <Image
                     src={project.image}
@@ -1273,7 +1185,7 @@ const Community: React.FC = () => {
                   />
                   <div className="absolute top-4 right-4">
                     <Badge className={getStatusColor(project.status)}>
-                      {project.status.replace("_", " ")}
+                      {project.status.replace('_', ' ')}
                     </Badge>
                   </div>
                   {project.isOpenForCollaboration && (
@@ -1295,15 +1207,11 @@ const Community: React.FC = () => {
                     />
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{project.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        by {project.author}
-                      </p>
+                      <p className="text-sm text-gray-600">by {project.author}</p>
                     </div>
                   </div>
 
-                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                    {project.description}
-                  </p>
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">{project.description}</p>
 
                   {/* Progress */}
                   <div className="mb-4">
@@ -1331,20 +1239,13 @@ const Community: React.FC = () => {
                   {/* Skills Needed */}
                   {project.skillsNeeded.length > 0 && (
                     <div className="mb-4">
-                      <h5 className="font-medium text-sm mb-2">
-                        Skills Needed:
-                      </h5>
+                      <h5 className="font-medium text-sm mb-2">Skills Needed:</h5>
                       <div className="flex flex-wrap gap-1">
-                        {project.skillsNeeded
-                          .slice(0, 2)
-                          .map((skill, index) => (
-                            <Badge
-                              key={index}
-                              className="text-xs bg-orange-100 text-orange-800"
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
+                        {project.skillsNeeded.slice(0, 2).map((skill, index) => (
+                          <Badge key={index} className="text-xs bg-orange-100 text-orange-800">
+                            {skill}
+                          </Badge>
+                        ))}
                         {project.skillsNeeded.length > 2 && (
                           <Badge className="text-xs bg-orange-100 text-orange-800">
                             +{project.skillsNeeded.length - 2} more

@@ -1,50 +1,10 @@
-import type { Metadata } from 'next';
-import dynamicImport from 'next/dynamic';
-import SEOStructuredData from '../../components/SEOStructuredData';
+import React from 'react';
 
-export const dynamic = 'force-dynamic';
-
-export const metadata: Metadata = {
-    title: "About MakrX - India's Leading Maker Ecosystem",
-    description:
-        "Learn about MakrX's mission to democratize manufacturing in India. Discover our journey, values, and commitment to empowering creators across the country.",
-    keywords: [
-        'about makrx',
-        'maker ecosystem india',
-        'digital manufacturing',
-        'company mission',
-        'maker community',
-    ],
-    openGraph: {
-        title: "About MakrX - India's Leading Maker Ecosystem",
-        description: "Learn about MakrX's mission to democratize manufacturing in India.",
-        url: 'https://makrx.org/about',
-        type: 'website',
-    },
-    twitter: {
-        title: "About MakrX - India's Leading Maker Ecosystem",
-        description: "Learn about MakrX's mission to democratize manufacturing in India.",
-    },
-};
-
-const About = dynamicImport(
-    () =>
-        import('../../components/page-components/PlaceholderPage').then((mod) => ({
-            default: mod.About,
-        })),
-    {
-        ssr: false,
-        loading: () => (
-            <div className="min-h-screen py-20 flex items-center justify-center">Loading...</div>
-        ),
-    },
-);
-
-export default function AboutPage() {
-    return (
-        <>
-            <SEOStructuredData type="organization" />
-            <About />
-        </>
-    );
+export default function ComingSoonPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-4xl font-bold">Coming Soon!</h1>
+      <p className="mt-3 text-xl">We're working hard to bring you this page.</p>
+    </div>
+  );
 }

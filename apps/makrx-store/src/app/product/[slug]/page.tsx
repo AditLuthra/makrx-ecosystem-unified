@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Star,
   ShoppingCart,
@@ -19,10 +19,10 @@ import {
   Check,
   X,
   Info,
-} from "lucide-react";
-import { api, type Product, formatPrice } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
-import ProductReviews from "@/components/ProductReviews";
+} from 'lucide-react';
+import { api, type Product, formatPrice } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ProductReviews from '@/components/ProductReviews';
 
 export default function ProductPage() {
   const params = useParams();
@@ -36,9 +36,9 @@ export default function ProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<
-    "description" | "specifications" | "reviews"
-  >("description");
+  const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>(
+    'description',
+  );
   const [addingToCart, setAddingToCart] = useState(false);
   const [showSpecifications, setShowSpecifications] = useState(false);
 
@@ -57,20 +57,15 @@ export default function ProductPage() {
 
         // Load related products from the same category
         if (productData.category_id) {
-          const relatedData = await api.getProductsByCategory(
-            productData.category_id,
-            {
-              per_page: 4,
-            },
-          );
-          const filtered = relatedData.products.filter(
-            (p) => p.id !== productData.id,
-          );
+          const relatedData = await api.getProductsByCategory(productData.category_id, {
+            per_page: 4,
+          });
+          const filtered = relatedData.products.filter((p) => p.id !== productData.id);
           setRelatedProducts(filtered);
         }
       } catch (err) {
-        console.error("Failed to load product:", err);
-        setError("Product not found");
+        console.error('Failed to load product:', err);
+        setError('Product not found');
       } finally {
         setLoading(false);
       }
@@ -94,13 +89,13 @@ export default function ProductPage() {
     setAddingToCart(true);
     try {
       await api.addToCart(product.id, quantity);
-      alert("Product added to cart!");
+      alert('Product added to cart!');
     } catch (error) {
-      console.error("Failed to add to cart:", error);
+      console.error('Failed to add to cart:', error);
       if (!isAuthenticated) {
-        alert("Please sign in to add items to your cart");
+        alert('Please sign in to add items to your cart');
       } else {
-        alert("Failed to add product to cart");
+        alert('Failed to add product to cart');
       }
     } finally {
       setAddingToCart(false);
@@ -129,12 +124,12 @@ export default function ProductPage() {
           url: window.location.href,
         });
       } catch (error) {
-        console.log("Error sharing:", error);
+        console.log('Error sharing:', error);
       }
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      alert('Link copied to clipboard!');
     }
   };
 
@@ -150,9 +145,7 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Product Not Found
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
           <p className="text-gray-600 mb-6">
             The product you're looking for doesn't exist or has been removed.
           </p>
@@ -167,9 +160,7 @@ export default function ProductPage() {
     );
   }
 
-  const savingsAmount = product.sale_price
-    ? product.price - product.sale_price
-    : 0;
+  const savingsAmount = product.sale_price ? product.price - product.sale_price : 0;
   const savingsPercentage = product.sale_price
     ? Math.round((savingsAmount / product.price) * 100)
     : 0;
@@ -189,10 +180,7 @@ export default function ProductPage() {
           {product.category && (
             <>
               <ChevronRight className="h-4 w-4" />
-              <Link
-                href={`/catalog/${product.category.slug}`}
-                className="hover:text-blue-600"
-              >
+              <Link href={`/catalog/${product.category.slug}`} className="hover:text-blue-600">
                 {product.category.name}
               </Link>
             </>
@@ -233,9 +221,7 @@ export default function ProductPage() {
               {product.images && product.images.length > 1 && (
                 <>
                   <button
-                    onClick={() =>
-                      handleImageChange(Math.max(0, selectedImageIndex - 1))
-                    }
+                    onClick={() => handleImageChange(Math.max(0, selectedImageIndex - 1))}
                     disabled={selectedImageIndex === 0}
                     className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full disabled:opacity-50"
                   >
@@ -243,12 +229,7 @@ export default function ProductPage() {
                   </button>
                   <button
                     onClick={() =>
-                      handleImageChange(
-                        Math.min(
-                          product.images.length - 1,
-                          selectedImageIndex + 1,
-                        ),
-                      )
+                      handleImageChange(Math.min(product.images.length - 1, selectedImageIndex + 1))
                     }
                     disabled={selectedImageIndex === product.images.length - 1}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full disabled:opacity-50"
@@ -267,9 +248,7 @@ export default function ProductPage() {
                     key={index}
                     onClick={() => handleImageChange(index)}
                     className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      index === selectedImageIndex
-                        ? "border-blue-600"
-                        : "border-gray-200"
+                      index === selectedImageIndex ? 'border-blue-600' : 'border-gray-200'
                     }`}
                   >
                     <Image
@@ -292,26 +271,17 @@ export default function ProductPage() {
           <div className="space-y-6">
             {/* Header */}
             <div>
-              {product.brand && (
-                <p className="text-sm text-gray-600 mb-2">{product.brand}</p>
-              )}
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {product.name}
-              </h1>
+              {product.brand && <p className="text-sm text-gray-600 mb-2">{product.brand}</p>}
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
 
               {/* Rating */}
               <div className="flex items-center space-x-2 mb-4">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-5 w-5 text-yellow-400 fill-current"
-                    />
+                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600">
-                  (4.8) • 124 reviews
-                </span>
+                <span className="text-sm text-gray-600">(4.8) • 124 reviews</span>
               </div>
 
               {/* Price */}
@@ -338,17 +308,13 @@ export default function ProductPage() {
                     <Check className="h-5 w-5 text-green-600" />
                     <span className="text-green-600 font-medium">In Stock</span>
                     {product.track_inventory && (
-                      <span className="text-sm text-gray-600">
-                        ({product.stock_qty} available)
-                      </span>
+                      <span className="text-sm text-gray-600">({product.stock_qty} available)</span>
                     )}
                   </>
                 ) : (
                   <>
                     <X className="h-5 w-5 text-red-600" />
-                    <span className="text-red-600 font-medium">
-                      Out of Stock
-                    </span>
+                    <span className="text-red-600 font-medium">Out of Stock</span>
                   </>
                 )}
               </div>
@@ -357,32 +323,21 @@ export default function ProductPage() {
             {/* Short Description */}
             {product.short_description && (
               <div>
-                <p className="text-gray-700 leading-relaxed">
-                  {product.short_description}
-                </p>
+                <p className="text-gray-700 leading-relaxed">{product.short_description}</p>
               </div>
             )}
 
             {/* Quick Specifications */}
             {product.attributes && Object.keys(product.attributes || {}).length > 0 && (
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">
-                  Key Features
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-3">Key Features</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {Object.entries(product.attributes || {})
                     .slice(0, 4)
                     .map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex justify-between py-2 border-b border-gray-100"
-                      >
-                        <span className="text-sm text-gray-600 capitalize">
-                          {key}:
-                        </span>
-                        <span className="text-sm font-medium text-gray-900">
-                          {value}
-                        </span>
+                      <div key={key} className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="text-sm text-gray-600 capitalize">{key}:</span>
+                        <span className="text-sm font-medium text-gray-900">{value}</span>
                       </div>
                     ))}
                 </div>
@@ -391,9 +346,7 @@ export default function ProductPage() {
                     onClick={() => setShowSpecifications(!showSpecifications)}
                     className="text-sm text-blue-600 hover:text-blue-700 mt-2"
                   >
-                    {showSpecifications
-                      ? "Show Less"
-                      : "Show All Specifications"}
+                    {showSpecifications ? 'Show Less' : 'Show All Specifications'}
                   </button>
                 )}
               </div>
@@ -403,9 +356,7 @@ export default function ProductPage() {
             <div className="space-y-4">
               {product.in_stock && (
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm font-medium text-gray-700">
-                    Quantity:
-                  </span>
+                  <span className="text-sm font-medium text-gray-700">Quantity:</span>
                   <div className="flex items-center border border-gray-300 rounded-lg">
                     <button
                       onClick={() => handleQuantityChange(-1)}
@@ -414,9 +365,7 @@ export default function ProductPage() {
                     >
                       <Minus className="h-4 w-4" />
                     </button>
-                    <span className="px-4 py-2 border-x border-gray-300">
-                      {quantity}
-                    </span>
+                    <span className="px-4 py-2 border-x border-gray-300">{quantity}</span>
                     <button
                       onClick={() => handleQuantityChange(1)}
                       disabled={quantity >= (product.stock_qty || 1)}
@@ -439,7 +388,7 @@ export default function ProductPage() {
                   ) : (
                     <>
                       <ShoppingCart className="h-5 w-5 mr-2" />
-                      {product.in_stock ? "Add to Cart" : "Out of Stock"}
+                      {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
                     </>
                   )}
                 </button>
@@ -463,9 +412,7 @@ export default function ProductPage() {
                 <div className="flex items-center space-x-3">
                   <Truck className="h-5 w-5 text-green-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      Free shipping
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">Free shipping</p>
                     <p className="text-xs text-gray-600">On orders over ₹6,225</p>
                   </div>
                 </div>
@@ -473,24 +420,16 @@ export default function ProductPage() {
                 <div className="flex items-center space-x-3">
                   <RotateCcw className="h-5 w-5 text-blue-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      30-day returns
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      Easy returns and exchanges
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">30-day returns</p>
+                    <p className="text-xs text-gray-600">Easy returns and exchanges</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
                   <Shield className="h-5 w-5 text-purple-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      Quality guarantee
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      100% authentic products
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">Quality guarantee</p>
+                    <p className="text-xs text-gray-600">100% authentic products</p>
                   </div>
                 </div>
               </div>
@@ -502,14 +441,14 @@ export default function ProductPage() {
         <div className="mt-16">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8">
-              {["description", "specifications", "reviews"].map((tab) => (
+              {['description', 'specifications', 'reviews'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
                   className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
                     activeTab === tab
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   {tab}
@@ -519,62 +458,46 @@ export default function ProductPage() {
           </div>
 
           <div className="py-8">
-            {activeTab === "description" && (
+            {activeTab === 'description' && (
               <div className="prose max-w-none">
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.description || "No description available."}
+                  {product.description || 'No description available.'}
                 </div>
               </div>
             )}
 
-            {activeTab === "specifications" && (
+            {activeTab === 'specifications' && (
               <div>
                 {Object.keys(product.specifications || {}).length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4">
-                        Technical Specifications
-                      </h3>
+                      <h3 className="font-semibold text-gray-900 mb-4">Technical Specifications</h3>
                       <div className="space-y-3">
-                        {Object.entries(product.specifications || {}).map(
-                          ([key, value]) => (
-                            <div
-                              key={key}
-                              className="flex justify-between py-2 border-b border-gray-100"
-                            >
-                              <span className="text-gray-600 capitalize">
-                                {key}:
-                              </span>
-                              <span className="font-medium text-gray-900">
-                                {value}
-                              </span>
-                            </div>
-                          ),
-                        )}
+                        {Object.entries(product.specifications || {}).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex justify-between py-2 border-b border-gray-100"
+                          >
+                            <span className="text-gray-600 capitalize">{key}:</span>
+                            <span className="font-medium text-gray-900">{value}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
                     {Object.keys(product.attributes || {}).length > 0 && (
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">
-                          Product Attributes
-                        </h3>
+                        <h3 className="font-semibold text-gray-900 mb-4">Product Attributes</h3>
                         <div className="space-y-3">
-                          {Object.entries(product.attributes || {}).map(
-                            ([key, value]) => (
-                              <div
-                                key={key}
-                                className="flex justify-between py-2 border-b border-gray-100"
-                              >
-                                <span className="text-gray-600 capitalize">
-                                  {key}:
-                                </span>
-                                <span className="font-medium text-gray-900">
-                                  {value}
-                                </span>
-                              </div>
-                            ),
-                          )}
+                          {Object.entries(product.attributes || {}).map(([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex justify-between py-2 border-b border-gray-100"
+                            >
+                              <span className="text-gray-600 capitalize">{key}:</span>
+                              <span className="font-medium text-gray-900">{value}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -585,7 +508,7 @@ export default function ProductPage() {
               </div>
             )}
 
-            {activeTab === "reviews" && product && (
+            {activeTab === 'reviews' && product && (
               <ProductReviews
                 productId={product.id.toString()}
                 userId={user?.id}
@@ -598,9 +521,7 @@ export default function ProductPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Related Products
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {relatedProducts.map((relatedProduct) => (
                 <Link
@@ -624,10 +545,7 @@ export default function ProductPage() {
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-gray-900">
-                        {formatPrice(
-                          relatedProduct.effective_price,
-                          relatedProduct.currency,
-                        )}
+                        {formatPrice(relatedProduct.effective_price, relatedProduct.currency)}
                       </span>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />

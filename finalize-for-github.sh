@@ -17,56 +17,56 @@ NC='\033[0m' # No Color
 
 # Function to print colored output
 print_status() {
-    echo -e "${GREEN}✅ $1${NC}"
+	echo -e "${GREEN}✅ $1${NC}"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ️  $1${NC}"
+	echo -e "${BLUE}ℹ️  $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
+	echo -e "${YELLOW}⚠️  $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}❌ $1${NC}"
+	echo -e "${RED}❌ $1${NC}"
 }
 
 # Step 1: Clean up repository
 print_info "Step 1: Cleaning up repository for production..."
 if [ -f "./cleanup-for-production.sh" ]; then
-    chmod +x ./cleanup-for-production.sh
-    ./cleanup-for-production.sh
-    print_status "Repository cleaned"
+	chmod +x ./cleanup-for-production.sh
+	./cleanup-for-production.sh
+	print_status "Repository cleaned"
 else
-    print_warning "cleanup-for-production.sh not found, skipping cleanup"
+	print_warning "cleanup-for-production.sh not found, skipping cleanup"
 fi
 
 # Step 2: Set up contributor environment
 print_info "Step 2: Setting up contributor environment..."
 if [ -f "./prepare-for-contributors.sh" ]; then
-    chmod +x ./prepare-for-contributors.sh
-    ./prepare-for-contributors.sh
-    print_status "Contributor environment set up"
+	chmod +x ./prepare-for-contributors.sh
+	./prepare-for-contributors.sh
+	print_status "Contributor environment set up"
 else
-    print_warning "prepare-for-contributors.sh not found, skipping contributor setup"
+	print_warning "prepare-for-contributors.sh not found, skipping contributor setup"
 fi
 
 # Step 3: Replace README with comprehensive version
 print_info "Step 3: Updating main README..."
 if [ -f "README-NEW.md" ]; then
-    mv README.md README-OLD.md 2>/dev/null || true
-    mv README-NEW.md README.md
-    print_status "README updated with comprehensive version"
+	mv README.md README-OLD.md 2>/dev/null || true
+	mv README-NEW.md README.md
+	print_status "README updated with comprehensive version"
 else
-    print_warning "README-NEW.md not found, keeping existing README"
+	print_warning "README-NEW.md not found, keeping existing README"
 fi
 
 # Step 4: Create GitHub issue templates
 print_info "Step 4: Creating GitHub issue templates..."
 mkdir -p .github/ISSUE_TEMPLATE
 
-cat > .github/ISSUE_TEMPLATE/bug_report.md << 'EOF'
+cat >.github/ISSUE_TEMPLATE/bug_report.md <<'EOF'
 ---
 name: Bug report
 about: Create a report to help us improve
@@ -106,7 +106,7 @@ Add any other context about the problem here.
 If you have ideas on how to fix this, please share them.
 EOF
 
-cat > .github/ISSUE_TEMPLATE/feature_request.md << 'EOF'
+cat >.github/ISSUE_TEMPLATE/feature_request.md <<'EOF'
 ---
 name: Feature request
 about: Suggest an idea for this project
@@ -141,7 +141,7 @@ Add any other context or screenshots about the feature request here.
 If you have technical details about how this could be implemented, please share them.
 EOF
 
-cat > .github/pull_request_template.md << 'EOF'
+cat >.github/pull_request_template.md <<'EOF'
 ## Description
 Brief description of what this PR does.
 
@@ -192,7 +192,7 @@ print_status "GitHub issue templates created"
 print_info "Step 5: Creating additional helpful files..."
 
 # Create a comprehensive .env.example
-cat > .env.example << 'EOF'
+cat >.env.example <<'EOF'
 # MakrX Ecosystem - Environment Configuration Template
 # Copy this file to .env and update the values
 
@@ -304,7 +304,7 @@ print_status ".env.example created with comprehensive configuration"
 print_info "Step 6: Enhancing package.json scripts..."
 
 # Create a temp script to update package.json (since direct JSON editing is complex in bash)
-cat > update_package_scripts.js << 'EOF'
+cat >update_package_scripts.js <<'EOF'
 const fs = require('fs');
 const path = require('path');
 
@@ -399,7 +399,7 @@ print_status "package.json enhanced with comprehensive scripts"
 print_info "Step 7: Creating VS Code workspace configuration..."
 mkdir -p .vscode
 
-cat > .vscode/settings.json << 'EOF'
+cat >.vscode/settings.json <<'EOF'
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -446,7 +446,7 @@ cat > .vscode/settings.json << 'EOF'
 }
 EOF
 
-cat > .vscode/extensions.json << 'EOF'
+cat >.vscode/extensions.json <<'EOF'
 {
   "recommendations": [
     "ms-vscode.vscode-typescript-next",
@@ -467,7 +467,7 @@ cat > .vscode/extensions.json << 'EOF'
 }
 EOF
 
-cat > .vscode/launch.json << 'EOF'
+cat >.vscode/launch.json <<'EOF'
 {
   "version": "0.2.0",
   "configurations": [
@@ -519,7 +519,7 @@ print_status "All shell scripts made executable"
 # Step 9: Create final summary
 print_info "Step 9: Creating final setup summary..."
 
-cat > GITHUB_READY_CHECKLIST.md << 'EOF'
+cat >GITHUB_READY_CHECKLIST.md <<'EOF'
 # 🎯 GitHub Ready Checklist
 
 ## ✅ Completed Setup
@@ -609,7 +609,7 @@ print_status "✨ All preparation steps completed successfully!"
 echo ""
 print_info "📋 What's been set up:"
 echo "   • Cross-platform setup scripts"
-echo "   • Comprehensive documentation"  
+echo "   • Comprehensive documentation"
 echo "   • GitHub Actions CI/CD pipeline"
 echo "   • Security scanning workflows"
 echo "   • Issue templates and PR templates"
@@ -627,7 +627,7 @@ echo ""
 print_status "🚀 The MakrX ecosystem is ready for contributors and production!"
 
 # Create a test script to verify everything works
-cat > test-setup.sh << 'EOF'
+cat >test-setup.sh <<'EOF'
 #!/bin/bash
 echo "🧪 Testing MakrX Ecosystem Setup..."
 

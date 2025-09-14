@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Bell,
   Check,
@@ -12,34 +12,25 @@ import {
   AlertTriangle,
   Trash2,
   Settings,
-} from "lucide-react";
-import {
-  useNotifications,
-  type Notification,
-} from "@/contexts/NotificationContext";
-import { Button } from "@/components/ui/Button";
+} from 'lucide-react';
+import { useNotifications, type Notification } from '@/contexts/NotificationContext';
+import { Button } from '@/components/ui/Button';
 
 export default function NotificationDropdown() {
-  const {
-    notifications,
-    unreadCount,
-    markAsRead,
-    markAllAsRead,
-    removeNotification,
-    clearAll,
-  } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, clearAll } =
+    useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const getIcon = (type: Notification["type"]) => {
+  const getIcon = (type: Notification['type']) => {
     switch (type) {
-      case "success":
+      case 'success':
         return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case "error":
+      case 'error':
         return <AlertCircle className="h-5 w-5 text-red-600" />;
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
-      case "info":
+      case 'info':
       default:
         return <Info className="h-5 w-5 text-blue-600" />;
     }
@@ -52,7 +43,7 @@ export default function NotificationDropdown() {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return "Just now";
+    if (minutes < 1) return 'Just now';
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
@@ -78,7 +69,7 @@ export default function NotificationDropdown() {
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount > 9 ? "9+" : unreadCount}
+            {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
@@ -87,18 +78,13 @@ export default function NotificationDropdown() {
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 
           {/* Dropdown Content */}
           <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-20 max-h-96 overflow-hidden">
             {/* Header */}
             <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Notifications
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
               <div className="flex space-x-2">
                 {unreadCount > 0 && (
                   <button
@@ -130,14 +116,12 @@ export default function NotificationDropdown() {
                     <div
                       key={notification.id}
                       className={`px-4 py-3 hover:bg-gray-50 cursor-pointer ${
-                        !notification.read ? "bg-blue-50" : ""
+                        !notification.read ? 'bg-blue-50' : ''
                       }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 mt-0.5">
-                          {getIcon(notification.type)}
-                        </div>
+                        <div className="flex-shrink-0 mt-0.5">{getIcon(notification.type)}</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <p className="text-sm font-medium text-gray-900 truncate">
@@ -158,23 +142,20 @@ export default function NotificationDropdown() {
                               </button>
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {notification.message}
-                          </p>
+                          <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
                           <div className="flex items-center justify-between mt-2">
                             <p className="text-xs text-gray-400">
                               {formatTime(notification.timestamp)}
                             </p>
-                            {notification.actionUrl &&
-                              notification.actionLabel && (
-                                <Link
-                                  href={notification.actionUrl}
-                                  onClick={() => setIsOpen(false)}
-                                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                  {notification.actionLabel}
-                                </Link>
-                              )}
+                            {notification.actionUrl && notification.actionLabel && (
+                              <Link
+                                href={notification.actionUrl}
+                                onClick={() => setIsOpen(false)}
+                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                              >
+                                {notification.actionLabel}
+                              </Link>
+                            )}
                           </div>
                         </div>
                       </div>

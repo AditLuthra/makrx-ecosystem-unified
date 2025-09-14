@@ -23,7 +23,7 @@ import {
   Wrench,
   GraduationCap,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 
 interface Makerspace {
@@ -80,17 +80,17 @@ const MODULE_ICONS = {
   billing: CreditCard,
   analytics: BarChart3,
   maintenance: Wrench,
-  skill_management: GraduationCap
+  skill_management: GraduationCap,
 };
 
 const MODULE_NAMES = {
   inventory: 'Inventory Management',
-  projects: 'Project Management', 
+  projects: 'Project Management',
   reservations: 'Equipment Reservations',
   billing: 'Billing & Payments',
   analytics: 'Analytics & Reports',
   maintenance: 'Maintenance Tracking',
-  skill_management: 'Skill Management'
+  skill_management: 'Skill Management',
 };
 
 const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
@@ -98,7 +98,7 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
   isOpen,
   onClose,
   onEdit,
-  onStatusChange
+  onStatusChange,
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -106,7 +106,7 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -249,26 +249,40 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">{makerspace.stats.totalUsers}</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {makerspace.stats.totalUsers}
+                    </div>
                     <div className="text-sm text-gray-600">Total Users</div>
-                    <div className="text-xs text-gray-500">{makerspace.stats.activeUsers} active</div>
+                    <div className="text-xs text-gray-500">
+                      {makerspace.stats.activeUsers} active
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">{makerspace.stats.projectCount}</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {makerspace.stats.projectCount}
+                    </div>
                     <div className="text-sm text-gray-600">Projects</div>
-                    <div className="text-xs text-gray-500">{makerspace.stats.completedProjects} completed</div>
+                    <div className="text-xs text-gray-500">
+                      {makerspace.stats.completedProjects} completed
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">{makerspace.stats.totalEquipment}</div>
+                    <div className="text-2xl font-bold text-purple-600">
+                      {makerspace.stats.totalEquipment}
+                    </div>
                     <div className="text-sm text-gray-600">Equipment</div>
-                    <div className="text-xs text-gray-500">{makerspace.stats.activeReservations} reserved</div>
+                    <div className="text-xs text-gray-500">
+                      {makerspace.stats.activeReservations} reserved
+                    </div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-600">
                       ${makerspace.stats.monthlyRevenue.toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600">Monthly Revenue</div>
-                    <div className="text-xs text-gray-500">{makerspace.stats.monthlyUsageHours}h usage</div>
+                    <div className="text-xs text-gray-500">
+                      {makerspace.stats.monthlyUsageHours}h usage
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -287,9 +301,14 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
               {makerspace.admins && makerspace.admins.length > 0 ? (
                 <div className="space-y-3">
                   {makerspace.admins.map((admin, index) => (
-                    <div key={admin.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={admin.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
-                        <div className="font-medium">{admin.firstName} {admin.lastName}</div>
+                        <div className="font-medium">
+                          {admin.firstName} {admin.lastName}
+                        </div>
                         <div className="text-sm text-gray-600">{admin.email}</div>
                       </div>
                       <div className="text-xs text-gray-500">
@@ -321,9 +340,12 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                 {makerspace.modules.map((moduleKey) => {
                   const Icon = MODULE_ICONS[moduleKey as keyof typeof MODULE_ICONS] || Settings;
                   const name = MODULE_NAMES[moduleKey as keyof typeof MODULE_NAMES] || moduleKey;
-                  
+
                   return (
-                    <div key={moduleKey} className="flex items-center gap-3 p-3 border rounded-lg bg-green-50">
+                    <div
+                      key={moduleKey}
+                      className="flex items-center gap-3 p-3 border rounded-lg bg-green-50"
+                    >
                       <Icon className="h-5 w-5 text-green-600" />
                       <span className="font-medium text-green-800">{name}</span>
                     </div>
@@ -356,7 +378,10 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                   </div>
                   {makerspace.stats && (
                     <div className="text-sm text-gray-500">
-                      {((makerspace.stats.totalUsers / (makerspace.maxUsers || 1)) * 100).toFixed(1)}% capacity
+                      {((makerspace.stats.totalUsers / (makerspace.maxUsers || 1)) * 100).toFixed(
+                        1,
+                      )}
+                      % capacity
                     </div>
                   )}
                 </div>
@@ -367,18 +392,18 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                   </div>
                   {makerspace.stats && (
                     <div className="text-sm text-gray-500">
-                      {((makerspace.stats.totalEquipment / (makerspace.maxEquipment || 1)) * 100).toFixed(1)}% capacity
+                      {(
+                        (makerspace.stats.totalEquipment / (makerspace.maxEquipment || 1)) *
+                        100
+                      ).toFixed(1)}
+                      % capacity
                     </div>
                   )}
                 </div>
                 <div>
                   <div className="font-medium">URL Slug</div>
-                  <div className="text-lg font-mono text-gray-800">
-                    /{makerspace.slug}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Used in URLs and routing
-                  </div>
+                  <div className="text-lg font-mono text-gray-800">/{makerspace.slug}</div>
+                  <div className="text-sm text-gray-500">Used in URLs and routing</div>
                 </div>
               </div>
             </CardContent>
@@ -398,10 +423,10 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Makerspace
                 </Button>
-                
+
                 {makerspace.status === 'active' && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => onStatusChange(makerspace.id, 'suspended')}
                     className="text-red-600 border-red-300 hover:bg-red-50"
                   >
@@ -409,10 +434,10 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                     Suspend
                   </Button>
                 )}
-                
+
                 {makerspace.status === 'suspended' && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => onStatusChange(makerspace.id, 'active')}
                     className="text-green-600 border-green-300 hover:bg-green-50"
                   >
@@ -420,19 +445,19 @@ const MakerspaceDetail: React.FC<MakerspaceDetailProps> = ({
                     Activate
                   </Button>
                 )}
-                
+
                 {makerspace.status === 'pending' && (
                   <>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => onStatusChange(makerspace.id, 'active')}
                       className="text-green-600 border-green-300 hover:bg-green-50"
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => onStatusChange(makerspace.id, 'suspended')}
                       className="text-red-600 border-red-300 hover:bg-red-50"
                     >

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!signature || !process.env.RAZORPAY_WEBHOOK_SECRET) {
       return NextResponse.json(
         { error: 'Webhook signature missing or not configured' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -21,10 +21,7 @@ export async function POST(request: NextRequest) {
       .digest('hex');
 
     if (expectedSignature !== signature) {
-      return NextResponse.json(
-        { error: 'Invalid webhook signature' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 400 });
     }
 
     const event = JSON.parse(body);
@@ -47,10 +44,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 'success' });
   } catch (error) {
     console.error('Webhook processing error:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }
 

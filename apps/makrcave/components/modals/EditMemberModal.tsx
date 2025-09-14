@@ -18,12 +18,12 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
   open,
   onOpenChange,
   member,
-  membershipPlans
+  membershipPlans,
 }) => {
   const { updateMember } = useMember();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -50,16 +50,21 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
   }, [member]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!member) return;
-    
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.membership_plan_id) {
+
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.membership_plan_id
+    ) {
       setError('Please fill in all required fields');
       return;
     }
@@ -75,10 +80,11 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
     try {
       await updateMember(member.id, {
         ...formData,
-        skills: formData.skills ? formData.skills.split(',').map(s => s.trim()) : [],
-        membership_plan_name: membershipPlans.find(p => p.id === formData.membership_plan_id)?.name || '',
+        skills: formData.skills ? formData.skills.split(',').map((s) => s.trim()) : [],
+        membership_plan_name:
+          membershipPlans.find((p) => p.id === formData.membership_plan_id)?.name || '',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update member');
@@ -103,7 +109,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
             Edit Member
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -166,7 +172,10 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
 
           <div>
             <Label htmlFor="edit-role">Role *</Label>
-            <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
+            <Select
+              value={formData.role}
+              onValueChange={(value) => handleInputChange('role', value)}
+            >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -181,8 +190,8 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
 
           <div>
             <Label htmlFor="edit-membership_plan">Membership Plan *</Label>
-            <Select 
-              value={formData.membership_plan_id} 
+            <Select
+              value={formData.membership_plan_id}
               onValueChange={(value) => handleInputChange('membership_plan_id', value)}
             >
               <SelectTrigger className="mt-1">
@@ -207,9 +216,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
               placeholder="3D Printing, Laser Cutting, Electronics"
               className="mt-1"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Separate multiple skills with commas
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Separate multiple skills with commas</p>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">

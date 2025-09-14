@@ -1,6 +1,6 @@
-"use client";
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+'use client';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
 export function ThreeBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -14,7 +14,12 @@ export function ThreeBackground() {
 
     // Scene setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000,
+    );
     const renderer = new THREE.WebGLRenderer({ alpha: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -30,10 +35,10 @@ export function ThreeBackground() {
     for (let i = 0; i < 50; i++) {
       const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
       const material = new THREE.MeshBasicMaterial({
-        color: i % 3 === 0 ? 0x00BCD4 : (i % 3 === 1 ? 0xFFEB3B : 0x00FF00),
+        color: i % 3 === 0 ? 0x00bcd4 : i % 3 === 1 ? 0xffeb3b : 0x00ff00,
         wireframe: true,
         transparent: true,
-        opacity: 0.3
+        opacity: 0.3,
       });
 
       const mesh = new THREE.Mesh(geometry, material);
@@ -79,7 +84,7 @@ export function ThreeBackground() {
       if (mountEl && renderer.domElement && mountEl.contains(renderer.domElement)) {
         mountEl.removeChild(renderer.domElement);
       }
-      meshes.forEach(mesh => {
+      meshes.forEach((mesh) => {
         scene.remove(mesh);
         mesh.geometry.dispose();
         (mesh.material as THREE.Material).dispose();

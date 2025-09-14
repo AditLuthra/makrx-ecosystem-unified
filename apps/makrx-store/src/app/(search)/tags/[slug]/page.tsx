@@ -110,9 +110,7 @@ export default function TagPage() {
             </h1>
 
             {tagInfo?.description && (
-              <p className="text-gray-600 dark:text-gray-300 text-lg mb-6">
-                {tagInfo.description}
-              </p>
+              <p className="text-gray-600 dark:text-gray-300 text-lg mb-6">{tagInfo.description}</p>
             )}
 
             {/* Category Distribution */}
@@ -163,37 +161,35 @@ export default function TagPage() {
         {/* Products Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Tagged Products
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tagged Products</h2>
             <p className="text-gray-600 dark:text-gray-400">
               {products?.total_count || 0} products found
             </p>
           </div>
 
           <div className="flex items-center gap-4">
-            <SortSelect
-              value={sort}
-              onChange={setSort}
-            />
+            <SortSelect value={sort} onChange={setSort} />
           </div>
         </div>
 
         {/* Search Refinement */}
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
           <p className="text-blue-800 dark:text-blue-200 text-sm">
-            <span className="font-medium">Looking for something more specific?</span> Try combining with other terms:
+            <span className="font-medium">Looking for something more specific?</span> Try combining
+            with other terms:
           </p>
           <div className="flex flex-wrap gap-2 mt-2">
-            {['PLA', 'PETG', 'Arduino', 'Raspberry Pi', 'LED'].filter(term => term.toLowerCase() !== tagName.toLowerCase()).map((term) => (
-              <Link
-                key={term}
-                href={`/search?q=${encodeURIComponent(`${tagName} ${term}`)}`}
-                className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded text-xs hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
-              >
-                {tagName} + {term}
-              </Link>
-            ))}
+            {['PLA', 'PETG', 'Arduino', 'Raspberry Pi', 'LED']
+              .filter((term) => term.toLowerCase() !== tagName.toLowerCase())
+              .map((term) => (
+                <Link
+                  key={term}
+                  href={`/search?q=${encodeURIComponent(`${tagName} ${term}`)}`}
+                  className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded text-xs hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+                >
+                  {tagName} + {term}
+                </Link>
+              ))}
           </div>
         </div>
 
@@ -210,8 +206,18 @@ export default function TagPage() {
         {products && products.products.length === 0 && (
           <div className="text-center py-12">
             <div className="mb-4">
-              <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.785-6.172-2.109l-.755.423A8.935 8.935 0 0112 16.5a8.935 8.935 0 017.927-2.186l-.755-.423A7.962 7.962 0 0117 13.291V12a5 5 0 10-10 0v1.291z" />
+              <svg
+                className="w-16 h-16 text-gray-400 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.785-6.172-2.109l-.755.423A8.935 8.935 0 0112 16.5a8.935 8.935 0 017.927-2.186l-.755-.423A7.962 7.962 0 0117 13.291V12a5 5 0 10-10 0v1.291z"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">

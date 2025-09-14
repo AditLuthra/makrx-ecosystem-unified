@@ -5,13 +5,13 @@ import { Badge } from '../ui/badge';
 import { Switch } from '../ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { useToast } from '../../hooks/use-toast';
-import { 
-  Bell, 
-  BellOff, 
-  Mail, 
-  MessageSquare, 
-  Clock, 
-  AlertTriangle, 
+import {
+  Bell,
+  BellOff,
+  Mail,
+  MessageSquare,
+  Clock,
+  AlertTriangle,
   CheckCircle,
   Settings,
   Users,
@@ -20,7 +20,7 @@ import {
   TrendingUp,
   Shield,
   DollarSign,
-  Package
+  Package,
 } from 'lucide-react';
 
 interface NotificationSettings {
@@ -56,7 +56,7 @@ interface NotificationSettingsModalProps {
 
 const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   open,
-  onOpenChange
+  onOpenChange,
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -83,7 +83,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
       high: true,
       medium: true,
       low: false,
-    }
+    },
   });
 
   const notificationCategories = [
@@ -92,83 +92,83 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
       label: 'Equipment & Maintenance',
       description: 'Maintenance schedules, equipment status, and repair notifications',
       icon: Wrench,
-      color: 'text-orange-600'
+      color: 'text-orange-600',
     },
     {
       key: 'reservations',
       label: 'Reservations',
       description: 'Booking confirmations, reminders, and cancellations',
       icon: Calendar,
-      color: 'text-blue-600'
+      color: 'text-blue-600',
     },
     {
       key: 'inventory_alerts',
       label: 'Inventory Alerts',
       description: 'Low stock warnings, reorder notifications, and supply updates',
       icon: Package,
-      color: 'text-green-600'
+      color: 'text-green-600',
     },
     {
       key: 'billing_updates',
       label: 'Billing & Payments',
       description: 'Invoice updates, payment confirmations, and billing alerts',
       icon: DollarSign,
-      color: 'text-purple-600'
+      color: 'text-purple-600',
     },
     {
       key: 'member_activities',
       label: 'Member Activities',
       description: 'Member check-ins, skill certifications, and community updates',
       icon: Users,
-      color: 'text-indigo-600'
+      color: 'text-indigo-600',
     },
     {
       key: 'system_updates',
       label: 'System Updates',
       description: 'Platform updates, feature announcements, and system maintenance',
       icon: Settings,
-      color: 'text-gray-600'
+      color: 'text-gray-600',
     },
     {
       key: 'safety_alerts',
       label: 'Safety Alerts',
       description: 'Emergency notifications, safety reminders, and incident reports',
       icon: Shield,
-      color: 'text-red-600'
+      color: 'text-red-600',
     },
     {
       key: 'project_updates',
       label: 'Project Updates',
       description: 'Project milestones, collaboration requests, and file sharing',
       icon: TrendingUp,
-      color: 'text-teal-600'
-    }
+      color: 'text-teal-600',
+    },
   ];
 
   const handleCategoryToggle = (category: keyof NotificationSettings['categories']) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       categories: {
         ...prev.categories,
-        [category]: !prev.categories[category]
-      }
+        [category]: !prev.categories[category],
+      },
     }));
   };
 
   const handlePriorityToggle = (priority: keyof NotificationSettings['priorities']) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       priorities: {
         ...prev.priorities,
-        [priority]: !prev.priorities[priority]
-      }
+        [priority]: !prev.priorities[priority],
+      },
     }));
   };
 
   const handleSettingChange = (key: keyof NotificationSettings, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -176,19 +176,19 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     setLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
-        title: "Settings Saved",
-        description: "Your notification preferences have been updated successfully.",
+        title: 'Settings Saved',
+        description: 'Your notification preferences have been updated successfully.',
       });
-      
+
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save notification settings. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save notification settings. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -212,7 +212,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             Notification Settings
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-8 p-6">
             {/* Overview Stats */}
@@ -221,7 +221,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-blue-600">Active Categories</p>
-                    <p className="text-2xl font-bold text-blue-900">{getEnabledCategoriesCount()}</p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {getEnabledCategoriesCount()}
+                    </p>
                   </div>
                   <Bell className="h-8 w-8 text-blue-600" />
                 </div>
@@ -231,7 +233,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-green-600">Priority Levels</p>
-                    <p className="text-2xl font-bold text-green-900">{getEnabledPrioritiesCount()}</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {getEnabledPrioritiesCount()}
+                    </p>
                   </div>
                   <AlertTriangle className="h-8 w-8 text-green-600" />
                 </div>
@@ -242,7 +246,13 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   <div>
                     <p className="text-sm font-medium text-purple-600">Delivery Method</p>
                     <p className="text-2xl font-bold text-purple-900">
-                      {[settings.email_enabled, settings.push_enabled, settings.sms_enabled].filter(Boolean).length}
+                      {
+                        [
+                          settings.email_enabled,
+                          settings.push_enabled,
+                          settings.sms_enabled,
+                        ].filter(Boolean).length
+                      }
                     </p>
                   </div>
                   <MessageSquare className="h-8 w-8 text-purple-600" />
@@ -302,7 +312,10 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Notification Frequency</h3>
-                <Select value={settings.frequency} onValueChange={(value) => handleSettingChange('frequency', value)}>
+                <Select
+                  value={settings.frequency}
+                  onValueChange={(value) => handleSettingChange('frequency', value)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -320,7 +333,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   <h3 className="text-lg font-medium text-gray-900">Quiet Hours</h3>
                   <Switch
                     checked={settings.quiet_hours_enabled}
-                    onCheckedChange={(checked) => handleSettingChange('quiet_hours_enabled', checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange('quiet_hours_enabled', checked)
+                    }
                   />
                 </div>
                 {settings.quiet_hours_enabled && (
@@ -356,19 +371,24 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   <div
                     key={priority}
                     className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                      enabled
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 bg-gray-50'
+                      enabled ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-gray-50'
                     }`}
-                    onClick={() => handlePriorityToggle(priority as keyof NotificationSettings['priorities'])}
+                    onClick={() =>
+                      handlePriorityToggle(priority as keyof NotificationSettings['priorities'])
+                    }
                   >
                     <div className="flex items-center justify-between">
-                      <span className={`font-medium capitalize ${
-                        priority === 'critical' ? 'text-red-600' :
-                        priority === 'high' ? 'text-orange-600' :
-                        priority === 'medium' ? 'text-yellow-600' :
-                        'text-green-600'
-                      }`}>
+                      <span
+                        className={`font-medium capitalize ${
+                          priority === 'critical'
+                            ? 'text-red-600'
+                            : priority === 'high'
+                              ? 'text-orange-600'
+                              : priority === 'medium'
+                                ? 'text-yellow-600'
+                                : 'text-green-600'
+                        }`}
+                      >
                         {priority}
                       </span>
                       {enabled && <CheckCircle className="h-4 w-4 text-blue-600" />}
@@ -384,15 +404,14 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
               <div className="space-y-4">
                 {notificationCategories.map((category) => {
                   const Icon = category.icon;
-                  const isEnabled = settings.categories[category.key as keyof NotificationSettings['categories']];
-                  
+                  const isEnabled =
+                    settings.categories[category.key as keyof NotificationSettings['categories']];
+
                   return (
                     <div
                       key={category.key}
                       className={`p-4 border-2 rounded-lg transition-colors ${
-                        isEnabled
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 bg-gray-50'
+                        isEnabled ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -405,7 +424,11 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                         </div>
                         <Switch
                           checked={isEnabled}
-                          onCheckedChange={() => handleCategoryToggle(category.key as keyof NotificationSettings['categories'])}
+                          onCheckedChange={() =>
+                            handleCategoryToggle(
+                              category.key as keyof NotificationSettings['categories'],
+                            )
+                          }
                         />
                       </div>
                     </div>

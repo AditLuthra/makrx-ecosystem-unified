@@ -1,4 +1,5 @@
 import os
+
 os.environ.setdefault("ENVIRONMENT", "test")
 os.environ.setdefault("DATABASE_URL", "sqlite:///./ci_local.db")
 
@@ -8,7 +9,9 @@ from backends.makrx_events.security import CurrentUser, get_current_user
 
 
 def _fake_user():
-    return CurrentUser(user_id="test-user", email="test@example.com", roles=["tester"]) 
+    return CurrentUser(
+        user_id="test-user", email="test@example.com", roles=["tester"]
+    )
 
 
 def setup_function(_):
@@ -24,7 +27,9 @@ client = TestClient(app)
 
 def test_create_update_delete_sub_event():
     # Create microsite
-    r = client.post("/api/microsites", json={"title": "Site A", "slug": "site-a"})
+    r = client.post(
+        "/api/microsites", json={"title": "Site A", "slug": "site-a"}
+    )
     assert r.status_code == 201
 
     # Create sub-event
@@ -32,7 +37,7 @@ def test_create_update_delete_sub_event():
         "title": "Hackathon Round 1",
         "slug": "hack-round-1",
         "status": "draft",
-        "capacity": 100
+        "capacity": 100,
     }
     r2 = client.post("/api/microsites/site-a/events", json=payload)
     assert r2.status_code == 201, r2.text
@@ -44,11 +49,13 @@ def test_create_update_delete_sub_event():
     assert r3.status_code == 200
 
     # Update sub-event
-    r4 = client.patch("/api/microsites/site-a/events/hack-round-1", json={"title": "Hackathon R1"})
+    r4 = client.patch(
+        "/api/microsites/site-a/events/hack-round-1",
+        json={"title": "Hackathon R1"},
+    )
     assert r4.status_code == 200
     assert r4.json()["title"] == "Hackathon R1"
 
     # Delete sub-event
     r5 = client.delete("/api/microsites/site-a/events/hack-round-1")
     assert r5.status_code == 200
-

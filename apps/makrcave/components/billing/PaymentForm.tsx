@@ -3,14 +3,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import {
-  X,
-  CreditCard,
-  DollarSign,
-  Zap,
-  Shield,
-  CheckCircle
-} from 'lucide-react';
+import { X, CreditCard, DollarSign, Zap, Shield, CheckCircle } from 'lucide-react';
 
 interface PaymentFormProps {
   isOpen: boolean;
@@ -19,12 +12,7 @@ interface PaymentFormProps {
   onSubmit: (paymentData: any) => void;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({
-  isOpen,
-  onClose,
-  type,
-  onSubmit
-}) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ isOpen, onClose, type, onSubmit }) => {
   const [paymentData, setPaymentData] = useState({
     amount: type === 'credits' ? '50' : '',
     credits: type === 'credits' ? '100' : '',
@@ -33,7 +21,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     expiryDate: '',
     cvv: '',
     holderName: '',
-    billingAddress: ''
+    billingAddress: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -44,18 +32,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     { credits: 100, price: 50, bonus: 10 },
     { credits: 250, price: 125, bonus: 25 },
     { credits: 500, price: 250, bonus: 75 },
-    { credits: 1000, price: 500, bonus: 200 }
+    { credits: 1000, price: 500, bonus: 200 },
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setPaymentData(prev => ({ ...prev, [field]: value }));
+    setPaymentData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handlePackageSelect = (pkg: any) => {
-    setPaymentData(prev => ({
+    setPaymentData((prev) => ({
       ...prev,
       credits: (pkg.credits + pkg.bonus).toString(),
-      amount: pkg.price.toString()
+      amount: pkg.price.toString(),
     }));
   };
 
@@ -65,14 +53,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
     try {
       // Mock payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const submitData = {
         ...paymentData,
         amount: parseFloat(paymentData.amount),
         credits: parseInt(paymentData.credits),
         transactionId: `tx-${Date.now()}`,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       onSubmit(submitData);
@@ -96,10 +84,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               {type === 'credits' ? 'Add Credits' : 'Payment Details'}
             </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -129,9 +114,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-lg">${pkg.price}</p>
-                        {pkg.bonus > 0 && (
-                          <p className="text-xs text-green-600">Best Value</p>
-                        )}
+                        {pkg.bonus > 0 && <p className="text-xs text-green-600">Best Value</p>}
                       </div>
                     </div>
                   </div>
@@ -181,7 +164,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           {/* Payment Method */}
           <div className="space-y-2">
             <Label>Payment Method</Label>
-            <Select value={paymentData.paymentMethod} onValueChange={(value) => handleInputChange('paymentMethod', value)}>
+            <Select
+              value={paymentData.paymentMethod}
+              onValueChange={(value) => handleInputChange('paymentMethod', value)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -259,7 +245,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               <Shield className="h-5 w-5 text-green-600 mt-0.5" />
               <div className="text-sm">
                 <p className="font-medium text-green-800">Secure Payment</p>
-                <p className="text-green-700">Your payment information is encrypted and secure. We never store your card details.</p>
+                <p className="text-green-700">
+                  Your payment information is encrypted and secure. We never store your card
+                  details.
+                </p>
               </div>
             </div>
           </div>
@@ -300,11 +289,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              onClick={handleSubmit}
-              disabled={!paymentData.amount || loading}
-            >
+            <Button type="submit" onClick={handleSubmit} disabled={!paymentData.amount || loading}>
               {loading ? 'Processing...' : `Pay $${paymentData.amount}`}
             </Button>
           </div>

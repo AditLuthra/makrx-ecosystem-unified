@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { handleAuthCallback, getCurrentUser } from "@/lib/auth";
-import { getRoleRedirect } from "@/lib/roleRedirect";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { handleAuthCallback, getCurrentUser } from '@/lib/auth';
+import { getRoleRedirect } from '@/lib/roleRedirect';
+import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -47,7 +47,7 @@ export default function AuthCallbackPage() {
         console.error('Auth callback error:', err);
         setError(err instanceof Error ? err.message : 'Authentication failed');
         setStatus('error');
-        
+
         // Redirect to login after error
         setTimeout(() => {
           router.push('/');

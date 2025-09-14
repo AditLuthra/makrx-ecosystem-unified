@@ -1,6 +1,12 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
@@ -10,8 +16,18 @@ import { useAuthHeaders } from '@makrx/auth';
 import EnhancedJobManagement from '../../components/EnhancedJobManagement';
 import ServiceProviderDashboard from '../../components/ServiceProviderDashboard';
 import {
-  Briefcase, Package, Clock, Users, Settings, TrendingUp,
-  FileText, Star, AlertCircle, CheckCircle, Plus, Eye
+  Briefcase,
+  Package,
+  Clock,
+  Users,
+  Settings,
+  TrendingUp,
+  FileText,
+  Star,
+  AlertCircle,
+  CheckCircle,
+  Plus,
+  Eye,
 } from 'lucide-react';
 
 // Types
@@ -51,15 +67,15 @@ const EnhancedJobs: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Get user profile
         const headers = await getHeaders();
         const profileResponse = await fetch('/api/v1/users/me', { headers });
-        
+
         if (profileResponse.ok) {
           const profile = await profileResponse.json();
           setUserProfile(profile);
-          
+
           // Determine initial tab based on user role
           if (profile.is_service_provider) {
             setActiveTab('provider');
@@ -72,18 +88,17 @@ const EnhancedJobs: React.FC = () => {
 
         // Get job overview
         const overviewResponse = await fetch('/api/v1/jobs/overview', { headers });
-        
+
         if (overviewResponse.ok) {
           const overview = await overviewResponse.json();
           setJobOverview(overview);
         }
-        
       } catch (error) {
         console.error('Failed to fetch data:', error);
         toast({
-          title: "Error",
-          description: "Failed to load job data. Please try again.",
-          variant: "destructive"
+          title: 'Error',
+          description: 'Failed to load job data. Please try again.',
+          variant: 'destructive',
         });
       } finally {
         setLoading(false);
@@ -104,11 +119,11 @@ const EnhancedJobs: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "You can now create a service provider profile!"
+          title: 'Success',
+          description: 'You can now create a service provider profile!',
         });
-        
-        setUserProfile(prev => prev ? { ...prev, is_service_provider: true } : null);
+
+        setUserProfile((prev) => (prev ? { ...prev, is_service_provider: true } : null));
         setActiveTab('provider');
       } else {
         throw new Error('Failed to become provider');
@@ -116,9 +131,9 @@ const EnhancedJobs: React.FC = () => {
     } catch (error) {
       console.error('Failed to become provider:', error);
       toast({
-        title: "Error",
-        description: "Failed to enable service provider status. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to enable service provider status. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -128,7 +143,7 @@ const EnhancedJobs: React.FC = () => {
     if (!amount) return '$0.00';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'USD',
     }).format(amount);
   };
 
@@ -153,7 +168,7 @@ const EnhancedJobs: React.FC = () => {
             Manage jobs, service orders, and provider operations
           </p>
         </div>
-        
+
         {userProfile && !userProfile.is_service_provider && (
           <Button onClick={handleBecomeProvider}>
             <Briefcase className="h-4 w-4 mr-2" />
@@ -206,7 +221,9 @@ const EnhancedJobs: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
-                  <p className="text-2xl font-bold">{formatCurrency(jobOverview.revenue_this_month)}</p>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(jobOverview.revenue_this_month)}
+                  </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-purple-500" />
               </div>
@@ -243,25 +260,31 @@ const EnhancedJobs: React.FC = () => {
                     <div className="h-2 w-2 rounded-full bg-green-500 mt-2"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">Job #J123 completed</p>
-                      <p className="text-xs text-muted-foreground">3D printing job finished successfully</p>
+                      <p className="text-xs text-muted-foreground">
+                        3D printing job finished successfully
+                      </p>
                       <p className="text-xs text-muted-foreground">2 hours ago</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <div className="h-2 w-2 rounded-full bg-blue-500 mt-2"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">New job assignment</p>
-                      <p className="text-xs text-muted-foreground">Laser cutting job assigned to your queue</p>
+                      <p className="text-xs text-muted-foreground">
+                        Laser cutting job assigned to your queue
+                      </p>
                       <p className="text-xs text-muted-foreground">5 hours ago</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <div className="h-2 w-2 rounded-full bg-yellow-500 mt-2"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">Payment received</p>
-                      <p className="text-xs text-muted-foreground">$150.00 payment processed for Job #J121</p>
+                      <p className="text-xs text-muted-foreground">
+                        $150.00 payment processed for Job #J121
+                      </p>
                       <p className="text-xs text-muted-foreground">1 day ago</p>
                     </div>
                   </div>
@@ -280,25 +303,25 @@ const EnhancedJobs: React.FC = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Job
                 </Button>
-                
+
                 <Button className="w-full justify-start" variant="outline">
                   <Eye className="h-4 w-4 mr-2" />
                   View All Jobs
                 </Button>
-                
+
                 <Button className="w-full justify-start" variant="outline">
                   <FileText className="h-4 w-4 mr-2" />
                   Generate Reports
                 </Button>
-                
+
                 <Button className="w-full justify-start" variant="outline">
                   <Settings className="h-4 w-4 mr-2" />
                   Provider Settings
                 </Button>
 
                 {!userProfile?.is_service_provider && (
-                  <Button 
-                    className="w-full justify-start" 
+                  <Button
+                    className="w-full justify-start"
                     variant="default"
                     onClick={handleBecomeProvider}
                   >
@@ -328,12 +351,14 @@ const EnhancedJobs: React.FC = () => {
                     </div>
                     <p className="text-sm text-muted-foreground">Customer Rating</p>
                   </div>
-                  
+
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{jobOverview.completed_jobs}</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {jobOverview.completed_jobs}
+                    </p>
                     <p className="text-sm text-muted-foreground">Jobs Completed</p>
                   </div>
-                  
+
                   <div className="text-center">
                     <p className="text-2xl font-bold text-blue-600">
                       {formatCurrency(jobOverview.revenue_this_month)}
@@ -346,7 +371,7 @@ const EnhancedJobs: React.FC = () => {
           )}
 
           {/* Getting Started - For new users */}
-          {(!userProfile?.is_service_provider && jobOverview?.total_jobs === 0) && (
+          {!userProfile?.is_service_provider && jobOverview?.total_jobs === 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Getting Started</CardTitle>
@@ -363,7 +388,7 @@ const EnhancedJobs: React.FC = () => {
                       <li>• Manage your order history</li>
                     </ul>
                   </div>
-                  
+
                   <div className="p-4 border rounded-lg">
                     <h3 className="font-semibold mb-2">As a Service Provider</h3>
                     <ul className="text-sm text-muted-foreground space-y-1">
@@ -372,8 +397,8 @@ const EnhancedJobs: React.FC = () => {
                       <li>• Track equipment utilization</li>
                       <li>• Build your reputation and ratings</li>
                     </ul>
-                    <Button 
-                      className="w-full mt-3" 
+                    <Button
+                      className="w-full mt-3"
                       variant="outline"
                       onClick={handleBecomeProvider}
                     >
@@ -405,9 +430,7 @@ const EnhancedJobs: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle>My Orders</CardTitle>
-              <CardDescription>
-                Jobs and orders you've submitted or are working on
-              </CardDescription>
+              <CardDescription>Jobs and orders you've submitted or are working on</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">

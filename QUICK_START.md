@@ -3,7 +3,7 @@
 ## 🚀 Fast Setup (Recommended)
 
 ```bash
-# 1. Check system status  
+# 1. Check system status
 npm run diagnose
 
 # 2. Start simple mode (no auth)
@@ -18,7 +18,7 @@ npm run stop
 
 ## 📋 System Requirements
 
-- **Node.js** 18+ 
+- **Node.js** 18+
 - **Python 3.8+** (for backend services)
 - **Docker** (for infrastructure)
 - **npm** 8+ (with workspace support)
@@ -26,20 +26,23 @@ npm run stop
 ## 🏗️ Architecture Overview
 
 ### Frontend Applications (Ports 3000-3004)
+
 - `gateway-frontend` (3000) - Main landing page
-- `gateway-frontend-hacker` (3001) - Alternative landing page 
+- `gateway-frontend-hacker` (3001) - Alternative landing page
 - `makrcave` (3002) - Makerspace management
 - `makrx-store` (3003) - E-commerce platform
 - `makrx-events` (3004) - Event management
 
 ### Backend Services (Ports 8001-8003)
+
 - `makrcave-api` (8001) - FastAPI service
-- `makrx-events-api` (8002) - FastAPI service  
+- `makrx-events-api` (8002) - FastAPI service
 - `makrx-store-api` (8003) - FastAPI service
 
 ### Infrastructure Services
+
 - PostgreSQL (5433)
-- Redis (6380) 
+- Redis (6380)
 - Keycloak (8081)
 - MinIO (9002-9003)
 
@@ -48,17 +51,20 @@ npm run stop
 ### Common Issues
 
 1. **"python not found"**
+
    ```bash
    # Already fixed in package.json to use python3
    which python3  # Should show path
    ```
 
 2. **Missing dependencies**
+
    ```bash
    npm run fix-deps  # Installs all missing deps
    ```
 
 3. **Port conflicts**
+
    ```bash
    npm run diagnose  # Shows port usage
    # Kill conflicting processes if needed
@@ -73,7 +79,7 @@ npm run stop
 ## 🔧 Development Workflow
 
 1. **Daily startup**: `npm run dev:simple`
-2. **Check status**: `npm run diagnose` 
+2. **Check status**: `npm run diagnose`
 3. **Stop services**: `npm run stop`
 4. **Full startup with auth**: `npm run dev`
 
@@ -90,7 +96,7 @@ Once running, access your applications at:
 
 - http://localhost:3000 - Gateway Frontend
 - http://localhost:3001 - Gateway Frontend Hacker
-- http://localhost:3002 - MakrCave  
+- http://localhost:3002 - MakrCave
 - http://localhost:3003 - MakrX Store
 - http://localhost:3004 - MakrX Events
 

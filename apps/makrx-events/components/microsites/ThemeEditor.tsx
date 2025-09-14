@@ -5,7 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Palette, Type, Layout, Image, Download, Undo2 } from 'lucide-react';
@@ -50,13 +56,24 @@ const presetColors = {
   greens: ['#10B981', '#059669', '#047857', '#065F46'],
   reds: ['#EF4444', '#DC2626', '#B91C1C', '#991B1B'],
   oranges: ['#F59E0B', '#D97706', '#B45309', '#92400E'],
-  grays: ['#6B7280', '#4B5563', '#374151', '#1F2937']
+  grays: ['#6B7280', '#4B5563', '#374151', '#1F2937'],
 };
 
 const fontOptions = [
-  'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat',
-  'Playfair Display', 'Merriweather', 'Oswald', 'Source Sans Pro',
-  'Nunito', 'Poppins', 'Raleway', 'Orbitron', 'Fira Code'
+  'Inter',
+  'Roboto',
+  'Open Sans',
+  'Lato',
+  'Montserrat',
+  'Playfair Display',
+  'Merriweather',
+  'Oswald',
+  'Source Sans Pro',
+  'Nunito',
+  'Poppins',
+  'Raleway',
+  'Orbitron',
+  'Fira Code',
 ];
 
 export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }: ThemeEditorProps) {
@@ -71,7 +88,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
   const updateTokens = (updates: Partial<ThemeTokens>) => {
     const updatedTheme = {
       ...localTheme,
-      tokens: { ...localTheme.tokens, ...updates }
+      tokens: { ...localTheme.tokens, ...updates },
     };
     setLocalTheme(updatedTheme);
     setHasChanges(true);
@@ -81,7 +98,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
   const updateAssets = (updates: Partial<ThemeAssets>) => {
     const updatedTheme = {
       ...localTheme,
-      assets: { ...localTheme.assets, ...updates }
+      assets: { ...localTheme.assets, ...updates },
     };
     setLocalTheme(updatedTheme);
     setHasChanges(true);
@@ -103,7 +120,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
     { id: 'colors', label: 'Colors', icon: Palette },
     { id: 'typography', label: 'Typography', icon: Type },
     { id: 'layout', label: 'Layout', icon: Layout },
-    { id: 'assets', label: 'Assets', icon: Image }
+    { id: 'assets', label: 'Assets', icon: Image },
   ];
 
   return (
@@ -177,7 +194,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                   />
                 </div>
                 <div className="flex gap-1">
-                  {presetColors.blues.map(color => (
+                  {presetColors.blues.map((color) => (
                     <button
                       key={color}
                       className="w-6 h-6 rounded border-2 border-white shadow-sm"
@@ -204,7 +221,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                   />
                 </div>
                 <div className="flex gap-1">
-                  {presetColors.purples.map(color => (
+                  {presetColors.purples.map((color) => (
                     <button
                       key={color}
                       className="w-6 h-6 rounded border-2 border-white shadow-sm"
@@ -274,7 +291,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {fontOptions.map(font => (
+                    {fontOptions.map((font) => (
                       <SelectItem key={font} value={font}>
                         <span style={{ fontFamily: font }}>{font}</span>
                       </SelectItem>
@@ -293,7 +310,7 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {fontOptions.map(font => (
+                    {fontOptions.map((font) => (
                       <SelectItem key={font} value={font}>
                         <span style={{ fontFamily: font }}>{font}</span>
                       </SelectItem>
@@ -305,18 +322,16 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
 
             <div className="space-y-4 p-4 border rounded-lg">
               <h4 className="text-sm font-medium text-muted-foreground">Preview</h4>
-              <div 
+              <div
                 className="text-2xl font-bold"
                 style={{ fontFamily: localTheme.tokens.fontHeading }}
               >
                 Heading Text Sample
               </div>
-              <div 
-                className="text-base"
-                style={{ fontFamily: localTheme.tokens.fontBody }}
-              >
-                This is body text that shows how your content will look with the selected typography. 
-                It includes regular text, <strong>bold text</strong>, and <em>italic text</em>.
+              <div className="text-base" style={{ fontFamily: localTheme.tokens.fontBody }}>
+                This is body text that shows how your content will look with the selected
+                typography. It includes regular text, <strong>bold text</strong>, and{' '}
+                <em>italic text</em>.
               </div>
             </div>
           </CardContent>
@@ -435,8 +450,8 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                   {localTheme.assets.logoUrl && (
                     <div className="space-y-2">
                       <Label className="text-xs">Logo</Label>
-                      <img 
-                        src={localTheme.assets.logoUrl} 
+                      <img
+                        src={localTheme.assets.logoUrl}
                         alt="Logo preview"
                         className="h-12 object-contain bg-muted rounded"
                       />
@@ -445,8 +460,8 @@ export default function ThemeEditor({ theme, onThemeChange, onSave, isLoading }:
                   {localTheme.assets.heroUrl && (
                     <div className="space-y-2">
                       <Label className="text-xs">Hero Image</Label>
-                      <img 
-                        src={localTheme.assets.heroUrl} 
+                      <img
+                        src={localTheme.assets.heroUrl}
                         alt="Hero preview"
                         className="w-full h-24 object-cover rounded"
                       />

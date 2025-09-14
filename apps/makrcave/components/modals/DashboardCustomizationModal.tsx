@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { useToast } from '../../hooks/use-toast';
-import { 
+import {
   LayoutDashboard,
   Plus,
   Minus,
@@ -26,7 +26,7 @@ import {
   Settings,
   CheckCircle,
   Star,
-  Activity
+  Activity,
 } from 'lucide-react';
 
 interface DashboardWidget {
@@ -53,7 +53,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
   open,
   onOpenChange,
   currentWidgets = [],
-  onSave
+  onSave,
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -73,11 +73,11 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'large',
       isVisible: true,
       order: 1,
-      isDefault: true
+      isDefault: true,
     },
     {
       id: 'reservations-today',
-      name: 'Today\'s Reservations',
+      name: "Today's Reservations",
       description: 'Upcoming reservations and bookings for today',
       category: 'operations',
       icon: Calendar,
@@ -85,7 +85,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'medium',
       isVisible: true,
       order: 2,
-      isDefault: true
+      isDefault: true,
     },
     {
       id: 'member-activity',
@@ -97,7 +97,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'medium',
       isVisible: true,
       order: 3,
-      isDefault: true
+      isDefault: true,
     },
     {
       id: 'revenue-chart',
@@ -109,7 +109,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'large',
       isVisible: false,
       order: 4,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'inventory-alerts',
@@ -121,7 +121,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'small',
       isVisible: true,
       order: 5,
-      isDefault: true
+      isDefault: true,
     },
     {
       id: 'usage-statistics',
@@ -133,7 +133,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'medium',
       isVisible: false,
       order: 6,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'maintenance-schedule',
@@ -145,7 +145,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'small',
       isVisible: true,
       order: 7,
-      isDefault: true
+      isDefault: true,
     },
     {
       id: 'project-progress',
@@ -157,7 +157,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'medium',
       isVisible: false,
       order: 8,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'safety-incidents',
@@ -169,7 +169,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'small',
       isVisible: false,
       order: 9,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'member-certifications',
@@ -181,7 +181,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'small',
       isVisible: false,
       order: 10,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'system-health',
@@ -193,7 +193,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'small',
       isVisible: false,
       order: 11,
-      isDefault: false
+      isDefault: false,
     },
     {
       id: 'quick-actions',
@@ -205,17 +205,37 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
       size: 'medium',
       isVisible: true,
       order: 12,
-      isDefault: true
-    }
+      isDefault: true,
+    },
   ];
 
   const categories = [
     { id: 'all', name: 'All Widgets', count: availableWidgets.length },
-    { id: 'operations', name: 'Operations', count: availableWidgets.filter(w => w.category === 'operations').length },
-    { id: 'analytics', name: 'Analytics', count: availableWidgets.filter(w => w.category === 'analytics').length },
-    { id: 'financial', name: 'Financial', count: availableWidgets.filter(w => w.category === 'financial').length },
-    { id: 'member', name: 'Member', count: availableWidgets.filter(w => w.category === 'member').length },
-    { id: 'system', name: 'System', count: availableWidgets.filter(w => w.category === 'system').length }
+    {
+      id: 'operations',
+      name: 'Operations',
+      count: availableWidgets.filter((w) => w.category === 'operations').length,
+    },
+    {
+      id: 'analytics',
+      name: 'Analytics',
+      count: availableWidgets.filter((w) => w.category === 'analytics').length,
+    },
+    {
+      id: 'financial',
+      name: 'Financial',
+      count: availableWidgets.filter((w) => w.category === 'financial').length,
+    },
+    {
+      id: 'member',
+      name: 'Member',
+      count: availableWidgets.filter((w) => w.category === 'member').length,
+    },
+    {
+      id: 'system',
+      name: 'System',
+      count: availableWidgets.filter((w) => w.category === 'system').length,
+    },
   ];
 
   useEffect(() => {
@@ -226,62 +246,69 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
     }
   }, [currentWidgets]);
 
-  const filteredWidgets = widgets.filter(widget => {
-    const matchesSearch = widget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         widget.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredWidgets = widgets.filter((widget) => {
+    const matchesSearch =
+      widget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      widget.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || widget.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const visibleWidgets = widgets.filter(w => w.isVisible).sort((a, b) => a.order - b.order);
-  const hiddenWidgets = widgets.filter(w => !w.isVisible);
+  const visibleWidgets = widgets.filter((w) => w.isVisible).sort((a, b) => a.order - b.order);
+  const hiddenWidgets = widgets.filter((w) => !w.isVisible);
 
   const toggleWidgetVisibility = (widgetId: string) => {
-    setWidgets(prev => prev.map(widget => 
-      widget.id === widgetId 
-        ? { ...widget, isVisible: !widget.isVisible }
-        : widget
-    ));
+    setWidgets((prev) =>
+      prev.map((widget) =>
+        widget.id === widgetId ? { ...widget, isVisible: !widget.isVisible } : widget,
+      ),
+    );
   };
 
   const moveWidget = (widgetId: string, direction: 'up' | 'down') => {
     const visibleWidgetsList = visibleWidgets;
-    const currentIndex = visibleWidgetsList.findIndex(w => w.id === widgetId);
-    
+    const currentIndex = visibleWidgetsList.findIndex((w) => w.id === widgetId);
+
     if (direction === 'up' && currentIndex > 0) {
       const newOrder = visibleWidgetsList[currentIndex - 1].order;
-      setWidgets(prev => prev.map(widget => {
-        if (widget.id === widgetId) {
-          return { ...widget, order: newOrder };
-        }
-        if (widget.id === visibleWidgetsList[currentIndex - 1].id) {
-          return { ...widget, order: widget.order + 1 };
-        }
-        return widget;
-      }));
+      setWidgets((prev) =>
+        prev.map((widget) => {
+          if (widget.id === widgetId) {
+            return { ...widget, order: newOrder };
+          }
+          if (widget.id === visibleWidgetsList[currentIndex - 1].id) {
+            return { ...widget, order: widget.order + 1 };
+          }
+          return widget;
+        }),
+      );
     } else if (direction === 'down' && currentIndex < visibleWidgetsList.length - 1) {
       const newOrder = visibleWidgetsList[currentIndex + 1].order;
-      setWidgets(prev => prev.map(widget => {
-        if (widget.id === widgetId) {
-          return { ...widget, order: newOrder };
-        }
-        if (widget.id === visibleWidgetsList[currentIndex + 1].id) {
-          return { ...widget, order: widget.order - 1 };
-        }
-        return widget;
-      }));
+      setWidgets((prev) =>
+        prev.map((widget) => {
+          if (widget.id === widgetId) {
+            return { ...widget, order: newOrder };
+          }
+          if (widget.id === visibleWidgetsList[currentIndex + 1].id) {
+            return { ...widget, order: widget.order - 1 };
+          }
+          return widget;
+        }),
+      );
     }
   };
 
   const resetToDefault = () => {
-    setWidgets(availableWidgets.map(widget => ({
-      ...widget,
-      isVisible: widget.isDefault,
-      order: widget.order
-    })));
+    setWidgets(
+      availableWidgets.map((widget) => ({
+        ...widget,
+        isVisible: widget.isDefault,
+        order: widget.order,
+      })),
+    );
     toast({
-      title: "Dashboard Reset",
-      description: "Dashboard has been reset to default layout.",
+      title: 'Dashboard Reset',
+      description: 'Dashboard has been reset to default layout.',
     });
   };
 
@@ -289,21 +316,21 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
     setLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       onSave?.(widgets);
-      
+
       toast({
-        title: "Dashboard Updated",
-        description: "Your dashboard customization has been saved successfully.",
+        title: 'Dashboard Updated',
+        description: 'Your dashboard customization has been saved successfully.',
       });
-      
+
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save dashboard settings. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save dashboard settings. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -312,19 +339,27 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
 
   const getSizeLabel = (size: string) => {
     switch (size) {
-      case 'small': return 'S';
-      case 'medium': return 'M';
-      case 'large': return 'L';
-      default: return 'M';
+      case 'small':
+        return 'S';
+      case 'medium':
+        return 'M';
+      case 'large':
+        return 'L';
+      default:
+        return 'M';
     }
   };
 
   const getSizeColor = (size: string) => {
     switch (size) {
-      case 'small': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-blue-100 text-blue-800';
-      case 'large': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case 'small':
+        return 'bg-green-100 text-green-800';
+      case 'medium':
+        return 'bg-blue-100 text-blue-800';
+      case 'large':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -337,7 +372,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
             Customize Dashboard
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
             {/* Left Panel - Available Widgets */}
@@ -407,18 +442,24 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
                           <Badge variant="outline" className="text-xs">
                             {widget.category}
                           </Badge>
-                          <Badge variant="outline" className={`text-xs ${getSizeColor(widget.size)}`}>
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${getSizeColor(widget.size)}`}
+                          >
                             {getSizeLabel(widget.size)}
                           </Badge>
                           {widget.isDefault && (
-                            <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800">
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-yellow-100 text-yellow-800"
+                            >
                               Default
                             </Badge>
                           )}
                         </div>
                         {widget.isVisible && (
                           <span className="text-xs text-green-600 font-medium">
-                            #{visibleWidgets.findIndex(w => w.id === widget.id) + 1}
+                            #{visibleWidgets.findIndex((w) => w.id === widget.id) + 1}
                           </span>
                         )}
                       </div>
@@ -432,9 +473,7 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
             <div className="space-y-4 overflow-y-auto">
               <div className="sticky top-0 bg-white z-10 pb-4 border-b">
                 <h3 className="font-medium text-gray-900">Dashboard Preview</h3>
-                <p className="text-sm text-gray-600">
-                  {visibleWidgets.length} widgets visible
-                </p>
+                <p className="text-sm text-gray-600">{visibleWidgets.length} widgets visible</p>
               </div>
 
               {/* Visible Widgets */}
@@ -476,7 +515,10 @@ const DashboardCustomizationModal: React.FC<DashboardCustomizationModalProps> = 
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm truncate">{widget.name}</p>
                               <div className="flex gap-1 mt-1">
-                                <Badge variant="outline" className={`text-xs ${getSizeColor(widget.size)}`}>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${getSizeColor(widget.size)}`}
+                                >
                                   {getSizeLabel(widget.size)}
                                 </Badge>
                               </div>

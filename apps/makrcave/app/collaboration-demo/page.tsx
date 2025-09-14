@@ -1,15 +1,15 @@
-"use client";
+'use client';
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { 
-  Users, 
-  MessageCircle, 
-  Video, 
-  FileText, 
-  PaintBucket, 
+import {
+  Users,
+  MessageCircle,
+  Video,
+  FileText,
+  PaintBucket,
   Monitor,
   Zap,
   Share2,
@@ -19,7 +19,7 @@ import {
   CheckCircle2,
   ArrowRight,
   Lightbulb,
-  Rocket
+  Rocket,
 } from 'lucide-react';
 import ProjectCollaborationHub from '../../components/collaboration/ProjectCollaborationHub';
 import RealTimeEditingIndicators from '../../components/collaboration/RealTimeEditingIndicators';
@@ -44,13 +44,14 @@ const CollaborationDemo: React.FC = () => {
         'Quick reaction buttons',
         'System notifications',
         'Message threading',
-        'File sharing in chat'
-      ]
+        'File sharing in chat',
+      ],
     },
     {
       id: 'live-editing',
       title: 'Live Editing Indicators',
-      description: 'See who is editing what in real-time with collaborative cursors and presence indicators',
+      description:
+        'See who is editing what in real-time with collaborative cursors and presence indicators',
       icon: Edit3,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
@@ -59,13 +60,14 @@ const CollaborationDemo: React.FC = () => {
         'Active user indicators',
         'Element editing status',
         'Conflict prevention',
-        'User presence awareness'
-      ]
+        'User presence awareness',
+      ],
     },
     {
       id: 'whiteboard',
       title: 'Collaborative Whiteboard',
-      description: 'Draw, sketch, and brainstorm together in real-time with shared visual workspace',
+      description:
+        'Draw, sketch, and brainstorm together in real-time with shared visual workspace',
       icon: PaintBucket,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
@@ -74,13 +76,14 @@ const CollaborationDemo: React.FC = () => {
         'Multiple user cursors',
         'Shape and text tools',
         'Undo/redo collaboration',
-        'Export and save boards'
-      ]
+        'Export and save boards',
+      ],
     },
     {
       id: 'document-editing',
       title: 'Shared Document Editing',
-      description: 'Collaborate on documents with real-time sync, version history, and conflict resolution',
+      description:
+        'Collaborate on documents with real-time sync, version history, and conflict resolution',
       icon: FileText,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
@@ -89,13 +92,14 @@ const CollaborationDemo: React.FC = () => {
         'Version history',
         'Document locking',
         'Cursor synchronization',
-        'Auto-save functionality'
-      ]
+        'Auto-save functionality',
+      ],
     },
     {
       id: 'video-calls',
       title: 'Integrated Video Calls',
-      description: 'Start video calls directly within projects without leaving the collaboration context',
+      description:
+        'Start video calls directly within projects without leaving the collaboration context',
       icon: Video,
       color: 'text-red-600',
       bgColor: 'bg-red-100',
@@ -104,8 +108,8 @@ const CollaborationDemo: React.FC = () => {
         'Screen sharing',
         'Audio controls',
         'Call notifications',
-        'Integration with chat'
-      ]
+        'Integration with chat',
+      ],
     },
     {
       id: 'presence-awareness',
@@ -119,9 +123,9 @@ const CollaborationDemo: React.FC = () => {
         'Current view tracking',
         'Activity status',
         'Last seen timestamps',
-        'Idle detection'
-      ]
-    }
+        'Idle detection',
+      ],
+    },
   ];
 
   const useCases = [
@@ -133,8 +137,8 @@ const CollaborationDemo: React.FC = () => {
         'Share design files in project',
         'Start collaborative session',
         'Use whiteboard for annotations',
-        'Document feedback in real-time'
-      ]
+        'Document feedback in real-time',
+      ],
     },
     {
       title: 'Project Planning',
@@ -144,8 +148,8 @@ const CollaborationDemo: React.FC = () => {
         'Create shared planning document',
         'Brainstorm on whiteboard',
         'Assign tasks in real-time',
-        'Track progress together'
-      ]
+        'Track progress together',
+      ],
     },
     {
       title: 'Remote Workshops',
@@ -155,9 +159,9 @@ const CollaborationDemo: React.FC = () => {
         'Set up video call',
         'Share screen for demos',
         'Use whiteboard for exercises',
-        'Document outcomes together'
-      ]
-    }
+        'Document outcomes together',
+      ],
+    },
   ];
 
   const renderFeatureDemo = (featureId: string) => {
@@ -186,7 +190,7 @@ const CollaborationDemo: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 border rounded">
                 <span>Project Description</span>
-                <RealTimeEditingIndicators 
+                <RealTimeEditingIndicators
                   projectId={demoProjectId}
                   elementId="description"
                   showViewers={true}
@@ -194,7 +198,7 @@ const CollaborationDemo: React.FC = () => {
               </div>
               <div className="flex items-center justify-between p-3 border rounded">
                 <span>BOM Item Details</span>
-                <RealTimeEditingIndicators 
+                <RealTimeEditingIndicators
                   projectId={demoProjectId}
                   elementId="bom-item-1"
                   showViewers={true}
@@ -202,7 +206,7 @@ const CollaborationDemo: React.FC = () => {
               </div>
               <div className="flex items-center justify-between p-3 border rounded">
                 <span>Milestone Timeline</span>
-                <RealTimeEditingIndicators 
+                <RealTimeEditingIndicators
                   projectId={demoProjectId}
                   elementId="milestone-timeline"
                   showViewers={true}
@@ -216,10 +220,7 @@ const CollaborationDemo: React.FC = () => {
         return (
           <div className="p-6">
             <h3 className="text-lg font-semibold mb-4">Collaborative Whiteboard Demo</h3>
-            <CollaborativeWhiteboard 
-              projectId={demoProjectId}
-              height={400}
-            />
+            <CollaborativeWhiteboard projectId={demoProjectId} height={400} />
           </div>
         );
 
@@ -227,7 +228,7 @@ const CollaborationDemo: React.FC = () => {
         return (
           <div className="p-6">
             <h3 className="text-lg font-semibold mb-4">Shared Document Editor Demo</h3>
-            <SharedDocumentEditor 
+            <SharedDocumentEditor
               projectId={demoProjectId}
               documentId="demo-document"
               title="Demo Project Document"
@@ -252,7 +253,8 @@ Try editing this document to see the collaboration features in action."
           <div className="p-6">
             <h3 className="text-lg font-semibold mb-4">Video Call Integration Demo</h3>
             <p className="text-gray-600 mb-4">
-              Video calling is integrated into the collaboration hub. Start a call to see the interface.
+              Video calling is integrated into the collaboration hub. Start a call to see the
+              interface.
             </p>
             <div className="bg-gray-100 p-4 rounded-lg">
               <div className="flex items-center justify-between mb-3">
@@ -286,27 +288,21 @@ Try editing this document to see the collaboration features in action."
                   <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   <span>Alex Chen</span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  Editing BOM • Last active now
-                </div>
+                <div className="text-sm text-gray-600">Editing BOM • Last active now</div>
               </div>
               <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                   <span>Sarah Kim</span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  Viewing Timeline • Idle 2m ago
-                </div>
+                <div className="text-sm text-gray-600">Viewing Timeline • Idle 2m ago</div>
               </div>
               <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                   <span>Mike Rodriguez</span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  Drawing on Whiteboard • Last active now
-                </div>
+                <div className="text-sm text-gray-600">Drawing on Whiteboard • Last active now</div>
               </div>
             </div>
           </div>
@@ -326,7 +322,8 @@ Try editing this document to see the collaboration features in action."
           <span>Real-time Collaboration Features</span>
         </div>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Experience seamless teamwork with MakrCave's advanced collaboration tools designed for modern maker teams
+          Experience seamless teamwork with MakrCave's advanced collaboration tools designed for
+          modern maker teams
         </p>
         <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
           <Zap className="h-4 w-4" />
@@ -358,9 +355,7 @@ Try editing this document to see the collaboration features in action."
           <CardContent className="p-6 text-center">
             <Share2 className="h-8 w-8 text-purple-600 mx-auto mb-3" />
             <h3 className="font-semibold mb-2">Seamless Integration</h3>
-            <p className="text-sm text-gray-600">
-              Built into every aspect of project management
-            </p>
+            <p className="text-sm text-gray-600">Built into every aspect of project management</p>
           </CardContent>
         </Card>
       </div>
@@ -370,8 +365,8 @@ Try editing this document to see the collaboration features in action."
         <h2 className="text-2xl font-semibold text-center">Collaboration Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {collaborationFeatures.map((feature) => (
-            <Card 
-              key={feature.id} 
+            <Card
+              key={feature.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${
                 activeDemo === feature.id ? 'ring-2 ring-blue-500' : ''
               }`}
@@ -385,9 +380,11 @@ Try editing this document to see the collaboration features in action."
                   <div className="flex-1">
                     <CardTitle className="text-lg">{feature.title}</CardTitle>
                   </div>
-                  <ArrowRight className={`h-4 w-4 transition-transform ${
-                    activeDemo === feature.id ? 'rotate-90' : ''
-                  }`} />
+                  <ArrowRight
+                    className={`h-4 w-4 transition-transform ${
+                      activeDemo === feature.id ? 'rotate-90' : ''
+                    }`}
+                  />
                 </div>
               </CardHeader>
               <CardContent>
@@ -415,9 +412,7 @@ Try editing this document to see the collaboration features in action."
               <Badge variant="secondary">Live Demo</Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
-            {renderFeatureDemo(activeDemo)}
-          </CardContent>
+          <CardContent className="p-0">{renderFeatureDemo(activeDemo)}</CardContent>
         </Card>
       )}
 
@@ -456,14 +451,11 @@ Try editing this document to see the collaboration features in action."
         <CardContent className="p-8 text-center">
           <h2 className="text-2xl font-semibold mb-4">Ready to Collaborate?</h2>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Experience the power of real-time collaboration in your next project. 
-            Start working together seamlessly with your team.
+            Experience the power of real-time collaboration in your next project. Start working
+            together seamlessly with your team.
           </p>
           <div className="flex items-center justify-center space-x-4">
-            <Button 
-              size="lg"
-              onClick={() => setShowCollaborationHub(true)}
-            >
+            <Button size="lg" onClick={() => setShowCollaborationHub(true)}>
               <Users className="h-5 w-5 mr-2" />
               Start Collaborating
             </Button>

@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { 
+import {
   Heart,
   Eye,
   GitFork,
@@ -26,7 +26,7 @@ import {
   Wrench,
   Gauge,
   Target,
-  CheckCircle2
+  CheckCircle2,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../../contexts/AuthContext';
@@ -77,7 +77,7 @@ interface ProjectShowcaseCardProps {
 const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
   project,
   viewMode,
-  onProjectClick
+  onProjectClick,
 }) => {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(project.is_liked);
@@ -87,21 +87,31 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'advanced': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'expert': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'expert':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getDifficultyIcon = (level: string) => {
     switch (level) {
-      case 'beginner': return '🟢';
-      case 'intermediate': return '🟡';
-      case 'advanced': return '🟠';
-      case 'expert': return '🔴';
-      default: return '⚪';
+      case 'beginner':
+        return '🟢';
+      case 'intermediate':
+        return '🟡';
+      case 'advanced':
+        return '🟠';
+      case 'expert':
+        return '🔴';
+      default:
+        return '⚪';
     }
   };
 
@@ -118,7 +128,7 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
       if (response.ok) {
         setIsLiked(!isLiked);
-        setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+        setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
       }
     } catch (error) {
       console.error('Error toggling like:', error);
@@ -146,13 +156,13 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: project.name,
           text: project.description,
-          url: window.location.origin + `/projects/${project.project_id}`
+          url: window.location.origin + `/projects/${project.project_id}`,
         });
       } catch (error) {
         console.error('Error sharing:', error);
@@ -173,15 +183,18 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
   if (viewMode === 'list') {
     return (
-      <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group" onClick={handleCardClick}>
+      <Card
+        className="hover:shadow-lg transition-all duration-200 cursor-pointer group"
+        onClick={handleCardClick}
+      >
         <CardContent className="p-6">
           <div className="flex space-x-6">
             {/* Thumbnail */}
             <div className="flex-shrink-0 relative">
               <div className="w-32 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg overflow-hidden">
                 {project.thumbnail_url ? (
-                  <img 
-                    src={project.thumbnail_url} 
+                  <img
+                    src={project.thumbnail_url}
                     alt={project.name}
                     className="w-full h-full object-cover"
                   />
@@ -198,7 +211,7 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
                   </div>
                 )}
               </div>
-              
+
               {/* Special badges */}
               <div className="absolute -top-2 -right-2 flex flex-col space-y-1">
                 {project.is_featured && (
@@ -228,9 +241,7 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
                     </Badge>
                   </div>
 
-                  <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                    {project.description}
-                  </p>
+                  <p className="text-gray-600 text-sm line-clamp-2 mb-3">{project.description}</p>
 
                   <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
                     <div className="flex items-center space-x-1">
@@ -257,12 +268,18 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
                   </div>
 
                   <div className="flex flex-wrap gap-1 mb-3">
-                    <Badge variant="secondary" className="text-xs">{project.category}</Badge>
-                    {project.tags.slice(0, 3).map(tag => (
-                      <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {project.category}
+                    </Badge>
+                    {project.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
                     ))}
                     {project.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">+{project.tags.length - 3}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        +{project.tags.length - 3}
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -312,7 +329,9 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
                 </div>
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{formatDistanceToNow(new Date(project.created_at), { addSuffix: true })}</span>
+                  <span>
+                    {formatDistanceToNow(new Date(project.created_at), { addSuffix: true })}
+                  </span>
                 </div>
               </div>
             </div>
@@ -324,12 +343,15 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
   // Grid view
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden" onClick={handleCardClick}>
+    <Card
+      className="hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden"
+      onClick={handleCardClick}
+    >
       {/* Thumbnail */}
       <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
         {project.thumbnail_url ? (
-          <img 
-            src={project.thumbnail_url} 
+          <img
+            src={project.thumbnail_url}
             alt={project.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -338,7 +360,7 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
             <Package className="h-12 w-12 text-gray-400" />
           </div>
         )}
-        
+
         {/* Video overlay */}
         {project.demo_video_url && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -405,9 +427,7 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
             </h3>
           </div>
 
-          <p className="text-gray-600 text-sm line-clamp-3">
-            {project.description}
-          </p>
+          <p className="text-gray-600 text-sm line-clamp-3">{project.description}</p>
         </div>
 
         {/* Creator info */}
@@ -429,12 +449,18 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mt-4 mb-4">
-          <Badge variant="secondary" className="text-xs">{project.category}</Badge>
-          {project.tags.slice(0, 2).map(tag => (
-            <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+          <Badge variant="secondary" className="text-xs">
+            {project.category}
+          </Badge>
+          {project.tags.slice(0, 2).map((tag) => (
+            <Badge key={tag} variant="outline" className="text-xs">
+              {tag}
+            </Badge>
           ))}
           {project.tags.length > 2 && (
-            <Badge variant="outline" className="text-xs">+{project.tags.length - 2}</Badge>
+            <Badge variant="outline" className="text-xs">
+              +{project.tags.length - 2}
+            </Badge>
           )}
         </div>
 
@@ -474,8 +500,15 @@ const ProjectShowcaseCard: React.FC<ProjectShowcaseCardProps> = ({
               <span>{project.fork_count}</span>
             </div>
           </div>
-          
-          <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleShare(e); }}>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare(e);
+            }}
+          >
             <Share2 className="h-4 w-4" />
           </Button>
         </div>

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
+
 # BOM Item for showcase
 class ShowcaseBOMItem(BaseModel):
     name: str
@@ -9,12 +10,14 @@ class ShowcaseBOMItem(BaseModel):
     estimated_cost: float
     supplier: Optional[str] = None
 
+
 # Award/Achievement for projects
 class ProjectAward(BaseModel):
     type: str
     name: str
     icon: str
     awarded_at: str
+
 
 # Main showcase project schema
 class ShowcaseProjectResponse(BaseModel):
@@ -35,7 +38,7 @@ class ShowcaseProjectResponse(BaseModel):
     tags: List[str] = []
     skills_required: List[str] = []
     equipment_used: List[str] = []
-    
+
     # Showcase metrics
     view_count: int
     like_count: int
@@ -43,34 +46,35 @@ class ShowcaseProjectResponse(BaseModel):
     comment_count: int
     download_count: int
     completion_rate: int  # Percentage
-    
+
     # Media and assets
     thumbnail_url: Optional[str] = None
     gallery_images: List[str] = []
     demo_video_url: Optional[str] = None
-    
+
     # Project details
     bill_of_materials: List[ShowcaseBOMItem] = []
     total_estimated_cost: float
-    
+
     # Social features
     is_featured: bool
     is_staff_pick: bool
     is_trending: bool
     awards: List[ProjectAward] = []
-    
+
     # Timestamps
     created_at: str
     updated_at: str
     featured_at: Optional[str] = None
-    
+
     # Interaction flags for current user
     is_liked: bool
     is_bookmarked: bool
     is_following_owner: bool
-    
+
     class Config:
         from_attributes = True
+
 
 # Featured maker for spotlight
 class FeaturedMaker(BaseModel):
@@ -81,31 +85,33 @@ class FeaturedMaker(BaseModel):
     bio: Optional[str] = None
     location: Optional[str] = None
     makerspace_name: Optional[str] = None
-    
+
     # Stats
     project_count: int
     total_likes: int
     total_views: int
     total_forks: int
     follower_count: int
-    
+
     # Featured project
     featured_project: Dict[str, Any]
-    
+
     # Skills and badges
     top_skills: List[str] = []
     achievements: List[Dict[str, Any]] = []
-    
+
     # Social
     is_verified: bool
     is_staff_pick: bool
     member_since: str
 
+
 class FeaturedMakerResponse(BaseModel):
     featured_maker: FeaturedMaker
-    
+
     class Config:
         from_attributes = True
+
 
 # Project statistics
 class ProjectStatsResponse(BaseModel):
@@ -116,12 +122,14 @@ class ProjectStatsResponse(BaseModel):
     total_likes: int
     total_views: int
 
+
 # Filter options
 class ShowcaseFiltersResponse(BaseModel):
     categories: List[str]
     tags: List[str]
     skills: List[str]
     difficulty_levels: List[str]
+
 
 # Project search and discovery
 class ProjectSearchRequest(BaseModel):
@@ -134,11 +142,13 @@ class ProjectSearchRequest(BaseModel):
     limit: int = 20
     offset: int = 0
 
+
 class ProjectSearchResponse(BaseModel):
     projects: List[ShowcaseProjectResponse]
     total_count: int
     has_more: bool
     filters_applied: Dict[str, Any]
+
 
 # Trending project (simplified)
 class TrendingProjectResponse(BaseModel):
@@ -154,21 +164,25 @@ class TrendingProjectResponse(BaseModel):
     thumbnail_url: Optional[str] = None
     created_at: str
     is_featured: Optional[bool] = False
-    
+
     class Config:
         from_attributes = True
+
 
 # Project interaction responses
 class ProjectLikeResponse(BaseModel):
     status: str
     like_count: int
 
+
 class ProjectBookmarkResponse(BaseModel):
     status: str
+
 
 class ProjectFollowResponse(BaseModel):
     status: str
     follower_count: int
+
 
 # Category statistics
 class CategoryStatsResponse(BaseModel):
@@ -177,6 +191,7 @@ class CategoryStatsResponse(BaseModel):
     avg_difficulty: str
     most_used_skills: List[str]
     trending_projects: int
+
 
 # Maker leaderboard
 class MakerLeaderboardEntry(BaseModel):
@@ -189,9 +204,11 @@ class MakerLeaderboardEntry(BaseModel):
     rank: int
     featured_projects: int
 
+
 class MakerLeaderboardResponse(BaseModel):
     makers: List[MakerLeaderboardEntry]
     time_period: str  # "week", "month", "all_time"
+
 
 # Project analytics for creators
 class ProjectAnalyticsResponse(BaseModel):
@@ -202,10 +219,12 @@ class ProjectAnalyticsResponse(BaseModel):
     referral_sources: Dict[str, Any]
     engagement_metrics: Dict[str, Any]
 
+
 # Community features
 class ProjectCommentCreate(BaseModel):
     comment: str
     parent_id: Optional[str] = None
+
 
 class ProjectCommentResponse(BaseModel):
     id: str
@@ -218,9 +237,10 @@ class ProjectCommentResponse(BaseModel):
     created_at: str
     likes: int
     replies_count: int
-    
+
     class Config:
         from_attributes = True
+
 
 # Project collections/playlists
 class ProjectCollectionCreate(BaseModel):
@@ -228,6 +248,7 @@ class ProjectCollectionCreate(BaseModel):
     description: Optional[str] = None
     is_public: bool = True
     project_ids: List[str] = []
+
 
 class ProjectCollectionResponse(BaseModel):
     id: str
@@ -240,9 +261,10 @@ class ProjectCollectionResponse(BaseModel):
     created_at: str
     updated_at: str
     thumbnail_projects: List[TrendingProjectResponse] = []
-    
+
     class Config:
         from_attributes = True
+
 
 # Showcase dashboard for admins
 class ShowcaseDashboardResponse(BaseModel):

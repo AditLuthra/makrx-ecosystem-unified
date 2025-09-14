@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/sitemaps/microsites/[slug] - Generate sitemap for specific microsite
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://makrx.events';
@@ -18,18 +15,18 @@ export async function GET(
         {
           slug: 'autonomous-robot-competition',
           title: 'Autonomous Robot Competition',
-          updatedAt: '2024-02-01T12:00:00Z'
+          updatedAt: '2024-02-01T12:00:00Z',
         },
         {
           slug: 'iot-workshop',
           title: 'IoT Development Workshop',
-          updatedAt: '2024-02-01T14:00:00Z'
+          updatedAt: '2024-02-01T14:00:00Z',
         },
         {
           slug: 'ai-ethics-panel',
           title: 'AI Ethics Panel Discussion',
-          updatedAt: '2024-02-01T16:00:00Z'
-        }
+          updatedAt: '2024-02-01T16:00:00Z',
+        },
       ],
       sections: [
         { slug: 'about', updatedAt: '2024-01-30T10:00:00Z' },
@@ -37,8 +34,8 @@ export async function GET(
         { slug: 'speakers', updatedAt: '2024-02-01T08:00:00Z' },
         { slug: 'sponsors', updatedAt: '2024-01-29T10:00:00Z' },
         { slug: 'venue', updatedAt: '2024-01-28T10:00:00Z' },
-        { slug: 'faq', updatedAt: '2024-01-27T10:00:00Z' }
-      ]
+        { slug: 'faq', updatedAt: '2024-01-27T10:00:00Z' },
+      ],
     };
 
     // Generate sitemap XML
@@ -53,13 +50,17 @@ export async function GET(
   </url>
 
   <!-- Microsite pages -->
-  ${mockMicrosite.sections.map(section => `
+  ${mockMicrosite.sections
+    .map(
+      (section) => `
   <url>
     <loc>${baseUrl}/m/${slug}/${section.slug}</loc>
     <lastmod>${section.updatedAt}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`).join('')}
+  </url>`,
+    )
+    .join('')}
 
   <!-- Events listing page -->
   <url>
@@ -70,7 +71,9 @@ export async function GET(
   </url>
 
   <!-- Individual sub-events -->
-  ${mockMicrosite.subEvents.map(event => `
+  ${mockMicrosite.subEvents
+    .map(
+      (event) => `
   <url>
     <loc>${baseUrl}/m/${slug}/events/${event.slug}</loc>
     <lastmod>${event.updatedAt}</lastmod>
@@ -82,7 +85,9 @@ export async function GET(
     <lastmod>${event.updatedAt}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>`).join('')}
+  </url>`,
+    )
+    .join('')}
 
   <!-- Contact page -->
   <url>
@@ -96,8 +101,8 @@ export async function GET(
     return new NextResponse(sitemap, {
       headers: {
         'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600' // Cache for 1 hour
-      }
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600', // Cache for 1 hour
+      },
     });
   } catch (error) {
     console.error('Error generating sitemap:', error);

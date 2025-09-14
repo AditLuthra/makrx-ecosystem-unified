@@ -1,10 +1,20 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  MapPin, Phone, Mail, Globe, Twitter, Linkedin, Instagram, 
-  Youtube, Github, ArrowRight, Heart, ExternalLink
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+  Github,
+  ArrowRight,
+  Heart,
+  ExternalLink,
 } from 'lucide-react';
 
 export default function Footer() {
@@ -31,7 +41,7 @@ export default function Footer() {
         { name: 'MakrX Store', href: '/store', description: 'Tools & materials' },
         { name: '3D Store', href: '/3d-store', description: 'Custom printing' },
         { name: 'Service Providers', href: '/service-providers', description: 'Freelance makers' },
-      ]
+      ],
     },
     {
       title: 'Resources',
@@ -40,7 +50,7 @@ export default function Footer() {
         { name: 'Learning Hub', href: '/learn', description: 'Courses & tutorials' },
         { name: 'Events', href: '/events', description: 'Workshops & meetups' },
         { name: 'Blog', href: '/blog', description: 'News & insights' },
-      ]
+      ],
     },
     {
       title: 'Support',
@@ -49,7 +59,7 @@ export default function Footer() {
         { name: 'Status', href: '/status', description: 'System status' },
         { name: 'Contact Us', href: '/contact', description: 'Get in touch' },
         { name: 'Safety Guidelines', href: '/safety', description: 'Stay safe' },
-      ]
+      ],
     },
     {
       title: 'Company',
@@ -58,16 +68,41 @@ export default function Footer() {
         { name: 'Careers', href: '/careers', description: 'Join our team' },
         { name: 'Press Kit', href: '/press', description: 'Media resources' },
         { name: 'Partners', href: '/partners', description: 'Collaboration' },
-      ]
-    }
+      ],
+    },
   ];
 
   const socialLinks = [
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/makrx', color: 'hover:text-blue-400' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/makrx', color: 'hover:text-blue-600' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/makrx', color: 'hover:text-pink-500' },
-    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@makrx', color: 'hover:text-red-500' },
-    { name: 'GitHub', icon: Github, href: 'https://github.com/makrx', color: 'hover:text-gray-400' },
+    {
+      name: 'Twitter',
+      icon: Twitter,
+      href: 'https://twitter.com/makrx',
+      color: 'hover:text-blue-400',
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      href: 'https://linkedin.com/company/makrx',
+      color: 'hover:text-blue-600',
+    },
+    {
+      name: 'Instagram',
+      icon: Instagram,
+      href: 'https://instagram.com/makrx',
+      color: 'hover:text-pink-500',
+    },
+    {
+      name: 'YouTube',
+      icon: Youtube,
+      href: 'https://youtube.com/@makrx',
+      color: 'hover:text-red-500',
+    },
+    {
+      name: 'GitHub',
+      icon: Github,
+      href: 'https://github.com/makrx',
+      color: 'hover:text-gray-400',
+    },
   ];
 
   const legalLinks = [
@@ -87,20 +122,15 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <div className="mb-6">
               <Link href="/" className="flex items-center gap-3 group">
-                <img 
-                  src="https://cdn.builder.io/api/v1/assets/f367f5e46f75423a83d3f29fae529dbb/botlogofinal-c921e6?format=webp&width=800" 
-                  alt="MakrBot" 
-                  className="w-8 h-8 group-hover:scale-110 transition-transform"
-                />
                 <div className="text-2xl font-display font-bold">
                   <span className="text-white">Makr</span>
                   <span className="text-makrx-yellow">X</span>
                 </div>
               </Link>
             </div>
-            
+
             <p className="text-gray-300 mb-6 leading-relaxed">
-              India's largest maker ecosystem connecting creators, innovators, and entrepreneurs 
+              India's largest maker ecosystem connecting creators, innovators, and entrepreneurs
               through premium makerspaces, cutting-edge tools, and comprehensive learning resources.
             </p>
 
@@ -144,9 +174,7 @@ export default function Footer() {
                           <span className="font-medium group-hover:text-makrx-yellow transition-colors">
                             {link.name}
                           </span>
-                          <span className="text-xs text-gray-500 mt-1">
-                            {link.description}
-                          </span>
+                          <span className="text-xs text-gray-500 mt-1">{link.description}</span>
                         </Link>
                       </li>
                     ))}
@@ -162,9 +190,13 @@ export default function Footer() {
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-bold mb-4">Stay Updated with MakrX</h3>
             <p className="text-gray-400 mb-6">
-              Get the latest maker news, workshop announcements, and exclusive insights delivered to your inbox.
+              Get the latest maker news, workshop announcements, and exclusive insights delivered to
+              your inbox.
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <form
+              onSubmit={handleNewsletterSubmit}
+              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+            >
               <label htmlFor="newsletter-email" className="sr-only">
                 Email address for newsletter subscription
               </label>
@@ -234,9 +266,7 @@ export default function Footer() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             {/* Copyright */}
             <div className="text-sm text-gray-400">
-              <p>
-                © {currentYear} Botness Technologies Pvt Ltd. All rights reserved.
-              </p>
+              <p>© {currentYear} Botness Technologies Pvt Ltd. All rights reserved.</p>
             </div>
 
             {/* Legal Links */}
@@ -249,18 +279,14 @@ export default function Footer() {
                   >
                     {link.name}
                   </Link>
-                  {index < legalLinks.length - 1 && (
-                    <span className="text-gray-600">|</span>
-                  )}
+                  {index < legalLinks.length - 1 && <span className="text-gray-600">|</span>}
                 </React.Fragment>
               ))}
             </div>
 
             {/* Additional Info */}
             <div className="text-sm text-gray-400">
-              <p>
-                GST: 29ABCDE1234F1Z5 | CIN: U72900KA2020PTC123456
-              </p>
+              <p>GST: 29ABCDE1234F1Z5 | CIN: U72900KA2020PTC123456</p>
             </div>
           </div>
         </div>

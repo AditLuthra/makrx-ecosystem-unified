@@ -2,7 +2,13 @@
 
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
@@ -16,27 +22,29 @@ const Contact = () => {
     organization: '',
     subject: '',
     category: '',
-    message: ''
+    message: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     setIsSubmitting(false);
     setSubmitSuccess(true);
     setFormData({
@@ -45,7 +53,7 @@ const Contact = () => {
       organization: '',
       subject: '',
       category: '',
-      message: ''
+      message: '',
     });
   };
 
@@ -57,7 +65,7 @@ const Contact = () => {
     { value: 'technical', label: 'Technical Support' },
     { value: 'partnership', label: 'Partnership Opportunity' },
     { value: 'billing', label: 'Billing & Accounts' },
-    { value: 'feature', label: 'Feature Request' }
+    { value: 'feature', label: 'Feature Request' },
   ];
 
   const contactMethods = [
@@ -66,29 +74,29 @@ const Contact = () => {
       title: 'Email Support',
       description: 'Get help with technical issues and account management',
       contact: 'support@makrx.org',
-      availability: 'Response within 24 hours'
+      availability: 'Response within 24 hours',
     },
     {
       icon: <Phone className="h-6 w-6" />,
       title: 'Phone Support',
       description: 'Speak with our team for urgent matters',
       contact: '+1 (555) MAKRCAVE',
-      availability: 'Mon-Fri 9AM-5PM PST'
+      availability: 'Mon-Fri 9AM-5PM PST',
     },
     {
       icon: <Building className="h-6 w-6" />,
       title: 'Enterprise Sales',
       description: 'Custom solutions for institutions and large organizations',
       contact: 'enterprise@makrx.org',
-      availability: 'Dedicated account manager'
+      availability: 'Dedicated account manager',
     },
     {
       icon: <MessageSquare className="h-6 w-6" />,
       title: 'Community Discord',
       description: 'Join thousands of makers for real-time support',
       contact: 'Join Discord Server',
-      availability: '24/7 community support'
-    }
+      availability: '24/7 community support',
+    },
   ];
 
   return (
@@ -103,11 +111,20 @@ const Contact = () => {
               </div>
               <span className="text-2xl font-bold text-white">MakrCave</span>
             </Link>
-            
+
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link>
-              <Link href="/find-makerspace" className="text-white/80 hover:text-white transition-colors">Find Makerspace</Link>
-              <Link href="/contact" className="text-white hover:text-white font-semibold">Contact</Link>
+              <Link href="/" className="text-white/80 hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link
+                href="/find-makerspace"
+                className="text-white/80 hover:text-white transition-colors"
+              >
+                Find Makerspace
+              </Link>
+              <Link href="/contact" className="text-white hover:text-white font-semibold">
+                Contact
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">
@@ -133,7 +150,8 @@ const Contact = () => {
               </span>
             </h1>
             <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-              Have questions about MakrCave? Want to join the network? Need technical support? We're here to help.
+              Have questions about MakrCave? Want to join the network? Need technical support? We're
+              here to help.
             </p>
           </div>
         </div>
@@ -144,7 +162,10 @@ const Contact = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {contactMethods.map((method, idx) => (
-              <Card key={idx} className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300">
+              <Card
+                key={idx}
+                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300"
+              >
                 <CardHeader className="text-center">
                   <div className="text-blue-400 mb-4 flex justify-center">{method.icon}</div>
                   <CardTitle className="text-white text-lg">{method.title}</CardTitle>
@@ -174,7 +195,9 @@ const Contact = () => {
                   {submitSuccess ? (
                     <div className="text-center py-8">
                       <div className="text-green-400 text-6xl mb-4">✓</div>
-                      <h3 className="text-white text-xl font-semibold mb-2">Message Sent Successfully!</h3>
+                      <h3 className="text-white text-xl font-semibold mb-2">
+                        Message Sent Successfully!
+                      </h3>
                       <p className="text-white/70 mb-6">
                         Thank you for contacting us. We'll get back to you within 24 hours.
                       </p>
@@ -190,7 +213,9 @@ const Contact = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="name" className="text-white/80">Full Name *</Label>
+                          <Label htmlFor="name" className="text-white/80">
+                            Full Name *
+                          </Label>
                           <Input
                             id="name"
                             name="name"
@@ -202,7 +227,9 @@ const Contact = () => {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="email" className="text-white/80">Email Address *</Label>
+                          <Label htmlFor="email" className="text-white/80">
+                            Email Address *
+                          </Label>
                           <Input
                             id="email"
                             name="email"
@@ -218,7 +245,9 @@ const Contact = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="organization" className="text-white/80">Organization</Label>
+                          <Label htmlFor="organization" className="text-white/80">
+                            Organization
+                          </Label>
                           <Input
                             id="organization"
                             name="organization"
@@ -229,7 +258,9 @@ const Contact = () => {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="category" className="text-white/80">Category *</Label>
+                          <Label htmlFor="category" className="text-white/80">
+                            Category *
+                          </Label>
                           <select
                             id="category"
                             name="category"
@@ -238,9 +269,15 @@ const Contact = () => {
                             required
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <option value="" className="bg-slate-800">Select a category</option>
+                            <option value="" className="bg-slate-800">
+                              Select a category
+                            </option>
                             {contactCategories.map((category) => (
-                              <option key={category.value} value={category.value} className="bg-slate-800">
+                              <option
+                                key={category.value}
+                                value={category.value}
+                                className="bg-slate-800"
+                              >
                                 {category.label}
                               </option>
                             ))}
@@ -249,7 +286,9 @@ const Contact = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="subject" className="text-white/80">Subject *</Label>
+                        <Label htmlFor="subject" className="text-white/80">
+                          Subject *
+                        </Label>
                         <Input
                           id="subject"
                           name="subject"
@@ -262,7 +301,9 @@ const Contact = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="message" className="text-white/80">Message *</Label>
+                        <Label htmlFor="message" className="text-white/80">
+                          Message *
+                        </Label>
                         <Textarea
                           id="message"
                           name="message"

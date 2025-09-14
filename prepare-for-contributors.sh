@@ -15,7 +15,7 @@ mkdir -p scripts/shared
 
 # Create comprehensive .gitignore
 echo "📝 Creating comprehensive .gitignore..."
-cat > .gitignore << 'EOF'
+cat >.gitignore <<'EOF'
 # Dependencies
 node_modules/
 .pnp
@@ -160,7 +160,7 @@ echo "✅ Created comprehensive .gitignore"
 echo "🔧 Setting up cross-platform scripts..."
 
 # Create Windows batch files
-cat > scripts/windows/setup.bat << 'EOF'
+cat >scripts/windows/setup.bat <<'EOF'
 @echo off
 echo Setting up MakrX Ecosystem on Windows...
 
@@ -207,7 +207,7 @@ echo    3. Or start with Docker: docker-compose up
 EOF
 
 # Create Windows development script
-cat > scripts/windows/dev.bat << 'EOF'
+cat >scripts/windows/dev.bat <<'EOF'
 @echo off
 echo Starting MakrX Ecosystem development environment...
 
@@ -234,7 +234,7 @@ echo    - Check each window for startup status
 EOF
 
 # Create Unix setup script
-cat > scripts/unix/setup.sh << 'EOF'
+cat >scripts/unix/setup.sh <<'EOF'
 #!/bin/bash
 
 set -e
@@ -289,7 +289,7 @@ echo "   3. Or start with Docker: docker-compose up"
 EOF
 
 # Create Unix development script
-cat > scripts/unix/dev.sh << 'EOF'
+cat >scripts/unix/dev.sh <<'EOF'
 #!/bin/bash
 
 set -e

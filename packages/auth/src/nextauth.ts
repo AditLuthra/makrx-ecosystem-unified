@@ -1,18 +1,18 @@
-import { NextAuthOptions } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
-import { AuthConfig } from './types';
+import { NextAuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
+import { AuthConfig } from "./types";
 
 export function createNextAuthConfig(config: AuthConfig): NextAuthOptions {
   return {
     providers: [
       {
-        id: 'keycloak',
-        name: 'Keycloak',
-        type: 'oauth',
+        id: "keycloak",
+        name: "Keycloak",
+        type: "oauth",
         wellKnown: `${config.keycloakUrl}/realms/${config.realm}/.well-known/openid_configuration`,
         authorization: {
           params: {
-            scope: 'openid email profile',
+            scope: "openid email profile",
           },
         },
         clientId: config.clientId,
@@ -21,7 +21,8 @@ export function createNextAuthConfig(config: AuthConfig): NextAuthOptions {
         profile(profile) {
           return {
             id: profile.sub,
-            name: profile.name ?? `${profile.given_name} ${profile.family_name}`,
+            name:
+              profile.name ?? `${profile.given_name} ${profile.family_name}`,
             email: profile.email,
             image: profile.picture,
             roles: profile.realm_access?.roles || [],
@@ -39,7 +40,10 @@ export function createNextAuthConfig(config: AuthConfig): NextAuthOptions {
         }
 
         // Return previous token if the access token has not expired yet
-        if (token.expiresAt && Date.now() < (token.expiresAt as number) * 1000) {
+        if (
+          token.expiresAt &&
+          Date.now() < (token.expiresAt as number) * 1000
+        ) {
           return token;
         }
 
@@ -65,23 +69,23 @@ export function createNextAuthConfig(config: AuthConfig): NextAuthOptions {
             const response = await fetch(
               `${config.keycloakUrl}/realms/${config.realm}/protocol/openid-connect/logout`,
               {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
+                  "Content-Type": "application/x-www-form-urlencoded",
                 },
                 body: new URLSearchParams({
                   client_id: config.clientId,
                   client_secret: config.clientSecret!,
                   refresh_token: token.refreshToken as string,
                 }),
-              }
+              },
             );
-            
+
             if (!response.ok) {
-              throw new Error('Failed to logout from Keycloak');
+              throw new Error("Failed to logout from Keycloak");
             }
           } catch (error) {
-            console.error('Error logging out from Keycloak:', error);
+            console.error("Error logging out from Keycloak:", error);
           }
         }
       },
@@ -89,26 +93,29 @@ export function createNextAuthConfig(config: AuthConfig): NextAuthOptions {
   };
 }
 
-async function refreshAccessToken(token: JWT, config: AuthConfig): Promise<JWT> {
+async function refreshAccessToken(
+  token: JWT,
+  config: AuthConfig,
+): Promise<JWT> {
   try {
     const response = await fetch(
       `${config.keycloakUrl}/realms/${config.realm}/protocol/openid-connect/token`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           client_id: config.clientId,
           client_secret: config.clientSecret!,
-          grant_type: 'refresh_token',
+          grant_type: "refresh_token",
           refresh_token: token.refreshToken as string,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
-      throw new Error('Failed to refresh token');
+      throw new Error("Failed to refresh token");
     }
 
     const refreshedTokens = await response.json();
@@ -120,16 +127,16 @@ async function refreshAccessToken(token: JWT, config: AuthConfig): Promise<JWT> 
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
     };
   } catch (error) {
-    console.error('Error refreshing access token:', error);
+    console.error("Error refreshing access token:", error);
     return {
       ...token,
-      error: 'RefreshAccessTokenError',
+      error: "RefreshAccessTokenError",
     };
   }
 }
 
 // Type augmentation for NextAuth
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     accessToken?: string;
     error?: string;
@@ -147,7 +154,7 @@ declare module 'next-auth' {
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
     refreshToken?: string;

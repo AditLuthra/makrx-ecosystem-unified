@@ -6,56 +6,56 @@ import { Download, ExternalLink, Calendar, Users } from 'lucide-react';
 export default function Press() {
   const mediaKit = [
     {
-      name: "MakrX Logo Pack",
-      description: "High-resolution logos in various formats (PNG, SVG, EPS)",
-      size: "2.4 MB",
-      downloadUrl: "/press/makrx-logo-pack.zip"
+      name: 'MakrX Logo Pack',
+      description: 'High-resolution logos in various formats (PNG, SVG, EPS)',
+      size: '2.4 MB',
+      downloadUrl: '/press/makrx-logo-pack.zip',
     },
     {
-      name: "Product Screenshots",
-      description: "High-quality screenshots of all MakrX applications",
-      size: "15.8 MB",
-      downloadUrl: "/press/product-screenshots.zip"
+      name: 'Product Screenshots',
+      description: 'High-quality screenshots of all MakrX applications',
+      size: '15.8 MB',
+      downloadUrl: '/press/product-screenshots.zip',
     },
     {
-      name: "Company Fact Sheet",
-      description: "Key statistics, timeline, and company information",
-      size: "1.2 MB",
-      downloadUrl: "/press/makrx-fact-sheet.pdf"
+      name: 'Company Fact Sheet',
+      description: 'Key statistics, timeline, and company information',
+      size: '1.2 MB',
+      downloadUrl: '/press/makrx-fact-sheet.pdf',
     },
     {
-      name: "Executive Photos",
-      description: "Professional headshots of leadership team",
-      size: "8.5 MB",
-      downloadUrl: "/press/executive-photos.zip"
-    }
+      name: 'Executive Photos',
+      description: 'Professional headshots of leadership team',
+      size: '8.5 MB',
+      downloadUrl: '/press/executive-photos.zip',
+    },
   ];
 
   const mediaMentions = [
     {
-      publication: "TechCrunch India",
-      title: "MakrX Raises $5M to Democratize Digital Manufacturing in India",
-      date: "2024-01-20",
-      url: "#"
+      publication: 'TechCrunch India',
+      title: 'MakrX Raises $5M to Democratize Digital Manufacturing in India',
+      date: '2024-01-20',
+      url: '#',
     },
     {
-      publication: "The Economic Times",
+      publication: 'The Economic Times',
       title: "Startup Spotlight: How MakrX is Transforming India's Maker Ecosystem",
-      date: "2024-01-15",
-      url: "#"
+      date: '2024-01-15',
+      url: '#',
     },
     {
-      publication: "YourStory",
+      publication: 'YourStory',
       title: "From Idea to Reality: MakrX's Vision for Connected Makerspaces",
-      date: "2024-01-10",
-      url: "#"
+      date: '2024-01-10',
+      url: '#',
     },
     {
-      publication: "Inc42",
+      publication: 'Inc42',
       title: "The Future of Manufacturing: MakrX's Digital-First Approach",
-      date: "2024-01-05",
-      url: "#"
-    }
+      date: '2024-01-05',
+      url: '#',
+    },
   ];
 
   const companyBoilerplate = `MakrX is India's leading digital manufacturing platform that connects creators, makerspaces, and service providers through an integrated ecosystem of tools and services. Founded in 2023, MakrX operates MakrCave (makerspace management), MakrX.Store (marketplace for tools and components), and 3D.MakrX.Store (custom fabrication platform).
@@ -89,8 +89,8 @@ Key Statistics:
             Press & Media
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto mb-8">
-            Resources, news, and updates about MakrX. For media inquiries, 
-            please contact our press team at press@makrx.org
+            Resources, news, and updates about MakrX. For media inquiries, please contact our press
+            team at press@makrx.org
           </p>
           <div className="text-center">
             <a
@@ -106,12 +106,19 @@ Key Statistics:
       {/* Press Kit */}
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Media Kit</h2>
-          
+          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">
+            Media Kit
+          </h2>
+
           <div className="grid md:grid-cols-2 gap-8">
             {mediaKit.map((item, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{item.name}</h3>
+              <div
+                key={index}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
+              >
+                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+                  {item.name}
+                </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">{item.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500 dark:text-gray-400">{item.size}</span>
@@ -132,8 +139,10 @@ Key Statistics:
       {/* Company Boilerplate */}
       <section className="py-20 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Company Boilerplate</h2>
-          
+          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">
+            Company Boilerplate
+          </h2>
+
           <div className="max-w-4xl mx-auto">
             <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-8">
               <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
@@ -155,11 +164,16 @@ Key Statistics:
       {/* Recent Media Mentions */}
       <section className="py-20 bg-gray-100 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Recent Media Mentions</h2>
-          
+          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">
+            Recent Media Mentions
+          </h2>
+
           <div className="space-y-6">
             {mediaMentions.map((mention, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <div
+                key={index}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
+              >
                 <div className="flex flex-col md:flex-row md:items-center justify-between">
                   <div className="flex-1 mb-4 md:mb-0">
                     <div className="flex items-center gap-3 mb-2">
@@ -169,9 +183,11 @@ Key Statistics:
                         {new Date(mention.date).toLocaleDateString()}
                       </div>
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">{mention.title}</h3>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                      {mention.title}
+                    </h3>
                   </div>
-                  
+
                   <div className="md:ml-8">
                     <a
                       href={mention.url}
@@ -191,17 +207,22 @@ Key Statistics:
       {/* Leadership Team */}
       <section className="py-20 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Leadership Team</h2>
-          
+          <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">
+            Leadership Team
+          </h2>
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-32 h-32 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Users className="w-12 h-12 text-gray-400 dark:text-gray-500" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Adit Luthra</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Adit Luthra
+              </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">Founder & CEO</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Former product leader with 10+ years experience in digital platforms and manufacturing technology.
+                Former product leader with 10+ years experience in digital platforms and
+                manufacturing technology.
               </p>
             </div>
 
@@ -209,10 +230,13 @@ Key Statistics:
               <div className="w-32 h-32 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Users className="w-12 h-12 text-gray-400 dark:text-gray-500" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Dr. Priya Sharma</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Dr. Priya Sharma
+              </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">CTO</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                PhD in Computer Science, expert in distributed systems and IoT platforms for industrial applications.
+                PhD in Computer Science, expert in distributed systems and IoT platforms for
+                industrial applications.
               </p>
             </div>
 
@@ -220,10 +244,13 @@ Key Statistics:
               <div className="w-32 h-32 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Users className="w-12 h-12 text-gray-400 dark:text-gray-500" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Rajesh Kumar</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Rajesh Kumar
+              </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">VP of Operations</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                15+ years in supply chain and operations, previously led manufacturing operations at major tech companies.
+                15+ years in supply chain and operations, previously led manufacturing operations at
+                major tech companies.
               </p>
             </div>
           </div>
@@ -233,9 +260,7 @@ Key Statistics:
       {/* Contact Section */}
       <section className="py-20 bg-makrx-blue dark:bg-gray-900">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Media Inquiries
-          </h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Media Inquiries</h2>
           <p className="text-xl text-white/90 mb-8">
             For interviews, comments, or additional information, please reach out to our press team.
           </p>

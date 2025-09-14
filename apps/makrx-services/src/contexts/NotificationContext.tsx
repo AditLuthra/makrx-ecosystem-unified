@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode } from "react";
 
 export interface Notification {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   title: string;
   message: string;
   duration?: number;
@@ -19,31 +19,36 @@ interface NotificationState {
   notifications: Notification[];
 }
 
-type NotificationAction = 
-  | { type: 'ADD_NOTIFICATION'; payload: Notification }
-  | { type: 'REMOVE_NOTIFICATION'; payload: string }
-  | { type: 'CLEAR_ALL' };
+type NotificationAction =
+  | { type: "ADD_NOTIFICATION"; payload: Notification }
+  | { type: "REMOVE_NOTIFICATION"; payload: string }
+  | { type: "CLEAR_ALL" };
 
 const initialState: NotificationState = {
-  notifications: []
+  notifications: [],
 };
 
-function notificationReducer(state: NotificationState, action: NotificationAction): NotificationState {
+function notificationReducer(
+  state: NotificationState,
+  action: NotificationAction,
+): NotificationState {
   switch (action.type) {
-    case 'ADD_NOTIFICATION':
+    case "ADD_NOTIFICATION":
       return {
         ...state,
-        notifications: [action.payload, ...state.notifications]
+        notifications: [action.payload, ...state.notifications],
       };
-    case 'REMOVE_NOTIFICATION':
+    case "REMOVE_NOTIFICATION":
       return {
         ...state,
-        notifications: state.notifications.filter(n => n.id !== action.payload)
+        notifications: state.notifications.filter(
+          (n) => n.id !== action.payload,
+        ),
       };
-    case 'CLEAR_ALL':
+    case "CLEAR_ALL":
       return {
         ...state,
-        notifications: []
+        notifications: [],
       };
     default:
       return state;
@@ -52,7 +57,9 @@ function notificationReducer(state: NotificationState, action: NotificationActio
 
 interface NotificationContextType {
   notifications: Notification[];
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
+  addNotification: (
+    notification: Omit<Notification, "id" | "timestamp">,
+  ) => void;
   removeNotification: (id: string) => void;
   clearAll: () => void;
   success: (title: string, message: string, duration?: number) => void;
@@ -61,51 +68,55 @@ interface NotificationContextType {
   info: (title: string, message: string, duration?: number) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(notificationReducer, initialState);
 
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp'>) => {
+  const addNotification = (
+    notification: Omit<Notification, "id" | "timestamp">,
+  ) => {
     const newNotification: Notification = {
       ...notification,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification });
+    dispatch({ type: "ADD_NOTIFICATION", payload: newNotification });
 
     // Auto-remove after duration (default 5 seconds)
     const duration = notification.duration || 5000;
     if (duration > 0) {
       setTimeout(() => {
-        dispatch({ type: 'REMOVE_NOTIFICATION', payload: newNotification.id });
+        dispatch({ type: "REMOVE_NOTIFICATION", payload: newNotification.id });
       }, duration);
     }
   };
 
   const removeNotification = (id: string) => {
-    dispatch({ type: 'REMOVE_NOTIFICATION', payload: id });
+    dispatch({ type: "REMOVE_NOTIFICATION", payload: id });
   };
 
   const clearAll = () => {
-    dispatch({ type: 'CLEAR_ALL' });
+    dispatch({ type: "CLEAR_ALL" });
   };
 
   const success = (title: string, message: string, duration?: number) => {
-    addNotification({ type: 'success', title, message, duration });
+    addNotification({ type: "success", title, message, duration });
   };
 
   const error = (title: string, message: string, duration?: number) => {
-    addNotification({ type: 'error', title, message, duration });
+    addNotification({ type: "error", title, message, duration });
   };
 
   const warning = (title: string, message: string, duration?: number) => {
-    addNotification({ type: 'warning', title, message, duration });
+    addNotification({ type: "warning", title, message, duration });
   };
 
   const info = (title: string, message: string, duration?: number) => {
-    addNotification({ type: 'info', title, message, duration });
+    addNotification({ type: "info", title, message, duration });
   };
 
   return (
@@ -118,7 +129,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         success,
         error,
         warning,
-        info
+        info,
       }}
     >
       {children}
@@ -129,7 +140,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 export function useNotifications() {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider",
+    );
   }
   return context;
 }

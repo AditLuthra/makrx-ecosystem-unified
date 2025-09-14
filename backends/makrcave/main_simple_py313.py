@@ -13,7 +13,7 @@ from typing import Dict, Any
 app = FastAPI(
     title="MakrX Backend",
     description="Simple backend for MakrX ecosystem",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS middleware
@@ -25,6 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def root():
     """Root endpoint"""
@@ -33,8 +34,9 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "python_version": "3.13",
-        "compatibility_mode": True
+        "compatibility_mode": True,
     }
+
 
 @app.get("/health")
 async def health_check():
@@ -43,8 +45,9 @@ async def health_check():
         "status": "healthy",
         "timestamp": "2025-01-04T12:00:00Z",
         "database": "simulated",
-        "cache": "simulated"
+        "cache": "simulated",
     }
+
 
 @app.get("/api/products")
 async def get_products():
@@ -55,39 +58,32 @@ async def get_products():
                 "id": 1,
                 "name": "Sample Product",
                 "price": 99.99,
-                "description": "This is a sample product"
+                "description": "This is a sample product",
             }
         ],
         "total": 1,
         "page": 1,
-        "per_page": 10
+        "per_page": 10,
     }
+
 
 @app.get("/api/categories")
 async def get_categories():
     """Mock categories endpoint"""
-    return [
-        {
-            "id": 1,
-            "name": "Electronics",
-            "slug": "electronics"
-        }
-    ]
+    return [{"id": 1, "name": "Electronics", "slug": "electronics"}]
+
 
 @app.post("/api/cart/items")
 async def add_to_cart():
     """Mock add to cart endpoint"""
     return {"message": "Item added to cart"}
 
+
 @app.get("/api/cart")
 async def get_cart():
     """Mock cart endpoint"""
-    return {
-        "id": "cart-1",
-        "items": [],
-        "total": 0,
-        "currency": "USD"
-    }
+    return {"id": "cart-1", "items": [], "total": 0, "currency": "USD"}
+
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8001))
@@ -96,5 +92,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=True,
-        log_level="info"
+        log_level="info",
     )

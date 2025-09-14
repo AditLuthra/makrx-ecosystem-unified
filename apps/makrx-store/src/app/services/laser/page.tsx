@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Upload,
   Zap,
@@ -11,7 +11,7 @@ import {
   DollarSign,
   Truck,
   Palette,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Material {
   name: string;
@@ -32,129 +32,80 @@ interface ServiceType {
 
 const materials: Material[] = [
   {
-    name: "Acrylic (PMMA)",
-    description: "Crystal clear, colorful options, excellent edge finish",
-    maxThickness: "25mm",
+    name: 'Acrylic (PMMA)',
+    description: 'Crystal clear, colorful options, excellent edge finish',
+    maxThickness: '25mm',
     pricePerSqIn: 0.15,
-    colors: [
-      "Clear",
-      "Black",
-      "White",
-      "Red",
-      "Blue",
-      "Green",
-      "Yellow",
-      "Orange",
-    ],
-    properties: [
-      "Optical clarity",
-      "UV resistant",
-      "Easy to clean",
-      "Flame polished edges",
-    ],
+    colors: ['Clear', 'Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Orange'],
+    properties: ['Optical clarity', 'UV resistant', 'Easy to clean', 'Flame polished edges'],
   },
   {
-    name: "Wood (Plywood)",
-    description: "Natural material, great for decorative items",
-    maxThickness: "20mm",
+    name: 'Wood (Plywood)',
+    description: 'Natural material, great for decorative items',
+    maxThickness: '20mm',
     pricePerSqIn: 0.12,
-    colors: ["Natural Birch", "Natural Oak", "Natural Walnut", "Cherry"],
-    properties: [
-      "Eco-friendly",
-      "Easy to finish",
-      "Laser burns beautifully",
-      "Natural grain",
-    ],
+    colors: ['Natural Birch', 'Natural Oak', 'Natural Walnut', 'Cherry'],
+    properties: ['Eco-friendly', 'Easy to finish', 'Laser burns beautifully', 'Natural grain'],
   },
   {
-    name: "MDF",
-    description: "Smooth surface, cost-effective, paint ready",
-    maxThickness: "15mm",
+    name: 'MDF',
+    description: 'Smooth surface, cost-effective, paint ready',
+    maxThickness: '15mm',
     pricePerSqIn: 0.08,
-    colors: ["Natural", "White primer"],
-    properties: [
-      "Smooth surface",
-      "Cost effective",
-      "Paint ready",
-      "Consistent density",
-    ],
+    colors: ['Natural', 'White primer'],
+    properties: ['Smooth surface', 'Cost effective', 'Paint ready', 'Consistent density'],
   },
   {
-    name: "Stainless Steel",
-    description: "Durable, corrosion resistant, industrial applications",
-    maxThickness: "3mm",
+    name: 'Stainless Steel',
+    description: 'Durable, corrosion resistant, industrial applications',
+    maxThickness: '3mm',
     pricePerSqIn: 0.45,
-    colors: ["Natural", "Brushed"],
-    properties: [
-      "Corrosion resistant",
-      "High strength",
-      "Food safe",
-      "Heat resistant",
-    ],
+    colors: ['Natural', 'Brushed'],
+    properties: ['Corrosion resistant', 'High strength', 'Food safe', 'Heat resistant'],
   },
   {
-    name: "Aluminum",
-    description: "Lightweight, excellent for signage and parts",
-    maxThickness: "6mm",
+    name: 'Aluminum',
+    description: 'Lightweight, excellent for signage and parts',
+    maxThickness: '6mm',
     pricePerSqIn: 0.35,
-    colors: ["Natural", "Anodized Black", "Anodized Silver"],
-    properties: [
-      "Lightweight",
-      "Corrosion resistant",
-      "Recyclable",
-      "Good conductivity",
-    ],
+    colors: ['Natural', 'Anodized Black', 'Anodized Silver'],
+    properties: ['Lightweight', 'Corrosion resistant', 'Recyclable', 'Good conductivity'],
   },
   {
-    name: "Cardboard/Paper",
-    description: "Perfect for prototyping and packaging",
-    maxThickness: "5mm",
+    name: 'Cardboard/Paper',
+    description: 'Perfect for prototyping and packaging',
+    maxThickness: '5mm',
     pricePerSqIn: 0.05,
-    colors: ["Natural", "White", "Black", "Kraft"],
-    properties: [
-      "Eco-friendly",
-      "Cost effective",
-      "Easy to fold",
-      "Recyclable",
-    ],
+    colors: ['Natural', 'White', 'Black', 'Kraft'],
+    properties: ['Eco-friendly', 'Cost effective', 'Easy to fold', 'Recyclable'],
   },
 ];
 
 const serviceTypes: ServiceType[] = [
   {
-    name: "Cutting Only",
-    description: "Precise cutting without engraving",
+    name: 'Cutting Only',
+    description: 'Precise cutting without engraving',
     icon: Zap,
     priceMultiplier: 1.0,
-    capabilities: [
-      "Clean cuts",
-      "Complex shapes",
-      "Tight tolerances",
-      "Smooth edges",
-    ],
+    capabilities: ['Clean cuts', 'Complex shapes', 'Tight tolerances', 'Smooth edges'],
   },
   {
-    name: "Engraving Only",
-    description: "Surface engraving and marking",
+    name: 'Engraving Only',
+    description: 'Surface engraving and marking',
     icon: Palette,
     priceMultiplier: 0.8,
-    capabilities: [
-      "Text engraving",
-      "Logo marking",
-      "Photo engraving",
-      "Serial numbers",
-    ],
+    capabilities: ['Text engraving', 'Logo marking', 'Photo engraving', 'Serial numbers'],
   },
   {
-    name: "Cut + Engrave",
-    description: "Combined cutting and engraving service",
+    name: 'Cut + Engrave',
+    description: 'Combined cutting and engraving service',
     icon: Layers,
     priceMultiplier: 1.4,
     capabilities: [
-      "Complete projects",
-      "Multiple operations",
-      "Complex designs",
-      "Batch processing",
+      'Complete projects',
+      'Multiple operations',
+      'Complex designs',
+      'Batch processing',
     ],
   },
 ];
@@ -163,22 +114,21 @@ export default function LaserCuttingPage() {
   const [selectedMaterial, setSelectedMaterial] = useState(materials[0]);
   const [selectedService, setSelectedService] = useState(serviceTypes[0]);
   const [selectedColor, setSelectedColor] = useState(materials[0].colors[0]);
-  const [thickness, setThickness] = useState("3mm");
+  const [thickness, setThickness] = useState('3mm');
   const [dimensions, setDimensions] = useState({ width: 100, height: 100 });
   const [quantity, setQuantity] = useState(1);
   const [dragActive, setDragActive] = useState(false);
 
   const area = (dimensions.width * dimensions.height) / 645.16; // Convert mm² to sq in
-  const materialCost =
-    area * selectedMaterial.pricePerSqIn * selectedService.priceMultiplier;
+  const materialCost = area * selectedMaterial.pricePerSqIn * selectedService.priceMultiplier;
   const totalPrice = Math.round(materialCost * quantity * 100) / 100;
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -189,7 +139,7 @@ export default function LaserCuttingPage() {
     setDragActive(false);
 
     const files = Array.from(e.dataTransfer.files);
-    console.log("Files dropped:", files);
+    console.log('Files dropped:', files);
   };
 
   return (
@@ -207,9 +157,8 @@ export default function LaserCuttingPage() {
               Laser Cutting & Engraving
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              High-precision laser cutting and engraving services for a wide
-              range of materials. From prototypes to production runs with
-              same-day turnaround available.
+              High-precision laser cutting and engraving services for a wide range of materials.
+              From prototypes to production runs with same-day turnaround available.
             </p>
           </div>
         </div>
@@ -227,8 +176,8 @@ export default function LaserCuttingPage() {
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragActive
-                    ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20"
-                    : "border-gray-300 dark:border-gray-600"
+                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                    : 'border-gray-300 dark:border-gray-600'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -252,17 +201,9 @@ export default function LaserCuttingPage() {
                   Design Requirements:
                 </h3>
                 <ul className="text-sm text-orange-700 dark:text-orange-400 space-y-1">
-                  <li>
-                    • Vector files preferred for best quality (AI, EPS, SVG,
-                    DXF)
-                  </li>
-                  <li>
-                    • Minimum feature size: 0.1mm for cutting, 0.5mm for
-                    engraving
-                  </li>
-                  <li>
-                    • Use RGB colors: Red for cutting, Black for engraving
-                  </li>
+                  <li>• Vector files preferred for best quality (AI, EPS, SVG, DXF)</li>
+                  <li>• Minimum feature size: 0.1mm for cutting, 0.5mm for engraving</li>
+                  <li>• Use RGB colors: Red for cutting, Black for engraving</li>
                   <li>• Convert text to curves/outlines before uploading</li>
                 </ul>
               </div>
@@ -281,8 +222,8 @@ export default function LaserCuttingPage() {
                       key={service.name}
                       className={`border rounded-lg p-4 cursor-pointer transition-all ${
                         selectedService.name === service.name
-                          ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20"
-                          : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
                       }`}
                       onClick={() => setSelectedService(service)}
                     >
@@ -295,16 +236,14 @@ export default function LaserCuttingPage() {
                           {service.description}
                         </p>
                         <div className="space-y-1">
-                          {service.capabilities
-                            .slice(0, 2)
-                            .map((capability) => (
-                              <div
-                                key={capability}
-                                className="text-xs text-gray-500 dark:text-gray-400"
-                              >
-                                • {capability}
-                              </div>
-                            ))}
+                          {service.capabilities.slice(0, 2).map((capability) => (
+                            <div
+                              key={capability}
+                              className="text-xs text-gray-500 dark:text-gray-400"
+                            >
+                              • {capability}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -324,8 +263,8 @@ export default function LaserCuttingPage() {
                     key={material.name}
                     className={`border rounded-lg p-4 cursor-pointer transition-all ${
                       selectedMaterial.name === material.name
-                        ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => {
                       setSelectedMaterial(material);
@@ -463,36 +402,26 @@ export default function LaserCuttingPage() {
 
                 <div className="border-t dark:border-gray-600 pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Material:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Material:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {selectedMaterial.name}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Service:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Service:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {selectedService.name}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Size:
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Size:</span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {dimensions.width}×{dimensions.height}mm
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Thickness:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {thickness}
-                    </span>
+                    <span className="text-gray-600 dark:text-gray-300">Thickness:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{thickness}</span>
                   </div>
                 </div>
 
@@ -547,8 +476,8 @@ export default function LaserCuttingPage() {
                 High Precision
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Achieve cutting tolerances of ±0.1mm with smooth, flame-polished
-                edges on a wide range of materials up to 25mm thick.
+                Achieve cutting tolerances of ±0.1mm with smooth, flame-polished edges on a wide
+                range of materials up to 25mm thick.
               </p>
             </div>
             <div className="text-center">
@@ -559,9 +488,8 @@ export default function LaserCuttingPage() {
                 Material Variety
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Cut and engrave wood, acrylic, metals, leather, textiles, and
-                more with specialized settings for optimal results on each
-                material.
+                Cut and engrave wood, acrylic, metals, leather, textiles, and more with specialized
+                settings for optimal results on each material.
               </p>
             </div>
             <div className="text-center">
@@ -572,8 +500,8 @@ export default function LaserCuttingPage() {
                 Fast Turnaround
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Same-day service available for simple cuts, with most projects
-                completed within 1-3 business days including complex engraving.
+                Same-day service available for simple cuts, with most projects completed within 1-3
+                business days including complex engraving.
               </p>
             </div>
           </div>

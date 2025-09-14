@@ -18,44 +18,44 @@ graph TB
         MS[MakrX Store<br/>:3003]
         ME[MakrX Events<br/>:3004]
     end
-    
+
     subgraph "Backend Services"
         MCB[MakrCave API<br/>:8001]
         MEB[Events API<br/>:8002]
         MSB[Store API<br/>:8003]
     end
-    
+
     subgraph "Infrastructure"
         KC[Keycloak<br/>:8081]
         PG[PostgreSQL<br/>:5433]
         RD[Redis<br/>:6380]
         MN[MinIO<br/>:9002]
     end
-    
+
     subgraph "Shared Packages"
         AU[Auth Package]
         UI[Shared UI]
         TY[Types Package]
     end
-    
+
     GF --> KC
     GH --> KC
     MC --> MCB
     MS --> MSB
     ME --> MEB
-    
+
     MCB --> PG
     MEB --> PG
     MSB --> PG
-    
+
     MCB --> RD
     MEB --> RD
     MSB --> RD
-    
+
     MC --> AU
     MS --> AU
     ME --> AU
-    
+
     MC --> UI
     MS --> UI
     ME --> UI
@@ -86,20 +86,24 @@ scripts\windows\setup.bat
 ### Manual Setup
 
 1. **Install Dependencies**
+
    ```bash
    npm ci --legacy-peer-deps
    ```
 
 2. **Environment Configuration (Secrets Policy)**
-    ```bash
-    cp .env.example .env
-    # Edit .env with your configuration
-    ```
-    - Do not commit real secrets. Only `.env.example` should contain sample values.
-    - Backend services also include per-service `.env.example` files (see `backends/*/.env.example`).
-    - The repo’s `.gitignore` excludes `.env*` by default.
+
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+   - Do not commit real secrets. Only `.env.example` should contain sample values.
+   - Backend services also include per-service `.env.example` files (see `backends/*/.env.example`).
+   - The repo’s `.gitignore` excludes `.env*` by default.
 
 3. **Start Infrastructure**
+
    ```bash
    docker-compose up -d
    ```
@@ -113,30 +117,30 @@ scripts\windows\setup.bat
 
 ### Frontend Applications
 
-| Application | Port | Description | Technology |
-|-------------|------|-------------|------------|
-| **Gateway Frontend** | 3000 | Main landing and gateway | Next.js 14 |
-| **Gateway Hacker** | 3001 | Developer-focused interface | Next.js 14 |
-| **MakrCave** | 3002 | Event management platform | Next.js 14 |
-| **MakrX Store** | 3003 | Marketplace platform | Next.js 14 |
-| **MakrX Events** | 3004 | Event discovery and management | Next.js 14 |
+| Application          | Port | Description                    | Technology |
+| -------------------- | ---- | ------------------------------ | ---------- |
+| **Gateway Frontend** | 3000 | Main landing and gateway       | Next.js 14 |
+| **Gateway Hacker**   | 3001 | Developer-focused interface    | Next.js 14 |
+| **MakrCave**         | 3002 | Event management platform      | Next.js 14 |
+| **MakrX Store**      | 3003 | Marketplace platform           | Next.js 14 |
+| **MakrX Events**     | 3004 | Event discovery and management | Next.js 14 |
 
 ### Backend Services
 
-| Service | Port | Description | Technology |
-|---------|------|-------------|------------|
+| Service          | Port | Description              | Technology       |
+| ---------------- | ---- | ------------------------ | ---------------- |
 | **MakrCave API** | 8001 | Event management backend | FastAPI (Python) |
-| **Events API** | 8002 | Events backend API | FastAPI (Python) |
-| **Store API** | 8003 | Marketplace backend | FastAPI (Python) |
+| **Events API**   | 8002 | Events backend API       | FastAPI (Python) |
+| **Store API**    | 8003 | Marketplace backend      | FastAPI (Python) |
 
 ### Infrastructure Services
 
-| Service | Port | Description |
-|---------|------|-------------|
-| **Keycloak** | 8081 | Authentication & Authorization |
-| **PostgreSQL** | 5433 | Primary database |
-| **Redis** | 6380 | Caching & sessions |
-| **MinIO** | 9002 | Object storage |
+| Service        | Port | Description                    |
+| -------------- | ---- | ------------------------------ |
+| **Keycloak**   | 8081 | Authentication & Authorization |
+| **PostgreSQL** | 5433 | Primary database               |
+| **Redis**      | 6380 | Caching & sessions             |
+| **MinIO**      | 9002 | Object storage                 |
 
 ## 🛠️ Development
 
@@ -231,13 +235,14 @@ The ecosystem uses **Keycloak** for centralized authentication and authorization
 The ecosystem uses a **shared PostgreSQL database** with service-specific schemas:
 
 - `makrcave_*`: Event management tables
-- `store_*`: Marketplace tables  
+- `store_*`: Marketplace tables
 - `events_*`: Event processing tables
 - `auth_*`: User and authentication data
 
 ## 🚀 Deployment
 
 ### Development
+
 ```bash
 docker-compose up -d
 npm run dev
@@ -250,16 +255,19 @@ npm run dev
 - Use nonces/hashes for any exceptional inline requirements.
 
 ### Staging
+
 ```bash
 docker-compose -f docker-compose.staging.yml up -d
 ```
 
 ### Production
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ### Kubernetes
+
 ```bash
 kubectl apply -f k8s/
 ```
@@ -277,21 +285,25 @@ See `BACKENDS_CONVENTIONS.md` and `backends/makrcave/README.md` for details.
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 npm run test:unit
 ```
 
 ### Integration Tests
+
 ```bash
 npm run test:integration
 ```
 
 ### End-to-End Tests
+
 ```bash
 npm run test:e2e
 ```
 
 ### Load Testing
+
 ```bash
 npm run test:load
 ```
@@ -301,7 +313,7 @@ npm run test:load
 Access monitoring dashboards:
 
 - **Grafana**: http://localhost:3005
-- **Prometheus**: http://localhost:9090  
+- **Prometheus**: http://localhost:9090
 - **Jaeger**: http://localhost:16686
 
 ## 🤝 Contributing
@@ -333,7 +345,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 # Database
 DATABASE_URL=postgresql://makrx:password@localhost:5433/makrx_ecosystem
 
-# Redis  
+# Redis
 REDIS_URL=redis://localhost:6380
 
 # Keycloak
@@ -366,7 +378,7 @@ See the consolidated [Documentation Index](docs/README.md) for environment varia
 
 - Never commit real secrets — only use `.env` locally and `.env.example` in git.
 - Rotate credentials if accidental commits occur and scrub history where possible.
-  
+
 See [SECURITY.md](SECURITY.md) for disclosure and security practices.
 
 ## 🐛 Troubleshooting
@@ -374,16 +386,19 @@ See [SECURITY.md](SECURITY.md) for disclosure and security practices.
 ### Common Issues
 
 **Port conflicts**: Check if services are already running
+
 ```bash
 lsof -i :3000  # Check if port 3000 is in use
 ```
 
 **Database connection**: Ensure PostgreSQL is running
+
 ```bash
 docker-compose logs postgres
 ```
 
 **Keycloak issues**: Restart Keycloak service
+
 ```bash
 docker-compose restart keycloak
 ```
@@ -394,7 +409,7 @@ See [Documentation Index](docs/README.md) for troubleshooting guides.
 
 - Documentation Index: `docs/README.md`
 - Contributing Guide: `CONTRIBUTING.md`
-  
+
 Legacy guides from prior repos are available under `docs/*`.
 
 ## 📄 License

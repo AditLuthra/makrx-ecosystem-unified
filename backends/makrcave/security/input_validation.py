@@ -56,9 +56,22 @@ class InputSanitizer:
     def sanitize_html(cls, text: str, allowed_tags: List[str] = None) -> str:
         if not text:
             return ""
-        allowed = allowed_tags or ["b", "i", "u", "em", "strong", "p", "br", "ul", "ol", "li"]
+        allowed = allowed_tags or [
+            "b",
+            "i",
+            "u",
+            "em",
+            "strong",
+            "p",
+            "br",
+            "ul",
+            "ol",
+            "li",
+        ]
         if bleach:
-            return bleach.clean(text, tags=allowed, attributes={"*": ["class"]}, strip=True)
+            return bleach.clean(
+                text, tags=allowed, attributes={"*": ["class"]}, strip=True
+            )
         # Fallback: basic escape + strip risky patterns
         sanitized = html.escape(text)
         for pattern in cls.XSS_PATTERNS:
@@ -82,7 +95,7 @@ class InputSanitizer:
         for pattern in cls.PATH_TRAVERSAL_PATTERNS:
             sanitized = re.sub(pattern, "", sanitized, flags=re.IGNORECASE)
         sanitized = re.sub(r'[<>:"/\\|?*]', "", sanitized)
-        sanitized = sanitized.strip('. ')
+        sanitized = sanitized.strip(". ")
         return sanitized[:255]
 
     @classmethod
@@ -90,5 +103,7 @@ class InputSanitizer:
         if not text:
             return False
         text_lower = text.lower()
-        return any(re.search(p, text_lower, flags=re.IGNORECASE) for p in cls.SQL_INJECTION_PATTERNS)
-
+        return any(
+            re.search(p, text_lower, flags=re.IGNORECASE)
+            for p in cls.SQL_INJECTION_PATTERNS
+        )

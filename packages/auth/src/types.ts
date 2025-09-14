@@ -13,7 +13,7 @@ export interface UserOrganization {
   id: string;
   name: string;
   slug: string;
-  role: 'owner' | 'admin' | 'manager' | 'member';
+  role: "owner" | "admin" | "manager" | "member";
 }
 
 export interface AuthConfig {
@@ -47,7 +47,10 @@ export interface AuthState {
 }
 
 export type AuthAction =
-  | { type: 'LOGIN_SUCCESS'; payload: { user: MakrXUser; token: string; refreshToken: string } }
-  | { type: 'LOGOUT' }
-  | { type: 'REFRESH_TOKEN'; payload: { token: string; refreshToken: string } }
-  | { type: 'UPDATE_USER'; payload: Partial<MakrXUser> };
+  | {
+      type: "LOGIN_SUCCESS";
+      payload: { user: MakrXUser; token: string; refreshToken: string };
+    }
+  | { type: "LOGOUT" }
+  | { type: "REFRESH_TOKEN"; payload: { token: string; refreshToken: string } }
+  | { type: "UPDATE_USER"; payload: Partial<MakrXUser> };

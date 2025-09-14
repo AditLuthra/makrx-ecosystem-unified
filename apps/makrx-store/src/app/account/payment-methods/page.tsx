@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { 
-  CreditCard, 
-  Plus, 
-  Trash2, 
-  Edit3, 
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+  CreditCard,
+  Plus,
+  Trash2,
+  Edit3,
   Shield,
   ArrowLeft,
   Check,
   AlertTriangle,
   Lock,
-  Star
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/contexts/NotificationContext";
+  Star,
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 interface PaymentMethod {
   id: string;
@@ -37,12 +37,14 @@ export default function PaymentMethodsPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { addNotification } = useNotifications();
-  
+
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newMethodType, setNewMethodType] = useState<'card' | 'upi' | 'netbanking' | 'wallet'>('card');
+  const [newMethodType, setNewMethodType] = useState<'card' | 'upi' | 'netbanking' | 'wallet'>(
+    'card',
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -58,36 +60,36 @@ export default function PaymentMethodsPage() {
       // Mock API call - replace with actual API
       const mockPaymentMethods: PaymentMethod[] = [
         {
-          id: "pm_1",
-          type: "card",
-          nickname: "Personal Visa",
-          card_last_four: "4242",
-          card_brand: "visa",
-          card_expiry: "12/26",
+          id: 'pm_1',
+          type: 'card',
+          nickname: 'Personal Visa',
+          card_last_four: '4242',
+          card_brand: 'visa',
+          card_expiry: '12/26',
           is_default: true,
           created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
-          last_used: new Date(Date.now() - 86400000 * 2).toISOString()
+          last_used: new Date(Date.now() - 86400000 * 2).toISOString(),
         },
         {
-          id: "pm_2",
-          type: "upi",
-          nickname: "Main UPI",
-          upi_id: "user@paytm",
+          id: 'pm_2',
+          type: 'upi',
+          nickname: 'Main UPI',
+          upi_id: 'user@paytm',
           is_default: false,
           created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
-          last_used: new Date(Date.now() - 86400000 * 5).toISOString()
+          last_used: new Date(Date.now() - 86400000 * 5).toISOString(),
         },
         {
-          id: "pm_3",
-          type: "card",
-          card_last_four: "8765",
-          card_brand: "mastercard",
-          card_expiry: "09/25",
+          id: 'pm_3',
+          type: 'card',
+          card_last_four: '8765',
+          card_brand: 'mastercard',
+          card_expiry: '09/25',
           is_default: false,
-          created_at: new Date(Date.now() - 86400000 * 60).toISOString()
-        }
+          created_at: new Date(Date.now() - 86400000 * 60).toISOString(),
+        },
       ];
-      
+
       setTimeout(() => {
         setPaymentMethods(mockPaymentMethods);
         setLoading(false);
@@ -101,28 +103,30 @@ export default function PaymentMethodsPage() {
 
   const deletePaymentMethod = async (methodId: string) => {
     if (!confirm('Are you sure you want to remove this payment method?')) return;
-    
-    setDeleting(prev => ({ ...prev, [methodId]: true }));
+
+    setDeleting((prev) => ({ ...prev, [methodId]: true }));
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setPaymentMethods(prev => prev.filter(method => method.id !== methodId));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setPaymentMethods((prev) => prev.filter((method) => method.id !== methodId));
       addNotification('Payment method removed', 'success');
     } catch (error) {
       addNotification('Failed to remove payment method', 'error');
     } finally {
-      setDeleting(prev => ({ ...prev, [methodId]: false }));
+      setDeleting((prev) => ({ ...prev, [methodId]: false }));
     }
   };
 
   const setDefaultPaymentMethod = async (methodId: string) => {
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      setPaymentMethods(prev => prev.map(method => ({
-        ...method,
-        is_default: method.id === methodId
-      })));
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      setPaymentMethods((prev) =>
+        prev.map((method) => ({
+          ...method,
+          is_default: method.id === methodId,
+        })),
+      );
       addNotification('Default payment method updated', 'success');
     } catch (error) {
       addNotification('Failed to update default payment method', 'error');
@@ -132,13 +136,29 @@ export default function PaymentMethodsPage() {
   const getCardIcon = (brand?: string) => {
     switch (brand) {
       case 'visa':
-        return <div className="w-8 h-6 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">VISA</div>;
+        return (
+          <div className="w-8 h-6 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
+            VISA
+          </div>
+        );
       case 'mastercard':
-        return <div className="w-8 h-6 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">MC</div>;
+        return (
+          <div className="w-8 h-6 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">
+            MC
+          </div>
+        );
       case 'amex':
-        return <div className="w-8 h-6 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">AMEX</div>;
+        return (
+          <div className="w-8 h-6 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">
+            AMEX
+          </div>
+        );
       case 'rupay':
-        return <div className="w-8 h-6 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">RP</div>;
+        return (
+          <div className="w-8 h-6 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">
+            RP
+          </div>
+        );
       default:
         return <CreditCard className="h-6 w-6 text-gray-400" />;
     }
@@ -149,11 +169,23 @@ export default function PaymentMethodsPage() {
       case 'card':
         return <CreditCard className="h-6 w-6 text-blue-500" />;
       case 'upi':
-        return <div className="w-6 h-6 bg-purple-500 rounded text-white text-xs flex items-center justify-center font-bold">UPI</div>;
+        return (
+          <div className="w-6 h-6 bg-purple-500 rounded text-white text-xs flex items-center justify-center font-bold">
+            UPI
+          </div>
+        );
       case 'netbanking':
-        return <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center font-bold">NB</div>;
+        return (
+          <div className="w-6 h-6 bg-green-500 rounded text-white text-xs flex items-center justify-center font-bold">
+            NB
+          </div>
+        );
       case 'wallet':
-        return <div className="w-6 h-6 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">W</div>;
+        return (
+          <div className="w-6 h-6 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">
+            W
+          </div>
+        );
       default:
         return <CreditCard className="h-6 w-6 text-gray-400" />;
     }
@@ -163,7 +195,7 @@ export default function PaymentMethodsPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -207,7 +239,7 @@ export default function PaymentMethodsPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Account
           </Link>
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -218,7 +250,7 @@ export default function PaymentMethodsPage() {
                 Manage your saved payment methods for faster checkout
               </p>
             </div>
-            
+
             <button
               onClick={() => setShowAddModal(true)}
               className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -238,8 +270,8 @@ export default function PaymentMethodsPage() {
                 Your payment information is secure
               </h3>
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                We use industry-standard encryption to protect your payment details. 
-                Your full card numbers are never stored on our servers.
+                We use industry-standard encryption to protect your payment details. Your full card
+                numbers are never stored on our servers.
               </p>
             </div>
           </div>
@@ -265,27 +297,35 @@ export default function PaymentMethodsPage() {
         ) : (
           <div className="space-y-4">
             {paymentMethods.map((method) => (
-              <div key={method.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
+              <div
+                key={method.id}
+                className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow"
+              >
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       {/* Method Icon */}
                       <div className="flex items-center gap-2">
                         {getMethodIcon(method.type)}
-                        {method.type === 'card' && method.card_brand && getCardIcon(method.card_brand)}
+                        {method.type === 'card' &&
+                          method.card_brand &&
+                          getCardIcon(method.card_brand)}
                       </div>
-                      
+
                       {/* Method Details */}
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {method.nickname || 
-                             (method.type === 'card' ? `•••• •••• •••• ${method.card_last_four}` :
-                              method.type === 'upi' ? method.upi_id :
-                              method.type === 'netbanking' ? method.bank_name :
-                              'Wallet')}
+                            {method.nickname ||
+                              (method.type === 'card'
+                                ? `•••• •••• •••• ${method.card_last_four}`
+                                : method.type === 'upi'
+                                  ? method.upi_id
+                                  : method.type === 'netbanking'
+                                    ? method.bank_name
+                                    : 'Wallet')}
                           </h3>
-                          
+
                           {method.is_default && (
                             <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
                               <Star className="h-3 w-3" />
@@ -293,7 +333,7 @@ export default function PaymentMethodsPage() {
                             </span>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                           {method.type === 'card' && method.card_expiry && (
                             <span>Expires {method.card_expiry}</span>
@@ -305,7 +345,7 @@ export default function PaymentMethodsPage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       {!method.is_default && (
@@ -316,7 +356,7 @@ export default function PaymentMethodsPage() {
                           Set as Default
                         </button>
                       )}
-                      
+
                       <button
                         onClick={() => deletePaymentMethod(method.id)}
                         disabled={deleting[method.id]}
@@ -341,7 +381,7 @@ export default function PaymentMethodsPage() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
             Security & Privacy
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-start gap-3">
               <Lock className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
@@ -354,7 +394,7 @@ export default function PaymentMethodsPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -366,19 +406,17 @@ export default function PaymentMethodsPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white mb-1">
-                  Fraud Protection
-                </h3>
+                <h3 className="font-medium text-gray-900 dark:text-white mb-1">Fraud Protection</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Advanced fraud detection monitors all transactions for suspicious activity.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <Check className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
               <div>

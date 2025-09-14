@@ -8,22 +8,25 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { 
-  Heart, 
-  Activity, 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  Heart,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Clock,
   RefreshCw,
   Shield,
   Database,
   Globe,
   Smartphone,
   Zap,
-  Settings
+  Settings,
 } from 'lucide-react';
-import healthCheckService, { SystemHealthStatus, HealthCheckResult } from '../services/healthCheckService';
+import healthCheckService, {
+  SystemHealthStatus,
+  HealthCheckResult,
+} from '../services/healthCheckService';
 import loggingService from '../services/loggingService';
 import { useAuth } from '../contexts/AuthContext';
 import { AdminOnly } from './ProtectedRoute';
@@ -37,7 +40,7 @@ interface HealthStatusDashboardProps {
 export default function HealthStatusDashboard({
   autoRefresh = true,
   refreshInterval = 30000,
-  compact = false
+  compact = false,
 }: HealthStatusDashboardProps) {
   const { user } = useAuth();
   const [healthStatus, setHealthStatus] = useState<SystemHealthStatus | null>(null);
@@ -51,12 +54,17 @@ export default function HealthStatusDashboard({
   const runHealthChecks = async () => {
     setIsLoading(true);
 
-    loggingService.info('health', 'HealthStatusDashboard.runHealthChecks', 'Running health checks', {
-      userId: user?.id,
-      userRole: user?.role,
-      compact,
-      autoRefresh
-    });
+    loggingService.info(
+      'health',
+      'HealthStatusDashboard.runHealthChecks',
+      'Running health checks',
+      {
+        userId: user?.id,
+        userRole: user?.role,
+        compact,
+        autoRefresh,
+      },
+    );
 
     try {
       const status = await healthCheckService.runAllChecks();
@@ -85,19 +93,27 @@ export default function HealthStatusDashboard({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'text-green-500';
-      case 'degraded': return 'text-yellow-500';
-      case 'unhealthy': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'healthy':
+        return 'text-green-500';
+      case 'degraded':
+        return 'text-yellow-500';
+      case 'unhealthy':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy': return <CheckCircle className="w-4 h-4" />;
-      case 'degraded': return <AlertTriangle className="w-4 h-4" />;
-      case 'unhealthy': return <XCircle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case 'healthy':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'degraded':
+        return <AlertTriangle className="w-4 h-4" />;
+      case 'unhealthy':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -117,10 +133,14 @@ export default function HealthStatusDashboard({
 
   const getOverallStatusMessage = (status: string) => {
     switch (status) {
-      case 'healthy': return 'All systems operational';
-      case 'degraded': return 'Some services experiencing issues';
-      case 'unhealthy': return 'Critical system failures detected';
-      default: return 'System status unknown';
+      case 'healthy':
+        return 'All systems operational';
+      case 'degraded':
+        return 'Some services experiencing issues';
+      case 'unhealthy':
+        return 'Critical system failures detected';
+      default:
+        return 'System status unknown';
     }
   };
 
@@ -142,19 +162,19 @@ export default function HealthStatusDashboard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge 
-              variant={healthStatus?.overall === 'healthy' ? 'default' : 
-                      healthStatus?.overall === 'degraded' ? 'secondary' : 'destructive'}
+            <Badge
+              variant={
+                healthStatus?.overall === 'healthy'
+                  ? 'default'
+                  : healthStatus?.overall === 'degraded'
+                    ? 'secondary'
+                    : 'destructive'
+              }
               className="uppercase font-semibold"
             >
               {healthStatus?.overall || 'Unknown'}
             </Badge>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={runHealthChecks}
-              disabled={isLoading}
-            >
+            <Button variant="outline" size="sm" onClick={runHealthChecks} disabled={isLoading}>
               <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
@@ -181,7 +201,7 @@ export default function HealthStatusDashboard({
             <div>
               <span className="text-muted-foreground">Healthy Services:</span>
               <div className="font-medium text-green-600">
-                {healthStatus?.services.filter(s => s.status === 'healthy').length || 0}
+                {healthStatus?.services.filter((s) => s.status === 'healthy').length || 0}
               </div>
             </div>
           </div>
@@ -199,7 +219,7 @@ export default function HealthStatusDashboard({
               <div className="flex items-center gap-2">
                 {getServiceIcon(service.service)}
                 <CardTitle className="text-sm font-medium">
-                  {service.service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  {service.service.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                 </CardTitle>
               </div>
               <div className={`flex items-center gap-1 ${getStatusColor(service.status)}`}>
@@ -264,9 +284,14 @@ export default function HealthStatusDashboard({
             <Activity className="w-5 h-5" />
             <CardTitle className="text-base">System Status</CardTitle>
           </div>
-          <Badge 
-            variant={healthStatus?.overall === 'healthy' ? 'default' : 
-                    healthStatus?.overall === 'degraded' ? 'secondary' : 'destructive'}
+          <Badge
+            variant={
+              healthStatus?.overall === 'healthy'
+                ? 'default'
+                : healthStatus?.overall === 'degraded'
+                  ? 'secondary'
+                  : 'destructive'
+            }
           >
             {healthStatus?.overall || 'Unknown'}
           </Badge>
@@ -275,13 +300,11 @@ export default function HealthStatusDashboard({
       <CardContent>
         <div className="flex flex-wrap gap-2">
           {healthStatus?.services.map((service) => (
-            <div 
+            <div
               key={service.service}
               className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted text-xs"
             >
-              <div className={getStatusColor(service.status)}>
-                {getStatusIcon(service.service)}
-              </div>
+              <div className={getStatusColor(service.status)}>{getStatusIcon(service.service)}</div>
               <span>{service.service}</span>
             </div>
           ))}

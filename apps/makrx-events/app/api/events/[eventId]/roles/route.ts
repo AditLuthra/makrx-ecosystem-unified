@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { eventRoles, users } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const roles = await db
       .select({
@@ -49,23 +46,17 @@ export async function GET(
           };
         }
         return role;
-      })
+      }),
     );
 
     return NextResponse.json(rolesWithAssigners);
   } catch (error) {
     console.error('Error fetching event roles:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch event roles' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch event roles' }, { status: 500 });
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const body = await request.json();
 
@@ -73,19 +64,11 @@ export async function POST(
     const existingRole = await db
       .select()
       .from(eventRoles)
-      .where(
-        and(
-          eq(eventRoles.eventId, params.eventId),
-          eq(eventRoles.userId, body.userId)
-        )
-      )
+      .where(and(eq(eventRoles.eventId, params.eventId), eq(eventRoles.userId, body.userId)))
       .limit(1);
 
     if (existingRole.length > 0) {
-      return NextResponse.json(
-        { error: 'User already has a role in this event' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User already has a role in this event' }, { status: 400 });
     }
 
     const [role] = await db
@@ -103,9 +86,6 @@ export async function POST(
     return NextResponse.json(role, { status: 201 });
   } catch (error) {
     console.error('Error creating event role:', error);
-    return NextResponse.json(
-      { error: 'Failed to create event role' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create event role' }, { status: 500 });
   }
 }

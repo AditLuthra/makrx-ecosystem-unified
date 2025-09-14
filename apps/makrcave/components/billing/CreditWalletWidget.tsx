@@ -17,7 +17,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   AlertCircle,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
 
 interface CreditTransaction {
@@ -49,7 +49,7 @@ const CreditWalletWidget: React.FC = () => {
     conversion_rate: 1.0,
     auto_recharge_enabled: false,
     auto_recharge_threshold: 10,
-    auto_recharge_amount: 100
+    auto_recharge_amount: 100,
   });
 
   const [recentTransactions] = useState<CreditTransaction[]>([
@@ -59,7 +59,7 @@ const CreditWalletWidget: React.FC = () => {
       amount: -45,
       description: '3D Print Job #PRT001',
       created_at: '2024-01-20T14:30:00Z',
-      balance_after: 150
+      balance_after: 150,
     },
     {
       id: '2',
@@ -67,7 +67,7 @@ const CreditWalletWidget: React.FC = () => {
       amount: 50,
       description: 'Workshop completion bonus',
       created_at: '2024-01-19T10:15:00Z',
-      balance_after: 195
+      balance_after: 195,
     },
     {
       id: '3',
@@ -75,7 +75,7 @@ const CreditWalletWidget: React.FC = () => {
       amount: -25,
       description: 'Laser cutting service',
       created_at: '2024-01-18T16:45:00Z',
-      balance_after: 145
+      balance_after: 145,
     },
     {
       id: '4',
@@ -83,8 +83,8 @@ const CreditWalletWidget: React.FC = () => {
       amount: 150,
       description: 'Credit purchase',
       created_at: '2024-01-17T11:20:00Z',
-      balance_after: 170
-    }
+      balance_after: 170,
+    },
   ]);
 
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -93,7 +93,7 @@ const CreditWalletWidget: React.FC = () => {
   const [settings, setSettings] = useState({
     auto_recharge_enabled: walletData.auto_recharge_enabled,
     auto_recharge_threshold: walletData.auto_recharge_threshold.toString(),
-    auto_recharge_amount: walletData.auto_recharge_amount.toString()
+    auto_recharge_amount: walletData.auto_recharge_amount.toString(),
   });
 
   const formatDate = (dateString: string) => {
@@ -102,7 +102,7 @@ const CreditWalletWidget: React.FC = () => {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return 'Invalid date';
@@ -132,11 +132,11 @@ const CreditWalletWidget: React.FC = () => {
   };
 
   const handleSaveSettings = () => {
-    setWalletData(prev => ({
+    setWalletData((prev) => ({
       ...prev,
       auto_recharge_enabled: settings.auto_recharge_enabled,
       auto_recharge_threshold: parseInt(settings.auto_recharge_threshold),
-      auto_recharge_amount: parseInt(settings.auto_recharge_amount)
+      auto_recharge_amount: parseInt(settings.auto_recharge_amount),
     }));
     setShowSettingsModal(false);
   };
@@ -201,7 +201,8 @@ const CreditWalletWidget: React.FC = () => {
                     <span className="font-medium">Auto-recharge enabled</span>
                   </div>
                   <p className="text-xs text-blue-600 mt-1">
-                    Will add {walletData.auto_recharge_amount} credits when balance falls below {walletData.auto_recharge_threshold}
+                    Will add {walletData.auto_recharge_amount} credits when balance falls below{' '}
+                    {walletData.auto_recharge_threshold}
                   </p>
                 </div>
               )}
@@ -219,17 +220,23 @@ const CreditWalletWidget: React.FC = () => {
 
               <div className="space-y-3">
                 {recentTransactions.slice(0, 4).map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-white border rounded-lg">
+                  <div
+                    key={transaction.id}
+                    className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       {getTransactionIcon(transaction.type, transaction.amount)}
                       <div>
                         <p className="text-sm font-medium">{transaction.description}</p>
-                        <p className="text-xs text-gray-500">{formatDate(transaction.created_at)}</p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(transaction.created_at)}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={`font-medium ${getTransactionColor(transaction.amount)}`}>
-                        {transaction.amount > 0 ? '+' : ''}{transaction.amount}
+                        {transaction.amount > 0 ? '+' : ''}
+                        {transaction.amount}
                       </p>
                       <p className="text-xs text-gray-500">Balance: {transaction.balance_after}</p>
                     </div>
@@ -250,7 +257,7 @@ const CreditWalletWidget: React.FC = () => {
               Buy Credits
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="credit-amount">Number of Credits</Label>
@@ -265,7 +272,8 @@ const CreditWalletWidget: React.FC = () => {
               />
               {buyAmount && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Total cost: ₹{(parseInt(buyAmount || '0') * walletData.conversion_rate).toFixed(2)}
+                  Total cost: ₹
+                  {(parseInt(buyAmount || '0') * walletData.conversion_rate).toFixed(2)}
                 </p>
               )}
             </div>
@@ -319,18 +327,20 @@ const CreditWalletWidget: React.FC = () => {
               Wallet Settings
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="auto-recharge">Auto-recharge</Label>
-                <p className="text-sm text-gray-500">Automatically add credits when balance is low</p>
+                <p className="text-sm text-gray-500">
+                  Automatically add credits when balance is low
+                </p>
               </div>
               <Switch
                 id="auto-recharge"
                 checked={settings.auto_recharge_enabled}
-                onCheckedChange={(checked) => 
-                  setSettings(prev => ({ ...prev, auto_recharge_enabled: checked }))
+                onCheckedChange={(checked) =>
+                  setSettings((prev) => ({ ...prev, auto_recharge_enabled: checked }))
                 }
               />
             </div>
@@ -343,8 +353,8 @@ const CreditWalletWidget: React.FC = () => {
                     id="threshold"
                     type="number"
                     value={settings.auto_recharge_threshold}
-                    onChange={(e) => 
-                      setSettings(prev => ({ ...prev, auto_recharge_threshold: e.target.value }))
+                    onChange={(e) =>
+                      setSettings((prev) => ({ ...prev, auto_recharge_threshold: e.target.value }))
                     }
                     className="mt-1"
                     min="1"
@@ -360,8 +370,8 @@ const CreditWalletWidget: React.FC = () => {
                     id="recharge-amount"
                     type="number"
                     value={settings.auto_recharge_amount}
-                    onChange={(e) => 
-                      setSettings(prev => ({ ...prev, auto_recharge_amount: e.target.value }))
+                    onChange={(e) =>
+                      setSettings((prev) => ({ ...prev, auto_recharge_amount: e.target.value }))
                     }
                     className="mt-1"
                     min="1"
@@ -377,9 +387,7 @@ const CreditWalletWidget: React.FC = () => {
               <Button variant="outline" onClick={() => setShowSettingsModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSaveSettings}>
-                Save Settings
-              </Button>
+              <Button onClick={handleSaveSettings}>Save Settings</Button>
             </div>
           </div>
         </DialogContent>

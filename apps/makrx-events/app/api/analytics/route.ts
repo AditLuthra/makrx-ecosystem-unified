@@ -8,13 +8,13 @@ export async function GET() {
     // Get basic analytics
     const [eventStats] = await db
       .select({
-        totalEvents: count()
+        totalEvents: count(),
       })
       .from(events);
 
     const [userStats] = await db
       .select({
-        totalUsers: count()
+        totalUsers: count(),
       })
       .from(users);
 
@@ -22,17 +22,17 @@ export async function GET() {
       events: {
         total: eventStats.totalEvents,
         published: eventStats.totalEvents, // Simplified - all are published
-        draft: 0
+        draft: 0,
       },
       users: {
         total: userStats.totalUsers,
-        active: userStats.totalUsers
+        active: userStats.totalUsers,
       },
       registrations: {
         total: 0, // Would need registration tracking
         pending: 0,
-        confirmed: 0
-      }
+        confirmed: 0,
+      },
     });
   } catch (error) {
     console.error('Error fetching analytics:', error);

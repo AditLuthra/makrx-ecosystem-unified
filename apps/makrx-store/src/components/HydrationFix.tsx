@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 export function HydrationFix() {
   useEffect(() => {
@@ -8,7 +8,7 @@ export function HydrationFix() {
     const removeExtensionAttributes = () => {
       const body = document.body;
       const html = document.documentElement;
-      
+
       // List of known browser extension attributes that cause hydration issues
       const extensionAttributes = [
         'data-new-gr-c-s-check-loaded',
@@ -17,11 +17,11 @@ export function HydrationFix() {
         'data-gramm_editor',
         'data-wf-page',
         'data-wf-site',
-        'cz-shortcut-listen'
+        'cz-shortcut-listen',
       ];
-      
+
       // Remove from body
-      extensionAttributes.forEach(attr => {
+      extensionAttributes.forEach((attr) => {
         if (body.hasAttribute(attr)) {
           body.removeAttribute(attr);
         }
@@ -33,29 +33,30 @@ export function HydrationFix() {
 
     // Run immediately
     removeExtensionAttributes();
-    
+
     // Also run after a short delay to catch any late-loading extensions
     const timeoutId = setTimeout(removeExtensionAttributes, 100);
-    
+
     // Set up a mutation observer to remove extension attributes as they're added
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes') {
           const target = mutation.target as Element;
           const attrName = mutation.attributeName;
-          
-          if (attrName && (
-            attrName.startsWith('data-gr-') ||
-            attrName.startsWith('data-gramm') ||
-            attrName.includes('grammarly') ||
-            attrName === 'cz-shortcut-listen'
-          )) {
+
+          if (
+            attrName &&
+            (attrName.startsWith('data-gr-') ||
+              attrName.startsWith('data-gramm') ||
+              attrName.includes('grammarly') ||
+              attrName === 'cz-shortcut-listen')
+          ) {
             target.removeAttribute(attrName);
           }
         }
       });
     });
-    
+
     // Observe changes to body and html elements
     observer.observe(document.body, {
       attributes: true,
@@ -64,10 +65,10 @@ export function HydrationFix() {
         'data-gr-ext-installed',
         'data-gramm',
         'data-gramm_editor',
-        'cz-shortcut-listen'
-      ]
+        'cz-shortcut-listen',
+      ],
     });
-    
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: [
@@ -75,8 +76,8 @@ export function HydrationFix() {
         'data-gr-ext-installed',
         'data-gramm',
         'data-gramm_editor',
-        'cz-shortcut-listen'
-      ]
+        'cz-shortcut-listen',
+      ],
     });
 
     return () => {

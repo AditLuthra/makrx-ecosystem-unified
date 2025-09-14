@@ -31,7 +31,13 @@ class LoggingService {
 
   // Overloaded error: (msg, error) or (category, component, msg, context, stack)
   error(message: string, error?: unknown): void;
-  error(category: string, component: string, message: string, context?: Record<string, unknown>, stack?: string): void;
+  error(
+    category: string,
+    component: string,
+    message: string,
+    context?: Record<string, unknown>,
+    stack?: string,
+  ): void;
   error(a: string, b?: unknown, c?: string, d?: Record<string, unknown>, e?: string) {
     if (c !== undefined) {
       // category, component, message, context, stack
@@ -58,7 +64,12 @@ class LoggingService {
 
   // Overloaded debug: (msg, data) or (category, component, msg, context)
   debug(message: string, data?: unknown): void;
-  debug(category: string, component: string, message: string, context?: Record<string, unknown>): void;
+  debug(
+    category: string,
+    component: string,
+    message: string,
+    context?: Record<string, unknown>,
+  ): void;
   debug(a: string, b?: unknown, c?: string, d?: Record<string, unknown>) {
     if (c !== undefined) {
       if (this.shouldLog('debug')) {
@@ -73,7 +84,13 @@ class LoggingService {
     }
   }
 
-  critical(category: string, component: string, message: string, context?: Record<string, unknown>, stack?: string) {
+  critical(
+    category: string,
+    component: string,
+    message: string,
+    context?: Record<string, unknown>,
+    stack?: string,
+  ) {
     console.error(`[CRITICAL] [${category}:${component}] ${message}`, context, stack);
     this.pushLog('error', category, component, message, context, stack);
   }
@@ -104,7 +121,13 @@ class LoggingService {
   }
 
   getLogStats(): LogStats {
-    const byLevel: Record<LogLevel, number> = { critical: 0, error: 0, warn: 0, info: 0, debug: 0 } as any;
+    const byLevel: Record<LogLevel, number> = {
+      critical: 0,
+      error: 0,
+      warn: 0,
+      info: 0,
+      debug: 0,
+    } as any;
     const byCategory: Record<string, number> = {};
     let lastError: LogEntry | undefined;
     const since = Date.now() - 24 * 60 * 60 * 1000;
@@ -112,14 +135,23 @@ class LoggingService {
     for (const l of this.logs) {
       byLevel[l.level]++;
       byCategory[l.category] = (byCategory[l.category] || 0) + 1;
-      if ((l.level === 'error' || l.level === 'critical') && (!lastError || l.timestamp > lastError.timestamp)) {
+      if (
+        (l.level === 'error' || l.level === 'critical') &&
+        (!lastError || l.timestamp > lastError.timestamp)
+      ) {
         lastError = l;
       }
       if ((l.level === 'error' || l.level === 'critical') && l.timestamp >= since) {
         errorCount24h++;
       }
     }
-    return { total: this.logs.length, byLevel, byCategory, errorCount24h, lastError: lastError ? { timestamp: lastError.timestamp, message: lastError.message } : null };
+    return {
+      total: this.logs.length,
+      byLevel,
+      byCategory,
+      errorCount24h,
+      lastError: lastError ? { timestamp: lastError.timestamp, message: lastError.message } : null,
+    };
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -129,7 +161,14 @@ class LoggingService {
     return messageLevelIndex <= currentLevelIndex;
   }
 
-  private pushLog(level: LogLevel, category: string, component: string, message: string, context?: Record<string, unknown>, stack?: string) {
+  private pushLog(
+    level: LogLevel,
+    category: string,
+    component: string,
+    message: string,
+    context?: Record<string, unknown>,
+    stack?: string,
+  ) {
     this.logs.push({
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       level,

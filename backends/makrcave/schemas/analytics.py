@@ -4,6 +4,7 @@ from datetime import datetime, date
 from enum import Enum
 import uuid
 
+
 class EventTypeEnum(str, Enum):
     LOGIN = "login"
     LOGOUT = "logout"
@@ -22,16 +23,19 @@ class EventTypeEnum(str, Enum):
     JOB_COMPLETED = "job_completed"
     FILE_UPLOADED = "file_uploaded"
 
+
 class TimePeriodEnum(str, Enum):
     DAILY = "daily"
     WEEKLY = "weekly"
     MONTHLY = "monthly"
     YEARLY = "yearly"
 
+
 class ReportFormatEnum(str, Enum):
     CSV = "csv"
     PDF = "pdf"
     XLSX = "xlsx"
+
 
 class UsageEventCreate(BaseModel):
     event_type: EventTypeEnum
@@ -41,6 +45,7 @@ class UsageEventCreate(BaseModel):
     resource_type: Optional[str] = None
     duration_minutes: Optional[int] = None
     metadata: Optional[Dict[str, Any]] = None
+
 
 class UsageEventResponse(BaseModel):
     id: uuid.UUID
@@ -58,6 +63,7 @@ class UsageEventResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class AnalyticsOverviewResponse(BaseModel):
     total_users: int
     active_users_today: int
@@ -71,6 +77,7 @@ class AnalyticsOverviewResponse(BaseModel):
     total_revenue: float
     revenue_this_month: float
 
+
 class UsageStatsResponse(BaseModel):
     period: str
     logins: int
@@ -80,12 +87,14 @@ class UsageStatsResponse(BaseModel):
     peak_hour: str
     most_active_day: str
 
+
 class InventoryInsightsResponse(BaseModel):
     top_consumed_items: List[Dict[str, Any]]
     fastest_depleting: List[Dict[str, Any]]
     reorder_alerts: List[Dict[str, Any]]
     consumption_trends: List[Dict[str, Any]]
     efficiency_score: float
+
 
 class EquipmentMetricsResponse(BaseModel):
     equipment_id: uuid.UUID
@@ -97,6 +106,7 @@ class EquipmentMetricsResponse(BaseModel):
     peak_usage_times: List[str]
     usage_trend: List[Dict[str, Any]]
 
+
 class ProjectAnalyticsResponse(BaseModel):
     total_projects: int
     completed_projects: int
@@ -105,6 +115,7 @@ class ProjectAnalyticsResponse(BaseModel):
     largest_boms: List[Dict[str, Any]]
     costliest_projects: List[Dict[str, Any]]
     makrx_store_percentage: float
+
 
 class RevenueAnalyticsResponse(BaseModel):
     total_revenue: float
@@ -115,19 +126,32 @@ class RevenueAnalyticsResponse(BaseModel):
     credit_sales: float
     store_revenue: float
 
+
 class ReportRequestCreate(BaseModel):
-    report_type: str = Field(..., description="Type of report: inventory, usage, revenue, equipment")
+    report_type: str = Field(
+        ..., description="Type of report: inventory, usage, revenue, equipment"
+    )
     report_format: ReportFormatEnum
     filters: Optional[Dict[str, Any]] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
 
-    @validator('report_type')
+    @validator("report_type")
     def validate_report_type(cls, v):
-        allowed_types = ['inventory', 'usage', 'revenue', 'equipment', 'projects', 'members']
+        allowed_types = [
+            "inventory",
+            "usage",
+            "revenue",
+            "equipment",
+            "projects",
+            "members",
+        ]
         if v not in allowed_types:
-            raise ValueError(f'Report type must be one of: {", ".join(allowed_types)}')
+            raise ValueError(
+                f'Report type must be one of: {", ".join(allowed_types)}'
+            )
         return v
+
 
 class ReportRequestResponse(BaseModel):
     id: uuid.UUID
@@ -143,6 +167,7 @@ class ReportRequestResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class AnalyticsFilters(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
@@ -152,11 +177,13 @@ class AnalyticsFilters(BaseModel):
     event_types: Optional[List[EventTypeEnum]] = None
     time_period: Optional[TimePeriodEnum] = TimePeriodEnum.DAILY
 
+
 class ChartDataPoint(BaseModel):
     label: str
     value: Union[int, float]
     date: Optional[datetime] = None
     metadata: Optional[Dict[str, Any]] = None
+
 
 class ChartData(BaseModel):
     title: str
@@ -165,6 +192,7 @@ class ChartData(BaseModel):
     x_axis_label: Optional[str] = None
     y_axis_label: Optional[str] = None
 
+
 class DashboardSection(BaseModel):
     section_id: str
     title: str
@@ -172,11 +200,13 @@ class DashboardSection(BaseModel):
     summary_stats: Optional[Dict[str, Any]] = None
     last_updated: datetime
 
+
 class AnalyticsDashboardResponse(BaseModel):
     overview: AnalyticsOverviewResponse
     sections: List[DashboardSection]
     generated_at: datetime
     cache_expires_at: datetime
+
 
 class EquipmentUsageLogCreate(BaseModel):
     equipment_id: uuid.UUID
@@ -190,6 +220,7 @@ class EquipmentUsageLogCreate(BaseModel):
     maintenance_required: bool = False
     notes: Optional[str] = None
 
+
 class InventoryAnalyticsCreate(BaseModel):
     inventory_item_id: uuid.UUID
     date: date
@@ -199,6 +230,7 @@ class InventoryAnalyticsCreate(BaseModel):
     ending_quantity: float = Field(..., ge=0)
     cost_per_unit: Optional[float] = Field(None, ge=0)
     projects_using: int = Field(default=0, ge=0)
+
 
 class ProjectAnalyticsCreate(BaseModel):
     project_id: uuid.UUID
@@ -213,9 +245,12 @@ class ProjectAnalyticsCreate(BaseModel):
     collaboration_count: int = Field(default=0, ge=0)
     complexity_score: Optional[float] = Field(None, ge=0, le=10)
 
+
 class RevenueAnalyticsCreate(BaseModel):
     date: date
-    revenue_type: str = Field(..., description="membership, credits, store, service")
+    revenue_type: str = Field(
+        ..., description="membership, credits, store, service"
+    )
     amount: float = Field(..., gt=0)
     currency: str = Field(default="USD", max_length=3)
     payment_method: Optional[str] = None
@@ -224,12 +259,22 @@ class RevenueAnalyticsCreate(BaseModel):
     tax_amount: Optional[float] = Field(None, ge=0)
     net_amount: Optional[float] = Field(None, ge=0)
 
-    @validator('revenue_type')
+    @validator("revenue_type")
     def validate_revenue_type(cls, v):
-        allowed_types = ['membership', 'credits', 'store', 'service', 'equipment_rental', 'training']
+        allowed_types = [
+            "membership",
+            "credits",
+            "store",
+            "service",
+            "equipment_rental",
+            "training",
+        ]
         if v not in allowed_types:
-            raise ValueError(f'Revenue type must be one of: {", ".join(allowed_types)}')
+            raise ValueError(
+                f'Revenue type must be one of: {", ".join(allowed_types)}'
+            )
         return v
+
 
 class AnalyticsSnapshotCreate(BaseModel):
     snapshot_type: str
@@ -237,6 +282,7 @@ class AnalyticsSnapshotCreate(BaseModel):
     start_date: datetime
     end_date: datetime
     data: Dict[str, Any]
+
 
 class AnalyticsSnapshotResponse(BaseModel):
     id: uuid.UUID

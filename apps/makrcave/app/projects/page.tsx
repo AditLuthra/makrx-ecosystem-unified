@@ -7,8 +7,14 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+import {
   Plus,
   Search,
   Filter,
@@ -21,9 +27,14 @@ import {
   CheckCircle,
   AlertCircle,
   Star,
-  MoreHorizontal
+  MoreHorizontal,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../components/ui/dropdown-menu';
 import { useAuth } from '../../contexts/AuthContext';
 import AddProjectModal from '../../components/AddProjectModal';
 import ProjectCard from '../../components/ProjectCard';
@@ -86,7 +97,7 @@ const Projects: React.FC = () => {
         skip: '0',
         limit: '100',
         sort_field: sortBy,
-        sort_direction: sortDirection
+        sort_direction: sortDirection,
       });
 
       if (searchTerm) {
@@ -118,53 +129,55 @@ const Projects: React.FC = () => {
   };
 
   // Filter and sort projects
-  const filteredProjects = projects.filter(project => {
-    // Search filter
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      const matchesSearch =
-        project.name.toLowerCase().includes(searchLower) ||
-        (project.description && project.description.toLowerCase().includes(searchLower)) ||
-        project.tags.some(tag => tag.toLowerCase().includes(searchLower));
-      if (!matchesSearch) return false;
-    }
+  const filteredProjects = projects
+    .filter((project) => {
+      // Search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch =
+          project.name.toLowerCase().includes(searchLower) ||
+          (project.description && project.description.toLowerCase().includes(searchLower)) ||
+          project.tags.some((tag) => tag.toLowerCase().includes(searchLower));
+        if (!matchesSearch) return false;
+      }
 
-    // Status filter
-    if (statusFilter !== 'all' && project.status !== statusFilter) {
-      return false;
-    }
+      // Status filter
+      if (statusFilter !== 'all' && project.status !== statusFilter) {
+        return false;
+      }
 
-    // Visibility filter
-    if (visibilityFilter !== 'all' && project.visibility !== visibilityFilter) {
-      return false;
-    }
+      // Visibility filter
+      if (visibilityFilter !== 'all' && project.visibility !== visibilityFilter) {
+        return false;
+      }
 
-    return true;
-  }).sort((a, b) => {
-    let aValue: any, bValue: any;
+      return true;
+    })
+    .sort((a, b) => {
+      let aValue: any, bValue: any;
 
-    switch (sortBy) {
-      case 'name':
-        aValue = a.name.toLowerCase();
-        bValue = b.name.toLowerCase();
-        break;
-      case 'created_at':
-        aValue = new Date(a.created_at);
-        bValue = new Date(b.created_at);
-        break;
-      case 'updated_at':
-      default:
-        aValue = new Date(a.updated_at);
-        bValue = new Date(b.updated_at);
-        break;
-    }
+      switch (sortBy) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'created_at':
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+        case 'updated_at':
+        default:
+          aValue = new Date(a.updated_at);
+          bValue = new Date(b.updated_at);
+          break;
+      }
 
-    if (sortDirection === 'asc') {
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-    } else {
-      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-    }
-  });
+      if (sortDirection === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
 
   useEffect(() => {
     fetchProjects();
@@ -177,21 +190,31 @@ const Projects: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'complete': return 'bg-green-100 text-green-800';
-      case 'on-hold': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'complete':
+        return 'bg-green-100 text-green-800';
+      case 'on-hold':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getVisibilityIcon = (visibility: string) => {
     switch (visibility) {
-      case 'public': return '🌐';
-      case 'private': return '🔒';
-      case 'team-only': return '👥';
-      default: return '❓';
+      case 'public':
+        return '🌐';
+      case 'private':
+        return '🔒';
+      case 'team-only':
+        return '👥';
+      default:
+        return '❓';
     }
   };
 
@@ -199,8 +222,6 @@ const Projects: React.FC = () => {
     if (project.milestones_count === 0) return 0;
     return Math.round((project.completed_milestones_count / project.milestones_count) * 100);
   };
-
-
 
   if (loading) {
     return (
@@ -218,9 +239,7 @@ const Projects: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your collaborative and personal projects
-          </p>
+          <p className="text-gray-600 mt-1">Manage your collaborative and personal projects</p>
         </div>
         <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -241,17 +260,22 @@ const Projects: React.FC = () => {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-blue-600">{filteredProjects.length}</p>
-                <p className="text-sm text-gray-600">{searchTerm || statusFilter !== 'all' || visibilityFilter !== 'all' ? 'Filtered' : 'Total'} Projects</p>
+                <p className="text-sm text-gray-600">
+                  {searchTerm || statusFilter !== 'all' || visibilityFilter !== 'all'
+                    ? 'Filtered'
+                    : 'Total'}{' '}
+                  Projects
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-green-600">
-                  {filteredProjects.filter(p => p.status === 'in-progress').length}
+                  {filteredProjects.filter((p) => p.status === 'in-progress').length}
                 </p>
                 <p className="text-sm text-gray-600">Active</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-purple-600">
-                  {filteredProjects.filter(p => p.status === 'complete').length}
+                  {filteredProjects.filter((p) => p.status === 'complete').length}
                 </p>
                 <p className="text-sm text-gray-600">Completed</p>
               </div>
@@ -270,19 +294,23 @@ const Projects: React.FC = () => {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-orange-600">
-                  {Math.round(projects.reduce((sum, p) => sum + p.collaborator_count, 0) / projects.length) || 0}
+                  {Math.round(
+                    projects.reduce((sum, p) => sum + p.collaborator_count, 0) / projects.length,
+                  ) || 0}
                 </p>
                 <p className="text-sm text-gray-600">Avg Collaborators</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-teal-600">
-                  {Math.round(projects.reduce((sum, p) => sum + p.bom_items_count, 0) / projects.length) || 0}
+                  {Math.round(
+                    projects.reduce((sum, p) => sum + p.bom_items_count, 0) / projects.length,
+                  ) || 0}
                 </p>
                 <p className="text-sm text-gray-600">Avg BOM Items</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-red-600">
-                  {projects.filter(p => p.visibility === 'public').length}
+                  {projects.filter((p) => p.visibility === 'public').length}
                 </p>
                 <p className="text-sm text-gray-600">Public Projects</p>
               </div>
@@ -376,8 +404,6 @@ const Projects: React.FC = () => {
         </CardContent>
       </Card>
 
-
-
       {/* Projects Grid/List */}
       {filteredProjects.length === 0 && !loading ? (
         <Card>
@@ -390,18 +416,18 @@ const Projects: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Get started by creating your first project to collaborate with your team.
               </p>
-              <Button onClick={() => setShowAddModal(true)}>
-                Create Your First Project
-              </Button>
+              <Button onClick={() => setShowAddModal(true)}>Create Your First Project</Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className={
-          viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-        }>
+        <div
+          className={
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+              : 'space-y-4'
+          }
+        >
           {filteredProjects.map((project) => (
             <ProjectCard
               key={project.project_id}

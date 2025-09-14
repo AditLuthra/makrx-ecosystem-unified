@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 // ========================================
 // ERROR BOUNDARY COMPONENT
@@ -9,15 +9,7 @@ import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { 
-  AlertTriangle, 
-  RefreshCw, 
-  Bug, 
-  FileText, 
-  Copy,
-  Home,
-  ArrowLeft
-} from 'lucide-react';
+import { AlertTriangle, RefreshCw, Bug, FileText, Copy, Home, ArrowLeft } from 'lucide-react';
 import loggingService from '../services/loggingService';
 
 interface ErrorBoundaryState {
@@ -46,49 +38,51 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       error: null,
       errorInfo: null,
       errorId: null,
-      retryCount: 0
+      retryCount: 0,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Generate unique error ID
     const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     this.setState({
       errorInfo,
-      errorId
+      errorId,
     });
 
     // Log error with comprehensive details
-    loggingService.logUIError(
-      this.props.componentName || 'Unknown Component',
-      error,
-      {
-        componentStack: errorInfo.componentStack,
-        errorBoundary: true,
-        errorId,
-        retryCount: this.state.retryCount,
-        userAgent: navigator.userAgent,
-        url: window.location.href,
-        timestamp: new Date().toISOString()
-      }
-    );
-
-    loggingService.critical('ui', 'ErrorBoundary', `React component error caught`, {
-      componentName: this.props.componentName,
-      errorName: error.name,
-      errorMessage: error.message,
+    loggingService.logUIError(this.props.componentName || 'Unknown Component', error, {
+      componentStack: errorInfo.componentStack,
+      errorBoundary: true,
       errorId,
       retryCount: this.state.retryCount,
-      componentStack: errorInfo.componentStack?.split('\n').slice(0, 5).join('\n') // First 5 lines
-    }, error.stack);
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      timestamp: new Date().toISOString(),
+    });
+
+    loggingService.critical(
+      'ui',
+      'ErrorBoundary',
+      `React component error caught`,
+      {
+        componentName: this.props.componentName,
+        errorName: error.name,
+        errorMessage: error.message,
+        errorId,
+        retryCount: this.state.retryCount,
+        componentStack: errorInfo.componentStack?.split('\n').slice(0, 5).join('\n'), // First 5 lines
+      },
+      error.stack,
+    );
 
     // Error logging is handled internally by loggingService above
     console.error('Application Error:', error, errorInfo);
@@ -97,24 +91,24 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     loggingService.logPerformance('error_boundary_triggered', 1, {
       componentName: this.props.componentName,
       errorType: error.name,
-      retryCount: this.state.retryCount
+      retryCount: this.state.retryCount,
     });
   }
 
   componentWillUnmount() {
     // Clean up any retry timeouts
-    this.retryTimeouts.forEach(timeout => clearTimeout(timeout));
+    this.retryTimeouts.forEach((timeout) => clearTimeout(timeout));
   }
 
   handleRetry = () => {
     const maxRetries = this.props.maxRetries || 3;
-    
+
     if (this.state.retryCount >= maxRetries) {
       loggingService.warn('ui', 'ErrorBoundary', 'Max retries exceeded', {
         componentName: this.props.componentName,
         maxRetries,
         currentRetryCount: this.state.retryCount,
-        errorId: this.state.errorId
+        errorId: this.state.errorId,
       });
       return;
     }
@@ -122,14 +116,14 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     loggingService.info('ui', 'ErrorBoundary', 'Retrying component render', {
       componentName: this.props.componentName,
       retryAttempt: this.state.retryCount + 1,
-      errorId: this.state.errorId
+      errorId: this.state.errorId,
     });
 
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       hasError: false,
       error: null,
       errorInfo: null,
-      retryCount: prevState.retryCount + 1
+      retryCount: prevState.retryCount + 1,
     }));
   };
 
@@ -137,27 +131,27 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     loggingService.info('ui', 'ErrorBoundary', 'User triggered page refresh from error boundary', {
       componentName: this.props.componentName,
       errorId: this.state.errorId,
-      retryCount: this.state.retryCount
+      retryCount: this.state.retryCount,
     });
-    
+
     window.location.reload();
   };
 
   handleGoHome = () => {
     loggingService.info('ui', 'ErrorBoundary', 'User navigated to home from error boundary', {
       componentName: this.props.componentName,
-      errorId: this.state.errorId
+      errorId: this.state.errorId,
     });
-    
+
     window.location.href = '/portal/dashboard';
   };
 
   handleGoBack = () => {
     loggingService.info('ui', 'ErrorBoundary', 'User navigated back from error boundary', {
       componentName: this.props.componentName,
-      errorId: this.state.errorId
+      errorId: this.state.errorId,
     });
-    
+
     window.history.back();
   };
 
@@ -170,18 +164,19 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       componentStack: this.state.errorInfo?.componentStack,
       timestamp: new Date().toISOString(),
       url: window.location.href,
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
     };
 
-    navigator.clipboard.writeText(JSON.stringify(errorDetails, null, 2))
+    navigator.clipboard
+      .writeText(JSON.stringify(errorDetails, null, 2))
       .then(() => {
         loggingService.info('ui', 'ErrorBoundary', 'Error details copied to clipboard', {
-          errorId: this.state.errorId
+          errorId: this.state.errorId,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         loggingService.warn('ui', 'ErrorBoundary', 'Failed to copy error details', {
-          error: err.message
+          error: err.message,
         });
       });
   };
@@ -209,7 +204,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     Something went wrong
                   </CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {this.props.componentName ? `Error in ${this.props.componentName}` : 'An unexpected error occurred'}
+                    {this.props.componentName
+                      ? `Error in ${this.props.componentName}`
+                      : 'An unexpected error occurred'}
                   </p>
                 </div>
                 <Badge variant="outline" className="text-xs">
@@ -217,7 +214,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </Badge>
               </div>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               {/* Error Message */}
               <div className="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg">
@@ -249,17 +246,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     Try Again
                   </Button>
                 )}
-                
+
                 <Button onClick={this.handleRefreshPage} variant="outline" size="sm">
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh Page
                 </Button>
-                
+
                 <Button onClick={this.handleGoBack} variant="outline" size="sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Go Back
                 </Button>
-                
+
                 <Button onClick={this.handleGoHome} variant="outline" size="sm">
                   <Home className="w-4 h-4 mr-2" />
                   Dashboard
@@ -299,10 +296,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                         </pre>
                       </div>
                     )}
-                    <Button 
-                      onClick={this.copyErrorDetails} 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      onClick={this.copyErrorDetails}
+                      variant="outline"
+                      size="sm"
                       className="mt-2"
                     >
                       <Copy className="w-3 h-3 mr-1" />
@@ -326,7 +323,7 @@ export default ErrorBoundary;
 // Higher-order component for easier usage
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>,
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
@@ -339,23 +336,25 @@ export function withErrorBoundary<P extends object>(
 }
 
 // Specialized error boundaries for different contexts
-export function PageErrorBoundary({ children, pageName }: { children: ReactNode; pageName: string }) {
+export function PageErrorBoundary({
+  children,
+  pageName,
+}: {
+  children: ReactNode;
+  pageName: string;
+}) {
   return (
-    <ErrorBoundary
-      componentName={`Page: ${pageName}`}
-      showDetails={true}
-      maxRetries={2}
-    >
+    <ErrorBoundary componentName={`Page: ${pageName}`} showDetails={true} maxRetries={2}>
       {children}
     </ErrorBoundary>
   );
 }
 
-export function ComponentErrorBoundary({ 
-  children, 
-  componentName 
-}: { 
-  children: ReactNode; 
+export function ComponentErrorBoundary({
+  children,
+  componentName,
+}: {
+  children: ReactNode;
   componentName: string;
 }) {
   return (

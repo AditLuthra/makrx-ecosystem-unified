@@ -53,4 +53,3 @@ curl -sf http://localhost:8081/realms/makrx/protocol/openid-connect/certs
 - If you change client IDs, update:
   - realm JSON and Compose envs for frontends (`NEXT_PUBLIC_*`) and backends (`KEYCLOAK_CLIENT_ID`).
 - For pure SPA clients, consider `publicClient=true` + PKCE.
-

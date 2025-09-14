@@ -14,15 +14,11 @@ interface AddMemberModalProps {
   membershipPlans: MembershipPlan[];
 }
 
-const AddMemberModal: React.FC<AddMemberModalProps> = ({
-  open,
-  onOpenChange,
-  membershipPlans
-}) => {
+const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, membershipPlans }) => {
   const { addMember } = useMember();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -34,14 +30,19 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.membership_plan_id) {
+
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.membership_plan_id
+    ) {
       setError('Please fill in all required fields');
       return;
     }
@@ -57,10 +58,10 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
     try {
       await addMember({
         ...formData,
-        role: formData.role as "user" | "service_provider" | "admin" | "makerspace_admin",
-        skills: formData.skills ? formData.skills.split(',').map(s => s.trim()) : [],
+        role: formData.role as 'user' | 'service_provider' | 'admin' | 'makerspace_admin',
+        skills: formData.skills ? formData.skills.split(',').map((s) => s.trim()) : [],
       });
-      
+
       // Reset form
       setFormData({
         firstName: '',
@@ -71,7 +72,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
         membership_plan_id: '',
         skills: '',
       });
-      
+
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add member');
@@ -103,7 +104,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
             Add New Member
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -116,7 +117,9 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="firstName" className="text-sm font-medium">First Name *</Label>
+              <Label htmlFor="firstName" className="text-sm font-medium">
+                First Name *
+              </Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
@@ -127,7 +130,9 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor="lastName" className="text-sm font-medium">Last Name *</Label>
+              <Label htmlFor="lastName" className="text-sm font-medium">
+                Last Name *
+              </Label>
               <Input
                 id="lastName"
                 value={formData.lastName}
@@ -166,7 +171,10 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
           <div>
             <Label htmlFor="role">Role *</Label>
-            <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
+            <Select
+              value={formData.role}
+              onValueChange={(value) => handleInputChange('role', value)}
+            >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -181,8 +189,8 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
           <div>
             <Label htmlFor="membership_plan">Membership Plan *</Label>
-            <Select 
-              value={formData.membership_plan_id} 
+            <Select
+              value={formData.membership_plan_id}
               onValueChange={(value) => handleInputChange('membership_plan_id', value)}
             >
               <SelectTrigger className="mt-1">
@@ -207,9 +215,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
               placeholder="3D Printing, Laser Cutting, Electronics"
               className="mt-1"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Separate multiple skills with commas
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Separate multiple skills with commas</p>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">

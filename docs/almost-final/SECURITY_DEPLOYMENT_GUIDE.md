@@ -328,14 +328,12 @@ echo "0 2 * * * /usr/local/bin/backup-makrx.sh" | sudo crontab -
 ### Security Incident Response
 
 1. **Immediate Actions**
-
    - Isolate affected systems
    - Change all potentially compromised secrets
    - Review access logs
    - Document the incident
 
 2. **Investigation**
-
    - Analyze attack vectors
    - Assess data exposure
    - Check for lateral movement

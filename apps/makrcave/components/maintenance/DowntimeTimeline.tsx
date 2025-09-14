@@ -1,14 +1,14 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle, 
-  Wrench, 
+import {
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+  Wrench,
   Calendar,
   TrendingDown,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 import { format, differenceInHours, differenceInDays, parseISO } from 'date-fns';
 
@@ -33,12 +33,14 @@ interface DowntimeEvent {
 const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
   // Process logs into downtime events
   const downtimeEvents: DowntimeEvent[] = logs
-    .filter(log => log.type === 'breakdown' || log.status === 'in_progress' || log.status === 'overdue')
-    .map(log => {
+    .filter(
+      (log) => log.type === 'breakdown' || log.status === 'in_progress' || log.status === 'overdue',
+    )
+    .map((log) => {
       const startTime = parseISO(log.created_at);
       const endTime = log.resolved_at ? parseISO(log.resolved_at) : null;
       const duration = endTime ? differenceInHours(endTime, startTime) : null;
-      
+
       // Determine impact level based on priority and type
       let impactLevel: 'low' | 'medium' | 'high' | 'critical' = 'medium';
       if (log.priority === 'critical') impactLevel = 'critical';
@@ -56,54 +58,72 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
         duration_hours: duration,
         impact_level: impactLevel,
         description: log.description,
-        cost: log.cost
+        cost: log.cost,
       };
     })
     .sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 
   // Calculate statistics
   const totalDowntimeHours = downtimeEvents
-    .filter(event => event.duration_hours)
+    .filter((event) => event.duration_hours)
     .reduce((sum, event) => sum + (event.duration_hours || 0), 0);
 
-  const avgDowntimeHours = downtimeEvents.length > 0 
-    ? Math.round(totalDowntimeHours / downtimeEvents.filter(e => e.duration_hours).length) 
-    : 0;
+  const avgDowntimeHours =
+    downtimeEvents.length > 0
+      ? Math.round(totalDowntimeHours / downtimeEvents.filter((e) => e.duration_hours).length)
+      : 0;
 
-  const activeDowntime = downtimeEvents.filter(event => !event.end_time).length;
-  const resolvedDowntime = downtimeEvents.filter(event => event.end_time).length;
+  const activeDowntime = downtimeEvents.filter((event) => !event.end_time).length;
+  const resolvedDowntime = downtimeEvents.filter((event) => event.end_time).length;
 
-  const impactDistribution = downtimeEvents.reduce((acc, event) => {
-    acc[event.impact_level] = (acc[event.impact_level] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const impactDistribution = downtimeEvents.reduce(
+    (acc, event) => {
+      acc[event.impact_level] = (acc[event.impact_level] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'resolved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_progress': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'overdue': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'resolved':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_progress':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'overdue':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'critical': return 'border-l-red-500 bg-red-50';
-      case 'high': return 'border-l-orange-500 bg-orange-50';
-      case 'medium': return 'border-l-yellow-500 bg-yellow-50';
-      case 'low': return 'border-l-green-500 bg-green-50';
-      default: return 'border-l-gray-500 bg-gray-50';
+      case 'critical':
+        return 'border-l-red-500 bg-red-50';
+      case 'high':
+        return 'border-l-orange-500 bg-orange-50';
+      case 'medium':
+        return 'border-l-yellow-500 bg-yellow-50';
+      case 'low':
+        return 'border-l-green-500 bg-green-50';
+      default:
+        return 'border-l-gray-500 bg-gray-50';
     }
   };
 
   const getImpactIcon = (impact: string) => {
     switch (impact) {
-      case 'critical': return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      case 'high': return <TrendingDown className="h-4 w-4 text-orange-600" />;
-      case 'medium': return <Clock className="h-4 w-4 text-yellow-600" />;
-      case 'low': return <TrendingUp className="h-4 w-4 text-green-600" />;
-      default: return <Clock className="h-4 w-4 text-gray-600" />;
+      case 'critical':
+        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      case 'high':
+        return <TrendingDown className="h-4 w-4 text-orange-600" />;
+      case 'medium':
+        return <Clock className="h-4 w-4 text-yellow-600" />;
+      case 'low':
+        return <TrendingUp className="h-4 w-4 text-green-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -183,9 +203,9 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
                         {event.type}
                       </Badge>
                     </div>
-                    
+
                     <p className="text-sm text-gray-700 mb-3">{event.description}</p>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Started:</span>
@@ -193,7 +213,7 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
                           {format(event.start_time, 'MMM dd, HH:mm')}
                         </div>
                       </div>
-                      
+
                       {event.end_time ? (
                         <div>
                           <span className="text-gray-500">Resolved:</span>
@@ -205,31 +225,28 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
                         <div>
                           <span className="text-gray-500">Duration:</span>
                           <div className="font-medium text-red-600">
-                            {formatDuration(differenceInHours(new Date(), event.start_time))} (ongoing)
+                            {formatDuration(differenceInHours(new Date(), event.start_time))}{' '}
+                            (ongoing)
                           </div>
                         </div>
                       )}
-                      
+
                       {event.duration_hours && (
                         <div>
                           <span className="text-gray-500">Total Duration:</span>
-                          <div className="font-medium">
-                            {formatDuration(event.duration_hours)}
-                          </div>
+                          <div className="font-medium">{formatDuration(event.duration_hours)}</div>
                         </div>
                       )}
-                      
+
                       {event.cost && (
                         <div>
                           <span className="text-gray-500">Cost:</span>
-                          <div className="font-medium">
-                            ${event.cost}
-                          </div>
+                          <div className="font-medium">${event.cost}</div>
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="ml-4 flex items-center gap-2">
                     {getImpactIcon(event.impact_level)}
                     {!event.end_time && (
@@ -240,14 +257,14 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Progress indicator for ongoing issues */}
                 {!event.end_time && (
                   <div className="mt-3 bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-red-500 h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${Math.min(100, (differenceInHours(new Date(), event.start_time) / 24) * 100)}%` 
+                      style={{
+                        width: `${Math.min(100, (differenceInHours(new Date(), event.start_time) / 24) * 100)}%`,
                       }}
                     ></div>
                   </div>
@@ -262,11 +279,10 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
           <div className="mt-6 pt-4 border-t">
             <div className="flex items-center justify-between text-sm text-gray-600">
               <span>
-                Showing {downtimeEvents.length} downtime event{downtimeEvents.length !== 1 ? 's' : ''}
+                Showing {downtimeEvents.length} downtime event
+                {downtimeEvents.length !== 1 ? 's' : ''}
               </span>
-              <span>
-                Total impact: {totalDowntimeHours} hours
-              </span>
+              <span>Total impact: {totalDowntimeHours} hours</span>
             </div>
           </div>
         )}

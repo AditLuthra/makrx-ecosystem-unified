@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth, type AuthenticatedRequest } from "@/lib/auth-middleware";
-import { db } from "@/lib/db";
-import { users } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth, type AuthenticatedRequest } from '@/lib/auth-middleware';
+import { db } from '@/lib/db';
+import { users } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,19 +15,12 @@ export async function GET(request: NextRequest) {
     const user = (request as AuthenticatedRequest).user;
 
     if (!user) {
-      return NextResponse.json(
-        { error: "No user session found" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'No user session found' }, { status: 401 });
     }
 
     // Try to fetch user data from database, create if doesn't exist
-    let [userData] = await db
-      .select()
-      .from(users)
-      .where(eq(users.keycloakId, user.id))
-      .limit(1);
-    
+    let [userData] = await db.select().from(users).where(eq(users.keycloakId, user.id)).limit(1);
+
     if (!userData) {
       // Create user in database if they don't exist
       [userData] = await db
@@ -38,8 +31,11 @@ export async function GET(request: NextRequest) {
           firstName: user.firstName,
           lastName: user.lastName,
           profileImageUrl: null,
-          role: user.roles?.includes('super_admin') ? 'super_admin' :
-               user.roles?.includes('event_admin') ? 'event_admin' : 'user',
+          role: user.roles?.includes('super_admin')
+            ? 'super_admin'
+            : user.roles?.includes('event_admin')
+              ? 'event_admin'
+              : 'user',
           status: 'active',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -49,10 +45,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(userData);
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch user data" },
-      { status: 500 }
-    );
+    console.error('Error fetching user:', error);
+    return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
   }
 }

@@ -10,17 +10,14 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId');
 
     let conditions = [];
-    
+
     if (category) {
       conditions.push(eq(eventTemplates.category, category));
     }
 
     // Show public templates or user's own templates
     if (userId) {
-      conditions.push(or(
-        eq(eventTemplates.isPublic, true),
-        eq(eventTemplates.createdBy, userId)
-      ));
+      conditions.push(or(eq(eventTemplates.isPublic, true), eq(eventTemplates.createdBy, userId)));
     } else {
       conditions.push(eq(eventTemplates.isPublic, true));
     }
@@ -48,10 +45,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(templates);
   } catch (error) {
     console.error('Error fetching event templates:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch event templates' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch event templates' }, { status: 500 });
   }
 }
 
@@ -75,9 +69,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(template, { status: 201 });
   } catch (error) {
     console.error('Error creating event template:', error);
-    return NextResponse.json(
-      { error: 'Failed to create event template' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create event template' }, { status: 500 });
   }
 }

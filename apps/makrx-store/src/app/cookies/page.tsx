@@ -21,7 +21,8 @@ const cookieCategories: CookieCategory[] = [
   {
     id: 'essential',
     name: 'Essential Cookies',
-    description: 'These cookies are necessary for the website to function and cannot be switched off in our systems.',
+    description:
+      'These cookies are necessary for the website to function and cannot be switched off in our systems.',
     required: true,
     enabled: true,
     cookies: [
@@ -29,26 +30,27 @@ const cookieCategories: CookieCategory[] = [
         name: 'session_id',
         purpose: 'Maintains user session and authentication state',
         duration: 'Session',
-        domain: 'makrx.com'
+        domain: 'makrx.com',
       },
       {
         name: 'csrf_token',
         purpose: 'Security token to prevent cross-site request forgery',
         duration: 'Session',
-        domain: 'makrx.com'
+        domain: 'makrx.com',
       },
       {
         name: 'cookie_consent',
         purpose: 'Stores your cookie preferences',
         duration: '1 year',
-        domain: 'makrx.com'
-      }
-    ]
+        domain: 'makrx.com',
+      },
+    ],
   },
   {
     id: 'performance',
     name: 'Performance & Analytics',
-    description: 'These cookies help us understand how visitors interact with our website by collecting information anonymously.',
+    description:
+      'These cookies help us understand how visitors interact with our website by collecting information anonymously.',
     required: false,
     enabled: true,
     cookies: [
@@ -56,26 +58,27 @@ const cookieCategories: CookieCategory[] = [
         name: '_ga',
         purpose: 'Google Analytics - Distinguishes unique users',
         duration: '2 years',
-        domain: '.makrx.com'
+        domain: '.makrx.com',
       },
       {
         name: '_ga_*',
         purpose: 'Google Analytics - Session and campaign data',
         duration: '2 years',
-        domain: '.makrx.com'
+        domain: '.makrx.com',
       },
       {
         name: 'hotjar_*',
         purpose: 'Hotjar - User behavior analytics and heatmaps',
         duration: '1 year',
-        domain: '.makrx.com'
-      }
-    ]
+        domain: '.makrx.com',
+      },
+    ],
   },
   {
     id: 'functional',
     name: 'Functional Cookies',
-    description: 'These cookies enhance functionality and personalization, such as remembering your preferences.',
+    description:
+      'These cookies enhance functionality and personalization, such as remembering your preferences.',
     required: false,
     enabled: false,
     cookies: [
@@ -83,26 +86,27 @@ const cookieCategories: CookieCategory[] = [
         name: 'theme_preference',
         purpose: 'Remembers your dark/light mode preference',
         duration: '1 year',
-        domain: 'makrx.com'
+        domain: 'makrx.com',
       },
       {
         name: 'language_pref',
         purpose: 'Stores your language selection',
         duration: '1 year',
-        domain: 'makrx.com'
+        domain: 'makrx.com',
       },
       {
         name: 'currency_pref',
         purpose: 'Remembers your preferred currency',
         duration: '1 year',
-        domain: 'makrx.com'
-      }
-    ]
+        domain: 'makrx.com',
+      },
+    ],
   },
   {
     id: 'marketing',
     name: 'Marketing & Advertising',
-    description: 'These cookies are used to track visitors across websites to display relevant advertisements.',
+    description:
+      'These cookies are used to track visitors across websites to display relevant advertisements.',
     required: false,
     enabled: false,
     cookies: [
@@ -110,22 +114,22 @@ const cookieCategories: CookieCategory[] = [
         name: '_fbp',
         purpose: 'Facebook Pixel - Tracks conversions and retargeting',
         duration: '3 months',
-        domain: '.makrx.com'
+        domain: '.makrx.com',
       },
       {
         name: 'google_ads_*',
         purpose: 'Google Ads - Conversion tracking and remarketing',
         duration: '90 days',
-        domain: '.makrx.com'
+        domain: '.makrx.com',
       },
       {
         name: 'linkedin_*',
         purpose: 'LinkedIn - B2B advertising and analytics',
         duration: '2 years',
-        domain: '.makrx.com'
-      }
-    ]
-  }
+        domain: '.makrx.com',
+      },
+    ],
+  },
 ];
 
 export default function CookiePolicyPage() {
@@ -133,20 +137,20 @@ export default function CookiePolicyPage() {
   const [showSettings, setShowSettings] = useState(false);
 
   const toggleCategory = (categoryId: string) => {
-    setCategories(prev => prev.map(cat => 
-      cat.id === categoryId && !cat.required 
-        ? { ...cat, enabled: !cat.enabled }
-        : cat
-    ));
+    setCategories((prev) =>
+      prev.map((cat) =>
+        cat.id === categoryId && !cat.required ? { ...cat, enabled: !cat.enabled } : cat,
+      ),
+    );
   };
 
   const acceptAll = () => {
-    setCategories(prev => prev.map(cat => ({ ...cat, enabled: true })));
+    setCategories((prev) => prev.map((cat) => ({ ...cat, enabled: true })));
     setShowSettings(false);
   };
 
   const acceptEssentialOnly = () => {
-    setCategories(prev => prev.map(cat => ({ ...cat, enabled: cat.required })));
+    setCategories((prev) => prev.map((cat) => ({ ...cat, enabled: cat.required })));
     setShowSettings(false);
   };
 
@@ -167,11 +171,10 @@ export default function CookiePolicyPage() {
                 <Cookie className="w-8 h-8 text-orange-600 dark:text-orange-400" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Cookie Policy
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Cookie Policy</h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Learn about how MakrX uses cookies and similar technologies to enhance your experience on our website.
+              Learn about how MakrX uses cookies and similar technologies to enhance your experience
+              on our website.
             </p>
           </div>
         </div>
@@ -181,9 +184,7 @@ export default function CookiePolicyPage() {
         {/* Cookie Settings Panel */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Cookie Preferences
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cookie Preferences</h2>
             <button
               onClick={() => setShowSettings(!showSettings)}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -192,9 +193,9 @@ export default function CookiePolicyPage() {
               Manage Cookies
             </button>
           </div>
-          
+
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            We use cookies and similar technologies to provide, protect, and improve our services. 
+            We use cookies and similar technologies to provide, protect, and improve our services.
             You can manage your preferences below or learn more about our cookie practices.
           </p>
 
@@ -202,7 +203,10 @@ export default function CookiePolicyPage() {
             <div className="border-t dark:border-gray-600 pt-6">
               <div className="space-y-6">
                 {categories.map((category) => (
-                  <div key={category.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                  <div
+                    key={category.id}
+                    className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                  >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -224,11 +228,11 @@ export default function CookiePolicyPage() {
                         />
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                       {category.description}
                     </p>
-                    
+
                     <div className="space-y-2">
                       {category.cookies.map((cookie, index) => (
                         <details key={index} className="group">
@@ -236,9 +240,15 @@ export default function CookiePolicyPage() {
                             {cookie.name}
                           </summary>
                           <div className="mt-2 ml-4 text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                            <p><strong>Purpose:</strong> {cookie.purpose}</p>
-                            <p><strong>Duration:</strong> {cookie.duration}</p>
-                            <p><strong>Domain:</strong> {cookie.domain}</p>
+                            <p>
+                              <strong>Purpose:</strong> {cookie.purpose}
+                            </p>
+                            <p>
+                              <strong>Duration:</strong> {cookie.duration}
+                            </p>
+                            <p>
+                              <strong>Domain:</strong> {cookie.domain}
+                            </p>
                           </div>
                         </details>
                       ))}
@@ -246,7 +256,7 @@ export default function CookiePolicyPage() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t dark:border-gray-600">
                 <button
                   onClick={acceptAll}
@@ -278,12 +288,13 @@ export default function CookiePolicyPage() {
               What Are Cookies?
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Cookies are small text files that are placed on your computer or mobile device when you visit a website. 
-              They are widely used to make websites work more efficiently and to provide information to website owners.
+              Cookies are small text files that are placed on your computer or mobile device when
+              you visit a website. They are widely used to make websites work more efficiently and
+              to provide information to website owners.
             </p>
             <p className="text-gray-600 dark:text-gray-300">
-              Cookies can be "persistent" (remain on your device until they expire or are deleted) or "session" 
-              (deleted when you close your browser).
+              Cookies can be "persistent" (remain on your device until they expire or are deleted)
+              or "session" (deleted when you close your browser).
             </p>
           </section>
 
@@ -295,7 +306,9 @@ export default function CookiePolicyPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Essential Website Functions</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Essential Website Functions
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
                     Authentication, security, and basic website functionality
                   </p>
@@ -304,7 +317,9 @@ export default function CookiePolicyPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Performance Analytics</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Performance Analytics
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
                     Understanding how visitors use our site to improve user experience
                   </p>
@@ -322,7 +337,9 @@ export default function CookiePolicyPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Marketing and Advertising</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Marketing and Advertising
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
                     Showing relevant advertisements and measuring campaign effectiveness
                   </p>
@@ -339,11 +356,23 @@ export default function CookiePolicyPage() {
               We work with trusted third-party partners who may set cookies on our website:
             </p>
             <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
-              <li><strong>Google Analytics:</strong> Website performance and user behavior analysis</li>
-              <li><strong>Google Ads:</strong> Advertising and conversion tracking</li>
-              <li><strong>Facebook Pixel:</strong> Social media advertising and remarketing</li>
-              <li><strong>Hotjar:</strong> User experience insights through heatmaps and session recordings</li>
-              <li><strong>LinkedIn Insight Tag:</strong> Professional network advertising and analytics</li>
+              <li>
+                <strong>Google Analytics:</strong> Website performance and user behavior analysis
+              </li>
+              <li>
+                <strong>Google Ads:</strong> Advertising and conversion tracking
+              </li>
+              <li>
+                <strong>Facebook Pixel:</strong> Social media advertising and remarketing
+              </li>
+              <li>
+                <strong>Hotjar:</strong> User experience insights through heatmaps and session
+                recordings
+              </li>
+              <li>
+                <strong>LinkedIn Insight Tag:</strong> Professional network advertising and
+                analytics
+              </li>
             </ul>
           </section>
 
@@ -376,7 +405,9 @@ export default function CookiePolicyPage() {
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Our Cookie Settings</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Our Cookie Settings
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
                     Use the "Manage Cookies" button above to control your preferences on our site
                   </p>
@@ -407,24 +438,29 @@ export default function CookiePolicyPage() {
               Updates to This Policy
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
-              We may update this Cookie Policy from time to time to reflect changes in our practices or applicable laws. 
-              We will notify you of any material changes by posting the updated policy on our website and updating the 
-              "Last Updated" date below.
+              We may update this Cookie Policy from time to time to reflect changes in our practices
+              or applicable laws. We will notify you of any material changes by posting the updated
+              policy on our website and updating the "Last Updated" date below.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Contact Us
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contact Us</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              If you have questions about this Cookie Policy or our data practices, please contact us:
+              If you have questions about this Cookie Policy or our data practices, please contact
+              us:
             </p>
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div className="space-y-2 text-sm">
-                <p className="text-gray-900 dark:text-white"><strong>Email:</strong> privacy@makrx.com</p>
-                <p className="text-gray-900 dark:text-white"><strong>Address:</strong> MakrX Inc., 123 Innovation St, San Francisco, CA 94102</p>
-                <p className="text-gray-900 dark:text-white"><strong>Data Protection Officer:</strong> dpo@makrx.com</p>
+                <p className="text-gray-900 dark:text-white">
+                  <strong>Email:</strong> privacy@makrx.com
+                </p>
+                <p className="text-gray-900 dark:text-white">
+                  <strong>Address:</strong> MakrX Inc., 123 Innovation St, San Francisco, CA 94102
+                </p>
+                <p className="text-gray-900 dark:text-white">
+                  <strong>Data Protection Officer:</strong> dpo@makrx.com
+                </p>
               </div>
             </div>
           </section>

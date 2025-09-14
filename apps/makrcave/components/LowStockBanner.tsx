@@ -20,11 +20,11 @@ interface LowStockBannerProps {
   onDismiss?: () => void;
 }
 
-export default function LowStockBanner({ 
-  lowStockItems, 
-  onReorderItem, 
-  onViewItem, 
-  onDismiss 
+export default function LowStockBanner({
+  lowStockItems,
+  onReorderItem,
+  onViewItem,
+  onDismiss,
 }: LowStockBannerProps) {
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -32,10 +32,10 @@ export default function LowStockBanner({
     return null;
   }
 
-  const criticalItems = lowStockItems.filter(item => item.quantity === 0);
-  const lowItems = lowStockItems.filter(item => item.quantity > 0);
-  const reorderableItems = lowStockItems.filter(item => 
-    item.supplierType === 'makrx' && item.productCode
+  const criticalItems = lowStockItems.filter((item) => item.quantity === 0);
+  const lowItems = lowStockItems.filter((item) => item.quantity > 0);
+  const reorderableItems = lowStockItems.filter(
+    (item) => item.supplierType === 'makrx' && item.productCode,
   );
 
   const handleDismiss = () => {
@@ -49,12 +49,10 @@ export default function LowStockBanner({
         <div className="flex-shrink-0">
           <AlertTriangle className="w-6 h-6 text-red-500" />
         </div>
-        
+
         <div className="flex-1">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-red-800 dark:text-red-200">
-              Low Stock Alert
-            </h3>
+            <h3 className="font-semibold text-red-800 dark:text-red-200">Low Stock Alert</h3>
             <button
               onClick={handleDismiss}
               className="p-1 hover:bg-red-100 dark:hover:bg-red-800/30 rounded transition-colors"
@@ -71,8 +69,11 @@ export default function LowStockBanner({
                   Out of Stock ({criticalItems.length} items)
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {criticalItems.slice(0, 4).map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded">
+                  {criticalItems.slice(0, 4).map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded"
+                    >
                       <div>
                         <span className="font-medium text-sm">{item.name}</span>
                         <span className="text-xs text-muted-foreground block">{item.location}</span>
@@ -112,8 +113,11 @@ export default function LowStockBanner({
                   Low Stock ({lowItems.length} items)
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {lowItems.slice(0, 8).map(item => (
-                    <div key={item.id} className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-gray-800 rounded text-sm">
+                  {lowItems.slice(0, 8).map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-gray-800 rounded text-sm"
+                    >
                       <span className="font-medium">{item.name}</span>
                       <span className="text-amber-600 dark:text-amber-400">
                         ({item.quantity} {item.unit})
@@ -147,7 +151,7 @@ export default function LowStockBanner({
                 Bulk Reorder from MakrX Store ({reorderableItems.length} items)
               </button>
             )}
-            
+
             <button className="makrcave-btn-secondary text-sm">
               <AlertTriangle className="w-4 h-4 mr-2" />
               Generate Low Stock Report
@@ -155,8 +159,8 @@ export default function LowStockBanner({
           </div>
 
           <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-xs text-blue-800 dark:text-blue-200">
-            <strong>Tip:</strong> Set up automatic reorder points to prevent stockouts. 
-            Items marked with "MakrX" can be automatically reordered from the store.
+            <strong>Tip:</strong> Set up automatic reorder points to prevent stockouts. Items marked
+            with "MakrX" can be automatically reordered from the store.
           </div>
         </div>
       </div>

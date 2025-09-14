@@ -1,11 +1,22 @@
-export type Role = 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user' | string;
+export type Role =
+  | 'super_admin'
+  | 'admin'
+  | 'makerspace_admin'
+  | 'service_provider'
+  | 'user'
+  | string;
 
 interface Context {
   isOwnResource?: boolean;
   isAssignedMakerspace?: boolean;
 }
 
-export function hasPermission(role: Role, _domain: string, _action: string, ctx: Context = {}): boolean {
+export function hasPermission(
+  role: Role,
+  _domain: string,
+  _action: string,
+  ctx: Context = {},
+): boolean {
   // Simple, permissive defaults to unblock builds. Refine as needed.
   if (role === 'super_admin' || role === 'admin' || role === 'makerspace_admin') return true;
 
@@ -28,4 +39,3 @@ export function hasPermission(role: Role, _domain: string, _action: string, ctx:
   // Fallback deny
   return false;
 }
-

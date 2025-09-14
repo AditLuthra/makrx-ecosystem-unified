@@ -2,12 +2,21 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, Users, Award, DollarSign, ArrowLeft, ExternalLink } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Award,
+  DollarSign,
+  ArrowLeft,
+  ExternalLink,
+} from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
 interface EventPageProps {
-  params: { 
+  params: {
     micrositeSlug: string;
     subEventSlug: string;
   };
@@ -87,7 +96,7 @@ async function getEventData(micrositeSlug: string, eventSlug: string) {
     venueDetails: {
       address: 'Building A, Level 2, MakerSpace Convention Center',
       capacity: 500,
-      facilities: ['WiFi', 'Power Outlets', 'Tool Library', 'Safety Equipment']
+      facilities: ['WiFi', 'Power Outlets', 'Tool Library', 'Safety Equipment'],
     },
     capacity: 100,
     registeredCount: 85,
@@ -100,31 +109,39 @@ async function getEventData(micrositeSlug: string, eventSlug: string) {
     images: [
       'https://images.unsplash.com/photo-1485827404703-89b55fcc595e',
       'https://images.unsplash.com/photo-1581094794329-c8112a89af12',
-      'https://images.unsplash.com/photo-1516110833967-0b5716ca75d0'
+      'https://images.unsplash.com/photo-1516110833967-0b5716ca75d0',
     ],
     organizers: [
       {
         name: 'Dr. Sarah Chen',
         title: 'Robotics Engineer, TechCorp',
         bio: 'Leading robotics researcher with 15+ years experience in autonomous systems.',
-        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b9c1c5de'
+        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b9c1c5de',
       },
       {
         name: 'Prof. Michael Rodriguez',
         title: 'Computer Science, Stanford University',
         bio: 'Professor specializing in AI and machine learning applications in robotics.',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e'
-      }
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
+      },
     ],
     sponsors: [
-      { name: 'TechCorp', tier: 'Title', logo: 'https://via.placeholder.com/120x40/3B82F6/white?text=TechCorp' },
-      { name: 'RoboTools', tier: 'Gold', logo: 'https://via.placeholder.com/100x40/10B981/white?text=RoboTools' }
+      {
+        name: 'TechCorp',
+        tier: 'Title',
+        logo: 'https://via.placeholder.com/120x40/3B82F6/white?text=TechCorp',
+      },
+      {
+        name: 'RoboTools',
+        tier: 'Gold',
+        logo: 'https://via.placeholder.com/100x40/10B981/white?text=RoboTools',
+      },
     ],
     requirements: [
       'Basic programming knowledge (Python or C++ preferred)',
       'Understanding of electronics and sensors',
       'Team of 2-4 members',
-      'Bring your own laptop and development tools'
+      'Bring your own laptop and development tools',
     ],
     schedule: [
       { time: '5:30 PM', activity: 'Registration & Check-in' },
@@ -133,8 +150,8 @@ async function getEventData(micrositeSlug: string, eventSlug: string) {
       { time: '7:30 PM', activity: 'Qualification Round' },
       { time: '8:30 PM', activity: 'Semifinal Round' },
       { time: '9:00 PM', activity: 'Final Round' },
-      { time: '9:30 PM', activity: 'Awards Ceremony' }
-    ]
+      { time: '9:30 PM', activity: 'Awards Ceremony' },
+    ],
   };
 
   return mockEvent;
@@ -143,11 +160,11 @@ async function getEventData(micrositeSlug: string, eventSlug: string) {
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const { micrositeSlug, subEventSlug } = await params;
   const event = await getEventData(micrositeSlug, subEventSlug);
-  
+
   if (!event) {
     return {
       title: 'Event Not Found',
-      description: 'The requested event could not be found.'
+      description: 'The requested event could not be found.',
     };
   }
 
@@ -157,8 +174,8 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     openGraph: {
       title: event.title,
       description: event.shortDesc,
-      images: [{ url: event.featuredImage }]
-    }
+      images: [{ url: event.featuredImage }],
+    },
   };
 }
 
@@ -173,17 +190,17 @@ export default async function EventPage({ params }: EventPageProps) {
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return {
-      date: date.toLocaleDateString('en-US', { 
+      date: date.toLocaleDateString('en-US', {
         weekday: 'long',
-        month: 'long', 
+        month: 'long',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
       }),
-      time: date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
+      time: date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: true
-      })
+        hour12: true,
+      }),
     };
   };
 
@@ -197,7 +214,7 @@ export default async function EventPage({ params }: EventPageProps) {
       {/* Header */}
       <div className="bg-white border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link 
+          <Link
             href={`/m/${micrositeSlug}/events`}
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -231,13 +248,9 @@ export default async function EventPage({ params }: EventPageProps) {
                   )}
                 </div>
 
-                <h1 className="text-4xl font-bold text-foreground mb-4">
-                  {event.title}
-                </h1>
+                <h1 className="text-4xl font-bold text-foreground mb-4">{event.title}</h1>
 
-                <p className="text-xl text-muted-foreground">
-                  {event.shortDesc}
-                </p>
+                <p className="text-xl text-muted-foreground">{event.shortDesc}</p>
               </div>
             </div>
 
@@ -247,7 +260,7 @@ export default async function EventPage({ params }: EventPageProps) {
                 <CardTitle>About This Event</CardTitle>
               </CardHeader>
               <CardContent>
-                <div 
+                <div
                   className="prose prose-lg max-w-none"
                   dangerouslySetInnerHTML={{ __html: event.longDesc }}
                 />
@@ -261,7 +274,7 @@ export default async function EventPage({ params }: EventPageProps) {
                   <CardTitle>Rules & Guidelines</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div 
+                  <div
                     className="prose prose-lg max-w-none"
                     dangerouslySetInnerHTML={{ __html: event.rulesMd }}
                   />
@@ -279,7 +292,7 @@ export default async function EventPage({ params }: EventPageProps) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div 
+                  <div
                     className="prose prose-lg max-w-none"
                     dangerouslySetInnerHTML={{ __html: event.prizesMd }}
                   />
@@ -296,13 +309,12 @@ export default async function EventPage({ params }: EventPageProps) {
                 <CardContent>
                   <div className="space-y-3">
                     {event.schedule.map((item, index) => (
-                      <div key={index} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                        <div className="font-medium text-sm w-20 flex-shrink-0">
-                          {item.time}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.activity}
-                        </div>
+                      <div
+                        key={index}
+                        className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg"
+                      >
+                        <div className="font-medium text-sm w-20 flex-shrink-0">{item.time}</div>
+                        <div className="text-sm text-muted-foreground">{item.activity}</div>
                       </div>
                     ))}
                   </div>
@@ -347,7 +359,9 @@ export default async function EventPage({ params }: EventPageProps) {
                 <div className="text-center">
                   {isFull ? (
                     <div>
-                      <Badge variant="destructive" className="mb-2">Event Full</Badge>
+                      <Badge variant="destructive" className="mb-2">
+                        Event Full
+                      </Badge>
                       <p className="text-sm text-muted-foreground">
                         {event.waitlistCount} people on waitlist
                       </p>
@@ -494,14 +508,12 @@ export default async function EventPage({ params }: EventPageProps) {
                   <div className="space-y-3">
                     {event.sponsors.map((sponsor, index) => (
                       <div key={index} className="flex items-center gap-3">
-                        <img
-                          src={sponsor.logo}
-                          alt={sponsor.name}
-                          className="h-8 object-contain"
-                        />
+                        <img src={sponsor.logo} alt={sponsor.name} className="h-8 object-contain" />
                         <div>
                           <div className="font-medium text-sm">{sponsor.name}</div>
-                          <div className="text-xs text-muted-foreground">{sponsor.tier} Sponsor</div>
+                          <div className="text-xs text-muted-foreground">
+                            {sponsor.tier} Sponsor
+                          </div>
                         </div>
                       </div>
                     ))}

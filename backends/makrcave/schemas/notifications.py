@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import Enum
 import uuid
 
+
 # Enums
 class NotificationType(str, Enum):
     JOB_CREATED = "job_created"
@@ -11,34 +12,35 @@ class NotificationType(str, Enum):
     JOB_FAILED = "job_failed"
     JOB_PROGRESS_UPDATE = "job_progress_update"
     JOB_READY_FOR_PICKUP = "job_ready_for_pickup"
-    
+
     INVENTORY_LOW_STOCK = "inventory_low_stock"
     INVENTORY_OUT_OF_STOCK = "inventory_out_of_stock"
     INVENTORY_RESTOCK_NEEDED = "inventory_restock_needed"
     INVENTORY_EXPIRED = "inventory_expired"
-    
+
     EQUIPMENT_MAINTENANCE_DUE = "equipment_maintenance_due"
     EQUIPMENT_MAINTENANCE_OVERDUE = "equipment_maintenance_overdue"
     EQUIPMENT_FAILURE = "equipment_failure"
     EQUIPMENT_AVAILABLE = "equipment_available"
     EQUIPMENT_RESERVATION_REMINDER = "equipment_reservation_reminder"
     EQUIPMENT_RESERVATION_CANCELLED = "equipment_reservation_cancelled"
-    
+
     MEMBERSHIP_EXPIRING = "membership_expiring"
     MEMBERSHIP_EXPIRED = "membership_expired"
     MEMBERSHIP_RENEWED = "membership_renewed"
     MEMBERSHIP_SUSPENDED = "membership_suspended"
     MEMBERSHIP_PAYMENT_FAILED = "membership_payment_failed"
-    
+
     PROJECT_SHARED = "project_shared"
     PROJECT_COLLABORATION_INVITE = "project_collaboration_invite"
     PROJECT_COMMENT = "project_comment"
-    
+
     ANNOUNCEMENT = "announcement"
     SYSTEM_MAINTENANCE = "system_maintenance"
     SECURITY_ALERT = "security_alert"
     TRAINING_REMINDER = "training_reminder"
     EVENT_REMINDER = "event_reminder"
+
 
 class NotificationChannel(str, Enum):
     IN_APP = "in_app"
@@ -49,12 +51,14 @@ class NotificationChannel(str, Enum):
     SLACK = "slack"
     DISCORD = "discord"
 
+
 class NotificationPriority(str, Enum):
     LOW = "low"
     NORMAL = "normal"
     HIGH = "high"
     URGENT = "urgent"
     CRITICAL = "critical"
+
 
 class NotificationStatus(str, Enum):
     PENDING = "pending"
@@ -63,6 +67,7 @@ class NotificationStatus(str, Enum):
     READ = "read"
     FAILED = "failed"
     CANCELLED = "cancelled"
+
 
 # Notification Schemas
 class NotificationCreate(BaseModel):
@@ -81,10 +86,12 @@ class NotificationCreate(BaseModel):
     expires_at: Optional[datetime] = None
     group_key: Optional[str] = None
 
+
 class NotificationUpdate(BaseModel):
     status: Optional[NotificationStatus] = None
     read_at: Optional[datetime] = None
     delivered_at: Optional[datetime] = None
+
 
 class NotificationResponse(BaseModel):
     id: uuid.UUID
@@ -114,6 +121,7 @@ class NotificationResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Bulk notification operations
 class BulkNotificationCreate(BaseModel):
     recipient_ids: List[uuid.UUID]
@@ -128,12 +136,14 @@ class BulkNotificationCreate(BaseModel):
     expires_at: Optional[datetime] = None
     batch_size: int = Field(100, gt=0, le=1000)
 
+
 class BulkNotificationResponse(BaseModel):
     batch_id: uuid.UUID
     total_notifications: int
     created_count: int
     failed_count: int
     errors: List[Dict[str, str]] = []
+
 
 # Template Schemas
 class NotificationTemplateCreate(BaseModel):
@@ -153,6 +163,7 @@ class NotificationTemplateCreate(BaseModel):
     css_styles: Optional[str] = None
     is_default: bool = False
 
+
 class NotificationTemplateUpdate(BaseModel):
     template_name: Optional[str] = Field(None, max_length=100)
     subject_template: Optional[str] = Field(None, max_length=255)
@@ -167,6 +178,7 @@ class NotificationTemplateUpdate(BaseModel):
     css_styles: Optional[str] = None
     is_active: Optional[bool] = None
     is_default: Optional[bool] = None
+
 
 class NotificationTemplateResponse(BaseModel):
     id: uuid.UUID
@@ -193,16 +205,23 @@ class NotificationTemplateResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Preference Schemas
 class NotificationPreferenceCreate(BaseModel):
     global_enabled: bool = True
     quiet_hours_enabled: bool = True
-    quiet_hours_start: str = Field("22:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
-    quiet_hours_end: str = Field("08:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    quiet_hours_start: str = Field(
+        "22:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
+    quiet_hours_end: str = Field(
+        "08:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
     timezone: str = "UTC"
     email_enabled: bool = True
     email_address: Optional[EmailStr] = None
-    email_frequency: str = Field("immediate", regex="^(immediate|hourly|daily|weekly)$")
+    email_frequency: str = Field(
+        "immediate", regex="^(immediate|hourly|daily|weekly)$"
+    )
     sms_enabled: bool = False
     sms_number: Optional[str] = Field(None, max_length=20)
     push_enabled: bool = True
@@ -210,19 +229,31 @@ class NotificationPreferenceCreate(BaseModel):
     in_app_sound: bool = True
     notification_type_preferences: Optional[Dict[str, Dict[str, Any]]] = None
     daily_digest_enabled: bool = False
-    daily_digest_time: str = Field("09:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    daily_digest_time: str = Field(
+        "09:00", regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
     weekly_digest_enabled: bool = False
-    weekly_digest_day: str = Field("monday", regex="^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$")
+    weekly_digest_day: str = Field(
+        "monday",
+        regex="^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$",
+    )
+
 
 class NotificationPreferenceUpdate(BaseModel):
     global_enabled: Optional[bool] = None
     quiet_hours_enabled: Optional[bool] = None
-    quiet_hours_start: Optional[str] = Field(None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
-    quiet_hours_end: Optional[str] = Field(None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    quiet_hours_start: Optional[str] = Field(
+        None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
+    quiet_hours_end: Optional[str] = Field(
+        None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
     timezone: Optional[str] = None
     email_enabled: Optional[bool] = None
     email_address: Optional[EmailStr] = None
-    email_frequency: Optional[str] = Field(None, regex="^(immediate|hourly|daily|weekly)$")
+    email_frequency: Optional[str] = Field(
+        None, regex="^(immediate|hourly|daily|weekly)$"
+    )
     sms_enabled: Optional[bool] = None
     sms_number: Optional[str] = Field(None, max_length=20)
     push_enabled: Optional[bool] = None
@@ -230,9 +261,15 @@ class NotificationPreferenceUpdate(BaseModel):
     in_app_sound: Optional[bool] = None
     notification_type_preferences: Optional[Dict[str, Dict[str, Any]]] = None
     daily_digest_enabled: Optional[bool] = None
-    daily_digest_time: Optional[str] = Field(None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    daily_digest_time: Optional[str] = Field(
+        None, regex=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
     weekly_digest_enabled: Optional[bool] = None
-    weekly_digest_day: Optional[str] = Field(None, regex="^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$")
+    weekly_digest_day: Optional[str] = Field(
+        None,
+        regex="^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$",
+    )
+
 
 class NotificationPreferenceResponse(BaseModel):
     id: uuid.UUID
@@ -263,6 +300,7 @@ class NotificationPreferenceResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Rule Schemas
 class NotificationRuleCreate(BaseModel):
     rule_name: str = Field(..., max_length=100)
@@ -275,12 +313,17 @@ class NotificationRuleCreate(BaseModel):
     throttle_duration_minutes: Optional[int] = Field(None, gt=0)
     max_notifications_per_day: Optional[int] = Field(None, gt=0)
     max_notifications_per_hour: Optional[int] = Field(None, gt=0)
-    recipient_type: str = Field(..., regex="^(specific_users|role_based|all_members)$")
+    recipient_type: str = Field(
+        ..., regex="^(specific_users|role_based|all_members)$"
+    )
     recipient_criteria: Optional[Dict[str, Any]] = None
     template_id: Optional[uuid.UUID] = None
     custom_content: Optional[Dict[str, Any]] = None
-    schedule_type: str = Field("immediate", regex="^(immediate|scheduled|recurring)$")
+    schedule_type: str = Field(
+        "immediate", regex="^(immediate|scheduled|recurring)$"
+    )
     schedule_config: Optional[Dict[str, Any]] = None
+
 
 class NotificationRuleUpdate(BaseModel):
     rule_name: Optional[str] = Field(None, max_length=100)
@@ -292,12 +335,17 @@ class NotificationRuleUpdate(BaseModel):
     throttle_duration_minutes: Optional[int] = Field(None, gt=0)
     max_notifications_per_day: Optional[int] = Field(None, gt=0)
     max_notifications_per_hour: Optional[int] = Field(None, gt=0)
-    recipient_type: Optional[str] = Field(None, regex="^(specific_users|role_based|all_members)$")
+    recipient_type: Optional[str] = Field(
+        None, regex="^(specific_users|role_based|all_members)$"
+    )
     recipient_criteria: Optional[Dict[str, Any]] = None
     template_id: Optional[uuid.UUID] = None
     custom_content: Optional[Dict[str, Any]] = None
-    schedule_type: Optional[str] = Field(None, regex="^(immediate|scheduled|recurring)$")
+    schedule_type: Optional[str] = Field(
+        None, regex="^(immediate|scheduled|recurring)$"
+    )
     schedule_config: Optional[Dict[str, Any]] = None
+
 
 class NotificationRuleResponse(BaseModel):
     id: uuid.UUID
@@ -326,6 +374,7 @@ class NotificationRuleResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # Analytics Schemas
 class NotificationAnalyticsResponse(BaseModel):
@@ -359,6 +408,7 @@ class NotificationAnalyticsResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Utility Schemas
 class NotificationFilter(BaseModel):
     notification_types: Optional[List[NotificationType]] = None
@@ -368,7 +418,10 @@ class NotificationFilter(BaseModel):
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     recipient_id: Optional[uuid.UUID] = None
-    read_status: Optional[bool] = None  # True for read, False for unread, None for all
+    read_status: Optional[bool] = (
+        None  # True for read, False for unread, None for all
+    )
+
 
 class NotificationStats(BaseModel):
     total_notifications: int
@@ -379,21 +432,25 @@ class NotificationStats(BaseModel):
     notifications_by_priority: Dict[str, int]
     recent_activity: List[Dict[str, Any]]
 
+
 class NotificationTest(BaseModel):
     notification_type: NotificationType
     channel: NotificationChannel
     recipient_id: uuid.UUID
     test_data: Optional[Dict[str, Any]] = None
 
+
 class PushTokenRegister(BaseModel):
     device_token: str
     device_type: str = Field(..., regex="^(ios|android|web)$")
     device_name: Optional[str] = None
 
+
 class DigestPreview(BaseModel):
     digest_type: str = Field(..., regex="^(daily|weekly)$")
     recipient_id: uuid.UUID
     date: Optional[datetime] = None
+
 
 class NotificationExport(BaseModel):
     format: str = Field(..., regex="^(csv|xlsx|json)$")
@@ -401,13 +458,17 @@ class NotificationExport(BaseModel):
     include_content: bool = True
     include_delivery_logs: bool = False
 
+
 # Real-time schemas
 class NotificationEvent(BaseModel):
-    event_type: str = Field(..., regex="^(created|updated|delivered|read|failed)$")
+    event_type: str = Field(
+        ..., regex="^(created|updated|delivered|read|failed)$"
+    )
     notification_id: uuid.UUID
     recipient_id: uuid.UUID
     data: Optional[Dict[str, Any]] = None
     timestamp: datetime
+
 
 class UnreadNotificationsSummary(BaseModel):
     total_unread: int
@@ -417,11 +478,13 @@ class UnreadNotificationsSummary(BaseModel):
     has_urgent: bool
     has_critical: bool
 
+
 # Template rendering
 class TemplateRenderRequest(BaseModel):
     template_id: uuid.UUID
     variables: Dict[str, Any]
     recipient_id: Optional[uuid.UUID] = None
+
 
 class TemplateRenderResponse(BaseModel):
     subject: Optional[str] = None
@@ -430,7 +493,8 @@ class TemplateRenderResponse(BaseModel):
     action_text: Optional[str] = None
     action_url: Optional[str] = None
     html_content: Optional[str] = None
-    
+
+
 # System schemas
 class NotificationSystemHealth(BaseModel):
     queue_status: Dict[str, Any]
@@ -438,6 +502,7 @@ class NotificationSystemHealth(BaseModel):
     delivery_stats: Dict[str, Any]
     error_rates: Dict[str, float]
     system_status: str
+
 
 class NotificationSystemConfig(BaseModel):
     max_retries: int = 3

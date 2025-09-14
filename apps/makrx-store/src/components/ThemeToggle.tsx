@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { Sun, Moon, Monitor } from "lucide-react";
-import { useTheme } from "@/contexts/SharedThemeProvider";
+import { Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from '@/contexts/SharedThemeProvider';
 
 export function ThemeToggle() {
   const { theme, effectiveTheme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
     } else {
-      setTheme("light");
+      setTheme('light');
     }
   };
 
   const getIcon = () => {
     switch (theme) {
-      case "light":
+      case 'light':
         return <Sun className="h-5 w-5" />;
-      case "dark":
+      case 'dark':
         return <Moon className="h-5 w-5" />;
-      case "system":
+      case 'system':
         return <Monitor className="h-5 w-5" />;
       default:
         return <Sun className="h-5 w-5" />;
@@ -31,14 +31,14 @@ export function ThemeToggle() {
 
   const getTooltip = () => {
     switch (theme) {
-      case "light":
-        return "Switch to dark mode";
-      case "dark":
-        return "Switch to system preference";
-      case "system":
-        return "Switch to light mode";
+      case 'light':
+        return 'Switch to dark mode';
+      case 'dark':
+        return 'Switch to system preference';
+      case 'system':
+        return 'Switch to light mode';
       default:
-        return "Toggle theme";
+        return 'Toggle theme';
     }
   };
 
@@ -64,22 +64,22 @@ export function ThemeToggleCompact() {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
     } else {
-      setTheme("light");
+      setTheme('light');
     }
   };
 
   const getIcon = () => {
     switch (theme) {
-      case "light":
+      case 'light':
         return <Sun className="h-4 w-4" />;
-      case "dark":
+      case 'dark':
         return <Moon className="h-4 w-4" />;
-      case "system":
+      case 'system':
         return <Monitor className="h-4 w-4" />;
       default:
         return <Sun className="h-4 w-4" />;
@@ -88,14 +88,14 @@ export function ThemeToggleCompact() {
 
   const getLabel = () => {
     switch (theme) {
-      case "light":
-        return "Light mode";
-      case "dark":
-        return "Dark mode";
-      case "system":
-        return "System";
+      case 'light':
+        return 'Light mode';
+      case 'dark':
+        return 'Dark mode';
+      case 'system':
+        return 'System';
       default:
-        return "Theme";
+        return 'Theme';
     }
   };
 

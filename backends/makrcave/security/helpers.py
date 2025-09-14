@@ -12,7 +12,9 @@ def _decode_jwt_no_verify(token: str) -> Dict[str, Any]:
         if len(parts) < 2:
             return {}
         payload_b64 = parts[1] + "==="  # pad
-        payload = base64.urlsafe_b64decode(payload_b64.encode("utf-8")).decode("utf-8")
+        payload = base64.urlsafe_b64decode(payload_b64.encode("utf-8")).decode(
+            "utf-8"
+        )
         return json.loads(payload)
     except Exception:
         return {}
@@ -26,7 +28,9 @@ def get_request_context(request: Request = None) -> Dict[str, Any]:
     ctx: Dict[str, Any] = {}
     try:
         if request:
-            auth = request.headers.get("authorization") or request.headers.get("Authorization")
+            auth = request.headers.get("authorization") or request.headers.get(
+                "Authorization"
+            )
             if auth and auth.lower().startswith("bearer "):
                 token = auth.split(" ", 1)[1]
                 payload = _decode_jwt_no_verify(token)
@@ -43,4 +47,3 @@ def get_request_context(request: Request = None) -> Dict[str, Any]:
     except Exception:
         pass
     return ctx
-

@@ -11,50 +11,40 @@ const emailSchema = z.object({
   participantName: z.string(),
   registrationType: z.string(),
   registrationId: z.string(),
-  paymentStatus: z.string().optional()
+  paymentStatus: z.string().optional(),
 });
 
 // POST /api/emails/send-registration-confirmation
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate input
     const validatedData = emailSchema.parse(body);
 
     // Send email
-    const result = await sendRegistrationConfirmationEmail(
-      validatedData.to,
-      validatedData
-    );
+    const result = await sendRegistrationConfirmationEmail(validatedData.to, validatedData);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error || 'Failed to send email' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: result.error || 'Failed to send email' }, { status: 500 });
     }
 
     return NextResponse.json({
       message: 'Registration confirmation email sent successfully',
-      emailSent: true
+      emailSent: true,
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error sending registration confirmation email:', error);
-    return NextResponse.json(
-      { error: 'Failed to send confirmation email' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to send confirmation email' }, { status: 500 });
   }
 }

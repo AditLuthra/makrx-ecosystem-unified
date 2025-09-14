@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { Check, AlertTriangle, Package } from "lucide-react";
+import { useState, useEffect, useMemo } from 'react';
+import { Check, AlertTriangle, Package } from 'lucide-react';
 
 interface ProductVariant {
   id: number;
@@ -24,7 +24,10 @@ interface VariantAttribute {
 
 interface ProductVariantSelectorProps {
   variants: ProductVariant[];
-  onVariantChange: (variant: ProductVariant | null, selectedAttributes: Record<string, string>) => void;
+  onVariantChange: (
+    variant: ProductVariant | null,
+    selectedAttributes: Record<string, string>,
+  ) => void;
   basePrice: number;
   currency?: string;
   className?: string;
@@ -34,8 +37,8 @@ export default function ProductVariantSelector({
   variants,
   onVariantChange,
   basePrice,
-  currency = "INR",
-  className = "",
+  currency = 'INR',
+  className = '',
 }: ProductVariantSelectorProps) {
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
@@ -43,7 +46,7 @@ export default function ProductVariantSelector({
   // Extract available attributes and their values from variants
   const availableAttributes = useMemo(() => {
     const attributeMap = new Map<string, Set<string>>();
-    
+
     variants.forEach((variant) => {
       Object.entries(variant.attributes).forEach(([key, value]) => {
         if (!attributeMap.has(key)) {
@@ -57,14 +60,12 @@ export default function ProductVariantSelector({
     attributeMap.forEach((values, attributeName) => {
       const attributeValues = Array.from(values).map((value) => {
         // Count how many variants have this attribute value
-        const count = variants.filter(
-          (v) => v.attributes[attributeName] === value
-        ).length;
-        
+        const count = variants.filter((v) => v.attributes[attributeName] === value).length;
+
         // Check if this value is available given current selections
         const available = variants.some((variant) => {
           if (variant.attributes[attributeName] !== value) return false;
-          
+
           // Check if this variant is compatible with current selections
           return Object.entries(selectedAttributes).every(([selectedKey, selectedValue]) => {
             if (selectedKey === attributeName) return true;
@@ -93,7 +94,7 @@ export default function ProductVariantSelector({
   useEffect(() => {
     const matchingVariant = variants.find((variant) => {
       return Object.entries(selectedAttributes).every(
-        ([key, value]) => variant.attributes[key] === value
+        ([key, value]) => variant.attributes[key] === value,
       );
     });
 
@@ -121,13 +122,11 @@ export default function ProductVariantSelector({
   };
 
   const hasSelections = Object.keys(selectedAttributes).length > 0;
-  const isCompleteSelection = availableAttributes.every(
-    (attr) => selectedAttributes[attr.name]
-  );
+  const isCompleteSelection = availableAttributes.every((attr) => selectedAttributes[attr.name]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
       currency,
     }).format(price);
   };
@@ -161,10 +160,9 @@ export default function ProductVariantSelector({
         {selectedVariant && selectedVariant.sale_price && (
           <span className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded text-sm font-medium">
             {Math.round(
-              ((selectedVariant.price - selectedVariant.sale_price) /
-                selectedVariant.price) *
-                100
-            )}% OFF
+              ((selectedVariant.price - selectedVariant.sale_price) / selectedVariant.price) * 100,
+            )}
+            % OFF
           </span>
         )}
       </div>
@@ -173,9 +171,7 @@ export default function ProductVariantSelector({
       {availableAttributes.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Options
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Options</h3>
             {hasSelections && (
               <button
                 onClick={clearAllSelections}
@@ -190,7 +186,7 @@ export default function ProductVariantSelector({
             <div key={attribute.name} className="space-y-2">
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                  {attribute.name.replace("_", " ")}
+                  {attribute.name.replace('_', ' ')}
                 </label>
                 {selectedAttributes[attribute.name] && (
                   <button
@@ -206,7 +202,7 @@ export default function ProductVariantSelector({
                 {attribute.values.map((option) => {
                   const isSelected = selectedAttributes[attribute.name] === option.value;
                   const isDisabled = !option.available;
-                  
+
                   return (
                     <button
                       key={option.value}
@@ -216,10 +212,10 @@ export default function ProductVariantSelector({
                         relative px-4 py-2 border rounded-lg text-sm font-medium transition-all
                         ${
                           isSelected
-                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200"
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
                             : isDisabled
-                            ? "border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900"
+                              ? 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900'
                         }
                       `}
                     >
@@ -228,9 +224,7 @@ export default function ProductVariantSelector({
                       )}
                       <span>{option.label}</span>
                       {!isDisabled && option.count > 1 && (
-                        <span className="ml-1 text-xs text-gray-500">
-                          ({option.count})
-                        </span>
+                        <span className="ml-1 text-xs text-gray-500">({option.count})</span>
                       )}
                     </button>
                   );
@@ -263,11 +257,11 @@ export default function ProductVariantSelector({
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         selectedVariant.stock_qty > 0
-                          ? "bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200"
-                          : "bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200"
+                          ? 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200'
+                          : 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200'
                       }`}
                     >
-                      {selectedVariant.stock_qty > 0 ? "In Stock" : "Out of Stock"}
+                      {selectedVariant.stock_qty > 0 ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </div>
                 </div>
@@ -315,11 +309,9 @@ export default function ProductVariantSelector({
             {Object.entries(selectedAttributes).map(([key, value]) => (
               <div key={key} className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400 capitalize">
-                  {key.replace("_", " ")}:
+                  {key.replace('_', ' ')}:
                 </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {value}
-                </span>
+                <span className="font-medium text-gray-900 dark:text-white">{value}</span>
               </div>
             ))}
           </div>
@@ -334,14 +326,17 @@ export function useProductVariants(variants: ProductVariant[]) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
-  const handleVariantChange = (variant: ProductVariant | null, attributes: Record<string, string>) => {
+  const handleVariantChange = (
+    variant: ProductVariant | null,
+    attributes: Record<string, string>,
+  ) => {
     setSelectedVariant(variant);
     setSelectedAttributes(attributes);
   };
 
   const canAddToCart = selectedVariant && selectedVariant.stock_qty > 0;
   const isInStock = selectedVariant ? selectedVariant.stock_qty > 0 : false;
-  const currentPrice = selectedVariant ? (selectedVariant.sale_price || selectedVariant.price) : 0;
+  const currentPrice = selectedVariant ? selectedVariant.sale_price || selectedVariant.price : 0;
 
   return {
     selectedVariant,

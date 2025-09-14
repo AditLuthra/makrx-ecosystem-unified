@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 // Using inline SVGs instead of Heroicons
 
 interface SearchFacet {
@@ -31,7 +31,7 @@ export default function SearchFilters({
   onFilterChange,
 }: SearchFiltersProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["brands", "material", "price"]),
+    new Set(['brands', 'material', 'price']),
   );
 
   const toggleSection = (sectionName: string) => {
@@ -44,11 +44,7 @@ export default function SearchFilters({
     setExpandedSections(newExpanded);
   };
 
-  const handleFilterChange = (
-    filterType: string,
-    value: string,
-    checked: boolean,
-  ) => {
+  const handleFilterChange = (filterType: string, value: string, checked: boolean) => {
     const currentValues = activeFilters[filterType] || [];
     let newValues;
 
@@ -64,10 +60,7 @@ export default function SearchFilters({
     });
   };
 
-  const handlePriceChange = (
-    type: "min_price" | "max_price",
-    value: string,
-  ) => {
+  const handlePriceChange = (type: 'min_price' | 'max_price', value: string) => {
     onFilterChange({
       ...activeFilters,
       [type]: value || undefined,
@@ -77,9 +70,7 @@ export default function SearchFilters({
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Filters
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filters</h3>
 
         {facets.map((facet) => (
           <div
@@ -91,7 +82,7 @@ export default function SearchFilters({
               className="flex items-center justify-between w-full text-left"
             >
               <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
-                {facet.name.replace("_", " ")}
+                {facet.name.replace('_', ' ')}
               </span>
               {expandedSections.has(facet.name) ? (
                 <svg
@@ -126,21 +117,14 @@ export default function SearchFilters({
 
             {expandedSections.has(facet.name) && (
               <div className="mt-3 space-y-2">
-                {facet.type === "checkbox" &&
+                {facet.type === 'checkbox' &&
                   facet.values.map((value) => (
                     <label key={value.name} className="flex items-center">
                       <input
                         type="checkbox"
-                        checked={
-                          activeFilters[facet.name]?.includes(value.name) ||
-                          false
-                        }
+                        checked={activeFilters[facet.name]?.includes(value.name) || false}
                         onChange={(e) =>
-                          handleFilterChange(
-                            facet.name,
-                            value.name,
-                            e.target.checked,
-                          )
+                          handleFilterChange(facet.name, value.name, e.target.checked)
                         }
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
@@ -150,25 +134,21 @@ export default function SearchFilters({
                     </label>
                   ))}
 
-                {facet.type === "range" && facet.name === "price" && (
+                {facet.type === 'range' && facet.name === 'price' && (
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
                         type="number"
                         placeholder="Min"
-                        value={activeFilters.min_price || ""}
-                        onChange={(e) =>
-                          handlePriceChange("min_price", e.target.value)
-                        }
+                        value={activeFilters.min_price || ''}
+                        onChange={(e) => handlePriceChange('min_price', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                       />
                       <input
                         type="number"
                         placeholder="Max"
-                        value={activeFilters.max_price || ""}
-                        onChange={(e) =>
-                          handlePriceChange("max_price", e.target.value)
-                        }
+                        value={activeFilters.max_price || ''}
+                        onChange={(e) => handlePriceChange('max_price', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                       />
                     </div>

@@ -25,10 +25,13 @@ def create_project_interaction_tables() -> bool:
     """Create tables used for project likes and bookmarks."""
     try:
         logger.info("Creating project interaction tables...")
-        Base.metadata.create_all(bind=engine, tables=[
-            ProjectLike.__table__,
-            ProjectBookmark.__table__,
-        ])
+        Base.metadata.create_all(
+            bind=engine,
+            tables=[
+                ProjectLike.__table__,
+                ProjectBookmark.__table__,
+            ],
+        )
         logger.info("Project interaction tables created successfully!")
         return True
     except Exception as exc:

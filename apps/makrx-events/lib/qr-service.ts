@@ -23,17 +23,17 @@ export interface QRCodeGenerationOptions {
 export class QRCodeService {
   static async generateQRCode(
     data: QRCodeData,
-    options: QRCodeGenerationOptions = {}
+    options: QRCodeGenerationOptions = {},
   ): Promise<{ qrCodeId: string; qrCodeUrl: string; rawCode: string }> {
     const {
       expirationHours = 24,
       size = 256,
-      color = { dark: '#000000', light: '#FFFFFF' }
+      color = { dark: '#000000', light: '#FFFFFF' },
     } = options;
 
     // Generate unique code
     const rawCode = nanoid(16);
-    
+
     // Calculate expiration
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + expirationHours);
@@ -77,7 +77,7 @@ export class QRCodeService {
 
   static async validateAndUseQRCode(
     qrCodeData: string,
-    scannedBy: string
+    scannedBy: string,
   ): Promise<{
     success: boolean;
     message: string;
@@ -93,13 +93,7 @@ export class QRCodeService {
       const [qrCodeRecord] = await db
         .select()
         .from(qrCodes)
-        .where(
-          and(
-            eq(qrCodes.id, id),
-            eq(qrCodes.code, code),
-            eq(qrCodes.status, 'active')
-          )
-        )
+        .where(and(eq(qrCodes.id, id), eq(qrCodes.code, code), eq(qrCodes.status, 'active')))
         .limit(1);
 
       if (!qrCodeRecord) {
@@ -108,11 +102,8 @@ export class QRCodeService {
 
       // Check expiration
       if (qrCodeRecord.expiresAt && new Date() > qrCodeRecord.expiresAt) {
-        await db
-          .update(qrCodes)
-          .set({ status: 'expired' })
-          .where(eq(qrCodes.id, id));
-        
+        await db.update(qrCodes).set({ status: 'expired' }).where(eq(qrCodes.id, id));
+
         return { success: false, message: 'QR code has expired' };
       }
 
@@ -146,11 +137,11 @@ export class QRCodeService {
         userId,
         eventId,
         activity: 'check_in',
-        metadata: { 
+        metadata: {
           qrCodeId: id,
           checkInType: type,
           sessionId: sessionId || null,
-          scannedBy 
+          scannedBy,
         },
       });
 
@@ -194,32 +185,28 @@ export class QRCodeService {
 
   static async regenerateQRCode(
     qrCodeId: string,
-    options: QRCodeGenerationOptions = {}
+    options: QRCodeGenerationOptions = {},
   ): Promise<{ qrCodeUrl: string; rawCode: string } | null> {
     // Get existing QR code
-    const [existingQR] = await db
-      .select()
-      .from(qrCodes)
-      .where(eq(qrCodes.id, qrCodeId))
-      .limit(1);
+    const [existingQR] = await db.select().from(qrCodes).where(eq(qrCodes.id, qrCodeId)).limit(1);
 
     if (!existingQR) {
       return null;
     }
 
     // Mark old QR code as expired
-    await db
-      .update(qrCodes)
-      .set({ status: 'expired' })
-      .where(eq(qrCodes.id, qrCodeId));
+    await db.update(qrCodes).set({ status: 'expired' }).where(eq(qrCodes.id, qrCodeId));
 
     // Generate new QR code
-    const newQR = await this.generateQRCode({
-      eventId: existingQR.eventId,
-      sessionId: existingQR.sessionId || undefined,
-      userId: existingQR.userId,
-      type: existingQR.type as 'event' | 'session',
-    }, options);
+    const newQR = await this.generateQRCode(
+      {
+        eventId: existingQR.eventId,
+        sessionId: existingQR.sessionId || undefined,
+        userId: existingQR.userId,
+        type: existingQR.type as 'event' | 'session',
+      },
+      options,
+    );
 
     return {
       qrCodeUrl: newQR.qrCodeUrl,
@@ -239,11 +226,11 @@ export class QRCodeService {
 
     const summary = {
       total: stats.length,
-      active: stats.filter(s => s.status === 'active').length,
-      used: stats.filter(s => s.status === 'used').length,
-      expired: stats.filter(s => s.status === 'expired').length,
-      eventCodes: stats.filter(s => s.type === 'event').length,
-      sessionCodes: stats.filter(s => s.type === 'session').length,
+      active: stats.filter((s) => s.status === 'active').length,
+      used: stats.filter((s) => s.status === 'used').length,
+      expired: stats.filter((s) => s.status === 'expired').length,
+      eventCodes: stats.filter((s) => s.type === 'event').length,
+      sessionCodes: stats.filter((s) => s.type === 'session').length,
     };
 
     return summary;

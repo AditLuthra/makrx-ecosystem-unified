@@ -9,7 +9,7 @@ import {
   CreditCard,
   Wallet,
   ShoppingCart,
-  Crown
+  Crown,
 } from 'lucide-react';
 
 interface Transaction {
@@ -26,26 +26,34 @@ interface TransactionHistoryListProps {
   transactions: Transaction[];
 }
 
-const TransactionHistoryList: React.FC<TransactionHistoryListProps> = ({ 
-  transactions 
-}) => {
+const TransactionHistoryList: React.FC<TransactionHistoryListProps> = ({ transactions }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      case 'refunded': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'subscription': return <Crown className="h-4 w-4 text-yellow-500" />;
-      case 'credits': return <Wallet className="h-4 w-4 text-blue-500" />;
-      case 'reorder': return <ShoppingCart className="h-4 w-4 text-green-500" />;
-      case 'service': return <CreditCard className="h-4 w-4 text-purple-500" />;
-      default: return <FileText className="h-4 w-4 text-gray-500" />;
+      case 'subscription':
+        return <Crown className="h-4 w-4 text-yellow-500" />;
+      case 'credits':
+        return <Wallet className="h-4 w-4 text-blue-500" />;
+      case 'reorder':
+        return <ShoppingCart className="h-4 w-4 text-green-500" />;
+      case 'service':
+        return <CreditCard className="h-4 w-4 text-purple-500" />;
+      default:
+        return <FileText className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -77,8 +85,8 @@ const TransactionHistoryList: React.FC<TransactionHistoryListProps> = ({
         ) : (
           <div className="space-y-4">
             {transactions.map((transaction) => (
-              <div 
-                key={transaction.id} 
+              <div
+                key={transaction.id}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -101,8 +109,8 @@ const TransactionHistoryList: React.FC<TransactionHistoryListProps> = ({
 
                   <div className="flex gap-2">
                     {transaction.status === 'failed' && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleRetryPayment(transaction.id)}
                       >
@@ -110,10 +118,10 @@ const TransactionHistoryList: React.FC<TransactionHistoryListProps> = ({
                         Retry
                       </Button>
                     )}
-                    
+
                     {transaction.invoiceId && transaction.status === 'completed' && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleDownloadInvoice(transaction.invoiceId!)}
                       >

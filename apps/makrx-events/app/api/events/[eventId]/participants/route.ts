@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { eventRegistrations, users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const participants = await db
       .select({
@@ -27,9 +24,6 @@ export async function GET(
     return NextResponse.json(participants);
   } catch (error) {
     console.error('Error fetching participants:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch participants' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch participants' }, { status: 500 });
   }
 }

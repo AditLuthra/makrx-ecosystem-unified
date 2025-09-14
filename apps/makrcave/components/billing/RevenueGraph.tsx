@@ -1,6 +1,16 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from 'recharts';
 import { TrendingUp, DollarSign, Calendar } from 'lucide-react';
 
 interface RevenueData {
@@ -19,7 +29,7 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data, type = 'line' }) => {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -43,7 +53,8 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data, type = 'line' }) => {
             <DollarSign className="h-4 w-4 text-green-600" />
             <span className="font-semibold">{formatCurrency(currentMonth)}</span>
             <span className={`text-xs ${growthRate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              ({growthRate >= 0 ? '+' : ''}{growthRate.toFixed(1)}%)
+              ({growthRate >= 0 ? '+' : ''}
+              {growthRate.toFixed(1)}%)
             </span>
           </div>
         </CardTitle>
@@ -54,28 +65,20 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data, type = 'line' }) => {
             {type === 'line' ? (
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="#888"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="#888"
-                  fontSize={12}
-                  tickFormatter={formatCurrency}
-                />
-                <Tooltip 
+                <XAxis dataKey="month" stroke="#888" fontSize={12} />
+                <YAxis stroke="#888" fontSize={12} tickFormatter={formatCurrency} />
+                <Tooltip
                   formatter={formatTooltip}
                   labelStyle={{ color: '#333' }}
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #ccc',
-                    borderRadius: '6px'
+                    borderRadius: '6px',
                   }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="revenue" 
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
                   stroke="#3B82F6"
                   strokeWidth={3}
                   dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
@@ -85,30 +88,18 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data, type = 'line' }) => {
             ) : (
               <BarChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="#888"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="#888"
-                  fontSize={12}
-                  tickFormatter={formatCurrency}
-                />
-                <Tooltip 
+                <XAxis dataKey="month" stroke="#888" fontSize={12} />
+                <YAxis stroke="#888" fontSize={12} tickFormatter={formatCurrency} />
+                <Tooltip
                   formatter={formatTooltip}
                   labelStyle={{ color: '#333' }}
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #ccc',
-                    borderRadius: '6px'
+                    borderRadius: '6px',
                   }}
                 />
-                <Bar 
-                  dataKey="revenue" 
-                  fill="#3B82F6"
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="revenue" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               </BarChart>
             )}
           </ResponsiveContainer>
@@ -130,8 +121,11 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data, type = 'line' }) => {
           </div>
           <div className="text-center">
             <p className="text-sm text-gray-600">Growth Rate</p>
-            <p className={`text-lg font-bold ${growthRate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {growthRate >= 0 ? '+' : ''}{growthRate.toFixed(1)}%
+            <p
+              className={`text-lg font-bold ${growthRate >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            >
+              {growthRate >= 0 ? '+' : ''}
+              {growthRate.toFixed(1)}%
             </p>
           </div>
         </div>

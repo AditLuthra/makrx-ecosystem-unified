@@ -3,13 +3,14 @@
 ## 🚨 Priority 1: Authentication Vulnerabilities
 
 ### 1. Fix JWT Verification (backends/auth-service/main.py:123)
+
 ```python
 # CURRENT (VULNERABLE):
 payload = jwt.decode(token, options={"verify_signature": False})
 
 # FIX TO:
 payload = jwt.decode(
-    token, 
+    token,
     key=get_public_key_from_keycloak(),  # Implement JWKS endpoint
     algorithms=["RS256"],
     audience="makrx-services"
@@ -17,6 +18,7 @@ payload = jwt.decode(
 ```
 
 ### 2. Remove Hardcoded Secrets
+
 ```python
 # REMOVE from auth-service/main.py:
 KEYCLOAK_CLIENT_SECRET = "makrx-auth-service-secret-2024"  # DELETE THIS
@@ -28,6 +30,7 @@ if not KEYCLOAK_CLIENT_SECRET:
 ```
 
 ### 3. Fix MakrCave Authentication (backends/makrcave/dependencies.py)
+
 ```python
 # REMOVE mock authentication:
 async def get_current_user():
@@ -41,13 +44,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 ## 🔒 Priority 2: CORS and Input Validation
 
 ### 4. Fix CORS Configuration
+
 ```python
 # backends/makrcave/main.py
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://makrcave.com",
-        "https://makrx.org", 
+        "https://makrx.org",
         "https://makrx.store"
     ],  # Remove "*"
     allow_credentials=True,
@@ -57,6 +61,7 @@ app.add_middleware(
 ```
 
 ### 5. Add Input Validation
+
 ```python
 # Add to all endpoints:
 from pydantic import BaseModel, validator
@@ -72,6 +77,7 @@ class SecureRequest(BaseModel):
 ## 🛡️ Priority 3: Database Security
 
 ### 6. Fix SQL Injection Prevention
+
 ```python
 # VULNERABLE:
 db.execute(f"SELECT * FROM users WHERE id = {user_id}")
@@ -81,6 +87,7 @@ db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
 ```
 
 ### 7. Disable Database Query Logging in Production
+
 ```python
 # backends/makrcave/database.py
 engine = create_engine(
@@ -93,6 +100,7 @@ engine = create_engine(
 ## 📊 Security Monitoring
 
 ### 8. Add Rate Limiting
+
 ```python
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -108,6 +116,7 @@ async def login_endpoint(request: Request):
 ```
 
 ### 9. Implement Audit Logging
+
 ```python
 import structlog
 
@@ -126,6 +135,7 @@ async def log_security_event(event_type: str, user_id: str, details: dict):
 ## 🔐 Secrets Management
 
 ### 10. Environment Variables Required
+
 ```bash
 # Add to .env files:
 KEYCLOAK_CLIENT_SECRET=your-real-secret-here

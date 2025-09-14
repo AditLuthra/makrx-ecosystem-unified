@@ -6,15 +6,40 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Label } from './ui/label';
 import { useToast } from '../hooks/use-toast';
 import {
-  Upload, FileText, Clock, DollarSign, User, AlertCircle, CheckCircle,
-  Eye, Edit3, Download, MessageSquare, Calendar, Package, Truck,
-  Star, TrendingUp, BarChart3, Filter, Search, Plus, RefreshCw
+  Upload,
+  FileText,
+  Clock,
+  DollarSign,
+  User,
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  Edit3,
+  Download,
+  MessageSquare,
+  Calendar,
+  Package,
+  Truck,
+  Star,
+  TrendingUp,
+  BarChart3,
+  Filter,
+  Search,
+  Plus,
+  RefreshCw,
 } from 'lucide-react';
 
 // Types
@@ -118,19 +143,30 @@ const EnhancedJobManagement: React.FC = () => {
     { value: 'shipped', label: 'Shipped', color: 'blue' },
     { value: 'completed', label: 'Completed', color: 'green' },
     { value: 'cancelled', label: 'Cancelled', color: 'red' },
-    { value: 'failed', label: 'Failed', color: 'red' }
+    { value: 'failed', label: 'Failed', color: 'red' },
   ];
 
   const priorities = [
     { value: 'low', label: 'Low', color: 'gray' },
     { value: 'normal', label: 'Normal', color: 'blue' },
     { value: 'high', label: 'High', color: 'orange' },
-    { value: 'urgent', label: 'Urgent', color: 'red' }
+    { value: 'urgent', label: 'Urgent', color: 'red' },
   ];
 
   const materialTypes = [
-    'pla', 'abs', 'petg', 'tpu', 'asa', 'pc', 'nylon', 'pva', 'hips',
-    'wood_fill', 'metal_fill', 'carbon_fiber', 'custom'
+    'pla',
+    'abs',
+    'petg',
+    'tpu',
+    'asa',
+    'pc',
+    'nylon',
+    'pva',
+    'hips',
+    'wood_fill',
+    'metal_fill',
+    'carbon_fiber',
+    'custom',
   ];
 
   const getHeaders = useAuthHeaders();
@@ -139,7 +175,7 @@ const EnhancedJobManagement: React.FC = () => {
   const fetchDashboardStats = useCallback(async () => {
     try {
       const response = await fetch('/api/v1/jobs/dashboard/stats', { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const stats = await response.json();
         setDashboardStats(stats);
@@ -155,7 +191,7 @@ const EnhancedJobManagement: React.FC = () => {
       setLoading(true);
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        page_size: '20'
+        page_size: '20',
       });
 
       if (searchQuery) params.append('search_query', searchQuery);
@@ -163,7 +199,7 @@ const EnhancedJobManagement: React.FC = () => {
       if (priorityFilter !== 'all') params.append('priority', priorityFilter);
 
       const response = await fetch(`/api/v1/jobs?${params}`, { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const data = await response.json();
         setJobs(data.jobs);
@@ -171,9 +207,9 @@ const EnhancedJobManagement: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch jobs:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch jobs. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to fetch jobs. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -184,7 +220,7 @@ const EnhancedJobManagement: React.FC = () => {
   const fetchJobFiles = useCallback(async (jobId: string) => {
     try {
       const response = await fetch(`/api/v1/jobs/${jobId}/files`, { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const files = await response.json();
         setJobFiles(files);
@@ -198,7 +234,7 @@ const EnhancedJobManagement: React.FC = () => {
   const fetchStatusUpdates = useCallback(async (jobId: string) => {
     try {
       const response = await fetch(`/api/v1/jobs/${jobId}/status`, { headers: await getHeaders() });
-      
+
       if (response.ok) {
         const updates = await response.json();
         setStatusUpdates(updates);
@@ -217,16 +253,16 @@ const EnhancedJobManagement: React.FC = () => {
         body: JSON.stringify({
           new_status: newStatus,
           update_message: message || `Status updated to ${newStatus}`,
-          is_customer_visible: true
-        })
+          is_customer_visible: true,
+        }),
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Job status updated successfully"
+          title: 'Success',
+          description: 'Job status updated successfully',
         });
-        
+
         // Refresh data
         await fetchJobs();
         if (selectedJob) {
@@ -238,9 +274,9 @@ const EnhancedJobManagement: React.FC = () => {
     } catch (error) {
       console.error('Failed to update job status:', error);
       toast({
-        title: "Error",
-        description: "Failed to update job status. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to update job status. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -255,15 +291,15 @@ const EnhancedJobManagement: React.FC = () => {
       const response = await fetch(`/api/v1/jobs/${jobId}/files`, {
         method: 'POST',
         headers: await getHeaders(),
-        body: formData
+        body: formData,
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "File uploaded successfully"
+          title: 'Success',
+          description: 'File uploaded successfully',
         });
-        
+
         await fetchJobFiles(jobId);
       } else {
         throw new Error('Failed to upload file');
@@ -271,9 +307,9 @@ const EnhancedJobManagement: React.FC = () => {
     } catch (error) {
       console.error('Failed to upload file:', error);
       toast({
-        title: "Error",
-        description: "Failed to upload file. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to upload file. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -294,13 +330,13 @@ const EnhancedJobManagement: React.FC = () => {
 
   // Get status badge color
   const getStatusColor = (status: string) => {
-    const statusInfo = jobStatuses.find(s => s.value === status);
+    const statusInfo = jobStatuses.find((s) => s.value === status);
     return statusInfo?.color || 'gray';
   };
 
   // Get priority badge color
   const getPriorityColor = (priority: string) => {
-    const priorityInfo = priorities.find(p => p.value === priority);
+    const priorityInfo = priorities.find((p) => p.value === priority);
     return priorityInfo?.color || 'gray';
   };
 
@@ -309,7 +345,7 @@ const EnhancedJobManagement: React.FC = () => {
     if (!amount) return '-';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'USD',
     }).format(amount);
   };
 
@@ -318,7 +354,7 @@ const EnhancedJobManagement: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -396,7 +432,9 @@ const EnhancedJobManagement: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Revenue Today</p>
-                        <p className="text-2xl font-bold">{formatCurrency(dashboardStats.revenue_today)}</p>
+                        <p className="text-2xl font-bold">
+                          {formatCurrency(dashboardStats.revenue_today)}
+                        </p>
                       </div>
                       <DollarSign className="h-8 w-8 text-green-500" />
                     </div>
@@ -412,11 +450,14 @@ const EnhancedJobManagement: React.FC = () => {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {Object.entries(dashboardStats.jobs_by_status).map(([status, count]) => {
-                      const statusInfo = jobStatuses.find(s => s.value === status);
+                      const statusInfo = jobStatuses.find((s) => s.value === status);
                       return (
                         <div key={status} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className={`bg-${statusInfo?.color}-100 text-${statusInfo?.color}-800`}>
+                            <Badge
+                              variant="secondary"
+                              className={`bg-${statusInfo?.color}-100 text-${statusInfo?.color}-800`}
+                            >
                               {statusInfo?.label || status}
                             </Badge>
                           </div>
@@ -433,11 +474,14 @@ const EnhancedJobManagement: React.FC = () => {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {Object.entries(dashboardStats.jobs_by_priority).map(([priority, count]) => {
-                      const priorityInfo = priorities.find(p => p.value === priority);
+                      const priorityInfo = priorities.find((p) => p.value === priority);
                       return (
                         <div key={priority} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className={`bg-${priorityInfo?.color}-100 text-${priorityInfo?.color}-800`}>
+                            <Badge
+                              variant="secondary"
+                              className={`bg-${priorityInfo?.color}-100 text-${priorityInfo?.color}-800`}
+                            >
                               {priorityInfo?.label || priority}
                             </Badge>
                           </div>
@@ -469,14 +513,14 @@ const EnhancedJobManagement: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
-                    {jobStatuses.map(status => (
+                    {jobStatuses.map((status) => (
                       <SelectItem key={status.value} value={status.value}>
                         {status.label}
                       </SelectItem>
@@ -490,7 +534,7 @@ const EnhancedJobManagement: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Priorities</SelectItem>
-                    {priorities.map(priority => (
+                    {priorities.map((priority) => (
                       <SelectItem key={priority.value} value={priority.value}>
                         {priority.label}
                       </SelectItem>
@@ -511,10 +555,9 @@ const EnhancedJobManagement: React.FC = () => {
                   <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium mb-2">No jobs found</h3>
                   <p className="text-muted-foreground mb-4">
-                    {searchQuery || statusFilter !== 'all' || priorityFilter !== 'all' 
+                    {searchQuery || statusFilter !== 'all' || priorityFilter !== 'all'
                       ? 'Try adjusting your filters or search query'
-                      : 'Create your first job to get started'
-                    }
+                      : 'Create your first job to get started'}
                   </p>
                   <Button onClick={() => setShowCreateJob(true)}>
                     <Plus className="h-4 w-4 mr-2" />
@@ -530,16 +573,23 @@ const EnhancedJobManagement: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-semibold">{job.title}</h3>
-                          <Badge variant="secondary" className={`bg-${getStatusColor(job.status)}-100 text-${getStatusColor(job.status)}-800`}>
-                            {jobStatuses.find(s => s.value === job.status)?.label || job.status}
+                          <Badge
+                            variant="secondary"
+                            className={`bg-${getStatusColor(job.status)}-100 text-${getStatusColor(job.status)}-800`}
+                          >
+                            {jobStatuses.find((s) => s.value === job.status)?.label || job.status}
                           </Badge>
-                          <Badge variant="outline" className={`bg-${getPriorityColor(job.priority)}-100 text-${getPriorityColor(job.priority)}-800`}>
-                            {priorities.find(p => p.value === job.priority)?.label || job.priority}
+                          <Badge
+                            variant="outline"
+                            className={`bg-${getPriorityColor(job.priority)}-100 text-${getPriorityColor(job.priority)}-800`}
+                          >
+                            {priorities.find((p) => p.value === job.priority)?.label ||
+                              job.priority}
                           </Badge>
                         </div>
-                        
+
                         <p className="text-muted-foreground text-sm mb-3">{job.description}</p>
-                        
+
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
                             <span className="text-muted-foreground">Customer:</span>
@@ -555,10 +605,12 @@ const EnhancedJobManagement: React.FC = () => {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Price:</span>
-                            <p className="font-medium">{formatCurrency(job.quoted_price || job.estimated_cost)}</p>
+                            <p className="font-medium">
+                              {formatCurrency(job.quoted_price || job.estimated_cost)}
+                            </p>
                           </div>
                         </div>
-                        
+
                         {job.completion_percentage > 0 && (
                           <div className="mt-3">
                             <div className="flex items-center justify-between text-sm mb-1">
@@ -569,12 +621,16 @@ const EnhancedJobManagement: React.FC = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center gap-2 ml-4">
-                        <Button variant="outline" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleJobSelect(job);
-                        }}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleJobSelect(job);
+                          }}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
@@ -617,7 +673,7 @@ const EnhancedJobManagement: React.FC = () => {
               {selectedJob?.title} - {selectedJob?.job_id}
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedJob && (
             <Tabs defaultValue="overview" className="space-y-4">
               <TabsList>
@@ -632,18 +688,23 @@ const EnhancedJobManagement: React.FC = () => {
                   <div>
                     <Label>Status</Label>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge className={`bg-${getStatusColor(selectedJob.status)}-100 text-${getStatusColor(selectedJob.status)}-800`}>
-                        {jobStatuses.find(s => s.value === selectedJob.status)?.label || selectedJob.status}
+                      <Badge
+                        className={`bg-${getStatusColor(selectedJob.status)}-100 text-${getStatusColor(selectedJob.status)}-800`}
+                      >
+                        {jobStatuses.find((s) => s.value === selectedJob.status)?.label ||
+                          selectedJob.status}
                       </Badge>
                       <Select
                         value={selectedJob.status}
-                        onValueChange={(newStatus) => updateJobStatus(selectedJob.job_id, newStatus)}
+                        onValueChange={(newStatus) =>
+                          updateJobStatus(selectedJob.job_id, newStatus)
+                        }
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {jobStatuses.map(status => (
+                          {jobStatuses.map((status) => (
                             <SelectItem key={status.value} value={status.value}>
                               {status.label}
                             </SelectItem>
@@ -681,8 +742,12 @@ const EnhancedJobManagement: React.FC = () => {
                   </div>
                   <div>
                     <Label>Priority</Label>
-                    <Badge variant="outline" className={`bg-${getPriorityColor(selectedJob.priority)}-100 text-${getPriorityColor(selectedJob.priority)}-800`}>
-                      {priorities.find(p => p.value === selectedJob.priority)?.label || selectedJob.priority}
+                    <Badge
+                      variant="outline"
+                      className={`bg-${getPriorityColor(selectedJob.priority)}-100 text-${getPriorityColor(selectedJob.priority)}-800`}
+                    >
+                      {priorities.find((p) => p.value === selectedJob.priority)?.label ||
+                        selectedJob.priority}
                     </Badge>
                   </div>
                   <div>
@@ -716,7 +781,7 @@ const EnhancedJobManagement: React.FC = () => {
                       input.onchange = (e) => {
                         const files = (e.target as HTMLInputElement).files;
                         if (files) {
-                          Array.from(files).forEach(file => {
+                          Array.from(files).forEach((file) => {
                             handleFileUpload(selectedJob.job_id, file);
                           });
                         }
@@ -747,13 +812,18 @@ const EnhancedJobManagement: React.FC = () => {
                               {file.layer_count && (
                                 <p className="text-sm text-muted-foreground">
                                   {file.layer_count} layers
-                                  {file.estimated_print_time_gcode && ` • ${Math.round(file.estimated_print_time_gcode / 60)}h ${file.estimated_print_time_gcode % 60}m`}
+                                  {file.estimated_print_time_gcode &&
+                                    ` • ${Math.round(file.estimated_print_time_gcode / 60)}h ${file.estimated_print_time_gcode % 60}m`}
                                 </p>
                               )}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={file.processing_status === 'completed' ? 'default' : 'secondary'}>
+                            <Badge
+                              variant={
+                                file.processing_status === 'completed' ? 'default' : 'secondary'
+                              }
+                            >
                               {file.processing_status}
                             </Badge>
                             <Button variant="outline" size="sm">
@@ -764,7 +834,7 @@ const EnhancedJobManagement: React.FC = () => {
                       </CardContent>
                     </Card>
                   ))}
-                  
+
                   {jobFiles.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       <FileText className="h-8 w-8 mx-auto mb-2" />
@@ -782,8 +852,11 @@ const EnhancedJobManagement: React.FC = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <Badge className={`bg-${getStatusColor(update.new_status)}-100 text-${getStatusColor(update.new_status)}-800`}>
-                                {jobStatuses.find(s => s.value === update.new_status)?.label || update.new_status}
+                              <Badge
+                                className={`bg-${getStatusColor(update.new_status)}-100 text-${getStatusColor(update.new_status)}-800`}
+                              >
+                                {jobStatuses.find((s) => s.value === update.new_status)?.label ||
+                                  update.new_status}
                               </Badge>
                               {update.completion_percentage > 0 && (
                                 <span className="text-sm text-muted-foreground">
@@ -791,16 +864,16 @@ const EnhancedJobManagement: React.FC = () => {
                                 </span>
                               )}
                             </div>
-                            
+
                             <p className="text-sm mb-2">{update.update_message}</p>
-                            
+
                             {update.milestone_reached && (
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <CheckCircle className="h-3 w-3" />
                                 Milestone: {update.milestone_reached}
                               </div>
                             )}
-                            
+
                             {update.estimated_time_remaining && (
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <Clock className="h-3 w-3" />
@@ -808,7 +881,7 @@ const EnhancedJobManagement: React.FC = () => {
                               </div>
                             )}
                           </div>
-                          
+
                           <div className="text-right text-sm text-muted-foreground">
                             <p>{new Date(update.updated_at).toLocaleDateString()}</p>
                             <p>{new Date(update.updated_at).toLocaleTimeString()}</p>
@@ -822,7 +895,7 @@ const EnhancedJobManagement: React.FC = () => {
                       </CardContent>
                     </Card>
                   ))}
-                  
+
                   {statusUpdates.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       <MessageSquare className="h-8 w-8 mx-auto mb-2" />

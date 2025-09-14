@@ -1,22 +1,30 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useKeycloak, useAuthHeaders } from '@makrx/auth';
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { useKeycloak, useAuthHeaders } from "@makrx/auth";
 
 export interface ServiceOrder {
   id: string;
   user_id: string;
-  service_type: 'printing' | 'engraving' | 'cnc' | 'injection';
-  status: 'pending' | 'quoted' | 'confirmed' | 'dispatched' | 'accepted' | 'in_progress' | 'completed' | 'delivered';
-  priority: 'normal' | 'rush';
-  
+  service_type: "printing" | "engraving" | "cnc" | "injection";
+  status:
+    | "pending"
+    | "quoted"
+    | "confirmed"
+    | "dispatched"
+    | "accepted"
+    | "in_progress"
+    | "completed"
+    | "delivered";
+  priority: "normal" | "rush";
+
   // File and design info
   file_url: string;
   file_name: string;
   file_type: string;
   file_size: number;
   preview_url?: string;
-  
+
   // Service specifications
   material: string;
   color_finish?: string;
@@ -26,7 +34,7 @@ export interface ServiceOrder {
     y: number;
     z: number;
   };
-  
+
   // Pricing
   base_price: number;
   material_cost: number;
@@ -34,12 +42,12 @@ export interface ServiceOrder {
   setup_fee: number;
   rush_fee: number;
   total_price: number;
-  
+
   // Provider assignment
   provider_id?: string;
   provider_name?: string;
   estimated_completion?: string;
-  
+
   // Tracking
   created_at: string;
   updated_at: string;
@@ -47,15 +55,15 @@ export interface ServiceOrder {
   accepted_at?: string;
   completed_at?: string;
   delivered_at?: string;
-  
+
   // Communication
   customer_notes?: string;
   provider_notes?: string;
   status_updates: StatusUpdate[];
-  
+
   // Cross-platform integration
   store_order_id?: string; // Links to main makrx-store order
-  sync_status: 'pending' | 'synced' | 'error';
+  sync_status: "pending" | "synced" | "error";
 }
 
 export interface StatusUpdate {
@@ -64,7 +72,7 @@ export interface StatusUpdate {
   message: string;
   timestamp: string;
   images?: string[];
-  user_type: 'customer' | 'provider' | 'system';
+  user_type: "customer" | "provider" | "system";
 }
 
 export interface Quote {
@@ -97,15 +105,21 @@ interface ServiceOrderState {
 }
 
 type ServiceOrderAction =
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'SET_ORDERS'; payload: ServiceOrder[] }
-  | { type: 'ADD_ORDER'; payload: ServiceOrder }
-  | { type: 'UPDATE_ORDER'; payload: { id: string; updates: Partial<ServiceOrder> } }
-  | { type: 'SET_CURRENT_ORDER'; payload: ServiceOrder | null }
-  | { type: 'SET_QUOTES'; payload: Quote[] }
-  | { type: 'ADD_QUOTE'; payload: Quote }
-  | { type: 'ADD_STATUS_UPDATE'; payload: { orderId: string; update: StatusUpdate } };
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_ORDERS"; payload: ServiceOrder[] }
+  | { type: "ADD_ORDER"; payload: ServiceOrder }
+  | {
+      type: "UPDATE_ORDER";
+      payload: { id: string; updates: Partial<ServiceOrder> };
+    }
+  | { type: "SET_CURRENT_ORDER"; payload: ServiceOrder | null }
+  | { type: "SET_QUOTES"; payload: Quote[] }
+  | { type: "ADD_QUOTE"; payload: Quote }
+  | {
+      type: "ADD_STATUS_UPDATE";
+      payload: { orderId: string; update: StatusUpdate };
+    };
 
 const initialState: ServiceOrderState = {
   orders: [],
@@ -115,55 +129,72 @@ const initialState: ServiceOrderState = {
   error: null,
 };
 
-function serviceOrderReducer(state: ServiceOrderState, action: ServiceOrderAction): ServiceOrderState {
+function serviceOrderReducer(
+  state: ServiceOrderState,
+  action: ServiceOrderAction,
+): ServiceOrderState {
   switch (action.type) {
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, loading: action.payload };
-    
-    case 'SET_ERROR':
+
+    case "SET_ERROR":
       return { ...state, error: action.payload, loading: false };
-    
-    case 'SET_ORDERS':
+
+    case "SET_ORDERS":
       return { ...state, orders: action.payload };
-    
-    case 'ADD_ORDER':
+
+    case "ADD_ORDER":
       return { ...state, orders: [action.payload, ...state.orders] };
-    
-    case 'UPDATE_ORDER':
+
+    case "UPDATE_ORDER":
       return {
         ...state,
-        orders: state.orders.map(order =>
-          order.id === action.payload.id 
+        orders: state.orders.map((order) =>
+          order.id === action.payload.id
             ? { ...order, ...action.payload.updates }
-            : order
+            : order,
         ),
-        currentOrder: state.currentOrder?.id === action.payload.id 
-          ? { ...state.currentOrder, ...action.payload.updates }
-          : state.currentOrder,
+        currentOrder:
+          state.currentOrder?.id === action.payload.id
+            ? { ...state.currentOrder, ...action.payload.updates }
+            : state.currentOrder,
       };
-    
-    case 'SET_CURRENT_ORDER':
+
+    case "SET_CURRENT_ORDER":
       return { ...state, currentOrder: action.payload };
-    
-    case 'SET_QUOTES':
+
+    case "SET_QUOTES":
       return { ...state, quotes: action.payload };
-    
-    case 'ADD_QUOTE':
+
+    case "ADD_QUOTE":
       return { ...state, quotes: [...state.quotes, action.payload] };
-    
-    case 'ADD_STATUS_UPDATE':
+
+    case "ADD_STATUS_UPDATE":
       return {
         ...state,
-        orders: state.orders.map(order =>
+        orders: state.orders.map((order) =>
           order.id === action.payload.orderId
-            ? { ...order, status_updates: [...order.status_updates, action.payload.update] }
-            : order
+            ? {
+                ...order,
+                status_updates: [
+                  ...order.status_updates,
+                  action.payload.update,
+                ],
+              }
+            : order,
         ),
-        currentOrder: state.currentOrder?.id === action.payload.orderId
-          ? { ...state.currentOrder, status_updates: [...state.currentOrder.status_updates, action.payload.update] }
-          : state.currentOrder,
+        currentOrder:
+          state.currentOrder?.id === action.payload.orderId
+            ? {
+                ...state.currentOrder,
+                status_updates: [
+                  ...state.currentOrder.status_updates,
+                  action.payload.update,
+                ],
+              }
+            : state.currentOrder,
       };
-    
+
     default:
       return state;
   }
@@ -171,28 +202,46 @@ function serviceOrderReducer(state: ServiceOrderState, action: ServiceOrderActio
 
 interface ServiceOrderContextType extends ServiceOrderState {
   // Order management
-  createOrder: (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'status_updates' | 'sync_status'>) => Promise<ServiceOrder>;
+  createOrder: (
+    orderData: Omit<
+      ServiceOrder,
+      "id" | "created_at" | "updated_at" | "status_updates" | "sync_status"
+    >,
+  ) => Promise<ServiceOrder>;
   updateOrder: (id: string, updates: Partial<ServiceOrder>) => Promise<void>;
   getOrder: (id: string) => Promise<ServiceOrder | null>;
   getUserOrders: () => Promise<ServiceOrder[]>;
-  
+
   // Quote management
   requestQuote: (orderId: string) => Promise<Quote>;
   acceptQuote: (quoteId: string) => Promise<void>;
-  
+
   // Status updates
-  addStatusUpdate: (orderId: string, message: string, images?: string[]) => Promise<void>;
-  
+  addStatusUpdate: (
+    orderId: string,
+    message: string,
+    images?: string[],
+  ) => Promise<void>;
+
   // Cross-platform sync
   syncWithStore: (orderId: string) => Promise<void>;
-  
+
   // File management
-  uploadFile: (file: File, orderType: string) => Promise<{ url: string; previewUrl?: string }>;
+  uploadFile: (
+    file: File,
+    orderType: string,
+  ) => Promise<{ url: string; previewUrl?: string }>;
 }
 
-const ServiceOrderContext = createContext<ServiceOrderContextType | undefined>(undefined);
+const ServiceOrderContext = createContext<ServiceOrderContextType | undefined>(
+  undefined,
+);
 
-export function ServiceOrderProvider({ children }: { children: React.ReactNode }) {
+export function ServiceOrderProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [state, dispatch] = useReducer(serviceOrderReducer, initialState);
   const { user, isAuthenticated } = useKeycloak();
   const getHeaders = useAuthHeaders();
@@ -206,88 +255,98 @@ export function ServiceOrderProvider({ children }: { children: React.ReactNode }
 
   const loadUserOrders = async () => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await fetch('/api/orders', {
+      dispatch({ type: "SET_LOADING", payload: true });
+      const response = await fetch("/api/orders", {
         headers: await getHeaders(),
       });
-      
-      if (!response.ok) throw new Error('Failed to load orders');
-      
+
+      if (!response.ok) throw new Error("Failed to load orders");
+
       const orders = await response.json();
-      dispatch({ type: 'SET_ORDERS', payload: orders });
+      dispatch({ type: "SET_ORDERS", payload: orders });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
-  const createOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'status_updates' | 'sync_status'>): Promise<ServiceOrder> => {
+  const createOrder = async (
+    orderData: Omit<
+      ServiceOrder,
+      "id" | "created_at" | "updated_at" | "status_updates" | "sync_status"
+    >,
+  ): Promise<ServiceOrder> => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: await getHeaders({ 'Content-Type': 'application/json' }),
+      dispatch({ type: "SET_LOADING", payload: true });
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: await getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           ...orderData,
           user_id: user?.id,
         }),
       });
-      
-      if (!response.ok) throw new Error('Failed to create order');
-      
+
+      if (!response.ok) throw new Error("Failed to create order");
+
       const order = await response.json();
-      
+
       // Add to local state
-      dispatch({ type: 'ADD_ORDER', payload: order });
-      
+      dispatch({ type: "ADD_ORDER", payload: order });
+
       // Sync with main store
       await syncWithStore(order.id);
-      
+
       return order;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
   const updateOrder = async (id: string, updates: Partial<ServiceOrder>) => {
     try {
       const response = await fetch(`/api/orders/${id}`, {
-        method: 'PATCH',
-        headers: await getHeaders({ 'Content-Type': 'application/json' }),
+        method: "PATCH",
+        headers: await getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(updates),
       });
-      
-      if (!response.ok) throw new Error('Failed to update order');
-      
+
+      if (!response.ok) throw new Error("Failed to update order");
+
       const updatedOrder = await response.json();
-      dispatch({ type: 'UPDATE_ORDER', payload: { id, updates: updatedOrder } });
-      
+      dispatch({
+        type: "UPDATE_ORDER",
+        payload: { id, updates: updatedOrder },
+      });
+
       // Sync status updates with main store
       if (updates.status || updates.status_updates) {
         await syncWithStore(id);
       }
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     }
   };
 
   const getOrder = async (id: string): Promise<ServiceOrder | null> => {
     try {
-      const response = await fetch(`/api/orders/${id}`, { headers: await getHeaders() });
-      
+      const response = await fetch(`/api/orders/${id}`, {
+        headers: await getHeaders(),
+      });
+
       if (!response.ok) return null;
-      
+
       const order = await response.json();
-      dispatch({ type: 'SET_CURRENT_ORDER', payload: order });
+      dispatch({ type: "SET_CURRENT_ORDER", payload: order });
       return order;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       return null;
     }
   };
@@ -300,21 +359,21 @@ export function ServiceOrderProvider({ children }: { children: React.ReactNode }
   const requestQuote = async (orderId: string): Promise<Quote> => {
     try {
       const response = await fetch(`/api/orders/${orderId}/quote`, {
-        method: 'POST',
+        method: "POST",
         headers: await getHeaders(),
       });
-      
-      if (!response.ok) throw new Error('Failed to request quote');
-      
+
+      if (!response.ok) throw new Error("Failed to request quote");
+
       const quote = await response.json();
-      dispatch({ type: 'ADD_QUOTE', payload: quote });
-      
+      dispatch({ type: "ADD_QUOTE", payload: quote });
+
       // Update order status to quoted
-      await updateOrder(orderId, { status: 'quoted' });
-      
+      await updateOrder(orderId, { status: "quoted" });
+
       return quote;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     }
   };
@@ -322,45 +381,52 @@ export function ServiceOrderProvider({ children }: { children: React.ReactNode }
   const acceptQuote = async (quoteId: string) => {
     try {
       const response = await fetch(`/api/quotes/${quoteId}/accept`, {
-        method: 'POST',
+        method: "POST",
         headers: await getHeaders(),
       });
-      
-      if (!response.ok) throw new Error('Failed to accept quote');
-      
+
+      if (!response.ok) throw new Error("Failed to accept quote");
+
       const { order } = await response.json();
-      dispatch({ type: 'UPDATE_ORDER', payload: { id: order.id, updates: order } });
+      dispatch({
+        type: "UPDATE_ORDER",
+        payload: { id: order.id, updates: order },
+      });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     }
   };
 
-  const addStatusUpdate = async (orderId: string, message: string, images?: string[]) => {
+  const addStatusUpdate = async (
+    orderId: string,
+    message: string,
+    images?: string[],
+  ) => {
     try {
       const update: StatusUpdate = {
         id: Date.now().toString(),
-        status: 'info',
+        status: "info",
         message,
         timestamp: new Date().toISOString(),
         images,
-        user_type: 'customer',
+        user_type: "customer",
       };
-      
+
       const response = await fetch(`/api/orders/${orderId}/status`, {
-        method: 'POST',
-        headers: await getHeaders({ 'Content-Type': 'application/json' }),
+        method: "POST",
+        headers: await getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(update),
       });
-      
-      if (!response.ok) throw new Error('Failed to add status update');
-      
-      dispatch({ type: 'ADD_STATUS_UPDATE', payload: { orderId, update } });
-      
+
+      if (!response.ok) throw new Error("Failed to add status update");
+
+      dispatch({ type: "ADD_STATUS_UPDATE", payload: { orderId, update } });
+
       // Sync with store
       await syncWithStore(orderId);
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     }
   };
@@ -368,46 +434,49 @@ export function ServiceOrderProvider({ children }: { children: React.ReactNode }
   const syncWithStore = async (orderId: string) => {
     try {
       const response = await fetch(`/api/orders/${orderId}/sync`, {
-        method: 'POST',
+        method: "POST",
         headers: await getHeaders(),
       });
-      
+
       if (!response.ok) {
-        console.warn('Failed to sync with main store:', response.statusText);
+        console.warn("Failed to sync with main store:", response.statusText);
         return;
       }
-      
+
       // Update sync status
-      dispatch({ 
-        type: 'UPDATE_ORDER', 
-        payload: { id: orderId, updates: { sync_status: 'synced' } }
+      dispatch({
+        type: "UPDATE_ORDER",
+        payload: { id: orderId, updates: { sync_status: "synced" } },
       });
     } catch (error) {
-      console.warn('Failed to sync with main store:', error);
-      dispatch({ 
-        type: 'UPDATE_ORDER', 
-        payload: { id: orderId, updates: { sync_status: 'error' } }
+      console.warn("Failed to sync with main store:", error);
+      dispatch({
+        type: "UPDATE_ORDER",
+        payload: { id: orderId, updates: { sync_status: "error" } },
       });
     }
   };
 
-  const uploadFile = async (file: File, orderType: string): Promise<{ url: string; previewUrl?: string }> => {
+  const uploadFile = async (
+    file: File,
+    orderType: string,
+  ): Promise<{ url: string; previewUrl?: string }> => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('orderType', orderType);
-      
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      formData.append("file", file);
+      formData.append("orderType", orderType);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
         headers: await getHeaders(),
         body: formData,
       });
-      
-      if (!response.ok) throw new Error('Failed to upload file');
-      
+
+      if (!response.ok) throw new Error("Failed to upload file");
+
       return await response.json();
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
+      dispatch({ type: "SET_ERROR", payload: (error as Error).message });
       throw error;
     }
   };
@@ -435,7 +504,9 @@ export function ServiceOrderProvider({ children }: { children: React.ReactNode }
 export function useServiceOrders() {
   const context = useContext(ServiceOrderContext);
   if (context === undefined) {
-    throw new Error('useServiceOrders must be used within a ServiceOrderProvider');
+    throw new Error(
+      "useServiceOrders must be used within a ServiceOrderProvider",
+    );
   }
   return context;
 }

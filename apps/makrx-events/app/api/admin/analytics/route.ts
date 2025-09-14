@@ -14,13 +14,10 @@ export async function GET(request: NextRequest) {
     }
 
     const user = (request as AuthenticatedRequest).user;
-    
+
     // Check if user has admin privileges
     if (!user?.roles?.includes('super_admin') && !user?.roles?.includes('event_admin')) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -29,7 +26,7 @@ export async function GET(request: NextRequest) {
     // Calculate date range
     const now = new Date();
     let startDate = new Date();
-    
+
     switch (timeRange) {
       case '1m':
         startDate.setMonth(now.getMonth() - 1);
@@ -50,13 +47,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get basic counts
-    const [totalUsersResult] = await db
-      .select({ count: count() })
-      .from(users);
+    const [totalUsersResult] = await db.select({ count: count() }).from(users);
 
-    const [totalEventsResult] = await db
-      .select({ count: count() })
-      .from(events);
+    const [totalEventsResult] = await db.select({ count: count() }).from(events);
 
     const [totalRegistrationsResult] = await db
       .select({ count: count() })
@@ -68,7 +61,7 @@ export async function GET(request: NextRequest) {
       totalEvents: totalEventsResult?.count || 0,
       totalRegistrations: totalRegistrationsResult?.count || 0,
       totalRevenue: 0, // Will be calculated from payments when Stripe is integrated
-      
+
       // Mock growth data - replace with real database queries
       userGrowth: [
         { month: 'Jan', users: 120, events: 8 },
@@ -116,9 +109,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(mockData);
   } catch (error) {
     console.error('Error fetching analytics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch analytics data' }, { status: 500 });
   }
 }

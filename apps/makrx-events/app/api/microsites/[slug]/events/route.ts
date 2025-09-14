@@ -3,14 +3,11 @@ import { z } from 'zod';
 import { insertSubEventSchema } from '@shared/schema';
 
 // GET /api/microsites/[slug]/events - Get all sub-events for a microsite
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
-    
+
     // Query parameters
     const type = searchParams.get('type'); // competition, workshop, talk, expo
     const track = searchParams.get('track'); // robotics, iot, manufacturing, etc.
@@ -27,8 +24,10 @@ export async function GET(
         type: 'competition',
         track: 'robotics',
         shortDesc: 'Build and program robots to navigate an obstacle course autonomously.',
-        longDesc: 'Teams will design, build, and program autonomous robots capable of navigating complex obstacle courses. Robots must demonstrate advanced sensing, navigation, and decision-making capabilities.',
-        rulesMd: '# Competition Rules\n\n1. Robots must be fully autonomous\n2. Maximum size: 50cm x 50cm x 50cm\n3. No remote control allowed',
+        longDesc:
+          'Teams will design, build, and program autonomous robots capable of navigating complex obstacle courses. Robots must demonstrate advanced sensing, navigation, and decision-making capabilities.',
+        rulesMd:
+          '# Competition Rules\n\n1. Robots must be fully autonomous\n2. Maximum size: 50cm x 50cm x 50cm\n3. No remote control allowed',
         prizesMd: '# Prizes\n\n- 1st Place: $5,000\n- 2nd Place: $3,000\n- 3rd Place: $1,000',
         startsAt: '2024-03-15T14:00:00Z',
         endsAt: '2024-03-15T18:00:00Z',
@@ -41,7 +40,7 @@ export async function GET(
         status: 'published',
         registrationCount: 23,
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
+        updatedAt: '2024-02-01T15:30:00Z',
       },
       {
         id: '2',
@@ -51,7 +50,8 @@ export async function GET(
         type: 'workshop',
         track: 'manufacturing',
         shortDesc: 'Advanced techniques for precision 3D printing and post-processing.',
-        longDesc: 'Learn professional 3D printing techniques including advanced slicing, multi-material printing, and post-processing methods.',
+        longDesc:
+          'Learn professional 3D printing techniques including advanced slicing, multi-material printing, and post-processing methods.',
         rulesMd: null,
         prizesMd: null,
         startsAt: '2024-03-15T10:00:00Z',
@@ -65,7 +65,7 @@ export async function GET(
         status: 'published',
         registrationCount: 25,
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
+        updatedAt: '2024-02-01T15:30:00Z',
       },
       {
         id: '3',
@@ -75,7 +75,8 @@ export async function GET(
         type: 'workshop',
         track: 'iot',
         shortDesc: 'Build wireless sensor networks using Arduino and LoRa.',
-        longDesc: 'Hands-on workshop covering IoT sensor design, wireless communication protocols, and cloud integration.',
+        longDesc:
+          'Hands-on workshop covering IoT sensor design, wireless communication protocols, and cloud integration.',
         rulesMd: null,
         prizesMd: null,
         startsAt: '2024-03-16T09:00:00Z',
@@ -89,27 +90,27 @@ export async function GET(
         status: 'draft',
         registrationCount: 0,
         createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-02-01T15:30:00Z'
-      }
+        updatedAt: '2024-02-01T15:30:00Z',
+      },
     ];
 
     // Apply filters
     let filteredEvents = mockSubEvents;
-    
+
     if (type) {
-      filteredEvents = filteredEvents.filter(e => e.type === type);
+      filteredEvents = filteredEvents.filter((e) => e.type === type);
     }
-    
+
     if (track) {
-      filteredEvents = filteredEvents.filter(e => e.track === track);
+      filteredEvents = filteredEvents.filter((e) => e.track === track);
     }
-    
+
     if (status) {
-      filteredEvents = filteredEvents.filter(e => e.status === status);
+      filteredEvents = filteredEvents.filter((e) => e.status === status);
     }
-    
+
     if (registrationType) {
-      filteredEvents = filteredEvents.filter(e => e.registrationType === registrationType);
+      filteredEvents = filteredEvents.filter((e) => e.registrationType === registrationType);
     }
 
     return NextResponse.json({
@@ -119,23 +120,17 @@ export async function GET(
         types: ['competition', 'workshop', 'talk', 'expo'],
         tracks: ['robotics', 'iot', 'manufacturing', 'electronics', 'software', 'creative'],
         statuses: ['draft', 'published', 'archived'],
-        registrationTypes: ['free', 'paid', 'external']
-      }
+        registrationTypes: ['free', 'paid', 'external'],
+      },
     });
   } catch (error) {
     console.error('Error fetching sub-events:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch sub-events' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch sub-events' }, { status: 500 });
   }
 }
 
 // POST /api/microsites/[slug]/events - Create a new sub-event
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
     const body = await request.json();
@@ -174,25 +169,22 @@ export async function POST(
       status: 'draft',
       registrationCount: 0,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(newSubEvent, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error creating sub-event:', error);
-    return NextResponse.json(
-      { error: 'Failed to create sub-event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create sub-event' }, { status: 500 });
   }
 }

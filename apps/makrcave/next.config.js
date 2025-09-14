@@ -3,25 +3,26 @@ const nextConfig = {
   output: 'standalone',
   // Enable transpilation of local packages
   transpilePackages: ['@makrx/auth', '@makrx/shared-ui', '@makrx/types'],
-  
+
   // Environment variables
   env: {
     APP_VERSION: process.env.npm_package_version || '1.0.0',
     BUILD_TIME: new Date().toISOString(),
   },
-  
+
   // API proxy for development
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NODE_ENV === 'production' 
-          ? 'https://api.makrcave.com/:path*' 
-          : 'http://localhost:8000/:path*', // Proxy to FastAPI backend
+        destination:
+          process.env.NODE_ENV === 'production'
+            ? 'https://api.makrcave.com/:path*'
+            : 'http://localhost:8000/:path*', // Proxy to FastAPI backend
       },
     ];
   },
-  
+
   // Security headers
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
@@ -40,16 +41,16 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Compress responses
   compress: true,
-  
+
   // Generate ETags for better caching
   generateEtags: true,
-  
+
   // Power off Next.js header
   poweredByHeader: false,
-  
+
   // Webpack configuration for custom modules
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Handle Keycloak JS modules
@@ -66,12 +67,12 @@ const nextConfig = {
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         process: 'process/browser',
-      })
+      }),
     );
 
     return config;
   },
-  
+
   // TypeScript configuration
   typescript: {
     // Enforce type errors in CI builds
@@ -83,13 +84,13 @@ const nextConfig = {
     // Enforce lint errors in CI builds
     ignoreDuringBuilds: process.env.CI !== 'true',
   },
-  
+
   // Images configuration for optimization
   images: {
     domains: ['localhost', 'makrx.org'],
     formats: ['image/webp', 'image/avif'],
   },
-  
+
   // Experimental features
   experimental: {
     // Enable modern builds

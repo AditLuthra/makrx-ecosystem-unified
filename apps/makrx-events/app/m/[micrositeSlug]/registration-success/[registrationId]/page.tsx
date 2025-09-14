@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  CheckCircle, 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  CheckCircle,
   Calendar,
   MapPin,
   Users,
@@ -10,10 +10,10 @@ import {
   Mail,
   Download,
   Share2,
-  ArrowLeft
-} from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+  ArrowLeft,
+} from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface RegistrationSuccessPageProps {
   params: {
@@ -27,40 +27,41 @@ async function getRegistrationData(registrationId: string) {
   // In real app, fetch from database
   return {
     id: registrationId,
-    eventTitle: "MakerFest 2024 - Arduino Workshop",
-    eventDate: "March 15, 2024",
-    eventTime: "10:00 AM - 4:00 PM PST",
-    eventLocation: "TechHub San Francisco, 123 Innovation St",
-    participantName: "John Smith",
-    email: "john.smith@example.com",
-    status: "confirmed",
-    registrationType: "paid",
+    eventTitle: 'MakerFest 2024 - Arduino Workshop',
+    eventDate: 'March 15, 2024',
+    eventTime: '10:00 AM - 4:00 PM PST',
+    eventLocation: 'TechHub San Francisco, 123 Innovation St',
+    participantName: 'John Smith',
+    email: 'john.smith@example.com',
+    status: 'confirmed',
+    registrationType: 'paid',
     amount: 45,
-    qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-    confirmationCode: "MF2024-ARD-001",
+    qrCode:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    confirmationCode: 'MF2024-ARD-001',
     benefits: [
-      "Access to all workshop sessions",
-      "Arduino starter kit included",
-      "Networking lunch",
-      "Digital certificate of completion"
+      'Access to all workshop sessions',
+      'Arduino starter kit included',
+      'Networking lunch',
+      'Digital certificate of completion',
     ],
     nextSteps: [
-      "Check your email for detailed event information",
-      "Add the event to your calendar",
-      "Join our event WhatsApp group for updates",
-      "Bring a laptop and arrive 15 minutes early"
+      'Check your email for detailed event information',
+      'Add the event to your calendar',
+      'Join our event WhatsApp group for updates',
+      'Bring a laptop and arrive 15 minutes early',
     ],
     contactInfo: {
-      organizer: "Sarah Chen",
-      email: "sarah@makerfest.com",
-      phone: "+1 (555) 123-4567"
-    }
+      organizer: 'Sarah Chen',
+      email: 'sarah@makerfest.com',
+      phone: '+1 (555) 123-4567',
+    },
   };
 }
 
 export default async function RegistrationSuccessPage({ params }: RegistrationSuccessPageProps) {
   const { micrositeSlug, registrationId } = await params;
-  
+
   const registration = await getRegistrationData(registrationId);
 
   if (!registration) {
@@ -90,9 +91,7 @@ export default async function RegistrationSuccessPage({ params }: RegistrationSu
           <CardContent className="pt-6">
             <div className="text-center">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                🎉 Registration Successful!
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">🎉 Registration Successful!</h2>
               <p className="text-gray-600 mb-4">
                 You're all set for <strong>{registration.eventTitle}</strong>
               </p>
@@ -175,9 +174,15 @@ export default async function RegistrationSuccessPage({ params }: RegistrationSu
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
-                  <p><strong>Organizer:</strong> {registration.contactInfo.organizer}</p>
-                  <p><strong>Email:</strong> {registration.contactInfo.email}</p>
-                  <p><strong>Phone:</strong> {registration.contactInfo.phone}</p>
+                  <p>
+                    <strong>Organizer:</strong> {registration.contactInfo.organizer}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {registration.contactInfo.email}
+                  </p>
+                  <p>
+                    <strong>Phone:</strong> {registration.contactInfo.phone}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -191,16 +196,14 @@ export default async function RegistrationSuccessPage({ params }: RegistrationSu
                   <QrCode className="h-5 w-5 mr-2" />
                   Your Check-in Code
                 </CardTitle>
-                <CardDescription>
-                  Show this QR code for quick check-in at the event
-                </CardDescription>
+                <CardDescription>Show this QR code for quick check-in at the event</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
                   <div className="bg-white p-4 rounded-lg border-2 inline-block">
-                    <img 
-                      src={registration.qrCode} 
-                      alt="Check-in QR Code" 
+                    <img
+                      src={registration.qrCode}
+                      alt="Check-in QR Code"
                       className="w-48 h-48 mx-auto"
                     />
                   </div>
@@ -218,7 +221,7 @@ export default async function RegistrationSuccessPage({ params }: RegistrationSu
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button className="w-full" asChild>
-                  <a 
+                  <a
                     href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
@@ -235,19 +238,21 @@ END:VCALENDAR`}
                     Add to Calendar
                   </a>
                 </Button>
-                
+
                 <Button variant="outline" className="w-full">
                   <Download className="h-4 w-4 mr-2" />
                   Download QR Code
                 </Button>
-                
+
                 <Button variant="outline" className="w-full">
                   <Share2 className="h-4 w-4 mr-2" />
                   Share Event
                 </Button>
-                
+
                 <Button variant="outline" className="w-full" asChild>
-                  <a href={`mailto:${registration.contactInfo.email}?subject=Question about ${registration.eventTitle}`}>
+                  <a
+                    href={`mailto:${registration.contactInfo.email}?subject=Question about ${registration.eventTitle}`}
+                  >
                     <Mail className="h-4 w-4 mr-2" />
                     Contact Organizer
                   </a>
@@ -283,8 +288,8 @@ END:VCALENDAR`}
               We're excited to see you at the event! 🚀
             </h3>
             <p className="text-blue-700 text-sm">
-              A confirmation email has been sent to <strong>{registration.email}</strong> with all the details. 
-              If you don't see it, please check your spam folder.
+              A confirmation email has been sent to <strong>{registration.email}</strong> with all
+              the details. If you don't see it, please check your spam folder.
             </p>
           </div>
         </div>

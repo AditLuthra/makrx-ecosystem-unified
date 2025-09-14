@@ -6,47 +6,47 @@
   /* Primary brand colors matching design reference */
   --primary: hsl(244, 77%, 61%); /* #6366F1 - Indigo */
   --primary-foreground: hsl(0, 0%, 100%);
-  
+
   /* Secondary brand colors */
   --secondary: hsl(326, 78%, 58%); /* #EC4899 - Pink */
   --secondary-foreground: hsl(0, 0%, 100%);
-  
+
   /* Accent colors */
   --accent: hsl(158, 72%, 44%); /* #10B981 - Emerald */
   --accent-foreground: hsl(0, 0%, 100%);
-  
+
   /* Muted colors */
   --muted: hsl(220, 13%, 46%); /* #64748B - Slate */
   --muted-foreground: hsl(220, 13%, 46%);
-  
+
   /* Base colors */
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 84%, 5%);
-  
+
   /* Card colors */
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(222, 84%, 5%);
-  
+
   /* Popover colors */
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(222, 84%, 5%);
-  
+
   /* Border and input colors */
   --border: hsl(214, 32%, 91%);
   --input: hsl(214, 32%, 91%);
   --ring: hsl(244, 77%, 61%);
-  
+
   /* Destructive colors */
   --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  
+
   /* Chart colors */
   --chart-1: hsl(244, 77%, 61%);
   --chart-2: hsl(158, 72%, 44%);
   --chart-3: hsl(43, 93%, 56%);
   --chart-4: hsl(147, 79%, 42%);
   --chart-5: hsl(341, 75%, 51%);
-  
+
   /* Sidebar colors */
   --sidebar: hsl(0, 0%, 100%);
   --sidebar-foreground: hsl(222, 84%, 5%);
@@ -56,15 +56,15 @@
   --sidebar-accent-foreground: hsl(244, 77%, 61%);
   --sidebar-border: hsl(214, 32%, 91%);
   --sidebar-ring: hsl(244, 77%, 61%);
-  
+
   /* Typography */
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, Monaco, 'Courier New', monospace;
-  
+
   /* Border radius */
   --radius: 0.75rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -113,12 +113,17 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold;
   }
 }
@@ -128,25 +133,25 @@
   .gradient-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   }
-  
+
   .gradient-hero {
     background: linear-gradient(135deg, hsl(244, 77%, 61%) 0%, hsl(326, 78%, 58%) 100%);
   }
-  
+
   /* Custom button styles */
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
   }
-  
+
   .btn-secondary {
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors;
   }
-  
+
   /* Card hover effects */
   .card-hover {
     @apply hover:shadow-lg transition-shadow duration-200;
   }
-  
+
   /* Text truncation utility */
   .line-clamp-3 {
     display: -webkit-box;
@@ -154,7 +159,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   /* Focus styles */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
@@ -166,22 +171,26 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.3s ease-out;
   }
-  
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
-  
+
   @keyframes slideUp {
-    from { 
+    from {
       opacity: 0;
       transform: translateY(20px);
     }
-    to { 
+    to {
       opacity: 1;
       transform: translateY(0);
     }
@@ -199,7 +208,8 @@
   }
 
   @keyframes bounce-subtle {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -214,12 +224,12 @@
   .animate-bounce-subtle {
     animation: bounce-subtle 3s ease-in-out infinite;
   }
-  
+
   /* Responsive text sizes */
   .text-responsive-lg {
     @apply text-2xl md:text-3xl lg:text-4xl;
   }
-  
+
   .text-responsive-xl {
     @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
   }
@@ -252,7 +262,9 @@ select:focus {
 
 /* Loading animation */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin {

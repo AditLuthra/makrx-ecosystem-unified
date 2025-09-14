@@ -6,12 +6,7 @@
     "prefer-const": "off",
     "no-var": "off"
   },
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/",
-    "*.config.js",
-    "*.config.ts"
-  ],
+  "ignorePatterns": ["dist/", "node_modules/", "*.config.js", "*.config.ts"],
   "env": {
     "browser": true,
     "es2022": true,

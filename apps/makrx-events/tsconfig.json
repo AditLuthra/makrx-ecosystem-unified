@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es6"
-    ],
+    "lib": ["dom", "dom.iterable", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -25,32 +21,14 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*",
-        "./*"
-      ],
-      "@shared/*": [
-        "../../packages/shared/src/*"
-      ],
-      "@makrx/auth": [
-        "../../packages/auth/src"
-      ],
-      "@makrx/shared-ui": [
-        "../../packages/shared-ui/src"
-      ],
-      "@makrx/types": [
-        "../../packages/types/src"
-      ]
+      "@/*": ["./src/*", "./*"],
+      "@shared/*": ["../../packages/shared/src/*"],
+      "@makrx/auth": ["../../packages/auth/src"],
+      "@makrx/shared-ui": ["../../packages/shared-ui/src"],
+      "@makrx/types": ["../../packages/types/src"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"],
   "extends": "../../tsconfig.base.json"
 }

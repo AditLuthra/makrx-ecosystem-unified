@@ -7,11 +7,11 @@ export const dynamic = 'force-dynamic';
 
 export default function PortalPage() {
   const router = useRouter();
-  
+
   useEffect(() => {
     router.replace('/portal/dashboard');
   }, [router]);
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">

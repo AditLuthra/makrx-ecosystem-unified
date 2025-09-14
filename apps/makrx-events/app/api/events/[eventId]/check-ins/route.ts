@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { eventCheckIns, eventRegistrations, users } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const checkIns = await db
       .select({
@@ -24,7 +21,7 @@ export async function GET(
           id: users.id,
           firstName: users.firstName,
           lastName: users.lastName,
-        }
+        },
       })
       .from(eventCheckIns)
       .leftJoin(users, eq(eventCheckIns.userId, users.id))
@@ -38,10 +35,7 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { eventId: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
     const { userId, checkedInBy, notes } = await request.json();
 
@@ -50,10 +44,7 @@ export async function POST(
       .select()
       .from(eventRegistrations)
       .where(
-        and(
-          eq(eventRegistrations.eventId, params.eventId),
-          eq(eventRegistrations.userId, userId)
-        )
+        and(eq(eventRegistrations.eventId, params.eventId), eq(eventRegistrations.userId, userId)),
       )
       .limit(1);
 
@@ -65,12 +56,7 @@ export async function POST(
     const existingCheckIn = await db
       .select()
       .from(eventCheckIns)
-      .where(
-        and(
-          eq(eventCheckIns.eventId, params.eventId),
-          eq(eventCheckIns.userId, userId)
-        )
-      )
+      .where(and(eq(eventCheckIns.eventId, params.eventId), eq(eventCheckIns.userId, userId)))
       .limit(1);
 
     if (existingCheckIn.length) {

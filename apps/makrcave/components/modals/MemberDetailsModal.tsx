@@ -19,7 +19,7 @@ import {
   Wrench,
   CreditCard,
   MapPin,
-  ExternalLink
+  ExternalLink,
 } from 'lucide-react';
 
 interface MemberDetailsModalProps {
@@ -28,11 +28,7 @@ interface MemberDetailsModalProps {
   member: Member | null;
 }
 
-const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
-  open,
-  onOpenChange,
-  member
-}) => {
+const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenChange, member }) => {
   if (!member) return null;
 
   const getStatusIcon = (status: string) => {
@@ -57,9 +53,12 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
       pending: 'bg-yellow-100 text-yellow-800',
       suspended: 'bg-orange-100 text-orange-800',
     };
-    
+
     return (
-      <Badge variant="outline" className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}>
+      <Badge
+        variant="outline"
+        className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -72,12 +71,17 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
       admin: 'bg-red-100 text-red-800',
       makerspace_admin: 'bg-yellow-100 text-yellow-800',
     };
-    
+
     return (
-      <Badge variant="outline" className={variants[role as keyof typeof variants] || 'bg-gray-100 text-gray-800'}>
-        {role === 'service_provider' ? 'Service Provider' : 
-         role === 'makerspace_admin' ? 'Manager' : 
-         role.charAt(0).toUpperCase() + role.slice(1)}
+      <Badge
+        variant="outline"
+        className={variants[role as keyof typeof variants] || 'bg-gray-100 text-gray-800'}
+      >
+        {role === 'service_provider'
+          ? 'Service Provider'
+          : role === 'makerspace_admin'
+            ? 'Manager'
+            : role.charAt(0).toUpperCase() + role.slice(1)}
       </Badge>
     );
   };
@@ -87,7 +91,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return 'Invalid date';
@@ -101,14 +105,15 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return 'Never';
     }
   };
 
-  const membershipProgress = (member.credits_used / (member.credits_used + member.credits_remaining)) * 100;
+  const membershipProgress =
+    (member.credits_used / (member.credits_used + member.credits_remaining)) * 100;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -119,16 +124,17 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
             Member Details
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Header Section */}
           <div className="flex items-start gap-4">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-2xl font-bold text-blue-700">
-                {member.firstName[0]}{member.lastName[0]}
+                {member.firstName[0]}
+                {member.lastName[0]}
               </span>
             </div>
-            
+
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -137,7 +143,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 {member.role === 'admin' && <Crown className="h-5 w-5 text-yellow-600" />}
                 {getStatusIcon(member.status)}
               </div>
-              
+
               <div className="flex items-center gap-3 mb-3">
                 {getStatusBadge(member.status)}
                 {getRoleBadge(member.role)}
@@ -145,7 +151,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                   {member.membership_plan_name}
                 </Badge>
               </div>
-              
+
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -174,7 +180,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 <p className="text-sm text-gray-600">Projects</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="p-4 text-center">
                 <Wrench className="h-6 w-6 text-green-600 mx-auto mb-2" />
@@ -182,7 +188,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 <p className="text-sm text-gray-600">Reservations</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="p-4 text-center">
                 <CreditCard className="h-6 w-6 text-purple-600 mx-auto mb-2" />
@@ -199,7 +205,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 <CreditCard className="h-5 w-5" />
                 Membership Information
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Plan</p>
@@ -209,7 +215,9 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                   <p className="text-sm text-gray-600">Status</p>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(member.status)}
-                    <span className="font-medium">{member.status.charAt(0).toUpperCase() + member.status.slice(1)}</span>
+                    <span className="font-medium">
+                      {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -221,16 +229,18 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                   <p className="font-medium">{formatDate(member.end_date)}</p>
                 </div>
               </div>
-              
+
               {/* Usage Progress */}
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm text-gray-600">Credit Usage</p>
-                  <p className="text-sm font-medium">{member.credits_used} / {member.credits_used + member.credits_remaining}</p>
+                  <p className="text-sm font-medium">
+                    {member.credits_used} / {member.credits_used + member.credits_remaining}
+                  </p>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full" 
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
                     style={{ width: `${membershipProgress}%` }}
                   ></div>
                 </div>
@@ -246,7 +256,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                   <Award className="h-5 w-5" />
                   Skills & Expertise
                 </h3>
-                
+
                 <div className="flex flex-wrap gap-2">
                   {member.skills.map((skill, index) => (
                     <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700">
@@ -265,7 +275,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 <Clock className="h-5 w-5" />
                 Activity Information
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Last Login</p>
@@ -296,7 +306,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
                 <User className="h-5 w-5" />
                 Account Information
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Member ID</p>
@@ -327,9 +337,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
               <ExternalLink className="h-4 w-4 mr-2" />
               View Projects
             </Button>
-            <Button>
-              Edit Member
-            </Button>
+            <Button>Edit Member</Button>
           </div>
         </div>
       </DialogContent>

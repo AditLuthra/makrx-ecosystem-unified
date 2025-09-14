@@ -3,6 +3,7 @@
 ## Overview
 
 The MakrX Services platform features a comprehensive feature flags system that allows for:
+
 - Granular control over feature availability
 - A/B testing capabilities
 - Beta user management
@@ -13,31 +14,37 @@ The MakrX Services platform features a comprehensive feature flags system that a
 ## Access Levels
 
 ### 1. **DISABLED**
+
 - Feature is completely unavailable
 - Returns 404 for related endpoints
 - Hidden from UI components
 
-### 2. **ENABLED** 
+### 2. **ENABLED**
+
 - Feature is publicly available
 - No restrictions on access
 - Default state for production features
 
 ### 3. **BETA**
+
 - Available only to users with `beta_user` role
 - Used for testing new features
 - Can be combined with specific user allowlists
 
 ### 4. **PASSWORD_ONLY**
+
 - Requires specific password in `X-Feature-Password` header
 - Used for experimental/sensitive features
 - Password can be shared with specific stakeholders
 
 ### 5. **ROLE_BASED**
+
 - Restricted to specific user roles
 - Common roles: `admin`, `provider`, `super_admin`
 - Can include explicit user allowlists
 
 ### 6. **A_B_TEST**
+
 - Enables A/B testing with percentage-based rollout
 - User assignment based on stable hash
 - Analytics tracking included
@@ -45,12 +52,14 @@ The MakrX Services platform features a comprehensive feature flags system that a
 ## Core Features by Category
 
 ### Service Features
+
 - **SERVICE_3D_PRINTING**: Complete 3D printing service platform
-- **SERVICE_LASER_ENGRAVING**: Laser cutting and engraving services  
+- **SERVICE_LASER_ENGRAVING**: Laser cutting and engraving services
 - **SERVICE_CNC**: CNC machining services (Beta)
 - **SERVICE_INJECTION_MOLDING**: Injection molding services (Password: `injection-beta-2024`)
 
 ### File Processing
+
 - **FILE_UPLOAD_3D**: Upload STL, OBJ, 3MF files
 - **FILE_UPLOAD_2D**: Upload SVG, DXF, AI files
 - **FILE_PREVIEW_3D**: Interactive 3D model preview
@@ -58,12 +67,14 @@ The MakrX Services platform features a comprehensive feature flags system that a
 - **FILE_AUTO_REPAIR**: Automatic mesh repair (Beta)
 
 ### Provider Features
+
 - **PROVIDER_DASHBOARD**: Provider management interface
 - **PROVIDER_REAL_TIME_JOBS**: WebSocket job notifications
 - **PROVIDER_INVENTORY_MANAGEMENT**: Material tracking
 - **PROVIDER_ANALYTICS**: Performance metrics (Beta)
 
 ### Experimental Features
+
 - **AI_DESIGN_SUGGESTIONS**: AI optimization suggestions (Password: `ai-design-2024`)
 - **AR_PREVIEW**: Augmented reality preview (Password: `ar-preview-2024`)
 - **BLOCKCHAIN_TRACKING**: Blockchain order verification (Disabled)
@@ -110,14 +121,14 @@ def my_service_function(user_id, user_roles):
 #### 1. Using React Context
 
 ```tsx
-import { useFeatureFlags, useFeature } from '@/lib/features';
+import { useFeatureFlags, useFeature } from "@/lib/features";
 
 function ServiceComponent() {
   const { isFeatureEnabled } = useFeatureFlags();
-  const { isEnabled, isBeta } = useFeature('SERVICE_3D_PRINTING');
-  
+  const { isEnabled, isBeta } = useFeature("SERVICE_3D_PRINTING");
+
   if (!isEnabled) return <ServiceUnavailable />;
-  
+
   return (
     <div>
       <h1>3D Printing Service {isBeta && <BetaBadge />}</h1>
@@ -132,8 +143,8 @@ function ServiceComponent() {
 ```tsx
 import { FeatureGate, PasswordProtectedFeature } from '@/lib/features';
 
-<FeatureGate 
-  feature="SERVICE_CNC" 
+<FeatureGate
+  feature="SERVICE_CNC"
   fallback={<div>CNC service coming soon</div>}
 >
   <CNCServiceInterface />
@@ -147,15 +158,12 @@ import { FeatureGate, PasswordProtectedFeature } from '@/lib/features';
 #### 3. Service-Specific Hooks
 
 ```tsx
-import { useServiceFeatures } from '@/lib/features';
+import { useServiceFeatures } from "@/lib/features";
 
 function ServicesOverview() {
-  const { 
-    enabledServices, 
-    has3DPrinting, 
-    hasLaserEngraving 
-  } = useServiceFeatures();
-  
+  const { enabledServices, has3DPrinting, hasLaserEngraving } =
+    useServiceFeatures();
+
   return (
     <div>
       <h2>Available Services ({enabledServices.length})</h2>
@@ -169,9 +177,11 @@ function ServicesOverview() {
 ## Management
 
 ### 1. Admin Dashboard
+
 Access via `/admin/feature-flags` (requires admin role + `ADMIN_FEATURE_FLAGS`)
 
 Features:
+
 - Real-time flag status overview
 - Bulk operations
 - Runtime overrides
@@ -250,6 +260,7 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 ### 2. Configuration Files
 
 #### Main Configuration (`config/features/feature_flags.json`)
+
 ```json
 {
   "SERVICE_3D_PRINTING": {
@@ -263,6 +274,7 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 ```
 
 #### Runtime Overrides (`config/features/overrides.json`)
+
 ```json
 {
   "SERVICE_CNC": {
@@ -285,12 +297,14 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 ## Best Practices
 
 ### 1. Feature Rollout Strategy
+
 1. Start with `disabled` for new features
 2. Move to `beta` for internal testing
 3. Use `password_only` for stakeholder demos
 4. Graduate to `enabled` for public release
 
 ### 2. Naming Conventions
+
 - Service features: `SERVICE_<NAME>`
 - Feature enhancements: `<SERVICE>_<ENHANCEMENT>`
 - File operations: `FILE_<ACTION>`
@@ -299,16 +313,19 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 - Experimental: Descriptive names with clear intent
 
 ### 3. Dependency Management
+
 - Use `depends_on` for feature prerequisites
 - Use `conflicts_with` for mutually exclusive features
 - Validate dependencies before enabling features
 
 ### 4. Testing Strategies
+
 - Use A/B testing for performance comparisons
 - Beta test with power users before public release
 - Monitor analytics for feature adoption
 
 ### 5. Security Considerations
+
 - Regularly rotate passwords for sensitive features
 - Use role-based access for internal features
 - Monitor feature access patterns for anomalies
@@ -316,18 +333,21 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 ## Monitoring and Analytics
 
 ### 1. Feature Usage Metrics
+
 - Request counts per feature
 - Unique user access patterns
 - Error rates by feature
 - Performance impact analysis
 
 ### 2. A/B Testing Analytics
+
 - Conversion rates by variant
 - User engagement metrics
 - Feature adoption curves
 - Statistical significance testing
 
 ### 3. Alerts and Notifications
+
 - Failed feature access attempts
 - Unusual usage patterns
 - Configuration change notifications
@@ -372,6 +392,7 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 ## Migration and Deployment
 
 ### 1. Adding New Features
+
 1. Define feature in `flags.py`
 2. Add to configuration files
 3. Implement feature gates
@@ -379,12 +400,14 @@ FEATURE_FLAGS_AUTO_RELOAD=true
 5. Deploy and enable gradually
 
 ### 2. Removing Features
+
 1. Set to `disabled` in production
 2. Monitor for access attempts
 3. Remove feature gates from code
 4. Clean up configuration files
 
 ### 3. Configuration Updates
+
 - Changes are auto-reloaded (if enabled)
 - Runtime overrides take precedence
 - Bulk operations for major changes

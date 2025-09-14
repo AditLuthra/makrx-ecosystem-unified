@@ -48,7 +48,7 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
     const colors = {
       beginner: 'bg-green-100 text-green-800',
       intermediate: 'bg-yellow-100 text-yellow-800',
-      advanced: 'bg-red-100 text-red-800'
+      advanced: 'bg-red-100 text-red-800',
     };
     return colors[difficulty as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
@@ -57,7 +57,7 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
     const icons = {
       competition: '🏆',
       workshop: '🔧',
-      talk: '💡'
+      talk: '💡',
     };
     return icons[type as keyof typeof icons] || '📅';
   };
@@ -67,21 +67,17 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            {content.title}
-          </h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4">{content.title}</h2>
           {content.description && (
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {content.description}
-            </p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{content.description}</p>
           )}
         </div>
 
         {/* Tracks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {content.tracks.map((track) => (
-            <Card 
-              key={track.id} 
+            <Card
+              key={track.id}
               className={`group hover:shadow-lg transition-all duration-200 ${
                 track.featured ? 'ring-2 ring-primary ring-offset-2' : ''
               }`}
@@ -91,15 +87,15 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
                   Featured Track
                 </div>
               )}
-              
+
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
                   {track.icon && (
-                    <div 
+                    <div
                       className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
-                      style={{ 
+                      style={{
                         backgroundColor: track.color ? `${track.color}20` : `${primaryColor}20`,
-                        color: track.color || primaryColor
+                        color: track.color || primaryColor,
                       }}
                     >
                       {track.icon}
@@ -115,19 +111,15 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
                     )}
                   </div>
                 </div>
-                
-                <p className="text-muted-foreground">
-                  {track.description}
-                </p>
+
+                <p className="text-muted-foreground">{track.description}</p>
               </CardHeader>
 
               <CardContent>
                 {/* Events List */}
                 <div className="space-y-3 mb-6">
-                  <h4 className="font-medium text-sm text-foreground">
-                    Events in this track:
-                  </h4>
-                  
+                  <h4 className="font-medium text-sm text-foreground">Events in this track:</h4>
+
                   {track.events.slice(0, 3).map((event) => (
                     <Link
                       key={event.id}
@@ -156,7 +148,7 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
                       </div>
                     </Link>
                   ))}
-                  
+
                   {track.events.length > 3 && (
                     <p className="text-xs text-muted-foreground text-center pt-2">
                       +{track.events.length - 3} more events
@@ -166,8 +158,8 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
 
                 {/* View All Button */}
                 <Link href={`/m/${micrositeSlug}/events?track=${encodeURIComponent(track.name)}`}>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full group-hover:border-primary group-hover:text-primary transition-colors"
                   >
                     View All Events
@@ -184,12 +176,8 @@ export default function Tracks({ content, variant = 'grid', micrositeSlug, theme
           <div className="text-center py-12">
             <div className="text-muted-foreground">
               <div className="text-4xl mb-4">🛤️</div>
-              <h3 className="text-lg font-medium mb-2">
-                Tracks Coming Soon
-              </h3>
-              <p className="text-sm">
-                We're organizing events into tracks. Check back soon!
-              </p>
+              <h3 className="text-lg font-medium mb-2">Tracks Coming Soon</h3>
+              <p className="text-sm">We're organizing events into tracks. Check back soon!</p>
             </div>
           </div>
         )}

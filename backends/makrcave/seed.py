@@ -28,7 +28,9 @@ load_dotenv()
 
 try:
     # Allow running from repo root
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+    sys.path.append(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    )
 except Exception:
     pass
 
@@ -58,17 +60,27 @@ def get_or_create_makerspace(session) -> Makerspace:
     if ms:
         return ms
     ms_id = str(uuid.uuid4())
-    ms = Makerspace(id=ms_id, name="Dev Makerspace", location="Local", description="Seeded makerspace")
+    ms = Makerspace(
+        id=ms_id,
+        name="Dev Makerspace",
+        location="Local",
+        description="Seeded makerspace",
+    )
     session.add(ms)
     session.commit()
     return ms
 
 
-def get_or_create_plan(session, makerspace_uuid: uuid.UUID) -> MembershipPlan | None:
+def get_or_create_plan(
+    session, makerspace_uuid: uuid.UUID
+) -> MembershipPlan | None:
     try:
         plan = (
             session.query(MembershipPlan)
-            .filter(MembershipPlan.name == "Basic", MembershipPlan.makerspace_id == makerspace_uuid)
+            .filter(
+                MembershipPlan.name == "Basic",
+                MembershipPlan.makerspace_id == makerspace_uuid,
+            )
             .first()
         )
         if plan:
@@ -96,8 +108,14 @@ def get_or_create_plan(session, makerspace_uuid: uuid.UUID) -> MembershipPlan | 
         return None
 
 
-def get_or_create_admin(session, makerspace_uuid: uuid.UUID, plan: MembershipPlan | None) -> Member:
-    admin = session.query(Member).filter(Member.email == "admin@example.com").first()
+def get_or_create_admin(
+    session, makerspace_uuid: uuid.UUID, plan: MembershipPlan | None
+) -> Member:
+    admin = (
+        session.query(Member)
+        .filter(Member.email == "admin@example.com")
+        .first()
+    )
     if admin:
         return admin
     admin = Member(
@@ -119,8 +137,14 @@ def get_or_create_admin(session, makerspace_uuid: uuid.UUID, plan: MembershipPla
     return admin
 
 
-def get_or_create_inventory_item(session, makerspace_id_str: str, admin_id: str) -> InventoryItem | None:
-    item = session.query(InventoryItem).filter(InventoryItem.product_code == "PLA-175").first()
+def get_or_create_inventory_item(
+    session, makerspace_id_str: str, admin_id: str
+) -> InventoryItem | None:
+    item = (
+        session.query(InventoryItem)
+        .filter(InventoryItem.product_code == "PLA-175")
+        .first()
+    )
     if item:
         return item
     try:
@@ -149,12 +173,16 @@ def get_or_create_inventory_item(session, makerspace_id_str: str, admin_id: str)
         return None
 
 
-def get_or_create_notification_template(session, makerspace_uuid: uuid.UUID, admin_uuid: uuid.UUID) -> NotificationTemplate | None:
+def get_or_create_notification_template(
+    session, makerspace_uuid: uuid.UUID, admin_uuid: uuid.UUID
+) -> NotificationTemplate | None:
     tpl = (
         session.query(NotificationTemplate)
         .filter(
-            NotificationTemplate.template_name == "inventory_low_stock_default",
-            NotificationTemplate.notification_type == NotificationType.INVENTORY_LOW_STOCK,
+            NotificationTemplate.template_name
+            == "inventory_low_stock_default",
+            NotificationTemplate.notification_type
+            == NotificationType.INVENTORY_LOW_STOCK,
         )
         .first()
     )
@@ -187,8 +215,18 @@ def get_or_create_notification_template(session, makerspace_uuid: uuid.UUID, adm
 
 def main() -> None:
     # Safety guard: avoid seeding in production unless explicitly allowed
-    if os.getenv("ENVIRONMENT", "development").lower() == "production" and os.getenv("SEED_ALLOW_PROD", "false").lower() not in ("1", "true", "yes"):
-        print("[seed] Refusing to run: ENVIRONMENT=production. Set SEED_ALLOW_PROD=true to override.")
+    if os.getenv(
+        "ENVIRONMENT", "development"
+    ).lower() == "production" and os.getenv(
+        "SEED_ALLOW_PROD", "false"
+    ).lower() not in (
+        "1",
+        "true",
+        "yes",
+    ):
+        print(
+            "[seed] Refusing to run: ENVIRONMENT=production. Set SEED_ALLOW_PROD=true to override."
+        )
         sys.exit(1)
     print("[seed] Initializing database (apply metadata if needed)...")
     init_db()
@@ -196,12 +234,18 @@ def main() -> None:
     try:
         ms = get_or_create_makerspace(session)
         # enhanced_member.Member expects UUID for makerspace_id; convert
-        makerspace_uuid = uuid.UUID(str(ms.id)) if not isinstance(ms.id, uuid.UUID) else ms.id
+        makerspace_uuid = (
+            uuid.UUID(str(ms.id))
+            if not isinstance(ms.id, uuid.UUID)
+            else ms.id
+        )
         plan = get_or_create_plan(session, makerspace_uuid)
         admin = get_or_create_admin(session, makerspace_uuid, plan)
         # Seed inventory item and notification template
         inv = get_or_create_inventory_item(session, str(ms.id), str(admin.id))
-        tpl = get_or_create_notification_template(session, makerspace_uuid, uuid.UUID(str(admin.id)))
+        tpl = get_or_create_notification_template(
+            session, makerspace_uuid, uuid.UUID(str(admin.id))
+        )
         print("[seed] Done.")
         print(f"  Makerspace: {ms.id} ({ms.name})")
         if plan:

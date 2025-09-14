@@ -8,14 +8,14 @@ export async function GET() {
     // Get event counts
     const [eventStats] = await db
       .select({
-        totalEvents: count()
+        totalEvents: count(),
       })
       .from(events);
 
     // Get user count
     const [userStats] = await db
       .select({
-        totalUsers: count()
+        totalUsers: count(),
       })
       .from(users);
 
@@ -24,7 +24,7 @@ export async function GET() {
       eventsAttended: 2,
       eventsCreated: 1,
       totalSpent: 85,
-      upcomingEvents: 2
+      upcomingEvents: 2,
     };
 
     return NextResponse.json({
@@ -32,7 +32,7 @@ export async function GET() {
         totalEvents: eventStats.totalEvents,
         totalUsers: userStats.totalUsers,
       },
-      user: mockUserStats
+      user: mockUserStats,
     });
   } catch (error) {
     console.error('Error fetching user stats:', error);

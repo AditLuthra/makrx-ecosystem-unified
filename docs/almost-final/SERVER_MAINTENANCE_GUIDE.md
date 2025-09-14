@@ -7,6 +7,7 @@ This guide covers ongoing maintenance, monitoring, and troubleshooting for the M
 ### 1. **Health Check Endpoints**
 
 #### Backend Health Check
+
 ```bash
 # Check backend API health
 curl -f http://localhost:8000/health
@@ -15,6 +16,7 @@ curl -f http://localhost:8000/health
 ```
 
 #### Frontend Health Check
+
 ```bash
 # Check frontend availability
 curl -f http://localhost:3000/health
@@ -23,6 +25,7 @@ curl -f http://localhost:3000/health
 ```
 
 #### Database Health Check
+
 ```bash
 # Check database connectivity
 docker-compose -f docker-compose.prod.yml exec postgres pg_isready -U makrcave_user -d makrcave_db
@@ -33,6 +36,7 @@ docker-compose -f docker-compose.prod.yml exec postgres pg_isready -U makrcave_u
 ### 2. **Log Monitoring**
 
 #### View Real-time Logs
+
 ```bash
 # All services
 docker-compose -f docker-compose.prod.yml logs -f
@@ -48,6 +52,7 @@ sudo tail -f /var/log/nginx/error.log
 ```
 
 #### Log Analysis Commands
+
 ```bash
 # Check for errors in backend logs
 docker-compose -f docker-compose.prod.yml logs backend | grep -i error
@@ -63,6 +68,7 @@ docker system df
 ### 3. **Performance Monitoring**
 
 #### System Resources
+
 ```bash
 # CPU and memory usage
 htop
@@ -77,6 +83,7 @@ ss -tulpn | grep -E ':(80|443|8000|5432)'
 ```
 
 #### Database Performance
+
 ```bash
 # Check active connections
 docker-compose -f docker-compose.prod.yml exec postgres psql -U makrcave_user -d makrcave_db -c "SELECT count(*) FROM pg_stat_activity;"
@@ -93,6 +100,7 @@ docker-compose -f docker-compose.prod.yml exec postgres psql -U makrcave_user -d
 ### 1. **Automated Backup Script**
 
 Create `/opt/makrcave/backup.sh`:
+
 ```bash
 #!/bin/bash
 
@@ -124,6 +132,7 @@ echo "Backup completed: $DATE"
 ```
 
 Schedule daily backups:
+
 ```bash
 # Edit crontab
 sudo crontab -e
@@ -135,6 +144,7 @@ sudo crontab -e
 ### 2. **Recovery Procedures**
 
 #### Database Recovery
+
 ```bash
 # Stop services
 docker-compose -f docker-compose.prod.yml down
@@ -148,6 +158,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 
 #### File Recovery
+
 ```bash
 # Restore uploads
 tar -xzf /var/backups/makrcave/uploads_backup_YYYYMMDD_HHMMSS.tar.gz -C ./
@@ -161,6 +172,7 @@ tar -xzf /var/backups/makrcave/config_backup_YYYYMMDD_HHMMSS.tar.gz -C ./
 ### 1. **System Alerts Script**
 
 Create `/opt/makrcave/alerts.sh`:
+
 ```bash
 #!/bin/bash
 
@@ -197,6 +209,7 @@ fi
 ```
 
 Schedule monitoring checks:
+
 ```bash
 # Check every 5 minutes
 */5 * * * * /opt/makrcave/alerts.sh
@@ -205,6 +218,7 @@ Schedule monitoring checks:
 ### 2. **Log Rotation Configuration**
 
 Create `/etc/logrotate.d/makrcave`:
+
 ```
 /var/log/makrcave/*.log {
     daily
@@ -262,7 +276,7 @@ docker-compose -f docker-compose.prod.yml exec backend python -c "
 import os
 migration_files = [
     'migrations/create_member_tables.py',
-    'migrations/create_skill_tables.py', 
+    'migrations/create_skill_tables.py',
     'migrations/create_analytics_tables.py'
 ]
 for migration in migration_files:
@@ -297,6 +311,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ### 1. **Common Issues**
 
 #### Backend Service Won't Start
+
 ```bash
 # Check logs
 docker-compose -f docker-compose.prod.yml logs backend
@@ -311,6 +326,7 @@ sudo chown -R makrcave:makrcave ./uploads ./logs
 ```
 
 #### Frontend Not Loading
+
 ```bash
 # Check nginx status
 docker-compose -f docker-compose.prod.yml logs nginx
@@ -324,6 +340,7 @@ docker-compose -f docker-compose.prod.yml up -d frontend
 ```
 
 #### Database Connection Issues
+
 ```bash
 # Check postgres status
 docker-compose -f docker-compose.prod.yml logs postgres
@@ -345,6 +362,7 @@ docker-compose -f docker-compose.prod.yml restart postgres backend
 ### 2. **Performance Issues**
 
 #### High CPU Usage
+
 ```bash
 # Identify resource-heavy containers
 docker stats
@@ -357,6 +375,7 @@ docker-compose -f docker-compose.prod.yml up -d --scale backend=2
 ```
 
 #### High Memory Usage
+
 ```bash
 # Check memory usage by service
 docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
@@ -366,6 +385,7 @@ docker system prune -f
 ```
 
 #### Slow Database Queries
+
 ```bash
 # Enable query logging
 docker-compose -f docker-compose.prod.yml exec postgres psql -U makrcave_user -d makrcave_db -c "
@@ -383,8 +403,9 @@ docker-compose -f docker-compose.prod.yml logs postgres | grep "duration:"
 ### 1. **Resource Monitoring**
 
 Track these metrics daily:
+
 - CPU usage percentage
-- Memory usage percentage  
+- Memory usage percentage
 - Disk usage percentage
 - Database connection count
 - Active user count
@@ -393,6 +414,7 @@ Track these metrics daily:
 ### 2. **Scaling Triggers**
 
 Consider scaling when:
+
 - CPU usage > 70% for 10+ minutes
 - Memory usage > 80% for 5+ minutes
 - Disk usage > 85%
@@ -402,6 +424,7 @@ Consider scaling when:
 ### 3. **Scaling Options**
 
 #### Vertical Scaling (Upgrade Server)
+
 ```bash
 # Backup data
 /opt/makrcave/backup.sh
@@ -415,6 +438,7 @@ docker-compose -f docker-compose.prod.yml down
 ```
 
 #### Horizontal Scaling (Load Balancing)
+
 ```bash
 # Scale backend containers
 docker-compose -f docker-compose.prod.yml up -d --scale backend=3

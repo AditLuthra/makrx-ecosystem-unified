@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   AlertTriangle,
   DollarSign,
@@ -27,8 +27,8 @@ import {
   ShoppingCart,
   Trash2,
   Users,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -42,7 +42,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
 
 interface DashboardMetrics {
   totalRevenue: number;
@@ -102,33 +102,33 @@ interface Customer {
 }
 
 const ComprehensiveStoreDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [dateRange, setDateRange] = useState("30d");
+  const [activeTab, setActiveTab] = useState('overview');
+  const [dateRange, setDateRange] = useState('30d');
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   // Chart data
   const revenueData = [
-    { date: "2024-01-01", revenue: 12000, orders: 45 },
-    { date: "2024-01-02", revenue: 15000, orders: 52 },
-    { date: "2024-01-03", revenue: 18000, orders: 61 },
-    { date: "2024-01-04", revenue: 14000, orders: 48 },
-    { date: "2024-01-05", revenue: 22000, orders: 73 },
-    { date: "2024-01-06", revenue: 19000, orders: 65 },
-    { date: "2024-01-07", revenue: 25000, orders: 81 },
+    { date: '2024-01-01', revenue: 12000, orders: 45 },
+    { date: '2024-01-02', revenue: 15000, orders: 52 },
+    { date: '2024-01-03', revenue: 18000, orders: 61 },
+    { date: '2024-01-04', revenue: 14000, orders: 48 },
+    { date: '2024-01-05', revenue: 22000, orders: 73 },
+    { date: '2024-01-06', revenue: 19000, orders: 65 },
+    { date: '2024-01-07', revenue: 25000, orders: 81 },
   ];
 
   const categoryData = [
-    { name: "3D Printing Materials", value: 35, revenue: 45000 },
-    { name: "Tools & Equipment", value: 25, revenue: 32000 },
-    { name: "Electronics", value: 20, revenue: 28000 },
-    { name: "3D Printing Services", value: 15, revenue: 22000 },
-    { name: "Accessories", value: 5, revenue: 8000 },
+    { name: '3D Printing Materials', value: 35, revenue: 45000 },
+    { name: 'Tools & Equipment', value: 25, revenue: 32000 },
+    { name: 'Electronics', value: 20, revenue: 28000 },
+    { name: '3D Printing Services', value: 15, revenue: 22000 },
+    { name: 'Accessories', value: 5, revenue: 8000 },
   ];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   useEffect(() => {
     loadDashboardData();
@@ -150,71 +150,71 @@ const ComprehensiveStoreDashboard: React.FC = () => {
         topProducts: [
           {
             id: 1,
-            name: "Premium PLA Filament - White",
-            sku: "PLA-WHT-1KG",
+            name: 'Premium PLA Filament - White',
+            sku: 'PLA-WHT-1KG',
             price: 25.99,
             stockQty: 145,
-            status: "active",
-            category: "3D Printing Materials",
+            status: 'active',
+            category: '3D Printing Materials',
             sales: 89,
             revenue: 2312.11,
-            lastOrdered: "2024-01-07",
+            lastOrdered: '2024-01-07',
           },
           {
             id: 2,
-            name: "Ender 3 V2 3D Printer",
-            sku: "END3V2-BLK",
+            name: 'Ender 3 V2 3D Printer',
+            sku: 'END3V2-BLK',
             price: 199.99,
             stockQty: 12,
-            status: "active",
-            category: "3D Printers",
+            status: 'active',
+            category: '3D Printers',
             sales: 23,
             revenue: 4599.77,
-            lastOrdered: "2024-01-06",
+            lastOrdered: '2024-01-06',
           },
         ],
         recentOrders: [
           {
-            id: "ord_123",
-            orderNumber: "ORD-2024-001",
-            customerEmail: "customer@example.com",
+            id: 'ord_123',
+            orderNumber: 'ORD-2024-001',
+            customerEmail: 'customer@example.com',
             total: 89.97,
-            status: "shipped",
-            createdAt: "2024-01-07T10:30:00Z",
+            status: 'shipped',
+            createdAt: '2024-01-07T10:30:00Z',
             itemCount: 3,
           },
         ],
         lowStockProducts: [
           {
             id: 3,
-            name: "Carbon Fiber PETG",
-            sku: "CF-PETG-1KG",
+            name: 'Carbon Fiber PETG',
+            sku: 'CF-PETG-1KG',
             price: 45.99,
             stockQty: 3,
-            status: "active",
-            category: "3D Printing Materials",
+            status: 'active',
+            category: '3D Printing Materials',
             sales: 15,
             revenue: 689.85,
-            lastOrdered: "2024-01-05",
+            lastOrdered: '2024-01-05',
           },
         ],
         pendingServiceOrders: [
           {
-            id: "svc_456",
-            customerEmail: "maker@example.com",
-            fileName: "phone_case.stl",
-            material: "PLA",
-            status: "pending_quote",
+            id: 'svc_456',
+            customerEmail: 'maker@example.com',
+            fileName: 'phone_case.stl',
+            material: 'PLA',
+            status: 'pending_quote',
             estimatedValue: 15.5,
-            createdAt: "2024-01-07T14:20:00Z",
-            dueDate: "2024-01-10T00:00:00Z",
+            createdAt: '2024-01-07T14:20:00Z',
+            dueDate: '2024-01-10T00:00:00Z',
           },
         ],
       };
 
       setMetrics(mockMetrics);
     } catch (error) {
-      console.error("Failed to load dashboard data:", error);
+      console.error('Failed to load dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -222,18 +222,18 @@ const ComprehensiveStoreDashboard: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { variant: "default" as const, label: "Active" },
-      inactive: { variant: "secondary" as const, label: "Inactive" },
-      pending: { variant: "secondary" as const, label: "Pending" },
-      shipped: { variant: "default" as const, label: "Shipped" },
-      delivered: { variant: "default" as const, label: "Delivered" },
-      cancelled: { variant: "destructive" as const, label: "Cancelled" },
-      pending_quote: { variant: "secondary" as const, label: "Pending Quote" },
-      in_production: { variant: "default" as const, label: "In Production" },
+      active: { variant: 'default' as const, label: 'Active' },
+      inactive: { variant: 'secondary' as const, label: 'Inactive' },
+      pending: { variant: 'secondary' as const, label: 'Pending' },
+      shipped: { variant: 'default' as const, label: 'Shipped' },
+      delivered: { variant: 'default' as const, label: 'Delivered' },
+      cancelled: { variant: 'destructive' as const, label: 'Cancelled' },
+      pending_quote: { variant: 'secondary' as const, label: 'Pending Quote' },
+      in_production: { variant: 'default' as const, label: 'In Production' },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || {
-      variant: "secondary" as const,
+      variant: 'secondary' as const,
       label: status,
     };
     return <Badge variant={config.variant}>{config.label}</Badge>;
@@ -253,12 +253,8 @@ const ComprehensiveStoreDashboard: React.FC = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Store Dashboard
-            </h1>
-            <p className="text-gray-600">
-              Comprehensive store management and analytics
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900">Store Dashboard</h1>
+            <p className="text-gray-600">Comprehensive store management and analytics</p>
           </div>
           <div className="flex items-center space-x-4">
             <Select value={dateRange} onValueChange={setDateRange}>
@@ -289,15 +285,11 @@ const ComprehensiveStoreDashboard: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Revenue
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Revenue</p>
                   <p className="text-2xl font-bold text-gray-900">
                     ₹{metrics?.totalRevenue.toLocaleString()}
                   </p>
-                  <p className="text-sm text-green-600">
-                    +12.5% from last period
-                  </p>
+                  <p className="text-sm text-green-600">+12.5% from last period</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-600" />
               </div>
@@ -308,15 +300,9 @@ const ComprehensiveStoreDashboard: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Orders
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {metrics?.totalOrders}
-                  </p>
-                  <p className="text-sm text-green-600">
-                    +8.2% from last period
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">{metrics?.totalOrders}</p>
+                  <p className="text-sm text-green-600">+8.2% from last period</p>
                 </div>
                 <ShoppingCart className="h-8 w-8 text-blue-600" />
               </div>
@@ -328,9 +314,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Products</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {metrics?.totalProducts}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{metrics?.totalProducts}</p>
                   <p className="text-sm text-blue-600">Active listings</p>
                 </div>
                 <Package className="h-8 w-8 text-orange-600" />
@@ -343,9 +327,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Customers</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {metrics?.totalCustomers}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{metrics?.totalCustomers}</p>
                   <p className="text-sm text-purple-600">Registered users</p>
                 </div>
                 <Users className="h-8 w-8 text-purple-600" />
@@ -355,11 +337,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
         </div>
 
         {/* Main Dashboard Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
@@ -408,18 +386,13 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name}: ${(percent * 100).toFixed(0)}%`
-                        }
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
                       >
                         {categoryData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -450,9 +423,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                       >
                         <div>
                           <p className="font-medium">{order.orderNumber}</p>
-                          <p className="text-sm text-gray-600">
-                            {order.customerEmail}
-                          </p>
+                          <p className="text-sm text-gray-600">{order.customerEmail}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-medium">₹{order.total}</p>
@@ -484,9 +455,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                           <p className="text-sm text-gray-600">{product.sku}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium text-orange-600">
-                            {product.stockQty} left
-                          </p>
+                          <p className="font-medium text-orange-600">{product.stockQty} left</p>
                           <Button size="sm" variant="outline">
                             Restock
                           </Button>
@@ -511,9 +480,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                       >
                         <div>
                           <p className="font-medium">{order.fileName}</p>
-                          <p className="text-sm text-gray-600">
-                            {order.customerEmail}
-                          </p>
+                          <p className="text-sm text-gray-600">{order.customerEmail}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-medium">₹{order.estimatedValue}</p>
@@ -540,18 +507,13 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                     className="pl-10 w-64"
                   />
                 </div>
-                <Select
-                  value={selectedCategory}
-                  onValueChange={setSelectedCategory}
-                >
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="materials">
-                      3D Printing Materials
-                    </SelectItem>
+                    <SelectItem value="materials">3D Printing Materials</SelectItem>
                     <SelectItem value="printers">3D Printers</SelectItem>
                     <SelectItem value="tools">Tools & Equipment</SelectItem>
                     <SelectItem value="electronics">Electronics</SelectItem>
@@ -602,9 +564,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                               <div className="text-sm font-medium text-gray-900">
                                 {product.name}
                               </div>
-                              <div className="text-sm text-gray-500">
-                                {product.category}
-                              </div>
+                              <div className="text-sm text-gray-500">{product.category}</div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -617,9 +577,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                             <div className="flex items-center">
                               <span
                                 className={`text-sm font-medium ${
-                                  product.stockQty < 10
-                                    ? "text-red-600"
-                                    : "text-gray-900"
+                                  product.stockQty < 10 ? 'text-red-600' : 'text-gray-900'
                                 }`}
                               >
                                 {product.stockQty}
@@ -665,9 +623,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
               <CardContent>
                 <div className="text-center py-8">
                   <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Order Management
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Order Management</h3>
                   <p className="text-gray-500">
                     Comprehensive order tracking and management coming soon...
                   </p>
@@ -703,9 +659,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
               <CardContent>
                 <div className="text-center py-8">
                   <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Customer Analytics
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Analytics</h3>
                   <p className="text-gray-500">
                     Customer insights and relationship management tools...
                   </p>
@@ -744,36 +698,23 @@ const ComprehensiveStoreDashboard: React.FC = () => {
                   <div className="space-y-6">
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Conversion Rate
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          {metrics?.conversionRate}%
-                        </span>
+                        <span className="text-sm font-medium">Conversion Rate</span>
+                        <span className="text-sm text-gray-600">{metrics?.conversionRate}%</span>
                       </div>
-                      <Progress
-                        value={metrics?.conversionRate}
-                        className="h-2"
-                      />
+                      <Progress value={metrics?.conversionRate} className="h-2" />
                     </div>
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Average Order Value
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          ₹{metrics?.avgOrderValue}
-                        </span>
+                        <span className="text-sm font-medium">Average Order Value</span>
+                        <span className="text-sm text-gray-600">₹{metrics?.avgOrderValue}</span>
                       </div>
                       <Progress value={75} className="h-2" />
                     </div>
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Customer Satisfaction
-                        </span>
+                        <span className="text-sm font-medium">Customer Satisfaction</span>
                         <span className="text-sm text-gray-600">4.8/5.0</span>
                       </div>
                       <Progress value={96} className="h-2" />
@@ -781,9 +722,7 @@ const ComprehensiveStoreDashboard: React.FC = () => {
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Inventory Turnover
-                        </span>
+                        <span className="text-sm font-medium">Inventory Turnover</span>
                         <span className="text-sm text-gray-600">8.2x</span>
                       </div>
                       <Progress value={82} className="h-2" />

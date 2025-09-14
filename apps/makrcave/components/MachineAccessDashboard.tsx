@@ -5,7 +5,14 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Label } from './ui/label';
@@ -13,10 +20,31 @@ import { Switch } from './ui/switch';
 import { useToast } from '../hooks/use-toast';
 import { useAuthHeaders } from '@makrx/auth';
 import {
-  Shield, Award, AlertTriangle, Clock, CheckCircle, XCircle,
-  Users, Wrench, BookOpen, Star, TrendingUp, BarChart3,
-  Plus, Eye, Edit3, Trash2, QrCode, Smartphone, Key,
-  Target, Trophy, Zap, Lock, Unlock, Activity
+  Shield,
+  Award,
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Users,
+  Wrench,
+  BookOpen,
+  Star,
+  TrendingUp,
+  BarChart3,
+  Plus,
+  Eye,
+  Edit3,
+  Trash2,
+  QrCode,
+  Smartphone,
+  Key,
+  Target,
+  Trophy,
+  Zap,
+  Lock,
+  Unlock,
+  Activity,
 } from 'lucide-react';
 
 // Types
@@ -105,7 +133,7 @@ const MachineAccessDashboard: React.FC = () => {
     { value: 'intermediate', label: 'Intermediate', color: 'blue' },
     { value: 'advanced', label: 'Advanced', color: 'orange' },
     { value: 'expert', label: 'Expert', color: 'purple' },
-    { value: 'maintenance', label: 'Maintenance', color: 'red' }
+    { value: 'maintenance', label: 'Maintenance', color: 'red' },
   ];
 
   const badgeRarities = [
@@ -113,7 +141,7 @@ const MachineAccessDashboard: React.FC = () => {
     { value: 'uncommon', label: 'Uncommon', color: 'green' },
     { value: 'rare', label: 'Rare', color: 'blue' },
     { value: 'epic', label: 'Epic', color: 'purple' },
-    { value: 'legendary', label: 'Legendary', color: 'yellow' }
+    { value: 'legendary', label: 'Legendary', color: 'yellow' },
   ];
 
   const accessResults = [
@@ -123,8 +151,13 @@ const MachineAccessDashboard: React.FC = () => {
     { value: 'denied_suspended', label: 'Suspended', color: 'red', icon: AlertTriangle },
     { value: 'denied_equipment_offline', label: 'Equipment Offline', color: 'gray', icon: Wrench },
     { value: 'denied_maintenance', label: 'Maintenance', color: 'yellow', icon: Wrench },
-    { value: 'denied_reservation_required', label: 'Reservation Required', color: 'blue', icon: Clock },
-    { value: 'denied_time_limit', label: 'Time Restricted', color: 'orange', icon: Clock }
+    {
+      value: 'denied_reservation_required',
+      label: 'Reservation Required',
+      color: 'blue',
+      icon: Clock,
+    },
+    { value: 'denied_time_limit', label: 'Time Restricted', color: 'orange', icon: Clock },
   ];
 
   // Fetch user access profile
@@ -133,7 +166,7 @@ const MachineAccessDashboard: React.FC = () => {
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/v1/machine-access/dashboard/user-profile', { headers });
-      
+
       if (response.ok) {
         const profile = await response.json();
         setUserProfile(profile);
@@ -141,9 +174,9 @@ const MachineAccessDashboard: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
       toast({
-        title: "Error",
-        description: "Failed to load access profile. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load access profile. Please try again.',
+        variant: 'destructive',
       });
     }
   }, [toast, getHeaders]);
@@ -153,7 +186,7 @@ const MachineAccessDashboard: React.FC = () => {
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/v1/machine-access/rules', { headers });
-      
+
       if (response.ok) {
         const rules = await response.json();
         setAccessRules(rules);
@@ -173,32 +206,32 @@ const MachineAccessDashboard: React.FC = () => {
         body: JSON.stringify({
           equipment_id: equipmentId,
           access_method: 'mobile_app',
-          session_duration_hours: 2
-        })
+          session_duration_hours: 2,
+        }),
       });
 
       const result = await response.json();
 
       if (result.success) {
         toast({
-          title: "Access Granted!",
+          title: 'Access Granted!',
           description: `You now have access to the equipment. Session ID: ${result.session_id}`,
         });
         setShowAccessRequest(false);
         await fetchUserProfile(); // Refresh profile
       } else {
         toast({
-          title: "Access Denied",
+          title: 'Access Denied',
           description: result.message || result.denial_reason,
-          variant: "destructive"
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Failed to request access:', error);
       toast({
-        title: "Error",
-        description: "Failed to request machine access. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to request machine access. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -207,10 +240,7 @@ const MachineAccessDashboard: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([
-        fetchUserProfile(),
-        fetchAccessRules()
-      ]);
+      await Promise.all([fetchUserProfile(), fetchAccessRules()]);
       setLoading(false);
     };
 
@@ -219,19 +249,19 @@ const MachineAccessDashboard: React.FC = () => {
 
   // Get level color
   const getLevelColor = (level: string) => {
-    const levelInfo = accessLevels.find(l => l.value === level);
+    const levelInfo = accessLevels.find((l) => l.value === level);
     return levelInfo?.color || 'gray';
   };
 
   // Get badge rarity color
   const getBadgeRarityColor = (rarity: string) => {
-    const rarityInfo = badgeRarities.find(r => r.value === rarity);
+    const rarityInfo = badgeRarities.find((r) => r.value === rarity);
     return rarityInfo?.color || 'gray';
   };
 
   // Get access result info
   const getAccessResultInfo = (result: string) => {
-    return accessResults.find(r => r.value === result) || accessResults[0];
+    return accessResults.find((r) => r.value === result) || accessResults[0];
   };
 
   // Format hours
@@ -257,7 +287,9 @@ const MachineAccessDashboard: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Machine Access</h1>
-          <p className="text-muted-foreground">Manage certifications, badges, and equipment access</p>
+          <p className="text-muted-foreground">
+            Manage certifications, badges, and equipment access
+          </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => setShowAccessRequest(true)}>
@@ -280,7 +312,7 @@ const MachineAccessDashboard: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Active Certifications</p>
                   <p className="text-2xl font-bold">
-                    {userProfile.certifications.filter(c => c.status === 'active').length}
+                    {userProfile.certifications.filter((c) => c.status === 'active').length}
                   </p>
                 </div>
                 <Shield className="h-8 w-8 text-blue-500" />
@@ -305,7 +337,9 @@ const MachineAccessDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Equipment Hours</p>
-                  <p className="text-2xl font-bold">{formatHours(userProfile.total_equipment_hours)}</p>
+                  <p className="text-2xl font-bold">
+                    {formatHours(userProfile.total_equipment_hours)}
+                  </p>
                 </div>
                 <Clock className="h-8 w-8 text-green-500" />
               </div>
@@ -354,7 +388,7 @@ const MachineAccessDashboard: React.FC = () => {
                     {userProfile.recent_access_attempts.slice(0, 5).map((attempt) => {
                       const resultInfo = getAccessResultInfo(attempt.result);
                       const IconComponent = resultInfo.icon;
-                      
+
                       return (
                         <div key={attempt.id} className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -368,7 +402,10 @@ const MachineAccessDashboard: React.FC = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <Badge variant={attempt.result === 'granted' ? 'default' : 'secondary'} className={`bg-${resultInfo.color}-100 text-${resultInfo.color}-800`}>
+                            <Badge
+                              variant={attempt.result === 'granted' ? 'default' : 'secondary'}
+                              className={`bg-${resultInfo.color}-100 text-${resultInfo.color}-800`}
+                            >
                               {resultInfo.label}
                             </Badge>
                             {attempt.session_duration_minutes && (
@@ -380,7 +417,7 @@ const MachineAccessDashboard: React.FC = () => {
                         </div>
                       );
                     })}
-                    
+
                     {userProfile.recent_access_attempts.length === 0 && (
                       <div className="text-center py-4 text-muted-foreground">
                         <Activity className="h-8 w-8 mx-auto mb-2" />
@@ -399,16 +436,18 @@ const MachineAccessDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {Object.entries(userProfile.certification_progress).map(([skillId, progress]) => (
-                      <div key={skillId}>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">{skillId}</span>
-                          <span className="text-sm">{Math.round(progress)}%</span>
+                    {Object.entries(userProfile.certification_progress).map(
+                      ([skillId, progress]) => (
+                        <div key={skillId}>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium">{skillId}</span>
+                            <span className="text-sm">{Math.round(progress)}%</span>
+                          </div>
+                          <Progress value={progress} className="h-2" />
                         </div>
-                        <Progress value={progress} className="h-2" />
-                      </div>
-                    ))}
-                    
+                      ),
+                    )}
+
                     {Object.keys(userProfile.certification_progress).length === 0 && (
                       <div className="text-center py-4 text-muted-foreground">
                         <Target className="h-8 w-8 mx-auto mb-2" />
@@ -438,18 +477,25 @@ const MachineAccessDashboard: React.FC = () => {
                         <AlertTriangle className="h-8 w-8 text-orange-500" />
                       )}
                     </div>
-                    <p className="text-2xl font-bold">{userProfile.safety_record.safety_score}/100</p>
+                    <p className="text-2xl font-bold">
+                      {userProfile.safety_record.safety_score}/100
+                    </p>
                     <p className="text-sm text-muted-foreground">Safety Score</p>
                   </div>
-                  
+
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-orange-600">{userProfile.safety_record.total_incidents}</p>
+                    <p className="text-2xl font-bold text-orange-600">
+                      {userProfile.safety_record.total_incidents}
+                    </p>
                     <p className="text-sm text-muted-foreground">Total Incidents</p>
                   </div>
-                  
+
                   <div className="text-center">
                     <p className="text-2xl font-bold text-blue-600">
-                      {userProfile.certifications.reduce((sum, cert) => sum + cert.successful_sessions, 0)}
+                      {userProfile.certifications.reduce(
+                        (sum, cert) => sum + cert.successful_sessions,
+                        0,
+                      )}
                     </p>
                     <p className="text-sm text-muted-foreground">Successful Sessions</p>
                   </div>
@@ -480,7 +526,10 @@ const MachineAccessDashboard: React.FC = () => {
                         {cert.equipment_id || 'General Skill'}
                       </p>
                     </div>
-                    <Badge variant={cert.status === 'active' ? 'default' : 'secondary'} className={`bg-${getLevelColor(cert.certification_level)}-100 text-${getLevelColor(cert.certification_level)}-800`}>
+                    <Badge
+                      variant={cert.status === 'active' ? 'default' : 'secondary'}
+                      className={`bg-${getLevelColor(cert.certification_level)}-100 text-${getLevelColor(cert.certification_level)}-800`}
+                    >
                       {cert.certification_level}
                     </Badge>
                   </div>
@@ -492,17 +541,17 @@ const MachineAccessDashboard: React.FC = () => {
                         {cert.status}
                       </Badge>
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Usage Hours:</span>
                       <span>{formatHours(cert.total_usage_hours)}</span>
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Sessions:</span>
                       <span>{cert.successful_sessions}</span>
                     </div>
-                    
+
                     {cert.expires_at && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Expires:</span>
@@ -515,14 +564,16 @@ const MachineAccessDashboard: React.FC = () => {
                     <div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded">
                       <div className="flex items-center gap-2 text-orange-700">
                         <AlertTriangle className="h-4 w-4" />
-                        <span className="text-sm font-medium">{cert.safety_incidents} Safety Incidents</span>
+                        <span className="text-sm font-medium">
+                          {cert.safety_incidents} Safety Incidents
+                        </span>
                       </div>
                     </div>
                   )}
                 </CardContent>
               </Card>
             ))}
-            
+
             {(!userProfile?.certifications || userProfile.certifications.length === 0) && (
               <Card className="col-span-full">
                 <CardContent className="p-8 text-center">
@@ -555,14 +606,21 @@ const MachineAccessDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userProfile?.badges.map((userBadge) => (
-              <Card key={userBadge.id} className={userBadge.is_featured ? 'ring-2 ring-yellow-400' : ''}>
+              <Card
+                key={userBadge.id}
+                className={userBadge.is_featured ? 'ring-2 ring-yellow-400' : ''}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       {userBadge.badge.icon_url ? (
-                        <img src={userBadge.badge.icon_url} alt={userBadge.badge.name} className="h-8 w-8" />
+                        <img
+                          src={userBadge.badge.icon_url}
+                          alt={userBadge.badge.name}
+                          className="h-8 w-8"
+                        />
                       ) : (
-                        <div 
+                        <div
                           className="h-8 w-8 rounded-full flex items-center justify-center"
                           style={{ backgroundColor: userBadge.badge.color_hex }}
                         >
@@ -575,7 +633,10 @@ const MachineAccessDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge variant="secondary" className={`bg-${getBadgeRarityColor(userBadge.badge.rarity)}-100 text-${getBadgeRarityColor(userBadge.badge.rarity)}-800`}>
+                      <Badge
+                        variant="secondary"
+                        className={`bg-${getBadgeRarityColor(userBadge.badge.rarity)}-100 text-${getBadgeRarityColor(userBadge.badge.rarity)}-800`}
+                      >
                         {userBadge.badge.rarity}
                       </Badge>
                       {userBadge.is_featured && (
@@ -593,12 +654,12 @@ const MachineAccessDashboard: React.FC = () => {
                       <span className="text-muted-foreground">Points:</span>
                       <span className="font-medium">{userBadge.badge.points_value}</span>
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Earned:</span>
                       <span>{new Date(userBadge.awarded_at).toLocaleDateString()}</span>
                     </div>
-                    
+
                     {userBadge.progress_value < 100 && (
                       <div>
                         <div className="flex justify-between items-center mb-1">
@@ -612,7 +673,7 @@ const MachineAccessDashboard: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
-            
+
             {(!userProfile?.badges || userProfile.badges.length === 0) && (
               <Card className="col-span-full">
                 <CardContent className="p-8 text-center">
@@ -647,9 +708,12 @@ const MachineAccessDashboard: React.FC = () => {
                 {userProfile?.recent_access_attempts.map((attempt) => {
                   const resultInfo = getAccessResultInfo(attempt.result);
                   const IconComponent = resultInfo.icon;
-                  
+
                   return (
-                    <div key={attempt.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={attempt.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div className="flex items-center gap-4">
                         <IconComponent className={`h-6 w-6 text-${resultInfo.color}-500`} />
                         <div>
@@ -662,9 +726,12 @@ const MachineAccessDashboard: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="text-right">
-                        <Badge variant={attempt.result === 'granted' ? 'default' : 'secondary'} className={`bg-${resultInfo.color}-100 text-${resultInfo.color}-800`}>
+                        <Badge
+                          variant={attempt.result === 'granted' ? 'default' : 'secondary'}
+                          className={`bg-${resultInfo.color}-100 text-${resultInfo.color}-800`}
+                        >
                           {resultInfo.label}
                         </Badge>
                         {attempt.session_duration_minutes && (
@@ -673,16 +740,15 @@ const MachineAccessDashboard: React.FC = () => {
                           </p>
                         )}
                         {attempt.denial_reason && (
-                          <p className="text-sm text-red-600 mt-1">
-                            {attempt.denial_reason}
-                          </p>
+                          <p className="text-sm text-red-600 mt-1">{attempt.denial_reason}</p>
                         )}
                       </div>
                     </div>
                   );
                 })}
-                
-                {(!userProfile?.recent_access_attempts || userProfile.recent_access_attempts.length === 0) && (
+
+                {(!userProfile?.recent_access_attempts ||
+                  userProfile.recent_access_attempts.length === 0) && (
                   <div className="text-center py-8 text-muted-foreground">
                     <Activity className="h-12 w-12 mx-auto mb-4" />
                     <h3 className="text-lg font-medium mb-2">No access history</h3>
@@ -700,11 +766,9 @@ const MachineAccessDashboard: React.FC = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Request Machine Access</DialogTitle>
-            <DialogDescription>
-              Select equipment to request access
-            </DialogDescription>
+            <DialogDescription>Select equipment to request access</DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="equipment">Equipment</Label>
@@ -725,7 +789,7 @@ const MachineAccessDashboard: React.FC = () => {
               <Button variant="outline" onClick={() => setShowAccessRequest(false)}>
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={() => requestMachineAccess(selectedEquipment)}
                 disabled={!selectedEquipment}
               >

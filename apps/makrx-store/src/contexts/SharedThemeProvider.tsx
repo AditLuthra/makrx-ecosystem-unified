@@ -1,3 +1,3 @@
-"use client";
+'use client';
 
-export { ThemeProvider, useTheme } from "next-themes";
+export { ThemeProvider, useTheme } from 'next-themes';

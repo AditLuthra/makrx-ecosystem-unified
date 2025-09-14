@@ -12,7 +12,7 @@ export default function StatusToggleButton({
   currentStatus,
   onStatusChange,
   canChange,
-  size = 'md'
+  size = 'md',
 }: StatusToggleButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -22,32 +22,32 @@ export default function StatusToggleButton({
       label: 'Available',
       icon: CheckCircle,
       color: 'text-green-600',
-      bgColor: 'bg-green-100 hover:bg-green-200'
+      bgColor: 'bg-green-100 hover:bg-green-200',
     },
     {
       value: 'in_use',
       label: 'In Use',
       icon: PlayCircle,
       color: 'text-blue-600',
-      bgColor: 'bg-blue-100 hover:bg-blue-200'
+      bgColor: 'bg-blue-100 hover:bg-blue-200',
     },
     {
       value: 'under_maintenance',
       label: 'Under Maintenance',
       icon: Wrench,
       color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100 hover:bg-yellow-200'
+      bgColor: 'bg-yellow-100 hover:bg-yellow-200',
     },
     {
       value: 'offline',
       label: 'Offline',
       icon: XCircle,
       color: 'text-red-600',
-      bgColor: 'bg-red-100 hover:bg-red-200'
-    }
+      bgColor: 'bg-red-100 hover:bg-red-200',
+    },
   ];
 
-  const currentOption = statusOptions.find(option => option.value === currentStatus);
+  const currentOption = statusOptions.find((option) => option.value === currentStatus);
   const IconComponent = currentOption?.icon || CheckCircle;
 
   const handleStatusChange = (newStatus: string) => {
@@ -79,7 +79,9 @@ export default function StatusToggleButton({
 
   if (!canChange) {
     return (
-      <div className={`inline-flex items-center rounded-lg border ${currentOption?.bgColor} ${currentOption?.color} ${getSizeClasses()}`}>
+      <div
+        className={`inline-flex items-center rounded-lg border ${currentOption?.bgColor} ${currentOption?.color} ${getSizeClasses()}`}
+      >
         <IconComponent className={`${getIconSize()} mr-1`} />
         <span className="capitalize">{currentStatus.replace('_', ' ')}</span>
       </div>
@@ -94,7 +96,12 @@ export default function StatusToggleButton({
       >
         <IconComponent className={`${getIconSize()} mr-1`} />
         <span className="capitalize">{currentStatus.replace('_', ' ')}</span>
-        <svg className={`${getIconSize()} ml-1`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className={`${getIconSize()} ml-1`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>

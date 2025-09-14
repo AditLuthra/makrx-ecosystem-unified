@@ -4,10 +4,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  Wallet, 
-  Crown, 
-  CreditCard, 
+import {
+  Wallet,
+  Crown,
+  CreditCard,
   TrendingUp,
   Calendar,
   DollarSign,
@@ -16,7 +16,7 @@ import {
   History,
   Gift,
   Star,
-  Shield
+  Shield,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { UserWallet, UserSubscription } from '../types/equipment-access';
@@ -52,57 +52,56 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
 
   const loadUserBillingData = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
-      
+
       const [walletData, subscriptionData] = await Promise.all([
         EquipmentBillingService.getUserWallet(user.id),
-        EquipmentBillingService.getUserSubscription(user.id)
+        EquipmentBillingService.getUserSubscription(user.id),
       ]);
-      
+
       setWallet(walletData);
       setSubscription(subscriptionData);
-      
+
       // Mock transaction history
       const mockTransactions: TransactionHistory[] = [
         {
           id: 'txn-1',
           date: new Date(Date.now() - 86400000).toISOString(),
           type: 'equipment_usage',
-          amount: -150.00,
+          amount: -150.0,
           description: 'Laser cutter usage - 1 hour',
           equipment_name: 'Glowforge Pro',
-          status: 'completed'
+          status: 'completed',
         },
         {
           id: 'txn-2',
           date: new Date(Date.now() - 172800000).toISOString(),
           type: 'wallet_topup',
-          amount: 500.00,
+          amount: 500.0,
           description: 'Wallet top-up via UPI',
-          status: 'completed'
+          status: 'completed',
         },
         {
           id: 'txn-3',
           date: new Date(Date.now() - 259200000).toISOString(),
           type: 'equipment_usage',
-          amount: -200.00,
+          amount: -200.0,
           description: 'CNC machine usage - 1 hour',
           equipment_name: 'Shapeoko 4',
-          status: 'completed'
+          status: 'completed',
         },
         {
           id: 'txn-4',
           date: new Date(Date.now() - 1209600000).toISOString(),
           type: 'subscription_payment',
-          amount: -999.00,
+          amount: -999.0,
           description: 'Pro Maker Plan - Monthly',
-          status: 'completed'
-        }
+          status: 'completed',
+        },
       ];
       setTransactions(mockTransactions);
-      
     } catch (error) {
       console.error('Failed to load billing data:', error);
     } finally {
@@ -119,19 +118,18 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
 
     try {
       // Mock payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       if (wallet) {
         setWallet({
           ...wallet,
           balance: wallet.balance + amount,
-          last_updated: new Date().toISOString()
+          last_updated: new Date().toISOString(),
         });
       }
-      
+
       setTopupAmount('');
       alert(`Successfully added ₹${amount.toFixed(2)} to your wallet!`);
-      
     } catch (error) {
       alert('Top-up failed. Please try again.');
     }
@@ -139,11 +137,16 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
-      case 'equipment_usage': return <DollarSign className="h-4 w-4 text-red-500" />;
-      case 'wallet_topup': return <Plus className="h-4 w-4 text-green-500" />;
-      case 'subscription_payment': return <Crown className="h-4 w-4 text-blue-500" />;
-      case 'refund': return <ArrowUpRight className="h-4 w-4 text-green-500" />;
-      default: return <History className="h-4 w-4 text-gray-500" />;
+      case 'equipment_usage':
+        return <DollarSign className="h-4 w-4 text-red-500" />;
+      case 'wallet_topup':
+        return <Plus className="h-4 w-4 text-green-500" />;
+      case 'subscription_payment':
+        return <Crown className="h-4 w-4 text-blue-500" />;
+      case 'refund':
+        return <ArrowUpRight className="h-4 w-4 text-green-500" />;
+      default:
+        return <History className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -151,7 +154,7 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -213,7 +216,9 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                   </>
                 )}
               </div>
-              <Crown className={`h-12 w-12 ${subscription?.status === 'active' ? 'text-blue-500' : 'text-gray-400'}`} />
+              <Crown
+                className={`h-12 w-12 ${subscription?.status === 'active' ? 'text-blue-500' : 'text-gray-400'}`}
+              />
             </div>
           </CardContent>
         </Card>
@@ -225,8 +230,13 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
               <div>
                 <p className="text-sm text-gray-600">This Month</p>
                 <p className="text-3xl font-bold text-purple-600">
-                  ₹{transactions
-                    .filter(t => t.type === 'equipment_usage' && new Date(t.date).getMonth() === new Date().getMonth())
+                  ₹
+                  {transactions
+                    .filter(
+                      (t) =>
+                        t.type === 'equipment_usage' &&
+                        new Date(t.date).getMonth() === new Date().getMonth(),
+                    )
                     .reduce((sum, t) => sum + Math.abs(t.amount), 0)
                     .toFixed(2)}
                 </p>
@@ -270,9 +280,9 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                         step="0.01"
                       />
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-2">
-                      {[100, 500, 1000].map(amount => (
+                      {[100, 500, 1000].map((amount) => (
                         <Button
                           key={amount}
                           variant="outline"
@@ -284,7 +294,7 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                       ))}
                     </div>
 
-                    <Button 
+                    <Button
                       onClick={handleWalletTopup}
                       disabled={!topupAmount || parseFloat(topupAmount) <= 0}
                       className="w-full"
@@ -318,8 +328,8 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
 
                     <div className="pt-4 border-t">
                       <p className="text-xs text-gray-500">
-                        Your wallet balance is used for pay-per-use equipment. 
-                        Unused funds never expire and are fully refundable.
+                        Your wallet balance is used for pay-per-use equipment. Unused funds never
+                        expire and are fully refundable.
                       </p>
                     </div>
                   </CardContent>
@@ -355,11 +365,11 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                           </div>
                         </div>
                       </div>
-                      
+
                       <div>
                         <h4 className="font-semibold mb-2">Included Equipment</h4>
                         <div className="space-y-1">
-                          {subscription.included_equipment_types.map(type => (
+                          {subscription.included_equipment_types.map((type) => (
                             <Badge key={type} variant="outline" className="mr-1">
                               {type.replace('_', ' ')}
                             </Badge>
@@ -375,9 +385,10 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                     <Crown className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">No Active Subscription</h3>
                     <p className="text-gray-600 mb-6">
-                      Upgrade to a membership plan for unlimited access to equipment and exclusive benefits.
+                      Upgrade to a membership plan for unlimited access to equipment and exclusive
+                      benefits.
                     </p>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                       <Card className="border-2 border-blue-200">
                         <CardContent className="p-4">
@@ -390,7 +401,7 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                           </ul>
                         </CardContent>
                       </Card>
-                      
+
                       <Card className="border-2 border-purple-200">
                         <CardContent className="p-4">
                           <h4 className="font-semibold mb-2">Pro Plan</h4>
@@ -404,7 +415,7 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                         </CardContent>
                       </Card>
                     </div>
-                    
+
                     <Button className="mt-6">
                       <Star className="h-4 w-4 mr-2" />
                       Upgrade Now
@@ -416,7 +427,7 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
 
             <TabsContent value="history" className="space-y-4">
               <div className="space-y-3">
-                {transactions.map(transaction => (
+                {transactions.map((transaction) => (
                   <Card key={transaction.id}>
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -431,10 +442,13 @@ const UserBillingDashboard: React.FC<UserBillingDashboardProps> = ({ className =
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={`font-bold ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {transaction.amount >= 0 ? '+' : ''}₹{Math.abs(transaction.amount).toFixed(2)}
+                          <p
+                            className={`font-bold ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                          >
+                            {transaction.amount >= 0 ? '+' : ''}₹
+                            {Math.abs(transaction.amount).toFixed(2)}
                           </p>
-                          <Badge 
+                          <Badge
                             variant={transaction.status === 'completed' ? 'default' : 'outline'}
                             className="text-xs"
                           >

@@ -7,14 +7,14 @@ cd /home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified
 
 # Check system requirements
 echo "🔍 Checking system requirements..."
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is required but not installed."
-    exit 1
+if ! command -v node &>/dev/null; then
+	echo "❌ Node.js is required but not installed."
+	exit 1
 fi
 
-if ! command -v docker &> /dev/null; then
-    echo "❌ Docker is required but not installed."
-    exit 1
+if ! command -v docker &>/dev/null; then
+	echo "❌ Docker is required but not installed."
+	exit 1
 fi
 
 # Stop any existing processes
@@ -53,10 +53,10 @@ echo ""
 
 # Start all frontend applications
 concurrently \
-  --prefix-colors "cyan,magenta,yellow,green" \
-  --prefix "{name}" \
-  --names "gateway,makrcave,events,store" \
-  "cd apps/gateway-frontend && npm run dev" \
-  "cd apps/makrcave && npm run dev" \
-  "cd apps/makrx-events && npm run dev" \
-  "cd apps/makrx-store && npm run dev"
+	--prefix-colors "cyan,magenta,yellow,green" \
+	--prefix "{name}" \
+	--names "gateway,makrcave,events,store" \
+	"cd apps/gateway-frontend && npm run dev" \
+	"cd apps/makrcave && npm run dev" \
+	"cd apps/makrx-events && npm run dev" \
+	"cd apps/makrx-store && npm run dev"

@@ -17,7 +17,7 @@
     "conflicts_with": []
   },
   "SERVICE_LASER_ENGRAVING": {
-    "key": "SERVICE_LASER_ENGRAVING", 
+    "key": "SERVICE_LASER_ENGRAVING",
     "name": "Laser Engraving Services",
     "description": "Laser cutting and engraving services",
     "access_level": "enabled",
@@ -35,7 +35,7 @@
   },
   "SERVICE_CNC": {
     "key": "SERVICE_CNC",
-    "name": "CNC Machining Services", 
+    "name": "CNC Machining Services",
     "description": "CNC milling and turning services",
     "access_level": "beta",
     "allowed_roles": ["beta_user", "provider", "admin"],
@@ -79,7 +79,7 @@
     "ab_variant": null,
     "start_date": null,
     "end_date": null,
-    "created_by": "system", 
+    "created_by": "system",
     "tags": ["3d-printing", "bulk"],
     "depends_on": ["SERVICE_3D_PRINTING"],
     "conflicts_with": []

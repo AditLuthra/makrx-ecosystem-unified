@@ -7,16 +7,54 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useAuthHeaders } from '@makrx/auth';
-import { 
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
 } from 'recharts';
-import { 
-  TrendingUp, TrendingDown, Activity, Users, DollarSign, Settings,
-  Zap, AlertTriangle, CheckCircle, Clock, Download, RefreshCw,
-  Target, Award, Calendar, Filter, Eye, BarChart3, PieChart as PieChartIcon,
-  LineChart as LineChartIcon, Calendar as CalendarIcon, Gauge, Brain,
-  Lightbulb, Shield, Bell, FileText, Database, Cpu, Heart
+import {
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Users,
+  DollarSign,
+  Settings,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  RefreshCw,
+  Target,
+  Award,
+  Calendar,
+  Filter,
+  Eye,
+  BarChart3,
+  PieChart as PieChartIcon,
+  LineChart as LineChartIcon,
+  Calendar as CalendarIcon,
+  Gauge,
+  Brain,
+  Lightbulb,
+  Shield,
+  Bell,
+  FileText,
+  Database,
+  Cpu,
+  Heart,
 } from 'lucide-react';
 
 interface KPIMetric {
@@ -106,7 +144,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const [realtimeMetrics, setRealtimeMetrics] = useState<RealtimeMetrics | null>(null);
   const [benchmarks, setBenchmarks] = useState<PerformanceBenchmark[]>([]);
   const [alerts, setAlerts] = useState<AnalyticsAlert[]>([]);
-  
+
   // UI state
   const [activeSection, setActiveSection] = useState('overview');
   const [loading, setLoading] = useState(false);
@@ -114,7 +152,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('last_30_days');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(30); // seconds
-  
+
   // Modal states
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
@@ -122,31 +160,37 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
 
   // Load dashboard data
   const getHeaders = useAuthHeaders();
-  const loadDashboard = useCallback(async (refreshCache: boolean = false) => {
-    setLoading(!dashboard || refreshCache);
-    setRefreshing(refreshCache);
-    
-    try {
-      const headers = await getHeaders();
-      const response = await fetch(`/api/enhanced-analytics/dashboard/comprehensive?refresh_cache=${refreshCache}`, { headers });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setDashboard(data);
+  const loadDashboard = useCallback(
+    async (refreshCache: boolean = false) => {
+      setLoading(!dashboard || refreshCache);
+      setRefreshing(refreshCache);
+
+      try {
+        const headers = await getHeaders();
+        const response = await fetch(
+          `/api/enhanced-analytics/dashboard/comprehensive?refresh_cache=${refreshCache}`,
+          { headers },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setDashboard(data);
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard:', error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (error) {
-      console.error('Failed to load dashboard:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [dashboard, getHeaders]);
+    },
+    [dashboard, getHeaders],
+  );
 
   const loadRealtimeMetrics = useCallback(async () => {
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/enhanced-analytics/realtime/metrics', { headers });
-      
+
       if (response.ok) {
         const data = await response.json();
         setRealtimeMetrics(data);
@@ -160,7 +204,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/enhanced-analytics/benchmarks/', { headers });
-      
+
       if (response.ok) {
         const data = await response.json();
         setBenchmarks(data);
@@ -174,7 +218,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
     try {
       const headers = await getHeaders();
       const response = await fetch('/api/enhanced-analytics/alerts/?is_active=true', { headers });
-      
+
       if (response.ok) {
         const data = await response.json();
         setAlerts(data);
@@ -198,7 +242,8 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
 
     const interval = setInterval(() => {
       loadRealtimeMetrics();
-      if (refreshInterval <= 60) { // Only refresh dashboard every minute at most
+      if (refreshInterval <= 60) {
+        // Only refresh dashboard every minute at most
         loadDashboard(true);
       }
     }, refreshInterval * 1000);
@@ -209,28 +254,40 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   // Utility functions
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
-      case 'up': return <TrendingUp className="w-4 h-4 text-green-500" />;
-      case 'down': return <TrendingDown className="w-4 h-4 text-red-500" />;
-      default: return <Clock className="w-4 h-4 text-gray-500" />;
+      case 'up':
+        return <TrendingUp className="w-4 h-4 text-green-500" />;
+      case 'down':
+        return <TrendingDown className="w-4 h-4 text-red-500" />;
+      default:
+        return <Clock className="w-4 h-4 text-gray-500" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'good': return 'text-green-600 bg-green-50 border-green-200';
-      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'critical': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'good':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'warning':
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'critical':
+        return 'text-red-600 bg-red-50 border-red-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -250,11 +307,11 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   // Chart rendering functions
   const renderChart = (chart: AnalyticsChart) => {
     const colors = chart.color_scheme || ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-    
+
     const commonProps = {
       data: chart.data,
       width: '100%',
-      height: 300
+      height: 300,
     };
 
     switch (chart.chart_type) {
@@ -266,17 +323,17 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
               <XAxis dataKey="label" />
               <YAxis />
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="value" 
-                stroke={colors[0]} 
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke={colors[0]}
                 strokeWidth={2}
                 dot={{ fill: colors[0] }}
               />
             </LineChart>
           </ResponsiveContainer>
         );
-      
+
       case 'bar':
         return (
           <ResponsiveContainer {...commonProps}>
@@ -289,7 +346,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
             </BarChart>
           </ResponsiveContainer>
         );
-      
+
       case 'pie':
         return (
           <ResponsiveContainer {...commonProps}>
@@ -312,7 +369,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
             </PieChart>
           </ResponsiveContainer>
         );
-      
+
       case 'area':
         return (
           <ResponsiveContainer {...commonProps}>
@@ -321,17 +378,17 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
               <XAxis dataKey="label" />
               <YAxis />
               <Tooltip />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke={colors[0]} 
-                fill={colors[0]} 
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={colors[0]}
+                fill={colors[0]}
                 fillOpacity={0.3}
               />
             </AreaChart>
           </ResponsiveContainer>
         );
-      
+
       default:
         return <div className="text-center py-8 text-gray-500">Chart type not supported</div>;
     }
@@ -345,17 +402,21 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
           <div>
             <p className="text-sm font-medium text-gray-600">{metric.name}</p>
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-2xl font-bold">
-                {formatValue(metric.value, metric.unit)}
-              </p>
+              <p className="text-2xl font-bold">{formatValue(metric.value, metric.unit)}</p>
               {metric.change_percentage !== undefined && (
                 <div className="flex items-center gap-1">
                   {getTrendIcon(metric.trend)}
-                  <span className={`text-sm font-medium ${
-                    metric.trend === 'up' ? 'text-green-600' : 
-                    metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                  }`}>
-                    {metric.change_percentage > 0 ? '+' : ''}{metric.change_percentage.toFixed(1)}%
+                  <span
+                    className={`text-sm font-medium ${
+                      metric.trend === 'up'
+                        ? 'text-green-600'
+                        : metric.trend === 'down'
+                          ? 'text-red-600'
+                          : 'text-gray-600'
+                    }`}
+                  >
+                    {metric.change_percentage > 0 ? '+' : ''}
+                    {metric.change_percentage.toFixed(1)}%
                   </span>
                 </div>
               )}
@@ -364,15 +425,13 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
               <div className="mt-2">
                 <div className="flex justify-between text-xs text-gray-500 mb-1">
                   <span>Target: {formatValue(metric.target, metric.unit)}</span>
-                  <span>
-                    {((Number(metric.value) / metric.target) * 100).toFixed(0)}%
-                  </span>
+                  <span>{((Number(metric.value) / metric.target) * 100).toFixed(0)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full" 
-                    style={{ 
-                      width: `${Math.min(100, (Number(metric.value) / metric.target) * 100)}%` 
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{
+                      width: `${Math.min(100, (Number(metric.value) / metric.target) * 100)}%`,
                     }}
                   ></div>
                 </div>
@@ -402,11 +461,15 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-green-500" />
-                  <span className="text-sm">{realtimeMetrics.equipment_in_use} Equipment in Use</span>
+                  <span className="text-sm">
+                    {realtimeMetrics.equipment_in_use} Equipment in Use
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Gauge className="w-4 h-4 text-purple-500" />
-                  <span className="text-sm">{realtimeMetrics.current_utilization}% Utilization</span>
+                  <span className="text-sm">
+                    {realtimeMetrics.current_utilization}% Utilization
+                  </span>
                 </div>
                 {realtimeMetrics.alerts > 0 && (
                   <div className="flex items-center gap-2">
@@ -433,7 +496,11 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
               onClick={() => loadDashboard(true)}
               disabled={refreshing}
             >
-              {refreshing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+              {refreshing ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -445,9 +512,9 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const renderAlertsBar = () => {
     if (alerts.length === 0) return null;
 
-    const criticalAlerts = alerts.filter(a => a.severity === 'critical').length;
-    const highAlerts = alerts.filter(a => a.severity === 'high').length;
-    
+    const criticalAlerts = alerts.filter((a) => a.severity === 'critical').length;
+    const highAlerts = alerts.filter((a) => a.severity === 'high').length;
+
     return (
       <Card className="mb-6 border-red-200 bg-red-50">
         <CardContent className="p-4">
@@ -464,11 +531,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAlertsModal(true)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowAlertsModal(true)}>
               View All Alerts
             </Button>
           </div>
@@ -488,28 +551,38 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {benchmarks.slice(0, 4).map(benchmark => (
+          {benchmarks.slice(0, 4).map((benchmark) => (
             <div key={benchmark.id} className="text-center">
               <div className="mb-2">
-                <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  benchmark.achievement_status === 'exceeded' ? 'bg-green-100 text-green-800' :
-                  benchmark.achievement_status === 'met' ? 'bg-blue-100 text-blue-800' :
-                  benchmark.achievement_status === 'below' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
+                <div
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    benchmark.achievement_status === 'exceeded'
+                      ? 'bg-green-100 text-green-800'
+                      : benchmark.achievement_status === 'met'
+                        ? 'bg-blue-100 text-blue-800'
+                        : benchmark.achievement_status === 'below'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {benchmark.achievement_status}
                 </div>
               </div>
-              <div className="text-lg font-bold">{benchmark.performance_percentage.toFixed(1)}%</div>
+              <div className="text-lg font-bold">
+                {benchmark.performance_percentage.toFixed(1)}%
+              </div>
               <div className="text-sm text-gray-600">{benchmark.benchmark_name}</div>
               <div className="mt-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                  <div
                     className={`h-2 rounded-full ${
-                      benchmark.achievement_status === 'exceeded' ? 'bg-green-500' :
-                      benchmark.achievement_status === 'met' ? 'bg-blue-500' :
-                      benchmark.achievement_status === 'below' ? 'bg-yellow-500' :
-                      'bg-red-500'
+                      benchmark.achievement_status === 'exceeded'
+                        ? 'bg-green-500'
+                        : benchmark.achievement_status === 'met'
+                          ? 'bg-blue-500'
+                          : benchmark.achievement_status === 'below'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
                     }`}
                     style={{ width: `${Math.min(100, benchmark.performance_percentage)}%` }}
                   ></div>
@@ -559,24 +632,22 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
             <span>Last Updated: {new Date(dashboard.generated_at).toLocaleString()}</span>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowFiltersModal(true)}
-          >
+          <Button variant="outline" onClick={() => setShowFiltersModal(true)}>
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowExportModal(true)}
-          >
+          <Button variant="outline" onClick={() => setShowExportModal(true)}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
           <Button onClick={() => loadDashboard(true)} disabled={refreshing}>
-            {refreshing ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            {refreshing ? (
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
             Refresh
           </Button>
         </div>
@@ -606,14 +677,12 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
           <TabsTrigger value="engagement">Engagement</TabsTrigger>
         </TabsList>
 
-        {dashboard.sections.map(section => (
+        {dashboard.sections.map((section) => (
           <TabsContent key={section.section_id} value={section.section_id} className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">{section.title}</h2>
-                {section.description && (
-                  <p className="text-gray-600">{section.description}</p>
-                )}
+                {section.description && <p className="text-gray-600">{section.description}</p>}
               </div>
               <div className="text-sm text-gray-500">
                 Last updated: {new Date(section.last_updated).toLocaleString()}
@@ -627,7 +696,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
 
             {/* Section Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {section.charts.map(chart => (
+              {section.charts.map((chart) => (
                 <Card key={chart.chart_id}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -637,9 +706,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                       {chart.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    {renderChart(chart)}
-                  </CardContent>
+                  <CardContent>{renderChart(chart)}</CardContent>
                 </Card>
               ))}
             </div>
@@ -655,8 +722,11 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {section.alerts.map(alert => (
-                      <div key={alert.id} className={`p-3 rounded-lg border ${getSeverityColor(alert.severity)}`}>
+                    {section.alerts.map((alert) => (
+                      <div
+                        key={alert.id}
+                        className={`p-3 rounded-lg border ${getSeverityColor(alert.severity)}`}
+                      >
                         <div className="flex items-start justify-between">
                           <div>
                             <h4 className="font-medium">{alert.title}</h4>
@@ -698,10 +768,13 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-2">Auto-refresh Interval</label>
-                <Select value={refreshInterval.toString()} onValueChange={(v) => setRefreshInterval(parseInt(v))}>
+                <Select
+                  value={refreshInterval.toString()}
+                  onValueChange={(v) => setRefreshInterval(parseInt(v))}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -741,8 +814,11 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
               <DialogTitle>Active Alerts</DialogTitle>
             </DialogHeader>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {alerts.map(alert => (
-                <div key={alert.id} className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)}`}>
+              {alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)}`}
+                >
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium">{alert.title}</h4>
@@ -752,9 +828,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Badge className={getSeverityColor(alert.severity)}>
-                        {alert.severity}
-                      </Badge>
+                      <Badge className={getSeverityColor(alert.severity)}>{alert.severity}</Badge>
                       <Badge variant="outline" className="text-xs">
                         {alert.alert_type}
                       </Badge>

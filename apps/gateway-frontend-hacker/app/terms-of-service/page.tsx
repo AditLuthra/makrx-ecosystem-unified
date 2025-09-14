@@ -1,4 +1,4 @@
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata = {
   title: 'Terms of Service — MakrX',
@@ -8,10 +8,13 @@ export const metadata = {
 export default function TermsOfServicePage() {
   return (
     <main>
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Terms of Service",
-        url: "https://makrx.org/terms-of-service"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Terms of Service',
+          url: 'https://makrx.org/terms-of-service',
+        }}
+      />
       Terms of Service
     </main>
   );

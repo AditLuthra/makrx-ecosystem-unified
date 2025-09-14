@@ -22,9 +22,7 @@ export default function AuthCallback() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-makrx-blue via-makrx-blue/95 to-makrx-blue/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-6">
       {/* Theme Toggle - Temporarily disabled */}
-      <div className="fixed top-6 right-6 z-50">
-        {/* <ThemeToggle variant="default" /> */}
-      </div>
+      <div className="fixed top-6 right-6 z-50">{/* <ThemeToggle variant="default" /> */}</div>
 
       <div className="w-full max-w-md relative">
         <div className="backdrop-blur-md border border-white/20 rounded-2xl p-8 bg-white/10 text-center">

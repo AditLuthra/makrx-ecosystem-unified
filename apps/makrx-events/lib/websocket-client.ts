@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -29,13 +29,15 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
     onConnect,
     onDisconnect,
     onError,
-    onMessage
+    onMessage,
   } = options;
 
   const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'disconnected' | 'error'
+  >('disconnected');
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
-  
+
   const ws = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -43,11 +45,11 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
   const connect = () => {
     try {
       setConnectionStatus('connecting');
-      
+
       // Determine WebSocket URL
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = url.startsWith('ws') ? url : `${protocol}//${window.location.host}${url}`;
-      
+
       ws.current = new WebSocket(wsUrl);
 
       ws.current.onopen = () => {
@@ -67,8 +69,10 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
         // Attempt to reconnect if enabled
         if (autoReconnect && reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current++;
-          console.log(`Attempting to reconnect (${reconnectAttempts.current}/${maxReconnectAttempts})...`);
-          
+          console.log(
+            `Attempting to reconnect (${reconnectAttempts.current}/${maxReconnectAttempts})...`,
+          );
+
           reconnectTimeout.current = setTimeout(() => {
             connect();
           }, reconnectInterval);
@@ -90,7 +94,6 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
           console.error('Error parsing WebSocket message:', error);
         }
       };
-
     } catch (error) {
       console.error('Error creating WebSocket connection:', error);
       setConnectionStatus('error');
@@ -101,11 +104,11 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
     if (reconnectTimeout.current) {
       clearTimeout(reconnectTimeout.current);
     }
-    
+
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.close();
     }
-    
+
     setIsConnected(false);
     setConnectionStatus('disconnected');
   };
@@ -146,7 +149,7 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
   // Connect on mount, disconnect on unmount
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
     };
@@ -175,6 +178,6 @@ export function useWebSocket(options: WebSocketClientOptions = {}) {
     subscribeToTournament,
     subscribeToLeaderboard,
     unsubscribe,
-    ping
+    ping,
   };
 }

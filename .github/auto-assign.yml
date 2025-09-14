@@ -3,7 +3,7 @@ addReviewers: true
 addAssignees: false
 
 reviewers:
-  - # Add your team members here
+  -  # Add your team members here
   # - username1
   # - username2
 
@@ -20,9 +20,9 @@ filterLabels:
 
 # Auto assign based on file paths
 filePathsConfig:
-  'apps/**': ['frontend-team']
-  'backends/**': ['backend-team']
-  'packages/**': ['core-team']
-  '.github/**': ['devops-team']
-  'docker-compose*.yml': ['devops-team']
-  'Dockerfile*': ['devops-team']
+  "apps/**": ["frontend-team"]
+  "backends/**": ["backend-team"]
+  "packages/**": ["core-team"]
+  ".github/**": ["devops-team"]
+  "docker-compose*.yml": ["devops-team"]
+  "Dockerfile*": ["devops-team"]

@@ -26,4 +26,3 @@ async def websocket_endpoint(ws: WebSocket):
         pass
     finally:
         connections.discard(ws)
-

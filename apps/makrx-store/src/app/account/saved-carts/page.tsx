@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { 
-  ShoppingCart, 
-  Bookmark, 
-  Trash2, 
-  Plus, 
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import {
+  ShoppingCart,
+  Bookmark,
+  Trash2,
+  Plus,
   Calendar,
   Package,
   ArrowLeft,
   RefreshCw,
   AlertCircle,
   Clock,
-  DollarSign
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { api, formatPrice } from "@/lib/api";
+  DollarSign,
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { api, formatPrice } from '@/lib/api';
 
 interface SavedCart {
   id: string;
@@ -54,7 +54,7 @@ export default function SavedCartsPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { addNotification } = useNotifications();
-  
+
   const [savedCarts, setSavedCarts] = useState<SavedCart[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
@@ -75,14 +75,14 @@ export default function SavedCartsPage() {
       // Mock API call - replace with actual API
       const mockSavedCarts: SavedCart[] = [
         {
-          id: "cart_1",
-          name: "3D Printer Starter Kit",
-          description: "Everything needed to get started with 3D printing",
+          id: 'cart_1',
+          name: '3D Printer Starter Kit',
+          description: 'Everything needed to get started with 3D printing',
           created_at: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
           updated_at: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
           item_count: 5,
           subtotal: 45000,
-          currency: "INR",
+          currency: 'INR',
           items: [
             {
               id: 1,
@@ -92,14 +92,14 @@ export default function SavedCartsPage() {
               total_price: 25000,
               product: {
                 id: 1,
-                slug: "ender-3-v2",
-                name: "Ender 3 V2 3D Printer",
-                brand: "Creality",
+                slug: 'ender-3-v2',
+                name: 'Ender 3 V2 3D Printer',
+                brand: 'Creality',
                 price: 25000,
-                images: ["/placeholder.svg"],
+                images: ['/placeholder.svg'],
                 stock_qty: 5,
-                in_stock: true
-              }
+                in_stock: true,
+              },
             },
             {
               id: 2,
@@ -109,26 +109,26 @@ export default function SavedCartsPage() {
               total_price: 10000,
               product: {
                 id: 2,
-                slug: "pla-filament-white",
-                name: "PLA Filament 1kg - White",
-                brand: "MakrX",
+                slug: 'pla-filament-white',
+                name: 'PLA Filament 1kg - White',
+                brand: 'MakrX',
                 price: 2500,
                 sale_price: 2250,
-                images: ["/placeholder.svg"],
+                images: ['/placeholder.svg'],
                 stock_qty: 20,
-                in_stock: true
-              }
-            }
-          ]
+                in_stock: true,
+              },
+            },
+          ],
         },
         {
-          id: "cart_2",
-          name: "Weekend Project Supplies",
+          id: 'cart_2',
+          name: 'Weekend Project Supplies',
           created_at: new Date(Date.now() - 86400000 * 7).toISOString(), // 1 week ago
           updated_at: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
           item_count: 3,
           subtotal: 8500,
-          currency: "INR",
+          currency: 'INR',
           items: [
             {
               id: 3,
@@ -138,19 +138,19 @@ export default function SavedCartsPage() {
               total_price: 6000,
               product: {
                 id: 3,
-                slug: "abs-filament-black",
-                name: "ABS Filament 1kg - Black",
-                brand: "MakrX",
+                slug: 'abs-filament-black',
+                name: 'ABS Filament 1kg - Black',
+                brand: 'MakrX',
                 price: 3000,
-                images: ["/placeholder.svg"],
+                images: ['/placeholder.svg'],
                 stock_qty: 0,
-                in_stock: false
-              }
-            }
-          ]
-        }
+                in_stock: false,
+              },
+            },
+          ],
+        },
       ];
-      
+
       setTimeout(() => {
         setSavedCarts(mockSavedCarts);
         setLoading(false);
@@ -164,31 +164,31 @@ export default function SavedCartsPage() {
 
   const deleteSavedCart = async (cartId: string) => {
     if (!confirm('Are you sure you want to delete this saved cart?')) return;
-    
-    setDeleting(prev => ({ ...prev, [cartId]: true }));
+
+    setDeleting((prev) => ({ ...prev, [cartId]: true }));
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setSavedCarts(prev => prev.filter(cart => cart.id !== cartId));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setSavedCarts((prev) => prev.filter((cart) => cart.id !== cartId));
       addNotification('Saved cart deleted', 'success');
     } catch (error) {
       addNotification('Failed to delete saved cart', 'error');
     } finally {
-      setDeleting(prev => ({ ...prev, [cartId]: false }));
+      setDeleting((prev) => ({ ...prev, [cartId]: false }));
     }
   };
 
   const restoreToCart = async (cartId: string) => {
-    setRestoring(prev => ({ ...prev, [cartId]: true }));
+    setRestoring((prev) => ({ ...prev, [cartId]: true }));
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       addNotification('Cart restored successfully', 'success');
       router.push('/cart');
     } catch (error) {
       addNotification('Failed to restore cart', 'error');
     } finally {
-      setRestoring(prev => ({ ...prev, [cartId]: false }));
+      setRestoring((prev) => ({ ...prev, [cartId]: false }));
     }
   };
 
@@ -196,16 +196,18 @@ export default function SavedCartsPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
   const getCartStatus = (cart: SavedCart) => {
-    const outOfStockItems = cart.items.filter(item => !item.product.in_stock);
-    const priceChanges = cart.items.filter(item => 
-      item.product.sale_price && item.unit_price !== (item.product.sale_price || item.product.price)
+    const outOfStockItems = cart.items.filter((item) => !item.product.in_stock);
+    const priceChanges = cart.items.filter(
+      (item) =>
+        item.product.sale_price &&
+        item.unit_price !== (item.product.sale_price || item.product.price),
     );
-    
+
     if (outOfStockItems.length > 0) {
       return { type: 'warning', message: `${outOfStockItems.length} item(s) out of stock` };
     }
@@ -253,7 +255,7 @@ export default function SavedCartsPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Account
           </Link>
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -264,7 +266,7 @@ export default function SavedCartsPage() {
                 {savedCarts.length} {savedCarts.length === 1 ? 'cart' : 'carts'} saved for later
               </p>
             </div>
-            
+
             <Link
               href="/cart"
               className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -296,9 +298,12 @@ export default function SavedCartsPage() {
           <div className="space-y-6">
             {savedCarts.map((cart) => {
               const status = getCartStatus(cart);
-              
+
               return (
-                <div key={cart.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div
+                  key={cart.id}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow"
+                >
                   {/* Cart Header */}
                   <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-start justify-between">
@@ -307,23 +312,25 @@ export default function SavedCartsPage() {
                           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                             {cart.name}
                           </h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            status.type === 'success' 
-                              ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                              : status.type === 'warning'
-                              ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
-                              : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              status.type === 'success'
+                                ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                                : status.type === 'warning'
+                                  ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                                  : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                            }`}
+                          >
                             {status.message}
                           </span>
                         </div>
-                        
+
                         {cart.description && (
                           <p className="text-gray-600 dark:text-gray-400 mb-3">
                             {cart.description}
                           </p>
                         )}
-                        
+
                         <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
                           <div className="flex items-center gap-1">
                             <Package className="h-4 w-4" />
@@ -345,7 +352,7 @@ export default function SavedCartsPage() {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 ml-4">
                         <button
                           onClick={() => restoreToCart(cart.id)}
@@ -359,7 +366,7 @@ export default function SavedCartsPage() {
                           )}
                           Restore to Cart
                         </button>
-                        
+
                         <button
                           onClick={() => deleteSavedCart(cart.id)}
                           disabled={deleting[cart.id]}
@@ -389,7 +396,7 @@ export default function SavedCartsPage() {
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
@@ -405,7 +412,7 @@ export default function SavedCartsPage() {
                                   Qty: {item.quantity}
                                 </p>
                               </div>
-                              
+
                               <div className="text-right ml-4">
                                 <p className="font-medium text-gray-900 dark:text-white">
                                   {formatPrice(item.total_price, cart.currency)}
@@ -416,18 +423,20 @@ export default function SavedCartsPage() {
                                     Out of stock
                                   </div>
                                 )}
-                                {item.product.sale_price && item.unit_price !== (item.product.sale_price || item.product.price) && (
-                                  <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                                    <DollarSign className="h-3 w-3" />
-                                    Price changed
-                                  </div>
-                                )}
+                                {item.product.sale_price &&
+                                  item.unit_price !==
+                                    (item.product.sale_price || item.product.price) && (
+                                    <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                                      <DollarSign className="h-3 w-3" />
+                                      Price changed
+                                    </div>
+                                  )}
                               </div>
                             </div>
                           </div>
                         </div>
                       ))}
-                      
+
                       {cart.items.length > 3 && (
                         <div className="text-center py-2 text-sm text-gray-500 dark:text-gray-400">
                           +{cart.items.length - 3} more items

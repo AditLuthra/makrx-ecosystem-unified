@@ -3,7 +3,12 @@
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
-async function request<T = any>(method: string, url: string, body?: any, opts?: RequestInit & { headers?: Record<string, string> }) {
+async function request<T = any>(
+  method: string,
+  url: string,
+  body?: any,
+  opts?: RequestInit & { headers?: Record<string, string> },
+) {
   const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -25,10 +30,20 @@ async function request<T = any>(method: string, url: string, body?: any, opts?: 
 }
 
 const api = {
-  get: <T = any>(url: string, opts?: RequestInit & { headers?: Record<string, string> }) => request<T>('GET', url, undefined, opts),
-  post: <T = any>(url: string, body?: any, opts?: RequestInit & { headers?: Record<string, string> }) => request<T>('POST', url, body, opts),
-  put: <T = any>(url: string, body?: any, opts?: RequestInit & { headers?: Record<string, string> }) => request<T>('PUT', url, body, opts),
-  delete: <T = any>(url: string, opts?: RequestInit & { headers?: Record<string, string> }) => request<T>('DELETE', url, undefined, opts),
+  get: <T = any>(url: string, opts?: RequestInit & { headers?: Record<string, string> }) =>
+    request<T>('GET', url, undefined, opts),
+  post: <T = any>(
+    url: string,
+    body?: any,
+    opts?: RequestInit & { headers?: Record<string, string> },
+  ) => request<T>('POST', url, body, opts),
+  put: <T = any>(
+    url: string,
+    body?: any,
+    opts?: RequestInit & { headers?: Record<string, string> },
+  ) => request<T>('PUT', url, body, opts),
+  delete: <T = any>(url: string, opts?: RequestInit & { headers?: Record<string, string> }) =>
+    request<T>('DELETE', url, undefined, opts),
   analytics: {
     getEquipmentStats: () => request('GET', '/api/v1/analytics/equipment'),
   },

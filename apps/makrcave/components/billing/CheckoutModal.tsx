@@ -22,7 +22,7 @@ import {
   ArrowRight,
   Lock,
   Smartphone,
-  Building
+  Building,
 } from 'lucide-react';
 
 interface CheckoutItem {
@@ -64,7 +64,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   availablePaymentMethods = [],
   creditBalance = 0,
   onProcessPayment,
-  onAddPaymentMethod
+  onAddPaymentMethod,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<string>(defaultPaymentMethod?.id || '');
   const [useCredits, setUseCredits] = useState(false);
@@ -77,7 +77,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     city: '',
     state: '',
     pincode: '',
-    gst_number: ''
+    gst_number: '',
   });
   const [step, setStep] = useState<'items' | 'payment' | 'billing' | 'review'>('items');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -90,9 +90,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       type: 'credits',
       title: 'Credit Purchase',
       description: '100 credits for makerspace services',
-      price: 100.00,
-      quantity: 1
-    }
+      price: 100.0,
+      quantity: 1,
+    },
   ];
 
   const mockPaymentMethods: PaymentMethod[] = [
@@ -103,21 +103,22 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       display_name: 'Visa •••• 4242',
       is_default: true,
       last_four: '4242',
-      brand: 'visa'
+      brand: 'visa',
     },
     {
       id: 'pm_2',
       type: 'upi',
       provider: 'razorpay',
       display_name: 'john.doe@paytm',
-      is_default: false
-    }
+      is_default: false,
+    },
   ];
 
   const checkoutItems = items.length > 0 ? items : mockItems;
-  const paymentMethods = availablePaymentMethods.length > 0 ? availablePaymentMethods : mockPaymentMethods;
+  const paymentMethods =
+    availablePaymentMethods.length > 0 ? availablePaymentMethods : mockPaymentMethods;
 
-  const subtotal = checkoutItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = checkoutItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.18; // 18% GST
   const creditDiscount = Math.min(creditsToUse, subtotal);
   const total = subtotal + tax - creditDiscount;
@@ -145,7 +146,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setBillingDetails(prev => ({ ...prev, [field]: value }));
+    setBillingDetails((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleProcessPayment = async () => {
@@ -155,7 +156,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
 
     setIsProcessing(true);
-    
+
     try {
       const paymentData = {
         items: checkoutItems,
@@ -163,7 +164,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         billing_details: billingDetails,
         credits_used: useCredits ? creditsToUse : 0,
         total_amount: total,
-        currency: 'INR'
+        currency: 'INR',
       };
 
       await onProcessPayment?.(paymentData);
@@ -235,10 +236,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         <div className="flex items-center justify-between mb-6">
           {['items', 'payment', 'billing', 'review'].map((stepName, index) => (
             <div key={stepName} className="flex items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                step === stepName ? 'bg-blue-600 text-white' : 
-                ['items', 'payment', 'billing', 'review'].indexOf(step) > index ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step === stepName
+                    ? 'bg-blue-600 text-white'
+                    : ['items', 'payment', 'billing', 'review'].indexOf(step) > index
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                }`}
+              >
                 {['items', 'payment', 'billing', 'review'].indexOf(step) > index ? (
                   <CheckCircle className="h-4 w-4" />
                 ) : (
@@ -246,9 +252,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 )}
               </div>
               {index < 3 && (
-                <div className={`w-12 h-1 mx-2 ${
-                  ['items', 'payment', 'billing', 'review'].indexOf(step) > index ? 'bg-green-600' : 'bg-gray-200'
-                }`} />
+                <div
+                  className={`w-12 h-1 mx-2 ${
+                    ['items', 'payment', 'billing', 'review'].indexOf(step) > index
+                      ? 'bg-green-600'
+                      : 'bg-gray-200'
+                  }`}
+                />
               )}
             </div>
           ))}
@@ -302,7 +312,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {step === 'payment' && (
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Payment Method</h3>
-              
+
               {/* Credit Balance */}
               {creditBalance > 0 && (
                 <Card>
@@ -312,13 +322,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <Wallet className="h-5 w-5 text-purple-600" />
                         <div>
                           <p className="font-medium">Use Credits</p>
-                          <p className="text-sm text-gray-600">Available: {creditBalance} credits</p>
+                          <p className="text-sm text-gray-600">
+                            Available: {creditBalance} credits
+                          </p>
                         </div>
                       </div>
-                      <Switch
-                        checked={useCredits}
-                        onCheckedChange={setUseCredits}
-                      />
+                      <Switch checked={useCredits} onCheckedChange={setUseCredits} />
                     </div>
                     {useCredits && (
                       <div className="mt-3">
@@ -327,7 +336,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                           id="credits-amount"
                           type="number"
                           value={creditsToUse}
-                          onChange={(e) => setCreditsToUse(Math.min(creditBalance, Math.max(0, parseInt(e.target.value) || 0)))}
+                          onChange={(e) =>
+                            setCreditsToUse(
+                              Math.min(creditBalance, Math.max(0, parseInt(e.target.value) || 0)),
+                            )
+                          }
                           max={Math.min(creditBalance, subtotal)}
                           className="mt-1"
                         />
@@ -340,9 +353,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               {/* Payment Methods */}
               <div className="space-y-3">
                 {paymentMethods.map((method) => (
-                  <Card key={method.id} className={`cursor-pointer transition-colors ${
-                    paymentMethod === method.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
-                  }`} onClick={() => setPaymentMethod(method.id)}>
+                  <Card
+                    key={method.id}
+                    className={`cursor-pointer transition-colors ${
+                      paymentMethod === method.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => setPaymentMethod(method.id)}
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -358,9 +377,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                             </Badge>
                           )}
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          paymentMethod === method.id ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
-                        }`}>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 ${
+                            paymentMethod === method.id
+                              ? 'border-blue-500 bg-blue-500'
+                              : 'border-gray-300'
+                          }`}
+                        >
                           {paymentMethod === method.id && (
                             <div className="w-full h-full rounded-full bg-white border-2 border-blue-500" />
                           )}
@@ -371,7 +394,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 ))}
 
                 {/* Add New Payment Method */}
-                <Card className="cursor-pointer border-dashed hover:bg-gray-50" onClick={onAddPaymentMethod}>
+                <Card
+                  className="cursor-pointer border-dashed hover:bg-gray-50"
+                  onClick={onAddPaymentMethod}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-center gap-2 text-gray-600">
                       <Plus className="h-4 w-4" />
@@ -398,7 +424,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="email">Email Address *</Label>
                   <Input
@@ -410,7 +436,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="phone">Phone Number *</Label>
                   <Input
@@ -421,7 +447,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="gst">GST Number (Optional)</Label>
                   <Input
@@ -432,7 +458,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div className="md:col-span-2">
                   <Label htmlFor="address">Address</Label>
                   <Input
@@ -443,7 +469,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="city">City</Label>
                   <Input
@@ -454,7 +480,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="state">State</Label>
                   <Input
@@ -465,7 +491,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="pincode">Pincode</Label>
                   <Input
@@ -484,7 +510,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {step === 'review' && (
             <div className="space-y-6">
               <h3 className="font-medium text-lg">Review Order</h3>
-              
+
               {/* Order Summary */}
               <Card>
                 <CardContent className="p-4">
@@ -492,7 +518,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="space-y-2">
                     {checkoutItems.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
-                        <span>{item.title} × {item.quantity}</span>
+                        <span>
+                          {item.title} × {item.quantity}
+                        </span>
                         <span>{formatCurrency(item.price * item.quantity)}</span>
                       </div>
                     ))}
@@ -522,17 +550,17 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Terms and Conditions */}
               <div className="flex items-start gap-3">
-                <Switch
-                  id="terms"
-                  checked={agreeToTerms}
-                  onCheckedChange={setAgreeToTerms}
-                />
+                <Switch id="terms" checked={agreeToTerms} onCheckedChange={setAgreeToTerms} />
                 <div className="text-sm">
                   <Label htmlFor="terms" className="cursor-pointer">
                     I agree to the{' '}
-                    <a href="#" className="text-blue-600 hover:underline">Terms of Service</a>
-                    {' '}and{' '}
-                    <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+                    <a href="#" className="text-blue-600 hover:underline">
+                      Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a href="#" className="text-blue-600 hover:underline">
+                      Privacy Policy
+                    </a>
                   </Label>
                 </div>
               </div>
@@ -544,7 +572,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="text-sm text-blue-800">
                     <p className="font-medium">Secure Payment</p>
                     <p className="text-xs mt-1">
-                      Your payment information is encrypted and secure. All transactions are processed through secure payment gateways.
+                      Your payment information is encrypted and secure. All transactions are
+                      processed through secure payment gateways.
                     </p>
                   </div>
                 </div>
@@ -586,7 +615,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             >
               {step === 'items' ? 'Cancel' : 'Back'}
             </Button>
-            
+
             <Button
               onClick={nextStep}
               disabled={!canProceed() || isProcessing}

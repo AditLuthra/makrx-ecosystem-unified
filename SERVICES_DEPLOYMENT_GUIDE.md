@@ -3,6 +3,7 @@
 ## Quick Start
 
 ### Development Setup
+
 ```bash
 # Navigate to services app
 cd apps/makrx-services
@@ -15,6 +16,7 @@ cd apps/makrx-services
 ```
 
 ### Production Deployment
+
 ```bash
 # Deploy services subdomain
 sudo cp nginx/services-subdomain.conf /etc/nginx/sites-available/
@@ -30,6 +32,7 @@ npm run build && npm start
 ### 1. DNS Configuration
 
 Set up subdomain DNS record:
+
 ```
 Type: A
 Host: services
@@ -37,7 +40,7 @@ Value: [SERVER_IP_ADDRESS]
 TTL: 300
 
 # Or CNAME if preferred
-Type: CNAME  
+Type: CNAME
 Host: services
 Value: makrx.store
 TTL: 300
@@ -46,6 +49,7 @@ TTL: 300
 ### 2. SSL Certificate Setup
 
 #### Option A: Let's Encrypt with Certbot
+
 ```bash
 # Install certbot if not already installed
 sudo apt install certbot python3-certbot-nginx
@@ -58,6 +62,7 @@ sudo certbot renew --dry-run
 ```
 
 #### Option B: Wildcard Certificate
+
 ```bash
 # If you already have *.makrx.store certificate
 # Update nginx config to use existing certificates:
@@ -86,6 +91,7 @@ sudo systemctl reload nginx
 ### 4. Database Setup
 
 #### Services Database
+
 ```bash
 # Create database
 createdb makrx_services
@@ -99,6 +105,7 @@ alembic upgrade head
 ```
 
 #### Update Main Store Database
+
 ```bash
 # Add service order support to main store
 cd backends/makrx-store
@@ -111,6 +118,7 @@ python manage.py migrate
 Create production environment files:
 
 #### Frontend (.env.production)
+
 ```bash
 # Production URLs
 NEXT_PUBLIC_SERVICES_API_URL=https://services.makrx.store/api
@@ -129,6 +137,7 @@ NEXT_PUBLIC_UPLOAD_ENDPOINT=/api/upload
 ```
 
 #### Backend (.env)
+
 ```bash
 # Database
 DATABASE_URL=postgresql://makrx_services:password@localhost/makrx_services
@@ -164,6 +173,7 @@ DEBUG=false
 ### 6. File Storage Setup
 
 #### Option A: S3 Configuration
+
 ```bash
 # Create S3 bucket
 aws s3 mb s3://makrx-services-files
@@ -185,6 +195,7 @@ aws s3api put-bucket-cors --bucket makrx-services-files --cors-configuration fil
 ```
 
 #### Option B: Local MinIO
+
 ```bash
 # Start MinIO
 docker run -d \
@@ -204,6 +215,7 @@ mc mb local/makrx-services
 #### Systemd Service Files
 
 **Frontend Service** (`/etc/systemd/system/makrx-services-frontend.service`):
+
 ```ini
 [Unit]
 Description=MakrX Services Frontend
@@ -224,6 +236,7 @@ WantedBy=multi-user.target
 ```
 
 **Backend Service** (`/etc/systemd/system/makrx-services-backend.service`):
+
 ```ini
 [Unit]
 Description=MakrX Services Backend API
@@ -243,6 +256,7 @@ WantedBy=multi-user.target
 ```
 
 Enable and start services:
+
 ```bash
 sudo systemctl enable makrx-services-frontend makrx-services-backend
 sudo systemctl start makrx-services-frontend makrx-services-backend
@@ -252,6 +266,7 @@ sudo systemctl status makrx-services-frontend makrx-services-backend
 ### 8. Monitoring Setup
 
 #### Health Check Script (`/usr/local/bin/check-services.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -275,6 +290,7 @@ fi
 ```
 
 #### Crontab Entry:
+
 ```bash
 # Check services every 5 minutes
 */5 * * * * /usr/local/bin/check-services.sh >> /var/log/makrx-services-health.log 2>&1
@@ -283,6 +299,7 @@ fi
 ### 9. Security Configuration
 
 #### Firewall Rules:
+
 ```bash
 # Allow nginx
 sudo ufw allow 'Nginx Full'
@@ -297,6 +314,7 @@ sudo ufw allow from 127.0.0.1 to any port 8006
 ```
 
 #### File Permissions:
+
 ```bash
 # Set proper ownership
 sudo chown -R www-data:www-data /var/www/makrx-services
@@ -313,6 +331,7 @@ chmod +x /usr/local/bin/check-services.sh
 ### 10. Testing Deployment
 
 #### Pre-launch Tests:
+
 ```bash
 # Test nginx configuration
 sudo nginx -t
@@ -329,6 +348,7 @@ curl -X POST https://services.makrx.store/api/test/store-sync
 ```
 
 #### Post-launch Verification:
+
 1. **Homepage Load Test**: Visit https://services.makrx.store
 2. **Provider Dashboard**: Test provider login and job management
 3. **File Upload**: Test STL/SVG file uploads
@@ -340,6 +360,7 @@ curl -X POST https://services.makrx.store/api/test/store-sync
 ### 11. Performance Optimization
 
 #### Frontend Optimization:
+
 ```bash
 # Build with production optimizations
 NODE_ENV=production npm run build
@@ -349,6 +370,7 @@ NODE_ENV=production npm run build
 ```
 
 #### Backend Optimization:
+
 ```bash
 # Use production ASGI server
 pip install gunicorn[gevent]
@@ -358,6 +380,7 @@ ExecStart=/var/www/makrx-services/backends/makrx-services/.venv/bin/gunicorn app
 ```
 
 #### Database Optimization:
+
 ```sql
 -- Create indexes for cross-platform queries
 CREATE INDEX idx_service_orders_user_id ON service_orders(user_id);
@@ -373,6 +396,7 @@ CREATE INDEX idx_service_orders_provider_status ON service_orders(provider_id, s
 ### 12. Backup Strategy
 
 #### Database Backups:
+
 ```bash
 # Daily backup script
 #!/bin/bash
@@ -392,6 +416,7 @@ find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ```
 
 #### File Storage Backups:
+
 ```bash
 # S3 sync for uploaded files
 aws s3 sync s3://makrx-services-files s3://makrx-services-backup/$(date +%Y%m%d)/
@@ -405,42 +430,47 @@ rsync -av /var/www/uploads/ /backups/uploads/$(date +%Y%m%d)/
 ### Common Issues
 
 1. **Cross-platform Sync Failing**:
+
    ```bash
    # Check backend logs
    journalctl -u makrx-services-backend -f
-   
+
    # Test store API connectivity
    curl -X GET https://makrx.store/api/health
    ```
 
 2. **File Upload Issues**:
+
    ```bash
    # Check nginx file size limits
    grep client_max_body_size /etc/nginx/sites-enabled/services.makrx.store
-   
+
    # Check upload directory permissions
    ls -la /var/www/makrx-services/uploads/
    ```
 
 3. **WebSocket Connection Problems**:
+
    ```bash
    # Test WebSocket endpoint
    wscat -c ws://localhost:8006/ws
-   
+
    # Check nginx WebSocket configuration
    nginx -T | grep -A 10 "location /ws"
    ```
 
 4. **Provider Dashboard Not Loading**:
+
    ```bash
    # Check Keycloak integration
    curl -X GET https://auth.makrx.store/realms/makrx
-   
+
    # Verify service provider role
    # Check in Keycloak admin console
    ```
 
 ### Log Files
+
 - **Frontend**: `/var/log/makrx-services-frontend.log`
 - **Backend**: `/var/log/makrx-services-backend.log`
 - **Nginx**: `/var/log/nginx/services.makrx.store.access.log`
@@ -460,6 +490,7 @@ After deployment, monitor these key metrics:
 ## Support
 
 For deployment issues:
+
 1. Check logs in `/var/log/`
 2. Verify all services are running: `systemctl status makrx-services-*`
 3. Test cross-platform connectivity

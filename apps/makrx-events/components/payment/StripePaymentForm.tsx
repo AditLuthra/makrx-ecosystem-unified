@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 // Temporarily comment out Alert until UI components are properly set up
@@ -67,14 +62,11 @@ function PaymentForm({ amount, currency, description, onSuccess, onError }: Paym
         throw new Error('Card element not found');
       }
 
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-          },
-        }
-      );
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+        },
+      });
 
       if (stripeError) {
         throw new Error(stripeError.message || 'Payment failed');
@@ -133,20 +125,14 @@ function PaymentForm({ amount, currency, description, onSuccess, onError }: Paym
             </div>
           )}
 
-          <Button
-            type="submit"
-            disabled={!stripe || isProcessing}
-            className="w-full"
-          >
+          <Button type="submit" disabled={!stripe || isProcessing} className="w-full">
             {isProcessing ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Processing...
               </>
             ) : (
-              <>
-                Pay ${amount.toFixed(2)}
-              </>
+              <>Pay ${amount.toFixed(2)}</>
             )}
           </Button>
 

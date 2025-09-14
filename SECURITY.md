@@ -32,4 +32,3 @@ We maintain the `main` branch and latest tagged releases. Security patches are a
 ## Disclosure Preferences
 
 If you prefer, you can use a PGP key for encrypted reports. Request our key via security@makrx.com.
-

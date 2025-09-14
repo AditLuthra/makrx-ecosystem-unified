@@ -10,12 +10,14 @@ A comprehensive, open-source event management platform designed for maker events
 ## 🚀 Features
 
 ### Core Platform
+
 - **Event Management**: Create, manage, and promote technical events
 - **Registration System**: Streamlined attendee registration with payment processing
 - **Real-time Updates**: Live leaderboards, notifications, and tournament updates
 - **Multi-format Events**: Support for workshops, competitions, exhibitions, and hybrid events
 
 ### Advanced Features
+
 - **Tournament Management**: Bracket generation, scoring systems, and live updates
 - **Team Formation**: Team creation, management, and communication tools
 - **Payment Processing**: Integrated Razorpay payment gateway with webhook verification
@@ -24,6 +26,7 @@ A comprehensive, open-source event management platform designed for maker events
 - **QR Code Integration**: Check-in system and session management
 
 ### Technical Features
+
 - **Authentication**: Keycloak integration with role-based access control
 - **Real-time Communication**: WebSocket server for live updates
 - **API Documentation**: OpenAPI/Swagger documentation
@@ -33,6 +36,7 @@ A comprehensive, open-source event management platform designed for maker events
 ## 🏗️ Architecture
 
 ### Frontend
+
 - **Framework**: Next.js 15 with App Router and TypeScript
 - **UI Library**: Radix UI primitives with shadcn/ui components
 - **Styling**: Tailwind CSS with custom design system
@@ -40,6 +44,7 @@ A comprehensive, open-source event management platform designed for maker events
 - **Real-time**: WebSocket client for live updates
 
 ### Backend
+
 - **Runtime**: Node.js with TypeScript
 - **API**: Next.js API routes with RESTful design
 - **Database**: PostgreSQL with Drizzle ORM
@@ -48,6 +53,7 @@ A comprehensive, open-source event management platform designed for maker events
 - **Real-time**: WebSocket server for live features
 
 ### Infrastructure
+
 - **Database**: Neon PostgreSQL (serverless)
 - **Storage**: File upload system with organized structure
 - **Email**: SMTP integration with template system
@@ -56,35 +62,41 @@ A comprehensive, open-source event management platform designed for maker events
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - PostgreSQL database
 - Keycloak server (for authentication)
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-org/makrx-events.git
    cd makrx-events
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 4. **Set up the database**
+
    ```bash
    npm run db:push
    ```
 
 5. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -151,17 +163,20 @@ docker-compose up -d
 ### Cloud Deployment
 
 #### Vercel
+
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
 #### Railway
+
 1. Create a new project on Railway
 2. Connect your GitHub repository
 3. Add environment variables
 4. Deploy with one click
 
 #### AWS/GCP/Azure
+
 - Use the provided `Dockerfile` for containerized deployment
 - Set up a managed PostgreSQL database
 - Configure environment variables
@@ -197,18 +212,20 @@ Interactive API documentation is available at `/api/docs` when running the appli
 Connect to `/ws` for real-time features:
 
 ```javascript
-const ws = new WebSocket('ws://localhost:5000/ws');
+const ws = new WebSocket("ws://localhost:5000/ws");
 
 // Subscribe to event updates
-ws.send(JSON.stringify({
-  type: 'subscribe',
-  data: { channel: 'event:123' }
-}));
+ws.send(
+  JSON.stringify({
+    type: "subscribe",
+    data: { channel: "event:123" },
+  }),
+);
 
 // Receive real-time updates
 ws.onmessage = (event) => {
   const message = JSON.parse(event.data);
-  console.log('Real-time update:', message);
+  console.log("Real-time update:", message);
 };
 ```
 
@@ -277,11 +294,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 ### Community Support
+
 - **Documentation**: [docs.makrx.events](https://docs.makrx.events)
 - **GitHub Issues**: [Report bugs or request features](https://github.com/your-org/makrx-events/issues)
 - **Discussions**: [Community discussions](https://github.com/your-org/makrx-events/discussions)
 
 ### Commercial Support
+
 For enterprise support, custom development, and consulting services, contact us at [support@makrx.events](mailto:support@makrx.events).
 
 ## 🙏 Acknowledgments

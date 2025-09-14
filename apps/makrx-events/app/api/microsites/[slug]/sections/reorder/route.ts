@@ -2,17 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const reorderSchema = z.object({
-  sections: z.array(z.object({
-    id: z.string(),
-    order: z.number()
-  }))
+  sections: z.array(
+    z.object({
+      id: z.string(),
+      order: z.number(),
+    }),
+  ),
 });
 
 // PATCH /api/microsites/[slug]/sections/reorder - Reorder sections
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
     const body = await request.json();
@@ -21,10 +20,10 @@ export async function PATCH(
     const validatedData = reorderSchema.parse(body);
 
     // Mock update - replace with actual database transaction
-    const updatedSections = validatedData.sections.map(section => ({
+    const updatedSections = validatedData.sections.map((section) => ({
       id: section.id,
       order: section.order,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }));
 
     // TODO: Update all sections in a single transaction
@@ -32,23 +31,20 @@ export async function PATCH(
 
     return NextResponse.json({
       message: 'Sections reordered successfully',
-      data: updatedSections
+      data: updatedSections,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error reordering sections:', error);
-    return NextResponse.json(
-      { error: 'Failed to reorder sections' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to reorder sections' }, { status: 500 });
   }
 }

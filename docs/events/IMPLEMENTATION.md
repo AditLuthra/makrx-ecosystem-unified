@@ -5,10 +5,11 @@ This guide covers implementing and extending MakrX.events features, including mi
 ## 🏗️ Architecture Overview
 
 ### Frontend Architecture
+
 ```
 app/
 ├── (auth)/              # Authentication pages
-├── dashboard/           # User dashboard  
+├── dashboard/           # User dashboard
 ├── events/             # Event management
 │   ├── [eventId]/     # Event details
 │   │   ├── teams/     # Team management
@@ -19,11 +20,12 @@ app/
 ```
 
 ### Component Architecture
+
 ```
 components/
 ├── ui/                    # Base UI components (shadcn)
 ├── team-manager.tsx       # Team formation & management
-├── tournament-bracket.tsx # Tournament brackets  
+├── tournament-bracket.tsx # Tournament brackets
 ├── leaderboard.tsx        # Live leaderboards
 ├── awards-manager.tsx     # Awards & certificates
 ├── bulk-email-manager.tsx # Communication system
@@ -37,6 +39,7 @@ components/
 ### 1. Team Management APIs
 
 #### Create Team API
+
 ```typescript
 // app/api/events/[eventId]/teams/route.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -68,7 +71,7 @@ export async function GET(
     return NextResponse.json(eventTeams);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch teams' }, 
+      { error: 'Failed to fetch teams' },
       { status: 500 }
     );
   }
@@ -80,9 +83,9 @@ export async function POST(
 ) {
   try {
     const { name, description, maxMembers, captainId } = await request.json();
-    
+
     const inviteCode = nanoid(8);
-    
+
     const [team] = await db
       .insert(teams)
       .values({
@@ -107,7 +110,7 @@ export async function POST(
     return NextResponse.json(team, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to create team' }, 
+      { error: 'Failed to create team' },
       { status: 500 }
     );
   }
@@ -115,15 +118,16 @@ export async function POST(
 ```
 
 #### Join Team API
+
 ```typescript
 // app/api/events/[eventId]/teams/join/route.ts
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   try {
     const { inviteCode, userId } = await request.json();
-    
+
     // Find team by invite code
     const [team] = await db
       .select()
@@ -131,15 +135,15 @@ export async function POST(
       .where(
         and(
           eq(teams.eventId, params.eventId),
-          eq(teams.inviteCode, inviteCode)
-        )
+          eq(teams.inviteCode, inviteCode),
+        ),
       )
       .limit(1);
 
     if (!team) {
       return NextResponse.json(
-        { error: 'Invalid invite code' }, 
-        { status: 404 }
+        { error: "Invalid invite code" },
+        { status: 404 },
       );
     }
 
@@ -150,10 +154,7 @@ export async function POST(
       .where(eq(teamMembers.teamId, team.id));
 
     if (memberCount[0].count >= team.maxMembers) {
-      return NextResponse.json(
-        { error: 'Team is full' }, 
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Team is full" }, { status: 400 });
     }
 
     // Add member to team
@@ -162,17 +163,14 @@ export async function POST(
       .values({
         teamId: team.id,
         userId,
-        role: 'member',
-        status: 'active',
+        role: "member",
+        status: "active",
       })
       .returning();
 
     return NextResponse.json(member, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to join team' }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to join team" }, { status: 500 });
   }
 }
 ```
@@ -180,6 +178,7 @@ export async function POST(
 ### 2. Tournament Bracket APIs
 
 #### Tournament Management
+
 ```typescript
 // app/api/tournaments/[tournamentId]/route.ts
 export async function GET(
@@ -206,7 +205,7 @@ export async function GET(
     return NextResponse.json(tournament[0]);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch tournament' }, 
+      { error: 'Failed to fetch tournament' },
       { status: 500 }
     );
   }
@@ -214,17 +213,18 @@ export async function GET(
 ```
 
 #### Match Management
+
 ```typescript
 // app/api/tournaments/[tournamentId]/matches/[matchId]/start/route.ts
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tournamentId: string; matchId: string } }
+  { params }: { params: { tournamentId: string; matchId: string } },
 ) {
   try {
     const [match] = await db
       .update(matches)
       .set({
-        status: 'in_progress',
+        status: "in_progress",
         startedAt: new Date(),
       })
       .where(eq(matches.id, params.matchId))
@@ -233,8 +233,8 @@ export async function POST(
     return NextResponse.json(match);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to start match' }, 
-      { status: 500 }
+      { error: "Failed to start match" },
+      { status: 500 },
     );
   }
 }
@@ -242,15 +242,15 @@ export async function POST(
 // app/api/tournaments/[tournamentId]/matches/[matchId]/complete/route.ts
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tournamentId: string; matchId: string } }
+  { params }: { params: { tournamentId: string; matchId: string } },
 ) {
   try {
     const { winnerId, score } = await request.json();
-    
+
     const [match] = await db
       .update(matches)
       .set({
-        status: 'completed',
+        status: "completed",
         winnerId,
         score,
         completedAt: new Date(),
@@ -260,15 +260,15 @@ export async function POST(
 
     // Update leaderboards
     await updateLeaderboardsForMatch(match);
-    
+
     // Advance winner to next round if applicable
     await advanceWinnerToNextRound(match);
 
     return NextResponse.json(match);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to complete match' }, 
-      { status: 500 }
+      { error: "Failed to complete match" },
+      { status: 500 },
     );
   }
 }
@@ -288,11 +288,11 @@ export async function GET(
     const tournamentId = searchParams.get('tournamentId');
 
     let conditions = [eq(leaderboards.eventId, params.eventId)];
-    
+
     if (type !== 'overall') {
       conditions.push(eq(leaderboards.type, type));
     }
-    
+
     if (tournamentId) {
       conditions.push(eq(leaderboards.tournamentId, tournamentId));
     }
@@ -314,7 +314,7 @@ export async function GET(
     return NextResponse.json(leaderboardData);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch leaderboards' }, 
+      { error: 'Failed to fetch leaderboards' },
       { status: 500 }
     );
   }
@@ -347,7 +347,7 @@ export async function GET(
     return NextResponse.json(eventAwards);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch awards' }, 
+      { error: 'Failed to fetch awards' },
       { status: 500 }
     );
   }
@@ -359,7 +359,7 @@ export async function POST(
 ) {
   try {
     const awardData = await request.json();
-    
+
     const [award] = await db
       .insert(awards)
       .values({
@@ -371,7 +371,7 @@ export async function POST(
     return NextResponse.json(award, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to create award' }, 
+      { error: 'Failed to create award' },
       { status: 500 }
     );
   }
@@ -379,24 +379,27 @@ export async function POST(
 ```
 
 #### Certificate Generation
+
 ```typescript
 // app/api/events/[eventId]/awards/[awardId]/certificate/[recipientId]/route.ts
-import { generateCertificatePDF } from '@/lib/certificate-generator';
+import { generateCertificatePDF } from "@/lib/certificate-generator";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string; awardId: string; recipientId: string } }
+  {
+    params,
+  }: { params: { eventId: string; awardId: string; recipientId: string } },
 ) {
   try {
     // Get award and recipient details
     const awardDetails = await getAwardAndRecipientDetails(
-      params.awardId, 
-      params.recipientId
+      params.awardId,
+      params.recipientId,
     );
-    
+
     // Generate certificate PDF
     const certificateUrl = await generateCertificatePDF(awardDetails);
-    
+
     // Update recipient record with certificate URL
     await db
       .update(awardRecipients)
@@ -406,8 +409,8 @@ export async function POST(
     return NextResponse.json({ certificateUrl });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to generate certificate' }, 
-      { status: 500 }
+      { error: "Failed to generate certificate" },
+      { status: 500 },
     );
   }
 }
@@ -419,7 +422,7 @@ export async function POST(
 // app/api/events/[eventId]/bulk-communications/route.ts
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   try {
     const communications = await db
@@ -431,33 +434,33 @@ export async function GET(
     return NextResponse.json(communications);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch communications' }, 
-      { status: 500 }
+      { error: "Failed to fetch communications" },
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   try {
     const campaignData = await request.json();
-    
+
     const [campaign] = await db
       .insert(bulkCommunications)
       .values({
         eventId: params.eventId,
         ...campaignData,
-        status: campaignData.scheduledFor ? 'scheduled' : 'draft',
+        status: campaignData.scheduledFor ? "scheduled" : "draft",
       })
       .returning();
 
     return NextResponse.json(campaign, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to create campaign' }, 
-      { status: 500 }
+      { error: "Failed to create campaign" },
+      { status: 500 },
     );
   }
 }
@@ -469,11 +472,11 @@ export async function POST(
 // app/api/events/[eventId]/exports/route.ts
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { eventId: string } },
 ) {
   try {
     const { type, format, filters, includeFields } = await request.json();
-    
+
     const [exportJob] = await db
       .insert(exportJobs)
       .values({
@@ -482,7 +485,7 @@ export async function POST(
         format,
         filters,
         includeFields,
-        status: 'queued',
+        status: "queued",
       })
       .returning();
 
@@ -492,8 +495,8 @@ export async function POST(
     return NextResponse.json(exportJob, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to create export' }, 
-      { status: 500 }
+      { error: "Failed to create export" },
+      { status: 500 },
     );
   }
 }
@@ -508,12 +511,18 @@ export async function POST(
 
 // Teams
 export const teams = pgTable("teams", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  eventId: varchar("event_id").notNull().references(() => events.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id")
+    .notNull()
+    .references(() => events.id),
   name: varchar("name").notNull(),
   description: text("description"),
   maxMembers: integer("max_members").notNull().default(4),
-  captainId: varchar("captain_id").notNull().references(() => users.id),
+  captainId: varchar("captain_id")
+    .notNull()
+    .references(() => users.id),
   status: varchar("status").notNull().default("forming"), // forming, ready, competing, eliminated
   inviteCode: varchar("invite_code").notNull().unique(),
   avatar: varchar("avatar"),
@@ -521,18 +530,28 @@ export const teams = pgTable("teams", {
 });
 
 export const teamMembers = pgTable("team_members", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  teamId: varchar("team_id").notNull().references(() => teams.id),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  teamId: varchar("team_id")
+    .notNull()
+    .references(() => teams.id),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id),
   role: varchar("role").notNull().default("member"), // captain, member
   status: varchar("status").notNull().default("active"), // active, inactive
   joinedAt: timestamp("joined_at").defaultNow(),
 });
 
-// Tournaments  
+// Tournaments
 export const tournaments = pgTable("tournaments", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  eventId: varchar("event_id").notNull().references(() => events.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id")
+    .notNull()
+    .references(() => events.id),
   name: varchar("name").notNull(),
   format: varchar("format").notNull().default("knockout"), // knockout, league, swiss
   status: varchar("status").notNull().default("draft"), // draft, active, completed
@@ -542,8 +561,12 @@ export const tournaments = pgTable("tournaments", {
 });
 
 export const tournamentParticipants = pgTable("tournament_participants", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  tournamentId: varchar("tournament_id").notNull().references(() => tournaments.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  tournamentId: varchar("tournament_id")
+    .notNull()
+    .references(() => tournaments.id),
   userId: varchar("user_id").references(() => users.id),
   teamId: varchar("team_id").references(() => teams.id),
   seed: integer("seed"),
@@ -553,8 +576,12 @@ export const tournamentParticipants = pgTable("tournament_participants", {
 
 // Leaderboards
 export const leaderboards = pgTable("leaderboards", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  eventId: varchar("event_id").notNull().references(() => events.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id")
+    .notNull()
+    .references(() => events.id),
   tournamentId: varchar("tournament_id").references(() => tournaments.id),
   name: varchar("name").notNull(),
   type: varchar("type").notNull().default("tournament"), // tournament, activity, overall
@@ -566,8 +593,12 @@ export const leaderboards = pgTable("leaderboards", {
 });
 
 export const leaderboardEntries = pgTable("leaderboard_entries", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  leaderboardId: varchar("leaderboard_id").notNull().references(() => leaderboards.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  leaderboardId: varchar("leaderboard_id")
+    .notNull()
+    .references(() => leaderboards.id),
   userId: varchar("user_id").references(() => users.id),
   teamId: varchar("team_id").references(() => teams.id),
   position: integer("position").notNull(),
@@ -587,15 +618,15 @@ export const leaderboardEntries = pgTable("leaderboard_entries", {
 
 ```typescript
 // lib/email-service.ts (Complete implementation)
-import { sendEmail } from '@sendgrid/mail';
-import { db } from './db';
-import { emailTemplates, emailQueue } from '@shared/schema';
+import { sendEmail } from "@sendgrid/mail";
+import { db } from "./db";
+import { emailTemplates, emailQueue } from "@shared/schema";
 
 export class EmailService {
   async sendRegistrationConfirmation(to: string, data: any) {
-    const template = await this.getTemplate('registration_confirmation');
+    const template = await this.getTemplate("registration_confirmation");
     const html = this.renderTemplate(template.htmlContent, data);
-    
+
     return await this.queueEmail({
       to,
       subject: template.subject,
@@ -606,8 +637,11 @@ export class EmailService {
 
   async sendBulkCommunication(campaignId: string) {
     const campaign = await this.getCampaign(campaignId);
-    const recipients = await this.getRecipients(campaign.targetAudience, campaign.filters);
-    
+    const recipients = await this.getRecipients(
+      campaign.targetAudience,
+      campaign.filters,
+    );
+
     for (const recipient of recipients) {
       await this.queueEmail({
         to: recipient.email,
@@ -624,7 +658,10 @@ export class EmailService {
 
   private renderTemplate(template: string, data: any) {
     // Replace variables like {{firstName}} with actual data
-    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
+    return template.replace(
+      /\{\{(\w+)\}\}/g,
+      (match, key) => data[key] || match,
+    );
   }
 }
 ```
@@ -633,7 +670,7 @@ export class EmailService {
 
 ```typescript
 // lib/payment-service.ts (Razorpay implementation)
-import Razorpay from 'razorpay';
+import Razorpay from "razorpay";
 
 export class PaymentService {
   private razorpay: Razorpay;
@@ -645,7 +682,7 @@ export class PaymentService {
     });
   }
 
-  async createOrder(amount: number, currency = 'INR', notes = {}) {
+  async createOrder(amount: number, currency = "INR", notes = {}) {
     return await this.razorpay.orders.create({
       amount: amount * 100, // Razorpay expects amount in paise
       currency,
@@ -653,12 +690,16 @@ export class PaymentService {
     });
   }
 
-  async verifySignature(razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string) {
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+  async verifySignature(
+    razorpay_order_id: string,
+    razorpay_payment_id: string,
+    razorpay_signature: string,
+  ) {
+    const crypto = require("crypto");
+    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
     hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const generatedSignature = hmac.digest('hex');
-    
+    const generatedSignature = hmac.digest("hex");
+
     return generatedSignature === razorpay_signature;
   }
 }
@@ -667,16 +708,20 @@ export class PaymentService {
 ## 🚀 Deployment Steps
 
 ### 1. Database Migration
+
 ```bash
 # Ensure database is up to date
 npm run db:push --force
 ```
 
 ### 2. Missing API Routes Implementation
+
 Create all the missing API route files as shown above.
 
 ### 3. Environment Variables
+
 Add required environment variables:
+
 ```bash
 # Payment processing
 VITE_RAZORPAY_KEY_ID=rzp_test_...
@@ -693,6 +738,7 @@ AWS_BUCKET_NAME=makrx-files
 ```
 
 ### 4. Background Job Processing
+
 ```typescript
 // lib/queue-processor.ts
 export class QueueProcessor {
@@ -700,7 +746,7 @@ export class QueueProcessor {
     const pendingEmails = await db
       .select()
       .from(emailQueue)
-      .where(eq(emailQueue.status, 'pending'))
+      .where(eq(emailQueue.status, "pending"))
       .limit(10);
 
     for (const email of pendingEmails) {
@@ -712,7 +758,7 @@ export class QueueProcessor {
     const pendingExports = await db
       .select()
       .from(exportJobs)
-      .where(eq(exportJobs.status, 'queued'))
+      .where(eq(exportJobs.status, "queued"))
       .limit(5);
 
     for (const exportJob of pendingExports) {
@@ -725,38 +771,40 @@ export class QueueProcessor {
 ## 📋 Testing Implementation
 
 ### API Testing
+
 ```typescript
 // __tests__/api/teams.test.ts
-import { POST } from '@/app/api/events/[eventId]/teams/route';
-import { mockDatabase } from '../utils/mock-db';
+import { POST } from "@/app/api/events/[eventId]/teams/route";
+import { mockDatabase } from "../utils/mock-db";
 
-describe('/api/events/[eventId]/teams', () => {
+describe("/api/events/[eventId]/teams", () => {
   beforeEach(() => {
     mockDatabase.reset();
   });
 
-  it('should create a new team', async () => {
-    const request = new Request('http://localhost', {
-      method: 'POST',
+  it("should create a new team", async () => {
+    const request = new Request("http://localhost", {
+      method: "POST",
       body: JSON.stringify({
-        name: 'Test Team',
-        description: 'A test team',
+        name: "Test Team",
+        description: "A test team",
         maxMembers: 4,
-        captainId: 'user-123',
+        captainId: "user-123",
       }),
     });
 
-    const response = await POST(request, { params: { eventId: 'event-123' } });
+    const response = await POST(request, { params: { eventId: "event-123" } });
     const data = await response.json();
 
     expect(response.status).toBe(201);
-    expect(data.name).toBe('Test Team');
+    expect(data.name).toBe("Test Team");
     expect(data.inviteCode).toBeDefined();
   });
 });
 ```
 
 ### Component Testing
+
 ```typescript
 // __tests__/components/team-manager.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -765,7 +813,7 @@ import { TeamManager } from '@/components/team-manager';
 describe('TeamManager', () => {
   it('should render team creation form', () => {
     render(<TeamManager eventId="event-123" userId="user-123" canManage={true} />);
-    
+
     expect(screen.getByText('Team Management')).toBeInTheDocument();
     expect(screen.getByText('Create Team')).toBeInTheDocument();
   });
@@ -789,6 +837,7 @@ describe('TeamManager', () => {
 ## 🆘 Support
 
 For implementation support:
-- 📧 Email: dev@makrx.events  
+
+- 📧 Email: dev@makrx.events
 - 💬 Discord: [MakrX Developers](https://discord.gg/makrx-dev)
 - 📚 Docs: [docs.makrx.events/api](https://docs.makrx.events/api)

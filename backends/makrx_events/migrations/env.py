@@ -16,27 +16,29 @@ if config.config_file_name is not None:
 # so we can import directly from the local database module.
 # Bootstrap alias so hyphenated folder can be imported as backends.makrx_events
 app_root = Path(__file__).resolve().parent.parent  # /app
-back_mod = types.ModuleType('backends')
+back_mod = types.ModuleType("backends")
 back_mod.__path__ = [str(app_root.parent)]  # not used but required
-sys.modules.setdefault('backends', back_mod)
-pkg_name = 'backends.makrx_events'
+sys.modules.setdefault("backends", back_mod)
+pkg_name = "backends.makrx_events"
 pkg_mod = types.ModuleType(pkg_name)
 pkg_mod.__path__ = [str(app_root)]
 sys.modules.setdefault(pkg_name, pkg_mod)
 
 from backends.makrx_events.database import Base  # type: ignore
+
 # Ensure models are imported so Base.metadata is populated
 from importlib import import_module
+
 for module in (
-    'backends.makrx_events.models.users',
-    'backends.makrx_events.models.events',
-    'backends.makrx_events.models.registrations',
-    'backends.makrx_events.models.activities',
-    'backends.makrx_events.models.teams',
-    'backends.makrx_events.models.tournaments',
-    'backends.makrx_events.models.sponsors',
-    'backends.makrx_events.models.microsites',
-    'backends.makrx_events.models.sub_events',
+    "backends.makrx_events.models.users",
+    "backends.makrx_events.models.events",
+    "backends.makrx_events.models.registrations",
+    "backends.makrx_events.models.activities",
+    "backends.makrx_events.models.teams",
+    "backends.makrx_events.models.tournaments",
+    "backends.makrx_events.models.sponsors",
+    "backends.makrx_events.models.microsites",
+    "backends.makrx_events.models.sub_events",
 ):
     try:
         import_module(module)

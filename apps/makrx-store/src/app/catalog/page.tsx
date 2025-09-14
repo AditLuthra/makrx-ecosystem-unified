@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Search,
   Filter,
@@ -15,17 +15,17 @@ import {
   X,
   SlidersHorizontal,
   ArrowUpDown,
-} from "lucide-react";
-import { api, type Product, type Category, formatPrice } from "@/lib/api";
-import CategoryCarousel from "@/components/CategoryCarousel";
+} from 'lucide-react';
+import { api, type Product, type Category, formatPrice } from '@/lib/api';
+import CategoryCarousel from '@/components/CategoryCarousel';
 
 const SORT_OPTIONS = [
-  { value: "created_desc", label: "Newest First" },
-  { value: "created_asc", label: "Oldest First" },
-  { value: "name_asc", label: "Name A-Z" },
-  { value: "name_desc", label: "Name Z-A" },
-  { value: "price_asc", label: "Price Low to High" },
-  { value: "price_desc", label: "Price High to Low" },
+  { value: 'created_desc', label: 'Newest First' },
+  { value: 'created_asc', label: 'Oldest First' },
+  { value: 'name_asc', label: 'Name A-Z' },
+  { value: 'name_desc', label: 'Name Z-A' },
+  { value: 'price_asc', label: 'Price Low to High' },
+  { value: 'price_desc', label: 'Price High to Low' },
 ];
 
 export default function CatalogPage() {
@@ -36,7 +36,7 @@ export default function CatalogPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
   // Show filters by default on desktop, hide on mobile
@@ -61,20 +61,20 @@ export default function CatalogPage() {
 
   // Filter state
   const [filters, setFilters] = useState({
-    q: searchParams.get("q") || "",
-    category_id: searchParams.get("category_id")
-      ? parseInt(searchParams.get("category_id")!)
+    q: searchParams.get('q') || '',
+    category_id: searchParams.get('category_id')
+      ? parseInt(searchParams.get('category_id')!)
       : undefined,
-    brand: searchParams.get("brand") || undefined,
-    price_min: searchParams.get("price_min")
-      ? parseFloat(searchParams.get("price_min")!)
+    brand: searchParams.get('brand') || undefined,
+    price_min: searchParams.get('price_min')
+      ? parseFloat(searchParams.get('price_min')!)
       : undefined,
-    price_max: searchParams.get("price_max")
-      ? parseFloat(searchParams.get("price_max")!)
+    price_max: searchParams.get('price_max')
+      ? parseFloat(searchParams.get('price_max')!)
       : undefined,
-    in_stock: searchParams.get("in_stock") === "true" ? true : undefined,
-    is_featured: searchParams.get("is_featured") === "true" ? true : undefined,
-    sort: searchParams.get("sort") || "created_desc",
+    in_stock: searchParams.get('in_stock') === 'true' ? true : undefined,
+    is_featured: searchParams.get('is_featured') === 'true' ? true : undefined,
+    sort: searchParams.get('sort') || 'created_desc',
   });
 
   // Load initial data
@@ -89,7 +89,7 @@ export default function CatalogPage() {
         setCategories(categoriesData);
         setBrands((brandsData.brands || []).map((b: any) => (typeof b === 'string' ? b : b.name)));
       } catch (error) {
-        console.error("Failed to load initial data:", error);
+        console.error('Failed to load initial data:', error);
       }
     };
 
@@ -123,7 +123,7 @@ export default function CatalogPage() {
         pages: response.pages,
       });
     } catch (error) {
-      console.error("Failed to load products:", error);
+      console.error('Failed to load products:', error);
     } finally {
       setLoading(false);
     }
@@ -138,69 +138,69 @@ export default function CatalogPage() {
     const params = new URLSearchParams();
 
     Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== "" && value !== null) {
+      if (value !== undefined && value !== '' && value !== null) {
         params.set(key, value.toString());
       }
     });
 
     if (pagination.page > 1) {
-      params.set("page", pagination.page.toString());
+      params.set('page', pagination.page.toString());
     }
 
-    const newUrl = `/catalog${params.toString() ? "?" + params.toString() : ""}`;
-    window.history.replaceState({}, "", newUrl);
+    const newUrl = `/catalog${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.replaceState({}, '', newUrl);
   }, [filters, pagination.page]);
 
   const handleFilterChange = (key: string, value: any) => {
     setFilters((prev) => ({
       ...prev,
-      [key]: value === "" ? undefined : value,
+      [key]: value === '' ? undefined : value,
     }));
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const clearFilters = () => {
     setFilters({
-      q: "",
+      q: '',
       category_id: undefined,
       brand: undefined,
       price_min: undefined,
       price_max: undefined,
       in_stock: undefined,
       is_featured: undefined,
-      sort: "created_desc",
+      sort: 'created_desc',
     });
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const handlePageChange = (page: number) => {
     setPagination((prev) => ({ ...prev, page }));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAddToCart = async (product: Product) => {
     try {
       await api.addToCart(product.id, 1);
       // Show success message or update cart count
-      alert("Product added to cart!");
+      alert('Product added to cart!');
     } catch (error) {
-      console.error("Failed to add to cart:", error);
-      alert("Failed to add product to cart");
+      console.error('Failed to add to cart:', error);
+      alert('Failed to add product to cart');
     }
   };
 
   const handleCategorySelect = (categoryId: number) => {
     // If categoryId is 0, it means "All Categories" - clear the filter
-    handleFilterChange("category_id", categoryId === 0 ? undefined : categoryId);
+    handleFilterChange('category_id', categoryId === 0 ? undefined : categoryId);
   };
 
   const getCategoryName = (categoryId?: number) => {
     const category = categories.find((c) => c.id === categoryId);
-    return category?.name || "All Categories";
+    return category?.name || 'All Categories';
   };
 
   const activeFiltersCount = Object.values(filters).filter(
-    (value) => value !== undefined && value !== "" && value !== "created_desc",
+    (value) => value !== undefined && value !== '' && value !== 'created_desc',
   ).length;
 
   return (
@@ -208,12 +208,8 @@ export default function CatalogPage() {
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Product Catalog
-          </h1>
-          <p className="text-gray-600">
-            Discover our complete range of maker products and tools
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Catalog</h1>
+          <p className="text-gray-600">Discover our complete range of maker products and tools</p>
         </div>
 
         {/* Category Carousel */}
@@ -233,7 +229,7 @@ export default function CatalogPage() {
                   type="text"
                   placeholder="Search products..."
                   value={filters.q}
-                  onChange={(e) => handleFilterChange("q", e.target.value)}
+                  onChange={(e) => handleFilterChange('q', e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -243,7 +239,7 @@ export default function CatalogPage() {
               {/* Sort */}
               <select
                 value={filters.sort}
-                onChange={(e) => handleFilterChange("sort", e.target.value)}
+                onChange={(e) => handleFilterChange('sort', e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {SORT_OPTIONS.map((option) => (
@@ -256,14 +252,14 @@ export default function CatalogPage() {
               {/* View Mode */}
               <div className="flex rounded-lg border border-gray-300">
                 <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "bg-white text-gray-600"}`}
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'}`}
                 >
                   <Grid3X3 className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "bg-white text-gray-600"}`}
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'}`}
                 >
                   <List className="h-4 w-4" />
                 </button>
@@ -305,14 +301,12 @@ export default function CatalogPage() {
               <div className="space-y-6">
                 {/* Category Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <select
-                    value={filters.category_id || ""}
+                    value={filters.category_id || ''}
                     onChange={(e) =>
                       handleFilterChange(
-                        "category_id",
+                        'category_id',
                         e.target.value ? parseInt(e.target.value) : undefined,
                       )
                     }
@@ -329,14 +323,10 @@ export default function CatalogPage() {
 
                 {/* Brand Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Brand
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
                   <select
-                    value={filters.brand || ""}
-                    onChange={(e) =>
-                      handleFilterChange("brand", e.target.value || undefined)
-                    }
+                    value={filters.brand || ''}
+                    onChange={(e) => handleFilterChange('brand', e.target.value || undefined)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">All Brands</option>
@@ -357,13 +347,11 @@ export default function CatalogPage() {
                     <input
                       type="number"
                       placeholder="Min"
-                      value={filters.price_min || ""}
+                      value={filters.price_min || ''}
                       onChange={(e) =>
                         handleFilterChange(
-                          "price_min",
-                          e.target.value
-                            ? parseFloat(e.target.value)
-                            : undefined,
+                          'price_min',
+                          e.target.value ? parseFloat(e.target.value) : undefined,
                         )
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -371,13 +359,11 @@ export default function CatalogPage() {
                     <input
                       type="number"
                       placeholder="Max"
-                      value={filters.price_max || ""}
+                      value={filters.price_max || ''}
                       onChange={(e) =>
                         handleFilterChange(
-                          "price_max",
-                          e.target.value
-                            ? parseFloat(e.target.value)
-                            : undefined,
+                          'price_max',
+                          e.target.value ? parseFloat(e.target.value) : undefined,
                         )
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -392,10 +378,7 @@ export default function CatalogPage() {
                       type="checkbox"
                       checked={filters.in_stock === true}
                       onChange={(e) =>
-                        handleFilterChange(
-                          "in_stock",
-                          e.target.checked ? true : undefined,
-                        )
+                        handleFilterChange('in_stock', e.target.checked ? true : undefined)
                       }
                       className="rounded border-gray-300 mr-2"
                     />
@@ -410,10 +393,7 @@ export default function CatalogPage() {
                       type="checkbox"
                       checked={filters.is_featured === true}
                       onChange={(e) =>
-                        handleFilterChange(
-                          "is_featured",
-                          e.target.checked ? true : undefined,
-                        )
+                        handleFilterChange('is_featured', e.target.checked ? true : undefined)
                       }
                       className="rounded border-gray-300 mr-2"
                     />
@@ -430,8 +410,7 @@ export default function CatalogPage() {
             <div className="flex items-center justify-between mb-6">
               <div className="text-sm text-gray-600">
                 Showing {products.length} of {pagination.total} products
-                {filters.category_id &&
-                  ` in ${getCategoryName(filters.category_id)}`}
+                {filters.category_id && ` in ${getCategoryName(filters.category_id)}`}
               </div>
             </div>
 
@@ -441,12 +420,8 @@ export default function CatalogPage() {
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No products found
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search or filters
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+                <p className="text-gray-600 mb-4">Try adjusting your search or filters</p>
                 <button
                   onClick={clearFilters}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
@@ -457,31 +432,25 @@ export default function CatalogPage() {
             ) : (
               <div
                 className={`grid gap-6 ${
-                  viewMode === "grid"
-                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    : "grid-cols-1"
+                  viewMode === 'grid'
+                    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                    : 'grid-cols-1'
                 }`}
               >
                 {products.map((product) => (
                   <div
                     key={product.id}
                     className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ${
-                      viewMode === "list"
-                        ? "flex items-center p-4"
-                        : "overflow-hidden"
+                      viewMode === 'list' ? 'flex items-center p-4' : 'overflow-hidden'
                     }`}
                   >
                     <Link
                       href={`/p/${product.slug}`}
-                      className={
-                        viewMode === "list" ? "flex-shrink-0" : "block"
-                      }
+                      className={viewMode === 'list' ? 'flex-shrink-0' : 'block'}
                     >
                       <div
                         className={`bg-gray-100 relative ${
-                          viewMode === "list"
-                            ? "w-24 h-24 rounded-lg"
-                            : "aspect-square"
+                          viewMode === 'list' ? 'w-24 h-24 rounded-lg' : 'aspect-square'
                         }`}
                       >
                         {product.images[0] && (
@@ -500,9 +469,7 @@ export default function CatalogPage() {
                       </div>
                     </Link>
 
-                    <div
-                      className={viewMode === "list" ? "ml-4 flex-1" : "p-4"}
-                    >
+                    <div className={viewMode === 'list' ? 'ml-4 flex-1' : 'p-4'}>
                       <Link href={`/p/${product.slug}`}>
                         <h3 className="font-semibold text-gray-900 mb-2 hover:text-blue-600">
                           {product.name}
@@ -510,9 +477,7 @@ export default function CatalogPage() {
                       </Link>
 
                       {product.brand && (
-                        <p className="text-sm text-gray-500 mb-2">
-                          {product.brand}
-                        </p>
+                        <p className="text-sm text-gray-500 mb-2">{product.brand}</p>
                       )}
 
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">
@@ -522,10 +487,7 @@ export default function CatalogPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="font-bold text-gray-900">
-                            {formatPrice(
-                              product.effective_price,
-                              product.currency,
-                            )}
+                            {formatPrice(product.effective_price, product.currency)}
                           </span>
                           {product.sale_price && (
                             <span className="text-sm text-gray-500 line-through">
@@ -537,9 +499,7 @@ export default function CatalogPage() {
                         <div className="flex items-center gap-2">
                           <div className="flex items-center">
                             <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                            <span className="text-sm text-gray-600 ml-1">
-                              4.8
-                            </span>
+                            <span className="text-sm text-gray-600 ml-1">4.8</span>
                           </div>
 
                           <button
@@ -554,9 +514,7 @@ export default function CatalogPage() {
 
                       {!product.in_stock && (
                         <div className="mt-2">
-                          <span className="text-xs text-red-600 font-medium">
-                            Out of Stock
-                          </span>
+                          <span className="text-xs text-red-600 font-medium">Out of Stock</span>
                         </div>
                       )}
                     </div>
@@ -576,27 +534,24 @@ export default function CatalogPage() {
                   Previous
                 </button>
 
-                {Array.from(
-                  { length: Math.min(5, pagination.pages) },
-                  (_, i) => {
-                    const page = Math.max(1, pagination.page - 2) + i;
-                    if (page > pagination.pages) return null;
+                {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+                  const page = Math.max(1, pagination.page - 2) + i;
+                  if (page > pagination.pages) return null;
 
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-3 py-2 text-sm rounded-lg ${
-                          page === pagination.page
-                            ? "bg-blue-600 text-white"
-                            : "border border-gray-300 hover:bg-gray-50"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  },
-                )}
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        page === pagination.page
+                          ? 'bg-blue-600 text-white'
+                          : 'border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
 
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
@@ -613,7 +568,10 @@ export default function CatalogPage() {
         {/* Mobile Filter Overlay */}
         {showFilters && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowFilters(false)} />
+            <div
+              className="absolute inset-0 bg-black bg-opacity-50"
+              onClick={() => setShowFilters(false)}
+            />
             <div className="absolute inset-y-0 right-0 w-80 max-w-full bg-white shadow-xl">
               <div className="h-full overflow-y-auto">
                 <div className="p-6">
@@ -644,10 +602,10 @@ export default function CatalogPage() {
                         Category
                       </label>
                       <select
-                        value={filters.category_id || ""}
+                        value={filters.category_id || ''}
                         onChange={(e) =>
                           handleFilterChange(
-                            "category_id",
+                            'category_id',
                             e.target.value ? parseInt(e.target.value) : undefined,
                           )
                         }
@@ -664,14 +622,10 @@ export default function CatalogPage() {
 
                     {/* Brand Filter */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Brand
-                      </label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
                       <select
-                        value={filters.brand || ""}
-                        onChange={(e) =>
-                          handleFilterChange("brand", e.target.value || undefined)
-                        }
+                        value={filters.brand || ''}
+                        onChange={(e) => handleFilterChange('brand', e.target.value || undefined)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="">All Brands</option>
@@ -692,13 +646,11 @@ export default function CatalogPage() {
                         <input
                           type="number"
                           placeholder="Min"
-                          value={filters.price_min || ""}
+                          value={filters.price_min || ''}
                           onChange={(e) =>
                             handleFilterChange(
-                              "price_min",
-                              e.target.value
-                                ? parseFloat(e.target.value)
-                                : undefined,
+                              'price_min',
+                              e.target.value ? parseFloat(e.target.value) : undefined,
                             )
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -706,13 +658,11 @@ export default function CatalogPage() {
                         <input
                           type="number"
                           placeholder="Max"
-                          value={filters.price_max || ""}
+                          value={filters.price_max || ''}
                           onChange={(e) =>
                             handleFilterChange(
-                              "price_max",
-                              e.target.value
-                                ? parseFloat(e.target.value)
-                                : undefined,
+                              'price_max',
+                              e.target.value ? parseFloat(e.target.value) : undefined,
                             )
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -727,10 +677,7 @@ export default function CatalogPage() {
                           type="checkbox"
                           checked={filters.in_stock === true}
                           onChange={(e) =>
-                            handleFilterChange(
-                              "in_stock",
-                              e.target.checked ? true : undefined,
-                            )
+                            handleFilterChange('in_stock', e.target.checked ? true : undefined)
                           }
                           className="rounded border-gray-300 mr-2"
                         />
@@ -745,10 +692,7 @@ export default function CatalogPage() {
                           type="checkbox"
                           checked={filters.is_featured === true}
                           onChange={(e) =>
-                            handleFilterChange(
-                              "is_featured",
-                              e.target.checked ? true : undefined,
-                            )
+                            handleFilterChange('is_featured', e.target.checked ? true : undefined)
                           }
                           className="rounded border-gray-300 mr-2"
                         />

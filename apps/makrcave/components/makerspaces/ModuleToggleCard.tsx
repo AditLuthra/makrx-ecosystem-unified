@@ -15,7 +15,7 @@ import {
   GraduationCap,
   MapPin,
   Users,
-  Settings
+  Settings,
 } from 'lucide-react';
 
 interface Makerspace {
@@ -40,96 +40,93 @@ const MODULE_CONFIG = {
     description: 'Track materials, supplies, and stock levels',
     icon: Package,
     color: 'text-blue-600',
-    bgColor: 'bg-blue-100'
+    bgColor: 'bg-blue-100',
   },
   projects: {
     name: 'Project Management',
     description: 'Create and manage member projects',
     icon: FolderOpen,
     color: 'text-green-600',
-    bgColor: 'bg-green-100'
+    bgColor: 'bg-green-100',
   },
   reservations: {
     name: 'Equipment Reservations',
     description: 'Book and schedule equipment usage',
     icon: Calendar,
     color: 'text-purple-600',
-    bgColor: 'bg-purple-100'
+    bgColor: 'bg-purple-100',
   },
   billing: {
     name: 'Billing & Payments',
     description: 'Handle memberships and payment processing',
     icon: CreditCard,
     color: 'text-yellow-600',
-    bgColor: 'bg-yellow-100'
+    bgColor: 'bg-yellow-100',
   },
   analytics: {
     name: 'Analytics & Reports',
     description: 'Usage statistics and business insights',
     icon: BarChart3,
     color: 'text-indigo-600',
-    bgColor: 'bg-indigo-100'
+    bgColor: 'bg-indigo-100',
   },
   maintenance: {
     name: 'Maintenance Tracking',
     description: 'Equipment maintenance and schedules',
     icon: Wrench,
     color: 'text-red-600',
-    bgColor: 'bg-red-100'
+    bgColor: 'bg-red-100',
   },
   skill_management: {
     name: 'Skill Management',
     description: 'Member certifications and training',
     icon: GraduationCap,
     color: 'text-teal-600',
-    bgColor: 'bg-teal-100'
-  }
+    bgColor: 'bg-teal-100',
+  },
 };
 
-const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({
-  makerspace,
-  onUpdate
-}) => {
+const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({ makerspace, onUpdate }) => {
   const { toast } = useToast();
   const [updatingModules, setUpdatingModules] = useState<Set<string>>(new Set());
 
   const handleModuleToggle = async (moduleKey: string, enabled: boolean) => {
-    setUpdatingModules(prev => new Set([...prev, moduleKey]));
-    
+    setUpdatingModules((prev) => new Set([...prev, moduleKey]));
+
     try {
       const response = await fetch(`/api/v1/makerspaces/${makerspace.id}/toggle-module`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           moduleKey,
-          enabled
+          enabled,
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: `${MODULE_CONFIG[moduleKey as keyof typeof MODULE_CONFIG]?.name} ${enabled ? 'enabled' : 'disabled'}`,
         });
         onUpdate();
       } else {
         toast({
-          title: "Error",
-          description: "Failed to update module",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to update module',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update module",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update module',
+        variant: 'destructive',
       });
     } finally {
-      setUpdatingModules(prev => {
+      setUpdatingModules((prev) => {
         const newSet = new Set(prev);
         newSet.delete(moduleKey);
         return newSet;
@@ -169,7 +166,7 @@ const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({
             <Settings className="h-4 w-4" />
             Module Configuration
           </h4>
-          
+
           <div className="space-y-3">
             {Object.entries(MODULE_CONFIG).map(([moduleKey, config]) => {
               const isEnabled = makerspace.modules.includes(moduleKey);
@@ -177,7 +174,7 @@ const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({
               const Icon = config.icon;
 
               return (
-                <div 
+                <div
                   key={moduleKey}
                   className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
                 >
@@ -219,9 +216,7 @@ const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({
                 </div>
                 <div>
                   <span className="text-gray-600">Active Users:</span>
-                  <div className="font-medium text-blue-600">
-                    {makerspace.stats.totalUsers}
-                  </div>
+                  <div className="font-medium text-blue-600">{makerspace.stats.totalUsers}</div>
                 </div>
               </div>
             </div>

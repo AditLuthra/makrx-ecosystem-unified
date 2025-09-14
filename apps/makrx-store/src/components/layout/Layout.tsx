@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Toaster } from 'react-hot-toast'
-import { Header } from './Header'
-import Footer from './Footer'
-import KeyboardShortcutsProvider from '@/components/KeyboardShortcuts'
+import React from 'react';
+import { Toaster } from 'react-hot-toast';
+import { Header } from './Header';
+import Footer from './Footer';
+import KeyboardShortcutsProvider from '@/components/KeyboardShortcuts';
 
 interface LayoutProps {
-  children: React.ReactNode
-  showHeader?: boolean
-  showFooter?: boolean
+  children: React.ReactNode;
+  showHeader?: boolean;
+  showFooter?: boolean;
 }
 
 export default function Layout({ children, showHeader = true, showFooter = true }: LayoutProps) {
@@ -17,9 +17,7 @@ export default function Layout({ children, showHeader = true, showFooter = true 
     <KeyboardShortcutsProvider>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         {showHeader && <Header />}
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
         {showFooter && <Footer />}
         <Toaster
           position="top-right"
@@ -44,5 +42,5 @@ export default function Layout({ children, showHeader = true, showFooter = true 
         />
       </div>
     </KeyboardShortcutsProvider>
-  )
+  );
 }

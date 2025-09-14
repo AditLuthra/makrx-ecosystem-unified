@@ -7,7 +7,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMakerspaceContext } from '../contexts/MakerspaceContext';
 import { NavLinkGuard, FlagGuard } from '../../../packages/feature-flags/src/components/FlagGuard';
-import { useBooleanFlag, useSpaceFlag } from '../../../packages/feature-flags/src/hooks/useFeatureFlags';
+import {
+  useBooleanFlag,
+  useSpaceFlag,
+} from '../../../packages/feature-flags/src/hooks/useFeatureFlags';
 import {
   Menu,
   X,
@@ -23,7 +26,7 @@ import {
   AlertTriangle,
   Briefcase,
   Bell,
-  Search
+  Search,
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -64,77 +67,78 @@ export default function FeatureFlaggedHeader() {
     {
       label: 'Dashboard',
       href: '/dashboard',
-      icon: Home
+      icon: Home,
     },
     {
       label: 'Equipment',
       href: '/equipment',
       icon: Wrench,
-      flagKey: 'cave.equipment.enabled'
+      flagKey: 'cave.equipment.enabled',
     },
     {
       label: 'Reservations',
       href: '/reservations',
       icon: Calendar,
-      flagKey: 'cave.reservations.enabled'
+      flagKey: 'cave.reservations.enabled',
     },
     {
       label: 'Inventory',
       href: '/inventory',
       icon: Package,
-      flagKey: 'cave.inventory.enabled'
+      flagKey: 'cave.inventory.enabled',
     },
     {
       label: 'Projects',
       href: '/projects',
       icon: FolderOpen,
-      flagKey: 'cave.projects.enabled'
+      flagKey: 'cave.projects.enabled',
     },
     {
       label: 'Members',
       href: '/members',
-      icon: Users
+      icon: Users,
     },
     {
       label: 'Skills & Badges',
       href: '/skills',
       icon: UserCheck,
-      flagKey: 'cave.skills.enabled'
+      flagKey: 'cave.skills.enabled',
     },
     {
       label: 'Providers',
       href: '/providers',
       icon: Briefcase,
       flagKey: 'cave.providers.enabled',
-      adminOnly: true
+      adminOnly: true,
     },
     {
       label: 'Jobs',
       href: '/jobs',
       icon: Briefcase,
       flagKey: 'cave.jobs.enabled',
-      providerOnly: true
+      providerOnly: true,
     },
     {
       label: 'Analytics',
       href: '/analytics',
       icon: BarChart3,
       flagKey: 'cave.analytics.enabled',
-      adminOnly: true
+      adminOnly: true,
     },
     {
       label: 'Maintenance',
       href: '/maintenance',
       icon: AlertTriangle,
       flagKey: 'cave.maintenance.enabled',
-      adminOnly: true
-    }
+      adminOnly: true,
+    },
   ];
 
-  const isAdmin = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'admin';
+  const isAdmin =
+    user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'admin';
   const isProvider = user?.role === 'service_provider';
 
-  const filteredNavItems = navigationItems.filter(item => {
+  const filteredNavItems = navigationItems.filter((item) => {
     if (item.adminOnly && !isAdmin) return false;
     if (item.providerOnly && !isProvider) return false;
     return true;
@@ -149,7 +153,7 @@ export default function FeatureFlaggedHeader() {
             <div className="flex-shrink-0 flex items-center">
               <div className="text-2xl font-bold text-makrx-teal">MakrCave</div>
             </div>
-            
+
             {/* Desktop navigation */}
             <nav className="hidden md:flex space-x-8 ml-8">
               {filteredNavItems.map((item) => (
@@ -177,9 +181,9 @@ export default function FeatureFlaggedHeader() {
               >
                 Store
               </NavLinkGuard>
-              
+
               <span className="text-gray-300">|</span>
-              
+
               <NavLinkGuard
                 flagKey="org.status.enabled"
                 href="/status"
@@ -187,7 +191,7 @@ export default function FeatureFlaggedHeader() {
               >
                 Status
               </NavLinkGuard>
-              
+
               <NavLinkGuard
                 flagKey="org.forum.enabled"
                 href="/forum"
@@ -219,11 +223,7 @@ export default function FeatureFlaggedHeader() {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-makrx-teal"
               >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function FeatureFlaggedHeader() {
                 {item.label}
               </NavLinkGuard>
             ))}
-            
+
             {/* Mobile cross-portal links */}
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -312,8 +312,12 @@ export default function FeatureFlaggedHeader() {
 function FeatureFlagDebugPanel() {
   const [showDebug, setShowDebug] = useState(false);
   const isInternal = useBooleanFlag('global.debug.enabled'); // Would need to add this flag
-  
-  if (!isInternal || typeof window === 'undefined' || !window.location.hostname.includes('localhost')) {
+
+  if (
+    !isInternal ||
+    typeof window === 'undefined' ||
+    !window.location.hostname.includes('localhost')
+  ) {
     return null;
   }
 
@@ -324,7 +328,7 @@ function FeatureFlagDebugPanel() {
     { key: 'cave.projects.enabled', label: 'Projects' },
     { key: 'cave.analytics.enabled', label: 'Analytics' },
     { key: 'cave.maintenance.enabled', label: 'Maintenance' },
-    { key: 'cave.notifications.enabled', label: 'Notifications' }
+    { key: 'cave.notifications.enabled', label: 'Notifications' },
   ];
 
   return (
@@ -343,11 +347,11 @@ function FeatureFlagDebugPanel() {
             </button>
           </div>
         </div>
-        
+
         {showDebug && (
           <div className="pb-3">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
-              {flags.map(flag => (
+              {flags.map((flag) => (
                 <FlagStatusIndicator key={flag.key} flagKey={flag.key} label={flag.label} />
               ))}
             </div>
@@ -360,7 +364,7 @@ function FeatureFlagDebugPanel() {
 
 function FlagStatusIndicator({ flagKey, label }: { flagKey: string; label: string }) {
   const isEnabled = useBooleanFlag(flagKey);
-  
+
   return (
     <div className="flex items-center space-x-1 text-xs">
       <div className={`w-2 h-2 rounded-full ${isEnabled ? 'bg-green-500' : 'bg-red-500'}`} />

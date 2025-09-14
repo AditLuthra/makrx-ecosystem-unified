@@ -4,10 +4,7 @@ import { registrations, subEvents, microsites, users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 // GET /api/registrations/[id] - Get registration details
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -40,16 +37,16 @@ export async function GET(
       .limit(1);
 
     if (!registration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     // Calculate payment expiry (24 hours from registration for pending payments)
-    const paymentExpiresAt = registration.status === 'pending' 
-      ? new Date(new Date(registration.registeredAt).getTime() + 24 * 60 * 60 * 1000).toISOString()
-      : null;
+    const paymentExpiresAt =
+      registration.status === 'pending'
+        ? new Date(
+            new Date(registration.registeredAt).getTime() + 24 * 60 * 60 * 1000,
+          ).toISOString()
+        : null;
 
     const response = {
       registration: {
@@ -57,7 +54,8 @@ export async function GET(
         eventTitle: `${registration.micrositeTitle} - ${registration.eventTitle}`,
         eventDate: registration.eventStartsAt,
         eventLocation: registration.eventLocation || 'TBD',
-        participantName: `${registration.userFirstName || ''} ${registration.userLastName || ''}`.trim(),
+        participantName:
+          `${registration.userFirstName || ''} ${registration.userLastName || ''}`.trim(),
         email: registration.userEmail,
         amount: registration.eventPrice || 0,
         currency: registration.eventCurrency || 'USD',
@@ -67,25 +65,18 @@ export async function GET(
         checkedInAt: registration.checkedInAt,
         expiresAt: paymentExpiresAt,
         participantInfo: registration.participantInfo,
-      }
+      },
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Error fetching registration:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch registration' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch registration' }, { status: 500 });
   }
 }
 
 // PUT /api/registrations/[id] - Update registration
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -98,10 +89,7 @@ export async function PUT(
       .limit(1);
 
     if (!existingRegistration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     // Update registration
@@ -131,21 +119,14 @@ export async function PUT(
       success: true,
       registration: updatedRegistration,
     });
-
   } catch (error) {
     console.error('Error updating registration:', error);
-    return NextResponse.json(
-      { error: 'Failed to update registration' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update registration' }, { status: 500 });
   }
 }
 
 // DELETE /api/registrations/[id] - Cancel registration
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
 
@@ -157,10 +138,7 @@ export async function DELETE(
       .limit(1);
 
     if (!existingRegistration) {
-      return NextResponse.json(
-        { error: 'Registration not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
     }
 
     // Soft delete by updating status
@@ -180,12 +158,8 @@ export async function DELETE(
       success: true,
       message: 'Registration cancelled successfully',
     });
-
   } catch (error) {
     console.error('Error cancelling registration:', error);
-    return NextResponse.json(
-      { error: 'Failed to cancel registration' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to cancel registration' }, { status: 500 });
   }
 }

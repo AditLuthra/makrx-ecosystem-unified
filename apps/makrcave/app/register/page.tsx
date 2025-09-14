@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { Building2, UserPlus, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -22,7 +28,7 @@ export default function RegisterPage() {
         'Basic inventory tracking',
         'Project collaboration',
         'Community access',
-      ]
+      ],
     },
     {
       id: 'pro' as const,
@@ -35,7 +41,7 @@ export default function RegisterPage() {
         'Custom workflows',
         'Priority support',
         'API access',
-      ]
+      ],
     },
     {
       id: 'enterprise' as const,
@@ -48,8 +54,8 @@ export default function RegisterPage() {
         'Dedicated support',
         'SLA guarantee',
         'Custom training',
-      ]
-    }
+      ],
+    },
   ];
 
   const handleRegister = () => {
@@ -61,18 +67,13 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
       <div className="max-w-6xl mx-auto py-8">
-        
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gradient-to-br from-blue-400 to-purple-600 rounded-full mb-4 shadow-lg">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Join MakrCave
-          </h1>
-          <p className="text-xl text-gray-300">
-            Start managing your makerspace today
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Join MakrCave</h1>
+          <p className="text-xl text-gray-300">Start managing your makerspace today</p>
         </div>
 
         {/* Pricing Cards */}
@@ -94,17 +95,13 @@ export default function RegisterPage() {
                   </span>
                 </div>
               )}
-              
+
               <CardHeader>
                 <CardTitle className="text-white text-xl">{plan.name}</CardTitle>
-                <CardDescription className="text-gray-300">
-                  {plan.description}
-                </CardDescription>
-                <div className="text-3xl font-bold text-blue-400">
-                  {plan.price}
-                </div>
+                <CardDescription className="text-gray-300">{plan.description}</CardDescription>
+                <div className="text-3xl font-bold text-blue-400">{plan.price}</div>
               </CardHeader>
-              
+
               <CardContent>
                 <ul className="space-y-3">
                   {plan.features.map((feature, index) => (
@@ -128,10 +125,10 @@ export default function RegisterPage() {
                 Create Your Account
               </CardTitle>
               <CardDescription className="text-gray-300">
-                Get started with {plans.find(p => p.id === selectedPlan)?.name} plan
+                Get started with {plans.find((p) => p.id === selectedPlan)?.name} plan
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -143,7 +140,7 @@ export default function RegisterPage() {
                   className="w-full px-4 py-3 bg-slate-700/50 border border-blue-500/30 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/50 transition-all"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Email Address
@@ -154,11 +151,9 @@ export default function RegisterPage() {
                   className="w-full px-4 py-3 bg-slate-700/50 border border-blue-500/30 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/50 transition-all"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
                 <input
                   type="password"
                   placeholder="Create a secure password"
@@ -177,7 +172,10 @@ export default function RegisterPage() {
               <div className="text-center pt-4">
                 <p className="text-gray-400 text-sm">
                   Already have an account?{' '}
-                  <Link href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+                  <Link
+                    href="/login"
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                  >
                     Sign in
                   </Link>
                 </p>
@@ -188,9 +186,7 @@ export default function RegisterPage() {
 
         {/* Features Preview */}
         <div className="mt-12 text-center">
-          <h3 className="text-2xl font-bold text-white mb-6">
-            Why Choose MakrCave?
-          </h3>
+          <h3 className="text-2xl font-bold text-white mb-6">Why Choose MakrCave?</h3>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-slate-800/30 backdrop-blur-sm border border-blue-500/20 rounded-lg p-6">
               <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -201,7 +197,7 @@ export default function RegisterPage() {
                 Track, reserve, and maintain all your makerspace equipment with ease.
               </p>
             </div>
-            
+
             <div className="bg-slate-800/30 backdrop-blur-sm border border-blue-500/20 rounded-lg p-6">
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-6 h-6 text-green-400" />
@@ -211,7 +207,7 @@ export default function RegisterPage() {
                 Enable seamless collaboration between makers and project teams.
               </p>
             </div>
-            
+
             <div className="bg-slate-800/30 backdrop-blur-sm border border-blue-500/20 rounded-lg p-6">
               <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <UserPlus className="w-6 h-6 text-purple-400" />

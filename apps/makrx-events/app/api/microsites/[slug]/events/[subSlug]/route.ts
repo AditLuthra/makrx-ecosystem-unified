@@ -5,7 +5,7 @@ import { insertSubEventSchema } from '@shared/schema';
 // GET /api/microsites/[slug]/events/[subSlug] - Get specific sub-event
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string; subSlug: string } }
+  { params }: { params: { slug: string; subSlug: string } },
 ) {
   try {
     const { slug, subSlug } = await params;
@@ -19,7 +19,8 @@ export async function GET(
       type: 'competition',
       track: 'robotics',
       shortDesc: 'Build and program robots to navigate an obstacle course autonomously.',
-      longDesc: 'Teams will design, build, and program autonomous robots capable of navigating complex obstacle courses. Robots must demonstrate advanced sensing, navigation, and decision-making capabilities.',
+      longDesc:
+        'Teams will design, build, and program autonomous robots capable of navigating complex obstacle courses. Robots must demonstrate advanced sensing, navigation, and decision-making capabilities.',
       rulesMd: `# Competition Rules
 
 ## General Rules
@@ -52,7 +53,7 @@ export async function GET(
       venue: {
         name: 'Competition Arena',
         location: 'Main Hall, Level 2',
-        capacity: 200
+        capacity: 200,
       },
       registrationType: 'free',
       capacity: 50,
@@ -66,13 +67,13 @@ export async function GET(
         {
           name: 'Dr. Sarah Chen',
           title: 'Robotics Engineer, Tesla',
-          bio: 'Leading expert in autonomous systems with 15+ years experience.'
+          bio: 'Leading expert in autonomous systems with 15+ years experience.',
         },
         {
           name: 'Mike Rodriguez',
           title: 'Founder, RoboTech Labs',
-          bio: 'Serial entrepreneur and robotics competition organizer.'
-        }
+          bio: 'Serial entrepreneur and robotics competition organizer.',
+        },
       ],
       schedule: [
         { time: '14:00', activity: 'Registration & Setup' },
@@ -81,39 +82,33 @@ export async function GET(
         { time: '15:30', activity: 'Round 1 - Qualifying' },
         { time: '16:30', activity: 'Round 2 - Semi-Finals' },
         { time: '17:30', activity: 'Final Round' },
-        { time: '18:00', activity: 'Awards Ceremony' }
+        { time: '18:00', activity: 'Awards Ceremony' },
       ],
       requirements: [
         'Basic knowledge of robotics and programming',
         'Team of 2-4 members (individuals welcome)',
         'Bring your own laptop for programming',
-        'Robot kit provided or bring your own'
+        'Robot kit provided or bring your own',
       ],
       createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-02-01T15:30:00Z'
+      updatedAt: '2024-02-01T15:30:00Z',
     };
 
     if (mockSubEvent.slug !== subSlug) {
-      return NextResponse.json(
-        { error: 'Sub-event not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Sub-event not found' }, { status: 404 });
     }
 
     return NextResponse.json(mockSubEvent);
   } catch (error) {
     console.error('Error fetching sub-event:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch sub-event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch sub-event' }, { status: 500 });
   }
 }
 
 // PATCH /api/microsites/[slug]/events/[subSlug] - Update sub-event
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string; subSlug: string } }
+  { params }: { params: { slug: string; subSlug: string } },
 ) {
   try {
     const { slug, subSlug } = await params;
@@ -144,33 +139,30 @@ export async function PATCH(
       badgeId: validatedData.badgeId || null,
       ticketingProfileId: validatedData.ticketingProfileId || null,
       status: validatedData.status || 'published',
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json(updatedSubEvent);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.issues
+          details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error updating sub-event:', error);
-    return NextResponse.json(
-      { error: 'Failed to update sub-event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update sub-event' }, { status: 500 });
   }
 }
 
 // DELETE /api/microsites/[slug]/events/[subSlug] - Delete sub-event
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; subSlug: string } }
+  { params }: { params: { slug: string; subSlug: string } },
 ) {
   try {
     const { slug, subSlug } = await params;
@@ -182,15 +174,9 @@ export async function DELETE(
     // Mock deletion - replace with actual database delete
     console.log(`Deleting sub-event ${subSlug} from microsite ${slug}`);
 
-    return NextResponse.json(
-      { message: 'Sub-event deleted successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Sub-event deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting sub-event:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete sub-event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete sub-event' }, { status: 500 });
   }
 }

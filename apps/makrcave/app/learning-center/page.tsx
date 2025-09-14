@@ -1,13 +1,19 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Progress } from '../../components/ui/progress';
-import { 
+import {
   BookOpen,
   Users,
   Award,
@@ -34,7 +40,7 @@ import {
   Headphones,
   Image as ImageIcon,
   Upload,
-  Save
+  Save,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -110,7 +116,8 @@ const LearningCenter: React.FC = () => {
       {
         id: 'course-001',
         title: '3D Printing Fundamentals',
-        description: 'Master the basics of 3D printing technology, materials, and design principles.',
+        description:
+          'Master the basics of 3D printing technology, materials, and design principles.',
         instructor: 'Dr. Sarah Chen',
         category: '3D Printing',
         difficulty: 'Beginner',
@@ -125,12 +132,13 @@ const LearningCenter: React.FC = () => {
         type: 'video',
         progress: 65,
         enrolled: true,
-        nextLesson: 'Lesson 8: Advanced Support Structures'
+        nextLesson: 'Lesson 8: Advanced Support Structures',
       },
       {
         id: 'course-002',
         title: 'Advanced CNC Machining',
-        description: 'Deep dive into precision machining techniques and advanced toolpath strategies.',
+        description:
+          'Deep dive into precision machining techniques and advanced toolpath strategies.',
         instructor: 'Mike Rodriguez',
         category: 'CNC',
         difficulty: 'Advanced',
@@ -142,12 +150,13 @@ const LearningCenter: React.FC = () => {
         tags: ['CNC', 'Machining', 'Precision'],
         skills: ['G-Code Programming', 'Tool Selection', 'Quality Control'],
         thumbnail: '/api/placeholder/300/200',
-        type: 'workshop'
+        type: 'workshop',
       },
       {
         id: 'course-003',
         title: 'Electronics for Makers',
-        description: 'Build your foundation in electronics, from basic circuits to microcontrollers.',
+        description:
+          'Build your foundation in electronics, from basic circuits to microcontrollers.',
         instructor: 'Alex Johnson',
         category: 'Electronics',
         difficulty: 'Intermediate',
@@ -161,7 +170,7 @@ const LearningCenter: React.FC = () => {
         thumbnail: '/api/placeholder/300/200',
         type: 'interactive',
         progress: 30,
-        enrolled: true
+        enrolled: true,
       },
       {
         id: 'course-004',
@@ -178,8 +187,8 @@ const LearningCenter: React.FC = () => {
         tags: ['Laser Cutting', 'Vector Design', 'Materials'],
         skills: ['Vector Graphics', 'Material Preparation', 'Safety Protocols'],
         thumbnail: '/api/placeholder/300/200',
-        type: 'video'
-      }
+        type: 'video',
+      },
     ];
 
     const mockCertifications: Certification[] = [
@@ -188,27 +197,35 @@ const LearningCenter: React.FC = () => {
         name: 'Certified 3D Printing Specialist',
         description: 'Industry-recognized certification for 3D printing expertise.',
         category: '3D Printing',
-        requirements: ['Complete 3D Printing Fundamentals', 'Pass practical exam', 'Submit portfolio project'],
+        requirements: [
+          'Complete 3D Printing Fundamentals',
+          'Pass practical exam',
+          'Submit portfolio project',
+        ],
         validityPeriod: 24,
         issuer: 'MakrCave Academy',
         difficulty: 'Intermediate',
         prerequisites: ['Basic CAD knowledge'],
         estimatedTime: 40,
         status: 'in_progress',
-        progress: 75
+        progress: 75,
       },
       {
         id: 'cert-002',
         name: 'CNC Machining Professional',
         description: 'Advanced certification for precision machining professionals.',
         category: 'CNC',
-        requirements: ['Complete Advanced CNC course', 'Pass written exam', 'Demonstrate machining proficiency'],
+        requirements: [
+          'Complete Advanced CNC course',
+          'Pass written exam',
+          'Demonstrate machining proficiency',
+        ],
         validityPeriod: 36,
         issuer: 'Manufacturing Institute',
         difficulty: 'Advanced',
         prerequisites: ['2 years machining experience'],
         estimatedTime: 60,
-        status: 'not_started'
+        status: 'not_started',
       },
       {
         id: 'cert-003',
@@ -225,20 +242,21 @@ const LearningCenter: React.FC = () => {
         progress: 100,
         completedDate: '2024-01-15',
         expiryDate: '2025-01-15',
-        credentialId: 'ESC-2024-001234'
-      }
+        credentialId: 'ESC-2024-001234',
+      },
     ];
 
     const mockLearningPaths: LearningPath[] = [
       {
         id: 'path-001',
         title: 'Digital Fabrication Master',
-        description: 'Complete pathway from beginner to expert in digital fabrication technologies.',
+        description:
+          'Complete pathway from beginner to expert in digital fabrication technologies.',
         courses: ['course-001', 'course-002', 'course-004'],
         totalHours: 44,
         difficulty: 'Progressive',
         completion: 45,
-        enrolled: true
+        enrolled: true,
       },
       {
         id: 'path-002',
@@ -248,41 +266,50 @@ const LearningCenter: React.FC = () => {
         totalHours: 32,
         difficulty: 'Intermediate',
         completion: 0,
-        enrolled: false
-      }
+        enrolled: false,
+      },
     ];
 
     setCourses(mockCourses);
     setCertifications(mockCertifications);
     setLearningPaths(mockLearningPaths);
-    setEnrolledCourses(mockCourses.filter(course => course.enrolled));
+    setEnrolledCourses(mockCourses.filter((course) => course.enrolled));
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Advanced': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Advanced':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'expired': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'completed':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'expired':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'all' || course.category === filterCategory;
     const matchesDifficulty = filterDifficulty === 'all' || course.difficulty === filterDifficulty;
-    
+
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
 
@@ -292,7 +319,9 @@ const LearningCenter: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Learning Center</h1>
-          <p className="text-gray-600">Expand your skills with our comprehensive courses and certifications</p>
+          <p className="text-gray-600">
+            Expand your skills with our comprehensive courses and certifications
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <Button variant="outline">
@@ -403,7 +432,7 @@ const LearningCenter: React.FC = () => {
                   <SelectItem value="Laser Cutting">Laser Cutting</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={filterDifficulty} onValueChange={setFilterDifficulty}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Difficulty" />
@@ -415,7 +444,7 @@ const LearningCenter: React.FC = () => {
                   <SelectItem value="Advanced">Advanced</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Button variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
                 More Filters
@@ -428,8 +457,8 @@ const LearningCenter: React.FC = () => {
             {filteredCourses.map((course) => (
               <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative">
-                  <img 
-                    src={course.thumbnail} 
+                  <img
+                    src={course.thumbnail}
                     alt={course.title}
                     className="w-full h-48 object-cover"
                   />
@@ -459,7 +488,7 @@ const LearningCenter: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-semibold text-lg line-clamp-2">{course.title}</h3>
@@ -468,9 +497,9 @@ const LearningCenter: React.FC = () => {
                       <span className="text-sm font-medium">{course.rating}</span>
                     </div>
                   </div>
-                  
+
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{course.description}</p>
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                     <span>By {course.instructor}</span>
                     <div className="flex items-center space-x-4">
@@ -484,7 +513,7 @@ const LearningCenter: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-1 mb-4">
                     {course.tags.slice(0, 3).map((tag, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
@@ -492,11 +521,9 @@ const LearningCenter: React.FC = () => {
                       </Badge>
                     ))}
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-blue-600">
-                      ${course.price}
-                    </div>
+                    <div className="text-lg font-bold text-blue-600">${course.price}</div>
                     <div className="flex space-x-2">
                       {course.enrolled ? (
                         <>
@@ -510,9 +537,7 @@ const LearningCenter: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <Button size="sm">
-                            Enroll Now
-                          </Button>
+                          <Button size="sm">Enroll Now</Button>
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -542,7 +567,7 @@ const LearningCenter: React.FC = () => {
                   <div className="text-3xl font-bold text-blue-600">68%</div>
                   <div className="text-sm text-gray-600">Overall Progress</div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
@@ -551,7 +576,7 @@ const LearningCenter: React.FC = () => {
                     </div>
                     <Progress value={37.5} />
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span>Learning Hours</span>
@@ -559,7 +584,7 @@ const LearningCenter: React.FC = () => {
                     </div>
                     <Progress value={40} />
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span>Certifications</span>
@@ -568,7 +593,7 @@ const LearningCenter: React.FC = () => {
                     <Progress value={33.3} />
                   </div>
                 </div>
-                
+
                 <div className="pt-4 border-t">
                   <h4 className="font-medium mb-2">This Week</h4>
                   <div className="text-sm text-gray-600 space-y-1">
@@ -588,10 +613,13 @@ const LearningCenter: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {enrolledCourses.map((course) => (
-                    <div key={course.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div
+                      key={course.id}
+                      className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                    >
                       <div className="flex items-center space-x-4">
-                        <img 
-                          src={course.thumbnail} 
+                        <img
+                          src={course.thumbnail}
                           alt={course.title}
                           className="w-16 h-16 rounded-lg object-cover"
                         />
@@ -628,17 +656,43 @@ const LearningCenter: React.FC = () => {
             <CardContent>
               <div className="space-y-4">
                 {[
-                  { action: 'Completed', item: 'Lesson 7: Support Structures', course: '3D Printing Fundamentals', time: '2 hours ago' },
-                  { action: 'Started', item: 'Circuit Analysis Module', course: 'Electronics for Makers', time: '1 day ago' },
-                  { action: 'Earned', item: 'Safety Certificate', course: 'Electronics Safety', time: '3 days ago' },
-                  { action: 'Enrolled', item: 'Laser Cutting Mastery', course: 'New Course', time: '1 week ago' }
+                  {
+                    action: 'Completed',
+                    item: 'Lesson 7: Support Structures',
+                    course: '3D Printing Fundamentals',
+                    time: '2 hours ago',
+                  },
+                  {
+                    action: 'Started',
+                    item: 'Circuit Analysis Module',
+                    course: 'Electronics for Makers',
+                    time: '1 day ago',
+                  },
+                  {
+                    action: 'Earned',
+                    item: 'Safety Certificate',
+                    course: 'Electronics Safety',
+                    time: '3 days ago',
+                  },
+                  {
+                    action: 'Enrolled',
+                    item: 'Laser Cutting Mastery',
+                    course: 'New Course',
+                    time: '1 week ago',
+                  },
                 ].map((activity, index) => (
                   <div key={index} className="flex items-center space-x-4 p-3 border rounded-lg">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      {activity.action === 'Completed' && <CheckCircle2 className="h-4 w-4 text-green-600" />}
+                      {activity.action === 'Completed' && (
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      )}
                       {activity.action === 'Started' && <Play className="h-4 w-4 text-blue-600" />}
-                      {activity.action === 'Earned' && <Award className="h-4 w-4 text-yellow-600" />}
-                      {activity.action === 'Enrolled' && <BookOpen className="h-4 w-4 text-purple-600" />}
+                      {activity.action === 'Earned' && (
+                        <Award className="h-4 w-4 text-yellow-600" />
+                      )}
+                      {activity.action === 'Enrolled' && (
+                        <BookOpen className="h-4 w-4 text-purple-600" />
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="text-sm">
@@ -665,18 +719,16 @@ const LearningCenter: React.FC = () => {
                       <CardTitle className="text-xl">{path.title}</CardTitle>
                       <p className="text-gray-600 mt-1">{path.description}</p>
                     </div>
-                    <Badge className={getDifficultyColor(path.difficulty)}>
-                      {path.difficulty}
-                    </Badge>
+                    <Badge className={getDifficultyColor(path.difficulty)}>{path.difficulty}</Badge>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <span>{path.courses.length} courses</span>
                     <span>{path.totalHours} hours total</span>
                   </div>
-                  
+
                   {path.enrolled && (
                     <div>
                       <div className="flex justify-between text-sm mb-2">
@@ -686,14 +738,17 @@ const LearningCenter: React.FC = () => {
                       <Progress value={path.completion} />
                     </div>
                   )}
-                  
+
                   <div className="space-y-2">
                     {path.courses.slice(0, 3).map((courseId, index) => {
-                      const course = courses.find(c => c.id === courseId);
+                      const course = courses.find((c) => c.id === courseId);
                       if (!course) return null;
-                      
+
                       return (
-                        <div key={courseId} className="flex items-center space-x-3 p-2 border rounded">
+                        <div
+                          key={courseId}
+                          className="flex items-center space-x-3 p-2 border rounded"
+                        >
                           <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-medium">
                             {index + 1}
                           </div>
@@ -708,7 +763,7 @@ const LearningCenter: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     {path.enrolled ? (
                       <Button className="flex-1">
@@ -716,9 +771,7 @@ const LearningCenter: React.FC = () => {
                         Continue Path
                       </Button>
                     ) : (
-                      <Button className="flex-1">
-                        Start Learning Path
-                      </Button>
+                      <Button className="flex-1">Start Learning Path</Button>
                     )}
                     <Button variant="outline">
                       <Eye className="h-4 w-4" />
@@ -750,10 +803,10 @@ const LearningCenter: React.FC = () => {
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   <p className="text-sm text-gray-600">{cert.description}</p>
-                  
+
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-500">Issuer:</span>
@@ -774,7 +827,7 @@ const LearningCenter: React.FC = () => {
                       </Badge>
                     </div>
                   </div>
-                  
+
                   {cert.status === 'in_progress' && cert.progress && (
                     <div>
                       <div className="flex justify-between text-sm mb-2">
@@ -784,7 +837,7 @@ const LearningCenter: React.FC = () => {
                       <Progress value={cert.progress} />
                     </div>
                   )}
-                  
+
                   {cert.status === 'completed' && (
                     <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                       <div className="flex items-center space-x-2 text-green-800 mb-2">
@@ -808,7 +861,7 @@ const LearningCenter: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div>
                     <h5 className="font-medium text-sm mb-2">Requirements:</h5>
                     <ul className="text-sm text-gray-600 space-y-1">
@@ -820,12 +873,10 @@ const LearningCenter: React.FC = () => {
                       ))}
                     </ul>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     {cert.status === 'not_started' && (
-                      <Button className="flex-1">
-                        Start Certification
-                      </Button>
+                      <Button className="flex-1">Start Certification</Button>
                     )}
                     {cert.status === 'in_progress' && (
                       <Button className="flex-1">
@@ -860,7 +911,7 @@ const LearningCenter: React.FC = () => {
                 rating: 4.9,
                 specialties: ['3D Printing', 'CAD Design', 'Materials Science'],
                 bio: 'PhD in Materials Engineering with 15+ years in additive manufacturing.',
-                avatar: '/api/placeholder/100/100'
+                avatar: '/api/placeholder/100/100',
               },
               {
                 name: 'Mike Rodriguez',
@@ -870,7 +921,7 @@ const LearningCenter: React.FC = () => {
                 rating: 4.8,
                 specialties: ['CNC Machining', 'Precision Engineering', 'Quality Control'],
                 bio: 'Former Boeing engineer, now sharing 20 years of machining expertise.',
-                avatar: '/api/placeholder/100/100'
+                avatar: '/api/placeholder/100/100',
               },
               {
                 name: 'Alex Johnson',
@@ -880,13 +931,13 @@ const LearningCenter: React.FC = () => {
                 rating: 4.7,
                 specialties: ['Circuit Design', 'Microcontrollers', 'IoT'],
                 bio: 'Startup founder and electronics educator passionate about maker culture.',
-                avatar: '/api/placeholder/100/100'
-              }
+                avatar: '/api/placeholder/100/100',
+              },
             ].map((instructor, index) => (
               <Card key={index} className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="text-center mb-4">
-                    <img 
+                    <img
                       src={instructor.avatar}
                       alt={instructor.name}
                       className="w-20 h-20 rounded-full mx-auto mb-3"
@@ -894,26 +945,28 @@ const LearningCenter: React.FC = () => {
                     <h3 className="font-semibold text-lg">{instructor.name}</h3>
                     <p className="text-gray-600 text-sm">{instructor.title}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-4 text-center">
                     <div>
                       <div className="font-bold text-blue-600">{instructor.courses}</div>
                       <div className="text-xs text-gray-600">Courses</div>
                     </div>
                     <div>
-                      <div className="font-bold text-green-600">{instructor.students.toLocaleString()}</div>
+                      <div className="font-bold text-green-600">
+                        {instructor.students.toLocaleString()}
+                      </div>
                       <div className="text-xs text-gray-600">Students</div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center space-x-1 mb-4">
                     <Star className="h-4 w-4 text-yellow-500 fill-current" />
                     <span className="font-medium">{instructor.rating}</span>
                     <span className="text-gray-500 text-sm">rating</span>
                   </div>
-                  
+
                   <p className="text-sm text-gray-600 mb-4">{instructor.bio}</p>
-                  
+
                   <div className="flex flex-wrap gap-1 mb-4">
                     {instructor.specialties.map((specialty, i) => (
                       <Badge key={i} variant="outline" className="text-xs">
@@ -921,14 +974,12 @@ const LearningCenter: React.FC = () => {
                       </Badge>
                     ))}
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <Button variant="outline" className="flex-1">
                       View Profile
                     </Button>
-                    <Button className="flex-1">
-                      View Courses
-                    </Button>
+                    <Button className="flex-1">View Courses</Button>
                   </div>
                 </CardContent>
               </Card>

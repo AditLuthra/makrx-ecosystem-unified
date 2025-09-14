@@ -16,7 +16,9 @@ class User(Base):
     role = Column(String, default="user")
     status = Column(String, default="active")
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
 
     __table_args__ = (
         UniqueConstraint("email", name="uq_users_email"),

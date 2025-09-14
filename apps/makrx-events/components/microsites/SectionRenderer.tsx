@@ -42,7 +42,7 @@ const SECTION_COMPONENTS = {
   tracks: Tracks,
   speakers: Speakers,
   venue: Venue,
-  'custom-mdx': CustomMDX
+  'custom-mdx': CustomMDX,
 } as const;
 
 // Loading skeleton for each section type
@@ -63,7 +63,7 @@ const SectionSkeleton = ({ type }: { type: string }) => {
         <div className="space-y-4">
           <Skeleton className="h-8 w-48" />
           <div className="grid gap-4">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="flex space-x-4">
                 <Skeleton className="h-12 w-20" />
                 <div className="flex-1 space-y-2">
@@ -80,7 +80,7 @@ const SectionSkeleton = ({ type }: { type: string }) => {
         <div className="space-y-6">
           <Skeleton className="h-8 w-48" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
           </div>
@@ -101,22 +101,19 @@ const SectionSkeleton = ({ type }: { type: string }) => {
 export default function SectionRenderer({ sections, micrositeSlug, theme }: SectionRendererProps) {
   // Filter and sort sections
   const visibleSections = sections
-    .filter(section => section.isVisible !== false)
+    .filter((section) => section.isVisible !== false)
     .sort((a, b) => a.order - b.order);
 
   const renderSection = (section: PageSection) => {
     const SectionComponent = SECTION_COMPONENTS[section.type as keyof typeof SECTION_COMPONENTS];
-    
+
     if (!SectionComponent) {
       console.warn(`Unknown section type: ${section.type}`);
       return null;
     }
 
     return (
-      <Suspense 
-        key={section.id} 
-        fallback={<SectionSkeleton type={section.type} />}
-      >
+      <Suspense key={section.id} fallback={<SectionSkeleton type={section.type} />}>
         <SectionComponent
           id={section.id}
           content={section.contentJson}
@@ -128,9 +125,5 @@ export default function SectionRenderer({ sections, micrositeSlug, theme }: Sect
     );
   };
 
-  return (
-    <div className="space-y-12">
-      {visibleSections.map(renderSection)}
-    </div>
-  );
+  return <div className="space-y-12">{visibleSections.map(renderSection)}</div>;
 }

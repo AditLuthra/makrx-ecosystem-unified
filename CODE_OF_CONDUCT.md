@@ -29,4 +29,3 @@ Project maintainers who do not follow or enforce the Code of Conduct may be remo
 ## Reporting
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting community@makrx.com.
-

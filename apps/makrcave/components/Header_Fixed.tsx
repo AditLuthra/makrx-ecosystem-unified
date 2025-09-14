@@ -19,7 +19,7 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  
+
   const appsRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -43,11 +43,10 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-blue-500/30 transition-all shadow-lg">
         <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
           <div className="flex items-center justify-between h-12 sm:h-14 md:h-16">
-            
             {/* Left Section - Logo & Mobile Menu */}
             <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
               {/* Mobile Menu Button */}
-              <button 
+              <button
                 className="lg:hidden p-1.5 sm:p-2 hover:bg-blue-500/10 rounded-lg transition-all text-blue-400 hover:shadow-sm"
                 onClick={onMobileMenuClick}
                 aria-label="Toggle mobile menu"
@@ -56,8 +55,8 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
               </button>
 
               {/* Logo */}
-              <Link 
-                href="/dashboard" 
+              <Link
+                href="/dashboard"
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               >
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded-md sm:rounded-lg flex items-center justify-center flex-shrink-0">
@@ -85,7 +84,6 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
 
             {/* Right Section - Actions & User */}
             <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink-0">
-              
               {/* Mobile Search Button */}
               <Button
                 variant="ghost"
@@ -124,8 +122,8 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <Link 
-                        href="/dashboard" 
+                      <Link
+                        href="/dashboard"
                         onClick={() => setShowApps(false)}
                         className="p-3 rounded-lg border border-blue-500/30 hover:border-blue-400/50 hover:shadow-md transition-all group bg-slate-700/50 hover:bg-slate-700/70"
                       >
@@ -165,8 +163,8 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
                         </div>
                         <div className="text-xs text-gray-400">Main Hub</div>
                       </a>
-                      <Link 
-                        href="/makrverse" 
+                      <Link
+                        href="/makrverse"
                         onClick={() => setShowApps(false)}
                         className="p-3 rounded-lg border border-blue-500/30 hover:border-blue-400/50 hover:shadow-md transition-all group bg-slate-700/50 hover:bg-slate-700/70"
                       >
@@ -192,7 +190,7 @@ export default function HeaderFixed({ onMobileMenuClick }: HeaderProps) {
                 aria-label="Toggle theme"
               >
                 <span className="text-sm sm:text-base">
-                  {theme === "dark" ? "🌙" : theme === "light" ? "☀️" : "🖥️"}
+                  {theme === 'dark' ? '🌙' : theme === 'light' ? '☀️' : '🖥️'}
                 </span>
               </Button>
 

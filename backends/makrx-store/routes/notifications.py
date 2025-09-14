@@ -1,6 +1,7 @@
 """
 User notifications and settings endpoints (DB-backed)
 """
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
@@ -56,7 +57,12 @@ async def update_user_notification_settings(
     if existing:
         existing.value = updated
     else:
-        cfg = SystemConfig(key=key, value=updated, description="User notification settings", category="notifications")
+        cfg = SystemConfig(
+            key=key,
+            value=updated,
+            description="User notification settings",
+            category="notifications",
+        )
         db.add(cfg)
     await db.commit()
     return {"message": "Settings updated"}
@@ -74,29 +80,52 @@ async def list_notifications(
 ):
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    base = select(NotificationModel).where(NotificationModel.user_id == current_user.user_id)
+    base = select(NotificationModel).where(
+        NotificationModel.user_id == current_user.user_id
+    )
     if type:
         base = base.where(NotificationModel.type == type)
     if status:
         base = base.where(NotificationModel.status == status)
     if read is not None:
         # Filter by meta->>'read' JSON flag
-        base = base.where((NotificationModel.meta['read'].astext == ('true' if read else 'false')))
+        base = base.where(
+            (
+                NotificationModel.meta["read"].astext
+                == ("true" if read else "false")
+            )
+        )
 
     # Count
-    count_stmt = base.with_only_columns(func.count(NotificationModel.id)).order_by(None)
+    count_stmt = base.with_only_columns(
+        func.count(NotificationModel.id)
+    ).order_by(None)
     total = (await db.execute(count_stmt)).scalar_one()
 
     # Page
     offset = (page - 1) * per_page
-    rows = (await db.execute(base.order_by(NotificationModel.created_at.desc()).offset(offset).limit(per_page))).scalars().all()
+    rows = (
+        (
+            await db.execute(
+                base.order_by(NotificationModel.created_at.desc())
+                .offset(offset)
+                .limit(per_page)
+            )
+        )
+        .scalars()
+        .all()
+    )
     items = [
         {
             "id": str(n.id),
             "type": n.type,
             "title": n.subject or n.template,
             "message": n.message,
-            "timestamp": n.created_at.isoformat() if n.created_at else datetime.utcnow().isoformat(),
+            "timestamp": (
+                n.created_at.isoformat()
+                if n.created_at
+                else datetime.utcnow().isoformat()
+            ),
             "read": bool((n.meta or {}).get("read", False)),
             "related_type": n.related_type,
             "related_id": n.related_id,
@@ -105,7 +134,7 @@ async def list_notifications(
     ]
     unread_stmt = select(func.count(NotificationModel.id)).where(
         NotificationModel.user_id == current_user.user_id,
-        (NotificationModel.meta['read'].astext != 'true')
+        (NotificationModel.meta["read"].astext != "true"),
     )
     unread_count = (await db.execute(unread_stmt)).scalar_one()
     pages = max(1, (total + per_page - 1) // per_page)
@@ -121,7 +150,7 @@ async def list_notifications(
 
 @router.get("/admin/notifications")
 async def admin_list_notifications(
-    current_admin = Depends(require_admin),
+    current_admin=Depends(require_admin),
     db: AsyncSession = Depends(get_db),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
@@ -143,17 +172,34 @@ async def admin_list_notifications(
     if status:
         base = base.where(NotificationModel.status == status)
     if read is not None:
-        base = base.where((NotificationModel.meta['read'].astext == ('true' if read else 'false')))
+        base = base.where(
+            (
+                NotificationModel.meta["read"].astext
+                == ("true" if read else "false")
+            )
+        )
     if date_from:
         base = base.where(NotificationModel.created_at >= date_from)
     if date_to:
         base = base.where(NotificationModel.created_at <= date_to)
 
-    count_stmt = base.with_only_columns(func.count(NotificationModel.id)).order_by(None)
+    count_stmt = base.with_only_columns(
+        func.count(NotificationModel.id)
+    ).order_by(None)
     total = (await db.execute(count_stmt)).scalar_one()
 
     offset = (page - 1) * per_page
-    rows = (await db.execute(base.order_by(NotificationModel.created_at.desc()).offset(offset).limit(per_page))).scalars().all()
+    rows = (
+        (
+            await db.execute(
+                base.order_by(NotificationModel.created_at.desc())
+                .offset(offset)
+                .limit(per_page)
+            )
+        )
+        .scalars()
+        .all()
+    )
     items = [
         {
             "id": str(n.id),
@@ -183,18 +229,25 @@ async def admin_list_notifications(
 
 @router.post("/admin/notifications/seed")
 async def seed_notifications(
-    current_admin = Depends(require_admin),
+    current_admin=Depends(require_admin),
     db: AsyncSession = Depends(get_db),
-    user_id: Optional[str] = Query(None, description="Target user_id; defaults to admin user"),
+    user_id: Optional[str] = Query(
+        None, description="Target user_id; defaults to admin user"
+    ),
     count: int = Query(5, ge=1, le=50),
 ):
     # Only allow seeding in non-production environments
     if os.getenv("ENVIRONMENT", "development") == "production":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Seeding disabled in production")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Seeding disabled in production",
+        )
 
     target_user = user_id or getattr(current_admin, "user_id", None)
     if not target_user:
-        raise HTTPException(status_code=400, detail="Unable to resolve user_id for seeding")
+        raise HTTPException(
+            status_code=400, detail="Unable to resolve user_id for seeding"
+        )
 
     now = datetime.utcnow()
     created = 0
@@ -210,12 +263,16 @@ async def seed_notifications(
             status=statuses[i % len(statuses)],
             meta={"read": i % 3 == 0},
             provider="internal",
-            created_at=now - timedelta(minutes=5*i),
+            created_at=now - timedelta(minutes=5 * i),
         )
         db.add(n)
         created += 1
     await db.commit()
-    return {"message": "Notifications seeded", "created": created, "user_id": target_user}
+    return {
+        "message": "Notifications seeded",
+        "created": created,
+        "user_id": target_user,
+    }
 
 
 @router.post("/notifications/{notification_id}/read")
@@ -247,7 +304,9 @@ async def mark_all_notifications_read(
 ):
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    stmt = select(NotificationModel).where(NotificationModel.user_id == current_user.user_id)
+    stmt = select(NotificationModel).where(
+        NotificationModel.user_id == current_user.user_id
+    )
     rows = (await db.execute(stmt)).scalars().all()
     for notif in rows:
         meta = notif.meta or {}

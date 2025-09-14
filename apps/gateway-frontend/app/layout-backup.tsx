@@ -13,8 +13,18 @@ export const metadata: Metadata = {
     default: 'MakrX - Digital Manufacturing Ecosystem',
     template: '%s | MakrX',
   },
-  description: "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers. Access MakrCave makerspaces, shop at MakrX.Store, and get custom fabrication through 3D.MakrX.Store.",
-  keywords: ['makerspace', 'digital manufacturing', '3d printing', 'laser cutting', 'custom fabrication', 'tools', 'india', 'makrx'],
+  description:
+    "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers. Access MakrCave makerspaces, shop at MakrX.Store, and get custom fabrication through 3D.MakrX.Store.",
+  keywords: [
+    'makerspace',
+    'digital manufacturing',
+    '3d printing',
+    'laser cutting',
+    'custom fabrication',
+    'tools',
+    'india',
+    'makrx',
+  ],
   authors: [{ name: 'MakrX Team' }],
   creator: 'MakrX',
   publisher: 'MakrX',
@@ -29,7 +39,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://makrx.org',
     title: 'MakrX - Digital Manufacturing Ecosystem',
-    description: "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers.",
+    description:
+      "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers.",
     siteName: 'MakrX',
     images: [
       {
@@ -45,7 +56,8 @@ export const metadata: Metadata = {
     site: '@makrx',
     creator: '@makrx',
     title: 'MakrX - Digital Manufacturing Ecosystem',
-    description: "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers.",
+    description:
+      "India's leading digital manufacturing platform connecting creators, makerspaces, and service providers.",
     images: ['https://makrx.org/og-image.jpg'],
   },
   robots: {
@@ -70,11 +82,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -110,7 +118,7 @@ export default function RootLayout({
               Skip to main content
             </a>
             <Header />
-            
+
             <main id="main-content" className="flex-1 pt-16 md:pt-20" role="main">
               {children}
             </main>

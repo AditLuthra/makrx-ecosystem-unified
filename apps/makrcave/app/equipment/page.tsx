@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useAuthHeaders } from "@makrx/auth";
+import { useAuthHeaders } from '@makrx/auth';
 import {
   Activity,
   BarChart3,
@@ -18,50 +18,37 @@ import {
   Star,
   Wrench,
   X,
-} from "lucide-react";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import AddEquipmentModal from "../../components/AddEquipmentModal";
-import EquipmentCard from "../../components/EquipmentCard";
-import EquipmentRating from "../../components/EquipmentRating";
-import EquipmentSkillRequirements from "../../components/EquipmentSkillRequirements";
-import MaintenanceModal from "../../components/MaintenanceModal";
-import ReservationModal from "../../components/ReservationModal";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
-import { useAuth } from "../../contexts/AuthContext";
-import { useSkills } from "../../contexts/SkillContext";
-import api, { equipmentApi } from "../../services/apiService";
+} from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import AddEquipmentModal from '../../components/AddEquipmentModal';
+import EquipmentCard from '../../components/EquipmentCard';
+import EquipmentRating from '../../components/EquipmentRating';
+import EquipmentSkillRequirements from '../../components/EquipmentSkillRequirements';
+import MaintenanceModal from '../../components/MaintenanceModal';
+import ReservationModal from '../../components/ReservationModal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { useAuth } from '../../contexts/AuthContext';
+import { useSkills } from '../../contexts/SkillContext';
+import api, { equipmentApi } from '../../services/apiService';
 
 interface Equipment {
   id: string;
   equipment_id: string;
   name: string;
   category:
-    | "printer_3d"
-    | "laser_cutter"
-    | "cnc_machine"
-    | "testing_tool"
-    | "soldering_station"
-    | "workstation"
-    | "hand_tool"
-    | "measuring_tool"
-    | "general_tool";
+    | 'printer_3d'
+    | 'laser_cutter'
+    | 'cnc_machine'
+    | 'testing_tool'
+    | 'soldering_station'
+    | 'workstation'
+    | 'hand_tool'
+    | 'measuring_tool'
+    | 'general_tool';
   sub_category?: string;
-  status: "available" | "in_use" | "under_maintenance" | "offline";
+  status: 'available' | 'in_use' | 'under_maintenance' | 'offline';
   location: string;
   linked_makerspace_id: string;
   requires_certification: boolean;
@@ -89,7 +76,7 @@ interface EquipmentReservation {
   start_time: string;
   end_time: string;
   duration_hours: number;
-  status: "pending" | "approved" | "active" | "completed" | "cancelled";
+  status: 'pending' | 'approved' | 'active' | 'completed' | 'cancelled';
   purpose?: string;
   project_name?: string;
 }
@@ -115,25 +102,21 @@ export default function Equipment() {
   // State management
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [stats, setStats] = useState<EquipmentStats | null>(null);
-  const [activeTab, setActiveTab] = useState("equipment");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedLocation, setSelectedLocation] = useState("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [activeTab, setActiveTab] = useState('equipment');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
-  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(
-    null
-  );
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState({
-    start: new Date().toISOString().split("T")[0],
-    end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
+    start: new Date().toISOString().split('T')[0],
+    end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   });
 
   // Load equipment and stats on mount
@@ -149,16 +132,16 @@ export default function Equipment() {
       if (response.data) {
         setEquipment(response.data);
       } else {
-        throw new Error(response.error || "Failed to load equipment");
+        throw new Error(response.error || 'Failed to load equipment');
       }
     } catch (error) {
-      console.error("Error loading equipment:", error);
+      console.error('Error loading equipment:', error);
       // Fallback to mock data in development
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         setEquipment(mockEquipment);
       } else {
         // Show error message in production
-        alert("Failed to load equipment. Please refresh the page.");
+        alert('Failed to load equipment. Please refresh the page.');
       }
     }
   };
@@ -170,12 +153,12 @@ export default function Equipment() {
       if (response.data) {
         setStats(response.data);
       } else {
-        throw new Error(response.error || "Failed to load stats");
+        throw new Error(response.error || 'Failed to load stats');
       }
     } catch (error) {
-      console.error("Error loading stats:", error);
+      console.error('Error loading stats:', error);
       // Calculate mock stats in development
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         setStats(calculateMockStats());
       }
     }
@@ -183,117 +166,111 @@ export default function Equipment() {
 
   // Role-based permissions
   const canViewEquipment =
-    user?.role === "super_admin" ||
-    user?.role === "makerspace_admin" ||
-    user?.role === "admin" ||
-    user?.role === "user" ||
-    user?.role === "service_provider";
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'admin' ||
+    user?.role === 'user' ||
+    user?.role === 'service_provider';
   const canReserve =
-    user?.role === "super_admin" ||
-    user?.role === "makerspace_admin" ||
-    user?.role === "user" ||
-    user?.role === "service_provider";
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'user' ||
+    user?.role === 'service_provider';
   const canCreateEquipment =
-    user?.role === "super_admin" ||
-    user?.role === "makerspace_admin" ||
-    user?.role === "service_provider";
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
   const canMaintenanceLogs =
-    user?.role === "super_admin" ||
-    user?.role === "makerspace_admin" ||
-    user?.role === "service_provider";
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
   const canDeleteEquipment =
-    user?.role === "super_admin" ||
-    user?.role === "makerspace_admin" ||
-    user?.role === "service_provider";
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
 
   // Mock data for development
   const mockEquipment: Equipment[] = [
     {
-      id: "eq-1",
-      equipment_id: "PRINTER3D-001",
-      name: "Ultimaker S3",
-      category: "printer_3d",
-      sub_category: "FDM Printer",
-      status: "available",
-      location: "Station A1",
-      linked_makerspace_id: "ms-1",
+      id: 'eq-1',
+      equipment_id: 'PRINTER3D-001',
+      name: 'Ultimaker S3',
+      category: 'printer_3d',
+      sub_category: 'FDM Printer',
+      status: 'available',
+      location: 'Station A1',
+      linked_makerspace_id: 'ms-1',
       requires_certification: true,
-      certification_required: "3D Printing Safety",
-      last_maintenance_date: "2024-01-15",
-      next_maintenance_date: "2024-02-15",
+      certification_required: '3D Printing Safety',
+      last_maintenance_date: '2024-01-15',
+      next_maintenance_date: '2024-02-15',
       total_usage_hours: 247.5,
       usage_count: 89,
       average_rating: 4.5,
       total_ratings: 23,
-      manufacturer: "Ultimaker",
-      model: "S3",
+      manufacturer: 'Ultimaker',
+      model: 'S3',
       hourly_rate: 12.0,
-      description: "High-precision FDM 3D printer perfect for prototyping",
-      image_url: "/images/ultimaker-s3.jpg",
-      created_at: "2024-01-01T00:00:00Z",
-      updated_at: "2024-01-15T10:30:00Z",
+      description: 'High-precision FDM 3D printer perfect for prototyping',
+      image_url: '/images/ultimaker-s3.jpg',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-15T10:30:00Z',
     },
     {
-      id: "eq-2",
-      equipment_id: "LASER-001",
-      name: "Glowforge Pro",
-      category: "laser_cutter",
-      sub_category: "CO2 Laser",
-      status: "in_use",
-      location: "Station B1",
-      linked_makerspace_id: "ms-1",
+      id: 'eq-2',
+      equipment_id: 'LASER-001',
+      name: 'Glowforge Pro',
+      category: 'laser_cutter',
+      sub_category: 'CO2 Laser',
+      status: 'in_use',
+      location: 'Station B1',
+      linked_makerspace_id: 'ms-1',
       requires_certification: true,
-      certification_required: "Laser Safety Certification",
-      last_maintenance_date: "2024-01-20",
-      next_maintenance_date: "2024-02-20",
+      certification_required: 'Laser Safety Certification',
+      last_maintenance_date: '2024-01-20',
+      next_maintenance_date: '2024-02-20',
       total_usage_hours: 156.2,
       usage_count: 45,
       average_rating: 4.8,
       total_ratings: 18,
-      manufacturer: "Glowforge",
-      model: "Pro",
+      manufacturer: 'Glowforge',
+      model: 'Pro',
       hourly_rate: 25.0,
-      description: "Precision laser cutter for wood, acrylic, and fabric",
-      created_at: "2024-01-01T00:00:00Z",
-      updated_at: "2024-01-20T14:20:00Z",
+      description: 'Precision laser cutter for wood, acrylic, and fabric',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-20T14:20:00Z',
     },
     {
-      id: "eq-3",
-      equipment_id: "CNC-001",
-      name: "Shapeoko 4",
-      category: "cnc_machine",
-      sub_category: "Desktop CNC",
-      status: "under_maintenance",
-      location: "Station C1",
-      linked_makerspace_id: "ms-1",
+      id: 'eq-3',
+      equipment_id: 'CNC-001',
+      name: 'Shapeoko 4',
+      category: 'cnc_machine',
+      sub_category: 'Desktop CNC',
+      status: 'under_maintenance',
+      location: 'Station C1',
+      linked_makerspace_id: 'ms-1',
       requires_certification: true,
-      certification_required: "CNC Operation Certificate",
-      last_maintenance_date: "2024-01-25",
+      certification_required: 'CNC Operation Certificate',
+      last_maintenance_date: '2024-01-25',
       total_usage_hours: 89.3,
       usage_count: 23,
       average_rating: 4.2,
       total_ratings: 12,
-      manufacturer: "Carbide 3D",
-      model: "Shapeoko 4",
+      manufacturer: 'Carbide 3D',
+      model: 'Shapeoko 4',
       hourly_rate: 30.0,
-      description: "CNC machine for precision cutting and carving",
-      created_at: "2024-01-01T00:00:00Z",
-      updated_at: "2024-01-25T09:15:00Z",
+      description: 'CNC machine for precision cutting and carving',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-25T09:15:00Z',
     },
   ];
 
   const calculateMockStats = (): EquipmentStats => {
     const total = mockEquipment.length;
-    const available = mockEquipment.filter(
-      (eq) => eq.status === "available"
-    ).length;
-    const inUse = mockEquipment.filter((eq) => eq.status === "in_use").length;
-    const maintenance = mockEquipment.filter(
-      (eq) => eq.status === "under_maintenance"
-    ).length;
-    const offline = mockEquipment.filter(
-      (eq) => eq.status === "offline"
-    ).length;
+    const available = mockEquipment.filter((eq) => eq.status === 'available').length;
+    const inUse = mockEquipment.filter((eq) => eq.status === 'in_use').length;
+    const maintenance = mockEquipment.filter((eq) => eq.status === 'under_maintenance').length;
+    const offline = mockEquipment.filter((eq) => eq.status === 'offline').length;
 
     return {
       total_equipment: total,
@@ -310,9 +287,9 @@ export default function Equipment() {
         cnc_machine: 1,
       },
       locations: {
-        "Station A1": 1,
-        "Station B1": 1,
-        "Station C1": 1,
+        'Station A1': 1,
+        'Station B1': 1,
+        'Station C1': 1,
       },
     };
   };
@@ -322,17 +299,15 @@ export default function Equipment() {
     let items = equipment;
 
     // Role-based filtering
-    if (user?.role === "service_provider") {
+    if (user?.role === 'service_provider') {
       // Service providers only see their own equipment or equipment they can service
       items = items.filter(
-        (item) => item.linked_makerspace_id === user.makerspace_id
+        (item) => item.linked_makerspace_id === user.makerspace_id,
         // In future: || item.service_provider_ids?.includes(user.id)
       );
-    } else if (user?.role !== "super_admin") {
+    } else if (user?.role !== 'super_admin') {
       // Non-super admins only see their makerspace equipment
-      items = items.filter(
-        (item) => item.linked_makerspace_id === user?.makerspace_id
-      );
+      items = items.filter((item) => item.linked_makerspace_id === user?.makerspace_id);
     }
 
     // Search filtering
@@ -343,62 +318,53 @@ export default function Equipment() {
           item.equipment_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.manufacturer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.location.toLowerCase().includes(searchTerm.toLowerCase())
+          item.location.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Category filtering
-    if (selectedCategory !== "all") {
+    if (selectedCategory !== 'all') {
       items = items.filter((item) => item.category === selectedCategory);
     }
 
     // Status filtering
-    if (selectedStatus !== "all") {
+    if (selectedStatus !== 'all') {
       items = items.filter((item) => item.status === selectedStatus);
     }
 
     // Location filtering
-    if (selectedLocation !== "all") {
+    if (selectedLocation !== 'all') {
       items = items.filter((item) => item.location === selectedLocation);
     }
 
     return items;
-  }, [
-    equipment,
-    searchTerm,
-    selectedCategory,
-    selectedStatus,
-    selectedLocation,
-    user,
-  ]);
+  }, [equipment, searchTerm, selectedCategory, selectedStatus, selectedLocation, user]);
 
   const categories = [
-    { value: "all", label: "All Categories" },
-    { value: "printer_3d", label: "3D Printers" },
-    { value: "laser_cutter", label: "Laser Cutters" },
-    { value: "cnc_machine", label: "CNC Machines" },
-    { value: "testing_tool", label: "Testing Tools" },
-    { value: "soldering_station", label: "Soldering Stations" },
-    { value: "workstation", label: "Workstations" },
-    { value: "hand_tool", label: "Hand Tools" },
-    { value: "measuring_tool", label: "Measuring Tools" },
-    { value: "general_tool", label: "General Tools" },
+    { value: 'all', label: 'All Categories' },
+    { value: 'printer_3d', label: '3D Printers' },
+    { value: 'laser_cutter', label: 'Laser Cutters' },
+    { value: 'cnc_machine', label: 'CNC Machines' },
+    { value: 'testing_tool', label: 'Testing Tools' },
+    { value: 'soldering_station', label: 'Soldering Stations' },
+    { value: 'workstation', label: 'Workstations' },
+    { value: 'hand_tool', label: 'Hand Tools' },
+    { value: 'measuring_tool', label: 'Measuring Tools' },
+    { value: 'general_tool', label: 'General Tools' },
   ];
 
   const statuses = [
-    { value: "all", label: "All Status" },
-    { value: "available", label: "Available" },
-    { value: "in_use", label: "In Use" },
-    { value: "under_maintenance", label: "Under Maintenance" },
-    { value: "offline", label: "Offline" },
+    { value: 'all', label: 'All Status' },
+    { value: 'available', label: 'Available' },
+    { value: 'in_use', label: 'In Use' },
+    { value: 'under_maintenance', label: 'Under Maintenance' },
+    { value: 'offline', label: 'Offline' },
   ];
 
   const locations = useMemo(() => {
-    const uniqueLocations = Array.from(
-      new Set(equipment.map((item) => item.location))
-    );
+    const uniqueLocations = Array.from(new Set(equipment.map((item) => item.location)));
     return [
-      { value: "all", label: "All Locations" },
+      { value: 'all', label: 'All Locations' },
       ...uniqueLocations.map((location) => ({
         value: location,
         label: location,
@@ -426,12 +392,8 @@ export default function Equipment() {
       <div className="p-6">
         <div className="text-center">
           <Wrench className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Access Denied
-          </h2>
-          <p className="text-gray-600">
-            You don't have permission to view equipment.
-          </p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">You don't have permission to view equipment.</p>
         </div>
       </div>
     );
@@ -442,12 +404,8 @@ export default function Equipment() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Equipment Management
-          </h1>
-          <p className="text-gray-600">
-            Manage and reserve makerspace equipment
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Equipment Management</h1>
+          <p className="text-gray-600">Manage and reserve makerspace equipment</p>
         </div>
 
         {canCreateEquipment && (
@@ -485,12 +443,8 @@ export default function Equipment() {
                     <Wrench className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Equipment
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.total_equipment}
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Total Equipment</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total_equipment}</p>
                   </div>
                 </div>
               </div>
@@ -501,12 +455,8 @@ export default function Equipment() {
                     <CheckCircle className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Available
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.available_equipment}
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Available</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.available_equipment}</p>
                   </div>
                 </div>
               </div>
@@ -517,9 +467,7 @@ export default function Equipment() {
                     <Activity className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Utilization Rate
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Utilization Rate</p>
                     <p className="text-2xl font-bold text-gray-900">
                       {(stats.utilization_rate || 0).toFixed(1)}%
                     </p>
@@ -533,9 +481,7 @@ export default function Equipment() {
                     <Star className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Avg Rating
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Avg Rating</p>
                     <p className="text-2xl font-bold text-gray-900">
                       {(stats.average_rating || 0).toFixed(1)}
                     </p>
@@ -556,17 +502,9 @@ export default function Equipment() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={filteredEquipment.slice(0, 8)}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="name"
-                      angle={-45}
-                      textAnchor="end"
-                      height={60}
-                      fontSize={12}
-                    />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} fontSize={12} />
                     <YAxis />
-                    <Tooltip
-                      formatter={(value) => [`${value} hours`, "Usage Hours"]}
-                    />
+                    <Tooltip formatter={(value) => [`${value} hours`, 'Usage Hours']} />
                     <Bar dataKey="total_usage_hours" fill="#3B82F6" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -579,50 +517,41 @@ export default function Equipment() {
                 Equipment Status Overview
               </h3>
               <div className="space-y-4">
-                {["available", "in_use", "under_maintenance", "offline"].map(
-                  (status) => {
-                    const count = filteredEquipment.filter(
-                      (eq) => eq.status === status
-                    ).length;
-                    const percentage =
-                      filteredEquipment.length > 0
-                        ? (count / filteredEquipment.length) * 100
-                        : 0;
-                    const statusColors = {
-                      available: "bg-green-500",
-                      in_use: "bg-blue-500",
-                      under_maintenance: "bg-yellow-500",
-                      offline: "bg-red-500",
-                    };
+                {['available', 'in_use', 'under_maintenance', 'offline'].map((status) => {
+                  const count = filteredEquipment.filter((eq) => eq.status === status).length;
+                  const percentage =
+                    filteredEquipment.length > 0 ? (count / filteredEquipment.length) * 100 : 0;
+                  const statusColors = {
+                    available: 'bg-green-500',
+                    in_use: 'bg-blue-500',
+                    under_maintenance: 'bg-yellow-500',
+                    offline: 'bg-red-500',
+                  };
 
-                    return (
-                      <div
-                        key={status}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-2">
+                  return (
+                    <div key={status} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
+                        ></div>
+                        <span className="text-sm font-medium capitalize">
+                          {(status || '').replace('_', ' ')}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">
+                          {count} ({(percentage || 0).toFixed(0)}%)
+                        </span>
+                        <div className="w-20 h-2 bg-gray-200 rounded-full">
                           <div
-                            className={`w-3 h-3 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
+                            className={`h-2 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
+                            style={{ width: `${percentage}%` }}
                           ></div>
-                          <span className="text-sm font-medium capitalize">
-                            {(status || "").replace("_", " ")}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600">
-                            {count} ({(percentage || 0).toFixed(0)}%)
-                          </span>
-                          <div className="w-20 h-2 bg-gray-200 rounded-full">
-                            <div
-                              className={`h-2 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
-                              style={{ width: `${percentage}%` }}
-                            ></div>
-                          </div>
                         </div>
                       </div>
-                    );
-                  }
-                )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -656,14 +585,14 @@ export default function Equipment() {
 
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-lg ${viewMode === "grid" ? "bg-makrx-blue text-white" : "text-gray-600 hover:bg-gray-100"}`}
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-makrx-blue text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-lg ${viewMode === "list" ? "bg-makrx-blue text-white" : "text-gray-600 hover:bg-gray-100"}`}
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-makrx-blue text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -716,9 +645,9 @@ export default function Equipment() {
           {/* Equipment Grid/List */}
           <div
             className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                : "space-y-4"
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
             }
           >
             {filteredEquipment.map((item) => (
@@ -735,11 +664,9 @@ export default function Equipment() {
                       }
                     : undefined
                 }
-                onMaintenance={
-                  canMaintenanceLogs ? handleMaintenanceLog : undefined
-                }
+                onMaintenance={canMaintenanceLogs ? handleMaintenanceLog : undefined}
                 viewMode={viewMode}
-                userRole={user?.role || "user"}
+                userRole={user?.role || 'user'}
                 canReserve={canReserve}
                 canEdit={canCreateEquipment}
                 canMaintenance={canMaintenanceLogs}
@@ -751,22 +678,20 @@ export default function Equipment() {
           {filteredEquipment.length === 0 && (
             <div className="text-center py-12">
               <Wrench className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No equipment found
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No equipment found</h3>
               <p className="text-gray-600 mb-4">
                 {searchTerm ||
-                selectedCategory !== "all" ||
-                selectedStatus !== "all" ||
-                selectedLocation !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "Get started by adding your first piece of equipment"}
+                selectedCategory !== 'all' ||
+                selectedStatus !== 'all' ||
+                selectedLocation !== 'all'
+                  ? 'Try adjusting your search or filters'
+                  : 'Get started by adding your first piece of equipment'}
               </p>
               {canCreateEquipment &&
                 !searchTerm &&
-                selectedCategory === "all" &&
-                selectedStatus === "all" &&
-                selectedLocation === "all" && (
+                selectedCategory === 'all' &&
+                selectedStatus === 'all' &&
+                selectedLocation === 'all' && (
                   <button
                     onClick={() => setShowAddModal(true)}
                     className="inline-flex items-center px-4 py-2 bg-makrx-blue text-white rounded-lg hover:bg-makrx-blue/90"
@@ -790,26 +715,26 @@ export default function Equipment() {
               onSubmit={async (reservationData) => {
                 try {
                   const headers = await getHeaders({
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                   });
                   const response = await fetch(
                     `/api/v1/equipment/${selectedEquipment.id}/reserve`,
                     {
-                      method: "POST",
+                      method: 'POST',
                       headers,
                       body: JSON.stringify(reservationData),
-                    }
+                    },
                   );
 
                   if (response.ok) {
-                    alert("Reservation submitted successfully!");
+                    alert('Reservation submitted successfully!');
                     loadEquipment(); // Refresh equipment list
                   } else {
-                    throw new Error("Failed to create reservation");
+                    throw new Error('Failed to create reservation');
                   }
                 } catch (error) {
-                  console.error("Error creating reservation:", error);
-                  alert("Failed to create reservation. Please try again.");
+                  console.error('Error creating reservation:', error);
+                  alert('Failed to create reservation. Please try again.');
                 }
               }}
               userProjects={[]} // Would load user projects from context
@@ -834,18 +759,18 @@ export default function Equipment() {
           editEquipment={selectedEquipment}
           onSubmit={async (equipmentData) => {
             try {
-              console.log("Submitting equipment data:", equipmentData);
+              console.log('Submitting equipment data:', equipmentData);
 
               const url = selectedEquipment
                 ? `/api/v1/equipment/${selectedEquipment.id}`
-                : "/api/v1/equipment/";
+                : '/api/v1/equipment/';
 
-              const method = selectedEquipment ? "PUT" : "POST";
+              const method = selectedEquipment ? 'PUT' : 'POST';
 
               console.log(`Making ${method} request to:`, url);
 
               const headers = await getHeaders({
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               });
               const response = await fetch(url, {
                 method,
@@ -853,8 +778,8 @@ export default function Equipment() {
                 body: JSON.stringify(equipmentData),
               });
 
-              console.log("Response status:", response.status);
-              console.log("Response headers:", response.headers);
+              console.log('Response status:', response.status);
+              console.log('Response headers:', response.headers);
 
               // Read response body once
               let responseData;
@@ -867,18 +792,18 @@ export default function Equipment() {
                 try {
                   responseData = await response.text();
                 } catch (e2) {
-                  responseData = "Unknown error";
+                  responseData = 'Unknown error';
                 }
               }
 
-              console.log("Response data:", responseData);
+              console.log('Response data:', responseData);
 
               if (response.ok) {
-                console.log("Success response:", responseData);
+                console.log('Success response:', responseData);
                 alert(
                   selectedEquipment
-                    ? "Equipment updated successfully!"
-                    : "Equipment created successfully!"
+                    ? 'Equipment updated successfully!'
+                    : 'Equipment created successfully!',
                 );
                 loadEquipment(); // Refresh equipment list
               } else {
@@ -886,16 +811,16 @@ export default function Equipment() {
 
                 if (isJson && responseData.detail) {
                   errorMessage = `Failed to save equipment: ${responseData.detail}`;
-                } else if (typeof responseData === "string" && responseData) {
+                } else if (typeof responseData === 'string' && responseData) {
                   errorMessage = `Failed to save equipment: ${responseData}`;
                 }
 
-                console.error("Error response:", responseData);
+                console.error('Error response:', responseData);
                 throw new Error(errorMessage);
               }
             } catch (error) {
-              console.error("Error saving equipment:", error);
-              const msg = (error as any)?.message || "Unknown error";
+              console.error('Error saving equipment:', error);
+              const msg = (error as any)?.message || 'Unknown error';
               alert(`Failed to save equipment: ${msg}`);
             }
           }}
@@ -914,26 +839,26 @@ export default function Equipment() {
           onSubmit={async (maintenanceData) => {
             try {
               const headers = await getHeaders({
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               });
               const response = await fetch(
                 `/api/v1/equipment/${selectedEquipment.id}/maintenance`,
                 {
-                  method: "POST",
+                  method: 'POST',
                   headers,
                   body: JSON.stringify(maintenanceData),
-                }
+                },
               );
 
               if (response.ok) {
-                alert("Maintenance log created successfully!");
+                alert('Maintenance log created successfully!');
                 loadEquipment(); // Refresh equipment list
               } else {
-                throw new Error("Failed to create maintenance log");
+                throw new Error('Failed to create maintenance log');
               }
             } catch (error) {
-              console.error("Error creating maintenance log:", error);
-              alert("Failed to create maintenance log. Please try again.");
+              console.error('Error creating maintenance log:', error);
+              alert('Failed to create maintenance log. Please try again.');
             }
           }}
         />
@@ -945,12 +870,8 @@ export default function Equipment() {
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {selectedEquipment.name}
-                </h2>
-                <p className="text-sm text-gray-600">
-                  {selectedEquipment.equipment_id}
-                </p>
+                <h2 className="text-xl font-semibold text-gray-900">{selectedEquipment.name}</h2>
+                <p className="text-sm text-gray-600">{selectedEquipment.equipment_id}</p>
               </div>
               <button
                 onClick={() => {
@@ -984,18 +905,14 @@ export default function Equipment() {
                     <div className="space-y-3">
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                        <span className="text-sm">
-                          {selectedEquipment.location}
-                        </span>
+                        <span className="text-sm">{selectedEquipment.location}</span>
                       </div>
 
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-2 text-gray-500" />
                         <span className="text-sm">
-                          {(selectedEquipment.total_usage_hours || 0).toFixed(
-                            1
-                          )}
-                          h used ({selectedEquipment.usage_count || 0} sessions)
+                          {(selectedEquipment.total_usage_hours || 0).toFixed(1)}h used (
+                          {selectedEquipment.usage_count || 0} sessions)
                         </span>
                       </div>
 
@@ -1013,8 +930,7 @@ export default function Equipment() {
                         <div className="flex items-center text-amber-600">
                           <Shield className="w-4 h-4 mr-2" />
                           <span className="text-sm">
-                            Certification Required:{" "}
-                            {selectedEquipment.certification_required}
+                            Certification Required: {selectedEquipment.certification_required}
                           </span>
                         </div>
                       )}
@@ -1022,52 +938,38 @@ export default function Equipment() {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Specifications
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
                     <dl className="space-y-2">
                       <div>
-                        <dt className="text-sm font-medium text-gray-500">
-                          Manufacturer
-                        </dt>
+                        <dt className="text-sm font-medium text-gray-500">Manufacturer</dt>
                         <dd className="text-sm text-gray-900">
-                          {selectedEquipment.manufacturer || "Not specified"}
+                          {selectedEquipment.manufacturer || 'Not specified'}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-gray-500">
-                          Model
-                        </dt>
+                        <dt className="text-sm font-medium text-gray-500">Model</dt>
                         <dd className="text-sm text-gray-900">
-                          {selectedEquipment.model || "Not specified"}
+                          {selectedEquipment.model || 'Not specified'}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-gray-500">
-                          Category
-                        </dt>
+                        <dt className="text-sm font-medium text-gray-500">Category</dt>
                         <dd className="text-sm text-gray-900">
-                          {(selectedEquipment.category || "")
-                            .replace("_", " ")
+                          {(selectedEquipment.category || '')
+                            .replace('_', ' ')
                             .replace(/\b\w/g, (l) => l.toUpperCase())}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-gray-500">
-                          Status
-                        </dt>
+                        <dt className="text-sm font-medium text-gray-500">Status</dt>
                         <dd className="text-sm text-gray-900 capitalize">
-                          {(selectedEquipment.status || "").replace("_", " ")}
+                          {(selectedEquipment.status || '').replace('_', ' ')}
                         </dd>
                       </div>
                       {selectedEquipment.description && (
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">
-                            Description
-                          </dt>
-                          <dd className="text-sm text-gray-900">
-                            {selectedEquipment.description}
-                          </dd>
+                          <dt className="text-sm font-medium text-gray-500">Description</dt>
+                          <dd className="text-sm text-gray-900">{selectedEquipment.description}</dd>
                         </div>
                       )}
                     </dl>
@@ -1080,7 +982,7 @@ export default function Equipment() {
                   equipmentName={selectedEquipment.name}
                   averageRating={selectedEquipment.average_rating}
                   totalRatings={selectedEquipment.total_ratings}
-                  canRate={user?.role !== "admin"} // Admins typically don't rate equipment
+                  canRate={user?.role !== 'admin'} // Admins typically don't rate equipment
                   onRatingSubmit={(rating) => {
                     // Refresh equipment data to update ratings
                     loadEquipment();

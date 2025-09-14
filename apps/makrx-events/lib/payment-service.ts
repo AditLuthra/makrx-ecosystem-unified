@@ -34,12 +34,14 @@ class PaymentService {
 
   async createRazorpayOrder(orderData: RazorpayOrderData): Promise<any> {
     try {
-      const auth = Buffer.from(`${this.razorpayKeyId}:${this.razorpayKeySecret}`).toString('base64');
-      
+      const auth = Buffer.from(`${this.razorpayKeyId}:${this.razorpayKeySecret}`).toString(
+        'base64',
+      );
+
       const response = await fetch('https://api.razorpay.com/v1/orders', {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(orderData),
@@ -59,7 +61,7 @@ class PaymentService {
   async verifyRazorpayPayment(paymentData: RazorpayPaymentData): Promise<boolean> {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
-      
+
       const body = razorpay_order_id + '|' + razorpay_payment_id;
       const expectedSignature = crypto
         .createHmac('sha256', this.razorpayKeySecret)
@@ -78,11 +80,11 @@ class PaymentService {
     amount: number,
     paymentMethod: 'razorpay' | 'upi',
     eventId: string,
-    userId: string
+    userId: string,
   ): Promise<{ orderId?: string; paymentUrl?: string }> {
     try {
       const receipt = `reg_${registrationId}_${Date.now()}`;
-      
+
       // Create payment transaction record
       const [transaction] = await db
         .insert(paymentTransactions)
@@ -147,7 +149,7 @@ class PaymentService {
 
   private generateUPIUrl(upiData: UPIPaymentData): string {
     const { vpa, amount, transactionId, merchantTransactionId } = upiData;
-    
+
     const params = new URLSearchParams({
       pa: vpa,
       pn: 'MakrX Events',
@@ -163,7 +165,7 @@ class PaymentService {
 
   async handlePaymentSuccess(
     transactionId: string,
-    paymentData: RazorpayPaymentData | any
+    paymentData: RazorpayPaymentData | any,
   ): Promise<boolean> {
     try {
       const [transaction] = await db
@@ -177,7 +179,7 @@ class PaymentService {
       }
 
       let verified = false;
-      
+
       if (transaction.paymentMethod === 'razorpay') {
         verified = await this.verifyRazorpayPayment(paymentData);
       } else if (transaction.paymentMethod === 'upi') {
@@ -222,10 +224,7 @@ class PaymentService {
     }
   }
 
-  async handlePaymentFailure(
-    transactionId: string,
-    reason: string
-  ): Promise<void> {
+  async handlePaymentFailure(transactionId: string, reason: string): Promise<void> {
     try {
       await db
         .update(paymentTransactions)
@@ -254,14 +253,16 @@ class PaymentService {
   async refundPayment(transactionId: string, amount?: number): Promise<boolean> {
     try {
       const transaction = await this.getTransactionStatus(transactionId);
-      
+
       if (!transaction || transaction.status !== 'completed') {
         throw new Error('Transaction not found or not completed');
       }
 
       if (transaction.paymentMethod === 'razorpay') {
-        const auth = Buffer.from(`${this.razorpayKeyId}:${this.razorpayKeySecret}`).toString('base64');
-        
+        const auth = Buffer.from(`${this.razorpayKeyId}:${this.razorpayKeySecret}`).toString(
+          'base64',
+        );
+
         const refundData = {
           amount: amount ? amount * 100 : parseInt(transaction.amount) * 100,
           speed: 'normal',
@@ -275,11 +276,11 @@ class PaymentService {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Basic ${auth}`,
+              Authorization: `Basic ${auth}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(refundData),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -343,7 +344,7 @@ class PaymentService {
           analytics.pendingPayments++;
         }
 
-        analytics.paymentMethods[transaction.paymentMethod] = 
+        analytics.paymentMethods[transaction.paymentMethod] =
           (analytics.paymentMethods[transaction.paymentMethod] || 0) + 1;
       }
 

@@ -5,7 +5,14 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Label } from './ui/label';
@@ -13,10 +20,31 @@ import { Switch } from './ui/switch';
 import { useToast } from '../hooks/use-toast';
 import { useAuthHeaders } from '@makrx/auth';
 import {
-  Trophy, Award, Star, Target, Zap, Crown, Medal, Shield,
-  Plus, Edit3, Eye, Users, TrendingUp, BarChart3, Filter,
-  Search, Upload, Download, Share2, Clock, CheckCircle,
-  ArrowUp, ArrowDown, Calendar, Gift
+  Trophy,
+  Award,
+  Star,
+  Target,
+  Zap,
+  Crown,
+  Medal,
+  Shield,
+  Plus,
+  Edit3,
+  Eye,
+  Users,
+  TrendingUp,
+  BarChart3,
+  Filter,
+  Search,
+  Upload,
+  Download,
+  Share2,
+  Clock,
+  CheckCircle,
+  ArrowUp,
+  ArrowDown,
+  Calendar,
+  Gift,
 } from 'lucide-react';
 
 // Types
@@ -89,7 +117,7 @@ const BadgeSystem: React.FC = () => {
     equipment_usage_required: 0,
     project_completions_required: 0,
     auto_award: false,
-    is_public: true
+    is_public: true,
   });
 
   // Constants
@@ -101,7 +129,7 @@ const BadgeSystem: React.FC = () => {
     { value: 'community_contribution', label: 'Community Contribution', icon: Users },
     { value: 'time_milestone', label: 'Time Milestone', icon: Clock },
     { value: 'quality_achievement', label: 'Quality Achievement', icon: Star },
-    { value: 'innovation_award', label: 'Innovation Award', icon: Zap }
+    { value: 'innovation_award', label: 'Innovation Award', icon: Zap },
   ];
 
   const badgeRarities = [
@@ -109,13 +137,22 @@ const BadgeSystem: React.FC = () => {
     { value: 'uncommon', label: 'Uncommon', color: 'green', emoji: '🥈' },
     { value: 'rare', label: 'Rare', color: 'blue', emoji: '🥇' },
     { value: 'epic', label: 'Epic', color: 'purple', emoji: '💎' },
-    { value: 'legendary', label: 'Legendary', color: 'yellow', emoji: '👑' }
+    { value: 'legendary', label: 'Legendary', color: 'yellow', emoji: '👑' },
   ];
 
   const categories = [
-    '3d_printing', 'laser_cutting', 'cnc_machining', 'electronics',
-    'woodworking', 'metalworking', 'safety', 'collaboration',
-    'teaching', 'innovation', 'quality', 'efficiency'
+    '3d_printing',
+    'laser_cutting',
+    'cnc_machining',
+    'electronics',
+    'woodworking',
+    'metalworking',
+    'safety',
+    'collaboration',
+    'teaching',
+    'innovation',
+    'quality',
+    'efficiency',
   ];
 
   // Fetch badges
@@ -128,7 +165,7 @@ const BadgeSystem: React.FC = () => {
 
       const headers = await getHeaders();
       const response = await fetch(`/api/v1/machine-access/badges?${params}`, { headers });
-      
+
       if (response.ok) {
         const badgesData = await response.json();
         setBadges(badgesData);
@@ -144,7 +181,7 @@ const BadgeSystem: React.FC = () => {
       const userId = 'current_user'; // This would come from auth context
       const headers = await getHeaders();
       const response = await fetch(`/api/v1/machine-access/users/${userId}/badges`, { headers });
-      
+
       if (response.ok) {
         const userBadgesData = await response.json();
         setUserBadges(userBadgesData);
@@ -167,18 +204,18 @@ const BadgeSystem: React.FC = () => {
             type: badgeForm.badge_type,
             requirements: {
               equipment_usage_hours: badgeForm.equipment_usage_required,
-              project_completions: badgeForm.project_completions_required
-            }
-          }
-        })
+              project_completions: badgeForm.project_completions_required,
+            },
+          },
+        }),
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Badge created successfully"
+          title: 'Success',
+          description: 'Badge created successfully',
         });
-        
+
         setShowCreateBadge(false);
         setBadgeForm({
           name: '',
@@ -192,7 +229,7 @@ const BadgeSystem: React.FC = () => {
           equipment_usage_required: 0,
           project_completions_required: 0,
           auto_award: false,
-          is_public: true
+          is_public: true,
         });
         await fetchBadges();
       } else {
@@ -201,9 +238,9 @@ const BadgeSystem: React.FC = () => {
     } catch (error) {
       console.error('Failed to create badge:', error);
       toast({
-        title: "Error",
-        description: "Failed to create badge. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to create badge. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -218,16 +255,16 @@ const BadgeSystem: React.FC = () => {
         body: JSON.stringify({
           user_id: userId,
           earned_through: 'manual_award',
-          achievement_notes: 'Manually awarded by administrator'
-        })
+          achievement_notes: 'Manually awarded by administrator',
+        }),
       });
 
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Badge awarded successfully"
+          title: 'Success',
+          description: 'Badge awarded successfully',
         });
-        
+
         setShowAwardModal(false);
         await fetchUserBadges();
       } else {
@@ -236,9 +273,9 @@ const BadgeSystem: React.FC = () => {
     } catch (error) {
       console.error('Failed to award badge:', error);
       toast({
-        title: "Error",
-        description: "Failed to award badge. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to award badge. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -247,10 +284,7 @@ const BadgeSystem: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([
-        fetchBadges(),
-        fetchUserBadges()
-      ]);
+      await Promise.all([fetchBadges(), fetchUserBadges()]);
       setLoading(false);
     };
 
@@ -258,9 +292,12 @@ const BadgeSystem: React.FC = () => {
   }, [fetchBadges, fetchUserBadges]);
 
   // Filter badges
-  const filteredBadges = badges.filter(badge => {
-    if (searchQuery && !badge.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !badge.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+  const filteredBadges = badges.filter((badge) => {
+    if (
+      searchQuery &&
+      !badge.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !badge.description.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
     return true;
@@ -268,12 +305,12 @@ const BadgeSystem: React.FC = () => {
 
   // Get rarity info
   const getRarityInfo = (rarity: string) => {
-    return badgeRarities.find(r => r.value === rarity) || badgeRarities[0];
+    return badgeRarities.find((r) => r.value === rarity) || badgeRarities[0];
   };
 
   // Get badge type info
   const getBadgeTypeInfo = (type: string) => {
-    return badgeTypes.find(t => t.value === type) || badgeTypes[0];
+    return badgeTypes.find((t) => t.value === type) || badgeTypes[0];
   };
 
   if (loading) {
@@ -353,7 +390,7 @@ const BadgeSystem: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Featured Badges</p>
                 <p className="text-2xl font-bold">
-                  {userBadges.filter(ub => ub.is_featured).length}
+                  {userBadges.filter((ub) => ub.is_featured).length}
                 </p>
               </div>
               <Crown className="h-8 w-8 text-orange-500" />
@@ -388,14 +425,14 @@ const BadgeSystem: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map(category => (
+                    {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category.replace('_', ' ').toUpperCase()}
                       </SelectItem>
@@ -409,7 +446,7 @@ const BadgeSystem: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Rarities</SelectItem>
-                    {badgeRarities.map(rarity => (
+                    {badgeRarities.map((rarity) => (
                       <SelectItem key={rarity.value} value={rarity.value}>
                         {rarity.emoji} {rarity.label}
                       </SelectItem>
@@ -426,17 +463,20 @@ const BadgeSystem: React.FC = () => {
               const rarityInfo = getRarityInfo(badge.rarity);
               const typeInfo = getBadgeTypeInfo(badge.badge_type);
               const IconComponent = typeInfo.icon;
-              const userHasBadge = userBadges.some(ub => ub.badge_id === badge.id);
-              
+              const userHasBadge = userBadges.some((ub) => ub.badge_id === badge.id);
+
               return (
-                <Card key={badge.id} className={`${userHasBadge ? 'ring-2 ring-green-400 bg-green-50' : ''} hover:shadow-lg transition-shadow cursor-pointer`}>
+                <Card
+                  key={badge.id}
+                  className={`${userHasBadge ? 'ring-2 ring-green-400 bg-green-50' : ''} hover:shadow-lg transition-shadow cursor-pointer`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         {badge.icon_url ? (
                           <img src={badge.icon_url} alt={badge.name} className="h-10 w-10" />
                         ) : (
-                          <div 
+                          <div
                             className="h-10 w-10 rounded-full flex items-center justify-center"
                             style={{ backgroundColor: badge.color_hex }}
                           >
@@ -451,31 +491,30 @@ const BadgeSystem: React.FC = () => {
                       <div className="text-right">
                         <div className="flex items-center gap-1 mb-1">
                           <span className="text-lg">{rarityInfo.emoji}</span>
-                          <Badge variant="secondary" className={`bg-${rarityInfo.color}-100 text-${rarityInfo.color}-800`}>
+                          <Badge
+                            variant="secondary"
+                            className={`bg-${rarityInfo.color}-100 text-${rarityInfo.color}-800`}
+                          >
                             {rarityInfo.label}
                           </Badge>
                         </div>
-                        {userHasBadge && (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        )}
+                        {userHasBadge && <CheckCircle className="h-4 w-4 text-green-500" />}
                       </div>
                     </div>
 
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {badge.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground mb-3">{badge.description}</p>
 
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Points:</span>
                         <span className="font-medium">{badge.points_value}</span>
                       </div>
-                      
+
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Type:</span>
                         <span>{typeInfo.label}</span>
                       </div>
-                      
+
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Awarded:</span>
                         <span>{badge.total_awarded} times</span>
@@ -532,16 +571,23 @@ const BadgeSystem: React.FC = () => {
               const rarityInfo = getRarityInfo(userBadge.badge.rarity);
               const typeInfo = getBadgeTypeInfo(userBadge.badge.badge_type);
               const IconComponent = typeInfo.icon;
-              
+
               return (
-                <Card key={userBadge.id} className={userBadge.is_featured ? 'ring-2 ring-yellow-400' : ''}>
+                <Card
+                  key={userBadge.id}
+                  className={userBadge.is_featured ? 'ring-2 ring-yellow-400' : ''}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         {userBadge.badge.icon_url ? (
-                          <img src={userBadge.badge.icon_url} alt={userBadge.badge.name} className="h-10 w-10" />
+                          <img
+                            src={userBadge.badge.icon_url}
+                            alt={userBadge.badge.name}
+                            className="h-10 w-10"
+                          />
                         ) : (
-                          <div 
+                          <div
                             className="h-10 w-10 rounded-full flex items-center justify-center"
                             style={{ backgroundColor: userBadge.badge.color_hex }}
                           >
@@ -550,13 +596,18 @@ const BadgeSystem: React.FC = () => {
                         )}
                         <div>
                           <h3 className="font-medium">{userBadge.badge.name}</h3>
-                          <p className="text-sm text-muted-foreground">{userBadge.badge.category}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {userBadge.badge.category}
+                          </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="flex items-center gap-1 mb-1">
                           <span className="text-lg">{rarityInfo.emoji}</span>
-                          <Badge variant="secondary" className={`bg-${rarityInfo.color}-100 text-${rarityInfo.color}-800`}>
+                          <Badge
+                            variant="secondary"
+                            className={`bg-${rarityInfo.color}-100 text-${rarityInfo.color}-800`}
+                          >
                             {rarityInfo.label}
                           </Badge>
                         </div>
@@ -575,12 +626,12 @@ const BadgeSystem: React.FC = () => {
                         <span className="text-muted-foreground">Points Earned:</span>
                         <span className="font-medium">{userBadge.badge.points_value}</span>
                       </div>
-                      
+
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Earned On:</span>
                         <span>{new Date(userBadge.awarded_at).toLocaleDateString()}</span>
                       </div>
-                      
+
                       {userBadge.progress_value < 100 && (
                         <div>
                           <div className="flex justify-between items-center mb-1">
@@ -604,7 +655,7 @@ const BadgeSystem: React.FC = () => {
                 </Card>
               );
             })}
-            
+
             {userBadges.length === 0 && (
               <Card className="col-span-full">
                 <CardContent className="p-8 text-center">
@@ -663,11 +714,9 @@ const BadgeSystem: React.FC = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Create New Badge</DialogTitle>
-            <DialogDescription>
-              Design a new achievement badge for the community
-            </DialogDescription>
+            <DialogDescription>Design a new achievement badge for the community</DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -675,7 +724,7 @@ const BadgeSystem: React.FC = () => {
                 <Input
                   id="badge_name"
                   value={badgeForm.name}
-                  onChange={(e) => setBadgeForm(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => setBadgeForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter badge name"
                 />
               </div>
@@ -684,13 +733,13 @@ const BadgeSystem: React.FC = () => {
                 <Label htmlFor="category">Category</Label>
                 <Select
                   value={badgeForm.category}
-                  onValueChange={(value) => setBadgeForm(prev => ({ ...prev, category: value }))}
+                  onValueChange={(value) => setBadgeForm((prev) => ({ ...prev, category: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map(category => (
+                    {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category.replace('_', ' ').toUpperCase()}
                       </SelectItem>
@@ -705,7 +754,7 @@ const BadgeSystem: React.FC = () => {
               <Textarea
                 id="description"
                 value={badgeForm.description}
-                onChange={(e) => setBadgeForm(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) => setBadgeForm((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe what this badge represents"
                 rows={3}
               />
@@ -716,13 +765,15 @@ const BadgeSystem: React.FC = () => {
                 <Label htmlFor="badge_type">Badge Type</Label>
                 <Select
                   value={badgeForm.badge_type}
-                  onValueChange={(value) => setBadgeForm(prev => ({ ...prev, badge_type: value }))}
+                  onValueChange={(value) =>
+                    setBadgeForm((prev) => ({ ...prev, badge_type: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {badgeTypes.map(type => (
+                    {badgeTypes.map((type) => (
                       <SelectItem key={type.value} value={type.value}>
                         {type.label}
                       </SelectItem>
@@ -735,13 +786,13 @@ const BadgeSystem: React.FC = () => {
                 <Label htmlFor="rarity">Rarity</Label>
                 <Select
                   value={badgeForm.rarity}
-                  onValueChange={(value) => setBadgeForm(prev => ({ ...prev, rarity: value }))}
+                  onValueChange={(value) => setBadgeForm((prev) => ({ ...prev, rarity: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {badgeRarities.map(rarity => (
+                    {badgeRarities.map((rarity) => (
                       <SelectItem key={rarity.value} value={rarity.value}>
                         {rarity.emoji} {rarity.label}
                       </SelectItem>
@@ -756,7 +807,12 @@ const BadgeSystem: React.FC = () => {
                   id="points"
                   type="number"
                   value={badgeForm.points_value}
-                  onChange={(e) => setBadgeForm(prev => ({ ...prev, points_value: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setBadgeForm((prev) => ({
+                      ...prev,
+                      points_value: parseInt(e.target.value) || 0,
+                    }))
+                  }
                   min="1"
                   max="1000"
                 />
@@ -770,7 +826,12 @@ const BadgeSystem: React.FC = () => {
                   id="equipment_hours"
                   type="number"
                   value={badgeForm.equipment_usage_required}
-                  onChange={(e) => setBadgeForm(prev => ({ ...prev, equipment_usage_required: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setBadgeForm((prev) => ({
+                      ...prev,
+                      equipment_usage_required: parseInt(e.target.value) || 0,
+                    }))
+                  }
                   min="0"
                 />
               </div>
@@ -781,7 +842,12 @@ const BadgeSystem: React.FC = () => {
                   id="projects"
                   type="number"
                   value={badgeForm.project_completions_required}
-                  onChange={(e) => setBadgeForm(prev => ({ ...prev, project_completions_required: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setBadgeForm((prev) => ({
+                      ...prev,
+                      project_completions_required: parseInt(e.target.value) || 0,
+                    }))
+                  }
                   min="0"
                 />
               </div>
@@ -793,16 +859,20 @@ const BadgeSystem: React.FC = () => {
                   <Switch
                     id="auto_award"
                     checked={badgeForm.auto_award}
-                    onCheckedChange={(checked) => setBadgeForm(prev => ({ ...prev, auto_award: checked }))}
+                    onCheckedChange={(checked) =>
+                      setBadgeForm((prev) => ({ ...prev, auto_award: checked }))
+                    }
                   />
                   <Label htmlFor="auto_award">Auto Award</Label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="is_public"
                     checked={badgeForm.is_public}
-                    onCheckedChange={(checked) => setBadgeForm(prev => ({ ...prev, is_public: checked }))}
+                    onCheckedChange={(checked) =>
+                      setBadgeForm((prev) => ({ ...prev, is_public: checked }))
+                    }
                   />
                   <Label htmlFor="is_public">Public</Label>
                 </div>
@@ -812,7 +882,10 @@ const BadgeSystem: React.FC = () => {
                 <Button variant="outline" onClick={() => setShowCreateBadge(false)}>
                   Cancel
                 </Button>
-                <Button onClick={createBadge} disabled={!badgeForm.name || !badgeForm.description || !badgeForm.category}>
+                <Button
+                  onClick={createBadge}
+                  disabled={!badgeForm.name || !badgeForm.description || !badgeForm.category}
+                >
                   Create Badge
                 </Button>
               </div>

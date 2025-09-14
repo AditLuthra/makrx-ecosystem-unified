@@ -3,9 +3,28 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Package, Plus, Search, Filter, Download, Upload, ShoppingCart,
-  AlertTriangle, BarChart3, Grid, List, Calendar, Eye, Edit,
-  X, Save, FileText, MapPin, Shield, ExternalLink, QrCode, Trash2
+  Package,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Upload,
+  ShoppingCart,
+  AlertTriangle,
+  BarChart3,
+  Grid,
+  List,
+  Calendar,
+  Eye,
+  Edit,
+  X,
+  Save,
+  FileText,
+  MapPin,
+  Shield,
+  ExternalLink,
+  QrCode,
+  Trash2,
 } from 'lucide-react';
 import { useMakerspace } from '../../contexts/MakerspaceContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -14,7 +33,18 @@ import InventoryCard from '../../components/InventoryCard';
 import LowStockBanner from '../../components/LowStockBanner';
 import UsageTimeline from '../../components/UsageTimeline';
 import AddItemModal from '../../components/AddItemModal';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 
 interface InventoryUsageLog {
   id: string;
@@ -32,7 +62,16 @@ interface InventoryUsageLog {
 interface InventoryItem {
   id: string;
   name: string;
-  category: 'filament' | 'resin' | 'tools' | 'electronics' | 'materials' | 'consumables' | 'machines' | 'sensors' | 'components';
+  category:
+    | 'filament'
+    | 'resin'
+    | 'tools'
+    | 'electronics'
+    | 'materials'
+    | 'consumables'
+    | 'machines'
+    | 'sensors'
+    | 'components';
   subcategory?: string;
   quantity: number;
   unit: string;
@@ -61,10 +100,10 @@ function InventoryView() {
     issueInventoryItem,
     restockInventoryItem,
     deleteInventoryItem,
-    loadInventoryItems
+    loadInventoryItems,
   } = useMakerspace();
   const { user, hasPermission } = useAuth();
-  
+
   // State management
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -84,23 +123,47 @@ function InventoryView() {
   }, [loadInventoryItems]);
 
   // Role-based permissions based on the access matrix
-  const canAddEdit = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || 
-                    (user?.role === 'service_provider' && selectedItem?.ownerUserId === user?.id);
-  const canIssue = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'service_provider';
-  const canDelete = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || 
-                   (user?.role === 'service_provider' && selectedItem?.ownerUserId === user?.id);
-  const canReorder = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'service_provider';
-  const canViewUsage = user?.role === 'super_admin' || user?.role === 'makerspace_admin' || user?.role === 'service_provider';
+  const canAddEdit =
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    (user?.role === 'service_provider' && selectedItem?.ownerUserId === user?.id);
+  const canIssue =
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
+  const canDelete =
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    (user?.role === 'service_provider' && selectedItem?.ownerUserId === user?.id);
+  const canReorder =
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
+  const canViewUsage =
+    user?.role === 'super_admin' ||
+    user?.role === 'makerspace_admin' ||
+    user?.role === 'service_provider';
   const canLinkToBOM = user?.role !== 'admin'; // All except global admin
 
   // Export functionality
   const exportToCSV = () => {
     const csvHeaders = [
-      'Name', 'Category', 'Subcategory', 'Quantity', 'Unit', 'Min Threshold',
-      'Location', 'Status', 'Supplier Type', 'Product Code', 'Price', 'Supplier', 'Description'
+      'Name',
+      'Category',
+      'Subcategory',
+      'Quantity',
+      'Unit',
+      'Min Threshold',
+      'Location',
+      'Status',
+      'Supplier Type',
+      'Product Code',
+      'Price',
+      'Supplier',
+      'Description',
     ];
 
-    const csvData = filteredInventory.map(item => [
+    const csvData = filteredInventory.map((item) => [
       item.name,
       item.category,
       item.subcategory || '',
@@ -113,14 +176,16 @@ function InventoryView() {
       item.productCode || '',
       item.price || '',
       item.supplier || '',
-      item.description || ''
+      item.description || '',
     ]);
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvData.map(row => row.map(field =>
-        typeof field === 'string' && field.includes(',') ? `"${field}"` : field
-      ).join(','))
+      ...csvData.map((row) =>
+        row
+          .map((field) => (typeof field === 'string' && field.includes(',') ? `"${field}"` : field))
+          .join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -141,49 +206,50 @@ function InventoryView() {
     // Apply role-based filtering per access matrix
     if (user?.role === 'makerspace_admin' && user.assignedMakerspaces) {
       // Makerspace Admin: View own cave only
-      items = items.filter(item => user.assignedMakerspaces?.includes(item.makerspaceId));
+      items = items.filter((item) => user.assignedMakerspaces?.includes(item.makerspaceId));
     } else if (user?.role === 'service_provider') {
       // Service Provider: View own inventory only
-      items = items.filter(item => item.ownerUserId === user?.id);
+      items = items.filter((item) => item.ownerUserId === user?.id);
     } else if (user?.role === 'user') {
       // Maker: Read-only access to all items in their makerspace
       if (user.assignedMakerspaces) {
-        items = items.filter(item => user.assignedMakerspaces?.includes(item.makerspaceId));
+        items = items.filter((item) => user.assignedMakerspaces?.includes(item.makerspaceId));
       }
     }
     // Super Admin sees all, Admin (Global) sees all but read-only
 
     // Search filtering
     if (searchTerm) {
-      items = items.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.productCode?.toLowerCase().includes(searchTerm.toLowerCase())
+      items = items.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.productCode?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Category filtering
     if (selectedCategory !== 'all') {
-      items = items.filter(item => item.category === selectedCategory);
+      items = items.filter((item) => item.category === selectedCategory);
     }
 
     // Status filtering
     if (selectedStatus !== 'all') {
-      items = items.filter(item => item.status === selectedStatus);
+      items = items.filter((item) => item.status === selectedStatus);
     }
 
     // Supplier type filtering
     if (selectedSupplierType !== 'all') {
-      items = items.filter(item => item.supplierType === selectedSupplierType);
+      items = items.filter((item) => item.supplierType === selectedSupplierType);
     }
 
     return items;
   }, [inventory, searchTerm, selectedCategory, selectedStatus, selectedSupplierType, user]);
 
   // Low stock items
-  const lowStockItems = filteredInventory.filter(item => 
-    item.quantity <= item.minThreshold && item.status === 'active'
+  const lowStockItems = filteredInventory.filter(
+    (item) => item.quantity <= item.minThreshold && item.status === 'active',
   );
 
   // Categories for filtering
@@ -251,7 +317,9 @@ function InventoryView() {
                   {selectedItem.subcategory && (
                     <>
                       <span className="text-sm text-muted-foreground">•</span>
-                      <span className="text-sm text-muted-foreground">{selectedItem.subcategory}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {selectedItem.subcategory}
+                      </span>
                     </>
                   )}
                   {selectedItem.supplierType === 'makrx' && (
@@ -268,20 +336,25 @@ function InventoryView() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {canDelete && (!selectedItem.ownerUserId || selectedItem.ownerUserId === user?.id) && (
-                <button
-                  onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete "${selectedItem.name}"? This action cannot be undone.`)) {
-                      handleDeleteItem(selectedItem.id);
-                      setShowDetailModal(false);
-                    }
-                  }}
-                  className="p-2 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-lg transition-colors"
-                  title="Delete Item"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              )}
+              {canDelete &&
+                (!selectedItem.ownerUserId || selectedItem.ownerUserId === user?.id) && (
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Are you sure you want to delete "${selectedItem.name}"? This action cannot be undone.`,
+                        )
+                      ) {
+                        handleDeleteItem(selectedItem.id);
+                        setShowDetailModal(false);
+                      }
+                    }}
+                    className="p-2 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-lg transition-colors"
+                    title="Delete Item"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="p-2 hover:bg-accent rounded-lg"
@@ -304,15 +377,21 @@ function InventoryView() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>Current Stock:</span>
-                      <span className={`font-medium ${
-                        selectedItem.quantity <= selectedItem.minThreshold ? 'text-red-600' : 'text-makrx-teal'
-                      }`}>
+                      <span
+                        className={`font-medium ${
+                          selectedItem.quantity <= selectedItem.minThreshold
+                            ? 'text-red-600'
+                            : 'text-makrx-teal'
+                        }`}
+                      >
                         {selectedItem.quantity} {selectedItem.unit}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Min Threshold:</span>
-                      <span>{selectedItem.minThreshold} {selectedItem.unit}</span>
+                      <span>
+                        {selectedItem.minThreshold} {selectedItem.unit}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Location:</span>
@@ -373,8 +452,13 @@ function InventoryView() {
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div className="text-sm">
-                        <span className="font-medium text-amber-800 dark:text-amber-200">Quality Disclaimer:</span>
-                        <span className="text-amber-700 dark:text-amber-300"> MakrX cannot verify the quality of external items.</span>
+                        <span className="font-medium text-amber-800 dark:text-amber-200">
+                          Quality Disclaimer:
+                        </span>
+                        <span className="text-amber-700 dark:text-amber-300">
+                          {' '}
+                          MakrX cannot verify the quality of external items.
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -384,8 +468,8 @@ function InventoryView() {
               {/* Usage Timeline */}
               <div>
                 {canViewUsage && selectedItem.history && selectedItem.history.length > 0 ? (
-                  <UsageTimeline 
-                    logs={selectedItem.history} 
+                  <UsageTimeline
+                    logs={selectedItem.history}
                     itemName={selectedItem.name}
                     unit={selectedItem.unit}
                     maxItems={5}
@@ -405,13 +489,11 @@ function InventoryView() {
           {/* Footer Actions */}
           <div className="p-6 border-t border-border flex gap-3 justify-end">
             {canIssue && selectedItem.quantity > 0 && selectedItem.status === 'active' && (
-              <button className="makrcave-btn-secondary">
-                Issue Items
-              </button>
+              <button className="makrcave-btn-secondary">Issue Items</button>
             )}
-            
+
             {canReorder && selectedItem.supplierType === 'makrx' && selectedItem.productCode && (
-              <button 
+              <button
                 onClick={() => handleReorderItem(selectedItem)}
                 className="makrcave-btn-primary"
               >
@@ -419,14 +501,14 @@ function InventoryView() {
                 Reorder from MakrX Store
               </button>
             )}
-            
+
             {canLinkToBOM && (
               <button className="makrcave-btn-secondary">
                 <FileText className="w-4 h-4 mr-2" />
                 Link to BOM
               </button>
             )}
-            
+
             {canAddEdit && (
               <button className="makrcave-btn-secondary">
                 <Edit className="w-4 h-4 mr-2" />
@@ -434,7 +516,7 @@ function InventoryView() {
               </button>
             )}
 
-            <button 
+            <button
               onClick={() => setShowDetailModal(false)}
               className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
             >
@@ -473,7 +555,7 @@ function InventoryView() {
               <Upload className="w-4 h-4" />
               Import CSV
             </button>
-            <button 
+            <button
               onClick={() => setShowAddModal(true)}
               className="makrcave-btn-primary flex items-center gap-2"
             >
@@ -483,7 +565,6 @@ function InventoryView() {
           </FeatureGate>
         </div>
       </div>
-
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -512,7 +593,7 @@ function InventoryView() {
             <div>
               <p className="text-sm text-muted-foreground">MakrX Verified</p>
               <p className="text-2xl font-bold text-makrx-teal">
-                {filteredInventory.filter(item => item.supplierType === 'makrx').length}
+                {filteredInventory.filter((item) => item.supplierType === 'makrx').length}
               </p>
             </div>
             <ShoppingCart className="w-8 h-8 text-makrx-teal" />
@@ -524,7 +605,7 @@ function InventoryView() {
             <div>
               <p className="text-sm text-muted-foreground">Active Items</p>
               <p className="text-2xl font-bold text-green-600">
-                {filteredInventory.filter(item => item.status === 'active').length}
+                {filteredInventory.filter((item) => item.status === 'active').length}
               </p>
             </div>
             <BarChart3 className="w-8 h-8 text-green-500" />
@@ -534,7 +615,7 @@ function InventoryView() {
 
       {/* Low Stock Banner */}
       {lowStockItems.length > 0 && (
-        <LowStockBanner 
+        <LowStockBanner
           lowStockItems={lowStockItems}
           onReorderItem={handleReorderItem}
           onViewItem={(item) => {
@@ -555,38 +636,44 @@ function InventoryView() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={[
-                    'filament', 'resin', 'tools', 'electronics', 'materials', 'consumables'
-                  ].map(category => ({
-                    name: category.charAt(0).toUpperCase() + category.slice(1),
-                    value: filteredInventory.filter(item => item.category === category).length,
-                    color: {
-                      filament: '#3B82F6',
-                      resin: '#10B981',
-                      tools: '#F59E0B',
-                      electronics: '#8B5CF6',
-                      materials: '#EF4444',
-                      consumables: '#06B6D4'
-                    }[category] || '#6B7280'
-                  })).filter(item => item.value > 0)}
+                  data={['filament', 'resin', 'tools', 'electronics', 'materials', 'consumables']
+                    .map((category) => ({
+                      name: category.charAt(0).toUpperCase() + category.slice(1),
+                      value: filteredInventory.filter((item) => item.category === category).length,
+                      color:
+                        {
+                          filament: '#3B82F6',
+                          resin: '#10B981',
+                          tools: '#F59E0B',
+                          electronics: '#8B5CF6',
+                          materials: '#EF4444',
+                          consumables: '#06B6D4',
+                        }[category] || '#6B7280',
+                    }))
+                    .filter((item) => item.value > 0)}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
                   dataKey="value"
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {[
-                    'filament', 'resin', 'tools', 'electronics', 'materials', 'consumables'
-                  ].map((category, index) => (
-                    <Cell key={`cell-${index}`} fill={({
-                      filament: '#3B82F6',
-                      resin: '#10B981',
-                      tools: '#F59E0B',
-                      electronics: '#8B5CF6',
-                      materials: '#EF4444',
-                      consumables: '#06B6D4'
-                    })[category] || '#6B7280'} />
-                  ))}
+                  {['filament', 'resin', 'tools', 'electronics', 'materials', 'consumables'].map(
+                    (category, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          {
+                            filament: '#3B82F6',
+                            resin: '#10B981',
+                            tools: '#F59E0B',
+                            electronics: '#8B5CF6',
+                            materials: '#EF4444',
+                            consumables: '#06B6D4',
+                          }[category] || '#6B7280'
+                        }
+                      />
+                    ),
+                  )}
                 </Pie>
                 <Tooltip />
               </PieChart>
@@ -603,13 +690,13 @@ function InventoryView() {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <p className="text-2xl font-bold text-green-600">
-                  {filteredInventory.filter(item => item.quantity > item.minThreshold).length}
+                  {filteredInventory.filter((item) => item.quantity > item.minThreshold).length}
                 </p>
                 <p className="text-sm text-green-700">Well Stocked</p>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg">
                 <p className="text-2xl font-bold text-red-600">
-                  {filteredInventory.filter(item => item.quantity <= item.minThreshold).length}
+                  {filteredInventory.filter((item) => item.quantity <= item.minThreshold).length}
                 </p>
                 <p className="text-sm text-red-700">Low Stock</p>
               </div>
@@ -617,19 +704,19 @@ function InventoryView() {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-lg font-bold text-blue-600">
-                  {filteredInventory.filter(item => item.supplierType === 'makrx').length}
+                  {filteredInventory.filter((item) => item.supplierType === 'makrx').length}
                 </p>
                 <p className="text-xs text-gray-600">MakrX Items</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-purple-600">
-                  {filteredInventory.filter(item => item.supplierType === 'external').length}
+                  {filteredInventory.filter((item) => item.supplierType === 'external').length}
                 </p>
                 <p className="text-xs text-gray-600">External Items</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-orange-600">
-                  {filteredInventory.filter(item => item.status === 'active').length}
+                  {filteredInventory.filter((item) => item.status === 'active').length}
                 </p>
                 <p className="text-xs text-gray-600">Active Items</p>
               </div>
@@ -693,7 +780,7 @@ function InventoryView() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal"
               >
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category.value} value={category.value}>
                     {category.label}
                   </option>
@@ -734,15 +821,23 @@ function InventoryView() {
       </div>
 
       {/* Inventory Grid/List */}
-      <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+      <div
+        className={
+          viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'
+        }
+      >
         {filteredInventory.map((item) => (
           <InventoryCard
             key={item.id}
             item={item}
-            onEdit={canAddEdit ? () => {
-              setSelectedItem(item);
-              setShowEditModal(true);
-            } : undefined}
+            onEdit={
+              canAddEdit
+                ? () => {
+                    setSelectedItem(item);
+                    setShowEditModal(true);
+                  }
+                : undefined
+            }
             onDelete={canDelete ? handleDeleteItem : undefined}
             onIssue={canIssue ? handleIssueItem : undefined}
             onReorder={canReorder ? handleReorderItem : undefined}
@@ -765,18 +860,17 @@ function InventoryView() {
           <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
           <h3 className="text-lg font-medium mb-2">No items found</h3>
           <p className="text-muted-foreground mb-4">
-            {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all' || selectedSupplierType !== 'all'
+            {searchTerm ||
+            selectedCategory !== 'all' ||
+            selectedStatus !== 'all' ||
+            selectedSupplierType !== 'all'
               ? 'Try adjusting your search or filter criteria'
               : user?.role === 'user'
                 ? 'No inventory items available in your makerspace'
-                : 'Start by adding your first inventory item'
-            }
+                : 'Start by adding your first inventory item'}
           </p>
           <FeatureGate featureKey="inventory.makerspace_management" fallback={null}>
-            <button 
-              onClick={() => setShowAddModal(true)}
-              className="makrcave-btn-primary"
-            >
+            <button onClick={() => setShowAddModal(true)} className="makrcave-btn-primary">
               <Plus className="w-4 h-4 mr-2" />
               Add First Item
             </button>
@@ -824,17 +918,24 @@ function InventoryView() {
               <ShoppingCart className="w-5 h-5" />
               Reorder from MakrX Store
             </h3>
-            
+
             <div className="space-y-4">
               <div className="bg-makrx-teal/10 p-4 rounded-lg">
                 <h4 className="font-medium">{selectedItem.name}</h4>
-                <p className="text-sm text-muted-foreground">Product Code: {selectedItem.productCode}</p>
-                <p className="text-sm text-muted-foreground">Current Stock: {selectedItem.quantity} {selectedItem.unit}</p>
-                <p className="text-sm text-muted-foreground">Min Threshold: {selectedItem.minThreshold} {selectedItem.unit}</p>
+                <p className="text-sm text-muted-foreground">
+                  Product Code: {selectedItem.productCode}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Current Stock: {selectedItem.quantity} {selectedItem.unit}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Min Threshold: {selectedItem.minThreshold} {selectedItem.unit}
+                </p>
               </div>
 
               <p className="text-sm text-muted-foreground">
-                This will open the MakrX Store with the product pre-selected. You can adjust quantities and complete the order there.
+                This will open the MakrX Store with the product pre-selected. You can adjust
+                quantities and complete the order there.
               </p>
             </div>
 
@@ -848,7 +949,10 @@ function InventoryView() {
               <button
                 onClick={() => {
                   // In real implementation, this would open MakrX Store
-                  window.open(`https://store.makrx.org/product/${selectedItem.productCode}`, '_blank');
+                  window.open(
+                    `https://store.makrx.org/product/${selectedItem.productCode}`,
+                    '_blank',
+                  );
                   setShowReorderModal(false);
                 }}
                 className="flex-1 makrcave-btn-primary"

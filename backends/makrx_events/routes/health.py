@@ -13,7 +13,6 @@ async def health_root():
     return {"status": "healthy", "service": "makrx-events-backend"}
 
 
-
 @router.get("/readyz")
 async def readyz():
     report = {"status": "ready", "checks": {}}
@@ -33,7 +32,11 @@ async def readyz():
     try:
         async with httpx.AsyncClient(timeout=5) as client:
             r = await client.get(well_known)
-            report["checks"]["keycloak"] = "ok" if r.status_code == 200 else f"fail: status {r.status_code}"
+            report["checks"]["keycloak"] = (
+                "ok"
+                if r.status_code == 200
+                else f"fail: status {r.status_code}"
+            )
             if r.status_code != 200:
                 report["status"] = "fail"
     except Exception as e:

@@ -1,8 +1,21 @@
 import { useState } from 'react';
-import { 
-  Package, AlertTriangle, Edit, Trash2, Clock, MapPin, 
-  ExternalLink, CheckCircle, XCircle, Eye, Minus, Plus,
-  ShoppingCart, History, Shield, User
+import {
+  Package,
+  AlertTriangle,
+  Edit,
+  Trash2,
+  Clock,
+  MapPin,
+  ExternalLink,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Minus,
+  Plus,
+  ShoppingCart,
+  History,
+  Shield,
+  User,
 } from 'lucide-react';
 
 interface InventoryUsageLog {
@@ -55,18 +68,18 @@ interface InventoryCardProps {
   canReorder?: boolean;
 }
 
-export default function InventoryCard({ 
-  item, 
-  onEdit, 
-  onDelete, 
-  onIssue, 
-  onReorder, 
+export default function InventoryCard({
+  item,
+  onEdit,
+  onDelete,
+  onIssue,
+  onReorder,
   onViewDetails,
   userRole,
   canEdit = false,
   canDelete = false,
   canIssue = false,
-  canReorder = false
+  canReorder = false,
 }: InventoryCardProps) {
   const [showIssueModal, setShowIssueModal] = useState(false);
   const [issueQuantity, setIssueQuantity] = useState(1);
@@ -77,25 +90,39 @@ export default function InventoryCard({
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'in_use': return <Clock className="w-4 h-4 text-blue-500" />;
-      case 'damaged': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'reserved': return <Clock className="w-4 h-4 text-amber-500" />;
-      case 'discontinued': return <XCircle className="w-4 h-4 text-gray-500" />;
-      default: return <Package className="w-4 h-4 text-gray-500" />;
+      case 'active':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'in_use':
+        return <Clock className="w-4 h-4 text-blue-500" />;
+      case 'damaged':
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'reserved':
+        return <Clock className="w-4 h-4 text-amber-500" />;
+      case 'discontinued':
+        return <XCircle className="w-4 h-4 text-gray-500" />;
+      default:
+        return <Package className="w-4 h-4 text-gray-500" />;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'filament': return 'bg-blue-100 text-blue-800';
-      case 'resin': return 'bg-purple-100 text-purple-800';
-      case 'tools': return 'bg-orange-100 text-orange-800';
-      case 'electronics': return 'bg-yellow-100 text-yellow-800';
-      case 'materials': return 'bg-green-100 text-green-800';
-      case 'machines': return 'bg-red-100 text-red-800';
-      case 'components': return 'bg-indigo-100 text-indigo-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'filament':
+        return 'bg-blue-100 text-blue-800';
+      case 'resin':
+        return 'bg-purple-100 text-purple-800';
+      case 'tools':
+        return 'bg-orange-100 text-orange-800';
+      case 'electronics':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'materials':
+        return 'bg-green-100 text-green-800';
+      case 'machines':
+        return 'bg-red-100 text-red-800';
+      case 'components':
+        return 'bg-indigo-100 text-indigo-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -120,8 +147,10 @@ export default function InventoryCard({
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-foreground group-hover:text-makrx-teal transition-colors cursor-pointer truncate"
-                  onClick={() => onViewDetails?.(item)}>
+              <h3
+                className="font-semibold text-foreground group-hover:text-makrx-teal transition-colors cursor-pointer truncate"
+                onClick={() => onViewDetails?.(item)}
+              >
                 {item.name}
               </h3>
               {item.supplierType === 'makrx' && (
@@ -135,15 +164,15 @@ export default function InventoryCard({
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2 mb-2">
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}
+              >
                 {item.category}
               </span>
               {item.subcategory && (
-                <span className="text-xs text-muted-foreground">
-                  {item.subcategory}
-                </span>
+                <span className="text-xs text-muted-foreground">{item.subcategory}</span>
               )}
             </div>
 
@@ -178,10 +207,12 @@ export default function InventoryCard({
               {item.quantity} {item.unit}
             </span>
           </div>
-          
+
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Min Threshold:</span>
-            <span className="text-muted-foreground">{item.minThreshold} {item.unit}</span>
+            <span className="text-muted-foreground">
+              {item.minThreshold} {item.unit}
+            </span>
           </div>
 
           {item.price && (
@@ -198,9 +229,13 @@ export default function InventoryCard({
               <span>{Math.round(stockPercentage)}%</span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
+              <div
                 className={`h-2 rounded-full transition-all ${
-                  isLowStock ? 'bg-red-500' : stockPercentage > 70 ? 'bg-makrx-teal' : 'bg-yellow-500'
+                  isLowStock
+                    ? 'bg-red-500'
+                    : stockPercentage > 70
+                      ? 'bg-makrx-teal'
+                      : 'bg-yellow-500'
                 }`}
                 style={{ width: `${Math.max(5, stockPercentage)}%` }}
               ></div>
@@ -211,8 +246,13 @@ export default function InventoryCard({
         {/* External Item Warning */}
         {item.supplierType === 'external' && (
           <div className="mb-4 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded text-xs">
-            <span className="font-medium text-amber-800 dark:text-amber-200">Quality Disclaimer:</span>
-            <span className="text-amber-700 dark:text-amber-300"> MakrX cannot verify the quality of external items.</span>
+            <span className="font-medium text-amber-800 dark:text-amber-200">
+              Quality Disclaimer:
+            </span>
+            <span className="text-amber-700 dark:text-amber-300">
+              {' '}
+              MakrX cannot verify the quality of external items.
+            </span>
           </div>
         )}
 
@@ -221,13 +261,15 @@ export default function InventoryCard({
           <div className="mb-4 p-2 bg-muted/50 rounded">
             <div className="text-xs text-muted-foreground mb-1">Recent Activity:</div>
             <div className="text-xs">
-              {item.history[0].action === 'issue' ? '📤' : 
-               item.history[0].action === 'add' ? '📥' : 
-               item.history[0].action === 'restock' ? '🔄' : '📝'} 
+              {item.history[0].action === 'issue'
+                ? '📤'
+                : item.history[0].action === 'add'
+                  ? '📥'
+                  : item.history[0].action === 'restock'
+                    ? '🔄'
+                    : '📝'}
               <span className="ml-1 capitalize">{item.history[0].action}</span>
-              <span className="ml-1 text-muted-foreground">
-                by {item.history[0].userName}
-              </span>
+              <span className="ml-1 text-muted-foreground">by {item.history[0].userName}</span>
             </div>
           </div>
         )}
@@ -270,7 +312,7 @@ export default function InventoryCard({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-card p-6 rounded-lg w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">Issue Item</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Quantity</label>

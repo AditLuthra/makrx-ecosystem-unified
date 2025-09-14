@@ -1,8 +1,8 @@
 // Admin Data Service - Manages dynamic categories, filters, and products
 
-import React from "react";
-import { categories as defaultCategories, products as defaultProducts } from "@/data/products";
-import { categoryFilterSets as defaultFilters } from "@/data/categoryFilters";
+import React from 'react';
+import { categories as defaultCategories, products as defaultProducts } from '@/data/products';
+import { categoryFilterSets as defaultFilters } from '@/data/categoryFilters';
 
 export interface AdminCategory {
   id: number;
@@ -73,9 +73,9 @@ class AdminDataService {
     if (saved) {
       return JSON.parse(saved);
     }
-    
+
     // Convert default categories to admin format
-    const adminCategories: AdminCategory[] = defaultCategories.map(cat => ({
+    const adminCategories: AdminCategory[] = defaultCategories.map((cat) => ({
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
@@ -84,9 +84,9 @@ class AdminDataService {
       icon: cat.icon,
       subcategories: cat.subcategories,
       featured: cat.featured,
-      productCount: cat.productCount
+      productCount: cat.productCount,
     }));
-    
+
     this.saveCategories(adminCategories);
     return adminCategories;
   }
@@ -98,7 +98,7 @@ class AdminDataService {
   }
 
   getCategoryBySlug(slug: string): AdminCategory | undefined {
-    return this.getCategories().find(cat => cat.slug === slug);
+    return this.getCategories().find((cat) => cat.slug === slug);
   }
 
   // Products Management
@@ -107,9 +107,9 @@ class AdminDataService {
     if (saved) {
       return JSON.parse(saved);
     }
-    
+
     // Convert default products to admin format
-    const adminProducts: AdminProduct[] = defaultProducts.map(prod => ({
+    const adminProducts: AdminProduct[] = defaultProducts.map((prod) => ({
       id: prod.id,
       name: prod.name,
       slug: prod.slug,
@@ -127,9 +127,9 @@ class AdminDataService {
       stock_qty: prod.stock_qty,
       tags: prod.tags,
       specifications: prod.specifications,
-      variants: prod.variants
+      variants: prod.variants,
     }));
-    
+
     this.saveProducts(adminProducts);
     return adminProducts;
   }
@@ -141,11 +141,11 @@ class AdminDataService {
   }
 
   getProductsByCategory(categorySlug: string): AdminProduct[] {
-    return this.getProducts().filter(prod => prod.category === categorySlug);
+    return this.getProducts().filter((prod) => prod.category === categorySlug);
   }
 
   getProductById(id: number): AdminProduct | undefined {
-    return this.getProducts().find(prod => prod.id === id);
+    return this.getProducts().find((prod) => prod.id === id);
   }
 
   // Filters Management
@@ -154,21 +154,21 @@ class AdminDataService {
     if (saved) {
       return JSON.parse(saved);
     }
-    
+
     // Convert default filters to admin format
     const adminFilters: AdminFilter[] = [];
-    defaultFilters.forEach(filterSet => {
-      filterSet.filters.forEach(filter => {
+    defaultFilters.forEach((filterSet) => {
+      filterSet.filters.forEach((filter) => {
         adminFilters.push({
           id: `${filterSet.category}-${filter.id}`,
           name: filter.name,
           type: filter.type,
           options: filter.options,
-          categories: [filterSet.category]
+          categories: [filterSet.category],
         });
       });
     });
-    
+
     this.saveFilters(adminFilters);
     return adminFilters;
   }
@@ -180,8 +180,8 @@ class AdminDataService {
   }
 
   getFiltersForCategory(categorySlug: string): AdminFilter[] {
-    return this.getFilters().filter(filter => 
-      filter.categories.includes(categorySlug) || filter.categories.length === 0
+    return this.getFilters().filter(
+      (filter) => filter.categories.includes(categorySlug) || filter.categories.length === 0,
     );
   }
 
@@ -189,17 +189,17 @@ class AdminDataService {
   updateProductCount(categorySlug: string): void {
     const categories = this.getCategories();
     const products = this.getProducts();
-    
-    const updatedCategories = categories.map(cat => {
+
+    const updatedCategories = categories.map((cat) => {
       if (cat.slug === categorySlug) {
         return {
           ...cat,
-          productCount: products.filter(prod => prod.category === categorySlug).length
+          productCount: products.filter((prod) => prod.category === categorySlug).length,
         };
       }
       return cat;
     });
-    
+
     this.saveCategories(updatedCategories);
   }
 
@@ -207,13 +207,14 @@ class AdminDataService {
   searchProducts(query: string): AdminProduct[] {
     const products = this.getProducts();
     const searchTerm = query.toLowerCase();
-    
-    return products.filter(product =>
-      product.name.toLowerCase().includes(searchTerm) ||
-      product.description.toLowerCase().includes(searchTerm) ||
-      product.brand.toLowerCase().includes(searchTerm) ||
-      product.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
-      product.category.toLowerCase().includes(searchTerm)
+
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm) ||
+        product.brand.toLowerCase().includes(searchTerm) ||
+        product.tags.some((tag) => tag.toLowerCase().includes(searchTerm)) ||
+        product.category.toLowerCase().includes(searchTerm),
     );
   }
 
@@ -223,7 +224,7 @@ class AdminDataService {
       categories: this.getCategories(),
       products: this.getProducts(),
       filters: this.getFilters(),
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
     return JSON.stringify(data, null, 2);
   }
@@ -231,7 +232,7 @@ class AdminDataService {
   importData(jsonData: string): { success: boolean; message: string } {
     try {
       const data = JSON.parse(jsonData);
-      
+
       if (data.categories) {
         this.saveCategories(data.categories);
       }
@@ -241,7 +242,7 @@ class AdminDataService {
       if (data.filters) {
         this.saveFilters(data.filters);
       }
-      
+
       return { success: true, message: 'Data imported successfully' };
     } catch (error) {
       return { success: false, message: 'Failed to import data: Invalid JSON format' };
@@ -253,7 +254,7 @@ class AdminDataService {
     localStorage.removeItem('admin_categories');
     localStorage.removeItem('admin_products');
     localStorage.removeItem('admin_filters');
-    
+
     // Trigger events to notify components
     window.dispatchEvent(new CustomEvent('categoriesUpdated', { detail: this.getCategories() }));
     window.dispatchEvent(new CustomEvent('productsUpdated', { detail: this.getProducts() }));
@@ -279,11 +280,11 @@ export function useAdminData() {
     const handleCategoriesUpdate = (event: CustomEvent) => {
       setCategories(event.detail);
     };
-    
+
     const handleProductsUpdate = (event: CustomEvent) => {
       setProducts(event.detail);
     };
-    
+
     const handleFiltersUpdate = (event: CustomEvent) => {
       setFilters(event.detail);
     };
@@ -307,6 +308,6 @@ export function useAdminData() {
       setCategories(adminDataService.getCategories());
       setProducts(adminDataService.getProducts());
       setFilters(adminDataService.getFilters());
-    }
+    },
   };
 }

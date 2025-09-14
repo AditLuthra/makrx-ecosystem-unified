@@ -1,4 +1,4 @@
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata = {
   title: 'Support — MakrX',
@@ -8,10 +8,13 @@ export const metadata = {
 export default function SupportPage() {
   return (
     <main>
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Support",
-        url: "https://makrx.org/support"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Support',
+          url: 'https://makrx.org/support',
+        }}
+      />
       Support
     </main>
   );

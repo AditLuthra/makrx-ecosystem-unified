@@ -14,14 +14,14 @@ sleep 10
 
 # Function to start a service in background
 start_service() {
-    local name=$1
-    local path=$2
-    local port=$3
-    
-    echo "🚀 Starting $name on port $port..."
-    cd "$path"
-    npm run dev &
-    cd - > /dev/null
+	local name=$1
+	local path=$2
+	local port=$3
+
+	echo "🚀 Starting $name on port $port..."
+	cd "$path"
+	npm run dev &
+	cd - >/dev/null
 }
 
 # Start all development servers
@@ -35,7 +35,7 @@ echo ""
 echo "✅ Development environment started!"
 echo "   🌐 Services will be available at:"
 echo "   - Gateway Frontend: http://localhost:3000"
-echo "   - Gateway Hacker: http://localhost:3001"  
+echo "   - Gateway Hacker: http://localhost:3001"
 echo "   - MakrCave: http://localhost:3002"
 echo "   - MakrX Store: http://localhost:3003"
 echo "   - MakrX Events: http://localhost:3004"

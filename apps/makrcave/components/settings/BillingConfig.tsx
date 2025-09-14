@@ -18,7 +18,7 @@ import {
   Info,
   AlertTriangle,
   Users,
-  Receipt
+  Receipt,
 } from 'lucide-react';
 
 interface MakerspaceSettings {
@@ -46,15 +46,10 @@ const currencies = [
   { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
   { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
   { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
-  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' }
+  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
 ];
 
-const BillingConfig: React.FC<BillingConfigProps> = ({
-  settings,
-  onUpdate,
-  onSave,
-  saving
-}) => {
+const BillingConfig: React.FC<BillingConfigProps> = ({ settings, onUpdate, onSave, saving }) => {
   const [showRazorpayKey, setShowRazorpayKey] = useState(false);
   const [showStripeKey, setShowStripeKey] = useState(false);
 
@@ -74,13 +69,13 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
       default_currency: settings.default_currency,
       razorpay_key_override: settings.razorpay_key_override,
       stripe_key_override: settings.stripe_key_override,
-      enable_membership_billing: settings.enable_membership_billing
+      enable_membership_billing: settings.enable_membership_billing,
     };
     onSave(billingData);
   };
 
   const getCurrencySymbol = (code: string) => {
-    return currencies.find(c => c.code === code)?.symbol || '$';
+    return currencies.find((c) => c.code === code)?.symbol || '$';
   };
 
   return (
@@ -93,7 +88,7 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
             <div className="text-sm text-purple-800">
               <p className="font-medium">Billing Configuration</p>
               <p className="text-purple-700 mt-1">
-                Configure payment processing, tax rates, and billing features for your makerspace. 
+                Configure payment processing, tax rates, and billing features for your makerspace.
                 These settings affect pricing, invoicing, and payment collection.
               </p>
             </div>
@@ -208,8 +203,8 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
           {/* Default Currency */}
           <div className="space-y-2">
             <Label htmlFor="default_currency">Default Currency</Label>
-            <Select 
-              value={settings.default_currency || 'INR'} 
+            <Select
+              value={settings.default_currency || 'INR'}
               onValueChange={(value) => handleInputChange('default_currency', value)}
             >
               <SelectTrigger>
@@ -241,13 +236,18 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
                   max="100"
                   step="0.1"
                   value={settings.default_tax_percent || 18}
-                  onChange={(e) => handleInputChange('default_tax_percent', parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange('default_tax_percent', parseFloat(e.target.value) || 0)
+                  }
                   className="w-24"
                 />
                 <span className="text-sm text-gray-600">%</span>
               </div>
               <div className="text-sm text-gray-500">
-                Example: {getCurrencySymbol(settings.default_currency || 'INR')}100 + {settings.default_tax_percent || 18}% tax = {getCurrencySymbol(settings.default_currency || 'INR')}{(100 * (1 + (settings.default_tax_percent || 18) / 100)).toFixed(2)}
+                Example: {getCurrencySymbol(settings.default_currency || 'INR')}100 +{' '}
+                {settings.default_tax_percent || 18}% tax ={' '}
+                {getCurrencySymbol(settings.default_currency || 'INR')}
+                {(100 * (1 + (settings.default_tax_percent || 18) / 100)).toFixed(2)}
               </div>
             </div>
             <p className="text-xs text-gray-500">
@@ -272,7 +272,8 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
               <div className="text-sm text-blue-800">
                 <p className="font-medium">Centralized Payment Processing</p>
                 <p className="text-blue-700 mt-1">
-                  All payments are processed through our secure payment gateway. You receive monthly payouts for all transactions in your makerspace. No additional setup required.
+                  All payments are processed through our secure payment gateway. You receive monthly
+                  payouts for all transactions in your makerspace. No additional setup required.
                 </p>
                 <div className="mt-3 space-y-1 text-blue-600">
                   <p>✓ Secure payment processing</p>
@@ -298,19 +299,19 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Credit System:</span>
-                  <Badge variant={settings.credit_system_enabled ? "default" : "outline"}>
+                  <Badge variant={settings.credit_system_enabled ? 'default' : 'outline'}>
                     {settings.credit_system_enabled ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Membership Billing:</span>
-                  <Badge variant={settings.enable_membership_billing ? "default" : "outline"}>
+                  <Badge variant={settings.enable_membership_billing ? 'default' : 'outline'}>
                     {settings.enable_membership_billing ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Cost Estimates:</span>
-                  <Badge variant={settings.show_job_cost_estimates ? "default" : "outline"}>
+                  <Badge variant={settings.show_job_cost_estimates ? 'default' : 'outline'}>
                     {settings.show_job_cost_estimates ? 'Shown' : 'Hidden'}
                   </Badge>
                 </div>
@@ -323,19 +324,20 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
                 <div className="flex items-center justify-between">
                   <span>Default Currency:</span>
                   <Badge variant="outline">
-                    {getCurrencySymbol(settings.default_currency || 'INR')} {settings.default_currency || 'INR'}
+                    {getCurrencySymbol(settings.default_currency || 'INR')}{' '}
+                    {settings.default_currency || 'INR'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Tax Rate:</span>
-                  <Badge variant="outline">
-                    {settings.default_tax_percent || 18}%
-                  </Badge>
+                  <Badge variant="outline">{settings.default_tax_percent || 18}%</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Gateway Override:</span>
                   <Badge variant="outline">
-                    {(settings.razorpay_key_override || settings.stripe_key_override) ? 'Custom' : 'Default'}
+                    {settings.razorpay_key_override || settings.stripe_key_override
+                      ? 'Custom'
+                      : 'Default'}
                   </Badge>
                 </div>
               </div>
@@ -355,7 +357,11 @@ const BillingConfig: React.FC<BillingConfigProps> = ({
               {settings.show_job_cost_estimates && (
                 <p>• Cost estimates will be displayed before job submission</p>
               )}
-              <p>• All prices will be displayed in {getCurrencySymbol(settings.default_currency || 'INR')} {settings.default_currency || 'INR'} with {settings.default_tax_percent || 18}% tax</p>
+              <p>
+                • All prices will be displayed in{' '}
+                {getCurrencySymbol(settings.default_currency || 'INR')}{' '}
+                {settings.default_currency || 'INR'} with {settings.default_tax_percent || 18}% tax
+              </p>
             </div>
           </div>
         </CardContent>

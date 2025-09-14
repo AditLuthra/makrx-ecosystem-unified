@@ -1,7 +1,7 @@
 export interface EquipmentAccessPolicy {
   id: string;
   equipment_id: string;
-  access_type: "free" | "subscription_only" | "pay_per_use";
+  access_type: 'free' | 'subscription_only' | 'pay_per_use';
   membership_required?: boolean;
   price_per_unit?: number;
   cost_unit?: string;

@@ -14,7 +14,9 @@ import { z } from "zod";
 
 // Users
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   username: text("username"),
   email: text("email"),
   keycloakId: varchar("keycloak_id"),
@@ -27,15 +29,17 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 export type User = typeof users.$inferSelect;
-export const insertUserSchema = (createInsertSchema(users).pick({
+export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
-}) as unknown as z.ZodTypeAny);
+}) as unknown as z.ZodTypeAny;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
 // Events
 export const events = pgTable("events", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   slug: text("slug").notNull(),
   title: text("title"),
   organizerId: varchar("organizer_id"),
@@ -54,26 +58,30 @@ export const events = pgTable("events", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 export type Event = typeof events.$inferSelect;
-export const insertEventSchema = (createInsertSchema(events).pick({
+export const insertEventSchema = createInsertSchema(events).pick({
   slug: true,
   title: true,
   organizerId: true,
   status: true,
   startDate: true,
   endDate: true,
-}) as unknown as z.ZodTypeAny);
+}) as unknown as z.ZodTypeAny;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 
 // Microsites and sub-events (minimal columns used by routes)
 export const microsites = pgTable("microsites", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   slug: text("slug").notNull(),
   title: text("title"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const subEvents = pgTable("sub_events", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   micrositeId: varchar("microsite_id").notNull(),
   title: text("title").notNull(),
   type: varchar("type"),
@@ -96,12 +104,16 @@ export const eventFeatures = pgTable("event_features", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 export type EventFeatures = typeof eventFeatures.$inferSelect;
-export const insertEventFeaturesSchema = createInsertSchema(eventFeatures) as unknown as z.ZodTypeAny;
+export const insertEventFeaturesSchema = createInsertSchema(
+  eventFeatures,
+) as unknown as z.ZodTypeAny;
 export type InsertEventFeatures = z.infer<typeof insertEventFeaturesSchema>;
 
 // Registrations
 export const eventRegistrations = pgTable("event_registrations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id"),
   micrositeId: varchar("microsite_id"),
   subEventId: varchar("sub_event_id"),
@@ -123,11 +135,13 @@ export const eventRegistrations = pgTable("event_registrations", {
   metadata: jsonb("metadata"),
 });
 export type EventRegistration = typeof eventRegistrations.$inferSelect;
-export const insertRegistrationSchema = (createInsertSchema(eventRegistrations).pick({
+export const insertRegistrationSchema = createInsertSchema(
+  eventRegistrations,
+).pick({
   eventId: true,
   userId: true,
   status: true,
-}) as unknown as z.ZodTypeAny);
+}) as unknown as z.ZodTypeAny;
 export type InsertRegistration = z.infer<typeof insertRegistrationSchema>;
 
 // Alias used in some routes
@@ -135,7 +149,9 @@ export const registrations = eventRegistrations;
 
 // Activities (user activity stream)
 export const userActivities = pgTable("user_activities", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull(),
   eventId: varchar("event_id"),
   activity: varchar("activity").notNull(),
@@ -144,22 +160,26 @@ export const userActivities = pgTable("user_activities", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 export type Activity = typeof userActivities.$inferSelect;
-export const insertActivitySchema = (createInsertSchema(userActivities).pick({
+export const insertActivitySchema = createInsertSchema(userActivities).pick({
   userId: true,
   eventId: true,
   activity: true,
-}) as unknown as z.ZodTypeAny);
+}) as unknown as z.ZodTypeAny;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 
 // Teams and members (basic)
 export const teams = pgTable("teams", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 export const teamMembers = pgTable("team_members", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   teamId: varchar("team_id").notNull(),
   userId: varchar("user_id").notNull(),
   role: varchar("role").default("member"),
@@ -167,14 +187,18 @@ export const teamMembers = pgTable("team_members", {
 
 // Tournaments (minimal)
 export const tournaments = pgTable("tournaments", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   name: text("name").notNull(),
 });
 
 // Sponsors (minimal)
 export const sponsors = pgTable("sponsors", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   name: text("name").notNull(),
   tier: varchar("tier"),
@@ -182,7 +206,9 @@ export const sponsors = pgTable("sponsors", {
 
 // Payment transactions (minimal)
 export const paymentTransactions = pgTable("payment_transactions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   registrationId: varchar("registration_id").notNull(),
   eventId: varchar("event_id"),
   userId: varchar("user_id"),
@@ -201,7 +227,9 @@ export const paymentTransactions = pgTable("payment_transactions", {
 
 // QR codes and check-ins (minimal)
 export const qrCodes = pgTable("qr_codes", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   sessionId: varchar("session_id"),
   userId: varchar("user_id"),
@@ -213,7 +241,9 @@ export const qrCodes = pgTable("qr_codes", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 export const eventCheckIns = pgTable("event_check_ins", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   userId: varchar("user_id").notNull(),
   checkedInBy: varchar("checked_in_by"),
@@ -223,14 +253,18 @@ export const eventCheckIns = pgTable("event_check_ins", {
 
 // Push subscriptions and live announcements (minimal)
 export const pushSubscriptions = pgTable("push_subscriptions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull(),
   endpoint: text("endpoint").notNull(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
 });
 export const liveAnnouncements = pgTable("live_announcements", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -238,7 +272,9 @@ export const liveAnnouncements = pgTable("live_announcements", {
 
 // Email templates and queue (minimal)
 export const emailTemplates = pgTable("email_templates", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   key: text("key").notNull(),
   subject: text("subject").notNull(),
   body: text("body").notNull(),
@@ -246,7 +282,9 @@ export const emailTemplates = pgTable("email_templates", {
   textContent: text("text_content"),
 });
 export const emailQueue = pgTable("email_queue", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   to: text("to"),
   recipient: text("recipient"),
   subject: text("subject").notNull(),
@@ -265,7 +303,9 @@ export const emailQueue = pgTable("email_queue", {
 
 // Admin applications (minimal)
 export const adminApplications = pgTable("admin_applications", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull(),
   status: varchar("status").default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -273,7 +313,9 @@ export const adminApplications = pgTable("admin_applications", {
 
 // Event templates (minimal)
 export const eventTemplates = pgTable("event_templates", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   description: text("description"),
   createdBy: varchar("created_by"),
@@ -287,21 +329,27 @@ export const eventTemplates = pgTable("event_templates", {
 
 // Sessions and related aggregates used in dashboards (minimal)
 export const eventSessions = pgTable("event_sessions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   title: text("title"),
   startsAt: timestamp("starts_at"),
 });
 
 export const sessionRegistrations = pgTable("session_registrations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   sessionId: varchar("session_id").notNull(),
   userId: varchar("user_id").notNull(),
   registeredAt: timestamp("registered_at").defaultNow(),
 });
 
 export const livestreams = pgTable("livestreams", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   platform: varchar("platform"),
   url: text("url"),
@@ -311,7 +359,9 @@ export const livestreams = pgTable("livestreams", {
 
 // Microsite registrations (minimal)
 export const micrositeRegistrations = pgTable("microsite_registrations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   micrositeSlug: text("microsite_slug").notNull(),
   userId: varchar("user_id").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -319,7 +369,9 @@ export const micrositeRegistrations = pgTable("microsite_registrations", {
 
 // Roles and other enums (minimal)
 export const eventRoles = pgTable("event_roles", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   userId: varchar("user_id").notNull(),
   role: varchar("role").notNull(),
@@ -327,7 +379,9 @@ export const eventRoles = pgTable("event_roles", {
 
 // Export jobs placeholder (used for exports API)
 export const exportJobs = pgTable("export_jobs", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id"),
   type: varchar("type"),
   status: varchar("status").default("pending"),

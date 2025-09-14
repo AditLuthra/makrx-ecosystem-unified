@@ -3,7 +3,17 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useKeycloak } from '@makrx/auth';
 
-export type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'inventory' | 'equipment' | 'projects' | 'system' | 'user' | 'security';
+export type NotificationType =
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'inventory'
+  | 'equipment'
+  | 'projects'
+  | 'system'
+  | 'user'
+  | 'security';
 
 export interface Notification {
   id: string;
@@ -58,7 +68,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           read: false,
           priority: 'medium',
           category: 'inventory',
-          actionUrl: '/inventory'
+          actionUrl: '/inventory',
         },
         {
           id: '2',
@@ -69,7 +79,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           read: false,
           priority: 'high',
           category: 'equipment',
-          actionUrl: '/equipment'
+          actionUrl: '/equipment',
         },
         {
           id: '3',
@@ -79,8 +89,8 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           timestamp: new Date(),
           read: false,
           priority: 'low',
-          category: 'system'
-        }
+          category: 'system',
+        },
       ];
       setNotifications(sampleNotifications);
     }
@@ -93,9 +103,9 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       timestamp: new Date(),
       read: false,
     };
-    
-    setNotifications(prev => [newNotification, ...prev]);
-    
+
+    setNotifications((prev) => [newNotification, ...prev]);
+
     // Auto-remove after 10 seconds for non-urgent notifications
     if (newNotification.priority !== 'urgent') {
       setTimeout(() => {
@@ -105,23 +115,19 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   };
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, read: true }
-          : notification
-      )
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification,
+      ),
     );
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+    setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })));
   };
 
   const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
+    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
   };
 
   const clearAll = () => {
@@ -129,18 +135,17 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   };
 
   const getNotificationsByCategory = (category: NotificationType): Notification[] => {
-    return notifications.filter(notification => 
-      notification.category === category || notification.type === category
+    return notifications.filter(
+      (notification) => notification.category === category || notification.type === category,
     );
   };
 
   const getUnreadCountByCategory = (category: NotificationType): number => {
-    return notifications.filter(n => 
-      (n.category === category || n.type === category) && !n.read
-    ).length;
+    return notifications.filter((n) => (n.category === category || n.type === category) && !n.read)
+      .length;
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const value: NotificationContextType = {
     notifications,
@@ -151,14 +156,10 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     removeNotification,
     clearAll,
     getNotificationsByCategory,
-    getUnreadCountByCategory
+    getUnreadCountByCategory,
   };
 
-  return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 }
 
 export function useNotifications() {

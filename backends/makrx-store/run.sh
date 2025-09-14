@@ -7,8 +7,8 @@ echo "==============================="
 
 # Create virtual environment if it doesn't exist
 if [ ! -d ".venv" ]; then
-    echo "Creating Python virtual environment..."
-    python3.12 -m venv .venv
+	echo "Creating Python virtual environment..."
+	python3.12 -m venv .venv
 fi
 
 # Activate virtual environment

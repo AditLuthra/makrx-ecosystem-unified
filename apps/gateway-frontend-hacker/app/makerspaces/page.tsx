@@ -1,4 +1,4 @@
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata = {
   title: 'Makerspaces — MakrX',
@@ -8,10 +8,13 @@ export const metadata = {
 export default function MakerspacesPage() {
   return (
     <main>
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Makerspaces",
-        url: "https://makrx.org/makerspaces"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Makerspaces',
+          url: 'https://makrx.org/makerspaces',
+        }}
+      />
       Makerspaces
     </main>
   );

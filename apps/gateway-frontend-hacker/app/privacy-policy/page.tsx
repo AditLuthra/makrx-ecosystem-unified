@@ -1,4 +1,4 @@
-import { SEOStructuredData } from "@/components/SEOStructuredData";
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 export const metadata = {
   title: 'Privacy Policy — MakrX',
@@ -8,10 +8,13 @@ export const metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <main>
-      <SEOStructuredData type="website" data={{
-        name: "MakrX Privacy Policy",
-        url: "https://makrx.org/privacy-policy"
-      }} />
+      <SEOStructuredData
+        type="website"
+        data={{
+          name: 'MakrX Privacy Policy',
+          url: 'https://makrx.org/privacy-policy',
+        }}
+      />
       Privacy Policy
     </main>
   );

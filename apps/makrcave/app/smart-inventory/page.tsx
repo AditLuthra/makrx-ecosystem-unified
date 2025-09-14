@@ -1,13 +1,19 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '../../components/ui/progress';
-import { 
+import {
   Package,
   TrendingUp,
   TrendingDown,
@@ -48,7 +54,7 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
-  PieChart
+  PieChart,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthHeaders } from '@makrx/auth';
@@ -166,7 +172,11 @@ const SmartInventory: React.FC = () => {
       setSuppliers(sup || []);
     } catch (error: any) {
       console.error('Failed to load inventory data', error);
-      toast({ title: 'Failed to load inventory data', description: error?.message || 'Unknown error', variant: 'destructive' });
+      toast({
+        title: 'Failed to load inventory data',
+        description: error?.message || 'Unknown error',
+        variant: 'destructive',
+      });
       setInventory([]);
       setForecasts([]);
       setPurchaseOrders([]);
@@ -176,55 +186,77 @@ const SmartInventory: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in_stock': return 'bg-green-100 text-green-800 border-green-200';
-      case 'low_stock': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'out_of_stock': return 'bg-red-100 text-red-800 border-red-200';
-      case 'overstock': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'approved': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'ordered': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'shipped': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'received': return 'bg-green-100 text-green-800 border-green-200';
-      case 'cancelled': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'in_stock':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'low_stock':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'out_of_stock':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'overstock':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'approved':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'ordered':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'shipped':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+      case 'received':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'cancelled':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getCriticalityColor = (level: string) => {
     switch (level) {
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getTrendIcon = (direction: string) => {
     switch (direction) {
-      case 'increasing': return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'decreasing': return <TrendingDown className="h-4 w-4 text-red-500" />;
-      case 'stable': return <Minus className="h-4 w-4 text-blue-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case 'increasing':
+        return <TrendingUp className="h-4 w-4 text-green-500" />;
+      case 'decreasing':
+        return <TrendingDown className="h-4 w-4 text-red-500" />;
+      case 'stable':
+        return <Minus className="h-4 w-4 text-blue-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const filteredInventory = inventory.filter(item => {
+  const filteredInventory = inventory.filter((item) => {
     const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
     const matchesStatus = filterStatus === 'all' || item.stockStatus === filterStatus;
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.sku.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.sku.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesStatus && matchesSearch;
   });
 
   const inventoryStats = {
     totalItems: inventory.length,
-    lowStockItems: inventory.filter(item => item.stockStatus === 'low_stock').length,
-    outOfStockItems: inventory.filter(item => item.stockStatus === 'out_of_stock').length,
-    autoReorderItems: inventory.filter(item => item.autoReorder).length,
-    totalValue: inventory.reduce((sum, item) => sum + (item.currentStock * item.unitCost), 0),
-    avgForecastAccuracy: Math.round(forecasts.reduce((sum, f) => sum + f.accuracy, 0) / forecasts.length),
-    pendingOrders: purchaseOrders.filter(po => po.status === 'pending').length,
-    monthlyBurn: inventory.reduce((sum, item) => sum + (item.averageUsage * item.unitCost), 0)
+    lowStockItems: inventory.filter((item) => item.stockStatus === 'low_stock').length,
+    outOfStockItems: inventory.filter((item) => item.stockStatus === 'out_of_stock').length,
+    autoReorderItems: inventory.filter((item) => item.autoReorder).length,
+    totalValue: inventory.reduce((sum, item) => sum + item.currentStock * item.unitCost, 0),
+    avgForecastAccuracy: Math.round(
+      forecasts.reduce((sum, f) => sum + f.accuracy, 0) / forecasts.length,
+    ),
+    pendingOrders: purchaseOrders.filter((po) => po.status === 'pending').length,
+    monthlyBurn: inventory.reduce((sum, item) => sum + item.averageUsage * item.unitCost, 0),
   };
 
   return (
@@ -333,27 +365,40 @@ const SmartInventory: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {inventory.filter(item => item.stockStatus !== 'in_stock').map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        {item.stockStatus === 'out_of_stock' && <AlertTriangle className="h-5 w-5 text-red-500" />}
-                        {item.stockStatus === 'low_stock' && <AlertTriangle className="h-5 w-5 text-yellow-500" />}
-                        {item.stockStatus === 'overstock' && <Package className="h-5 w-5 text-blue-500" />}
-                        <div>
-                          <div className="font-medium text-sm">{item.name}</div>
-                          <div className="text-xs text-gray-500">Current: {item.currentStock} | Min: {item.minThreshold}</div>
+                  {inventory
+                    .filter((item) => item.stockStatus !== 'in_stock')
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
+                        <div className="flex items-center space-x-3">
+                          {item.stockStatus === 'out_of_stock' && (
+                            <AlertTriangle className="h-5 w-5 text-red-500" />
+                          )}
+                          {item.stockStatus === 'low_stock' && (
+                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                          )}
+                          {item.stockStatus === 'overstock' && (
+                            <Package className="h-5 w-5 text-blue-500" />
+                          )}
+                          <div>
+                            <div className="font-medium text-sm">{item.name}</div>
+                            <div className="text-xs text-gray-500">
+                              Current: {item.currentStock} | Min: {item.minThreshold}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge className={getStatusColor(item.stockStatus)}>
+                            {item.stockStatus.replace('_', ' ')}
+                          </Badge>
+                          {item.autoReorder && (
+                            <div className="text-xs text-green-600 mt-1">Auto-reorder enabled</div>
+                          )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <Badge className={getStatusColor(item.stockStatus)}>
-                          {item.stockStatus.replace('_', ' ')}
-                        </Badge>
-                        {item.autoReorder && (
-                          <div className="text-xs text-green-600 mt-1">Auto-reorder enabled</div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -369,9 +414,9 @@ const SmartInventory: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {forecasts.map((forecast) => {
-                    const item = inventory.find(i => i.id === forecast.itemId);
+                    const item = inventory.find((i) => i.id === forecast.itemId);
                     if (!item) return null;
-                    
+
                     return (
                       <div key={forecast.itemId} className="border rounded-lg p-3">
                         <div className="flex items-center justify-between mb-2">
@@ -381,16 +426,18 @@ const SmartInventory: React.FC = () => {
                             <span className="text-sm">{forecast.accuracy}% accuracy</span>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-2">
                           {forecast.predictions.slice(0, 2).map((pred, index) => (
                             <div key={index} className="flex justify-between text-xs">
                               <span>{pred.period}</span>
-                              <span className="font-medium">{pred.predictedDemand} units ({pred.confidence}%)</span>
+                              <span className="font-medium">
+                                {pred.predictedDemand} units ({pred.confidence}%)
+                              </span>
                             </div>
                           ))}
                         </div>
-                        
+
                         {forecast.seasonality && (
                           <Badge variant="outline" className="mt-2 text-xs">
                             Seasonal Pattern
@@ -416,16 +463,19 @@ const SmartInventory: React.FC = () => {
               <CardContent>
                 <div className="space-y-3">
                   {purchaseOrders.slice(0, 5).map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={order.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <div className="font-medium text-sm">{order.orderNumber}</div>
                         <div className="text-xs text-gray-500">{order.supplier}</div>
-                        <div className="text-xs text-gray-500">Expected: {order.expectedDelivery}</div>
+                        <div className="text-xs text-gray-500">
+                          Expected: {order.expectedDelivery}
+                        </div>
                       </div>
                       <div className="text-right">
-                        <Badge className={getStatusColor(order.status)}>
-                          {order.status}
-                        </Badge>
+                        <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
                         <div className="text-sm font-medium mt-1">${order.totalAmount}</div>
                         {order.autoGenerated && (
                           <div className="text-xs text-blue-600">Auto-generated</div>
@@ -448,28 +498,32 @@ const SmartInventory: React.FC = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-lg font-bold text-blue-600">${inventoryStats.monthlyBurn.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-blue-600">
+                        ${inventoryStats.monthlyBurn.toLocaleString()}
+                      </div>
                       <div className="text-sm text-gray-600">Monthly Burn Rate</div>
                     </div>
                     <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-lg font-bold text-green-600">{inventoryStats.autoReorderItems}</div>
+                      <div className="text-lg font-bold text-green-600">
+                        {inventoryStats.autoReorderItems}
+                      </div>
                       <div className="text-sm text-gray-600">Auto-Reorder Items</div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Inventory Turnover</span>
                       <span className="font-medium">6.2x/year</span>
                     </div>
                     <Progress value={62} className="h-2" />
-                    
+
                     <div className="flex justify-between text-sm">
                       <span>Stockout Risk</span>
                       <span className="font-medium">12%</span>
                     </div>
                     <Progress value={12} className="h-2" />
-                    
+
                     <div className="flex justify-between text-sm">
                       <span>Forecast Reliability</span>
                       <span className="font-medium">{inventoryStats.avgForecastAccuracy}%</span>
@@ -510,7 +564,7 @@ const SmartInventory: React.FC = () => {
                   <SelectItem value="Hardware">Hardware</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={filterStatus} onValueChange={setFilterStatus}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Status" />
@@ -535,14 +589,16 @@ const SmartInventory: React.FC = () => {
                     <div>
                       <CardTitle className="text-lg">{item.name}</CardTitle>
                       <p className="text-sm text-gray-600">{item.sku}</p>
-                      <p className="text-xs text-gray-500">{item.category} • {item.subcategory}</p>
+                      <p className="text-xs text-gray-500">
+                        {item.category} • {item.subcategory}
+                      </p>
                     </div>
                     <Badge className={getStatusColor(item.stockStatus)}>
                       {item.stockStatus.replace('_', ' ')}
                     </Badge>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   {/* Stock Level Visual */}
                   <div>
@@ -551,15 +607,15 @@ const SmartInventory: React.FC = () => {
                       <span className="font-medium">{item.currentStock} units</span>
                     </div>
                     <div className="relative">
-                      <Progress 
-                        value={Math.min(100, (item.currentStock / item.maxThreshold) * 100)} 
+                      <Progress
+                        value={Math.min(100, (item.currentStock / item.maxThreshold) * 100)}
                         className="h-3"
                       />
-                      <div 
+                      <div
                         className="absolute top-0 h-3 w-0.5 bg-red-500"
                         style={{ left: `${(item.minThreshold / item.maxThreshold) * 100}%` }}
                       />
-                      <div 
+                      <div
                         className="absolute top-0 h-3 w-0.5 bg-yellow-500"
                         style={{ left: `${(item.reorderPoint / item.maxThreshold) * 100}%` }}
                       />
@@ -570,7 +626,7 @@ const SmartInventory: React.FC = () => {
                       <span>Max: {item.maxThreshold}</span>
                     </div>
                   </div>
-                  
+
                   {/* Key Metrics */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
@@ -590,7 +646,7 @@ const SmartInventory: React.FC = () => {
                       <div className="font-medium">{item.forecastDemand} units</div>
                     </div>
                   </div>
-                  
+
                   {/* Supplier & Location */}
                   <div className="text-sm">
                     <div className="flex justify-between">
@@ -602,7 +658,7 @@ const SmartInventory: React.FC = () => {
                       <span className="font-medium">{item.location}</span>
                     </div>
                   </div>
-                  
+
                   {/* Auto-reorder Status */}
                   {item.autoReorder && (
                     <div className="flex items-center space-x-2 text-sm text-green-600">
@@ -610,7 +666,7 @@ const SmartInventory: React.FC = () => {
                       <span>Auto-reorder enabled</span>
                     </div>
                   )}
-                  
+
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
                     <Button size="sm" className="flex-1">
@@ -634,9 +690,9 @@ const SmartInventory: React.FC = () => {
         <TabsContent value="forecasting" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {forecasts.map((forecast) => {
-              const item = inventory.find(i => i.id === forecast.itemId);
+              const item = inventory.find((i) => i.id === forecast.itemId);
               if (!item) return null;
-              
+
               return (
                 <Card key={forecast.itemId}>
                   <CardHeader>
@@ -648,13 +704,15 @@ const SmartInventory: React.FC = () => {
                       <div className="text-right">
                         <div className="flex items-center space-x-1">
                           {getTrendIcon(forecast.trendDirection)}
-                          <span className="text-sm font-medium capitalize">{forecast.trendDirection}</span>
+                          <span className="text-sm font-medium capitalize">
+                            {forecast.trendDirection}
+                          </span>
                         </div>
                         <div className="text-xs text-gray-500">{forecast.accuracy}% accuracy</div>
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     {/* Forecast Chart Placeholder */}
                     <div className="h-32 bg-gray-50 rounded-lg flex items-center justify-center">
@@ -663,7 +721,7 @@ const SmartInventory: React.FC = () => {
                         <p className="text-sm">Demand Forecast Chart</p>
                       </div>
                     </div>
-                    
+
                     {/* Predictions */}
                     <div className="space-y-3">
                       <h4 className="font-medium">Upcoming Predictions:</h4>
@@ -672,13 +730,13 @@ const SmartInventory: React.FC = () => {
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <div className="font-medium">{pred.period}</div>
-                              <div className="text-sm text-gray-600">{pred.predictedDemand} units expected</div>
+                              <div className="text-sm text-gray-600">
+                                {pred.predictedDemand} units expected
+                              </div>
                             </div>
-                            <Badge variant="outline">
-                              {pred.confidence}% confidence
-                            </Badge>
+                            <Badge variant="outline">{pred.confidence}% confidence</Badge>
                           </div>
-                          
+
                           <div className="text-xs text-gray-500">
                             <span>Factors: </span>
                             {pred.factors.join(', ')}
@@ -686,7 +744,7 @@ const SmartInventory: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    
+
                     {/* Forecast Settings */}
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline" className="flex-1">
@@ -714,9 +772,7 @@ const SmartInventory: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-3">
                         <h3 className="font-semibold text-lg">{order.orderNumber}</h3>
-                        <Badge className={getStatusColor(order.status)}>
-                          {order.status}
-                        </Badge>
+                        <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
                         {order.autoGenerated && (
                           <Badge variant="outline">
                             <Zap className="h-3 w-3 mr-1" />
@@ -724,7 +780,7 @@ const SmartInventory: React.FC = () => {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
                         <div>
                           <span className="text-gray-500">Supplier:</span>
@@ -743,18 +799,23 @@ const SmartInventory: React.FC = () => {
                           <div className="font-medium">${order.totalAmount.toLocaleString()}</div>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <h5 className="font-medium">Order Items:</h5>
                         {order.items.map((item, index) => (
-                          <div key={index} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
+                          <div
+                            key={index}
+                            className="flex justify-between text-sm p-2 bg-gray-50 rounded"
+                          >
                             <span>{item.itemName}</span>
-                            <span>{item.quantity} × ${item.unitCost} = ${item.totalCost}</span>
+                            <span>
+                              {item.quantity} × ${item.unitCost} = ${item.totalCost}
+                            </span>
                           </div>
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline">
                         <Eye className="h-4 w-4" />
@@ -792,7 +853,7 @@ const SmartInventory: React.FC = () => {
                     )}
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   {/* Supplier Metrics */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
@@ -816,7 +877,7 @@ const SmartInventory: React.FC = () => {
                       <div className="font-medium">${supplier.minimumOrder}</div>
                     </div>
                   </div>
-                  
+
                   {/* Contact Info */}
                   <div className="text-sm">
                     <div className="flex justify-between">
@@ -832,7 +893,7 @@ const SmartInventory: React.FC = () => {
                       <span className="font-medium">{supplier.paymentTerms}</span>
                     </div>
                   </div>
-                  
+
                   {/* Categories */}
                   <div>
                     <h5 className="font-medium text-sm mb-2">Categories:</h5>
@@ -844,7 +905,7 @@ const SmartInventory: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
                     <Button size="sm" className="flex-1">

@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { 
-  Heart, 
-  ShoppingCart, 
-  Trash2, 
-  Share2, 
-  Eye, 
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import {
+  Heart,
+  ShoppingCart,
+  Trash2,
+  Share2,
+  Eye,
   Filter,
   Grid3X3,
   List,
   ArrowLeft,
   Star,
   Package,
-  AlertCircle
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { api, formatPrice } from "@/lib/api";
+  AlertCircle,
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { api, formatPrice } from '@/lib/api';
 
 interface WishlistItem {
   id: number;
@@ -52,7 +52,7 @@ export default function WishlistPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { addNotification } = useNotifications();
-  
+
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -80,18 +80,18 @@ export default function WishlistPage() {
           created_at: new Date().toISOString(),
           product: {
             id: 1,
-            slug: "premium-pla-filament-white",
-            name: "Premium PLA Filament - White",
-            brand: "MakrX",
+            slug: 'premium-pla-filament-white',
+            name: 'Premium PLA Filament - White',
+            brand: 'MakrX',
             price: 2500,
             sale_price: 2250,
-            currency: "INR",
-            images: ["/placeholder.svg"],
+            currency: 'INR',
+            images: ['/placeholder.svg'],
             stock_qty: 15,
             in_stock: true,
             rating: { average: 4.5, count: 23 },
-            category: { name: "Filaments", slug: "filaments" }
-          }
+            category: { name: 'Filaments', slug: 'filaments' },
+          },
         },
         {
           id: 2,
@@ -99,20 +99,20 @@ export default function WishlistPage() {
           created_at: new Date().toISOString(),
           product: {
             id: 2,
-            slug: "ender-3-v2-3d-printer",
-            name: "Ender 3 V2 3D Printer",
-            brand: "Creality",
+            slug: 'ender-3-v2-3d-printer',
+            name: 'Ender 3 V2 3D Printer',
+            brand: 'Creality',
             price: 25000,
-            currency: "INR",
-            images: ["/placeholder.svg"],
+            currency: 'INR',
+            images: ['/placeholder.svg'],
             stock_qty: 0,
             in_stock: false,
             rating: { average: 4.7, count: 156 },
-            category: { name: "3D Printers", slug: "3d-printers" }
-          }
-        }
+            category: { name: '3D Printers', slug: '3d-printers' },
+          },
+        },
       ];
-      
+
       setTimeout(() => {
         setWishlistItems(mockWishlist);
         setLoading(false);
@@ -125,29 +125,29 @@ export default function WishlistPage() {
   };
 
   const removeFromWishlist = async (itemId: number) => {
-    setRemoving(prev => ({ ...prev, [itemId]: true }));
+    setRemoving((prev) => ({ ...prev, [itemId]: true }));
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setWishlistItems(prev => prev.filter(item => item.id !== itemId));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
       addNotification('Item removed from wishlist', 'success');
     } catch (error) {
       addNotification('Failed to remove item', 'error');
     } finally {
-      setRemoving(prev => ({ ...prev, [itemId]: false }));
+      setRemoving((prev) => ({ ...prev, [itemId]: false }));
     }
   };
 
   const addToCart = async (productId: number) => {
-    setAddingToCart(prev => ({ ...prev, [productId]: true }));
+    setAddingToCart((prev) => ({ ...prev, [productId]: true }));
     try {
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
       addNotification('Item added to cart', 'success');
     } catch (error) {
       addNotification('Failed to add to cart', 'error');
     } finally {
-      setAddingToCart(prev => ({ ...prev, [productId]: false }));
+      setAddingToCart((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -170,7 +170,7 @@ export default function WishlistPage() {
 
   // Filter and sort items
   const filteredAndSortedItems = wishlistItems
-    .filter(item => {
+    .filter((item) => {
       if (filterBy === 'in_stock') return item.product.in_stock;
       if (filterBy === 'on_sale') return item.product.sale_price;
       return true;
@@ -224,7 +224,7 @@ export default function WishlistPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Account
           </Link>
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -235,7 +235,7 @@ export default function WishlistPage() {
                 {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'} saved
               </p>
             </div>
-            
+
             {wishlistItems.length > 0 && (
               <button
                 onClick={shareWishlist}
@@ -314,11 +314,13 @@ export default function WishlistPage() {
             </div>
 
             {/* Items Grid/List */}
-            <div className={
-              viewMode === 'grid' 
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                : "space-y-4"
-            }>
+            <div
+              className={
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                  : 'space-y-4'
+              }
+            >
               {filteredAndSortedItems.map((item) => (
                 <div
                   key={item.id}
@@ -327,21 +329,23 @@ export default function WishlistPage() {
                   }`}
                 >
                   {/* Product Image */}
-                  <div className={`relative ${viewMode === 'list' ? 'w-24 h-24 flex-shrink-0' : 'aspect-square mb-4'}`}>
+                  <div
+                    className={`relative ${viewMode === 'list' ? 'w-24 h-24 flex-shrink-0' : 'aspect-square mb-4'}`}
+                  >
                     <Image
                       src={item.product.images[0] || '/placeholder.svg'}
                       alt={item.product.name}
                       fill
                       className="object-cover rounded-lg"
                     />
-                    
+
                     {/* Stock Badge */}
                     {!item.product.in_stock && (
                       <div className="absolute top-2 left-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded text-xs font-medium">
                         Out of Stock
                       </div>
                     )}
-                    
+
                     {/* Sale Badge */}
                     {item.product.sale_price && (
                       <div className="absolute top-2 right-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-xs font-medium">
@@ -366,7 +370,7 @@ export default function WishlistPage() {
                           {item.product.name}
                         </Link>
                       </div>
-                      
+
                       <button
                         onClick={() => removeFromWishlist(item.id)}
                         disabled={removing[item.id]}
@@ -404,7 +408,10 @@ export default function WishlistPage() {
                     {/* Price */}
                     <div className="flex items-center gap-2 mb-3">
                       <span className="font-bold text-lg text-gray-900 dark:text-white">
-                        {formatPrice(item.product.sale_price || item.product.price, item.product.currency)}
+                        {formatPrice(
+                          item.product.sale_price || item.product.price,
+                          item.product.currency,
+                        )}
                       </span>
                       {item.product.sale_price && (
                         <span className="text-sm text-gray-500 line-through">
@@ -429,7 +436,7 @@ export default function WishlistPage() {
                           </>
                         )}
                       </button>
-                      
+
                       <Link
                         href={`/p/${item.product.slug}`}
                         className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

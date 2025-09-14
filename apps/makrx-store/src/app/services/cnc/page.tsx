@@ -21,41 +21,45 @@ const materials: Material[] = [
     name: 'Aluminum 6061',
     description: 'Lightweight, corrosion-resistant, excellent machinability',
     priceMultiplier: 1.0,
-    properties: ['Lightweight', 'Corrosion resistant', 'Good strength', 'Easy to machine']
+    properties: ['Lightweight', 'Corrosion resistant', 'Good strength', 'Easy to machine'],
   },
   {
     name: 'Stainless Steel 304',
     description: 'High strength, excellent corrosion resistance',
     priceMultiplier: 1.8,
-    properties: ['High strength', 'Corrosion resistant', 'Food safe', 'Magnetic']
+    properties: ['High strength', 'Corrosion resistant', 'Food safe', 'Magnetic'],
   },
   {
     name: 'Brass',
     description: 'Excellent machinability, antimicrobial properties',
     priceMultiplier: 2.2,
-    properties: ['Antimicrobial', 'Decorative', 'Good conductivity', 'Easy to machine']
+    properties: ['Antimicrobial', 'Decorative', 'Good conductivity', 'Easy to machine'],
   },
   {
     name: 'Delrin (POM)',
     description: 'Low friction plastic, high precision capabilities',
     priceMultiplier: 1.3,
-    properties: ['Low friction', 'Chemical resistant', 'Precise dimensions', 'Food safe']
+    properties: ['Low friction', 'Chemical resistant', 'Precise dimensions', 'Food safe'],
   },
   {
     name: 'PEEK',
     description: 'High-performance thermoplastic, chemical resistant',
     priceMultiplier: 5.0,
-    properties: ['High temperature', 'Chemical resistant', 'Biocompatible', 'Low outgassing']
-  }
+    properties: ['High temperature', 'Chemical resistant', 'Biocompatible', 'Low outgassing'],
+  },
 ];
 
 const finishes: Finish[] = [
   { name: 'As Machined', description: 'Standard machined finish', additionalCost: 0 },
   { name: 'Bead Blasted', description: 'Uniform matte finish', additionalCost: 15 },
-  { name: 'Anodized (Type II)', description: 'Corrosion protection for aluminum', additionalCost: 25 },
+  {
+    name: 'Anodized (Type II)',
+    description: 'Corrosion protection for aluminum',
+    additionalCost: 25,
+  },
   { name: 'Hard Anodized (Type III)', description: 'Wear-resistant coating', additionalCost: 45 },
   { name: 'Powder Coating', description: 'Durable color finish', additionalCost: 30 },
-  { name: 'Polished', description: 'Mirror-like surface finish', additionalCost: 50 }
+  { name: 'Polished', description: 'Mirror-like surface finish', additionalCost: 50 },
 ];
 
 export default function CNCMachiningPage() {
@@ -65,7 +69,9 @@ export default function CNCMachiningPage() {
   const [dragActive, setDragActive] = useState(false);
 
   const basePrice = 85;
-  const estimatedPrice = Math.round(basePrice * selectedMaterial.priceMultiplier * quantity + selectedFinish.additionalCost);
+  const estimatedPrice = Math.round(
+    basePrice * selectedMaterial.priceMultiplier * quantity + selectedFinish.additionalCost,
+  );
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -81,7 +87,7 @@ export default function CNCMachiningPage() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     console.log('Files dropped:', files);
   };
@@ -101,8 +107,8 @@ export default function CNCMachiningPage() {
               CNC Machining Services
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Precision CNC machining for prototypes and production parts. From aluminum to aerospace-grade materials, 
-              we deliver parts with tolerances as tight as ±0.005".
+              Precision CNC machining for prototypes and production parts. From aluminum to
+              aerospace-grade materials, we deliver parts with tolerances as tight as ±0.005".
             </p>
           </div>
         </div>
@@ -139,7 +145,7 @@ export default function CNCMachiningPage() {
                   Choose Files
                 </button>
               </div>
-              
+
               <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
                   Design Guidelines for Best Results:
@@ -174,7 +180,9 @@ export default function CNCMachiningPage() {
                         {material.name}
                       </h3>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {material.priceMultiplier === 1.0 ? 'Base price' : `${material.priceMultiplier}x`}
+                        {material.priceMultiplier === 1.0
+                          ? 'Base price'
+                          : `${material.priceMultiplier}x`}
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
@@ -236,7 +244,7 @@ export default function CNCMachiningPage() {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Instant Quote
               </h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -336,8 +344,8 @@ export default function CNCMachiningPage() {
                 Material Expertise
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                From aluminum and steel to exotic alloys and high-performance plastics, 
-                we have the expertise to machine your material of choice.
+                From aluminum and steel to exotic alloys and high-performance plastics, we have the
+                expertise to machine your material of choice.
               </p>
             </div>
             <div className="text-center">
@@ -348,8 +356,8 @@ export default function CNCMachiningPage() {
                 Advanced Equipment
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                5-axis CNC centers, Swiss-style lathes, and automated inspection equipment 
-                ensure consistent quality and fast turnaround times.
+                5-axis CNC centers, Swiss-style lathes, and automated inspection equipment ensure
+                consistent quality and fast turnaround times.
               </p>
             </div>
           </div>

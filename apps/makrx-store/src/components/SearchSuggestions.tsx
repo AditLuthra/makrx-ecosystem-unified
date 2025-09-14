@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface SearchSuggestionsProps {
   suggestions: string[];
@@ -15,9 +15,7 @@ export default function SearchSuggestions({
 
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-        Did you mean?
-      </h3>
+      <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">Did you mean?</h3>
       <div className="flex flex-wrap gap-2">
         {suggestions.map((suggestion, index) => (
           <button

@@ -2,7 +2,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: '0 2 * * MON'  # Run every Monday at 2 AM
+    - cron: "0 2 * * MON" # Run every Monday at 2 AM
   workflow_dispatch:
 
 jobs:
@@ -11,76 +11,76 @@ jobs:
     strategy:
       matrix:
         update-type: [npm, pip]
-    
+
     steps:
-    - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Setup Node.js
-      if: matrix.update-type == 'npm'
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-    
-    - name: Setup Python
-      if: matrix.update-type == 'pip'
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Update npm dependencies
-      if: matrix.update-type == 'npm'
-      run: |
-        # Update main dependencies
-        npx npm-check-updates -u
-        npm install
-        
-        # Update workspace dependencies
-        npm run update-deps --workspaces --if-present
-        
-        # Check for security vulnerabilities
-        npm audit fix || echo "Manual review required for security fixes"
-    
-    - name: Update Python dependencies
-      if: matrix.update-type == 'pip'
-      run: |
-        # Update backend dependencies
-        for backend in backends/*; do
-          if [ -f "$backend/requirements.txt" ]; then
-            echo "Updating $backend"
-            cd "$backend"
-            pip-compile --upgrade requirements.in || echo "No requirements.in found"
-            cd ../..
-          fi
-        done
-    
-    - name: Run tests after updates
-      run: |
-        npm run test --workspaces --if-present || echo "Some tests failed - manual review needed"
-    
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore: update ${{ matrix.update-type }} dependencies'
-        title: 'Automated ${{ matrix.update-type }} dependency updates'
-        body: |
-          Automated dependency updates for ${{ matrix.update-type }}.
-          
-          ## Changes
-          - Updated dependencies to latest compatible versions
-          - Fixed security vulnerabilities where possible
-          
-          ## Testing
-          - [ ] All tests pass
-          - [ ] No breaking changes detected
-          - [ ] Security audit clean
-          
-          Please review and test thoroughly before merging.
-        branch: dependency-updates/${{ matrix.update-type }}-${{ github.run_number }}
-        labels: |
-          dependencies
-          automated-pr
-          ${{ matrix.update-type }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        if: matrix.update-type == 'npm'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Setup Python
+        if: matrix.update-type == 'pip'
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Update npm dependencies
+        if: matrix.update-type == 'npm'
+        run: |
+          # Update main dependencies
+          npx npm-check-updates -u
+          npm install
+
+          # Update workspace dependencies
+          npm run update-deps --workspaces --if-present
+
+          # Check for security vulnerabilities
+          npm audit fix || echo "Manual review required for security fixes"
+
+      - name: Update Python dependencies
+        if: matrix.update-type == 'pip'
+        run: |
+          # Update backend dependencies
+          for backend in backends/*; do
+            if [ -f "$backend/requirements.txt" ]; then
+              echo "Updating $backend"
+              cd "$backend"
+              pip-compile --upgrade requirements.in || echo "No requirements.in found"
+              cd ../..
+            fi
+          done
+
+      - name: Run tests after updates
+        run: |
+          npm run test --workspaces --if-present || echo "Some tests failed - manual review needed"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update ${{ matrix.update-type }} dependencies"
+          title: "Automated ${{ matrix.update-type }} dependency updates"
+          body: |
+            Automated dependency updates for ${{ matrix.update-type }}.
+
+            ## Changes
+            - Updated dependencies to latest compatible versions
+            - Fixed security vulnerabilities where possible
+
+            ## Testing
+            - [ ] All tests pass
+            - [ ] No breaking changes detected
+            - [ ] Security audit clean
+
+            Please review and test thoroughly before merging.
+          branch: dependency-updates/${{ matrix.update-type }}-${{ github.run_number }}
+          labels: |
+            dependencies
+            automated-pr
+            ${{ matrix.update-type }}

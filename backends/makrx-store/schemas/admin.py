@@ -10,11 +10,13 @@ from datetime import datetime
 from enum import Enum
 import uuid
 
+
 # Enums
 class CouponType(str, Enum):
     PERCENTAGE = "percentage"
     FIXED_AMOUNT = "fixed_amount"
     FREE_SHIPPING = "free_shipping"
+
 
 class NotificationStatus(str, Enum):
     PENDING = "pending"
@@ -23,11 +25,13 @@ class NotificationStatus(str, Enum):
     FAILED = "failed"
     BOUNCED = "bounced"
 
+
 class NotificationType(str, Enum):
     EMAIL = "email"
     SMS = "sms"
     PUSH = "push"
     WEBHOOK = "webhook"
+
 
 class AuditSeverity(str, Enum):
     INFO = "info"
@@ -35,14 +39,18 @@ class AuditSeverity(str, Enum):
     ERROR = "error"
     CRITICAL = "critical"
 
+
 # Base schemas
 class TimestampMixin(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
+
 # Coupon schemas
 class CouponBase(BaseModel):
-    code: str = Field(..., min_length=3, max_length=50, pattern=r'^[A-Z0-9_-]+$')
+    code: str = Field(
+        ..., min_length=3, max_length=50, pattern=r"^[A-Z0-9_-]+$"
+    )
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     type: CouponType
@@ -55,22 +63,24 @@ class CouponBase(BaseModel):
     expires_at: Optional[datetime] = None
     is_active: bool = True
 
-    @validator('value')
+    @validator("value")
     def validate_value(cls, v, values):
-        coupon_type = values.get('type')
+        coupon_type = values.get("type")
         if coupon_type == CouponType.PERCENTAGE and v > 100:
-            raise ValueError('Percentage discount cannot exceed 100%')
+            raise ValueError("Percentage discount cannot exceed 100%")
         return v
 
-    @validator('expires_at')
+    @validator("expires_at")
     def validate_dates(cls, v, values):
-        starts_at = values.get('starts_at')
+        starts_at = values.get("starts_at")
         if v and starts_at and v <= starts_at:
-            raise ValueError('Expiry date must be after start date')
+            raise ValueError("Expiry date must be after start date")
         return v
+
 
 class CouponCreate(CouponBase):
     pass
+
 
 class CouponUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
@@ -83,11 +93,13 @@ class CouponUpdate(BaseModel):
     expires_at: Optional[datetime] = None
     is_active: Optional[bool] = None
 
+
 class Coupon(CouponBase, TimestampMixin):
     id: int
     current_usage: int = 0
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class CouponUsage(BaseModel):
     id: int
@@ -97,8 +109,9 @@ class CouponUsage(BaseModel):
     discount_amount: Decimal
     order_total: Decimal
     used_at: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class CouponList(BaseModel):
     coupons: List[Coupon]
@@ -106,6 +119,7 @@ class CouponList(BaseModel):
     page: int
     per_page: int
     pages: int
+
 
 # Audit Log schemas
 class AuditLogCreate(BaseModel):
@@ -128,11 +142,13 @@ class AuditLogCreate(BaseModel):
     severity: AuditSeverity = AuditSeverity.INFO
     category: Optional[str] = Field(None, max_length=50)
 
+
 class AuditLog(AuditLogCreate):
     id: int
     created_at: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class AuditLogFilter(BaseModel):
     actor_id: Optional[str] = None
@@ -144,6 +160,7 @@ class AuditLogFilter(BaseModel):
     date_from: Optional[datetime] = None
     date_to: Optional[datetime] = None
 
+
 class AuditLogList(BaseModel):
     logs: List[AuditLog]
     total: int
@@ -151,9 +168,12 @@ class AuditLogList(BaseModel):
     per_page: int
     pages: int
 
+
 # System Configuration schemas
 class SystemConfigBase(BaseModel):
-    key: str = Field(..., min_length=1, max_length=100, pattern=r'^[a-z0-9_.-]+$')
+    key: str = Field(
+        ..., min_length=1, max_length=100, pattern=r"^[a-z0-9_.-]+$"
+    )
     value: Any
     description: Optional[str] = None
     category: Optional[str] = Field(None, max_length=50)
@@ -162,8 +182,10 @@ class SystemConfigBase(BaseModel):
     is_readonly: bool = False
     validation_schema: Optional[Dict[str, Any]] = None
 
+
 class SystemConfigCreate(SystemConfigBase):
     pass
+
 
 class SystemConfigUpdate(BaseModel):
     value: Optional[Any] = None
@@ -173,15 +195,18 @@ class SystemConfigUpdate(BaseModel):
     is_readonly: Optional[bool] = None
     validation_schema: Optional[Dict[str, Any]] = None
 
+
 class SystemConfig(SystemConfigBase, TimestampMixin):
     id: int
     updated_by: Optional[str] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class SystemConfigList(BaseModel):
     configs: List[SystemConfig]
     total: int
+
 
 # Notification schemas
 class NotificationBase(BaseModel):
@@ -195,10 +220,12 @@ class NotificationBase(BaseModel):
     related_type: Optional[str] = Field(None, max_length=50)
     related_id: Optional[str] = Field(None, max_length=255)
     metadata: Dict[str, Any] = {}
-    priority: str = Field("normal", pattern=r'^(low|normal|high|urgent)$')
+    priority: str = Field("normal", pattern=r"^(low|normal|high|urgent)$")
+
 
 class NotificationCreate(NotificationBase):
     pass
+
 
 class Notification(NotificationBase, TimestampMixin):
     id: uuid.UUID
@@ -212,8 +239,9 @@ class Notification(NotificationBase, TimestampMixin):
     sent_at: Optional[datetime] = None
     delivered_at: Optional[datetime] = None
     failed_at: Optional[datetime] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class NotificationList(BaseModel):
     notifications: List[Notification]
@@ -221,6 +249,7 @@ class NotificationList(BaseModel):
     page: int
     per_page: int
     pages: int
+
 
 # API Key schemas
 class ApiKeyBase(BaseModel):
@@ -233,8 +262,10 @@ class ApiKeyBase(BaseModel):
     expires_at: Optional[datetime] = None
     allowed_ips: List[str] = []
 
+
 class ApiKeyCreate(ApiKeyBase):
     pass
+
 
 class ApiKeyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
@@ -245,17 +276,20 @@ class ApiKeyUpdate(BaseModel):
     allowed_ips: Optional[List[str]] = None
     is_active: Optional[bool] = None
 
+
 class ApiKey(ApiKeyBase, TimestampMixin):
     id: int
     key_prefix: str
     is_active: bool
     last_used_at: Optional[datetime] = None
     total_requests: int = 0
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class ApiKeyWithSecret(ApiKey):
     key: str  # Only returned on creation
+
 
 class ApiKeyList(BaseModel):
     api_keys: List[ApiKey]
@@ -263,6 +297,7 @@ class ApiKeyList(BaseModel):
     page: int
     per_page: int
     pages: int
+
 
 # Dashboard and analytics schemas
 class DashboardStats(BaseModel):
@@ -277,12 +312,14 @@ class DashboardStats(BaseModel):
     top_products: List[Dict[str, Any]]
     recent_orders: List[Dict[str, Any]]
 
+
 class RevenueAnalytics(BaseModel):
     period: str  # daily, weekly, monthly
     data: List[Dict[str, Any]]  # [{date, revenue, orders}, ...]
     total_revenue: Decimal
     total_orders: int
     growth_rate: Optional[Decimal] = None
+
 
 class ProductAnalytics(BaseModel):
     product_id: int
@@ -293,6 +330,7 @@ class ProductAnalytics(BaseModel):
     views: int
     conversion_rate: Optional[Decimal] = None
 
+
 class ServiceAnalytics(BaseModel):
     total_uploads: int
     total_quotes: int
@@ -302,6 +340,7 @@ class ServiceAnalytics(BaseModel):
     popular_materials: List[Dict[str, Any]]
     turnaround_times: Dict[str, Any]
 
+
 # Health check schemas
 class HealthCheck(BaseModel):
     status: str = "healthy"
@@ -310,6 +349,7 @@ class HealthCheck(BaseModel):
     environment: str
     services: Dict[str, Any] = {}
 
+
 class ServiceHealth(BaseModel):
     name: str
     status: str  # healthy, degraded, unhealthy
@@ -317,16 +357,19 @@ class ServiceHealth(BaseModel):
     last_check: datetime
     details: Optional[Dict[str, Any]] = None
 
+
 # Common response schemas
 class MessageResponse(BaseModel):
     message: str
     success: bool = True
+
 
 class ErrorResponse(BaseModel):
     error: str
     message: str
     details: Optional[Dict[str, Any]] = None
     request_id: Optional[str] = None
+
 
 class PaginationInfo(BaseModel):
     page: int
@@ -336,6 +379,7 @@ class PaginationInfo(BaseModel):
     has_next: bool
     has_prev: bool
 
+
 # File upload schemas
 class FileUploadResponse(BaseModel):
     filename: str
@@ -344,6 +388,7 @@ class FileUploadResponse(BaseModel):
     content_type: str
     upload_url: str
 
+
 # Webhook schemas
 class WebhookEvent(BaseModel):
     id: str
@@ -351,6 +396,7 @@ class WebhookEvent(BaseModel):
     data: Dict[str, Any]
     timestamp: datetime
     source: str
+
 
 class WebhookResponse(BaseModel):
     received: bool = True

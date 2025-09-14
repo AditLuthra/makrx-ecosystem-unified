@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 // Using inline SVGs instead of Heroicons
 
 interface AddToCartFormProps {
@@ -8,11 +8,7 @@ interface AddToCartFormProps {
   variantId?: number | null;
   maxQuantity: number;
   inStock: boolean;
-  onAddToCart?: (
-    productId: number,
-    variantId: number | null,
-    quantity: number,
-  ) => void;
+  onAddToCart?: (productId: number, variantId: number | null, quantity: number) => void;
 }
 
 export default function AddToCartForm({
@@ -41,17 +37,17 @@ export default function AddToCartForm({
         await onAddToCart(productId, variantId, quantity);
       } else {
         // Default implementation - could make API call here
-        console.log("Adding to cart:", { productId, variantId, quantity });
+        console.log('Adding to cart:', { productId, variantId, quantity });
 
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       // Show success feedback (could be replaced with a toast notification)
-      alert("Added to cart successfully!");
+      alert('Added to cart successfully!');
     } catch (error) {
-      console.error("Failed to add to cart:", error);
-      alert("Failed to add to cart. Please try again.");
+      console.error('Failed to add to cart:', error);
+      alert('Failed to add to cart. Please try again.');
     } finally {
       setIsAdding(false);
     }
@@ -63,7 +59,7 @@ export default function AddToCartForm({
     // Add to cart and redirect to checkout
     await handleAddToCart();
     // Redirect to checkout page
-    window.location.href = "/checkout";
+    window.location.href = '/checkout';
   };
 
   const toggleWishlist = () => {
@@ -78,27 +74,15 @@ export default function AddToCartForm({
       {/* Quantity Selector */}
       {inStock && (
         <div className="flex items-center space-x-4">
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            Quantity:
-          </span>
+          <span className="text-sm font-medium text-gray-900 dark:text-white">Quantity:</span>
           <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
             <button
               onClick={() => handleQuantityChange(quantity - 1)}
               disabled={quantity <= 1}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20 12H4"
-                />
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
               </svg>
             </button>
             <input
@@ -106,9 +90,7 @@ export default function AddToCartForm({
               min="1"
               max={maxQuantity}
               value={quantity}
-              onChange={(e) =>
-                handleQuantityChange(parseInt(e.target.value) || 1)
-              }
+              onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
               className="w-16 px-2 py-2 text-center border-0 bg-transparent focus:ring-0 focus:outline-none"
             />
             <button
@@ -116,12 +98,7 @@ export default function AddToCartForm({
               disabled={quantity >= maxQuantity}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -154,12 +131,7 @@ export default function AddToCartForm({
             </>
           ) : (
             <>
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -167,7 +139,7 @@ export default function AddToCartForm({
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 2.5M7 13l2.5 2.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
                 />
               </svg>
-              {inStock ? "Add to Cart" : "Out of Stock"}
+              {inStock ? 'Add to Cart' : 'Out of Stock'}
             </>
           )}
         </button>
@@ -190,11 +162,7 @@ export default function AddToCartForm({
             className="flex-1 flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             {isWishlisted ? (
-              <svg
-                className="h-5 w-5 text-red-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
+              <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
@@ -202,12 +170,7 @@ export default function AddToCartForm({
                 />
               </svg>
             ) : (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -216,9 +179,7 @@ export default function AddToCartForm({
                 />
               </svg>
             )}
-            <span className="text-sm font-medium">
-              {isWishlisted ? "Saved" : "Save"}
-            </span>
+            <span className="text-sm font-medium">{isWishlisted ? 'Saved' : 'Save'}</span>
           </button>
 
           {/* Share */}
@@ -231,17 +192,12 @@ export default function AddToCartForm({
                 });
               } else {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Link copied to clipboard!");
+                alert('Link copied to clipboard!');
               }
             }}
             className="flex-1 flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -262,9 +218,7 @@ export default function AddToCartForm({
               Only {maxQuantity} left in stock
             </span>
           ) : maxQuantity <= 20 ? (
-            <span className="text-yellow-600 dark:text-yellow-400">
-              {maxQuantity} in stock
-            </span>
+            <span className="text-yellow-600 dark:text-yellow-400">{maxQuantity} in stock</span>
           ) : (
             <span className="text-green-600 dark:text-green-400">In stock</span>
           )}
@@ -274,12 +228,7 @@ export default function AddToCartForm({
       {/* Delivery Information */}
       <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2 text-sm">
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -290,12 +239,7 @@ export default function AddToCartForm({
           <span>Free shipping on orders over ₹999</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -306,12 +250,7 @@ export default function AddToCartForm({
           <span>Easy returns within 30 days</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

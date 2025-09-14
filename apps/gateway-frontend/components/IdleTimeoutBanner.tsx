@@ -19,12 +19,12 @@ export default function IdleTimeoutBanner() {
       clearTimeout(idleTimer);
       clearTimeout(warningTimer);
       setShowBanner(false);
-      
+
       // Start idle detection (30 minutes)
       idleTimer = setTimeout(() => {
         setShowBanner(true);
         setTimeLeft(300); // 5 minute warning
-        
+
         // Start countdown
         const countdown = setInterval(() => {
           setTimeLeft((prev) => {
@@ -37,7 +37,7 @@ export default function IdleTimeoutBanner() {
             return prev - 1;
           });
         }, 1000);
-        
+
         warningTimer = setTimeout(() => {
           clearInterval(countdown);
           setShowBanner(false);
@@ -47,8 +47,8 @@ export default function IdleTimeoutBanner() {
 
     // Events that reset the idle timer
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    
-    events.forEach(event => {
+
+    events.forEach((event) => {
       document.addEventListener(event, resetTimer, true);
     });
 
@@ -58,7 +58,7 @@ export default function IdleTimeoutBanner() {
     return () => {
       clearTimeout(idleTimer);
       clearTimeout(warningTimer);
-      events.forEach(event => {
+      events.forEach((event) => {
         document.removeEventListener(event, resetTimer, true);
       });
     };

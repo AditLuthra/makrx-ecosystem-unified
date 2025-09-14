@@ -3,14 +3,12 @@
  * Implements PKCE, silent refresh and user role helpers
  */
 
-import Keycloak, { KeycloakInstance } from "keycloak-js";
+import Keycloak, { KeycloakInstance } from 'keycloak-js';
 
 // Configuration
-const KEYCLOAK_URL =
-  process.env.NEXT_PUBLIC_KEYCLOAK_URL || "https://auth.makrx.org";
-const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "makrx";
-const CLIENT_ID =
-  process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "makrx-store";
+const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://auth.makrx.org';
+const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx';
+const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-store';
 
 // Types
 export interface User {
@@ -34,7 +32,7 @@ const keycloak: KeycloakInstance = new Keycloak({
 let authListeners: Array<(user: User | null) => void> = [];
 let initPromise: Promise<boolean> | null = null;
 
-const isClient = typeof window !== "undefined";
+const isClient = typeof window !== 'undefined';
 
 // Initialize Keycloak and enable silent SSO
 export const init = async (): Promise<boolean> => {
@@ -42,10 +40,9 @@ export const init = async (): Promise<boolean> => {
   if (!initPromise) {
     initPromise = keycloak
       .init({
-        onLoad: "check-sso",
-        pkceMethod: "S256",
-        silentCheckSsoRedirectUri:
-          window.location.origin + "/silent-check-sso.html",
+        onLoad: 'check-sso',
+        pkceMethod: 'S256',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
       })
       .then((authenticated) => {
         if (authenticated) {
@@ -60,8 +57,8 @@ export const init = async (): Promise<boolean> => {
         await keycloak.updateToken(60);
         notifyAuthListeners(getCurrentUser());
       } catch {
-        sessionStorage.setItem("makrx_redirect_url", window.location.href);
-        window.alert("Session expired. Please log in again.");
+        sessionStorage.setItem('makrx_redirect_url', window.location.href);
+        window.alert('Session expired. Please log in again.');
         keycloak.login();
       }
     };
@@ -77,8 +74,8 @@ export const getToken = async (): Promise<string | null> => {
     await keycloak.updateToken(60);
     return keycloak.token ?? null;
   } catch {
-    sessionStorage.setItem("makrx_redirect_url", window.location.href);
-    window.alert("Session expired. Please log in again.");
+    sessionStorage.setItem('makrx_redirect_url', window.location.href);
+    window.alert('Session expired. Please log in again.');
     redirectToSSO();
     return null;
   }
@@ -95,7 +92,7 @@ export const getCurrentUser = (): User | null => {
     preferred_username: parsed.preferred_username,
     email_verified: parsed.email_verified || false,
     roles: parsed.realm_access?.roles || [],
-    scopes: (parsed.scope || "").split(" "),
+    scopes: (parsed.scope || '').split(' '),
   };
 };
 
@@ -104,8 +101,7 @@ export const isAuthenticated = (): boolean => !!keycloak.authenticated;
 export const hasRole = (role: string): boolean =>
   keycloak.hasRealmRole ? keycloak.hasRealmRole(role) : false;
 
-export const hasAnyRole = (roles: string[]): boolean =>
-  roles.some((r) => hasRole(r));
+export const hasAnyRole = (roles: string[]): boolean => roles.some((r) => hasRole(r));
 
 export const hasScope = (scope: string): boolean => {
   const user = getCurrentUser();
@@ -117,15 +113,12 @@ export const login = (redirectUri?: string): void => {
   if (!isClient) return;
 
   // Store original URL for redirect after login
-  sessionStorage.setItem("makrx_redirect_url", window.location.href);
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      "makrx_pre_login_url",
-      window.location.pathname + window.location.search,
-    );
+  sessionStorage.setItem('makrx_redirect_url', window.location.href);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('makrx_pre_login_url', window.location.pathname + window.location.search);
   }
   keycloak.login({
-    redirectUri: redirectUri || window.location.origin + "/auth/callback",
+    redirectUri: redirectUri || window.location.origin + '/auth/callback',
   });
 };
 
@@ -151,15 +144,11 @@ export const handleAuthCallback = async (): Promise<boolean> => {
 };
 
 // Auth listeners
-export const addAuthListener = (
-  listener: (user: User | null) => void,
-): void => {
+export const addAuthListener = (listener: (user: User | null) => void): void => {
   authListeners.push(listener);
 };
 
-export const removeAuthListener = (
-  listener: (user: User | null) => void,
-): void => {
+export const removeAuthListener = (listener: (user: User | null) => void): void => {
   authListeners = authListeners.filter((l) => l !== listener);
 };
 
@@ -168,7 +157,7 @@ const notifyAuthListeners = (user: User | null): void => {
     try {
       listener(user);
     } catch (error) {
-      console.error("Auth listener error:", error);
+      console.error('Auth listener error:', error);
     }
   });
 };

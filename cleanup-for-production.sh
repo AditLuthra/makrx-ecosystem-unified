@@ -10,10 +10,10 @@ echo "=============================================="
 
 # Function to safely remove files/directories if they exist
 safe_remove() {
-    if [ -e "$1" ]; then
-        echo "🗑️  Removing: $1"
-        rm -rf "$1"
-    fi
+	if [ -e "$1" ]; then
+		echo "🗑️  Removing: $1"
+		rm -rf "$1"
+	fi
 }
 
 # Remove temporary files and build artifacts

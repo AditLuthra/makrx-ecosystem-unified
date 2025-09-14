@@ -5,14 +5,11 @@ export async function POST(request: NextRequest) {
     const { amount, currency = 'INR', eventId, userId } = await request.json();
 
     if (!process.env.VITE_RAZORPAY_KEY_ID) {
-      return NextResponse.json(
-        { error: 'Payment service not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Payment service not configured' }, { status: 500 });
     }
 
     const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const order = {
       id: orderId,
       amount: amount * 100, // Convert to paise
@@ -29,9 +26,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error creating payment order:', error);
-    return NextResponse.json(
-      { error: 'Failed to create payment order' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create payment order' }, { status: 500 });
   }
 }

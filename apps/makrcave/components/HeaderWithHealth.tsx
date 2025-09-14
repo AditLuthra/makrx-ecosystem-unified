@@ -10,22 +10,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { formatUserDisplayNameCompact } from '../lib/userUtils';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { 
-  Bell, 
-  LogOut, 
-  Settings, 
-  User, 
-  Building2,
-  Activity,
-  ChevronDown
-} from 'lucide-react';
+import { Bell, LogOut, Settings, User, Building2, Activity, ChevronDown } from 'lucide-react';
 import HealthStatusIndicator from './HealthStatusIndicator';
 import { useHealth, useHealthStatus } from '../contexts/HealthContext';
 import { ThemeToggle } from '../../../packages/ui/components/ThemeToggle';
@@ -35,9 +27,9 @@ interface HeaderWithHealthProps {
   title?: string;
 }
 
-export default function HeaderWithHealth({ 
-  showHealthStatus = true, 
-  title = "MakrCave" 
+export default function HeaderWithHealth({
+  showHealthStatus = true,
+  title = 'MakrCave',
 }: HeaderWithHealthProps) {
   const { user, logout } = useAuth();
   const { runHealthChecks } = useHealth();
@@ -78,17 +70,23 @@ export default function HeaderWithHealth({
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'super_admin': return 'bg-purple-500';
-      case 'admin': return 'bg-blue-500';
-      case 'makerspace_admin': return 'bg-green-500';
-      case 'service_provider': return 'bg-orange-500';
-      case 'user': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+      case 'super_admin':
+        return 'bg-purple-500';
+      case 'admin':
+        return 'bg-blue-500';
+      case 'makerspace_admin':
+        return 'bg-green-500';
+      case 'service_provider':
+        return 'bg-orange-500';
+      case 'user':
+        return 'bg-gray-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
   const formatRoleDisplay = (role: string) => {
-    return role.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   // ========================================
@@ -96,7 +94,10 @@ export default function HeaderWithHealth({
   // ========================================
 
   const renderLogo = () => (
-    <Link to="/portal/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+    <Link
+      to="/portal/dashboard"
+      className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+    >
       <div className="w-8 h-8 bg-makrx-teal rounded-lg flex items-center justify-center">
         <Building2 className="w-5 h-5 text-white" />
       </div>
@@ -110,11 +111,7 @@ export default function HeaderWithHealth({
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground hidden sm:inline">System:</span>
-        <HealthStatusIndicator 
-          showLabel={false} 
-          variant="compact" 
-          position="header"
-        />
+        <HealthStatusIndicator showLabel={false} variant="compact" position="header" />
       </div>
     );
   };
@@ -192,21 +189,15 @@ export default function HeaderWithHealth({
       <div className="container mx-auto px-4">
         <div className="flex h-14 items-center justify-between">
           {/* Left side - Logo */}
-          <div className="flex items-center gap-4">
-            {renderLogo()}
-          </div>
+          <div className="flex items-center gap-4">{renderLogo()}</div>
 
           {/* Center - Health Status (on larger screens) */}
-          <div className="hidden lg:flex items-center">
-            {renderHealthStatus()}
-          </div>
+          <div className="hidden lg:flex items-center">{renderHealthStatus()}</div>
 
           {/* Right side - Actions */}
           <div className="flex items-center gap-2">
             {/* Health Status (on smaller screens) */}
-            <div className="lg:hidden">
-              {renderHealthStatus()}
-            </div>
+            <div className="lg:hidden">{renderHealthStatus()}</div>
 
             {/* Theme Toggle */}
             <ThemeToggle variant="icon-only" />
@@ -226,9 +217,9 @@ export default function HeaderWithHealth({
           <div className="flex items-center justify-center gap-2 text-sm">
             <Activity className="w-4 h-4" />
             <span>System issues detected</span>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleHealthClick}
               className="text-white hover:bg-red-600 h-6 px-2 ml-2"
             >

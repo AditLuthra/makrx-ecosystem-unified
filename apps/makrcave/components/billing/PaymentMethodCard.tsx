@@ -16,9 +16,15 @@ import {
   CheckCircle,
   Calendar,
   Shield,
-  MoreHorizontal
+  MoreHorizontal,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '../ui/dropdown-menu';
 
 interface PaymentMethod {
   id: string;
@@ -50,7 +56,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
   onAddPaymentMethod,
   onEditPaymentMethod,
   onDeletePaymentMethod,
-  onSetDefaultMethod
+  onSetDefaultMethod,
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newMethodType, setNewMethodType] = useState<'card' | 'bank_account' | 'upi'>('card');
@@ -64,7 +70,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
     account_number: '',
     ifsc_code: '',
     account_type: 'savings',
-    upi_id: ''
+    upi_id: '',
   });
 
   // Mock data if no payment methods provided
@@ -80,7 +86,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       holder_name: 'John Doe',
       is_default: true,
       is_verified: true,
-      created_at: '2024-01-15T10:30:00Z'
+      created_at: '2024-01-15T10:30:00Z',
     },
     {
       id: '2',
@@ -91,7 +97,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       upi_id: 'john.doe@paytm',
       is_default: false,
       is_verified: true,
-      created_at: '2024-01-10T14:20:00Z'
+      created_at: '2024-01-10T14:20:00Z',
     },
     {
       id: '3',
@@ -103,8 +109,8 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       holder_name: 'John Doe',
       is_default: false,
       is_verified: false,
-      created_at: '2024-01-08T09:15:00Z'
-    }
+      created_at: '2024-01-08T09:15:00Z',
+    },
   ];
 
   const methods = paymentMethods.length > 0 ? paymentMethods : mockMethods;
@@ -113,9 +119,17 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
     if (type === 'card') {
       return <CreditCard className="h-5 w-5 text-blue-600" />;
     } else if (type === 'upi') {
-      return <div className="h-5 w-5 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">₹</div>;
+      return (
+        <div className="h-5 w-5 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">
+          ₹
+        </div>
+      );
     } else {
-      return <div className="h-5 w-5 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">B</div>;
+      return (
+        <div className="h-5 w-5 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">
+          B
+        </div>
+      );
     }
   };
 
@@ -124,25 +138,25 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       return {
         title: `${method.brand} •••• ${method.last_four}`,
         subtitle: `Expires ${method.expiry_month}/${method.expiry_year}`,
-        description: method.holder_name
+        description: method.holder_name,
       };
     } else if (method.type === 'upi') {
       return {
         title: method.upi_id || `UPI •••• ${method.last_four}`,
         subtitle: 'UPI ID',
-        description: method.holder_name
+        description: method.holder_name,
       };
     } else {
       return {
         title: `${method.bank_name} •••• ${method.last_four}`,
         subtitle: `${method.account_type?.charAt(0).toUpperCase()}${method.account_type?.slice(1)} Account`,
-        description: method.holder_name
+        description: method.holder_name,
       };
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAddMethod = () => {
@@ -158,7 +172,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       account_number: '',
       ifsc_code: '',
       account_type: 'savings',
-      upi_id: ''
+      upi_id: '',
     });
   };
 
@@ -167,7 +181,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return 'Invalid date';
@@ -205,7 +219,10 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
               {methods.map((method) => {
                 const display = getMethodDisplay(method);
                 return (
-                  <div key={method.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div
+                    key={method.id}
+                    className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         {getMethodIcon(method.type, method.brand)}
@@ -228,7 +245,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                           <p className="text-xs text-gray-500">{display.description}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <div className="text-right text-xs text-gray-500">
                           <p>Added {formatDate(method.created_at)}</p>
@@ -237,7 +254,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                             <span className="capitalize">{method.provider}</span>
                           </div>
                         </div>
-                        
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
@@ -256,7 +273,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                               Edit
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => onDeletePaymentMethod?.(method.id)}
                               className="text-red-600"
                             >
@@ -267,7 +284,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                         </DropdownMenu>
                       </div>
                     </div>
-                    
+
                     {!method.is_verified && (
                       <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
                         <div className="flex items-center gap-2 text-yellow-800 text-sm">
@@ -296,11 +313,14 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
               Add Payment Method
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="method-type">Payment Method Type</Label>
-              <Select value={newMethodType} onValueChange={(value: 'card' | 'bank_account' | 'upi') => setNewMethodType(value)}>
+              <Select
+                value={newMethodType}
+                onValueChange={(value: 'card' | 'bank_account' | 'upi') => setNewMethodType(value)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -335,11 +355,14 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <Label htmlFor="expiry-month">Month</Label>
-                    <Select value={formData.expiry_month} onValueChange={(value) => handleInputChange('expiry_month', value)}>
+                    <Select
+                      value={formData.expiry_month}
+                      onValueChange={(value) => handleInputChange('expiry_month', value)}
+                    >
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="MM" />
                       </SelectTrigger>
@@ -352,10 +375,13 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="expiry-year">Year</Label>
-                    <Select value={formData.expiry_year} onValueChange={(value) => handleInputChange('expiry_year', value)}>
+                    <Select
+                      value={formData.expiry_year}
+                      onValueChange={(value) => handleInputChange('expiry_year', value)}
+                    >
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="YYYY" />
                       </SelectTrigger>
@@ -371,7 +397,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="cvv">CVV</Label>
                     <Input
@@ -412,7 +438,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="account-number">Account Number</Label>
                   <Input
@@ -423,7 +449,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="ifsc-code">IFSC Code</Label>
                   <Input
@@ -434,10 +460,13 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                     className="mt-1"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="account-type">Account Type</Label>
-                  <Select value={formData.account_type} onValueChange={(value) => handleInputChange('account_type', value)}>
+                  <Select
+                    value={formData.account_type}
+                    onValueChange={(value) => handleInputChange('account_type', value)}
+                  >
                     <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
@@ -456,7 +485,8 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
                 <div className="text-sm text-blue-800">
                   <p className="font-medium">Secure Payment</p>
                   <p className="text-xs mt-1">
-                    Your payment information is encrypted and secure. We never store sensitive payment details.
+                    Your payment information is encrypted and secure. We never store sensitive
+                    payment details.
                   </p>
                 </div>
               </div>
@@ -466,9 +496,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
               <Button variant="outline" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAddMethod}>
-                Add Payment Method
-              </Button>
+              <Button onClick={handleAddMethod}>Add Payment Method</Button>
             </div>
           </div>
         </DialogContent>

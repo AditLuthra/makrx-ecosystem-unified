@@ -7,7 +7,12 @@ class Tournament(Base):
     __tablename__ = "tournaments"
 
     id = Column(String, primary_key=True)
-    event_id = Column(String, ForeignKey("events.id", ondelete="CASCADE"), index=True, nullable=False)
+    event_id = Column(
+        String,
+        ForeignKey("events.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
     name = Column(Text, nullable=False)
     description = Column(Text)
     format = Column(String)

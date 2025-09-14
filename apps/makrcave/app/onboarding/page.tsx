@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
@@ -7,9 +7,18 @@ import QuickStartWizard from '@/components/onboarding/QuickStartWizard';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { 
-  ArrowRight, CheckCircle, Clock, Users, Zap, Star,
-  Play, BookOpen, MessageCircle, Gift, Target
+import {
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Users,
+  Zap,
+  Star,
+  Play,
+  BookOpen,
+  MessageCircle,
+  Gift,
+  Target,
 } from 'lucide-react';
 
 interface OnboardingState {
@@ -28,24 +37,29 @@ const OnboardingPage: React.FC = () => {
     userType: '',
     completedSteps: [],
     showTutorial: false,
-    showQuickStart: false
+    showQuickStart: false,
   });
 
   // Check if user is returning from invitation or specific flow
   const inviteCode = searchParams?.get('invite');
-  const userTypeParam = searchParams?.get('type') as 'user' | 'admin' | 'provider' | 'super_admin' | null;
+  const userTypeParam = searchParams?.get('type') as
+    | 'user'
+    | 'admin'
+    | 'provider'
+    | 'super_admin'
+    | null;
   const skipToParam = searchParams?.get('skip_to');
 
   useEffect(() => {
     // Handle URL parameters for direct flows
     if (userTypeParam) {
-      setOnboardingState(prev => ({ ...prev, userType: userTypeParam }));
+      setOnboardingState((prev) => ({ ...prev, userType: userTypeParam }));
     }
-    
+
     if (skipToParam === 'tutorial') {
-      setOnboardingState(prev => ({ ...prev, stage: 'tutorial', showTutorial: true }));
+      setOnboardingState((prev) => ({ ...prev, stage: 'tutorial', showTutorial: true }));
     } else if (skipToParam === 'quick_start') {
-      setOnboardingState(prev => ({ ...prev, stage: 'quick_start', showQuickStart: true }));
+      setOnboardingState((prev) => ({ ...prev, stage: 'quick_start', showQuickStart: true }));
     }
   }, [userTypeParam, skipToParam]);
 
@@ -58,7 +72,7 @@ const OnboardingPage: React.FC = () => {
         title: 'Welcome to Your Dashboard',
         content: 'This is your command center. Everything you need is accessible from here.',
         position: 'bottom' as const,
-        tip: 'Click the MakrCave logo anytime to return to the dashboard'
+        tip: 'Click the MakrCave logo anytime to return to the dashboard',
       },
       {
         id: 'navigation',
@@ -67,7 +81,7 @@ const OnboardingPage: React.FC = () => {
         content: 'Use this sidebar to navigate between different sections of the platform.',
         position: 'right' as const,
         action: 'hover' as const,
-        actionText: 'Hover over items to see details'
+        actionText: 'Hover over items to see details',
       },
       {
         id: 'profile',
@@ -75,8 +89,8 @@ const OnboardingPage: React.FC = () => {
         title: 'Your Profile',
         content: 'Keep your profile updated to connect with the right people and opportunities.',
         position: 'left' as const,
-        action: 'click' as const
-      }
+        action: 'click' as const,
+      },
     ];
 
     const userSteps = [
@@ -85,9 +99,10 @@ const OnboardingPage: React.FC = () => {
         id: 'projects',
         target: '[data-tutorial="projects"]',
         title: 'Your Projects',
-        content: 'Create and manage your projects here. Collaborate with others and track progress.',
+        content:
+          'Create and manage your projects here. Collaborate with others and track progress.',
         position: 'bottom' as const,
-        tip: 'Projects can be public or private depending on your preference'
+        tip: 'Projects can be public or private depending on your preference',
       },
       {
         id: 'equipment',
@@ -96,8 +111,8 @@ const OnboardingPage: React.FC = () => {
         content: 'Reserve equipment for your projects. Check availability and book time slots.',
         position: 'top' as const,
         action: 'click' as const,
-        actionText: 'Click to view available equipment'
-      }
+        actionText: 'Click to view available equipment',
+      },
     ];
 
     const adminSteps = [
@@ -108,14 +123,14 @@ const OnboardingPage: React.FC = () => {
         title: 'Analytics Dashboard',
         content: 'Monitor your makerspace usage, member activity, and equipment utilization.',
         position: 'bottom' as const,
-        tip: 'Data updates in real-time to help you make informed decisions'
+        tip: 'Data updates in real-time to help you make informed decisions',
       },
       {
         id: 'members',
         target: '[data-tutorial="members"]',
         title: 'Member Management',
         content: 'Add new members, manage permissions, and track membership status.',
-        position: 'right' as const
+        position: 'right' as const,
       },
       {
         id: 'inventory',
@@ -123,8 +138,8 @@ const OnboardingPage: React.FC = () => {
         title: 'Inventory Control',
         content: 'Track materials, manage stock levels, and set up automatic reordering.',
         position: 'left' as const,
-        tip: 'Connect to MakrX.Store for seamless inventory management'
-      }
+        tip: 'Connect to MakrX.Store for seamless inventory management',
+      },
     ];
 
     switch (userType) {
@@ -138,30 +153,30 @@ const OnboardingPage: React.FC = () => {
   };
 
   const handleProfileSetupComplete = (userType: string) => {
-    setOnboardingState(prev => ({
+    setOnboardingState((prev) => ({
       ...prev,
       stage: 'tutorial',
       userType: userType as any,
-      showTutorial: true
+      showTutorial: true,
     }));
   };
 
   const handleTutorialComplete = () => {
-    setOnboardingState(prev => ({
+    setOnboardingState((prev) => ({
       ...prev,
       stage: 'quick_start',
       showTutorial: false,
-      showQuickStart: true
+      showQuickStart: true,
     }));
   };
 
   const handleQuickStartComplete = () => {
-    setOnboardingState(prev => ({
+    setOnboardingState((prev) => ({
       ...prev,
       stage: 'completed',
-      showQuickStart: false
+      showQuickStart: false,
     }));
-    
+
     // Navigate to appropriate dashboard
     setTimeout(() => {
       router.push('/dashboard');
@@ -169,10 +184,10 @@ const OnboardingPage: React.FC = () => {
   };
 
   const handleSkipToQuickStart = () => {
-    setOnboardingState(prev => ({
+    setOnboardingState((prev) => ({
       ...prev,
       stage: 'quick_start',
-      showQuickStart: true
+      showQuickStart: true,
     }));
   };
 
@@ -192,21 +207,19 @@ const OnboardingPage: React.FC = () => {
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
               <CheckCircle className="h-10 w-10 text-white" />
             </div>
-            
-            <h1 className="text-4xl font-bold text-white mb-6">
-              🎉 You're All Set!
-            </h1>
-            
+
+            <h1 className="text-4xl font-bold text-white mb-6">🎉 You're All Set!</h1>
+
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Welcome to the MakrCave community! Your dashboard is loading and you'll be 
-              redirected shortly. Time to start making amazing things!
+              Welcome to the MakrCave community! Your dashboard is loading and you'll be redirected
+              shortly. Time to start making amazing things!
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
                 { icon: Users, label: 'Connected', desc: 'Join 10k+ makers' },
                 { icon: Zap, label: 'Equipped', desc: 'Access smart tools' },
-                { icon: Star, label: 'Ready', desc: 'Start creating' }
+                { icon: Star, label: 'Ready', desc: 'Start creating' },
               ].map((item, idx) => (
                 <div key={idx} className="flex flex-col items-center p-4 bg-white/5 rounded-lg">
                   <item.icon className="h-8 w-8 text-blue-400 mb-2" />
@@ -234,7 +247,7 @@ const OnboardingPage: React.FC = () => {
       {/* Mock Dashboard for Tutorial */}
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header 
+        <header
           data-tutorial="header"
           className="bg-white shadow-sm border-b border-gray-200 px-6 py-4"
         >
@@ -246,13 +259,13 @@ const OnboardingPage: React.FC = () => {
               <span className="text-xl font-bold text-gray-900">MakrCave</span>
               <Badge className="bg-green-100 text-green-700">Tutorial Mode</Badge>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Help
               </Button>
-              <div 
+              <div
                 data-tutorial="profile"
                 className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 rounded-lg px-3 py-2"
               >
@@ -267,7 +280,7 @@ const OnboardingPage: React.FC = () => {
 
         <div className="flex">
           {/* Sidebar */}
-          <nav 
+          <nav
             data-tutorial="navigation"
             className="w-64 bg-white shadow-sm h-screen border-r border-gray-200"
           >
@@ -278,13 +291,13 @@ const OnboardingPage: React.FC = () => {
                   { icon: BookOpen, label: 'Projects', badge: '3' },
                   { icon: Clock, label: 'Equipment', notification: true },
                   { icon: Users, label: 'Community' },
-                  { icon: Gift, label: 'Store' }
+                  { icon: Gift, label: 'Store' },
                 ].map((item, idx) => (
                   <div
                     key={idx}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer ${
-                      item.active 
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                      item.active
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
                         : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
@@ -293,13 +306,9 @@ const OnboardingPage: React.FC = () => {
                       <span className="font-medium">{item.label}</span>
                     </div>
                     {item.badge && (
-                      <Badge className="bg-gray-100 text-gray-600 text-xs">
-                        {item.badge}
-                      </Badge>
+                      <Badge className="bg-gray-100 text-gray-600 text-xs">{item.badge}</Badge>
                     )}
-                    {item.notification && (
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    )}
+                    {item.notification && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
                   </div>
                 ))}
               </div>
@@ -310,15 +319,16 @@ const OnboardingPage: React.FC = () => {
           <main className="flex-1 p-6">
             <div className="max-w-7xl mx-auto">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Welcome back, John! 👋
-                </h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, John! 👋</h1>
                 <p className="text-gray-600">Here's what's happening in your makerspace today.</p>
               </div>
 
               {/* Tutorial Trigger Buttons */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card data-tutorial="projects" className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  data-tutorial="projects"
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -332,7 +342,10 @@ const OnboardingPage: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card data-tutorial="equipment" className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  data-tutorial="equipment"
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -346,7 +359,10 @@ const OnboardingPage: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card data-tutorial="analytics" className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  data-tutorial="analytics"
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -370,11 +386,7 @@ const OnboardingPage: React.FC = () => {
                 >
                   Skip Tutorial
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={handleSkipAll}
-                  className="text-gray-500"
-                >
+                <Button variant="ghost" onClick={handleSkipAll} className="text-gray-500">
                   Skip All & Go to Dashboard
                 </Button>
               </div>
@@ -387,7 +399,7 @@ const OnboardingPage: React.FC = () => {
       {onboardingState.showTutorial && (
         <TutorialOverlay
           isVisible={onboardingState.showTutorial}
-          onClose={() => setOnboardingState(prev => ({ ...prev, showTutorial: false }))}
+          onClose={() => setOnboardingState((prev) => ({ ...prev, showTutorial: false }))}
           steps={getTutorialSteps(onboardingState.userType)}
           onComplete={handleTutorialComplete}
           autoPlay={true}
@@ -399,11 +411,11 @@ const OnboardingPage: React.FC = () => {
       {onboardingState.showQuickStart && (
         <QuickStartWizard
           userType={onboardingState.userType as any}
-          onClose={() => setOnboardingState(prev => ({ ...prev, showQuickStart: false }))}
+          onClose={() => setOnboardingState((prev) => ({ ...prev, showQuickStart: false }))}
           onActionComplete={(actionId) => {
-            setOnboardingState(prev => ({
+            setOnboardingState((prev) => ({
               ...prev,
-              completedSteps: [...prev.completedSteps, actionId]
+              completedSteps: [...prev.completedSteps, actionId],
             }));
           }}
         />

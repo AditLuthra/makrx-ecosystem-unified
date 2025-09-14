@@ -39,13 +39,9 @@ export default function About({ content, variant = 'default', theme }: AboutProp
           {/* Text Content */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-4xl font-bold text-foreground mb-4">
-                {content.title}
-              </h2>
+              <h2 className="text-4xl font-bold text-foreground mb-4">{content.title}</h2>
               {content.description && (
-                <p className="text-xl text-muted-foreground mb-6">
-                  {content.description}
-                </p>
+                <p className="text-xl text-muted-foreground mb-6">{content.description}</p>
               )}
             </div>
 
@@ -59,7 +55,7 @@ export default function About({ content, variant = 'default', theme }: AboutProp
               <div className="space-y-3">
                 {content.features.map((feature, index) => (
                   <div key={index} className="flex items-center space-x-3">
-                    <div 
+                    <div
                       className="w-2 h-2 rounded-full flex-shrink-0"
                       style={{ backgroundColor: primaryColor }}
                     />
@@ -86,11 +82,7 @@ export default function About({ content, variant = 'default', theme }: AboutProp
             {/* Main image or video */}
             {content.video ? (
               <div className="aspect-video rounded-lg overflow-hidden">
-                <video
-                  controls
-                  className="w-full h-full object-cover"
-                  poster={content.image}
-                >
+                <video controls className="w-full h-full object-cover" poster={content.image}>
                   <source src={content.video} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
@@ -116,12 +108,8 @@ export default function About({ content, variant = 'default', theme }: AboutProp
                           <span className="text-2xl">{highlight.icon}</span>
                         </div>
                       )}
-                      <h3 className="font-semibold text-foreground mb-2">
-                        {highlight.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {highlight.description}
-                      </p>
+                      <h3 className="font-semibold text-foreground mb-2">{highlight.title}</h3>
+                      <p className="text-sm text-muted-foreground">{highlight.description}</p>
                     </CardContent>
                   </Card>
                 ))}

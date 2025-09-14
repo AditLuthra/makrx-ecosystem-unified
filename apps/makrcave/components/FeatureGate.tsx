@@ -13,17 +13,17 @@ interface FeatureGateProps {
 /**
  * Feature Gate Component - Conditionally renders children based on feature access
  */
-export function FeatureGate({ 
-  featureKey, 
-  children, 
-  fallback = null, 
-  showReasonWhenBlocked = false 
+export function FeatureGate({
+  featureKey,
+  children,
+  fallback = null,
+  showReasonWhenBlocked = false,
 }: FeatureGateProps) {
   const { hasFeatureAccess } = useFeatureFlags();
   const { user } = useAuth();
-  
+
   const accessResult = hasFeatureAccess(featureKey);
-  
+
   if (accessResult.hasAccess) {
     return <>{children}</>;
   }
@@ -41,9 +41,9 @@ export function FeatureGate({
             <p className="font-medium">{accessResult.flag.name} - Not Available</p>
             <p className="text-sm">
               {accessResult.reason === 'disabled' && 'This feature is currently disabled'}
-              {accessResult.reason === 'insufficient_role' && 
+              {accessResult.reason === 'insufficient_role' &&
                 `Requires one of: ${accessResult.flag.allowedRoles.join(', ')}. Current role: ${user?.role}`}
-              {accessResult.reason === 'environment_mismatch' && 
+              {accessResult.reason === 'environment_mismatch' &&
                 `Feature only available in: ${accessResult.flag.environment}`}
               {accessResult.reason === 'not_found' && 'Feature configuration not found'}
             </p>
@@ -62,7 +62,7 @@ export function FeatureGate({
 export function withFeatureFlag<P extends object>(
   WrappedComponent: ComponentType<P>,
   featureKey: string,
-  fallbackComponent?: ComponentType<P>
+  fallbackComponent?: ComponentType<P>,
 ) {
   return function FeatureGatedComponent(props: P) {
     const { hasFeatureAccess } = useFeatureFlags();
@@ -86,12 +86,11 @@ export function withFeatureFlag<P extends object>(
           <div>
             <h2 className="text-xl font-semibold mb-2">Feature Not Available</h2>
             <p className="text-muted-foreground">
-              {accessResult.flag?.name || 'This feature'} is not available for your current role or is disabled.
+              {accessResult.flag?.name || 'This feature'} is not available for your current role or
+              is disabled.
             </p>
             {accessResult.flag && (
-              <p className="text-sm text-muted-foreground mt-2">
-                {accessResult.flag.description}
-              </p>
+              <p className="text-sm text-muted-foreground mt-2">{accessResult.flag.description}</p>
             )}
           </div>
         </div>
@@ -105,9 +104,9 @@ export function withFeatureFlag<P extends object>(
  */
 export function useFeatureAccess(featureKey: string) {
   const { hasFeatureAccess, isFeatureEnabled } = useFeatureFlags();
-  
+
   const accessResult = hasFeatureAccess(featureKey);
-  
+
   return {
     hasAccess: accessResult.hasAccess,
     isEnabled: isFeatureEnabled(featureKey),
@@ -127,14 +126,14 @@ interface FeatureFlagBadgeProps {
 export function FeatureFlagBadge({ featureKey, showForAllUsers = false }: FeatureFlagBadgeProps) {
   const { hasFeatureAccess } = useFeatureFlags();
   const { user } = useAuth();
-  
+
   // Only show to admins unless explicitly shown for all users
   if (!showForAllUsers && user?.role !== 'super_admin') {
     return null;
   }
-  
+
   const accessResult = hasFeatureAccess(featureKey);
-  
+
   const getBadgeStyle = () => {
     if (accessResult.hasAccess) {
       return 'bg-green-100 text-green-800 border-green-200';
@@ -150,12 +149,14 @@ export function FeatureFlagBadge({ featureKey, showForAllUsers = false }: Featur
         return 'bg-red-100 text-red-800 border-red-200';
     }
   };
-  
+
   return (
-    <span className={`
+    <span
+      className={`
       inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border
       ${getBadgeStyle()}
-    `}>
+    `}
+    >
       {accessResult.hasAccess ? '✓' : '✗'} {featureKey}
     </span>
   );

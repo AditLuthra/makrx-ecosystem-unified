@@ -9,6 +9,7 @@ This project adheres to a code of conduct. By participating, you are expected to
 ## 🚀 Quick Start for Contributors
 
 ### 1. Fork and Clone
+
 ```bash
 # Fork the repository on GitHub
 git clone https://github.com/your-username/makrx-events.git
@@ -16,6 +17,7 @@ cd makrx-events
 ```
 
 ### 2. Set Up Development Environment
+
 ```bash
 # Install dependencies
 npm install
@@ -32,6 +34,7 @@ npm run dev
 ```
 
 ### 3. Create a Feature Branch
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
@@ -65,6 +68,7 @@ git checkout -b feature/your-feature-name
 ### Code Style Guidelines
 
 #### TypeScript/JavaScript
+
 ```typescript
 // Use explicit types
 interface UserData {
@@ -83,12 +87,13 @@ try {
   const result = await apiCall();
   return result;
 } catch (error) {
-  console.error('API call failed:', error);
-  throw new Error('Failed to fetch data');
+  console.error("API call failed:", error);
+  throw new Error("Failed to fetch data");
 }
 ```
 
 #### React Components
+
 ```tsx
 // Use TypeScript interfaces for props
 interface EventCardProps {
@@ -108,12 +113,19 @@ export function ErrorBoundary({ children }: { children: React.ReactNode }) {
 ```
 
 #### Database Schema
+
 ```typescript
 // Use descriptive table and column names
 export const eventRegistrations = pgTable("event_registrations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  eventId: varchar("event_id").notNull().references(() => events.id),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id")
+    .notNull()
+    .references(() => events.id),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id),
   status: varchar("status").notNull().default("confirmed"),
   registeredAt: timestamp("registered_at").defaultNow(),
 });
@@ -122,36 +134,38 @@ export const eventRegistrations = pgTable("event_registrations", {
 ### Testing Guidelines
 
 #### Unit Tests
-```typescript
-import { describe, it, expect } from 'vitest';
-import { validateEmail } from '@/lib/utils';
 
-describe('validateEmail', () => {
-  it('should validate correct email addresses', () => {
-    expect(validateEmail('test@example.com')).toBe(true);
-    expect(validateEmail('user.name@domain.co.uk')).toBe(true);
+```typescript
+import { describe, it, expect } from "vitest";
+import { validateEmail } from "@/lib/utils";
+
+describe("validateEmail", () => {
+  it("should validate correct email addresses", () => {
+    expect(validateEmail("test@example.com")).toBe(true);
+    expect(validateEmail("user.name@domain.co.uk")).toBe(true);
   });
 
-  it('should reject invalid email addresses', () => {
-    expect(validateEmail('invalid-email')).toBe(false);
-    expect(validateEmail('')).toBe(false);
+  it("should reject invalid email addresses", () => {
+    expect(validateEmail("invalid-email")).toBe(false);
+    expect(validateEmail("")).toBe(false);
   });
 });
 ```
 
 #### API Tests
-```typescript
-import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '@/app/api/events/route';
 
-describe('/api/events', () => {
-  it('should return events list', async () => {
+```typescript
+import { testApiHandler } from "next-test-api-route-handler";
+import handler from "@/app/api/events/route";
+
+describe("/api/events", () => {
+  it("should return events list", async () => {
     await testApiHandler({
       handler,
       test: async ({ fetch }) => {
-        const res = await fetch({ method: 'GET' });
+        const res = await fetch({ method: "GET" });
         expect(res.status).toBe(200);
-        
+
         const data = await res.json();
         expect(Array.isArray(data)).toBe(true);
       },
@@ -202,6 +216,7 @@ type(scope): description
 ```
 
 ### Types
+
 - `feat`: New features
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -211,6 +226,7 @@ type(scope): description
 - `chore`: Build process or auxiliary tool changes
 
 ### Examples
+
 ```bash
 feat(auth): add Keycloak integration
 fix(events): resolve registration payment bug
@@ -224,11 +240,13 @@ test(api): add integration tests for events API
 ### Before Submitting
 
 1. **Run the test suite**
+
    ```bash
    npm test
    ```
 
 2. **Check code quality**
+
    ```bash
    npm run lint
    npm run type-check
@@ -248,12 +266,14 @@ test(api): add integration tests for events API
 ### Pull Request Process
 
 1. **Update your branch**
+
    ```bash
    git fetch origin
    git rebase origin/main
    ```
 
 2. **Push your changes**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -268,23 +288,28 @@ test(api): add integration tests for events API
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Tests pass locally
 - [ ] Added new tests
 - [ ] Manual testing completed
 
 ## Screenshots
+
 (If applicable)
 
 ## Related Issues
+
 Closes #123
 ```
 
@@ -300,25 +325,31 @@ Closes #123
 
 ```markdown
 ## Bug Description
+
 Clear description of the bug
 
 ## Steps to Reproduce
+
 1. Go to '...'
 2. Click on '...'
 3. See error
 
 ## Expected Behavior
+
 What you expected to happen
 
 ## Actual Behavior
+
 What actually happened
 
 ## Environment
+
 - Browser: [e.g., Chrome 91]
 - OS: [e.g., macOS 11.4]
 - Node.js version: [e.g., 16.14.0]
 
 ## Additional Context
+
 Any other relevant information
 ```
 
@@ -334,18 +365,23 @@ Any other relevant information
 
 ```markdown
 ## Feature Description
+
 Clear description of the feature
 
 ## Problem Statement
+
 What problem does this solve?
 
 ## Proposed Solution
+
 How should this feature work?
 
 ## Alternative Solutions
+
 Other approaches considered
 
 ## Additional Context
+
 Any other relevant information
 ```
 
@@ -408,33 +444,34 @@ try {
   const validatedData = schema.parse(requestBody);
   // Process request
 } catch (error) {
-  return NextResponse.json(
-    { error: 'Invalid input' },
-    { status: 400 }
-  );
+  return NextResponse.json({ error: "Invalid input" }, { status: 400 });
 }
 ```
 
 ## 📚 Resources
 
 ### Documentation
+
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Documentation](https://react.dev/)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [Drizzle ORM Documentation](https://orm.drizzle.team/docs/)
 
 ### Tools
+
 - [VS Code Extensions](https://code.visualstudio.com/docs/languages/typescript)
 - [React Developer Tools](https://react.dev/learn/react-developer-tools)
 - [Postman](https://www.postman.com/) - API testing
 
 ### Community
+
 - [GitHub Discussions](https://github.com/your-org/makrx-events/discussions)
 - [Discord Server](https://discord.gg/makrx-events) (if available)
 
 ## 🏆 Recognition
 
 Contributors will be recognized in:
+
 - README.md contributors section
 - Release notes
 - Annual contributor highlights

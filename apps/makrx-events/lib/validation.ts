@@ -29,12 +29,14 @@ export const createAwardSchema = z.object({
   eventId: idSchema,
 });
 
-export const awardRecipientSchema = z.object({
-  userId: idSchema.optional(),
-  teamId: idSchema.optional(),
-}).refine(data => data.userId || data.teamId, {
-  message: "Either userId or teamId must be provided",
-});
+export const awardRecipientSchema = z
+  .object({
+    userId: idSchema.optional(),
+    teamId: idSchema.optional(),
+  })
+  .refine((data) => data.userId || data.teamId, {
+    message: 'Either userId or teamId must be provided',
+  });
 
 // Tournament validation schemas
 export const createTournamentSchema = z.object({

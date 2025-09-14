@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Trophy, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, MapPin, Users, Trophy, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
 // Section type definitions
 export interface SectionData {
@@ -24,32 +24,38 @@ interface SectionRendererProps {
 
 // Individual section components
 function HeroSection({ content, micrositeSlug }: { content: any; micrositeSlug: string }) {
-  const { 
-    title = "Event Title", 
-    subtitle = "Event Subtitle", 
+  const {
+    title = 'Event Title',
+    subtitle = 'Event Subtitle',
     description,
     backgroundImage,
-    ctaText = "Register Now",
+    ctaText = 'Register Now',
     ctaUrl = `/m/${micrositeSlug}/register`,
     startDate,
     endDate,
-    location
+    location,
   } = content;
 
   return (
-    <section 
+    <section
       className="relative bg-gradient-to-r from-primary/90 to-primary text-white py-20 px-4"
-      style={backgroundImage ? {
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      } : {}}
+      style={
+        backgroundImage
+          ? {
+              backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url(${backgroundImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }
+          : {}
+      }
     >
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-6">{title}</h1>
         {subtitle && <p className="text-xl md:text-2xl mb-6 text-white/90">{subtitle}</p>}
-        {description && <p className="text-lg mb-8 text-white/80 max-w-2xl mx-auto">{description}</p>}
-        
+        {description && (
+          <p className="text-lg mb-8 text-white/80 max-w-2xl mx-auto">{description}</p>
+        )}
+
         {(startDate || endDate || location) && (
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-white/90">
             {startDate && (
@@ -67,7 +73,7 @@ function HeroSection({ content, micrositeSlug }: { content: any; micrositeSlug: 
             )}
           </div>
         )}
-        
+
         <Button size="lg" className="bg-white text-primary hover:bg-white/90" asChild>
           <Link href={ctaUrl}>{ctaText}</Link>
         </Button>
@@ -77,12 +83,12 @@ function HeroSection({ content, micrositeSlug }: { content: any; micrositeSlug: 
 }
 
 function AboutSection({ content }: { content: any }) {
-  const { 
-    title = "About This Event", 
-    description = "", 
+  const {
+    title = 'About This Event',
+    description = '',
     features = [],
     stats = [],
-    images = []
+    images = [],
   } = content;
 
   return (
@@ -93,7 +99,9 @@ function AboutSection({ content }: { content: any }) {
           {description && (
             <div className="prose prose-lg max-w-4xl mx-auto text-gray-600">
               {description.split('\n').map((paragraph: string, index: number) => (
-                <p key={index} className="mb-4">{paragraph}</p>
+                <p key={index} className="mb-4">
+                  {paragraph}
+                </p>
               ))}
             </div>
           )}
@@ -126,42 +134,38 @@ function AboutSection({ content }: { content: any }) {
 }
 
 function ScheduleSection({ content, micrositeSlug }: { content: any; micrositeSlug: string }) {
-  const { 
-    title = "Event Schedule", 
-    showFullSchedule = true,
-    highlightedEvents = []
-  } = content;
+  const { title = 'Event Schedule', showFullSchedule = true, highlightedEvents = [] } = content;
 
   // Mock schedule data - would come from sub-events
   const mockEvents = [
     {
-      id: "1",
-      title: "Registration & Welcome",
-      time: "9:00 AM",
-      type: "general",
-      location: "Main Lobby"
+      id: '1',
+      title: 'Registration & Welcome',
+      time: '9:00 AM',
+      type: 'general',
+      location: 'Main Lobby',
     },
     {
-      id: "2", 
-      title: "Opening Keynote",
-      time: "10:00 AM",
-      type: "keynote",
-      location: "Main Theater"
+      id: '2',
+      title: 'Opening Keynote',
+      time: '10:00 AM',
+      type: 'keynote',
+      location: 'Main Theater',
     },
     {
-      id: "3",
-      title: "3D Printing Workshop",
-      time: "11:00 AM",
-      type: "workshop",
-      location: "Workshop Room A"
+      id: '3',
+      title: '3D Printing Workshop',
+      time: '11:00 AM',
+      type: 'workshop',
+      location: 'Workshop Room A',
     },
     {
-      id: "4",
-      title: "Robot Competition",
-      time: "2:00 PM", 
-      type: "competition",
-      location: "Arena"
-    }
+      id: '4',
+      title: 'Robot Competition',
+      time: '2:00 PM',
+      type: 'competition',
+      location: 'Arena',
+    },
   ];
 
   return (
@@ -176,12 +180,15 @@ function ScheduleSection({ content, micrositeSlug }: { content: any; micrositeSl
             <Card key={event.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <Badge 
+                  <Badge
                     variant={
-                      event.type === 'keynote' ? 'default' :
-                      event.type === 'competition' ? 'destructive' :
-                      event.type === 'workshop' ? 'secondary' : 
-                      'outline'
+                      event.type === 'keynote'
+                        ? 'default'
+                        : event.type === 'competition'
+                          ? 'destructive'
+                          : event.type === 'workshop'
+                            ? 'secondary'
+                            : 'outline'
                     }
                   >
                     {event.type}
@@ -203,9 +210,7 @@ function ScheduleSection({ content, micrositeSlug }: { content: any; micrositeSl
         {showFullSchedule && (
           <div className="text-center">
             <Button asChild>
-              <Link href={`/m/${micrositeSlug}/schedule`}>
-                View Full Schedule
-              </Link>
+              <Link href={`/m/${micrositeSlug}/schedule`}>View Full Schedule</Link>
             </Button>
           </div>
         )}
@@ -215,27 +220,23 @@ function ScheduleSection({ content, micrositeSlug }: { content: any; micrositeSl
 }
 
 function SponsorsSection({ content }: { content: any }) {
-  const { 
-    title = "Our Sponsors", 
-    tiers = ["Gold", "Silver", "Bronze"],
-    sponsors = {}
-  } = content;
+  const { title = 'Our Sponsors', tiers = ['Gold', 'Silver', 'Bronze'], sponsors = {} } = content;
 
   // Mock sponsor data
   const mockSponsors = {
     Gold: [
-      { name: "TechCorp", logo: null },
-      { name: "InnovateNow", logo: null }
+      { name: 'TechCorp', logo: null },
+      { name: 'InnovateNow', logo: null },
     ],
     Silver: [
-      { name: "CircuitFlow", logo: null },
-      { name: "MakerSpace Pro", logo: null },
-      { name: "RoboTech", logo: null }
+      { name: 'CircuitFlow', logo: null },
+      { name: 'MakerSpace Pro', logo: null },
+      { name: 'RoboTech', logo: null },
     ],
     Bronze: [
-      { name: "Code Academy", logo: null },
-      { name: "Hardware Hub", logo: null }
-    ]
+      { name: 'Code Academy', logo: null },
+      { name: 'Hardware Hub', logo: null },
+    ],
   };
 
   return (
@@ -250,22 +251,27 @@ function SponsorsSection({ content }: { content: any }) {
             <div key={tier}>
               <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">{tier} Sponsors</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {(mockSponsors[tier as keyof typeof mockSponsors] || []).map((sponsor: any, index: number) => (
-                  <div key={index} className="flex items-center justify-center p-6 bg-gray-50 rounded-lg">
-                    {sponsor.logo ? (
-                      <img src={sponsor.logo} alt={sponsor.name} className="max-h-16" />
-                    ) : (
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-gray-200 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                          <span className="text-xs font-medium text-gray-500">
-                            {sponsor.name.substring(0, 2)}
-                          </span>
+                {(mockSponsors[tier as keyof typeof mockSponsors] || []).map(
+                  (sponsor: any, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-center p-6 bg-gray-50 rounded-lg"
+                    >
+                      {sponsor.logo ? (
+                        <img src={sponsor.logo} alt={sponsor.name} className="max-h-16" />
+                      ) : (
+                        <div className="text-center">
+                          <div className="w-16 h-16 bg-gray-200 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                            <span className="text-xs font-medium text-gray-500">
+                              {sponsor.name.substring(0, 2)}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">{sponsor.name}</span>
                         </div>
-                        <span className="text-sm font-medium text-gray-700">{sponsor.name}</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           ))}
@@ -276,29 +282,27 @@ function SponsorsSection({ content }: { content: any }) {
 }
 
 function FAQSection({ content }: { content: any }) {
-  const { 
-    title = "Frequently Asked Questions",
-    faqs = []
-  } = content;
+  const { title = 'Frequently Asked Questions', faqs = [] } = content;
 
   // Mock FAQ data
   const mockFAQs = [
     {
-      question: "When is the event?",
-      answer: "The event takes place March 15-17, 2024 at the Moscone Center in San Francisco."
+      question: 'When is the event?',
+      answer: 'The event takes place March 15-17, 2024 at the Moscone Center in San Francisco.',
     },
     {
-      question: "How do I register?",
-      answer: "You can register through our website by clicking the 'Register Now' button."
+      question: 'How do I register?',
+      answer: "You can register through our website by clicking the 'Register Now' button.",
     },
     {
-      question: "What should I bring?",
-      answer: "Bring a valid ID, comfortable shoes, and a notebook. All workshop materials are provided."
+      question: 'What should I bring?',
+      answer:
+        'Bring a valid ID, comfortable shoes, and a notebook. All workshop materials are provided.',
     },
     {
-      question: "Is parking available?",
-      answer: "Yes, the venue has parking available. We also recommend public transportation."
-    }
+      question: 'Is parking available?',
+      answer: 'Yes, the venue has parking available. We also recommend public transportation.',
+    },
   ];
 
   return (
@@ -334,11 +338,9 @@ function CustomSection({ content }: { content: any }) {
             <h2 className="text-4xl font-bold text-gray-900 mb-6">{title}</h2>
           </div>
         )}
-        
-        {html && (
-          <div dangerouslySetInnerHTML={{ __html: html }} />
-        )}
-        
+
+        {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
+
         {markdown && (
           <div className="prose prose-lg max-w-none">
             {/* Would use a markdown parser here */}
@@ -351,14 +353,18 @@ function CustomSection({ content }: { content: any }) {
 }
 
 // Main renderer component
-export function SectionRenderer({ sections, micrositeSlug, editMode = false }: SectionRendererProps) {
+export function SectionRenderer({
+  sections,
+  micrositeSlug,
+  editMode = false,
+}: SectionRendererProps) {
   const visibleSections = sections
-    .filter(section => section.isVisible || editMode)
+    .filter((section) => section.isVisible || editMode)
     .sort((a, b) => a.order - b.order);
 
   const renderSection = (section: SectionData) => {
     const sectionProps = { content: section.contentJson, micrositeSlug };
-    
+
     let component: ReactNode = null;
 
     switch (section.type) {
@@ -393,13 +399,17 @@ export function SectionRenderer({ sections, micrositeSlug, editMode = false }: S
     if (editMode) {
       return (
         <div key={section.id} className="relative group">
-          <div className={`${!section.isVisible ? 'opacity-50' : ''}`}>
-            {component}
-          </div>
+          <div className={`${!section.isVisible ? 'opacity-50' : ''}`}>{component}</div>
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-lg shadow-lg p-2 flex space-x-2">
-            <Button size="sm" variant="outline">Edit</Button>
-            <Button size="sm" variant="outline">Move</Button>
-            <Button size="sm" variant="outline">Delete</Button>
+            <Button size="sm" variant="outline">
+              Edit
+            </Button>
+            <Button size="sm" variant="outline">
+              Move
+            </Button>
+            <Button size="sm" variant="outline">
+              Delete
+            </Button>
           </div>
         </div>
       );
@@ -411,7 +421,7 @@ export function SectionRenderer({ sections, micrositeSlug, editMode = false }: S
   return (
     <div className="min-h-screen">
       {visibleSections.map(renderSection)}
-      
+
       {editMode && (
         <section className="py-16 px-4 bg-gray-50 border-2 border-dashed border-gray-300">
           <div className="max-w-6xl mx-auto text-center">

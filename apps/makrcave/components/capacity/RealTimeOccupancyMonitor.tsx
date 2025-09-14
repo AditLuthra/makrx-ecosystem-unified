@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
-import { 
+import {
   Users,
   UserCheck,
   UserX,
@@ -18,7 +18,7 @@ import {
   Eye,
   RefreshCw,
   Radio,
-  CheckCircle2
+  CheckCircle2,
 } from 'lucide-react';
 
 interface OccupancyData {
@@ -76,25 +76,41 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
         change_5min: Math.floor(Math.random() * 6) - 3,
         active_sessions: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (_, i) => ({
           user_id: `user_${i}`,
-          user_name: ['Alex Chen', 'Sarah Kim', 'Mike Rodriguez', 'Emma Johnson', 'David Park'][i] || 'Unknown',
+          user_name:
+            ['Alex Chen', 'Sarah Kim', 'Mike Rodriguez', 'Emma Johnson', 'David Park'][i] ||
+            'Unknown',
           check_in_time: new Date(Date.now() - Math.random() * 7200000).toISOString(),
           zone: zone.name,
-          activity: ['3D Printing', 'Electronics', 'Woodworking', 'Laser Cutting', 'Assembly'][Math.floor(Math.random() * 5)],
-          duration: Math.random() * 4 + 0.5
-        }))
+          activity: ['3D Printing', 'Electronics', 'Woodworking', 'Laser Cutting', 'Assembly'][
+            Math.floor(Math.random() * 5)
+          ],
+          duration: Math.random() * 4 + 0.5,
+        })),
       })),
       recent_activity: Array.from({ length: 8 }, (_, i) => ({
-        type: ['check_in', 'check_out', 'zone_change'][Math.floor(Math.random() * 3)] as 'check_in' | 'check_out' | 'zone_change',
-        user_name: ['Alex Chen', 'Sarah Kim', 'Mike Rodriguez', 'Emma Johnson', 'David Park', 'Lisa Wong', 'James Smith'][i] || 'Member',
+        type: ['check_in', 'check_out', 'zone_change'][Math.floor(Math.random() * 3)] as
+          | 'check_in'
+          | 'check_out'
+          | 'zone_change',
+        user_name:
+          [
+            'Alex Chen',
+            'Sarah Kim',
+            'Mike Rodriguez',
+            'Emma Johnson',
+            'David Park',
+            'Lisa Wong',
+            'James Smith',
+          ][i] || 'Member',
         zone: metrics.zones[Math.floor(Math.random() * metrics.zones.length)].name,
         timestamp: new Date(Date.now() - i * 300000).toISOString(),
-        duration: Math.random() * 3 + 1
+        duration: Math.random() * 3 + 1,
       })),
       peak_prediction: {
         next_peak_time: new Date(Date.now() + Math.random() * 14400000).toISOString(),
         predicted_occupancy: Math.floor(Math.random() * 15) + 35,
-        confidence: Math.floor(Math.random() * 20) + 75
-      }
+        confidence: Math.floor(Math.random() * 20) + 75,
+      },
     });
 
     setOccupancyData(generateRealTimeData());
@@ -117,19 +133,27 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'check_in': return UserCheck;
-      case 'check_out': return UserX;
-      case 'zone_change': return ArrowUp;
-      default: return Activity;
+      case 'check_in':
+        return UserCheck;
+      case 'check_out':
+        return UserX;
+      case 'zone_change':
+        return ArrowUp;
+      default:
+        return Activity;
     }
   };
 
   const getActivityColor = (type: string) => {
     switch (type) {
-      case 'check_in': return 'text-green-600';
-      case 'check_out': return 'text-red-600';
-      case 'zone_change': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'check_in':
+        return 'text-green-600';
+      case 'check_out':
+        return 'text-red-600';
+      case 'zone_change':
+        return 'text-blue-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -165,7 +189,9 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
       {/* Connection Status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <div
+            className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+          ></div>
           <span className="text-sm font-medium">
             {isConnected ? 'Real-time monitoring active' : 'Connection lost'}
           </span>
@@ -200,12 +226,17 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
                 {((occupancyData.total_occupancy / metrics.max_capacity) * 100).toFixed(1)}%
               </span>
             </div>
-            
-            <Progress value={(occupancyData.total_occupancy / metrics.max_capacity) * 100} className="h-3" />
-            
+
+            <Progress
+              value={(occupancyData.total_occupancy / metrics.max_capacity) * 100}
+              className="h-3"
+            />
+
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-lg font-semibold text-green-600">{occupancyData.total_occupancy}</div>
+                <div className="text-lg font-semibold text-green-600">
+                  {occupancyData.total_occupancy}
+                </div>
                 <div className="text-xs text-gray-600">Current</div>
               </div>
               <div>
@@ -235,27 +266,31 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {occupancyData.zone_occupancy.map(zone => {
+              {occupancyData.zone_occupancy.map((zone) => {
                 const utilization = getUtilizationLevel(zone.current_count, zone.max_capacity);
                 const utilizationRate = (zone.current_count / zone.max_capacity) * 100;
-                
+
                 return (
-                  <div 
+                  <div
                     key={zone.zone_id}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedZone === zone.zone_id 
-                        ? 'border-blue-500 bg-blue-50' 
+                      selectedZone === zone.zone_id
+                        ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
-                    onClick={() => setSelectedZone(selectedZone === zone.zone_id ? null : zone.zone_id)}
+                    onClick={() =>
+                      setSelectedZone(selectedZone === zone.zone_id ? null : zone.zone_id)
+                    }
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-semibold">{zone.zone_name}</h4>
                       <div className="flex items-center space-x-2">
                         {zone.change_5min !== 0 && (
-                          <div className={`flex items-center space-x-1 ${
-                            zone.change_5min > 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
+                          <div
+                            className={`flex items-center space-x-1 ${
+                              zone.change_5min > 0 ? 'text-green-600' : 'text-red-600'
+                            }`}
+                          >
                             {zone.change_5min > 0 ? (
                               <ArrowUp className="h-3 w-3" />
                             ) : (
@@ -269,9 +304,9 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
                         </Badge>
                       </div>
                     </div>
-                    
+
                     <Progress value={utilizationRate} className="h-2 mb-2" />
-                    
+
                     <div className="flex items-center justify-between text-sm text-gray-600">
                       <span>{utilizationRate.toFixed(1)}% utilized</span>
                       <span>{zone.active_sessions.length} active sessions</span>
@@ -317,24 +352,34 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
               {occupancyData.recent_activity.map((activity, index) => {
                 const Icon = getActivityIcon(activity.type);
                 const color = getActivityColor(activity.type);
-                
+
                 return (
-                  <div key={index} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      activity.type === 'check_in' ? 'bg-green-100' :
-                      activity.type === 'check_out' ? 'bg-red-100' :
-                      'bg-blue-100'
-                    }`}>
+                  <div
+                    key={index}
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50"
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        activity.type === 'check_in'
+                          ? 'bg-green-100'
+                          : activity.type === 'check_out'
+                            ? 'bg-red-100'
+                            : 'bg-blue-100'
+                      }`}
+                    >
                       <Icon className={`h-4 w-4 ${color}`} />
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900">
                         {activity.user_name}
                         <span className="font-normal text-gray-600 ml-1">
-                          {activity.type === 'check_in' ? 'checked into' :
-                           activity.type === 'check_out' ? 'checked out of' :
-                           'moved to'} {activity.zone}
+                          {activity.type === 'check_in'
+                            ? 'checked into'
+                            : activity.type === 'check_out'
+                              ? 'checked out of'
+                              : 'moved to'}{' '}
+                          {activity.zone}
                         </span>
                       </div>
                       <div className="text-xs text-gray-500 flex items-center space-x-2">
@@ -368,7 +413,7 @@ const RealTimeOccupancyMonitor: React.FC<RealTimeOccupancyMonitorProps> = ({ met
             <div>
               <h4 className="font-semibold text-gray-900">Next Peak Expected</h4>
               <p className="text-gray-600">
-                {new Date(occupancyData.peak_prediction.next_peak_time).toLocaleTimeString()} - 
+                {new Date(occupancyData.peak_prediction.next_peak_time).toLocaleTimeString()} -
                 Expected {occupancyData.peak_prediction.predicted_occupancy} people
               </p>
               <div className="flex items-center space-x-2 mt-2">

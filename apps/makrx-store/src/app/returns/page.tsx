@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Package, RotateCcw, Clock, Shield, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import Link from 'next/link';
+import { Package, RotateCcw, Clock, Shield, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 export default function ReturnsPage() {
   return (
@@ -22,7 +22,8 @@ export default function ReturnsPage() {
             Returns & Exchanges
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Easy returns and exchanges. Your satisfaction is our priority. If you&apos;re not happy, we&apos;ll make it right.
+            Easy returns and exchanges. Your satisfaction is our priority. If you&apos;re not happy,
+            we&apos;ll make it right.
           </p>
         </div>
 
@@ -35,7 +36,9 @@ export default function ReturnsPage() {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center shadow-sm">
             <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Free Returns</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Free Returns
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">For defective items</p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center shadow-sm">
@@ -54,8 +57,9 @@ export default function ReturnsPage() {
             </h2>
             <div className="space-y-4 text-gray-600 dark:text-gray-400">
               <p>
-                We want you to be completely satisfied with your purchase. If you&apos;re not happy for any reason, 
-                you can return most items within 30 days of delivery for a full refund or exchange.
+                We want you to be completely satisfied with your purchase. If you&apos;re not happy
+                for any reason, you can return most items within 30 days of delivery for a full
+                refund or exchange.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
@@ -88,7 +92,9 @@ export default function ReturnsPage() {
 
           {/* Return Process */}
           <section className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">How to Return an Item</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              How to Return an Item
+            </h2>
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
@@ -99,12 +105,19 @@ export default function ReturnsPage() {
                     Request Return Authorization
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Visit your <Link href="/account/orders" className="text-blue-600 dark:text-blue-400 hover:underline">order history</Link> and 
-                    click &quot;Return Item&quot; or contact our support team. You&apos;ll receive a Return Authorization (RA) number.
+                    Visit your{' '}
+                    <Link
+                      href="/account/orders"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      order history
+                    </Link>{' '}
+                    and click &quot;Return Item&quot; or contact our support team. You&apos;ll
+                    receive a Return Authorization (RA) number.
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
                   2
@@ -114,11 +127,12 @@ export default function ReturnsPage() {
                     Package Your Item
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Pack the item securely in its original packaging. Include all accessories, manuals, and the RA number.
+                    Pack the item securely in its original packaging. Include all accessories,
+                    manuals, and the RA number.
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
                   3
@@ -128,12 +142,12 @@ export default function ReturnsPage() {
                     Ship or Schedule Pickup
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Use the prepaid return label (for defective items) or ship at your cost. 
-                    We also offer free pickup for orders over ₹10,000.
+                    Use the prepaid return label (for defective items) or ship at your cost. We also
+                    offer free pickup for orders over ₹10,000.
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
                   4
@@ -143,7 +157,8 @@ export default function ReturnsPage() {
                     Get Your Refund
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Once we receive and inspect your return, we&apos;ll process your refund within 3-5 business days.
+                    Once we receive and inspect your return, we&apos;ll process your refund within
+                    3-5 business days.
                   </p>
                 </div>
               </div>
@@ -152,15 +167,25 @@ export default function ReturnsPage() {
 
           {/* Return Conditions */}
           <section className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Return Conditions by Category</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              Return Conditions by Category
+            </h2>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">Category</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">Return Window</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">Condition</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">Restocking Fee</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">
+                      Category
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">
+                      Return Window
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">
+                      Condition
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">
+                      Restocking Fee
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 dark:text-gray-400">
@@ -198,15 +223,15 @@ export default function ReturnsPage() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Exchanges</h2>
             <div className="space-y-4 text-gray-600 dark:text-gray-400">
               <p>
-                We offer exchanges for defective items, wrong sizes, or color variations. 
-                Exchange processing is faster than returns and typically takes 5-7 business days.
+                We offer exchanges for defective items, wrong sizes, or color variations. Exchange
+                processing is faster than returns and typically takes 5-7 business days.
               </p>
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                 <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
                   Express Exchange Program
                 </h3>
                 <p className="text-blue-800 dark:text-blue-200 text-sm">
-                  For premium customers, we can ship the replacement before receiving the return. 
+                  For premium customers, we can ship the replacement before receiving the return.
                   Contact support to check eligibility.
                 </p>
               </div>
@@ -215,10 +240,14 @@ export default function ReturnsPage() {
 
           {/* Warranty Claims */}
           <section className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Warranty Claims</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              Warranty Claims
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Manufacturer Warranty</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  Manufacturer Warranty
+                </h3>
                 <ul className="space-y-2 text-gray-600 dark:text-gray-400">
                   <li>• Contact manufacturer directly</li>
                   <li>• We provide purchase proof</li>
@@ -227,7 +256,9 @@ export default function ReturnsPage() {
                 </ul>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">MakrX Protection Plan</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  MakrX Protection Plan
+                </h3>
                 <ul className="space-y-2 text-gray-600 dark:text-gray-400">
                   <li>• Extended warranty available</li>
                   <li>• Covers accidental damage</li>
@@ -247,12 +278,16 @@ export default function ReturnsPage() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Email Support</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    Email Support
+                  </h3>
                   <p className="text-sm">returns@makrx.store</p>
                   <p className="text-sm text-gray-500">24-48 hour response</p>
                 </div>
                 <div className="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Phone Support</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    Phone Support
+                  </h3>
                   <p className="text-sm">+91 80-4567-8900</p>
                   <p className="text-sm text-gray-500">Mon-Fri, 9 AM - 6 PM</p>
                 </div>

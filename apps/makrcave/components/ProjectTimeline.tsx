@@ -10,21 +10,27 @@ import { Textarea } from './ui/textarea';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { 
-  Plus, 
-  Calendar as CalendarIcon, 
-  Flag, 
-  CheckCircle, 
-  Circle, 
+import {
+  Plus,
+  Calendar as CalendarIcon,
+  Flag,
+  CheckCircle,
+  Circle,
   Clock,
   MoreHorizontal,
   Edit,
   Trash2,
   Target,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu';
 import { format, formatDistanceToNow, isBefore, isAfter } from 'date-fns';
 
 interface Milestone {
@@ -52,7 +58,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
   projectId,
   milestones,
   canEdit,
-  onUpdate
+  onUpdate,
 }) => {
   const getHeaders = useAuthHeaders();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -61,7 +67,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
     title: '',
     description: '',
     target_date: undefined as Date | undefined,
-    priority: 'medium'
+    priority: 'medium',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,21 +75,31 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'medium':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case 'low': return <Flag className="h-3 w-3" />;
-      case 'medium': return <Flag className="h-3 w-3" />;
-      case 'high': return <AlertTriangle className="h-3 w-3" />;
-      case 'critical': return <AlertTriangle className="h-3 w-3" />;
-      default: return <Flag className="h-3 w-3" />;
+      case 'low':
+        return <Flag className="h-3 w-3" />;
+      case 'medium':
+        return <Flag className="h-3 w-3" />;
+      case 'high':
+        return <AlertTriangle className="h-3 w-3" />;
+      case 'critical':
+        return <AlertTriangle className="h-3 w-3" />;
+      default:
+        return <Flag className="h-3 w-3" />;
     }
   };
 
@@ -126,10 +142,13 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
   const handleCompleteMilestone = async (milestoneId: number) => {
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch(`/api/v1/projects/${projectId}/milestones/${milestoneId}/complete`, {
-        method: 'POST',
-        headers,
-      });
+      const response = await fetch(
+        `/api/v1/projects/${projectId}/milestones/${milestoneId}/complete`,
+        {
+          method: 'POST',
+          headers,
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -168,7 +187,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
       title: '',
       description: '',
       target_date: undefined,
-      priority: 'medium'
+      priority: 'medium',
     });
     setError(null);
   };
@@ -194,7 +213,10 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
   const isOverdue = (targetDate?: string) => {
     if (!targetDate) return false;
     try {
-      return isBefore(new Date(targetDate), new Date()) && !milestones.find(m => m.target_date === targetDate)?.is_completed;
+      return (
+        isBefore(new Date(targetDate), new Date()) &&
+        !milestones.find((m) => m.target_date === targetDate)?.is_completed
+      );
     } catch {
       return false;
     }
@@ -202,7 +224,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
 
   const getTimelineProgress = () => {
     if (milestones.length === 0) return 0;
-    const completed = milestones.filter(m => m.is_completed).length;
+    const completed = milestones.filter((m) => m.is_completed).length;
     return Math.round((completed / milestones.length) * 100);
   };
 
@@ -211,14 +233,14 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
     if (a.is_completed !== b.is_completed) {
       return a.is_completed ? 1 : -1;
     }
-    
+
     if (a.target_date && b.target_date) {
       return new Date(a.target_date).getTime() - new Date(b.target_date).getTime();
     }
-    
+
     if (a.target_date && !b.target_date) return -1;
     if (!a.target_date && b.target_date) return 1;
-    
+
     return a.order_index - b.order_index;
   });
 
@@ -231,7 +253,8 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
           <div>
             <h4 className="font-medium">Project Timeline</h4>
             <p className="text-sm text-gray-600">
-              {getTimelineProgress()}% complete ({milestones.filter(m => m.is_completed).length} of {milestones.length})
+              {getTimelineProgress()}% complete ({milestones.filter((m) => m.is_completed).length}{' '}
+              of {milestones.length})
             </p>
           </div>
         </div>
@@ -246,7 +269,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
       {/* Progress Bar */}
       {milestones.length > 0 && (
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
+          <div
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${getTimelineProgress()}%` }}
           />
@@ -263,16 +286,21 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
           </div>
         ) : (
           sortedMilestones.map((milestone, index) => (
-            <div key={milestone.id} className={`flex items-start space-x-3 p-3 rounded-lg border ${
-              milestone.is_completed ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
-            }`}>
+            <div
+              key={milestone.id}
+              className={`flex items-start space-x-3 p-3 rounded-lg border ${
+                milestone.is_completed ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
+              }`}
+            >
               {/* Timeline Connector */}
               <div className="flex flex-col items-center">
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  milestone.is_completed 
-                    ? 'bg-green-500 border-green-500' 
-                    : 'bg-white border-gray-300'
-                }`}>
+                <div
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    milestone.is_completed
+                      ? 'bg-green-500 border-green-500'
+                      : 'bg-white border-gray-300'
+                  }`}
+                >
                   {milestone.is_completed ? (
                     <CheckCircle className="h-4 w-4 text-white" />
                   ) : (
@@ -288,10 +316,12 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h5 className={`font-medium ${milestone.is_completed ? 'line-through text-gray-600' : 'text-gray-900'}`}>
+                    <h5
+                      className={`font-medium ${milestone.is_completed ? 'line-through text-gray-600' : 'text-gray-900'}`}
+                    >
                       {milestone.title}
                     </h5>
-                    
+
                     {milestone.description && (
                       <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
                     )}
@@ -303,9 +333,11 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                       </Badge>
 
                       {milestone.target_date && (
-                        <div className={`text-xs flex items-center gap-1 ${
-                          isOverdue(milestone.target_date) ? 'text-red-600' : 'text-gray-600'
-                        }`}>
+                        <div
+                          className={`text-xs flex items-center gap-1 ${
+                            isOverdue(milestone.target_date) ? 'text-red-600' : 'text-gray-600'
+                          }`}
+                        >
                           <CalendarIcon className="h-3 w-3" />
                           {formatDate(milestone.target_date)}
                           {!milestone.is_completed && (
@@ -344,7 +376,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                           Edit Milestone
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleDeleteMilestone(milestone.id)}
                           className="text-red-600"
                         >
@@ -367,7 +399,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
           <DialogHeader>
             <DialogTitle>Add Milestone</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -408,7 +440,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                   <Button variant="outline" className="w-full justify-start text-left mt-1">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {newMilestone.target_date ? (
-                      format(newMilestone.target_date, "PPP")
+                      format(newMilestone.target_date, 'PPP')
                     ) : (
                       <span>Pick a target date</span>
                     )}
@@ -430,8 +462,8 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
 
             <div>
               <Label htmlFor="priority">Priority</Label>
-              <Select 
-                value={newMilestone.priority} 
+              <Select
+                value={newMilestone.priority}
                 onValueChange={(value) => setNewMilestone({ ...newMilestone, priority: value })}
               >
                 <SelectTrigger className="mt-1">

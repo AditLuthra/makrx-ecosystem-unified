@@ -20,12 +20,14 @@ This directory consolidates documentation migrated from prior repos and apps int
 - GitHub/CI: `docs/ai/GITHUB_INTEGRATION_README.md`, `.github/` workflows
 
 ### Store Backend
+
 - Backend Guide: `backends/makrx-store/README.md`
 - Service Docs: `docs/store/README.md`
 - Makefile tasks: `backends/makrx-store/Makefile`
 - CI migration script: `backends/makrx-store/scripts/ci_migrate.sh`
 
 Getting Started (Backend)
+
 - `cd backends/makrx-store`
 - `make install`
 - `export DATABASE_URL=postgresql://user:pass@localhost:5433/makrx_ecosystem`

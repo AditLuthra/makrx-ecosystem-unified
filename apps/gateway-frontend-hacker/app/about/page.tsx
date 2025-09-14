@@ -1,15 +1,29 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import {
-  Users, Target, Award, Heart, Globe, Zap, Shield,
-  TrendingUp, Building2, ShoppingCart, GraduationCap,
-  ArrowRight, Star, CheckCircle, Lightbulb, Rocket,
-  MapPin, Calendar, ExternalLink
-} from "lucide-react";
-import { ThreeBackground } from "@/components/ThreeBackground";
-import { SEOStructuredData } from "@/components/SEOStructuredData";
-
+  Users,
+  Target,
+  Award,
+  Heart,
+  Globe,
+  Zap,
+  Shield,
+  TrendingUp,
+  Building2,
+  ShoppingCart,
+  GraduationCap,
+  ArrowRight,
+  Star,
+  CheckCircle,
+  Lightbulb,
+  Rocket,
+  MapPin,
+  Calendar,
+  ExternalLink,
+} from 'lucide-react';
+import { ThreeBackground } from '@/components/ThreeBackground';
+import { SEOStructuredData } from '@/components/SEOStructuredData';
 
 interface ValueCardProps {
   icon: ReactNode;
@@ -75,14 +89,14 @@ function Milestone({ year, title, description }: MilestoneProps) {
 export default function AboutPage() {
   return (
     <main className="min-h-screen relative z-10">
-      <SEOStructuredData type="organization" data={{
-        name: "MakrX",
-        url: "https://makrx.org",
-        sameAs: [
-          "https://github.com/makrx",
-          "https://www.youtube.com/@makrx"
-        ]
-      }} />
+      <SEOStructuredData
+        type="organization"
+        data={{
+          name: 'MakrX',
+          url: 'https://makrx.org',
+          sameAs: ['https://github.com/makrx', 'https://www.youtube.com/@makrx'],
+        }}
+      />
       <ThreeBackground />
 
       {/* Hero Section */}
@@ -135,7 +149,9 @@ export default function AboutPage() {
       <section className="py-24 bg-dark-bg-secondary">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Our Mission & Vision</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+              Our Mission & Vision
+            </h2>
             <p className="text-xl text-dark-text-secondary max-w-3xl mx-auto font-mono">
               Building the future where every idea has the tools and support to become reality
             </p>
@@ -146,17 +162,20 @@ export default function AboutPage() {
               <div className="w-16 h-16 bg-makr-blue border border-makr-blue/30 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-makr-yellow group-hover:border-makr-yellow/50 group-hover:scale-110 transition-all shadow-neon">
                 <Target className="w-8 h-8 text-white group-hover:text-dark-bg-primary" />
               </div>
-              <h3 className="text-3xl font-bold text-gradient-cyberpunk mb-6 font-mono">Our Mission</h3>
+              <h3 className="text-3xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                Our Mission
+              </h3>
               <p className="text-lg text-dark-text-secondary leading-relaxed mb-6 font-mono">
-                To democratize innovation by providing accessible, affordable, and comprehensive maker resources
-                that empower individuals and communities to transform their ideas into reality.
+                To democratize innovation by providing accessible, affordable, and comprehensive
+                maker resources that empower individuals and communities to transform their ideas
+                into reality.
               </p>
               <ul className="space-y-3">
                 {[
                   'Make professional fabrication tools accessible to everyone',
                   'Foster collaborative learning and knowledge sharing',
                   'Support entrepreneurship and innovation',
-                  'Build sustainable maker communities'
+                  'Build sustainable maker communities',
                 ].map((item, index) => (
                   <li key={index} className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-terminal-green mr-3 mt-1 flex-shrink-0" />
@@ -170,17 +189,20 @@ export default function AboutPage() {
               <div className="w-16 h-16 bg-purple-600 border border-purple-600/30 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-makr-yellow group-hover:border-makr-yellow/50 group-hover:scale-110 transition-all shadow-neon">
                 <Rocket className="w-8 h-8 text-white group-hover:text-dark-bg-primary" />
               </div>
-              <h3 className="text-3xl font-bold text-gradient-cyberpunk mb-6 font-mono">Our Vision</h3>
+              <h3 className="text-3xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+                Our Vision
+              </h3>
               <p className="text-lg text-dark-text-secondary leading-relaxed mb-6 font-mono">
-                To be the leading ecosystem that transforms India into a global innovation powerhouse,
-                where every maker has the tools, knowledge, and community support to create extraordinary things.
+                To be the leading ecosystem that transforms India into a global innovation
+                powerhouse, where every maker has the tools, knowledge, and community support to
+                create extraordinary things.
               </p>
               <ul className="space-y-3">
                 {[
                   'India as a global hub for hardware innovation',
                   'Every student with access to hands-on learning',
                   'Thriving local manufacturing ecosystem',
-                  'Sustainable and circular design practices'
+                  'Sustainable and circular design practices',
                 ].map((item, index) => (
                   <li key={index} className="flex items-start">
                     <Star className="w-5 h-5 text-makr-yellow mr-3 mt-1 flex-shrink-0" />
@@ -197,8 +219,12 @@ export default function AboutPage() {
       <section className="py-24 bg-dark-bg-primary">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Our Values</h2>
-            <p className="text-xl text-dark-text-secondary max-w-3xl mx-auto font-mono">The principles that guide everything we do</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+              Our Values
+            </h2>
+            <p className="text-xl text-dark-text-secondary max-w-3xl mx-auto font-mono">
+              The principles that guide everything we do
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -230,8 +256,12 @@ export default function AboutPage() {
       <section className="py-24 bg-dark-bg-secondary">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Our Journey</h2>
-            <p className="text-xl text-dark-text-secondary max-w-3xl mx-auto font-mono">From a simple idea to India's largest maker ecosystem</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+              Our Journey
+            </h2>
+            <p className="text-xl text-dark-text-secondary max-w-3xl mx-auto font-mono">
+              From a simple idea to India's largest maker ecosystem
+            </p>
           </div>
 
           <div className="space-y-16">
@@ -267,7 +297,9 @@ export default function AboutPage() {
       {/* Call to Action */}
       <section className="py-24 bg-gradient-to-r from-makr-blue/30 to-purple-700/30 border-t border-makr-blue/30">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">Join the Maker Revolution</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gradient-cyberpunk mb-6 font-mono">
+            Join the Maker Revolution
+          </h2>
           <p className="text-xl text-dark-text-secondary mb-12 leading-relaxed font-mono">
             Be part of India's largest maker community and transform your ideas into reality.
           </p>

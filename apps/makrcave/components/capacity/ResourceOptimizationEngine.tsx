@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
+import {
   Brain,
   Zap,
   Target,
@@ -25,7 +25,7 @@ import {
   Eye,
   Calendar,
   BarChart3,
-  Activity
+  Activity,
 } from 'lucide-react';
 
 interface OptimizationScenario {
@@ -94,24 +94,25 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
           'Reduce equipment wait times by 35%',
           'Increase zone utilization by 16%',
           'Improve member satisfaction scores',
-          'Better equipment accessibility'
+          'Better equipment accessibility',
         ],
         risks: [
           'Temporary disruption during move',
           'Member adaptation period',
-          'Potential workflow changes'
+          'Potential workflow changes',
         ],
         requirements: [
           'Equipment moving crew',
           'Updated zone layouts',
-          'Member communication plan'
+          'Member communication plan',
         ],
-        status: 'available'
+        status: 'available',
       },
       {
         id: 'dynamic-scheduling',
         name: 'Dynamic Scheduling System',
-        description: 'Implement AI-driven scheduling to balance load across peak and off-peak hours',
+        description:
+          'Implement AI-driven scheduling to balance load across peak and off-peak hours',
         type: 'scheduling',
         current_efficiency: 62,
         projected_efficiency: 78,
@@ -122,20 +123,20 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
           'Reduce peak hour congestion by 28%',
           'Increase off-peak utilization by 45%',
           'Dynamic pricing optimization',
-          'Automated conflict resolution'
+          'Automated conflict resolution',
         ],
         risks: [
           'System integration complexity',
           'Member resistance to dynamic pricing',
-          'Learning curve for staff'
+          'Learning curve for staff',
         ],
         requirements: [
           'Software development',
           'Integration with booking system',
           'Staff training',
-          'Member education'
+          'Member education',
         ],
-        status: 'available'
+        status: 'available',
       },
       {
         id: 'zone-reconfiguration',
@@ -151,20 +152,20 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
           'Increase capacity by 22%',
           'Improve workflow efficiency',
           'Better noise isolation',
-          'Enhanced safety protocols'
+          'Enhanced safety protocols',
         ],
         risks: [
           'High implementation cost',
           'Extended downtime required',
-          'Potential permit requirements'
+          'Potential permit requirements',
         ],
         requirements: [
           'Space planning consultant',
           'Construction permits',
           'Temporary alternative space',
-          'Updated safety protocols'
+          'Updated safety protocols',
         ],
-        status: 'available'
+        status: 'available',
       },
       {
         id: 'capacity-expansion',
@@ -180,21 +181,21 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
           'Handle 40% more concurrent users',
           'Reduce wait lists by 60%',
           'Support growth for 2+ years',
-          'Improve member retention'
+          'Improve member retention',
         ],
         risks: [
           'Significant capital investment',
           'Extended implementation time',
-          'Market demand uncertainty'
+          'Market demand uncertainty',
         ],
         requirements: [
           'Space availability',
           'Budget approval',
           'Permit acquisition',
-          'Staff hiring and training'
+          'Staff hiring and training',
         ],
-        status: 'blocked'
-      }
+        status: 'blocked',
+      },
     ];
 
     setOptimizationScenarios(scenarios);
@@ -211,11 +212,11 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
       { step: 'Running optimization algorithms', progress: 40 },
       { step: 'Evaluating scenarios', progress: 60 },
       { step: 'Calculating impact', progress: 80 },
-      { step: 'Generating recommendations', progress: 100 }
+      { step: 'Generating recommendations', progress: 100 },
     ];
 
     for (const step of progressSteps) {
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
       setOptimizationProgress(step.progress);
     }
 
@@ -230,42 +231,42 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
           change_type: 'relocate',
           from_zone: 'Main Workshop',
           to_zone: '3D Printing Bay',
-          impact: 25
+          impact: 25,
         },
         {
           resource: 'Electronics Workstations',
           change_type: 'add',
           to_zone: 'Electronics Lab',
-          impact: 18
+          impact: 18,
         },
         {
           resource: 'Underutilized Laser Engraver',
           change_type: 'relocate',
           from_zone: 'Meeting Room',
           to_zone: 'Main Workshop',
-          impact: 12
-        }
+          impact: 12,
+        },
       ],
       timeline: [
         {
           phase: 'Planning & Preparation',
           duration: '3 days',
           cost: 500,
-          requirements: ['Layout planning', 'Equipment audit', 'Staff coordination']
+          requirements: ['Layout planning', 'Equipment audit', 'Staff coordination'],
         },
         {
           phase: 'Implementation',
           duration: '2 days',
           cost: 1500,
-          requirements: ['Equipment relocation', 'Zone reconfiguration', 'Safety checks']
+          requirements: ['Equipment relocation', 'Zone reconfiguration', 'Safety checks'],
         },
         {
           phase: 'Testing & Validation',
           duration: '1 week',
           cost: 300,
-          requirements: ['System testing', 'Member feedback', 'Performance monitoring']
-        }
-      ]
+          requirements: ['System testing', 'Member feedback', 'Performance monitoring'],
+        },
+      ],
     };
 
     setOptimizationResults(mockResult);
@@ -274,31 +275,46 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
 
   const getScenarioTypeIcon = (type: string) => {
     switch (type) {
-      case 'equipment': return Wrench;
-      case 'scheduling': return Clock;
-      case 'layout': return MapPin;
-      case 'capacity': return Users;
-      default: return Target;
+      case 'equipment':
+        return Wrench;
+      case 'scheduling':
+        return Clock;
+      case 'layout':
+        return MapPin;
+      case 'capacity':
+        return Users;
+      default:
+        return Target;
     }
   };
 
   const getScenarioTypeColor = (type: string) => {
     switch (type) {
-      case 'equipment': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'scheduling': return 'bg-green-100 text-green-800 border-green-200';
-      case 'layout': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'capacity': return 'bg-orange-100 text-orange-800 border-orange-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'equipment':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'scheduling':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'layout':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'capacity':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'blocked': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'available':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'completed':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'blocked':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -326,7 +342,8 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-              {optimizationScenarios.filter(s => s.status === 'available').length} scenarios available
+              {optimizationScenarios.filter((s) => s.status === 'available').length} scenarios
+              available
             </Badge>
           </div>
         </CardHeader>
@@ -342,7 +359,9 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Optimizing Resources</h3>
-                <p className="text-gray-600">Running AI algorithms to find the best configuration...</p>
+                <p className="text-gray-600">
+                  Running AI algorithms to find the best configuration...
+                </p>
               </div>
               <Progress value={optimizationProgress} className="w-full max-w-md mx-auto" />
               <p className="text-sm text-gray-500">{optimizationProgress}% complete</p>
@@ -353,12 +372,12 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
 
       {/* Optimization Scenarios */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {optimizationScenarios.map(scenario => {
+        {optimizationScenarios.map((scenario) => {
           const TypeIcon = getScenarioTypeIcon(scenario.type);
           const improvementPotential = scenario.projected_efficiency - scenario.current_efficiency;
-          
+
           return (
-            <Card 
+            <Card
               key={scenario.id}
               className={`border-2 transition-all duration-200 hover:shadow-lg ${
                 selectedScenario === scenario.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
@@ -380,15 +399,15 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                   </Badge>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 {/* Type and Metrics */}
                 <div className="flex items-center justify-between">
-                  <Badge className={getScenarioTypeColor(scenario.type)}>
-                    {scenario.type}
-                  </Badge>
+                  <Badge className={getScenarioTypeColor(scenario.type)}>{scenario.type}</Badge>
                   <div className="text-right">
-                    <div className={`text-lg font-bold ${getImprovementColor(improvementPotential)}`}>
+                    <div
+                      className={`text-lg font-bold ${getImprovementColor(improvementPotential)}`}
+                    >
                       +{improvementPotential.toFixed(1)}%
                     </div>
                     <div className="text-xs text-gray-600">efficiency gain</div>
@@ -402,10 +421,12 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                     <span className="font-medium">{scenario.current_efficiency}%</span>
                   </div>
                   <Progress value={scenario.current_efficiency} className="h-2" />
-                  
+
                   <div className="flex justify-between text-sm">
                     <span>Projected Efficiency</span>
-                    <span className="font-medium text-green-600">{scenario.projected_efficiency}%</span>
+                    <span className="font-medium text-green-600">
+                      {scenario.projected_efficiency}%
+                    </span>
                   </div>
                   <Progress value={scenario.projected_efficiency} className="h-2" />
                 </div>
@@ -414,7 +435,9 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="text-gray-600">Implementation Cost</div>
-                    <div className="font-medium">${scenario.implementation_cost.toLocaleString()}</div>
+                    <div className="font-medium">
+                      ${scenario.implementation_cost.toLocaleString()}
+                    </div>
                   </div>
                   <div>
                     <div className="text-gray-600">Timeline</div>
@@ -432,7 +455,7 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2 pt-2">
-                  <Button 
+                  <Button
                     onClick={() => runOptimization(scenario.id)}
                     disabled={scenario.status === 'blocked' || isOptimizing}
                     className="flex-1"
@@ -513,9 +536,11 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                     <div>
                       <h4 className="font-semibold text-green-900">Recommendation</h4>
                       <p className="text-green-800 text-sm">
-                        This optimization scenario shows strong potential for improving overall efficiency. 
-                        The {optimizationResults.success_probability.toFixed(1)}% success probability and 
-                        {optimizationResults.expected_improvement.toFixed(1)}% improvement make this a valuable investment.
+                        This optimization scenario shows strong potential for improving overall
+                        efficiency. The {optimizationResults.success_probability.toFixed(1)}%
+                        success probability and
+                        {optimizationResults.expected_improvement.toFixed(1)}% improvement make this
+                        a valuable investment.
                       </p>
                     </div>
                   </div>
@@ -538,9 +563,7 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                             <span>to {change.to_zone}</span>
                           </div>
                         )}
-                        {change.change_type === 'add' && (
-                          <span>Add to {change.to_zone}</span>
-                        )}
+                        {change.change_type === 'add' && <span>Add to {change.to_zone}</span>}
                         {change.change_type === 'remove' && (
                           <span>Remove from {change.from_zone}</span>
                         )}
@@ -548,7 +571,9 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                       <div className="mt-2">
                         <div className="flex items-center justify-between text-sm">
                           <span>Expected Impact</span>
-                          <span className="font-medium text-green-600">+{change.impact}% efficiency</span>
+                          <span className="font-medium text-green-600">
+                            +{change.impact}% efficiency
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -564,7 +589,9 @@ const ResourceOptimizationEngine: React.FC<ResourceOptimizationEngineProps> = ({
                         <h4 className="font-semibold">{phase.phase}</h4>
                         <div className="text-right">
                           <div className="font-medium">{phase.duration}</div>
-                          <div className="text-sm text-gray-600">${phase.cost.toLocaleString()}</div>
+                          <div className="text-sm text-gray-600">
+                            ${phase.cost.toLocaleString()}
+                          </div>
                         </div>
                       </div>
                       <div className="space-y-2">

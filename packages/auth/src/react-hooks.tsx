@@ -1,7 +1,13 @@
-'use client';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { MakrXKeycloak } from './keycloak-class';
-import { AuthConfig, MakrXUser } from './types';
+"use client";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { MakrXKeycloak } from "./keycloak-class";
+import { AuthConfig, MakrXUser } from "./types";
 
 interface KeycloakContextType {
   keycloak: MakrXKeycloak | null;
@@ -29,7 +35,7 @@ export function KeycloakProvider({ children, config }: KeycloakProviderProps) {
   useEffect(() => {
     const initKeycloak = async () => {
       const kc = new MakrXKeycloak(config);
-      
+
       kc.onAuthSuccess(async () => {
         const userInfo = await kc.getUserInfo();
         setUser(userInfo);
@@ -91,7 +97,7 @@ export function KeycloakProvider({ children, config }: KeycloakProviderProps) {
 export function useKeycloak() {
   const context = useContext(KeycloakContext);
   if (!context) {
-    throw new Error('useKeycloak must be used within a KeycloakProvider');
+    throw new Error("useKeycloak must be used within a KeycloakProvider");
   }
   return context;
 }

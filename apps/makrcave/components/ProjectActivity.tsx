@@ -4,19 +4,19 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { 
-  Activity, 
-  User, 
-  UserPlus, 
-  UserMinus, 
-  Edit, 
-  Plus, 
-  Minus, 
-  Upload, 
-  Download, 
-  Calendar, 
-  CheckCircle, 
-  Settings, 
+import {
+  Activity,
+  User,
+  UserPlus,
+  UserMinus,
+  Edit,
+  Plus,
+  Minus,
+  Upload,
+  Download,
+  Calendar,
+  CheckCircle,
+  Settings,
   Flag,
   Package,
   Wrench,
@@ -25,7 +25,7 @@ import {
   Filter,
   Search,
   Eye,
-  MoreHorizontal
+  MoreHorizontal,
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -45,32 +45,45 @@ interface ProjectActivityProps {
   showAll?: boolean;
 }
 
-const ProjectActivity: React.FC<ProjectActivityProps> = ({ 
-  activities, 
-  showAll = false 
-}) => {
+const ProjectActivity: React.FC<ProjectActivityProps> = ({ activities, showAll = false }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'project_created': return <Plus className="h-4 w-4 text-green-600" />;
-      case 'project_updated': return <Edit className="h-4 w-4 text-blue-600" />;
-      case 'member_added': return <UserPlus className="h-4 w-4 text-green-600" />;
-      case 'member_removed': return <UserMinus className="h-4 w-4 text-red-600" />;
-      case 'member_role_changed': return <User className="h-4 w-4 text-orange-600" />;
-      case 'bom_item_added': return <Plus className="h-4 w-4 text-blue-600" />;
-      case 'bom_item_removed': return <Minus className="h-4 w-4 text-red-600" />;
-      case 'bom_item_updated': return <Package className="h-4 w-4 text-blue-600" />;
-      case 'equipment_reserved': return <Wrench className="h-4 w-4 text-green-600" />;
-      case 'equipment_unreserved': return <Wrench className="h-4 w-4 text-red-600" />;
-      case 'file_uploaded': return <Upload className="h-4 w-4 text-blue-600" />;
-      case 'file_removed': return <Download className="h-4 w-4 text-red-600" />;
-      case 'milestone_added': return <Flag className="h-4 w-4 text-purple-600" />;
-      case 'milestone_completed': return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'status_changed': return <Settings className="h-4 w-4 text-orange-600" />;
-      default: return <Activity className="h-4 w-4 text-gray-600" />;
+      case 'project_created':
+        return <Plus className="h-4 w-4 text-green-600" />;
+      case 'project_updated':
+        return <Edit className="h-4 w-4 text-blue-600" />;
+      case 'member_added':
+        return <UserPlus className="h-4 w-4 text-green-600" />;
+      case 'member_removed':
+        return <UserMinus className="h-4 w-4 text-red-600" />;
+      case 'member_role_changed':
+        return <User className="h-4 w-4 text-orange-600" />;
+      case 'bom_item_added':
+        return <Plus className="h-4 w-4 text-blue-600" />;
+      case 'bom_item_removed':
+        return <Minus className="h-4 w-4 text-red-600" />;
+      case 'bom_item_updated':
+        return <Package className="h-4 w-4 text-blue-600" />;
+      case 'equipment_reserved':
+        return <Wrench className="h-4 w-4 text-green-600" />;
+      case 'equipment_unreserved':
+        return <Wrench className="h-4 w-4 text-red-600" />;
+      case 'file_uploaded':
+        return <Upload className="h-4 w-4 text-blue-600" />;
+      case 'file_removed':
+        return <Download className="h-4 w-4 text-red-600" />;
+      case 'milestone_added':
+        return <Flag className="h-4 w-4 text-purple-600" />;
+      case 'milestone_completed':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'status_changed':
+        return <Settings className="h-4 w-4 text-orange-600" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -103,21 +116,21 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
 
   const getActivityTypeLabel = (type: string) => {
     const typeMap: { [key: string]: string } = {
-      'project_created': 'Project',
-      'project_updated': 'Project',
-      'member_added': 'Team',
-      'member_removed': 'Team',
-      'member_role_changed': 'Team',
-      'bom_item_added': 'BOM',
-      'bom_item_removed': 'BOM',
-      'bom_item_updated': 'BOM',
-      'equipment_reserved': 'Equipment',
-      'equipment_unreserved': 'Equipment',
-      'file_uploaded': 'Files',
-      'file_removed': 'Files',
-      'milestone_added': 'Timeline',
-      'milestone_completed': 'Timeline',
-      'status_changed': 'Project',
+      project_created: 'Project',
+      project_updated: 'Project',
+      member_added: 'Team',
+      member_removed: 'Team',
+      member_role_changed: 'Team',
+      bom_item_added: 'BOM',
+      bom_item_removed: 'BOM',
+      bom_item_updated: 'BOM',
+      equipment_reserved: 'Equipment',
+      equipment_unreserved: 'Equipment',
+      file_uploaded: 'Files',
+      file_removed: 'Files',
+      milestone_added: 'Timeline',
+      milestone_completed: 'Timeline',
+      status_changed: 'Project',
     };
     return typeMap[type] || 'General';
   };
@@ -127,7 +140,7 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
       const date = new Date(dateString);
       const now = new Date();
       const diffInHours = Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
-      
+
       if (diffInHours < 24) {
         return formatDistanceToNow(date, { addSuffix: true });
       } else {
@@ -149,17 +162,20 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
   };
 
   const getActivityTypes = () => {
-    const types = Array.from(new Set(activities.map(a => getActivityTypeLabel(a.activity_type))));
+    const types = Array.from(new Set(activities.map((a) => getActivityTypeLabel(a.activity_type))));
     return types.sort();
   };
 
-  const filteredActivities = activities.filter(activity => {
-    const matchesSearch = activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         activity.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (activity.description && activity.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesType = filterType === 'all' || getActivityTypeLabel(activity.activity_type) === filterType;
-    
+  const filteredActivities = activities.filter((activity) => {
+    const matchesSearch =
+      activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      activity.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (activity.description &&
+        activity.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesType =
+      filterType === 'all' || getActivityTypeLabel(activity.activity_type) === filterType;
+
     return matchesSearch && matchesType;
   });
 
@@ -177,9 +193,7 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
                 Complete history of project changes and updates
               </p>
             </div>
-            <Badge variant="outline">
-              {activities.length} Activities
-            </Badge>
+            <Badge variant="outline">{activities.length} Activities</Badge>
           </div>
 
           {/* Search and Filter */}
@@ -224,8 +238,8 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
           </div>
         ) : (
           displayedActivities.map((activity, index) => (
-            <div 
-              key={activity.id} 
+            <div
+              key={activity.id}
               className={`border rounded-lg p-4 ${getActivityColor(activity.activity_type)}`}
             >
               <div className="flex items-start space-x-3">
@@ -249,15 +263,14 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
                           {getActivityTypeLabel(activity.activity_type)}
                         </Badge>
                       </div>
-                      
+
                       {activity.description && (
                         <p className="text-sm text-gray-600 mb-2">
-                          {expandedItems.has(activity.id) 
-                            ? activity.description 
-                            : activity.description.length > 100 
+                          {expandedItems.has(activity.id)
+                            ? activity.description
+                            : activity.description.length > 100
                               ? `${activity.description.substring(0, 100)}...`
-                              : activity.description
-                          }
+                              : activity.description}
                           {activity.description.length > 100 && (
                             <button
                               onClick={() => toggleExpanded(activity.id)}
@@ -297,11 +310,7 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
 
                     {/* Actions */}
                     {showAll && activity.metadata && Object.keys(activity.metadata).length > 0 && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => toggleExpanded(activity.id)}
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => toggleExpanded(activity.id)}>
                         <Eye className="h-4 w-4" />
                       </Button>
                     )}
@@ -332,7 +341,9 @@ const ProjectActivity: React.FC<ProjectActivityProps> = ({
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               {getActivityTypes().map((type) => {
-                const count = activities.filter(a => getActivityTypeLabel(a.activity_type) === type).length;
+                const count = activities.filter(
+                  (a) => getActivityTypeLabel(a.activity_type) === type,
+                ).length;
                 return (
                   <div key={type} className="text-center">
                     <div className="font-medium text-lg">{count}</div>

@@ -4,13 +4,13 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { 
-  FileText, 
-  Save, 
-  Download, 
-  Share2, 
-  History, 
-  Users, 
+import {
+  FileText,
+  Save,
+  Download,
+  Share2,
+  History,
+  Users,
   Edit3,
   Eye,
   Lock,
@@ -19,12 +19,18 @@ import {
   MoreHorizontal,
   Clock,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
 import { useAuthHeaders } from '@makrx/auth';
 import { useAuth } from '../../contexts/AuthContext';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '../ui/dropdown-menu';
 import { formatDistanceToNow } from 'date-fns';
 
 interface DocumentChange {
@@ -71,7 +77,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
   title = 'Shared Document',
   initialContent = '',
   isReadOnly = false,
-  className = ''
+  className = '',
 }) => {
   const { user } = useAuth();
   const { addEventListener, isConnected } = useRealTimeUpdates();
@@ -97,10 +103,19 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
   const [syncStatus, setSyncStatus] = useState<'synced' | 'saving' | 'error'>('synced');
 
   // User colors for collaborative editing
-  const userColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'];
+  const userColors = [
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#96CEB4',
+    '#FFEAA7',
+    '#DDA0DD',
+    '#98D8C8',
+    '#F7DC6F',
+  ];
   const getUserColor = (userId: string) => {
     const hash = userId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
+      a = (a << 5) - a + b.charCodeAt(0);
       return a & a;
     }, 0);
     return userColors[Math.abs(hash) % userColors.length];
@@ -120,7 +135,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
             operation: event.payload.operation,
             position: event.payload.position,
             content: event.payload.content,
-            timestamp: new Date(event.payload.timestamp)
+            timestamp: new Date(event.payload.timestamp),
           };
 
           applyRemoteChange(change);
@@ -129,8 +144,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
 
       addEventListener('document.cursor', (event) => {
         if (event.payload.document_id === documentId && event.payload.user_id !== user?.id) {
-          setActiveEditors(prev => {
-            const filtered = prev.filter(e => e.user_id !== event.payload.user_id);
+          setActiveEditors((prev) => {
+            const filtered = prev.filter((e) => e.user_id !== event.payload.user_id);
             filtered.push({
               user_id: event.payload.user_id,
               user_name: event.payload.user_name,
@@ -138,7 +153,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
               selection_start: event.payload.selection_start,
               selection_end: event.payload.selection_end,
               last_activity: new Date(event.payload.timestamp),
-              color: getUserColor(event.payload.user_id)
+              color: getUserColor(event.payload.user_id),
             });
             return filtered;
           });
@@ -150,22 +165,24 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
           setIsLocked(event.payload.locked);
           setLockOwner(event.payload.locked ? event.payload.user_id : null);
         }
-      })
+      }),
     ];
 
     return () => {
-      removeListeners.forEach(remove => remove());
+      removeListeners.forEach((remove) => remove());
     };
   }, [isConnected, documentId, addEventListener, user?.id]);
 
   // Apply remote changes to document
   const applyRemoteChange = (change: DocumentChange) => {
-    setContent(prev => {
+    setContent((prev) => {
       switch (change.operation) {
         case 'insert':
           return prev.slice(0, change.position) + change.content + prev.slice(change.position);
         case 'delete':
-          return prev.slice(0, change.position) + prev.slice(change.position + change.content.length);
+          return (
+            prev.slice(0, change.position) + prev.slice(change.position + change.content.length)
+          );
         default:
           return prev;
       }
@@ -173,7 +190,11 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
   };
 
   // Broadcast document changes
-  const broadcastChange = async (operation: 'insert' | 'delete', position: number, content: string) => {
+  const broadcastChange = async (
+    operation: 'insert' | 'delete',
+    position: number,
+    content: string,
+  ) => {
     if (!user || !isConnected || !documentId) return;
 
     try {
@@ -189,8 +210,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
           operation,
           position,
           content,
-          timestamp: new Date().toISOString()
-        })
+          timestamp: new Date().toISOString(),
+        }),
       });
     } catch (error) {
       console.error('Failed to broadcast change:', error);
@@ -198,29 +219,32 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
   };
 
   // Broadcast cursor position
-  const broadcastCursor = useCallback(async (position: number, selStart?: number, selEnd?: number) => {
-    if (!user || !isConnected || !documentId) return;
+  const broadcastCursor = useCallback(
+    async (position: number, selStart?: number, selEnd?: number) => {
+      if (!user || !isConnected || !documentId) return;
 
-    try {
-      const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      await fetch('/api/v1/collaboration/document/cursor', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          document_id: documentId,
-          project_id: projectId,
-          user_id: user.id,
-          user_name: user.name || user.email,
-          position,
-          selection_start: selStart,
-          selection_end: selEnd,
-          timestamp: new Date().toISOString()
-        })
-      });
-    } catch (error) {
-      console.error('Failed to broadcast cursor:', error);
-    }
-  }, [user, isConnected, documentId, projectId]);
+      try {
+        const headers = await getHeaders({ 'Content-Type': 'application/json' });
+        await fetch('/api/v1/collaboration/document/cursor', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            document_id: documentId,
+            project_id: projectId,
+            user_id: user.id,
+            user_name: user.name || user.email,
+            position,
+            selection_start: selStart,
+            selection_end: selEnd,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to broadcast cursor:', error);
+      }
+    },
+    [user, isConnected, documentId, projectId],
+  );
 
   // Handle content changes
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -228,7 +252,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
 
     const newContent = e.target.value;
     const oldContent = content;
-    
+
     // Determine the change operation
     if (newContent.length > oldContent.length) {
       // Insert operation
@@ -238,18 +262,21 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
     } else if (newContent.length < oldContent.length) {
       // Delete operation
       const position = e.target.selectionStart;
-      const deletedText = oldContent.slice(position, position + (oldContent.length - newContent.length));
+      const deletedText = oldContent.slice(
+        position,
+        position + (oldContent.length - newContent.length),
+      );
       broadcastChange('delete', position, deletedText);
     }
 
     setContent(newContent);
     setHasUnsavedChanges(newContent !== savedContent);
-    
+
     // Auto-save with debounce
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
-    
+
     saveTimeoutRef.current = setTimeout(() => {
       handleSave();
     }, 2000);
@@ -276,7 +303,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
     if (!documentId || !hasUnsavedChanges) return;
 
     setSyncStatus('saving');
-    
+
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
       const response = await fetch(`/api/v1/documents/${documentId}`, {
@@ -284,8 +311,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
         headers,
         body: JSON.stringify({
           content,
-          project_id: projectId
-        })
+          project_id: projectId,
+        }),
       });
 
       if (response.ok) {
@@ -307,7 +334,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
     if (!documentId || !user) return;
 
     const newLockState = !isLocked || lockOwner !== user.id;
-    
+
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
       await fetch(`/api/v1/documents/${documentId}/lock`, {
@@ -315,8 +342,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
         headers,
         body: JSON.stringify({
           locked: newLockState,
-          project_id: projectId
-        })
+          project_id: projectId,
+        }),
       });
 
       setIsLocked(newLockState);
@@ -357,7 +384,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
 
   // Restore from history
   const restoreVersion = async (version: DocumentVersion) => {
-    if (!window.confirm(`Restore to version ${version.version}? Current changes will be lost.`)) return;
+    if (!window.confirm(`Restore to version ${version.version}? Current changes will be lost.`))
+      return;
 
     setContent(version.content);
     setSavedContent(version.content);
@@ -370,8 +398,8 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
   useEffect(() => {
     const cleanup = setInterval(() => {
       const now = new Date();
-      setActiveEditors(prev => 
-        prev.filter(editor => now.getTime() - editor.last_activity.getTime() < 10000)
+      setActiveEditors((prev) =>
+        prev.filter((editor) => now.getTime() - editor.last_activity.getTime() < 10000),
       );
     }, 5000);
 
@@ -394,7 +422,9 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
       case 'saving':
         return 'Saving...';
       case 'synced':
-        return lastSaveTime ? `Saved ${formatDistanceToNow(lastSaveTime, { addSuffix: true })}` : 'Saved';
+        return lastSaveTime
+          ? `Saved ${formatDistanceToNow(lastSaveTime, { addSuffix: true })}`
+          : 'Saved';
       case 'error':
         return 'Error saving';
     }
@@ -407,17 +437,15 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             <CardTitle className="text-lg">{title}</CardTitle>
-            
+
             {isLocked && (
               <Badge variant={lockOwner === user?.id ? 'default' : 'destructive'}>
                 <Lock className="h-3 w-3 mr-1" />
                 {lockOwner === user?.id ? 'Locked by you' : 'Locked'}
               </Badge>
             )}
-            
-            {!isConnected && (
-              <Badge variant="destructive">Offline</Badge>
-            )}
+
+            {!isConnected && <Badge variant="destructive">Offline</Badge>}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -429,9 +457,9 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
 
             {/* Active editors */}
             <div className="flex -space-x-1">
-              {activeEditors.slice(0, 3).map(editor => (
+              {activeEditors.slice(0, 3).map((editor) => (
                 <Avatar key={editor.user_id} className="h-6 w-6 border-2 border-white">
-                  <AvatarFallback 
+                  <AvatarFallback
                     className="text-xs"
                     style={{ backgroundColor: editor.color + '20', color: editor.color }}
                   >
@@ -509,7 +537,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
 
           {/* Collaborative cursors overlay */}
           <div className="absolute inset-0 pointer-events-none">
-            {activeEditors.map(editor => {
+            {activeEditors.map((editor) => {
               const textarea = textareaRef.current;
               if (!textarea) return null;
 
@@ -523,23 +551,20 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
                 <div
                   key={editor.user_id}
                   className="absolute flex items-center"
-                  style={{ 
+                  style={{
                     top: Math.min(top, 380), // Keep within bounds
                     left: 16,
-                    color: editor.color
+                    color: editor.color,
                   }}
                 >
-                  <div 
-                    className="w-0.5 h-5 mr-1"
-                    style={{ backgroundColor: editor.color }}
-                  />
-                  <Badge 
-                    variant="outline" 
+                  <div className="w-0.5 h-5 mr-1" style={{ backgroundColor: editor.color }} />
+                  <Badge
+                    variant="outline"
                     className="text-xs h-5"
-                    style={{ 
+                    style={{
                       backgroundColor: editor.color + '20',
                       borderColor: editor.color,
-                      color: editor.color
+                      color: editor.color,
                     }}
                   >
                     {editor.user_name}
@@ -557,7 +582,7 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
             <span>{content.split('\n').length} lines</span>
             <span>Cursor at {cursorPosition}</span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             {activeEditors.length > 0 && (
               <span className="flex items-center gap-1">
@@ -583,22 +608,22 @@ const SharedDocumentEditor: React.FC<SharedDocumentEditorProps> = ({
             </CardHeader>
             <CardContent className="overflow-y-auto">
               <div className="space-y-2">
-                {documentHistory.map(version => (
-                  <div key={version.id} className="flex items-center justify-between p-3 border rounded">
+                {documentHistory.map((version) => (
+                  <div
+                    key={version.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
                     <div>
                       <div className="font-medium">Version {version.version}</div>
                       <div className="text-sm text-gray-600">
-                        {version.author} • {formatDistanceToNow(version.timestamp, { addSuffix: true })}
+                        {version.author} •{' '}
+                        {formatDistanceToNow(version.timestamp, { addSuffix: true })}
                       </div>
                       {version.comment && (
                         <div className="text-sm text-gray-500 italic">{version.comment}</div>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => restoreVersion(version)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => restoreVersion(version)}>
                       Restore
                     </Button>
                   </div>

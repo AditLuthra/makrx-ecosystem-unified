@@ -3,16 +3,16 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { 
-  Pencil, 
-  Eraser, 
-  Square, 
-  Circle, 
-  Type, 
-  Palette, 
-  Undo, 
-  Redo, 
-  Download, 
+import {
+  Pencil,
+  Eraser,
+  Square,
+  Circle,
+  Type,
+  Palette,
+  Undo,
+  Redo,
+  Download,
   Trash2,
   MousePointer2,
   Minus,
@@ -21,7 +21,7 @@ import {
   Move3D,
   ZoomIn,
   ZoomOut,
-  RotateCcw
+  RotateCcw,
 } from 'lucide-react';
 import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
 import { useAuthHeaders } from '@makrx/auth';
@@ -56,17 +56,19 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
   projectId,
   className = '',
   height = 600,
-  isReadOnly = false
+  isReadOnly = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const { user } = useAuth();
   const { addEventListener, isConnected } = useRealTimeUpdates();
   const getHeaders = useAuthHeaders();
-  
+
   // Drawing state
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentTool, setCurrentTool] = useState<'pen' | 'eraser' | 'select' | 'rectangle' | 'circle' | 'line' | 'text' | 'note'>('pen');
+  const [currentTool, setCurrentTool] = useState<
+    'pen' | 'eraser' | 'select' | 'rectangle' | 'circle' | 'line' | 'text' | 'note'
+  >('pen');
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [actions, setActions] = useState<DrawingAction[]>([]);
@@ -77,10 +79,19 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
   const [selectedElements, setSelectedElements] = useState<string[]>([]);
 
   // User colors for cursors and attribution
-  const userColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'];
+  const userColors = [
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#96CEB4',
+    '#FFEAA7',
+    '#DDA0DD',
+    '#98D8C8',
+    '#F7DC6F',
+  ];
   const getUserColor = (userId: string) => {
     const hash = userId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
+      a = (a << 5) - a + b.charCodeAt(0);
       return a & a;
     }, 0);
     return userColors[Math.abs(hash) % userColors.length];
@@ -94,12 +105,12 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
 
     const ctx = canvas.getContext('2d');
     const overlayCtx = overlay.getContext('2d');
-    
+
     if (ctx) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
     }
-    
+
     if (overlayCtx) {
       overlayCtx.lineCap = 'round';
       overlayCtx.lineJoin = 'round';
@@ -122,34 +133,34 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
             user_id: event.payload.user_id,
             user_name: event.payload.user_name,
             data: event.payload.data,
-            timestamp: new Date(event.payload.timestamp)
+            timestamp: new Date(event.payload.timestamp),
           };
-          
-          setActions(prev => [...prev, action]);
+
+          setActions((prev) => [...prev, action]);
           applyAction(action);
         }
       }),
 
       addEventListener('whiteboard.cursor', (event) => {
         if (event.payload.project_id === projectId && event.payload.user_id !== user?.id) {
-          setUserCursors(prev => {
-            const filtered = prev.filter(c => c.user_id !== event.payload.user_id);
+          setUserCursors((prev) => {
+            const filtered = prev.filter((c) => c.user_id !== event.payload.user_id);
             filtered.push({
               user_id: event.payload.user_id,
               user_name: event.payload.user_name,
               x: event.payload.x,
               y: event.payload.y,
               color: getUserColor(event.payload.user_id),
-              tool: event.payload.tool || 'pen'
+              tool: event.payload.tool || 'pen',
             });
             return filtered;
           });
         }
-      })
+      }),
     ];
 
     return () => {
-      removeListeners.forEach(remove => remove());
+      removeListeners.forEach((remove) => remove());
     };
   }, [isConnected, projectId, addEventListener, user?.id]);
 
@@ -184,8 +195,8 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
           user_name: user.name || user.email,
           type: action.type,
           data: action.data,
-          timestamp: new Date().toISOString()
-        })
+          timestamp: new Date().toISOString(),
+        }),
       });
     } catch (error) {
       console.error('Failed to broadcast action:', error);
@@ -193,28 +204,31 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
   };
 
   // Broadcast cursor position
-  const broadcastCursor = useCallback(async (x: number, y: number) => {
-    if (!user || !isConnected) return;
+  const broadcastCursor = useCallback(
+    async (x: number, y: number) => {
+      if (!user || !isConnected) return;
 
-    try {
-      const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      await fetch('/api/v1/collaboration/whiteboard/cursor', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          project_id: projectId,
-          user_id: user.id,
-          user_name: user.name || user.email,
-          x: x,
-          y: y,
-          tool: currentTool,
-          timestamp: new Date().toISOString()
-        })
-      });
-    } catch (error) {
-      console.error('Failed to broadcast cursor:', error);
-    }
-  }, [user, isConnected, projectId, currentTool]);
+      try {
+        const headers = await getHeaders({ 'Content-Type': 'application/json' });
+        await fetch('/api/v1/collaboration/whiteboard/cursor', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            project_id: projectId,
+            user_id: user.id,
+            user_name: user.name || user.email,
+            x: x,
+            y: y,
+            tool: currentTool,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to broadcast cursor:', error);
+      }
+    },
+    [user, isConnected, projectId, currentTool],
+  );
 
   // Apply drawing action
   const applyAction = (action: DrawingAction) => {
@@ -257,14 +271,19 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
         ctx.strokeStyle = action.data.color;
         ctx.lineWidth = action.data.width;
         ctx.beginPath();
-        
+
         switch (action.data.shape) {
           case 'rectangle':
             ctx.rect(action.data.x, action.data.y, action.data.width, action.data.height);
             break;
           case 'circle':
-            ctx.arc(action.data.x + action.data.width / 2, action.data.y + action.data.height / 2, 
-                   Math.min(Math.abs(action.data.width), Math.abs(action.data.height)) / 2, 0, 2 * Math.PI);
+            ctx.arc(
+              action.data.x + action.data.width / 2,
+              action.data.y + action.data.height / 2,
+              Math.min(Math.abs(action.data.width), Math.abs(action.data.height)) / 2,
+              0,
+              2 * Math.PI,
+            );
             break;
           case 'line':
             ctx.moveTo(action.data.x, action.data.y);
@@ -305,16 +324,16 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
     const rect = canvas.getBoundingClientRect();
     return {
       x: (e.clientX - rect.left - pan.x) / zoom,
-      y: (e.clientY - rect.top - pan.y) / zoom
+      y: (e.clientY - rect.top - pan.y) / zoom,
     };
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isReadOnly) return;
-    
+
     setIsDrawing(true);
     const pos = getMousePos(e);
-    
+
     if (currentTool === 'pen' || currentTool === 'eraser') {
       const action: DrawingAction = {
         id: Date.now().toString(),
@@ -324,12 +343,12 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
         data: {
           points: [pos],
           color: strokeColor,
-          width: strokeWidth
+          width: strokeWidth,
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      
-      setActions(prev => [...prev, action]);
+
+      setActions((prev) => [...prev, action]);
       setUndoStack([]);
       broadcastAction(action);
     }
@@ -342,17 +361,17 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
     if (!isDrawing || isReadOnly) return;
 
     if (currentTool === 'pen' || currentTool === 'eraser') {
-      setActions(prev => {
+      setActions((prev) => {
         const lastAction = prev[prev.length - 1];
         if (lastAction && lastAction.user_id === user?.id) {
           const updatedAction = {
             ...lastAction,
             data: {
               ...lastAction.data,
-              points: [...lastAction.data.points, pos]
-            }
+              points: [...lastAction.data.points, pos],
+            },
           };
-          
+
           const newActions = [...prev.slice(0, -1), updatedAction];
           applyAction(updatedAction);
           broadcastAction(updatedAction);
@@ -372,8 +391,8 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
     if (actions.length === 0) return;
 
     const lastAction = actions[actions.length - 1];
-    setUndoStack(prev => [...prev, lastAction]);
-    setActions(prev => prev.slice(0, -1));
+    setUndoStack((prev) => [...prev, lastAction]);
+    setActions((prev) => prev.slice(0, -1));
     redrawCanvas(actions.slice(0, -1));
   };
 
@@ -381,14 +400,14 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
     if (undoStack.length === 0) return;
 
     const actionToRedo = undoStack[undoStack.length - 1];
-    setUndoStack(prev => prev.slice(0, -1));
-    setActions(prev => [...prev, actionToRedo]);
+    setUndoStack((prev) => prev.slice(0, -1));
+    setActions((prev) => [...prev, actionToRedo]);
     applyAction(actionToRedo);
   };
 
   const handleClear = () => {
     if (!window.confirm('Clear the entire whiteboard? This cannot be undone.')) return;
-    
+
     setActions([]);
     setUndoStack([]);
     const canvas = canvasRef.current;
@@ -409,11 +428,11 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
   };
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev * 1.2, 3));
+    setZoom((prev) => Math.min(prev * 1.2, 3));
   };
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev / 1.2, 0.3));
+    setZoom((prev) => Math.max(prev / 1.2, 0.3));
   };
 
   const handleReset = () => {
@@ -431,7 +450,7 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
 
     ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-    userCursors.forEach(cursor => {
+    userCursors.forEach((cursor) => {
       const x = cursor.x * zoom + pan.x;
       const y = cursor.y * zoom + pan.y;
 
@@ -455,17 +474,15 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
           <CardTitle className="flex items-center gap-2">
             <Pencil className="h-5 w-5" />
             Collaborative Whiteboard
-            {!isConnected && (
-              <Badge variant="destructive">Offline</Badge>
-            )}
+            {!isConnected && <Badge variant="destructive">Offline</Badge>}
           </CardTitle>
-          
+
           <div className="flex items-center space-x-1">
             {/* Active users */}
             <div className="flex -space-x-1 mr-2">
-              {userCursors.slice(0, 3).map(cursor => (
+              {userCursors.slice(0, 3).map((cursor) => (
                 <Avatar key={cursor.user_id} className="h-6 w-6 border-2 border-white">
-                  <AvatarFallback 
+                  <AvatarFallback
                     className="text-xs"
                     style={{ backgroundColor: cursor.color + '20', color: cursor.color }}
                   >
@@ -629,7 +646,7 @@ const CollaborativeWhiteboard: React.FC<CollaborativeWhiteboardProps> = ({
             onMouseLeave={handleMouseUp}
             style={{
               transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
-              transformOrigin: '0 0'
+              transformOrigin: '0 0',
             }}
           />
           <canvas

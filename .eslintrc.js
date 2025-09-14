@@ -10,13 +10,16 @@ module.exports = {
       "error",
       {
         selector: "Literal[value='mock-token']",
-        message: "Do not use mock-token. Use real auth or omit Authorization header."
+        message:
+          "Do not use mock-token. Use real auth or omit Authorization header.",
       },
       {
-        selector: "CallExpression[callee.object.name='localStorage'][callee.property.name='getItem'][arguments.0.value='auth_token']",
-        message: "Avoid direct localStorage auth_token usage inline. Prefer a centralized helper (e.g., getAuthHeaders)."
-      }
-    ]
+        selector:
+          "CallExpression[callee.object.name='localStorage'][callee.property.name='getItem'][arguments.0.value='auth_token']",
+        message:
+          "Avoid direct localStorage auth_token usage inline. Prefer a centralized helper (e.g., getAuthHeaders).",
+      },
+    ],
   },
   settings: {
     next: {

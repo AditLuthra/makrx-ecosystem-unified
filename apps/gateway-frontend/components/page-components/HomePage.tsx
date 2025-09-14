@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from "react";
-import Link from "next/link";
+import React, { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 import {
   ArrowRight,
   Play,
@@ -18,8 +18,8 @@ import {
   Award,
   TrendingUp,
   Heart,
-} from "lucide-react";
-import SEOStructuredData from "../SEOStructuredData";
+} from 'lucide-react';
+import SEOStructuredData from '../SEOStructuredData';
 
 interface StatCardProps {
   number: string;
@@ -33,15 +33,15 @@ const StatCard: React.FC<StatCardProps> = ({ number, label, icon }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   // Extract the numeric part from the string (e.g., "50+" -> 50)
-  const targetNumber = parseInt(number.replace(/\D/g, "")) || 0;
-  const suffix = number.replace(/\d/g, "");
+  const targetNumber = parseInt(number.replace(/\D/g, '')) || 0;
+  const suffix = number.replace(/\d/g, '');
 
   // Format number for display (e.g., 10000 -> "10K")
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
-      return (num / 1000000).toFixed(num % 1000000 === 0 ? 0 : 1) + "M";
+      return (num / 1000000).toFixed(num % 1000000 === 0 ? 0 : 1) + 'M';
     } else if (num >= 1000) {
-      return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + "K";
+      return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + 'K';
     }
     return num.toString();
   };
@@ -91,7 +91,7 @@ const StatCard: React.FC<StatCardProps> = ({ number, label, icon }) => {
           startAnimation();
         }
       },
-      { threshold: 0.1, rootMargin: "50px" },
+      { threshold: 0.1, rootMargin: '50px' },
     );
 
     const currentRef = ref.current;
@@ -117,10 +117,7 @@ const StatCard: React.FC<StatCardProps> = ({ number, label, icon }) => {
           {icon}
         </div>
       </div>
-      <div
-        className="text-3xl font-bold text-white dark:text-gray-100 mb-2"
-        aria-live="polite"
-      >
+      <div className="text-3xl font-bold text-white dark:text-gray-100 mb-2" aria-live="polite">
         {getDisplayText()}
       </div>
       <div className="text-white/80 dark:text-gray-300">{label}</div>
@@ -136,23 +133,17 @@ interface FeatureCardProps {
   gradient: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({
-  title,
-  description,
-  icon,
-  href,
-  gradient,
-}) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon, href, gradient }) => {
   return (
     <Link href={href} className="group block">
       <div
         className={[
-          "relative overflow-hidden rounded-2xl p-8 h-full transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:-rotate-1 border",
-          "border-white/10 dark:border-slate-700",
-          "bg-gradient-to-br",
+          'relative overflow-hidden rounded-2xl p-8 h-full transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:-rotate-1 border',
+          'border-white/10 dark:border-slate-700',
+          'bg-gradient-to-br',
           gradient,
-          "dark:from-slate-800 dark:to-slate-900",
-        ].join(" ")}
+          'dark:from-slate-800 dark:to-slate-900',
+        ].join(' ')}
       >
         <div className="relative z-10">
           <div
@@ -171,7 +162,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           </p>
 
           <div className="flex items-center font-medium group-hover:text-makrx-yellow transition-all duration-300 text-white dark:text-gray-200">
-            Explore{" "}
+            Explore{' '}
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
           </div>
         </div>
@@ -197,12 +188,7 @@ interface TestimonialProps {
   company: string;
 }
 
-const Testimonial: React.FC<TestimonialProps> = ({
-  quote,
-  author,
-  role,
-  company,
-}) => (
+const Testimonial: React.FC<TestimonialProps> = ({ quote, author, role, company }) => (
   <div className="bg-white dark:bg-slate-950 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-gray-100 dark:border-slate-800">
     <div className="flex items-center mb-4">
       {[...Array(5)].map((_, i) => (
@@ -215,9 +201,7 @@ const Testimonial: React.FC<TestimonialProps> = ({
         {author.charAt(0)}
       </div>
       <div>
-        <div className="font-semibold text-gray-900 dark:text-white">
-          {author}
-        </div>
+        <div className="font-semibold text-gray-900 dark:text-white">{author}</div>
         <div className="text-gray-600 dark:text-gray-400 text-sm">
           {role}, {company}
         </div>
@@ -270,7 +254,7 @@ export default function HomePage() {
                     {/* Dream word with enhanced animations */}
                     <div
                       className="dream-word inline-block animate-slide-in-left cursor-default relative group"
-                      style={{ animationDelay: "0.2s" }}
+                      style={{ animationDelay: '0.2s' }}
                     >
                       <span className="relative z-10 bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent font-medium">
                         Dream.
@@ -282,15 +266,15 @@ export default function HomePage() {
                     <div
                       className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-makrx-yellow/60"
                       style={{
-                        opacity: "0",
-                        animation: "fadeIn 0.6s ease-out 0.7s forwards",
+                        opacity: '0',
+                        animation: 'fadeIn 0.6s ease-out 0.7s forwards',
                       }}
                     ></div>
 
                     {/* Make word - central focus with enhanced styling */}
                     <div
                       className="make-word inline-block animate-slide-in-right cursor-default relative group"
-                      style={{ animationDelay: "0.5s" }}
+                      style={{ animationDelay: '0.5s' }}
                     >
                       <span className="relative z-10 bg-gradient-to-r from-makrx-yellow via-yellow-300 to-makrx-yellow bg-clip-text text-transparent font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
                         Make.
@@ -302,15 +286,15 @@ export default function HomePage() {
                     <div
                       className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-makrx-yellow/60"
                       style={{
-                        opacity: "0",
-                        animation: "fadeIn 0.6s ease-out 1.2s forwards",
+                        opacity: '0',
+                        animation: 'fadeIn 0.6s ease-out 1.2s forwards',
                       }}
                     ></div>
 
                     {/* Share word with enhanced animations */}
                     <div
                       className="share-word inline-block animate-slide-in-left cursor-default relative group"
-                      style={{ animationDelay: "0.8s" }}
+                      style={{ animationDelay: '0.8s' }}
                     >
                       <span className="relative z-10 bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent font-medium">
                         Share.
@@ -325,8 +309,8 @@ export default function HomePage() {
                   <div
                     className="w-24 sm:w-32 md:w-40 h-1 bg-gradient-to-r from-transparent via-makrx-yellow to-transparent rounded-full"
                     style={{
-                      opacity: "0",
-                      animation: "fadeIn 0.8s ease-out 1.5s forwards",
+                      opacity: '0',
+                      animation: 'fadeIn 0.8s ease-out 1.5s forwards',
                     }}
                   ></div>
                 </div>
@@ -335,15 +319,15 @@ export default function HomePage() {
                 <div
                   className="absolute -top-4 left-1/4 w-1 h-1 bg-makrx-yellow/40 dark:bg-makrx-yellow/60 rounded-full"
                   style={{
-                    opacity: "0",
-                    animation: "fadeIn 0.6s ease-out 2s forwards",
+                    opacity: '0',
+                    animation: 'fadeIn 0.6s ease-out 2s forwards',
                   }}
                 ></div>
                 <div
                   className="absolute -top-2 right-1/3 w-1.5 h-1.5 bg-white/30 dark:bg-makrx-yellow/40 rounded-full"
                   style={{
-                    opacity: "0",
-                    animation: "fadeIn 0.6s ease-out 2.5s forwards",
+                    opacity: '0',
+                    animation: 'fadeIn 0.6s ease-out 2.5s forwards',
                   }}
                 ></div>
               </div>
@@ -356,9 +340,9 @@ export default function HomePage() {
           </div>
 
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 dark:text-gray-300 mb-6 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
-            Access world-class makerspaces, shop cutting-edge tools, learn new
-            skills, and bring your ideas to life. Join thousands of makers,
-            innovators, and creators in the MakrX ecosystem.
+            Access world-class makerspaces, shop cutting-edge tools, learn new skills, and bring
+            your ideas to life. Join thousands of makers, innovators, and creators in the MakrX
+            ecosystem.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-8 sm:mb-16 px-4">
@@ -389,9 +373,7 @@ export default function HomePage() {
                     className="w-20 h-20 bg-makrx-yellow rounded-full flex items-center justify-center hover:bg-yellow-300 transition-colors group"
                     aria-label="Play video about MakrX ecosystem"
                     onClick={() =>
-                      alert(
-                        "Video feature coming soon! This will showcase the MakrX ecosystem.",
-                      )
+                      alert('Video feature coming soon! This will showcase the MakrX ecosystem.')
                     }
                   >
                     <Play
@@ -411,15 +393,15 @@ export default function HomePage() {
         {/* Static Background Elements */}
         <div
           className="absolute top-20 left-10 w-20 h-20 bg-makrx-yellow/10 dark:bg-makrx-yellow/20 rounded-full"
-          style={{ opacity: "0", animation: "fadeIn 1s ease-out 2s forwards" }}
+          style={{ opacity: '0', animation: 'fadeIn 1s ease-out 2s forwards' }}
         />
         <div
           className="absolute bottom-20 right-10 w-16 h-16 bg-purple-400/10 dark:bg-purple-400/20 rounded-full"
-          style={{ opacity: "0", animation: "fadeIn 1s ease-out 3s forwards" }}
+          style={{ opacity: '0', animation: 'fadeIn 1s ease-out 3s forwards' }}
         />
         <div
           className="absolute top-1/3 right-20 w-12 h-12 bg-white/5 dark:bg-makrx-yellow/10 rounded-full"
-          style={{ opacity: "0", animation: "fadeIn 1s ease-out 4s forwards" }}
+          style={{ opacity: '0', animation: 'fadeIn 1s ease-out 4s forwards' }}
         />
       </section>
 
@@ -460,13 +442,13 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
               Everything You Need to
               <span className="text-makrx-blue dark:text-makrx-yellow transition-colors">
-                {" "}
+                {' '}
                 Create
               </span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
-              From idea to reality, MakrX provides the tools, space, knowledge,
-              and community to bring your vision to life.
+              From idea to reality, MakrX provides the tools, space, knowledge, and community to
+              bring your vision to life.
             </p>
           </div>
 
@@ -521,8 +503,8 @@ export default function HomePage() {
                 Discover & Plan
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Explore makerspaces near you, browse tools and materials, and
-                plan your project with our expert community guidance.
+                Explore makerspaces near you, browse tools and materials, and plan your project with
+                our expert community guidance.
               </p>
             </div>
 
@@ -536,8 +518,8 @@ export default function HomePage() {
                 Create & Build
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Access professional equipment, get materials delivered, and
-                build with support from experienced makers and mentors.
+                Access professional equipment, get materials delivered, and build with support from
+                experienced makers and mentors.
               </p>
             </div>
 
@@ -551,8 +533,8 @@ export default function HomePage() {
                 Share & Inspire
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Showcase your creations, inspire others, and become part of a
-                thriving community of makers and innovators.
+                Showcase your creations, inspire others, and become part of a thriving community of
+                makers and innovators.
               </p>
             </div>
           </div>
@@ -563,9 +545,7 @@ export default function HomePage() {
       <section className="py-24 sm:py-28 lg:py-36 bg-gradient-to-br from-gray-900 to-makrx-blue dark:from-slate-950 dark:to-slate-900 border-t border-gray-700 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Why Choose MakrX?
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Why Choose MakrX?</h2>
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
               Join the largest maker ecosystem in India with unmatched benefits
             </p>
@@ -575,27 +555,23 @@ export default function HomePage() {
             {[
               {
                 icon: <Shield className="w-8 h-8 text-makrx-yellow" />,
-                title: "Premium Quality",
-                description:
-                  "Professional-grade equipment and materials with quality assurance",
+                title: 'Premium Quality',
+                description: 'Professional-grade equipment and materials with quality assurance',
               },
               {
                 icon: <Users className="w-8 h-8 text-makrx-yellow" />,
-                title: "Expert Community",
-                description:
-                  "Learn from and collaborate with experienced makers and professionals",
+                title: 'Expert Community',
+                description: 'Learn from and collaborate with experienced makers and professionals',
               },
               {
                 icon: <Zap className="w-8 h-8 text-makrx-yellow" />,
-                title: "Fast & Reliable",
-                description:
-                  "Quick access to spaces, fast delivery, and reliable service",
+                title: 'Fast & Reliable',
+                description: 'Quick access to spaces, fast delivery, and reliable service',
               },
               {
                 icon: <Heart className="w-8 h-8 text-makrx-yellow" />,
-                title: "Passionate Support",
-                description:
-                  "Dedicated support team that understands and shares your passion",
+                title: 'Passionate Support',
+                description: 'Dedicated support team that understands and shares your passion',
               },
             ].map((benefit, index) => (
               <div key={index} className="text-center group">
@@ -623,8 +599,7 @@ export default function HomePage() {
                 Loved by Makers
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
-                Hear from the amazing creators who are already part of the MakrX
-                family
+                Hear from the amazing creators who are already part of the MakrX family
               </p>
             </div>
 
@@ -659,8 +634,8 @@ export default function HomePage() {
             Ready to Start Creating?
           </h2>
           <p className="text-lg sm:text-xl text-white/90 mb-8 sm:mb-12 leading-relaxed px-4">
-            Join thousands of makers who are already bringing their ideas to
-            life with MakrX. Your creative journey starts here.
+            Join thousands of makers who are already bringing their ideas to life with MakrX. Your
+            creative journey starts here.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">

@@ -2,9 +2,30 @@ import { Users, UserPlus, Shield, Mail, Calendar } from 'lucide-react';
 
 export default function AdminUsers() {
   const users = [
-    { id: '1', name: 'John User', email: 'john@makrx.org', role: 'user', joinDate: '2024-01-15', lastActive: '2024-01-26' },
-    { id: '2', name: 'Sarah Designer', email: 'sarah@makrx.org', role: 'user', joinDate: '2024-01-10', lastActive: '2024-01-25' },
-    { id: '3', name: 'Mike Creator', email: 'mike@makrx.org', role: 'makerspace_admin', joinDate: '2024-01-05', lastActive: '2024-01-26' }
+    {
+      id: '1',
+      name: 'John User',
+      email: 'john@makrx.org',
+      role: 'user',
+      joinDate: '2024-01-15',
+      lastActive: '2024-01-26',
+    },
+    {
+      id: '2',
+      name: 'Sarah Designer',
+      email: 'sarah@makrx.org',
+      role: 'user',
+      joinDate: '2024-01-10',
+      lastActive: '2024-01-25',
+    },
+    {
+      id: '3',
+      name: 'Mike Creator',
+      email: 'mike@makrx.org',
+      role: 'makerspace_admin',
+      joinDate: '2024-01-05',
+      lastActive: '2024-01-26',
+    },
   ];
 
   return (
@@ -15,9 +36,7 @@ export default function AdminUsers() {
             <Users className="w-8 h-8" />
             User Management
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage makerspace members and permissions
-          </p>
+          <p className="text-muted-foreground mt-1">Manage makerspace members and permissions</p>
         </div>
         <button className="makrcave-btn-primary flex items-center gap-2">
           <UserPlus className="w-4 h-4" />
@@ -45,7 +64,10 @@ export default function AdminUsers() {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-makrx-teal rounded-full flex items-center justify-center">
                         <span className="text-sm font-semibold text-white">
-                          {user.name.split(' ').map(n => n[0]).join('')}
+                          {user.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
                         </span>
                       </div>
                       <div>
@@ -55,9 +77,13 @@ export default function AdminUsers() {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'makerspace_admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.role === 'makerspace_admin'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {user.role.replace('_', ' ')}
                     </span>
                   </td>
@@ -82,12 +108,18 @@ export default function AdminUsers() {
         {/* Mobile Card View */}
         <div className="lg:hidden space-y-4 p-4">
           {users.map((user) => (
-            <div key={user.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div
+              key={user.id}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-10 h-10 bg-makrx-teal rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-sm font-semibold text-white">
-                      {user.name.split(' ').map(n => n[0]).join('')}
+                      {user.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
@@ -104,13 +136,17 @@ export default function AdminUsers() {
                   </button>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500 text-xs font-medium mb-1">Role</p>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    user.role === 'makerspace_admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      user.role === 'makerspace_admin'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
                     {user.role.replace('_', ' ')}
                   </span>
                 </div>

@@ -5,25 +5,17 @@ import { eq, and } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string; teamId: string } }
+  { params }: { params: { eventId: string; teamId: string } },
 ) {
   try {
     const [team] = await db
       .select()
       .from(teams)
-      .where(
-        and(
-          eq(teams.id, params.teamId),
-          eq(teams.eventId, params.eventId)
-        )
-      )
+      .where(and(eq(teams.id, params.teamId), eq(teams.eventId, params.eventId)))
       .limit(1);
 
     if (!team) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     // Get team members
@@ -53,16 +45,13 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching team:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch team' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch team' }, { status: 500 });
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { eventId: string; teamId: string } }
+  { params }: { params: { eventId: string; teamId: string } },
 ) {
   try {
     const body = await request.json();
@@ -75,65 +64,41 @@ export async function PATCH(
         status: body.status,
         avatar: body.avatar,
       })
-      .where(
-        and(
-          eq(teams.id, params.teamId),
-          eq(teams.eventId, params.eventId)
-        )
-      )
+      .where(and(eq(teams.id, params.teamId), eq(teams.eventId, params.eventId)))
       .returning();
 
     if (!team) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     return NextResponse.json(team);
   } catch (error) {
     console.error('Error updating team:', error);
-    return NextResponse.json(
-      { error: 'Failed to update team' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update team' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { eventId: string; teamId: string } }
+  { params }: { params: { eventId: string; teamId: string } },
 ) {
   try {
     // Delete team members first
-    await db
-      .delete(teamMembers)
-      .where(eq(teamMembers.teamId, params.teamId));
+    await db.delete(teamMembers).where(eq(teamMembers.teamId, params.teamId));
 
     // Delete team
     const [team] = await db
       .delete(teams)
-      .where(
-        and(
-          eq(teams.id, params.teamId),
-          eq(teams.eventId, params.eventId)
-        )
-      )
+      .where(and(eq(teams.id, params.teamId), eq(teams.eventId, params.eventId)))
       .returning();
 
     if (!team) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting team:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete team' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete team' }, { status: 500 });
   }
 }
