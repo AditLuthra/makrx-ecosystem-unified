@@ -15,5 +15,5 @@ if [ "$USE_GUNICORN" = "true" ] || [ "$USE_GUNICORN" = "1" ]; then
 		--error-logfile -
 else
 	echo "Starting with uvicorn on port $PORT"
-	exec uvicorn main:app --host 0.0.0.0 --port "$PORT" --no-access-log
+	exec uvicorn main:app --host 0.0.0.0 --port "$PORT"
 fi

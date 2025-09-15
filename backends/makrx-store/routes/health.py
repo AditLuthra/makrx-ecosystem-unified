@@ -2,7 +2,7 @@
 Health check endpoints for makrx-store backend
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from database import get_db
@@ -10,6 +10,7 @@ from redis.asyncio import Redis as AsyncRedis
 import os
 from datetime import datetime
 import httpx
+from ..redis_utils import check_redis_connection
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -36,6 +37,7 @@ async def liveness_check():
     }
 
 
+@router.get("/healthz")
 @router.get("/detailed")
 async def detailed_health_check(db: AsyncSession = Depends(get_db)):
     """Detailed health check with dependencies"""

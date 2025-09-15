@@ -1,12 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 import os
 import structlog
+import uuid
+import time
+import logging
 from logging_config import configure_logging
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+from sqlalchemy import text
 
 # Import security middleware
 from middleware.security import add_security_middleware
@@ -16,6 +20,7 @@ from routes import api_router
 from routes.health import router as health_router
 from dependencies import get_keycloak_public_key
 from database import engine
+from .redis_utils import check_redis_connection
 
 # Configure logging early
 configure_logging()
@@ -78,6 +83,20 @@ app.add_middleware(
 add_security_middleware(app)
 app.add_middleware(ErrorHandlingMiddleware)
 
+# Request middleware with request_id and structlog context enrichment
+@app.middleware("http")
+async def request_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    structlog.contextvars.bind_contextvars(request_id=request_id)
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
+    structlog.contextvars.clear_contextvars()
+    return response
+
 # Optional network safety: trusted hosts and proxy headers
 trusted_hosts = os.getenv("TRUSTED_HOSTS")
 if trusted_hosts:
@@ -89,10 +108,39 @@ if os.getenv("TRUST_PROXY", "false").lower() in ("1", "true", "yes"):
     app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
+# Liveness probe
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def liveness_check():
     return {"status": "healthy", "service": "makrcave-backend"}
+
+# Readiness probe
+@app.get("/healthz", status_code=status.HTTP_200_OK)
+async def readiness_check():
+    db_ok = False
+    redis_ok = False
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        db_ok = True
+    except Exception as e:
+        log.error("Database readiness check failed", error=str(e))
+
+    try:
+        redis_ok = await check_redis_connection()
+    except Exception as e:
+        log.error("Redis readiness check failed", error=str(e))
+
+    if db_ok and redis_ok:
+        return {"status": "healthy", "database": "ok", "redis": "ok"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "status": "unhealthy",
+                "database": "ok" if db_ok else "unhealthy",
+                "redis": "ok" if redis_ok else "unhealthy",
+            },
+        )
 
 
 # Startup checks: warm Keycloak JWKS/public key and verify DB connection
@@ -105,7 +153,7 @@ async def on_startup():
         log.warning("keycloak_public_key_warm_failed", error=str(e))
     try:
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))
         log.info("database_connectivity_ok")
     except Exception as e:
         log.error("database_connectivity_failed", error=str(e))
@@ -129,6 +177,15 @@ if __name__ == "__main__":
         port=port,
         reload=os.getenv("ENVIRONMENT") == "development",
     )
+
+    # Configure uvicorn's loggers to use structlog
+    # This ensures that uvicorn's logs are processed by structlog's JSONRenderer
+    for _log in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
+        logging.getLogger(_log).handlers = [structlog.stdlib.ProcessorFormatter.wrap_for_formatter(
+            structlog.dev.ConsoleRenderer() if os.getenv("ENVIRONMENT") == "development" else structlog.processors.JSONRenderer()
+        )]
+        logging.getLogger(_log).propagate = False
+        logging.getLogger(_log).setLevel(log.level)
 # Optional Prometheus metrics
 if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"):
     try:

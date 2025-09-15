@@ -7,13 +7,16 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-makrx_ecosystem}
       POSTGRES_USER: ${POSTGRES_USER:-makrx}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-makrx_dev_password}
-    ports:
-      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./services/postgres/init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1g
     healthcheck:
       test:
         [
@@ -27,12 +30,15 @@ services:
   redis:
     image: redis:7-alpine
     container_name: makrx-unified-redis
-    ports:
-      - "${REDIS_PORT:-6380}:6379"
     volumes:
       - redis_data:/data
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1g
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -53,13 +59,16 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT_HTTPS: "false"
-    ports:
-      - "${KEYCLOAK_PORT:-8081}:8080"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     volumes:
       - ./services/keycloak/realm-config:/opt/keycloak/data/import
     command: ["start-dev", "--import-realm"]
@@ -72,18 +81,20 @@ services:
 
   # Object Storage
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
     container_name: makrx-unified-minio
-    ports:
-      - "${MINIO_PORT:-9002}:9000"
-      - "${MINIO_CONSOLE_PORT:-9003}:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
     volumes:
       - minio_data:/data
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1g
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -97,8 +108,6 @@ services:
       context: .
       dockerfile: apps/gateway-frontend/Dockerfile
     container_name: makrx-gateway-frontend
-    ports:
-      - "${GATEWAY_FRONTEND_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
@@ -111,7 +120,12 @@ services:
       - postgres
       - redis
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -125,8 +139,6 @@ services:
       context: .
       dockerfile: apps/gateway-frontend-hacker/Dockerfile
     container_name: makrx-gateway-frontend-hacker
-    ports:
-      - "${GATEWAY_FRONTEND_HACKER_PORT:-3001}:3001"
     environment:
       NODE_ENV: production
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
@@ -139,7 +151,12 @@ services:
       - postgres
       - redis
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -153,8 +170,6 @@ services:
       context: .
       dockerfile: apps/makrcave/Dockerfile
     container_name: makrx-makrcave
-    ports:
-      - "${MAKRCAVE_PORT:-3002}:3002"
     environment:
       NODE_ENV: production
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
@@ -167,7 +182,12 @@ services:
       - postgres
       - redis
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -181,8 +201,6 @@ services:
       context: .
       dockerfile: apps/makrx-store/Dockerfile
     container_name: makrx-store
-    ports:
-      - "${MAKRX_STORE_PORT:-3003}:3003"
     environment:
       NODE_ENV: production
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
@@ -199,7 +217,12 @@ services:
       - redis
       - minio
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -213,8 +236,6 @@ services:
       context: .
       dockerfile: apps/makrx-events/Dockerfile
     container_name: makrx-events
-    ports:
-      - "${MAKRX_EVENTS_PORT:-3004}:3004"
     environment:
       NODE_ENV: production
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
@@ -227,7 +248,12 @@ services:
       - postgres
       - redis
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -242,8 +268,6 @@ services:
       context: backends/makrcave
       dockerfile: Dockerfile
     container_name: makrx-makrcave-backend
-    ports:
-      - "${MAKRCAVE_BACKEND_PORT:-8001}:8000"
     environment:
       ENVIRONMENT: production
       PORT: 8000
@@ -262,7 +286,12 @@ services:
       keycloak:
         condition: service_healthy
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -276,8 +305,6 @@ services:
       context: backends/makrx_events
       dockerfile: Dockerfile
     container_name: makrx-events-backend
-    ports:
-      - "${MAKRX_EVENTS_BACKEND_PORT:-8002}:5000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD:-makrx_dev_password}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
@@ -292,7 +319,12 @@ services:
       keycloak:
         condition: service_healthy
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -306,8 +338,6 @@ services:
       context: backends/makrx-store
       dockerfile: Dockerfile
     container_name: makrx-store-backend
-    ports:
-      - "${MAKRX_STORE_BACKEND_PORT:-8003}:8000"
     environment:
       ENVIRONMENT: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD:-makrx_dev_password}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
@@ -329,7 +359,12 @@ services:
       minio:
         condition: service_healthy
     networks:
-      - makrx-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     profiles:
       - production
     healthcheck:
@@ -354,7 +389,13 @@ services:
       - makrx-store
       - makrx-events
     networks:
-      - makrx-network
+      - public-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     volumes:
       - ./services/nginx/conf.d:/etc/nginx/conf.d
       - nginx_logs:/var/log/nginx
@@ -369,7 +410,9 @@ services:
 
 # Networks
 networks:
-  makrx-network:
+  public-network:
+    driver: bridge
+  internal-network:
     driver: bridge
 
 # Volumes

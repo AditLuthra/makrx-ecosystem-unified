@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { KeycloakProvider } from '@makrx/auth';
+import { KeycloakProvider, useAuthHeaders } from '@makrx/auth';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -16,14 +16,11 @@ const authConfig = {
   clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-events',
 };
 
-const authConfig = {
-  url: process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'http://localhost:8081',
-  realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx',
-  clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-events',
-};
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const { getAuthHeaders } = useAuthHeaders();
   const [queryClient] = useState(
-    () =>
+    ()
+      =>
       new QueryClient({
         defaultOptions: {
           queries: {
@@ -31,8 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               const [url] = queryKey as string[];
 
               if (url.startsWith('/api/')) {
+                const headers = await getAuthHeaders();
                 const res = await fetch(url, {
                   credentials: 'include',
+                  headers: headers,
                 });
 
                 if (!res.ok) {

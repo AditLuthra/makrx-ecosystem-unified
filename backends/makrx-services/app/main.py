@@ -12,7 +12,9 @@ import asyncio
 import logging
 import os
 import time
+import uuid
 import uvicorn
+import structlog
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -27,13 +29,25 @@ from app.routes import (
 )
 from app.routers import feature_flags, services
 from app.features import FeatureFlagMiddleware, feature_manager
-# from app.tasks.job_dispatch import start_job_dispatcher
-# from app.middleware.metrics import PrometheusMiddleware
-# from app.middleware.logging import LoggingMiddleware
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Configure structlog for structured logging
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.JSONRenderer(),
+    ],
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,
+)
+
+logging.basicConfig(level=logging.INFO, handlers=[structlog.stdlib.ProcessorFormatter.wrap_for_formatter(structlog.processors.JSONRenderer())])
+logger = structlog.get_logger(__name__)
 
 settings = get_settings()
 
@@ -105,6 +119,20 @@ app.add_middleware(
 # Feature flag middleware
 app.add_middleware(FeatureFlagMiddleware, manager=feature_manager)
 
+# Request middleware with request_id and structlog context enrichment
+@app.middleware("http")
+async def request_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    structlog.contextvars.bind_contextvars(request_id=request_id)
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
+    structlog.contextvars.clear_contextvars()
+    return response
+
 # Custom middleware (uncomment when implementing)
 # app.add_middleware(PrometheusMiddleware)
 # app.add_middleware(LoggingMiddleware)
@@ -136,25 +164,41 @@ async def general_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for load balancers"""
+# Readiness probe
+@app.get("/healthz", status_code=status.HTTP_200_OK)
+async def readiness_check():
+    db_ok = False
+    redis_ok = False
     try:
-        # Test database connection
         db = SessionLocal()
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         db.close()
-        
-        return {
-            "status": "healthy",
-            "service": "makrx-services",
-            "version": "1.0.0",
-            "timestamp": int(time.time())
-        }
+        db_ok = True
     except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        raise HTTPException(status_code=503, detail="Service unhealthy")
+        logger.error("Database readiness check failed", error=str(e))
+
+    try:
+        from app.core.redis import check_redis_connection
+        redis_ok = await check_redis_connection()
+    except Exception as e:
+        logger.error("Redis readiness check failed", error=str(e))
+
+    if db_ok and redis_ok:
+        return {"status": "healthy", "database": "ok", "redis": "ok"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "status": "unhealthy",
+                "database": "ok" if db_ok else "unhealthy",
+                "redis": "ok" if redis_ok else "unhealthy",
+            },
+        )
+
+# Liveness probe
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def liveness_check():
+    return {"status": "healthy", "service": "makrx-services-backend"}
 
 # Metrics endpoint
 @app.get("/metrics")
@@ -203,6 +247,33 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8006,
         reload=settings.DEBUG,
-        access_log=True,
-        log_level="info" if settings.DEBUG else "warning"
+        log_config={
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "json_formatter": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processor": structlog.processors.JSONRenderer(),
+                }
+            },
+            "handlers": {
+                "default": {
+                    "formatter": "json_formatter",
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://sys.stdout",
+                }
+            },
+            "loggers": {
+                "uvicorn.access": {
+                    "handlers": ["default"],
+                    "level": "INFO",
+                    "propagate": False,
+                },
+                "uvicorn.error": {
+                    "handlers": ["default"],
+                    "level": "INFO",
+                    "propagate": False,
+                },
+            },
+        },
     )

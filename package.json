@@ -19,9 +19,9 @@
     "docker:dev": "docker-compose up --build",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up --build -d",
     "docker:down": "docker-compose down -v",
-    "setup": "npm ci --legacy-peer-deps && npm run setup:env && npm run setup:infrastructure",
+    "setup": "npm ci && npm run setup:env && npm run setup:infrastructure",
     "dev:apps": "concurrently \"npm run dev --workspace=apps/gateway-frontend\" \"npm run dev --workspace=apps/gateway-frontend-hacker\" \"npm run dev --workspace=apps/makrcave\" \"npm run dev --workspace=apps/makrx-store\" \"npm run dev --workspace=apps/makrx-events\"",
-    "dev:backends": "concurrently \"cd backends/makrcave && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload\" \"cd backends/makrx_events && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload\" \"cd backends/makrx-store && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8003 --reload\"",
+    "dev:backends": "concurrently \"cd backends/makrcave && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload\" \"cd backends/makrx-events && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload\" \"cd backends/makrx-store && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8003 --reload\"",
     "dev:infrastructure": "docker-compose up -d postgres redis keycloak minio",
     "build:apps": "npm run build --workspaces --if-present",
     "test:unit": "npm run test --workspaces --if-present",
@@ -40,12 +40,12 @@
     "docker:clean": "docker system prune -af && docker volume prune -f",
     "setup:env": "node scripts/setup-env.js",
     "setup:infrastructure": "docker-compose up -d && sleep 30 && npm run db:migrate",
-    "fresh": "npm run clean && npm ci --legacy-peer-deps && npm run build",
+    "fresh": "npm run clean && npm ci && npm run build",
     "validate": "npm run lint && npm run type-check && npm run test:unit",
     "validate:ci": "npm run validate && npm run build && npm run test:integration"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=8.0.0"
   },
   "devDependencies": {

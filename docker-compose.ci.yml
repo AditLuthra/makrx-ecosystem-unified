@@ -70,7 +70,7 @@ services:
 
   # Test MinIO
   minio-test:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
     container_name: makrx-minio-test
     ports:
       - "9004:9000"
@@ -125,7 +125,7 @@ services:
 
   # Load testing service
   load-tester:
-    image: grafana/k6:latest
+    image: grafana/k6:0.50.0
     container_name: makrx-load-tester
     volumes:
       - ./tests/load:/scripts
@@ -137,7 +137,7 @@ services:
 
   # Code quality scanner
   sonarqube:
-    image: sonarqube:community
+    image: sonarqube:9.9-community
     container_name: makrx-sonarqube
     ports:
       - "9000:9000"
@@ -159,7 +159,7 @@ services:
 
   # Security scanning
   trivy:
-    image: aquasec/trivy:latest
+    image: aquasec/trivy:0.50.1
     container_name: makrx-trivy
     volumes:
       - .:/app

@@ -4,6 +4,7 @@ import os
 import httpx
 from sqlalchemy import text
 from backends.makrx_events.database import engine
+from backends.makrx_events.redis_utils import check_redis_connection
 
 router = APIRouter()
 
@@ -13,7 +14,7 @@ async def health_root():
     return {"status": "healthy", "service": "makrx-events-backend"}
 
 
-@router.get("/readyz")
+@router.get("/healthz")
 async def readyz():
     report = {"status": "ready", "checks": {}}
     # DB check
@@ -23,6 +24,16 @@ async def readyz():
         report["checks"]["database"] = "ok"
     except Exception as e:
         report["checks"]["database"] = f"fail: {e}"
+        report["status"] = "fail"
+
+    # Redis check
+    try:
+        redis_ok = await check_redis_connection()
+        report["checks"]["redis"] = "ok" if redis_ok else "fail: connection failed"
+        if not redis_ok:
+            report["status"] = "fail"
+    except Exception as e:
+        report["checks"]["redis"] = f"fail: {e}"
         report["status"] = "fail"
 
     # Keycloak check

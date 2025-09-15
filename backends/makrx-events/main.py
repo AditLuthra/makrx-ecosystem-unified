@@ -152,4 +152,18 @@ if __name__ == "__main__":
     import uvicorn
 
     port = int(os.getenv("PORT", "5000"))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=True,
+    )
+
+    # Configure uvicorn's loggers to use structlog
+    # This ensures that uvicorn's logs are processed by structlog's JSONRenderer
+    for _log in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
+        logging.getLogger(_log).handlers = [structlog.stdlib.ProcessorFormatter.wrap_for_formatter(
+            structlog.dev.ConsoleRenderer() if os.getenv("ENVIRONMENT") == "development" else structlog.processors.JSONRenderer()
+        )]
+        logging.getLogger(_log).propagate = False
+        logging.getLogger(_log).setLevel(logger.level)

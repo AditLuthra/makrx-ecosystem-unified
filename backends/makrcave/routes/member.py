@@ -619,19 +619,19 @@ async def bulk_member_operations(
 
 
 # Helper functions
-def _can_view_members(user: dict) -> bool:
+def _can_view_members(user: CurrentUser) -> bool:
     """Check if user can view members"""
-    return user.get("role") in ["super_admin", "makerspace_admin", "admin"]
+    return any(role in user.roles for role in ["super_admin", "makerspace_admin", "admin"])
 
 
-def _can_manage_members(user: dict) -> bool:
+def _can_manage_members(user: CurrentUser) -> bool:
     """Check if user can manage members"""
-    return user.get("role") in ["super_admin", "makerspace_admin"]
+    return any(role in user.roles for role in ["super_admin", "makerspace_admin"])
 
 
-def _can_manage_membership_plans(user: dict) -> bool:
+def _can_manage_membership_plans(user: CurrentUser) -> bool:
     """Check if user can manage membership plans"""
-    return user.get("role") in ["super_admin", "makerspace_admin"]
+    return any(role in user.roles for role in ["super_admin", "makerspace_admin"])
 
 
 def _get_user_makerspace_id(user: dict) -> str:

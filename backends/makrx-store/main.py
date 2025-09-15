@@ -184,4 +184,38 @@ if __name__ == "__main__":
     import uvicorn
 
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True, log_level="info")
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=True,
+        log_config={
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "json_formatter": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processor": structlog.processors.JSONRenderer(),
+                }
+            },
+            "handlers": {
+                "default": {
+                    "formatter": "json_formatter",
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://sys.stdout",
+                }
+            },
+            "loggers": {
+                "uvicorn.access": {
+                    "handlers": ["default"],
+                    "level": "INFO",
+                    "propagate": False,
+                },
+                "uvicorn.error": {
+                    "handlers": ["default"],
+                    "level": "INFO",
+                    "propagate": False,
+                },
+            },
+        },
+    )
