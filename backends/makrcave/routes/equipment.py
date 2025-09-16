@@ -6,7 +6,8 @@ from datetime import datetime
 import uuid
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_roles, check_permission
+from ..dependencies import CurrentUser
 from models.equipment import (
     EquipmentStatus,
     EquipmentCategory,
@@ -30,7 +31,7 @@ security = HTTPBearer()
 
 @router.get("/", response_model=List[EquipmentResponse])
 async def get_equipment(
-    makerspace_id: str = Query(...),
+    makerspace_id: Optional[str] = Query(None),
     category: Optional[EquipmentCategory] = Query(None),
     status: Optional[EquipmentStatus] = Query(None),
     skip: int = Query(0, ge=0),
@@ -40,6 +41,17 @@ async def get_equipment(
 ):
     """Get equipment list with optional filtering"""
     try:
+        # If makerspace_id is not provided, use the user's makerspace_id
+        if not makerspace_id:
+            makerspace_id = _get_user_makerspace_id(current_user)
+
+        # Super admins can view equipment from any makerspace, others are restricted
+        if current_user.role != "super_admin" and makerspace_id != _get_user_makerspace_id(current_user):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions to view equipment from another makerspace",
+            )
+
         equipment_crud = get_equipment_crud(db)
         equipment_list = equipment_crud.get_equipment_list(
             makerspace_id=makerspace_id,
@@ -56,7 +68,7 @@ async def get_equipment(
         )
 
 
-@router.get("/{equipment_id}")
+@router.get("/{equipment_id}", response_model=EquipmentResponse)
 async def get_equipment_details(
     equipment_id: str,
     current_user=Depends(get_current_user),
@@ -70,77 +82,60 @@ async def get_equipment_details(
             status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
         )
 
-    return {
-        "id": equipment.id,
-        "equipment_id": equipment.equipment_id,
-        "name": equipment.name,
-        "category": equipment.category.value,
-        "sub_category": equipment.sub_category,
-        "status": equipment.status.value,
-        "location": equipment.location,
-        "description": equipment.description,
-        "specifications": equipment.specifications,
-        "manufacturer": equipment.manufacturer,
-        "model": equipment.model,
-        "hourly_rate": equipment.hourly_rate,
-        "requires_certification": equipment.requires_certification,
-        "certification_required": equipment.certification_required,
-        "average_rating": equipment.average_rating,
-        "total_ratings": equipment.total_ratings,
-        "manual_url": equipment.manual_url,
-        "image_url": equipment.image_url,
-        "created_at": equipment.created_at,
-        "updated_at": equipment.updated_at,
-    }
+    # Check if user has access to this makerspace's equipment
+    if (
+        equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
+        and current_user.role != "super_admin"
+    ):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
+    return EquipmentResponse.from_orm(equipment)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=EquipmentResponse, status_code=status.HTTP_201_CREATED)
 async def create_equipment(
-    equipment_data: dict,
+    equipment_data: EquipmentCreate,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Create new equipment"""
-    try:
-        # Generate equipment ID
-        equipment_id = f"EQ-{str(uuid.uuid4())[:8].upper()}"
-
-        new_equipment = Equipment(
-            equipment_id=equipment_id,
-            name=equipment_data["name"],
-            category=EquipmentCategory(equipment_data["category"]),
-            location=equipment_data["location"],
-            linked_makerspace_id=equipment_data["makerspace_id"],
-            description=equipment_data.get("description"),
-            hourly_rate=equipment_data.get("hourly_rate"),
-            requires_certification=equipment_data.get("requires_certification", False),
-            created_by=current_user.user_id,
+    if not check_permission(current_user.role, "add_edit_equipment"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions"
         )
 
-        db.add(new_equipment)
-        db.commit()
-        db.refresh(new_equipment)
-
-        return {
-            "message": "Equipment created successfully",
-            "equipment_id": new_equipment.id,
-        }
+    try:
+        makerspace_id = _get_user_makerspace_id(current_user)
+        equipment_crud = get_equipment_crud(db)
+        new_equipment = equipment_crud.create_equipment(
+            makerspace_id=makerspace_id,
+            equipment_data=equipment_data,
+            created_by_user_id=current_user.user_id,
+            created_by_user_name=current_user.name,
+        )
+        return new_equipment
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create equipment: {str(e)}",
         )
 
 
-@router.post("/{equipment_id}/reserve")
+@router.post("/{equipment_id}/reserve", response_model=EquipmentReservationResponse)
 async def reserve_equipment(
     equipment_id: str,
-    reservation_data: dict,
+    reservation_data: EquipmentReservationCreate,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Reserve equipment"""
+    if not check_permission(current_user.role, "reserve_equipment"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions"
+        )
+
     try:
         # Check if equipment exists and is available
         equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
@@ -149,6 +144,13 @@ async def reserve_equipment(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Equipment not found",
             )
+
+        # Check if user has access to this makerspace's equipment
+        if (
+            equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
+            and current_user.role != "super_admin"
+        ):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
         if equipment.status != EquipmentStatus.AVAILABLE:
             raise HTTPException(
@@ -160,19 +162,19 @@ async def reserve_equipment(
         reservation = EquipmentReservation(
             equipment_id=equipment_id,
             member_id=current_user.user_id,
-            start_time=datetime.fromisoformat(reservation_data["start_time"]),
-            end_time=datetime.fromisoformat(reservation_data["end_time"]),
-            purpose=reservation_data.get("purpose"),
-            notes=reservation_data.get("notes"),
+            start_time=reservation_data.start_time,
+            end_time=reservation_data.end_time,
+            purpose=reservation_data.purpose,
+            notes=reservation_data.notes,
         )
 
         db.add(reservation)
         db.commit()
+        db.refresh(reservation)
 
-        return {
-            "message": "Equipment reserved successfully",
-            "reservation_id": reservation.id,
-        }
+        return EquipmentReservationResponse.from_orm(reservation)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         db.rollback()
         raise HTTPException(
@@ -181,31 +183,34 @@ async def reserve_equipment(
         )
 
 
-@router.get("/{equipment_id}/reservations")
+@router.get("/{equipment_id}/reservations", response_model=List[EquipmentReservationResponse])
 async def get_equipment_reservations(
     equipment_id: str,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Get equipment reservations"""
+    # Check if equipment exists
+    equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
+    if not equipment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
+        )
+
+    # Check if user has access to this makerspace's equipment
+    if (
+        equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
+        and current_user.role != "super_admin"
+    ):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
     reservations = (
         db.query(EquipmentReservation)
         .filter(EquipmentReservation.equipment_id == equipment_id)
         .all()
     )
 
-    return [
-        {
-            "id": res.id,
-            "member_id": res.member_id,
-            "start_time": res.start_time,
-            "end_time": res.end_time,
-            "status": res.status.value,
-            "purpose": res.purpose,
-            "created_at": res.created_at,
-        }
-        for res in reservations
-    ]
+    return [EquipmentReservationResponse.from_orm(res) for res in reservations]
 
 
 # Ratings endpoints used by frontend
@@ -221,6 +226,14 @@ async def list_equipment_ratings(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
         )
+
+    # Check if user has access to this makerspace's equipment
+    if (
+        equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
+        and current_user.role != "super_admin"
+    ):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
     ratings = [r for r in (equipment.ratings or []) if r.is_approved]
     return ratings
 
@@ -238,11 +251,19 @@ async def create_equipment_rating(
 ):
     """Create a rating for equipment. Prevent duplicate ratings per user."""
     # Ensure equipment exists
-    exists = db.query(Equipment).filter(Equipment.id == equipment_id).first()
-    if not exists:
+    equipment = db.query(Equipment).filter(Equipment.id == equipment_id).first()
+    if not equipment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found"
         )
+
+    # Check if user has access to this makerspace's equipment
+    if (
+        equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
+        and current_user.role != "super_admin"
+    ):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
     # Ensure path/body alignment
     rating.equipment_id = equipment_id
     try:
@@ -261,3 +282,10 @@ async def create_equipment_rating(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create rating: {str(e)}",
         )
+
+
+# Helper functions
+def _get_user_makerspace_id(user: CurrentUser) -> str:
+    """Get user's makerspace ID"""
+    # This should be implemented based on your user model
+    return user.get("makerspace_id", "default_makerspace")

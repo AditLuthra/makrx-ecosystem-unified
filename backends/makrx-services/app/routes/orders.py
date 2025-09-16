@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_roles
 from app.models.orders import ServiceOrder, StatusUpdate
 from app.models.users import User
 from app.services.store_integration import sync_order_with_store
@@ -256,10 +256,25 @@ async def update_order(
                 detail="Order not found"
             )
         
-        # Update allowed fields
-        updatable_fields = ['customer_notes', 'priority']
+        # Define fields that only admins/service providers can update
+        admin_updatable_fields = ['status', 'provider_id', 'estimated_completion', 'provider_notes']
+
         for field, value in updates.items():
-            if field in updatable_fields:
+            if field in admin_updatable_fields:
+                # Check if user has admin or service_provider role
+                if not (current_user.has_role("admin") or current_user.has_role("service_provider")):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail=f"Insufficient permissions to update {field}"
+                    )
+                setattr(order, field, value)
+            else:
+                # Allow regular users to update only non-sensitive fields
+                if field not in ['customer_notes', 'priority']:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail=f"Cannot update field: {field}"
+                    )
                 setattr(order, field, value)
         
         order.updated_at = datetime.utcnow()
@@ -302,6 +317,14 @@ async def add_status_update(
                 detail="Order not found"
             )
         
+        # Only allow admin or service_provider to change the status field
+        if 'status' in status_data:
+            if not (current_user.has_role("admin") or current_user.has_role("service_provider")):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Insufficient permissions to change order status"
+                )
+
         # Create status update
         status_update = StatusUpdate(
             id=str(uuid.uuid4()),

@@ -171,21 +171,47 @@ app.include_router(health_router, prefix="/api")
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8001))
     log.info("starting_makrcave_backend", port=port)
+
+    # Define Uvicorn logging configuration
+    LOGGING_CONFIG = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "json_formatter": {
+                "()": "structlog.stdlib.ProcessorFormatter",
+                "processor": structlog.processors.JSONRenderer(),
+            },
+            "console_formatter": {
+                "()": "structlog.stdlib.ProcessorFormatter",
+                "processor": structlog.dev.ConsoleRenderer(),
+            },
+        },
+        "handlers": {
+            "default": {
+                "class": "logging.StreamHandler",
+                "formatter": "console_formatter" if os.getenv("ENVIRONMENT") == "development" else "json_formatter",
+                "level": "INFO",
+            },
+            "access": {
+                "class": "logging.StreamHandler",
+                "formatter": "json_formatter", # Always JSON for access logs
+                "level": "INFO",
+            },
+        },
+        "loggers": {
+            "uvicorn": {"handlers": ["default"], "level": "INFO", "propagate": False},
+            "uvicorn.error": {"level": "INFO"},
+            "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
+        },
+    }
+
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
         port=port,
         reload=os.getenv("ENVIRONMENT") == "development",
+        log_config=LOGGING_CONFIG, # Pass the logging configuration
     )
-
-    # Configure uvicorn's loggers to use structlog
-    # This ensures that uvicorn's logs are processed by structlog's JSONRenderer
-    for _log in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
-        logging.getLogger(_log).handlers = [structlog.stdlib.ProcessorFormatter.wrap_for_formatter(
-            structlog.dev.ConsoleRenderer() if os.getenv("ENVIRONMENT") == "development" else structlog.processors.JSONRenderer()
-        )]
-        logging.getLogger(_log).propagate = False
-        logging.getLogger(_log).setLevel(log.level)
 # Optional Prometheus metrics
 if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"):
     try:

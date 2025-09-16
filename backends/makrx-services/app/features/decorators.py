@@ -8,6 +8,7 @@ from fastapi import HTTPException, status, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from .flags import feature_flags, AccessLevel
+from ..core.security import require_auth, AuthUser
 
 
 security = HTTPBearer(auto_error=False)
@@ -45,32 +46,44 @@ def feature_required(feature_key: str,
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            # Extract request from args/kwargs
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
+            # Get the feature flag definition
+            flag = feature_flags.get_flag(feature_key)
+            if not flag:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Feature not found")
+
+            # Ensure request is available in kwargs
+            request: Request = kwargs.get("request")
             if not request:
-                # Try to find request in kwargs
-                request = kwargs.get('request')
-            
-            if not request:
+                # If request is not in kwargs, it must be the first positional argument
+                if args and isinstance(args[0], Request):
+                    request = args[0]
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="Request context not available for feature flag check"
+                    )
+
+            # Get authenticated user (if any)
+            user: Optional[AuthUser] = await get_current_user(request, Depends(HTTPBearer(auto_error=False)))
+
+            # Check if authentication is required for this feature
+            if flag.access_level not in [AccessLevel.PUBLIC, AccessLevel.DISABLED] and user is None:
                 raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Request context not available for feature flag check"
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Authentication required for this feature"
                 )
-            
-            # Get user context
-            user_context = get_user_context(request)
+
+            # Get user context for feature flag evaluation
+            user_id = user.user_id if user else None
+            user_roles = set(user.roles) if user else set()
+            feature_password = request.headers.get('X-Feature-Password')
             
             # Check if feature is enabled
             is_enabled = feature_flags.is_enabled(
                 feature_key,
-                user_id=user_context.get('user_id'),
-                user_roles=user_context.get('user_roles'),
-                password=user_context.get('feature_password')
+                user_id=user_id,
+                user_roles=user_roles,
+                password=feature_password
             )
             
             if not is_enabled:
@@ -90,25 +103,11 @@ def beta_access_required(feature_key: str,
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
-            if not request:
-                request = kwargs.get('request')
-            
-            if not request:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Request context not available"
-                )
-            
-            user_context = get_user_context(request)
+            # Ensure user is authenticated and get their roles
+            current_user: AuthUser = await require_auth(request=args[0]) # Assuming request is the first arg
+            user_roles = set(current_user.roles)
             
             # Check if user has beta access
-            user_roles = user_context.get('user_roles', set())
             if 'beta_user' not in user_roles and 'admin' not in user_roles:
                 message = error_message or f"Beta access required for '{feature_key}'"
                 raise HTTPException(
@@ -119,9 +118,9 @@ def beta_access_required(feature_key: str,
             # Also check if the feature itself is enabled
             is_enabled = feature_flags.is_enabled(
                 feature_key,
-                user_id=user_context.get('user_id'),
-                user_roles=user_context.get('user_roles'),
-                password=user_context.get('feature_password')
+                user_id=current_user.user_id,
+                user_roles=user_roles,
+                password=request.headers.get('X-Feature-Password')
             )
             
             if not is_enabled:
@@ -144,22 +143,9 @@ def password_access_required(feature_key: str,
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
-            if not request:
-                request = kwargs.get('request')
-            
-            if not request:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Request context not available"
-                )
-            
-            user_context = get_user_context(request)
+            # Ensure user is authenticated and get their roles
+            current_user: AuthUser = await require_auth(request=args[0]) # Assuming request is the first arg
+            user_roles = set(current_user.roles)
             
             # Get the feature flag
             flag = feature_flags.get_flag(feature_key)
@@ -170,7 +156,7 @@ def password_access_required(feature_key: str,
                 )
             
             # Check if password is provided
-            provided_password = user_context.get('feature_password')
+            provided_password = request.headers.get('X-Feature-Password')
             if not provided_password:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -180,8 +166,8 @@ def password_access_required(feature_key: str,
             # Check if feature is enabled with the password
             is_enabled = feature_flags.is_enabled(
                 feature_key,
-                user_id=user_context.get('user_id'),
-                user_roles=user_context.get('user_roles'),
+                user_id=current_user.user_id,
+                user_roles=user_roles,
                 password=provided_password
             )
             
@@ -203,23 +189,9 @@ def admin_required(func: Callable) -> Callable:
     """
     @wraps(func)
     async def wrapper(*args, **kwargs):
-        request = None
-        for arg in args:
-            if isinstance(arg, Request):
-                request = arg
-                break
-        
-        if not request:
-            request = kwargs.get('request')
-        
-        if not request:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Request context not available"
-            )
-        
-        user_context = get_user_context(request)
-        user_roles = user_context.get('user_roles', set())
+        # Ensure user is authenticated and get their roles
+        current_user: AuthUser = await require_auth(request=args[0]) # Assuming request is the first arg
+        user_roles = set(current_user.roles)
         
         if 'admin' not in user_roles and 'super_admin' not in user_roles:
             raise HTTPException(
@@ -238,23 +210,9 @@ def role_required(*required_roles: str):
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
-            if not request:
-                request = kwargs.get('request')
-            
-            if not request:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Request context not available"
-                )
-            
-            user_context = get_user_context(request)
-            user_roles = user_context.get('user_roles', set())
+            # Ensure user is authenticated and get their roles
+            current_user: AuthUser = await require_auth(request=args[0]) # Assuming request is the first arg
+            user_roles = set(current_user.roles)
             
             if not any(role in user_roles for role in required_roles):
                 raise HTTPException(

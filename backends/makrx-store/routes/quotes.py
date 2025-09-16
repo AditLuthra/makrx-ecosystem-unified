@@ -485,6 +485,44 @@ async def get_quote(
 ):
     """Retrieve existing quote by ID"""
     # In production, fetch from database
+    # For now, mock data for demonstration
+    if quote_id == "mock_quote_id":
+        return {
+            "quote_id": "mock_quote_id",
+            "total_price": 123.45,
+            "currency": "INR",
+            "breakdown": {},
+            "estimated_delivery": "2025-09-20T10:00:00",
+            "valid_until": "2025-09-18T10:00:00",
+            "print_parameters": {
+                "material": "PLA",
+                "quality": "standard",
+                "infill_percentage": 20,
+                "layer_height": 0.2,
+                "supports": False,
+                "brim": False,
+                "quantity": 1,
+                "rush_order": False
+            },
+            "file_analysis": {
+                "volume_mm3": 15000.0,
+                "surface_area_mm2": 8500.0,
+                "bounding_box": {"length": 50.0, "width": 40.0, "height": 30.0},
+                "estimated_print_time_hours": 3.5,
+                "complexity_score": 6.2,
+                "overhangs_detected": True,
+                "thin_walls_detected": False,
+            }
+        }
+    
+    # In a real application, you would fetch the quote from the database
+    # and then check if current_user.user_id matches the quote's user_id
+    # For example:
+    # quote = await db.execute(select(Quote).where(Quote.id == quote_id, Quote.user_id == current_user.user_id)).scalar_one_or_none()
+    # if not quote:
+    #     raise HTTPException(status_code=404, detail="Quote not found or access denied")
+    # return quote
+
     raise HTTPException(status_code=404, detail="Quote not found")
 
 

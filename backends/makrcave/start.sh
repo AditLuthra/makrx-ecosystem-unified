@@ -5,6 +5,9 @@ PORT="${PORT:-8001}"
 WORKERS="${WORKERS:-2}"
 USE_GUNICORN="${USE_GUNICORN:-false}"
 
+echo "Running Alembic migrations..."
+alembic upgrade head
+
 if [ "$USE_GUNICORN" = "true" ] || [ "$USE_GUNICORN" = "1" ]; then
 	echo "Starting with gunicorn ($WORKERS workers) on port $PORT"
 	exec gunicorn main:app \

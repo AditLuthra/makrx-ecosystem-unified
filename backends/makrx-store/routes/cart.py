@@ -11,6 +11,7 @@ from typing import Optional
 
 from database import get_db
 from models.commerce import Cart, CartItem, Product
+from core.security import require_auth, AuthUser
 
 router = APIRouter()
 
@@ -23,13 +24,11 @@ class AddToCartRequest(BaseModel):
 @router.post("/api/cart/add")
 async def add_to_cart(
     request: AddToCartRequest,
-    user_id: Optional[str] = None,  # This would come from Keycloak JWT
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Add item to cart"""
-    # For now, use a demo user ID if not provided
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     # Check if product exists
     product_query = select(Product).where(Product.id == request.product_id)
@@ -89,12 +88,11 @@ async def add_to_cart(
 
 @router.get("/api/cart")
 async def get_cart(
-    user_id: Optional[str] = None,  # This would come from Keycloak JWT
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Get user's cart"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     # Get cart with items and products
     cart_query = (
@@ -158,12 +156,11 @@ async def get_cart(
 @router.delete("/api/cart/item/{item_id}")
 async def remove_cart_item(
     item_id: int,
-    user_id: Optional[str] = None,  # This would come from Keycloak JWT
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Remove item from cart"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     # Find cart item belonging to user
     cart_item_query = (
@@ -196,12 +193,11 @@ class UpdateCartItemRequest(BaseModel):
 async def update_cart_item(
     item_id: int,
     request: UpdateCartItemRequest,
-    user_id: Optional[str] = None,  # This would come from Keycloak JWT
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Update cart item quantity"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     if request.quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than 0")

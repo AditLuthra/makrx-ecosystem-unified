@@ -23,6 +23,7 @@ from models.commerce import Product, Category, Order, OrderItem
 from models.subscriptions import QuickReorder, BOMIntegration
 from models.reviews import Review, ProductRatingSummary
 from pydantic import BaseModel, Field
+from core.security import get_current_user_optional, AuthUser
 
 logger = logging.getLogger(__name__)
 
@@ -351,6 +352,7 @@ async def advanced_product_search(
 @router.get("/recommendations", response_model=List[Dict[str, Any]])
 async def get_product_recommendations(
     request: ProductRecommendationRequest = Depends(),
+    user: Optional[AuthUser] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -358,6 +360,17 @@ async def get_product_recommendations(
     """
     try:
         recommendations = []
+
+        # If personalized recommendations are requested, ensure user is authenticated
+        if request.recommendation_type == "personalized":
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Authentication required for personalized recommendations",
+                )
+            user_id_for_recommendation = user.user_id
+        else:
+            user_id_for_recommendation = None
 
         if request.recommendation_type == "similar" and request.product_id:
             recommendations = await get_similar_products(
@@ -374,9 +387,9 @@ async def get_product_recommendations(
                 db, request.category_id, request.limit
             )
 
-        elif request.recommendation_type == "personalized" and request.user_id:
+        elif request.recommendation_type == "personalized":
             recommendations = await get_personalized_recommendations(
-                db, request.user_id, request.limit
+                db, user_id_for_recommendation, request.limit
             )
 
         else:
@@ -387,6 +400,8 @@ async def get_product_recommendations(
 
         return recommendations
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Recommendations error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get recommendations")

@@ -30,7 +30,6 @@ MAKRCAVE_API_URL = "http://makrcave-backend:8000"
 # Pydantic Models
 class BOMImportRequest(BaseModel):
     makrcave_project_id: str
-    makrcave_user_id: str
     auto_add_to_cart: bool = True
     create_quick_reorder: bool = False
     quick_reorder_name: Optional[str] = None

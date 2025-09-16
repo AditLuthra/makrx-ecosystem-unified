@@ -4,7 +4,7 @@ const nextConfig = {
   // Transpile local workspace packages
   transpilePackages: ['@makrx/auth', '@makrx/shared-ui', '@makrx/types'],
   // Performance optimizations
-  reactStrictMode: false,
+  reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: process.env.CI !== 'true',
   },
@@ -89,6 +89,14 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
           },
         ],
       },

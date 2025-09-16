@@ -2,6 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   transpilePackages: ['@makrx/auth', '@makrx/shared-ui', '@makrx/types'],
+  reactStrictMode: true,
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
     const csp = isProd
@@ -14,6 +15,10 @@ const nextConfig = {
           { key: 'Content-Security-Policy', value: csp },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
         ],
       },
     ];

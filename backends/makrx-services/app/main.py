@@ -20,7 +20,7 @@ from pathlib import Path
 
 from app.core.config import get_settings
 from app.core.database import engine, SessionLocal
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_roles
 from app.models import Base
 from app.routes import (
     orders,
@@ -113,7 +113,7 @@ app.add_middleware(
     ] if not settings.DEBUG else ["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
 )
 
 # Feature flag middleware
@@ -227,7 +227,7 @@ async def root():
     }
 
 # Cross-platform integration endpoints
-@app.post("/api/orders/{order_id}/sync")
+@app.post("/api/orders/{order_id}/sync", dependencies=[Depends(require_roles(["admin", "service_provider"]))])
 async def sync_order_with_store(
     order_id: str,
     current_user = Depends(get_current_user)

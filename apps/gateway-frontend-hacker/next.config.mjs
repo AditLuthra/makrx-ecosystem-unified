@@ -18,6 +18,19 @@ const nextConfig = {
     // Re-enable type checking during build
     ignoreBuildErrors: false,
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
+        ],
+      },
+    ];
+  },
   webpack: (config, { webpack }) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

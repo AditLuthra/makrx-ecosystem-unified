@@ -114,3 +114,30 @@ async def get_current_user(
         return CurrentUser(user_id=user_id, email=email, roles=roles)
     except JWTError:
         raise credentials_exception
+
+def require_roles(allowed_roles: List[str]):
+    """
+    Dependency factory that checks if user has required roles
+    """
+
+    def role_checker(
+        current_user: CurrentUser = Depends(get_current_user),
+    ):
+        # Ensure current_user is not None (should be handled by get_current_user, but for safety)
+        if current_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required",
+            )
+
+        # Get roles from the already validated current_user object
+        user_roles = current_user.roles
+
+        # Check if user has any of the required roles
+        if not any(role in user_roles for role in allowed_roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
+            )
+
+    return role_checker

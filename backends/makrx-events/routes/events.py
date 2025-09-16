@@ -12,7 +12,7 @@ from backends.makrx_events.schemas.events import (
     RegistrationCreate,
     RegistrationRead,
 )
-from backends.makrx_events.security import get_current_user, CurrentUser
+from backends.makrx_events.security import get_current_user, CurrentUser, require_roles
 
 router = APIRouter()
 
@@ -43,7 +43,7 @@ def make_slug(title: str) -> str:
     return slug
 
 
-@router.post("/events", response_model=EventRead, status_code=201)
+@router.post("/events", response_model=EventRead, status_code=201, dependencies=[Depends(require_roles(["event_organizer", "admin"]))])
 def create_event(
     payload: EventCreate,
     user: CurrentUser = Depends(get_current_user),
@@ -74,6 +74,14 @@ def update_event(
     ev = db.query(Event).filter(Event.id == event_id).first()
     if not ev:
         raise HTTPException(status_code=404, detail="Event not found")
+
+    # Check if the current user is the organizer or an admin
+    if not (user.user_id == ev.organizer_id or "admin" in user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions to update this event",
+        )
+
     data = payload.model_dump(exclude_unset=True)
     # Keep slug stable on update for compatibility
     for k, v in data.items():

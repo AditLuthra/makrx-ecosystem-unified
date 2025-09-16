@@ -10,3 +10,4 @@
 - The project is a monorepo containing multiple applications. Key applications include 'makrcave' (makerspace management), 'makrx.store' (e-commerce), 'makrx.events' (event management), 'services.makrx.store' (3D printing/laser engraving services), and 'gateway-frontend' which serves makrx.org.
 - User's preference: Never remove features, always fix them. Never reduce functionality.
 - User's preference: Never remove features, always fix them. Never reduce functionality.
+- Backend: Strict CORS (origins, methods) and pydantic schema validation; reject unknown fields.

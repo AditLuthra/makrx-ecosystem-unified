@@ -6,6 +6,7 @@ const nextConfig = {
     "@makrx/shared-ui",
     "@makrx/types",
   ],
+  reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: process.env.CI !== "true",
   },
@@ -32,6 +33,15 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
+        ],
+      },
       {
         source: "/api/:path*",
         headers: [

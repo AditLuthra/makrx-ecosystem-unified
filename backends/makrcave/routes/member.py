@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_roles
 from schemas.member import (
     MemberCreate,
     MemberUpdate,
@@ -41,7 +41,7 @@ security = HTTPBearer()
 
 
 # Member management routes
-@router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_roles(["super_admin", "makerspace_admin"]))])
 async def create_member(
     member: MemberCreate,
     current_user=Depends(get_current_user),
@@ -50,13 +50,6 @@ async def create_member(
 ):
     """Create a new member"""
     try:
-        # Check permissions
-        if not _can_manage_members(current_user):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions to create members",
-            )
-
         # Check if member already exists
         existing_member = crud_member.get_member_by_email(
             db, member.email, member.makerspace_id

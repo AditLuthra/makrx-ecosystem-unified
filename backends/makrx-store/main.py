@@ -32,6 +32,7 @@ from routes import (
 from database_sync import create_tables, test_connection
 from middleware.api_security import setup_api_security
 from core.config import settings
+from core.security import require_roles, get_current_user
 
 # Config: single source of truth via core.config.settings
 
@@ -170,7 +171,7 @@ async def startup_event():
 
 
 # Sample data initialization endpoint (for development)
-@app.post("/api/admin/init-sample-data")
+@app.post("/api/admin/init-sample-data", dependencies=[Depends(require_roles(["admin", "super_admin"]))])
 async def init_sample_data():
     """Initialize sample data for development"""
     # This would populate the database with sample categories and products

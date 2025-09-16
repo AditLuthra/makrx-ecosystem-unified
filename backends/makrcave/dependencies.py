@@ -202,32 +202,23 @@ def require_roles(allowed_roles: List[str]):
     """
 
     def role_checker(
-        credentials: HTTPAuthorizationCredentials = Depends(security),
+        current_user: CurrentUser = Depends(get_current_user),
     ):
-        try:
-            # Decode token to get roles
-            payload = jwt.get_unverified_claims(credentials.credentials)
-
-            # Get roles from token
-            realm_roles = payload.get("realm_access", {}).get("roles", [])
-            client_roles = (
-                payload.get("resource_access", {})
-                .get(KEYCLOAK_CLIENT_ID, {})
-                .get("roles", [])
-            )
-            user_roles = realm_roles + client_roles
-
-            # Check if user has any of the required roles
-            if not any(role in user_roles for role in allowed_roles):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Insufficient permissions",
-                )
-
-        except JWTError:
+        # Ensure current_user is not None (should be handled by get_current_user, but for safety)
+        if current_user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
+                detail="Authentication required",
+            )
+
+        # Get roles from the already validated current_user object
+        user_roles = current_user.roles
+
+        # Check if user has any of the required roles
+        if not any(role in user_roles for role in allowed_roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
             )
 
     return role_checker
@@ -239,9 +230,15 @@ def require_scope(required_scope: str):
     """
 
     def scope_checker(
-        credentials: HTTPAuthorizationCredentials = Depends(security),
-        current_user=Depends(get_current_user),
+        current_user: CurrentUser = Depends(get_current_user),
     ):
+        # Ensure current_user is not None (should be handled by get_current_user, but for safety)
+        if current_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required",
+            )
+
         # Implement scope checking logic based on your business rules
         # For now, allowing all authenticated users
         if required_scope == "makerspace":

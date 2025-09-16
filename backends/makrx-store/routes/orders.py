@@ -13,6 +13,7 @@ from datetime import datetime
 
 from database import get_db
 from models.commerce import Order, OrderItem, Product, Cart, CartItem
+from core.security import require_auth, AuthUser, require_roles
 
 router = APIRouter()
 
@@ -34,12 +35,14 @@ class CheckoutResponse(BaseModel):
 
 @router.get("/api/orders")
 async def get_user_orders(
-    user_id: Optional[str] = None,  # From JWT token
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
+    status_filter: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0
 ):
     """Get user's order history"""
-    if not user_id:
-        user_id = "demo_user"  # For demo purposes
+    user_id = current_user.user_id
 
     query = (
         select(Order)
@@ -87,12 +90,11 @@ async def get_user_orders(
 @router.get("/api/orders/{order_id}")
 async def get_order_details(
     order_id: int,
-    user_id: Optional[str] = None,  # From JWT token
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Get detailed order information"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     query = (
         select(Order)
@@ -152,12 +154,11 @@ async def get_order_details(
 @router.post("/api/orders/checkout")
 async def checkout(
     request: CheckoutRequest,
-    user_id: Optional[str] = None,  # From JWT token
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Process checkout and create order from cart"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     try:
         # Get user's cart
@@ -238,7 +239,7 @@ async def checkout(
 async def update_order_status(
     order_id: int,
     status_data: dict,
-    user_id: Optional[str] = None,
+    current_user: AuthUser = Depends(require_roles(["admin", "super_admin"])),
     db: AsyncSession = Depends(get_db),
 ):
     """Update order status (for admin use)"""
@@ -273,12 +274,11 @@ async def update_order_status(
 @router.get("/api/orders/{order_id}/tracking")
 async def get_order_tracking(
     order_id: int,
-    user_id: Optional[str] = None,
+    current_user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """Get order tracking information"""
-    if not user_id:
-        user_id = "demo_user"
+    user_id = current_user.user_id
 
     query = select(Order).where(Order.id == order_id, Order.user_id == user_id)
     result = await db.execute(query)
