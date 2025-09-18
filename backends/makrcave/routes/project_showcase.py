@@ -8,11 +8,11 @@ from datetime import datetime, timedelta
 from ..database import get_db
 
 # Models
-from models.project import Project, ProjectCollaborator, ProjectVisibility
-from models.enhanced_member import Member
+from ..models.project import Project, ProjectCollaborator, ProjectVisibility
+from ..models.enhanced_member import Member
 
 # Schemas
-from schemas.project_showcase import (
+from ..schemas.project_showcase import (
     ShowcaseProjectResponse,
     ShowcaseBOMItem,
     ProjectAward,

@@ -1,51 +1,10 @@
-export interface EquipmentAccessPolicy {
-  id: string;
-  equipment_id: string;
-  access_type: 'free' | 'subscription_only' | 'pay_per_use';
-  membership_required?: boolean;
-  price_per_unit?: number;
-  cost_unit?: string;
-  minimum_billing_time?: number;
-  grace_period_minutes?: number;
-  max_daily_cap?: number;
-  overuse_penalty_flat?: number;
-  overuse_penalty_percent?: number;
-  created_at?: string;
-  updated_at?: string;
-  created_by?: string;
-  hourly_rate?: number;
-}
-
-export interface CostEstimate {
-  total: number;
-  breakdown: Array<{ label: string; amount: number }>;
-  equipment_name?: string;
-  estimated_total?: number; // for compatibility
-  daily_cap_reached?: boolean;
-}
-
-export interface AccessCheckResult {
-  canAccess: boolean;
-  missingSkills: string[];
-  reason?: string;
-  allowed?: boolean; // for compatibility
-  required_action?: string;
-}
-
-export interface UserSubscription {
-  plan: string;
-  included_equipment_types: string[];
-  status?: string;
-  plan_name?: string;
-  end_date?: string;
-  start_date?: string;
-}
-
-export interface UserWallet {
-  balance: number;
-  currency: string;
-  last_updated?: string;
-}
+import {
+  EquipmentAccessPolicy,
+  CostEstimate,
+  AccessCheckResult,
+  UserSubscription,
+  UserWallet,
+} from '../types/equipment-access';
 
 export class EquipmentBillingService {
   static async getUserWallet(_userId: string): Promise<UserWallet> {
@@ -77,7 +36,13 @@ export class EquipmentBillingService {
     const hours = Math.max(0, durationMinutes) / 60;
     return {
       total: parseFloat((rate * hours).toFixed(2)),
-      breakdown: [{ label: 'Usage', amount: parseFloat((rate * hours).toFixed(2)) }],
+      breakdown: [
+        {
+          label: 'Usage',
+          amount: parseFloat((rate * hours).toFixed(2)),
+          value: `₹${(rate * hours).toFixed(2)}`,
+        },
+      ],
       equipment_name: '',
       estimated_total: parseFloat((rate * hours).toFixed(2)),
       daily_cap_reached: false,

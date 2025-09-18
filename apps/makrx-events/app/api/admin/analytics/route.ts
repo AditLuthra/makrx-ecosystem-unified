@@ -55,12 +55,12 @@ export async function GET(request: NextRequest) {
       .select({ count: count() })
       .from(micrositeRegistrations);
 
-    // Mock data for now - replace with real calculations when payment system is integrated
+    // Mock data for now - replace with real calculations when Razorpay payments are persisted
     const mockData = {
       totalUsers: totalUsersResult?.count || 0,
       totalEvents: totalEventsResult?.count || 0,
       totalRegistrations: totalRegistrationsResult?.count || 0,
-      totalRevenue: 0, // Will be calculated from payments when Stripe is integrated
+      totalRevenue: 0, // Replace with revenue from Razorpay transactions
 
       // Mock growth data - replace with real database queries
       userGrowth: [

@@ -5,7 +5,7 @@ import SmartSearch from '@/components/SmartSearch';
 import { ThemeToggle, ThemeToggleCompact } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminDataService, type AdminCategory } from '@/lib/adminData';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { LogOut, Menu, Package, Settings, ShoppingCart, User, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -42,7 +42,7 @@ export function Header() {
     const loadCartCount = async () => {
       if (isAuthenticated) {
         try {
-          const cart = await api.getCart();
+          const cart = await storeApi.getCart();
           setCartItemCount(cart.item_count);
         } catch (error) {
           console.error('Failed to load cart:', error);

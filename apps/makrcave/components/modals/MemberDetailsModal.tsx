@@ -31,7 +31,25 @@ interface MemberDetailsModalProps {
 const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenChange, member }) => {
   if (!member) return null;
 
-  const getStatusIcon = (status: string) => {
+  const skills = member.skills ?? [];
+  const creditsUsed = member.credits_used ?? 0;
+  const creditsRemaining = member.credits_remaining ?? 0;
+  const totalCredits = creditsUsed + creditsRemaining;
+  const firstName = member.firstName ?? '';
+  const lastName = member.lastName ?? '';
+  const displayName = [firstName, lastName].filter(Boolean).join(' ') || member.name;
+  const initials = `${firstName.charAt(0) || member.name?.charAt(0) || 'M'}${lastName.charAt(0) ?? ''}`.trim();
+  const email = member.email ?? 'Not provided';
+  const phone = member.phone;
+  const membershipPlanName = member.membership_plan_name ?? 'No plan assigned';
+  const projectsCount = member.projects_count ?? 0;
+  const reservationsCount = member.reservations_count ?? 0;
+  const creditsRemainingDisplay = creditsRemaining;
+  const statusLabel = member.status
+    ? `${member.status.charAt(0).toUpperCase()}${member.status.slice(1)}`
+    : 'Unknown';
+
+  const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'active':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
@@ -46,13 +64,21 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status?: string) => {
     const variants = {
       active: 'bg-green-100 text-green-800',
       expired: 'bg-red-100 text-red-800',
       pending: 'bg-yellow-100 text-yellow-800',
       suspended: 'bg-orange-100 text-orange-800',
     };
+
+    if (!status) {
+      return (
+        <Badge variant="outline" className="bg-gray-100 text-gray-800">
+          Unknown
+        </Badge>
+      );
+    }
 
     return (
       <Badge
@@ -64,13 +90,21 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
     );
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (role?: string) => {
     const variants = {
       user: 'bg-blue-100 text-blue-800',
       service_provider: 'bg-purple-100 text-purple-800',
       admin: 'bg-red-100 text-red-800',
       makerspace_admin: 'bg-yellow-100 text-yellow-800',
     };
+
+    if (!role) {
+      return (
+        <Badge variant="outline" className="bg-gray-100 text-gray-800">
+          Member
+        </Badge>
+      );
+    }
 
     return (
       <Badge
@@ -86,7 +120,8 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
     );
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown';
     try {
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -98,7 +133,8 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
     }
   };
 
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (dateString?: string) => {
+    if (!dateString) return 'Never';
     try {
       return new Date(dateString).toLocaleString('en-US', {
         year: 'numeric',
@@ -112,8 +148,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
     }
   };
 
-  const membershipProgress =
-    (member.credits_used / (member.credits_used + member.credits_remaining)) * 100;
+  const membershipProgress = totalCredits === 0 ? 0 : (creditsUsed / totalCredits) * 100;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -129,17 +164,12 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
           {/* Header Section */}
           <div className="flex items-start gap-4">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-blue-700">
-                {member.firstName[0]}
-                {member.lastName[0]}
-              </span>
+              <span className="text-2xl font-bold text-blue-700">{initials || 'M'}</span>
             </div>
 
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {member.firstName} {member.lastName}
-                </h2>
+                <h2 className="text-2xl font-bold text-gray-900">{displayName}</h2>
                 {member.role === 'admin' && <Crown className="h-5 w-5 text-yellow-600" />}
                 {getStatusIcon(member.status)}
               </div>
@@ -148,19 +178,19 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
                 {getStatusBadge(member.status)}
                 {getRoleBadge(member.role)}
                 <Badge variant="outline" className="bg-gray-100 text-gray-800">
-                  {member.membership_plan_name}
+                  {membershipPlanName}
                 </Badge>
               </div>
 
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <span>{member.email}</span>
+                  <span>{email}</span>
                 </div>
-                {member.phone && (
+                {phone && (
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4" />
-                    <span>{member.phone}</span>
+                    <span>{phone}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
@@ -176,7 +206,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
             <Card>
               <CardContent className="p-4 text-center">
                 <FolderOpen className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-900">{member.projects_count}</p>
+                <p className="text-2xl font-bold text-gray-900">{projectsCount}</p>
                 <p className="text-sm text-gray-600">Projects</p>
               </CardContent>
             </Card>
@@ -184,7 +214,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
             <Card>
               <CardContent className="p-4 text-center">
                 <Wrench className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-900">{member.reservations_count}</p>
+                <p className="text-2xl font-bold text-gray-900">{reservationsCount}</p>
                 <p className="text-sm text-gray-600">Reservations</p>
               </CardContent>
             </Card>
@@ -192,7 +222,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
             <Card>
               <CardContent className="p-4 text-center">
                 <CreditCard className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-900">{member.credits_remaining}</p>
+                <p className="text-2xl font-bold text-gray-900">{creditsRemainingDisplay}</p>
                 <p className="text-sm text-gray-600">Credits Left</p>
               </CardContent>
             </Card>
@@ -209,15 +239,13 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Plan</p>
-                  <p className="font-medium">{member.membership_plan_name}</p>
+                  <p className="font-medium">{membershipPlanName}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Status</p>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(member.status)}
-                    <span className="font-medium">
-                      {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
-                    </span>
+                    <span className="font-medium">{statusLabel}</span>
                   </div>
                 </div>
                 <div>
@@ -235,7 +263,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm text-gray-600">Credit Usage</p>
                   <p className="text-sm font-medium">
-                    {member.credits_used} / {member.credits_used + member.credits_remaining}
+                    {creditsUsed} / {totalCredits}
                   </p>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -249,7 +277,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
           </Card>
 
           {/* Skills */}
-          {member.skills.length > 0 && (
+          {skills.length > 0 && (
             <Card>
               <CardContent className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -258,7 +286,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
                 </h3>
 
                 <div className="flex flex-wrap gap-2">
-                  {member.skills.map((skill, index) => (
+                  {skills.map((skill, index) => (
                     <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700">
                       {skill}
                     </Badge>
@@ -289,11 +317,11 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Projects</p>
-                  <p className="font-medium">{member.projects_count}</p>
+                  <p className="font-medium">{projectsCount}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Reservations</p>
-                  <p className="font-medium">{member.reservations_count}</p>
+                  <p className="font-medium">{reservationsCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -318,7 +346,9 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({ open, onOpenCha
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Role</p>
-                  <p className="font-medium">{member.role.replace('_', ' ').toUpperCase()}</p>
+                  <p className="font-medium">
+                    {(member.role ?? 'user').replace('_', ' ').toUpperCase()}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Account Status</p>

@@ -40,6 +40,8 @@ export default function ProtectedRoute({
   showAccessDenied = true,
 }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading, hasRole } = useKeycloak();
+  const userRoles = user?.roles ?? [];
+  const primaryRole = userRoles[0] ?? 'user';
   const router = useRouter();
 
   useEffect(() => {
@@ -101,11 +103,7 @@ export default function ProtectedRoute({
   }
 
   if (requiredPermission) {
-    const permission = hasPermission(
-      user.role || 'user',
-      requiredPermission.area,
-      requiredPermission.action,
-    );
+    const permission = hasPermission(primaryRole, requiredPermission.area, requiredPermission.action);
     if (!permission) {
       hasAccess = false;
       reason = `Missing permission: ${requiredPermission.area}.${requiredPermission.action}`;
@@ -113,7 +111,7 @@ export default function ProtectedRoute({
   }
 
   if (adminFeature) {
-    const adminPermissions = hasPermission(user.role || 'user', 'admin', adminFeature);
+    const adminPermissions = hasPermission(primaryRole, 'admin', adminFeature);
     if (!adminPermissions) {
       hasAccess = false;
       reason = `Missing admin feature access: ${adminFeature}`;
@@ -122,7 +120,6 @@ export default function ProtectedRoute({
 
   // Log access attempts
   if (hasAccess) {
-    const userRoles = user.roles || [];
     loggingService.info('auth', 'ProtectedRoute', 'Access granted to protected route', {
       userId: user.id,
       userRoles,
@@ -133,7 +130,6 @@ export default function ProtectedRoute({
       requiredPermission,
     });
   } else {
-    const userRoles = user.roles || [];
     loggingService.warn('auth', 'ProtectedRoute', 'Access denied to protected route', {
       userId: user.id,
       userRoles,
@@ -231,11 +227,12 @@ export function AdminOnly({
   if (!user) return <>{fallback}</>;
 
   if (feature) {
-    const hasAccess = hasPermission(user.role || 'user', 'admin', feature);
+    const primaryRole = user.role || user.roles?.[0] || 'user';
+    const hasAccess = hasPermission(primaryRole, 'admin', feature);
     if (!hasAccess) return <>{fallback}</>;
   } else {
     // Check if user is admin-level
-    if (!user.roles.some((r) => ['super_admin', 'admin'].includes(r))) {
+    if (!user.roles?.some((r) => ['super_admin', 'admin'].includes(r))) {
       return <>{fallback}</>;
     }
   }
@@ -253,7 +250,7 @@ export function SuperAdminOnly({
 }) {
   const { user } = useAuth();
 
-  if (!user || !user.roles.includes('super_admin')) {
+  if (!user || !user.roles?.includes('super_admin')) {
     return <>{fallback}</>;
   }
 

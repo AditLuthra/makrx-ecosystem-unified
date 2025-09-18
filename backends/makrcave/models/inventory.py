@@ -198,17 +198,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
 
-class Project(Base):
-    __tablename__ = "projects"
 
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(Text)
-    owner_id = Column(String, ForeignKey("users.id"))
-    status = Column(String, default="active")
-
-    # Relationships
-    owner = relationship("User")
 
 
 class Job(Base):

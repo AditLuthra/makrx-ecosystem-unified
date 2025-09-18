@@ -54,7 +54,7 @@ class EquipmentRatingBase(BaseModel):
     issues_encountered: Optional[str] = None
     would_recommend: Optional[bool] = None
     difficulty_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced)$"
+        None, pattern="^(beginner|intermediate|advanced)$"
     )
 
 
@@ -74,7 +74,7 @@ class EquipmentRatingUpdate(BaseModel):
     suggestions: Optional[str] = None
     would_recommend: Optional[bool] = None
     difficulty_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced)$"
+        None, pattern="^(beginner|intermediate|advanced)$"
     )
 
 
@@ -205,6 +205,15 @@ class ReservationResponse(ReservationBase):
         from_attributes = True
 
 
+# Backward-compatible aliases for routes expecting legacy names
+class EquipmentReservationCreate(ReservationCreate):
+    pass
+
+
+class EquipmentReservationResponse(ReservationResponse):
+    pass
+
+
 # Equipment schemas
 class EquipmentBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
@@ -291,7 +300,7 @@ class UsageSessionBase(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(None, pattern="^(excellent|good|fair|poor)$")
     issues_encountered: Optional[str] = None
     notes: Optional[str] = None
 
@@ -307,7 +316,7 @@ class UsageSessionUpdate(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, regex="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(None, pattern="^(excellent|good|fair|poor)$")
     issues_encountered: Optional[str] = None
     power_consumed_kwh: Optional[float] = Field(None, ge=0)
     material_consumed: Optional[List[Dict[str, Any]]] = None
@@ -349,7 +358,7 @@ class EquipmentFilter(BaseModel):
 
     # Sorting
     sort_by: str = "name"
-    sort_order: str = Field("asc", regex="^(asc|desc)$")
+    sort_order: str = Field("asc", pattern="^(asc|desc)$")
 
 
 class EquipmentStatsResponse(BaseModel):

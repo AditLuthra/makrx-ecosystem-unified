@@ -91,7 +91,10 @@ const HealthCheckTest: React.FC = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900">Overall System Health</h3>
                   <p className="text-sm text-gray-600">
-                    Last updated: {new Date(healthStatus.lastUpdated).toLocaleTimeString()}
+                    Last updated:{' '}
+                    {healthStatus.lastUpdated
+                      ? new Date(healthStatus.lastUpdated).toLocaleTimeString()
+                      : 'Unknown'}
                   </p>
                   <p className="text-sm text-gray-600">Environment: {healthStatus.environment}</p>
                 </div>
@@ -118,7 +121,7 @@ const HealthCheckTest: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         {getStatusBadge(service.status)}
                         <span className="text-xs text-gray-500">
-                          {Math.round(service.responseTime)}ms
+                          {Math.round(service.responseTime ?? 0)}ms
                         </span>
                       </div>
 

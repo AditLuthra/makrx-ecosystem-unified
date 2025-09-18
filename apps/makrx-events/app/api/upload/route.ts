@@ -3,8 +3,20 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
+const uploadsEnabled = () => process.env.ALLOW_LOCAL_UPLOADS === 'true';
+
 export async function POST(request: NextRequest) {
   try {
+    if (!uploadsEnabled()) {
+      return NextResponse.json(
+        {
+          error:
+            'File uploads are disabled. Configure an object storage integration and set ALLOW_LOCAL_UPLOADS=true only for local development.',
+        },
+        { status: 503 },
+      );
+    }
+
     const data = await request.formData();
     const file: File | null = data.get('file') as unknown as File;
     const type = data.get('type') as string; // 'logo', 'hero', 'favicon', 'event-image', 'certificate', 'export'
@@ -137,6 +149,16 @@ export async function POST(request: NextRequest) {
 // GET /api/upload - List uploaded files with filtering
 export async function GET(request: NextRequest) {
   try {
+    if (!uploadsEnabled()) {
+      return NextResponse.json(
+        {
+          error:
+            'File uploads are disabled. Configure an object storage integration and set ALLOW_LOCAL_UPLOADS=true only for local development.',
+        },
+        { status: 503 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const micrositeId = searchParams.get('micrositeId');

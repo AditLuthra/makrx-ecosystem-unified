@@ -78,6 +78,8 @@ export default function EquipmentRating({
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest'>('newest');
   const [hasUserRated, setHasUserRated] = useState(false);
 
+  const derivedTotalRatings = totalRatings ?? ratings.length;
+
   const [formData, setFormData] = useState<RatingFormData>({
     overall_rating: 0,
     reliability_rating: 0,
@@ -337,7 +339,7 @@ export default function EquipmentRating({
               {renderStars(averageRating || 0, 'lg')}
             </div>
             <p className="text-sm text-gray-600">
-              {totalRatings || 0} rating{(totalRatings || 0) !== 1 ? 's' : ''}
+              {derivedTotalRatings} rating{derivedTotalRatings !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -350,7 +352,11 @@ export default function EquipmentRating({
                   <div
                     className="bg-yellow-400 h-2 rounded-full"
                     style={{
-                      width: `${totalRatings > 0 ? (ratingBreakdown[stars as keyof typeof ratingBreakdown] / totalRatings) * 100 : 0}%`,
+                      width: `${
+                        derivedTotalRatings > 0
+                          ? (ratingBreakdown[stars as keyof typeof ratingBreakdown] / derivedTotalRatings) * 100
+                          : 0
+                      }%`,
                     }}
                   ></div>
                 </div>

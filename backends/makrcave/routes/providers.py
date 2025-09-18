@@ -16,8 +16,8 @@ from enum import Enum
 
 from ..database import get_db
 from ..security.input_validation import InputSanitizer
-from models.project import Project
-from models.equipment import Equipment
+from ..models.project import Project
+from ..models.equipment import Equipment
 
 # Remove Member import to avoid model duplication; use CRUD/services for data access
 

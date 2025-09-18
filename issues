@@ -1,0 +1,134 @@
+[2] [1] Process SpawnProcess-1:
+[2] [1] Traceback (most recent call last):
+[2] [1]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[2] [1]     self.run()
+[2] [1]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 108, in run
+[2] [1]     self._target(*self._args, **self._kwargs)
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+[2] [1]     target(sockets=sockets)
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/server.py", line 65, in run
+[2] [1]     return asyncio.run(self.serve(sockets=sockets))
+[2] [1]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [1]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 194, in run
+[2] [1]     return runner.run(main)
+[2] [1]            ^^^^^^^^^^^^^^^^
+[2] [1]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 118, in run
+[2] [1]     return self._loop.run_until_complete(task)
+[2] [1]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [1]   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/server.py", line 69, in serve
+[2] [1]     await self._serve(sockets)
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/server.py", line 76, in _serve
+[2] [1]     config.load()
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/config.py", line 434, in load
+[2] [1]     self.loaded_app = import_from_string(self.app)
+[2] [1]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 22, in import_from_string
+[2] [1]     raise exc from None
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+[2] [1]     module = importlib.import_module(module_str)
+[2] [1]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [1]   File "/usr/local/lib/python3.12/importlib/__init__.py", line 90, in import_module
+[2] [1]     return _bootstrap._gcd_import(name[level:], package, level)
+[2] [1]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [1]   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+[2] [1]   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+[2] [1]   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+[2] [1]   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+[2] [1]   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+[2] [1]   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+[2] [1]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-events/main.py", line 19, in <module>
+[2] [1]     from backends.makrx_events.database import init_db
+[2] [1] ModuleNotFoundError: No module named 'backends.makrx_events'
+[2] [0] Process SpawnProcess-1:
+[2] [0] Traceback (most recent call last):
+[2] [0]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[2] [0]     self.run()
+[2] [0]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 108, in run
+[2] [0]     self._target(*self._args, **self._kwargs)
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+[2] [0]     target(sockets=sockets)
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/server.py", line 65, in run
+[2] [0]     return asyncio.run(self.serve(sockets=sockets))
+[2] [0]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [0]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 194, in run
+[2] [0]     return runner.run(main)
+[2] [0]            ^^^^^^^^^^^^^^^^
+[2] [0]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 118, in run
+[2] [0]     return self._loop.run_until_complete(task)
+[2] [0]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [0]   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/server.py", line 69, in serve
+[2] [0]     await self._serve(sockets)
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/server.py", line 76, in _serve
+[2] [0]     config.load()
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/config.py", line 434, in load
+[2] [0]     self.loaded_app = import_from_string(self.app)
+[2] [0]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+[2] [0]     module = importlib.import_module(module_str)
+[2] [0]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [0]   File "/usr/local/lib/python3.12/importlib/__init__.py", line 90, in import_module
+[2] [0]     return _bootstrap._gcd_import(name[level:], package, level)
+[2] [0]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [0]   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+[2] [0]   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+[2] [0]   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+[2] [0]   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+[2] [0]   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+[2] [0]   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/main.py", line 16, in <module>
+[2] [0]     from middleware.security import add_security_middleware
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/middleware/__init__.py", line 6, in <module>
+[2] [0]     from .security import (
+[2] [0]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrcave/middleware/security.py", line 18, in <module>
+[2] [0]     from ..security.helpers import get_request_context
+[2] [0] ImportError: attempted relative import beyond top-level package
+[2] [2] Process SpawnProcess-1:
+[2] [2] Traceback (most recent call last):
+[2] [2]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[2] [2]     self.run()
+[2] [2]   File "/usr/local/lib/python3.12/multiprocessing/process.py", line 108, in run
+[2] [2]     self._target(*self._args, **self._kwargs)
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+[2] [2]     target(sockets=sockets)
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/server.py", line 65, in run
+[2] [2]     return asyncio.run(self.serve(sockets=sockets))
+[2] [2]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [2]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 194, in run
+[2] [2]     return runner.run(main)
+[2] [2]            ^^^^^^^^^^^^^^^^
+[2] [2]   File "/usr/local/lib/python3.12/asyncio/runners.py", line 118, in run
+[2] [2]     return self._loop.run_until_complete(task)
+[2] [2]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [2]   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/server.py", line 69, in serve
+[2] [2]     await self._serve(sockets)
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/server.py", line 76, in _serve
+[2] [2]     config.load()
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/config.py", line 434, in load
+[2] [2]     self.loaded_app = import_from_string(self.app)
+[2] [2]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 22, in import_from_string
+[2] [2]     raise exc from None
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+[2] [2]     module = importlib.import_module(module_str)
+[2] [2]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [2]   File "/usr/local/lib/python3.12/importlib/__init__.py", line 90, in import_module
+[2] [2]     return _bootstrap._gcd_import(name[level:], package, level)
+[2] [2]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2] [2]   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+[2] [2]   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+[2] [2]   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+[2] [2]   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+[2] [2]   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+[2] [2]   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/main.py", line 16, in <module>
+[2] [2]     from routes import (
+[2] [2]   File "/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified/backends/makrx-store/routes/health.py", line 13, in <module>
+[2] [2]     from backends.makrx_store.redis_utils import check_redis_connection
+[2] [2] ModuleNotFoundError: No module named 'backends.makrx_store'
+[1] [0] warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router
+[1] [0] 
+[1] [0] warn  - In order to be able to deminify errors, @sentry/nextjs creates sourcemaps and uploads them to the Sentry server. Depending on your deployment setup, this means your original code may be visible in browser devtools in production. To prevent this, set hideSourceMaps to true in the sentry options in your next.config.js. To disable this warning without changing sourcemap behavior, set hideSourceMaps to false. (In @sentry/nextjs version 8.0.0 and beyond, this option will default to true.) See https://webpack.js.org/configuration/devtool/ and https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map for more information.
+[1] [0] 

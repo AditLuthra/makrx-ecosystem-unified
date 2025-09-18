@@ -4,22 +4,14 @@
  */
 
 import Keycloak, { KeycloakInstance } from 'keycloak-js';
+import type { User } from '@/types';
 
 // Configuration
 const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://auth.makrx.org';
 const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx';
 const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-store';
 
-// Types
-export interface User {
-  sub: string;
-  email: string;
-  name: string;
-  preferred_username: string;
-  email_verified: boolean;
-  roles: string[];
-  scopes: string[];
-}
+export type { User } from '@/types';
 
 // Keycloak instance
 const keycloak: KeycloakInstance = new Keycloak({
@@ -27,6 +19,11 @@ const keycloak: KeycloakInstance = new Keycloak({
   realm: REALM,
   clientId: CLIENT_ID,
 });
+
+const redirectToSSO = (): void => {
+  if (!isClient) return;
+  keycloak.login();
+};
 
 // Auth state management
 let authListeners: Array<(user: User | null) => void> = [];
@@ -86,6 +83,7 @@ export const getCurrentUser = (): User | null => {
   const parsed = keycloak.tokenParsed as Record<string, any> | undefined;
   if (!parsed) return null;
   return {
+    id: parsed.sub,
     sub: parsed.sub,
     email: parsed.email,
     name: parsed.name,

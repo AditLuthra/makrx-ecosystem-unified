@@ -12,8 +12,12 @@ const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
 
   // Payment (optional in development)
-  VITE_RAZORPAY_KEY_ID: z.string().optional(),
-  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_KEY_ID: z.string().min(1, 'RAZORPAY_KEY_ID is required').optional(),
+  RAZORPAY_KEY_SECRET: z.string().min(1, 'RAZORPAY_KEY_SECRET is required').optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+
+  // Uploads
+  ALLOW_LOCAL_UPLOADS: z.enum(['true', 'false']).optional(),
 
   // Email (optional in development)
   SMTP_HOST: z.string().optional(),
@@ -49,6 +53,8 @@ export function validateEnvironment(): Environment {
         'KEYCLOAK_BASE_URL',
         'KEYCLOAK_CLIENT_ID',
         'KEYCLOAK_CLIENT_SECRET',
+        'RAZORPAY_KEY_ID',
+        'RAZORPAY_KEY_SECRET',
       ];
 
       const missing = requiredForProduction.filter((key) => !process.env[key]);

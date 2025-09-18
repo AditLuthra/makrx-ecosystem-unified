@@ -4,12 +4,12 @@ from typing import Optional, Dict, Any, List
 from uuid import UUID
 import json
 
-from models.makerspace_settings import (
+from ..models.makerspace_settings import (
     MakerspaceSettings,
     ThemeMode,
     PrintTechnology,
 )
-from schemas.makerspace_settings import (
+from ..schemas.makerspace_settings import (
     MakerspaceSettingsCreate,
     MakerspaceSettingsUpdate,
     GeneralInformationUpdate,

@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
-import { api, formatPrice } from '@/lib/api';
+import { storeApi, formatPrice } from '@/services/storeApi';
 
 interface SavedCart {
   id: string;

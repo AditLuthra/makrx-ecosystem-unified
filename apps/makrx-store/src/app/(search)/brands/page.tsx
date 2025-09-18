@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
 interface Brand {
   name: string;
@@ -28,7 +28,7 @@ export default function BrandsPage() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const data = await api.getBrandsWithProducts(true);
+        const data = await storeApi.getBrandsWithProducts(true);
         setBrands(data.brands || []);
       } catch (error) {
         console.error('Failed to fetch brands:', error);

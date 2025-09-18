@@ -101,7 +101,9 @@ services:
     container_name: makrx-gateway-frontend-prod
     environment:
       NODE_ENV: production
-      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx-prod
+      NEXT_PUBLIC_KEYCLOAK_URL: https://auth.makrx.org
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx-prod
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
       REDIS_URL: redis://redis:6379/0
       NEXTAUTH_URL: https://makrx.org
@@ -127,7 +129,9 @@ services:
     container_name: makrx-gateway-frontend-hacker-prod
     environment:
       NODE_ENV: production
-      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx-prod
+      NEXT_PUBLIC_KEYCLOAK_URL: https://auth.makrx.org
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx-prod
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
       REDIS_URL: redis://redis:6379/1
       NEXTAUTH_URL: https://hacker.makrx.org
@@ -153,7 +157,9 @@ services:
     container_name: makrx-makrcave-prod
     environment:
       NODE_ENV: production
-      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx-prod
+      NEXT_PUBLIC_KEYCLOAK_URL: https://auth.makrx.org
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx-prod
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
       REDIS_URL: redis://redis:6379/2
       NEXTAUTH_URL: https://makrcave.com
@@ -179,7 +185,9 @@ services:
     container_name: makrx-store-prod
     environment:
       NODE_ENV: production
-      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx-prod
+      NEXT_PUBLIC_KEYCLOAK_URL: https://auth.makrx.org
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx-prod
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
       REDIS_URL: redis://redis:6379/3
       NEXTAUTH_URL: https://makrx.store
@@ -209,7 +217,9 @@ services:
     container_name: makrx-events-prod
     environment:
       NODE_ENV: production
-      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx
+      KEYCLOAK_ISSUER: https://auth.makrx.org/realms/makrx-prod
+      NEXT_PUBLIC_KEYCLOAK_URL: https://auth.makrx.org
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx-prod
       DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
       REDIS_URL: redis://redis:6379/4
       NEXTAUTH_URL: https://makrx.events

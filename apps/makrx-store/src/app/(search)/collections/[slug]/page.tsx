@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProductGrid from '@/components/ProductGrid';
 import SortSelect from '@/components/SortSelect';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
 interface Collection {
   id: number;
@@ -59,9 +59,9 @@ export default function CollectionPage() {
     const fetchCollectionData = async () => {
       setLoading(true);
       try {
-        const collectionData = await api.getCollection(slug);
+        const collectionData = await storeApi.getCollection(slug);
         setCollection(collectionData);
-        const productsData = await api.getCollectionProducts(slug, {
+        const productsData = await storeApi.getCollectionProducts(slug, {
           page,
           sort,
           per_page: 20,

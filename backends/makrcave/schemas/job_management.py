@@ -253,7 +253,7 @@ class ServiceProviderCreate(BaseModel):
     business_name: Optional[str] = None
     display_name: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    contact_email: str = Field(..., regex=r"^[^@]+@[^@]+\.[^@]+$")
+    contact_email: str = Field(..., pattern=r"^[^@]+@[^@]+\.[^@]+$")
     contact_phone: Optional[str] = None
     website_url: Optional[str] = None
 
@@ -284,7 +284,7 @@ class ServiceProviderUpdate(BaseModel):
     business_name: Optional[str] = None
     display_name: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
-    contact_email: Optional[str] = Field(None, regex=r"^[^@]+@[^@]+\.[^@]+$")
+    contact_email: Optional[str] = Field(None, pattern=r"^[^@]+@[^@]+\.[^@]+$")
     contact_phone: Optional[str] = None
     website_url: Optional[str] = None
 

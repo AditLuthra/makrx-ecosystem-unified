@@ -14,10 +14,10 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 
 from ..database import get_db
-from models.project import Project, BOMItem
+from ..models.project import Project, BOMItem
 
 # Removed unused import of models.member to avoid model duplication
-from schemas.project import BOMItemResponse
+from ..schemas.project import BOMItemResponse
 
 logger = logging.getLogger(__name__)
 

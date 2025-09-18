@@ -69,10 +69,10 @@ class MachineAccessRuleCreate(BaseModel):
 
     # Time-based restrictions
     allowed_hours_start: Optional[str] = Field(
-        None, regex=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        None, pattern=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
     )
     allowed_hours_end: Optional[str] = Field(
-        None, regex=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        None, pattern=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
     )
     allowed_days: Optional[List[str]] = None
 
@@ -99,10 +99,10 @@ class MachineAccessRuleUpdate(BaseModel):
     safety_quiz_passing_score: Optional[int] = Field(None, ge=50, le=100)
 
     allowed_hours_start: Optional[str] = Field(
-        None, regex=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        None, pattern=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
     )
     allowed_hours_end: Optional[str] = Field(
-        None, regex=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        None, pattern=r"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
     )
     allowed_days: Optional[List[str]] = None
 
@@ -228,7 +228,7 @@ class BadgeCreate(BaseModel):
     category: str = Field(..., min_length=1, max_length=100)
 
     icon_url: Optional[str] = Field(None, max_length=500)
-    color_hex: str = Field(default="#4F46E5", regex=r"^#[0-9A-Fa-f]{6}$")
+    color_hex: str = Field(default="#4F46E5", pattern=r"^#[0-9A-Fa-f]{6}$")
 
     criteria: Dict[str, Any] = Field(..., min_items=1)
     points_value: int = Field(default=10, ge=1, le=1000)
@@ -252,7 +252,7 @@ class BadgeUpdate(BaseModel):
     category: Optional[str] = Field(None, min_length=1, max_length=100)
 
     icon_url: Optional[str] = Field(None, max_length=500)
-    color_hex: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    color_hex: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
 
     criteria: Optional[Dict[str, Any]] = None
     points_value: Optional[int] = Field(None, ge=1, le=1000)

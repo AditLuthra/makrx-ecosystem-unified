@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Grid, List, Filter } from 'lucide-react';
-import { api, type Product } from '@/lib/api';
+import { storeApi, type Product } from '@/services/storeApi';
 import ProductGrid from '@/components/ProductGrid';
 import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
 import SortSelect from '@/components/SortSelect';
@@ -24,7 +24,7 @@ export default function ComponentsPage() {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const productsData = await api.getProducts({
+        const productsData = await storeApi.getProducts({
           category: 'components',
           per_page: 20,
           sort: sortBy,

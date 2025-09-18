@@ -8,13 +8,16 @@ from sqlalchemy.sql import case
 import logging
 
 from ..database import get_db
-from models.enhanced_analytics import EquipmentUtilizationMetrics
-from models.enhanced_member import Member, MemberActivityLog
-from models.skill import MemberSkill
-from models.machine_access import UserCertification, SafetyIncident
-from models.equipment import Equipment, EquipmentReservation
+from ..models.enhanced_analytics import EquipmentUtilizationMetrics
+from ..models.enhanced_member import Member, MemberActivityLog
+try:
+    from ..models.skill import MemberSkill
+except ImportError:  # Backward compatibility when MemberSkill model is absent
+    MemberSkill = None
+from ..models.machine_access import UserCertification, SafetyIncident
+from ..models.equipment import Equipment, EquipmentReservation
 
-from models.billing import Transaction, CreditTransaction
+from ..models.billing import Transaction, CreditTransaction
 
 logger = logging.getLogger(__name__)
 
@@ -664,17 +667,20 @@ class RealAnalyticsService:
             )
 
             # Skills and certifications
-            skills_distribution = (
-                self.db.query(
-                    MemberSkill.skill_name,
-                    MemberSkill.skill_level,
-                    func.count(MemberSkill.id).label("member_count"),
+            if MemberSkill is not None:
+                skills_distribution = (
+                    self.db.query(
+                        MemberSkill.skill_name,
+                        MemberSkill.skill_level,
+                        func.count(MemberSkill.id).label("member_count"),
+                    )
+                    .join(Member, MemberSkill.member_id == Member.id)
+                    .filter(Member.makerspace_id == makerspace_id)
+                    .group_by(MemberSkill.skill_name, MemberSkill.skill_level)
+                    .all()
                 )
-                .join(Member, MemberSkill.member_id == Member.id)
-                .filter(Member.makerspace_id == makerspace_id)
-                .group_by(MemberSkill.skill_name, MemberSkill.skill_level)
-                .all()
-            )
+            else:
+                skills_distribution = []
 
             # Recent certifications
             recent_certifications = (

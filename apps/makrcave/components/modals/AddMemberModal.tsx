@@ -14,22 +14,43 @@ interface AddMemberModalProps {
   membershipPlans: MembershipPlan[];
 }
 
+type MemberRole = 'user' | 'service_provider' | 'admin' | 'makerspace_admin';
+
+interface AddMemberFormState {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: MemberRole;
+  membership_plan_id: string;
+  skills: string;
+}
+
+const buildDefaultFormState = (): AddMemberFormState => ({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  role: 'user',
+  membership_plan_id: '',
+  skills: '',
+});
+
 const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, membershipPlans }) => {
   const { addMember } = useMember();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    role: 'user',
-    membership_plan_id: '',
-    skills: '',
-  });
+  const safePlans = Array.isArray(membershipPlans) ? membershipPlans : [];
 
-  const handleInputChange = (field: string, value: string) => {
+  const [formData, setFormData] = useState<AddMemberFormState>(() => buildDefaultFormState());
+
+  const resetForm = () => setFormData(buildDefaultFormState());
+
+  const handleInputChange = <Field extends keyof AddMemberFormState>(
+    field: Field,
+    value: AddMemberFormState[Field],
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
@@ -58,20 +79,14 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, mem
     try {
       await addMember({
         ...formData,
-        role: formData.role as 'user' | 'service_provider' | 'admin' | 'makerspace_admin',
-        skills: formData.skills ? formData.skills.split(',').map((s) => s.trim()) : [],
+        role: formData.role,
+        skills: formData.skills
+          ? formData.skills.split(',').map((skill) => skill.trim()).filter(Boolean)
+          : [],
       });
 
       // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        role: 'user',
-        membership_plan_id: '',
-        skills: '',
-      });
+      resetForm();
 
       onOpenChange(false);
     } catch (err) {
@@ -82,15 +97,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, mem
   };
 
   const handleCancel = () => {
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      role: 'user',
-      membership_plan_id: '',
-      skills: '',
-    });
+    resetForm();
     setError(null);
     onOpenChange(false);
   };
@@ -173,7 +180,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, mem
             <Label htmlFor="role">Role *</Label>
             <Select
               value={formData.role}
-              onValueChange={(value) => handleInputChange('role', value)}
+              onValueChange={(value) => handleInputChange('role', value as MemberRole)}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select role" />
@@ -197,11 +204,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ open, onOpenChange, mem
                 <SelectValue placeholder="Select membership plan" />
               </SelectTrigger>
               <SelectContent>
-                {membershipPlans.map((plan) => (
+                {safePlans.map((plan) => {
+                  const label = plan.name || 'Untitled plan';
+                  const price =
+                    typeof plan.price === 'number' && Number.isFinite(plan.price)
+                      ? `$${plan.price.toFixed(2)}`
+                      : 'No price listed';
+                  return (
                   <SelectItem key={plan.id} value={plan.id}>
-                    {plan.name} - ${plan.price}
+                      {label} - {price}
                   </SelectItem>
-                ))}
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>

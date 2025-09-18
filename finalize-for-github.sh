@@ -337,10 +337,10 @@ const newScripts = {
   "type-check": "npm run type-check --workspaces --if-present",
   
   // Database scripts
-  "db:migrate": "cd backends/makrcave && alembic upgrade head && cd ../makrx-store && alembic upgrade head",
+  "db:migrate": "cd backends/makrcave && PYTHONPATH=../.. ./venv/bin/alembic upgrade head && cd ../makrx_store && if [ -z \"$DATABASE_URL\" ]; then echo 'WARNING: Skipping MakrX Store migrations. Set DATABASE_URL to your Postgres connection string first.'; else PYTHONPATH=../.. ./venv/bin/alembic upgrade head; fi && cd ../makrx_events && PYTHONPATH=../.. ./venv/bin/alembic upgrade head",
   "db:seed": "npm run db:seed:makrcave && npm run db:seed:store && npm run db:seed:events",
-  "db:seed:makrcave": "cd backends/makrcave && python scripts/seed_database.py",
-  "db:seed:store": "cd backends/makrx-store && python scripts/seed_database.py",
+  "db:seed:makrcave": "cd backends/makrcave && PYTHONPATH=../.. ./venv/bin/python seed.py",
+  "db:seed:store": "cd backends/makrx_store && if [ -z \"$DATABASE_URL\" ]; then echo 'WARNING: Skipping MakrX Store seed. Set DATABASE_URL before seeding.'; else PYTHONPATH=../.. ./venv/bin/python seed_data.py; fi",
   "db:seed:events": "echo 'No seed for events backend' && exit 0",
   
   // Docker scripts

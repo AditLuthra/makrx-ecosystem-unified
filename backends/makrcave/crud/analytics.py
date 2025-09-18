@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime, date, timedelta
 import uuid
 
-from models.analytics import (
+from ..models.analytics import (
     UsageEvent,
     AnalyticsSnapshot,
     ReportRequest,
@@ -14,7 +14,7 @@ from models.analytics import (
     RevenueAnalytics,
     EventType,
 )
-from schemas.analytics import (
+from ..schemas.analytics import (
     UsageEventCreate,
     ReportRequestCreate,
     EquipmentUsageLogCreate,
@@ -87,7 +87,7 @@ class AnalyticsCRUD:
 
         if total_events == 0:
             # No data available, use mock data
-            from utils.analytics_mock_data import get_mock_analytics_overview
+            from ..utils.analytics_mock_data import get_mock_analytics_overview
 
             return get_mock_analytics_overview()
         today = datetime.now().date()
@@ -186,7 +186,7 @@ class AnalyticsCRUD:
         )
 
         if total_events == 0:
-            from utils.analytics_mock_data import get_mock_usage_stats
+            from ..utils.analytics_mock_data import get_mock_usage_stats
 
             return get_mock_usage_stats(period.value)
         end_date = datetime.now()

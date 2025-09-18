@@ -5,6 +5,7 @@ import { createContext, useContext, ReactNode } from 'react';
 interface UserSkill {
   skillId: string;
   status: 'certified' | 'in_progress' | 'expired' | 'revoked';
+  level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 
 interface AccessCheckResult {

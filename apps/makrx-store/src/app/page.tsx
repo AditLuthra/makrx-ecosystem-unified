@@ -4,41 +4,26 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Star, Users, Package, Truck, Clock, QrCode } from 'lucide-react';
-import { api, type Product, type Category, formatPrice } from '@/lib/api';
+import {
+  useGetStoreFeaturedProductsQuery,
+  useGetStoreCategoriesQuery,
+} from '@/services/storeApi';
+import type { Product, Category } from '@/types';
+
+function formatPrice(price: number, currency: string = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+    }).format(price);
+}
 
 export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: featuredProductsData, isLoading: featuredProductsLoading } = useGetStoreFeaturedProductsQuery(8);
+  const { data: categoriesData, isLoading: categoriesLoading } = useGetStoreCategoriesQuery();
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [productsData, categoriesData] = await Promise.all([
-          api.getFeaturedProducts(8),
-          api.getCategories(),
-        ]);
-
-        setFeaturedProducts(Array.isArray(productsData) ? productsData : []);
-        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-      } catch (error) {
-        // Silently handle errors in development when using mock data
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Using fallback data due to backend unavailability');
-        } else {
-          console.error('Failed to load homepage data:', error);
-        }
-
-        // Set empty arrays as fallback
-        setFeaturedProducts([]);
-        setCategories([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+  const featuredProducts = featuredProductsData || [];
+  const categories = categoriesData || [];
+  const loading = featuredProductsLoading || categoriesLoading;
 
   const handleCategoryClick = (category: Category) => {
     window.location.href = `/catalog/${category.slug}`;

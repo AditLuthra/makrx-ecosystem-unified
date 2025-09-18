@@ -20,7 +20,7 @@ from pathlib import Path
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_user_optional
-from models.job_management import (
+from ..models.job_management import (
     ServiceJob,
     ServiceJobFile,
     JobStatusUpdate,
@@ -35,7 +35,7 @@ from models.job_management import (
     JobType,
     FilamentType,
 )
-from schemas.job_management import (
+from ..schemas.job_management import (
     ServiceJobCreate,
     ServiceJobUpdate,
     ServiceJobResponse,

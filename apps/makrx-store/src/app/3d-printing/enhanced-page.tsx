@@ -23,7 +23,7 @@ import {
   MapPin,
   Truck,
 } from 'lucide-react';
-import { api, formatPrice } from '@/lib/api';
+import { storeApi, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { STLPreview } from '@/components/STLPreview';
 import { SVGPreview } from '@/components/SVGPreview';
@@ -274,7 +274,7 @@ export default function Enhanced3DPrintingPage() {
 
       try {
         // Get upload URL
-        const uploadResponse = await api.createUploadUrl(
+        const uploadResponse = await storeApi.createUploadUrl(
           file.name,
           file.type || 'application/octet-stream',
           file.size,
@@ -297,7 +297,7 @@ export default function Enhanced3DPrintingPage() {
         }
 
         // Mark upload as complete
-        await api.completeUpload(uploadResponse.upload_id, uploadResponse.file_key);
+        await storeApi.completeUpload(uploadResponse.upload_id, uploadResponse.file_key);
 
         // Update status to processing
         setUploadedFiles((prev) =>
@@ -323,7 +323,7 @@ export default function Enhanced3DPrintingPage() {
 
     const poll = async () => {
       try {
-        const upload = await api.getUpload(uploadId);
+        const upload = await storeApi.getUpload(uploadId);
 
         if (upload.status === 'processed') {
           setUploadedFiles((prev) =>
@@ -416,7 +416,7 @@ export default function Enhanced3DPrintingPage() {
     try {
       const file = processedFiles[0];
 
-      const quoteData = await api.createQuote({
+      const quoteData = await storeApi.createQuote({
         upload_id: file.id,
         service_type: activeService,
         material: selectedMaterial,
@@ -442,7 +442,7 @@ export default function Enhanced3DPrintingPage() {
 
     try {
       // Create service order
-      const order = await api.createServiceOrder(quote.id, {
+      const order = await storeApi.createServiceOrder(quote.id, {
         delivery_method: 'pickup', // This would be user-selected
         notes: '',
       });

@@ -23,7 +23,7 @@ import {
   Calendar,
   DollarSign,
 } from 'lucide-react';
-import { api, formatPrice } from '@/lib/api';
+import { storeApi, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface OrderStatus {
@@ -129,7 +129,7 @@ export default function OrderTracking() {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.getServiceOrder(orderId);
+      const response = await storeApi.getServiceOrder(orderId);
       setOrder(response);
     } catch (err: any) {
       console.error('Failed to load order:', err);
@@ -142,7 +142,7 @@ export default function OrderTracking() {
   const refreshOrder = async () => {
     try {
       setRefreshing(true);
-      const response = await api.getServiceOrder(orderId);
+      const response = await storeApi.getServiceOrder(orderId);
       setOrder(response);
     } catch (err) {
       console.error('Failed to refresh order:', err);

@@ -10,6 +10,7 @@ export type NotificationType =
   | 'error'
   | 'inventory'
   | 'equipment'
+  | 'project'
   | 'projects'
   | 'system'
   | 'user'
@@ -25,6 +26,7 @@ export interface Notification {
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   category?: NotificationType;
   actionUrl?: string;
+  actionLabel?: string;
   actions?: Array<{
     label: string;
     action: () => void;

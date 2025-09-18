@@ -9,8 +9,8 @@ export function useModuleFlag(_key: string, defaultValue: boolean = true) {
 }
 
 export function useSpaceFlag(
-  _makerspaceId: string,
   _key: string,
+  _makerspaceId?: string,
   defaultValue: boolean = true,
 ) {
   return defaultValue;

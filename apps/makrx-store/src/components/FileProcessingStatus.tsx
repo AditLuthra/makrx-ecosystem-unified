@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { useNotifications } from '@/contexts/NotificationContext';
 import {
   FileText,
@@ -106,7 +106,7 @@ export default function FileProcessingStatus({
     // Fallback polling every 5 seconds
     const pollStatus = async () => {
       try {
-        const status = await api.getProcessingStatus(uploadId);
+        const status = await storeApi.getProcessingStatus(uploadId);
         setStatus(status.status);
         setProgress(status.progress || 0);
 

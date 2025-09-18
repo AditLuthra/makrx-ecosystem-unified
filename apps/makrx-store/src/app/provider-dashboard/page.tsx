@@ -27,7 +27,7 @@ import {
   Minus,
   ExternalLink,
 } from 'lucide-react';
-import { api, formatPrice } from '@/lib/api';
+import { storeApi, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AvailableJob {
@@ -120,7 +120,7 @@ export default function ProviderDashboard() {
 
   const loadDashboardStats = async () => {
     try {
-      const response = await api.getProviderDashboard();
+      const response = await storeApi.getProviderDashboard();
       setStats(response.stats);
       setNotifications(response.notifications || []);
     } catch (error) {
@@ -130,7 +130,7 @@ export default function ProviderDashboard() {
 
   const loadAvailableJobs = async () => {
     try {
-      const response = await api.getAvailableJobs();
+      const response = await storeApi.getAvailableJobs();
       const jobs = Array.isArray(response) ? response : (response as any).available_jobs || [];
       setAvailableJobs(jobs);
     } catch (error) {
@@ -140,7 +140,7 @@ export default function ProviderDashboard() {
 
   const loadAcceptedJobs = async () => {
     try {
-      const response = await api.getProviderJobs();
+      const response = await storeApi.getProviderJobs();
       setAcceptedJobs(response.jobs || []);
     } catch (error) {
       console.error('Failed to load accepted jobs:', error);
@@ -149,7 +149,7 @@ export default function ProviderDashboard() {
 
   const loadInventory = async () => {
     try {
-      const response = await api.getProviderInventory();
+      const response = await storeApi.getProviderInventory();
       const items = (response as any).inventory || response || [];
       setInventory(items);
     } catch (error) {
@@ -159,7 +159,7 @@ export default function ProviderDashboard() {
 
   const acceptJob = async (jobId: string) => {
     try {
-      await api.acceptJob(jobId);
+      await storeApi.acceptJob(jobId);
       setNotifications((prev) => [
         ...prev,
         {
@@ -185,7 +185,7 @@ export default function ProviderDashboard() {
 
   const updateJobStatus = async (jobId: string, status: string, notes?: string) => {
     try {
-      await api.updateJobStatus(jobId, status, notes);
+      await storeApi.updateJobStatus(jobId, status, notes);
       loadAcceptedJobs();
       setNotifications((prev) => [
         ...prev,
@@ -206,7 +206,7 @@ export default function ProviderDashboard() {
     action: 'add' | 'subtract',
   ) => {
     try {
-      await api.updateProviderInventory(materialId, quantity, action);
+      await storeApi.updateProviderInventory(materialId, quantity, action);
       loadInventory();
     } catch (error) {
       console.error('Failed to update inventory:', error);

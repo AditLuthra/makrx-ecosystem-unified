@@ -10,14 +10,14 @@ from ..database import get_db
 from ..dependencies import get_current_user
 
 # Use enhanced member model
-from models.enhanced_member import Member
-from models.membership_plans import (
+from ..models.enhanced_member import Member
+from ..models.membership_plans import (
     AccessType,
     BillingCycle,
     MembershipPlan,
     PlanType,
 )
-from security.events import SecurityEventType, log_security_event
+from ..security.events import SecurityEventType, log_security_event
 
 router = APIRouter(prefix="/api/v1/membership-plans", tags=["Membership Plans"])
 
@@ -58,7 +58,7 @@ class MembershipPlanCreate(BaseModel):
     display_order: int = Field(default=0, ge=0)
     highlight_plan: bool = False
     badge_text: Optional[str] = Field(None, max_length=50)
-    custom_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    custom_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     terms_text: Optional[str] = None
     contract_length_months: Optional[int] = Field(None, ge=1)
     early_termination_fee: float = Field(default=0.0, ge=0)
@@ -101,7 +101,7 @@ class MembershipPlanUpdate(BaseModel):
     display_order: Optional[int] = Field(None, ge=0)
     highlight_plan: Optional[bool] = None
     badge_text: Optional[str] = Field(None, max_length=50)
-    custom_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    custom_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     terms_text: Optional[str] = None
     contract_length_months: Optional[int] = Field(None, ge=1)
     early_termination_fee: Optional[float] = Field(None, ge=0)

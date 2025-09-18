@@ -4,8 +4,8 @@ from typing import List, Optional, Dict, Any
 
 from ..database import get_db
 from ..dependencies import get_current_user, require_role
-from models.skill import SkillStatus, RequestStatus
-from schemas.skill import (
+from ..models.skill import SkillStatus, RequestStatus
+from ..schemas.skill import (
     Skill,
     SkillCreate,
     SkillUpdate,
@@ -25,7 +25,7 @@ from schemas.skill import (
     SkillAnalytics,
     MakerspaceSkillOverview,
 )
-from crud import skill as skill_crud
+from ..crud import skill as skill_crud
 
 router = APIRouter(prefix="/api/v1/skills", tags=["skills"])
 
@@ -342,7 +342,7 @@ async def check_bulk_equipment_access(
     )
 
     # Get all equipment in makerspace
-    from crud.equipment import get_equipment
+    from ..crud.equipment import get_equipment
 
     equipment_list = get_equipment(db=db, makerspace_id=makerspace_id)
 
@@ -377,7 +377,7 @@ async def get_equipment_skill_requirements(
     current_user=Depends(get_current_user),
 ):
     """Get skill requirements for all equipment"""
-    from crud.equipment import get_equipment
+    from ..crud.equipment import get_equipment
 
     equipment_list = get_equipment(db=db, makerspace_id=makerspace_id)
 

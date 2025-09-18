@@ -37,7 +37,7 @@ chmod +x scripts/unix/setup.sh
 ./scripts/unix/setup.sh
 
 # (NEW) Set up Python 3.12 virtual environments and install backend dependencies
-for d in backends/makrcave backends/makrx-store backends/makrx_events; do
+for d in backends/makrcave backends/makrx_store backends/makrx_events ; do
   cd $d
   python3.12 -m venv venv
   source venv/bin/activate
@@ -56,7 +56,7 @@ cd makrx-ecosystem-unified
 scripts\windows\setup.bat
 
 REM (NEW) Set up Python virtual environments and install backend dependencies
-FOR %%d IN (backends\makrcave backends\makrx-store backends\makrx_events) DO (
+FOR %%d IN (backends\makrcave backends\makrx_store backends\makrx_events) DO (
   cd %%d
   python -m venv venv
   call venv\Scripts\activate
@@ -82,7 +82,7 @@ cd makrx-ecosystem-unified
 npm ci --legacy-peer-deps
 
 # (NEW) Set up Python 3.12 virtual environments and install backend dependencies
-for d in backends/makrcave backends/makrx-store backends/makrx_events; do
+for d in backends/makrcave backends/makrx_store backends/makrx_events; do
   cd $d
   python3.12 -m venv venv
   source venv/bin/activate
@@ -113,7 +113,7 @@ Edit the `.env` file with your configuration:
 
 ```bash
 # Database Configuration
-DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem
+DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5432/makrx_ecosystem
 REDIS_URL=redis://localhost:6380
 
 # Keycloak Configuration
@@ -160,13 +160,19 @@ docker-compose logs -f keycloak
 #### Step 7: Initialize Database
 
 ```bash
-# Run database migrations
+# Load environment variables so Alembic can connect to Postgres (update if you
+# customized ports or credentials)
+export DATABASE_URL="postgresql://makrx:makrx_dev_password@localhost:5432/makrx_ecosystem"
+
+# Run database migrations (MakrX Store migrations are skipped if DATABASE_URL is unset)
 npm run db:migrate
 
 # Seed with sample data (optional)
 npm run db:seed
 
-# (If you see 'alembic: not found', 'python: not found', or 'No module named uvicorn', ensure you have activated the correct Python 3.12 virtual environment in each backend directory.)
+# If migrations are skipped or fail, confirm DATABASE_URL, ensure Docker services
+# are healthy (`docker-compose ps`), and verify the Python 3.12 virtual
+# environments in each backend contain dependencies.
 ```
 
 #### Step 8: Start Development Servers

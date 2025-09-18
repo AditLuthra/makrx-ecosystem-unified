@@ -14,7 +14,7 @@ import uuid
 
 from ..database import get_db
 from ..dependencies import get_current_user
-from schemas.enhanced_analytics import (
+from ..schemas.enhanced_analytics import (
     EnhancedUsageMetricsCreate,
     EnhancedUsageMetricsResponse,
     EquipmentUtilizationMetricsCreate,
@@ -44,7 +44,7 @@ from schemas.enhanced_analytics import (
     AlertSeverity,
     TrendDirection,
 )
-from crud import enhanced_analytics as crud_analytics
+from ..crud import enhanced_analytics as crud_analytics
 
 router = APIRouter()
 

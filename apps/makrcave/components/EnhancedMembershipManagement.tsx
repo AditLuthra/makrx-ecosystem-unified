@@ -700,7 +700,10 @@ const EnhancedMembershipManagement: React.FC = () => {
                   </Select>
 
                   <div className="flex items-center gap-2">
-                    <Checkbox checked={showInactive} onCheckedChange={setShowInactive} />
+                    <Checkbox
+                      checked={showInactive}
+                      onCheckedChange={(checked) => setShowInactive(checked === true)}
+                    />
                     <label className="text-sm">Show Inactive</label>
                   </div>
                 </div>
@@ -740,7 +743,10 @@ const EnhancedMembershipManagement: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Checkbox checked={showInactive} onCheckedChange={setShowInactive} />
+                    <Checkbox
+                      checked={showInactive}
+                      onCheckedChange={(checked) => setShowInactive(checked === true)}
+                    />
                     <label className="text-sm">Show Inactive</label>
                   </div>
                 </div>

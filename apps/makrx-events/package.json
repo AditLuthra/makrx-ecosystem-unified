@@ -27,6 +27,7 @@
     "crypto-browserify": "^3.12.1",
     "drizzle-orm": "^0.44.5",
     "eslint-config-next": "^14.2.3",
+    "jose": "^4.15.9",
     "keycloak-js": "^25.0.0",
     "lucide-react": "^0.462.0",
     "next": "14.2.32",

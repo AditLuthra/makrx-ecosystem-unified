@@ -38,8 +38,8 @@ const DowntimeTimeline: React.FC<DowntimeTimelineProps> = ({ logs }) => {
     )
     .map((log) => {
       const startTime = parseISO(log.created_at);
-      const endTime = log.resolved_at ? parseISO(log.resolved_at) : null;
-      const duration = endTime ? differenceInHours(endTime, startTime) : null;
+      const endTime = log.resolved_at ? parseISO(log.resolved_at) : undefined;
+      const duration = endTime ? differenceInHours(endTime, startTime) : undefined;
 
       // Determine impact level based on priority and type
       let impactLevel: 'low' | 'medium' | 'high' | 'critical' = 'medium';

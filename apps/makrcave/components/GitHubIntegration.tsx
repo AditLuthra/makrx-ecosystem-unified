@@ -54,12 +54,19 @@ interface GitHubIntegrationProps {
   repoUrl: string;
   branch?: string;
   className?: string;
+  defaultBranch?: string;
+  projectId?: string;
+  repoName?: string;
+  isConnected?: boolean;
+  canEdit?: boolean;
+  onUpdate?: () => void;
 }
 
 const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
   repoUrl,
-  branch = 'main',
+  branch,
   className = '',
+  defaultBranch = 'main',
 }) => {
   const [repo, setRepo] = useState<GitHubRepo | null>(null);
   const [commits, setCommits] = useState<GitHubCommit[]>([]);
@@ -76,6 +83,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
   };
 
   const repoInfo = getRepoInfo(repoUrl);
+  const activeBranch = branch || defaultBranch;
 
   // Mock data for development (since GitHub API requires authentication)
   const getMockData = () => {
@@ -170,7 +178,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
     if (repoUrl && repoInfo) {
       fetchGitHubData();
     }
-  }, [repoUrl, branch]);
+  }, [repoUrl, activeBranch]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -273,7 +281,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
 
                   <div className="flex items-center gap-2">
                     <GitBranch className="h-4 w-4" />
-                    <Badge variant="outline">{branch}</Badge>
+                    <Badge variant="outline">{activeBranch}</Badge>
                   </div>
                 </div>
               ) : null}
@@ -352,7 +360,7 @@ const GitHubIntegration: React.FC<GitHubIntegrationProps> = ({
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              window.open(`${repoUrl}/blob/${branch}/${file.path}`, '_blank')
+                              window.open(`${repoUrl}/blob/${activeBranch}/${file.path}`, '_blank')
                             }
                           >
                             <ExternalLink className="h-3 w-3" />

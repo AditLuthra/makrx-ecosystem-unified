@@ -31,6 +31,10 @@ prometheus-fastapi-instrumentator==6.1.0
 # HTTP Client
 httpx==0.27.2
 requests==2.32.3
+starlette>=0.20.0
+
+# Payment Gateway
+razorpay==1.4.2
 
 # Utilities
 python-dateutil==2.9.0.post0

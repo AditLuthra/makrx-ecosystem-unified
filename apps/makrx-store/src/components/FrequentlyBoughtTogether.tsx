@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Product, formatPrice } from '@/lib/api';
+import { storeApi, Product, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { ShoppingCart, Plus, Check } from 'lucide-react';
@@ -19,7 +19,7 @@ export default function FrequentlyBoughtTogether({
 }: FrequentlyBoughtTogetherProps) {
   const { isAuthenticated } = useAuth();
   const { addNotification } = useNotifications();
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set([baseProduct.id]));
+  const [selectedProducts, setSelectedProducts] = useState<Set<number>>(new Set([baseProduct.id]));
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Calculate total price
@@ -29,7 +29,7 @@ export default function FrequentlyBoughtTogether({
     return sum + (product?.price || 0);
   }, 0);
 
-  const toggleProduct = (productId: string) => {
+  const toggleProduct = (productId: number) => {
     const newSelected = new Set(selectedProducts);
     if (newSelected.has(productId)) {
       // Don't allow deselecting the base product
@@ -55,15 +55,11 @@ export default function FrequentlyBoughtTogether({
     setIsAddingToCart(true);
     try {
       const selectedProductList = [...selectedProducts]
-        .map((id) =>
-          id === baseProduct.id ? baseProduct : recommendations.find((p) => p.id === id),
-        )
+        .map((id) => (id === baseProduct.id ? baseProduct : recommendations.find((p) => p.id === id)))
         .filter(Boolean) as Product[];
 
-      // Add each selected product to cart
       for (const product of selectedProductList) {
-        // Mock cart addition - replace with actual API call
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        await storeApi.addToCart(product.id, 1);
       }
 
       addNotification({

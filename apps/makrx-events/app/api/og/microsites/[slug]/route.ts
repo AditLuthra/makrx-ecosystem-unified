@@ -2,6 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageResponse } from 'next/og';
 import React from 'react';
+import { db } from '@/lib/db';
+import { microsites } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 export const runtime = 'edge';
 
@@ -11,52 +14,43 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
 
-    // Optional query parameters for customization
-    const title = searchParams.get('title') || 'MakerFest 2024';
-    const subtitle = searchParams.get('subtitle') || 'Join the largest maker community event';
-    const theme = searchParams.get('theme') || 'festival-classic';
-    const bgImage = searchParams.get('bg');
+    const [microsite] = await db
+      .select()
+      .from(microsites)
+      .where(eq(microsites.slug, slug))
+      .limit(1);
 
-    // Mock microsite data - replace with actual database query
-    const mockMicrosite = {
-      slug,
-      title: title,
-      subtitle: subtitle,
-      description:
-        'Experience the future of making with hands-on workshops, competitions, and exhibitions.',
-      theme: {
-        primary: '#3B82F6',
-        accent: '#8B5CF6',
-        background: '#FFFFFF',
-        foreground: '#1F2937',
-      },
-      heroImage: bgImage || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
-      startsAt: '2024-04-15T09:00:00Z',
-      endsAt: '2024-04-17T18:00:00Z',
-      venue: 'MakerSpace Convention Center',
-    };
+    if (!microsite) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
 
-    // Format dates
-    const startDate = new Date(mockMicrosite.startsAt);
-    const endDate = new Date(mockMicrosite.endsAt);
-    const dateRange = `${startDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    })} - ${endDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })}`;
+    const requestedTitle = searchParams.get('title');
+    const requestedSubtitle = searchParams.get('subtitle');
+    const requestedBackground = searchParams.get('bg');
 
-    const bgImage = mockMicrosite.heroImage
-      ? 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(' +
-        mockMicrosite.heroImage +
-        ')'
-      : 'linear-gradient(135deg, ' +
-        mockMicrosite.theme.primary +
-        ', ' +
-        mockMicrosite.theme.accent +
-        ')';
+    const title = requestedTitle ?? microsite.title ?? slug;
+    const subtitle = requestedSubtitle ?? microsite.subtitle ?? microsite.description ?? '';
+
+    const startDate = microsite.startsAt ? new Date(microsite.startsAt) : null;
+    const endDate = microsite.endsAt ? new Date(microsite.endsAt) : null;
+    let dateRange = 'Dates coming soon';
+    if (startDate && endDate) {
+      dateRange = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    } else if (startDate) {
+      dateRange = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+
+    const settings = (microsite.settings ?? {}) as Record<string, unknown>;
+    const heroImage = requestedBackground || (microsite.heroImage as string | null);
+    const theme = (settings.theme as { primary?: string; accent?: string } | undefined) ?? {};
+
+    const backgroundImage = heroImage
+      ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${heroImage})`
+      : `linear-gradient(135deg, ${theme.primary ?? '#3B82F6'}, ${theme.accent ?? '#8B5CF6'})`;
 
     return new ImageResponse(
       React.createElement(
@@ -69,8 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: mockMicrosite.theme.background,
-            backgroundImage: bgImage,
+            backgroundImage,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             fontSize: 32,
@@ -102,21 +95,23 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
                 lineHeight: 1.1,
               },
             },
-            mockMicrosite.title,
+            title,
           ),
-          React.createElement(
-            'div',
-            {
-              style: {
-                fontSize: '36px',
-                color: 'rgba(255, 255, 255, 0.9)',
-                marginBottom: '32px',
-                textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
-                fontWeight: 400,
-              },
-            },
-            mockMicrosite.subtitle,
-          ),
+          subtitle
+            ? React.createElement(
+                'div',
+                {
+                  style: {
+                    fontSize: '36px',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '32px',
+                    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
+                    fontWeight: 400,
+                  },
+                },
+                subtitle,
+              )
+            : null,
           React.createElement(
             'div',
             {
@@ -141,51 +136,31 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
                   fontWeight: 'bold',
                 },
               },
-              '📅 ' + dateRange,
+              `📅 ${dateRange}`,
             ),
-            React.createElement(
-              'div',
-              {
-                style: {
-                  fontSize: '24px',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                },
-              },
-              '📍 ' + mockMicrosite.venue,
-            ),
+            microsite.location
+              ? React.createElement(
+                  'div',
+                  {
+                    style: {
+                      fontSize: '24px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    },
+                  },
+                  `📍 ${microsite.location}`,
+                )
+              : null,
           ),
           React.createElement(
             'div',
             {
               style: {
-                position: 'absolute',
-                bottom: '40px',
-                right: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                color: 'rgba(255, 255, 255, 0.8)',
+                marginTop: '40px',
                 fontSize: '20px',
+                color: 'rgba(255, 255, 255, 0.85)',
               },
             },
-            React.createElement(
-              'div',
-              {
-                style: {
-                  width: '32px',
-                  height: '32px',
-                  backgroundColor: mockMicrosite.theme.primary,
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontWeight: 'bold',
-                },
-              },
-              'M',
-            ),
-            'MakrX.events',
+            'Powered by MakrX.events',
           ),
         ),
       ),
@@ -195,7 +170,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       },
     );
   } catch (error) {
-    console.error('Error generating OG image:', error);
-    return new NextResponse('Failed to generate image', { status: 500 });
+    console.error('Failed to generate microsite OG image:', error);
+    return NextResponse.json({ error: 'Failed to generate image' }, { status: 500 });
   }
 }

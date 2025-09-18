@@ -1,4 +1,59 @@
-from fastapi import Response
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+    Query,
+    BackgroundTasks,
+    Request,
+    Response,
+)
+from fastapi.security import HTTPBearer
+from fastapi.responses import FileResponse, StreamingResponse
+from sqlalchemy.orm import Session
+from typing import List, Optional
+import uuid
+import os
+import io
+from datetime import datetime, timedelta
+
+from ..database import get_db
+from ..dependencies import get_current_user
+from ..schemas.billing import (
+    TransactionCreate,
+    TransactionUpdate,
+    TransactionResponse,
+    InvoiceCreate,
+    InvoiceUpdate,
+    InvoiceResponse,
+    CreditWalletResponse,
+    CreditWalletUpdate,
+    CreditTransactionResponse,
+    RefundCreate,
+    RefundResponse,
+    PaymentMethodCreate,
+    PaymentMethodResponse,
+    CheckoutSessionCreate,
+    CheckoutSessionResponse,
+    BillingAnalytics,
+    TransactionFilter,
+    TransactionSort,
+    ServiceBillingCreate,
+    ServiceBillingResponse,
+    WebhookPayload,
+    BulkRefundRequest,
+    CreditAdjustment,
+)
+from ..crud import billing as crud_billing
+from ..utils.payment_service import payment_service, calculate_service_charge
+from ..utils.invoice_generator import (
+    generate_invoice_pdf,
+    save_invoice_to_file,
+    generate_invoice_filename,
+)
+
+router = APIRouter()
+security = HTTPBearer()
 
 
 # Usage by Category endpoint for Pie Chart
@@ -9,7 +64,7 @@ async def get_usage_by_category(
     """Return usage data for pie chart, aggregated by service_type."""
     makerspace_id = _get_user_makerspace_id(current_user)
     # Aggregate successful transactions by service_type
-    from models.billing import Transaction, TransactionStatus
+    from ..models.billing import Transaction, TransactionStatus
     from sqlalchemy import func
 
     results = (
@@ -43,64 +98,6 @@ async def get_usage_by_category(
         for service_type, value in results
     ]
     return data
-
-
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    status,
-    Query,
-    BackgroundTasks,
-    Request,
-)
-from fastapi.security import HTTPBearer
-from fastapi.responses import FileResponse, StreamingResponse
-from sqlalchemy.orm import Session
-from typing import List, Optional
-import uuid
-import os
-import io
-from datetime import datetime, timedelta
-
-from ..database import get_db
-from ..dependencies import get_current_user
-from schemas.billing import (
-    TransactionCreate,
-    TransactionUpdate,
-    TransactionResponse,
-    InvoiceCreate,
-    InvoiceUpdate,
-    InvoiceResponse,
-    CreditWalletResponse,
-    CreditWalletUpdate,
-    CreditTransactionResponse,
-    RefundCreate,
-    RefundResponse,
-    PaymentMethodCreate,
-    PaymentMethodResponse,
-    CheckoutSessionCreate,
-    CheckoutSessionResponse,
-    BillingAnalytics,
-    TransactionFilter,
-    TransactionSort,
-    ServiceBillingCreate,
-    ServiceBillingResponse,
-    WebhookPayload,
-    BulkRefundRequest,
-    CreditAdjustment,
-)
-from crud import billing as crud_billing
-from utils.payment_service import payment_service, calculate_service_charge
-from utils.invoice_generator import (
-    generate_invoice_pdf,
-    save_invoice_to_file,
-    generate_invoice_filename,
-)
-from utils.email_service import send_invoice_email
-
-router = APIRouter()
-security = HTTPBearer()
 
 
 # Transaction routes

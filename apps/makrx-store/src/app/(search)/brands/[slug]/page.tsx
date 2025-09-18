@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProductGrid from '@/components/ProductGrid';
 import SortSelect from '@/components/SortSelect';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
 interface Brand {
   name: string;
@@ -50,9 +50,9 @@ export default function BrandPage() {
     const fetchBrandData = async () => {
       setLoading(true);
       try {
-        const brandData = await api.getBrand(slug);
+        const brandData = await storeApi.getBrand(slug);
         setBrand(brandData);
-        const productsData = await api.advancedSearch({
+        const productsData = await storeApi.advancedSearch({
           filters: { brands: [brandData.name] },
           sort_by: sort,
           page,

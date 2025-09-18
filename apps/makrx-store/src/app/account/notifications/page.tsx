@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { withAuth } from '@/contexts/AuthContext';
 import { useNotifications, requestNotificationPermission } from '@/contexts/NotificationContext';
-import { api, type NotificationSettings } from '@/lib/api';
+import { storeApi, type NotificationSettings } from '@/services/storeApi';
 import {
   Bell,
   BellOff,
@@ -39,7 +39,7 @@ function NotificationSettingsPage() {
 
   const loadSettings = async () => {
     try {
-      const userSettings = await api.getNotificationSettings();
+      const userSettings = await storeApi.getNotificationSettings();
       if (userSettings) setSettings(userSettings);
     } catch (error) {
       console.error('Failed to load notification settings:', error);
@@ -57,7 +57,7 @@ function NotificationSettingsPage() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      await api.updateNotificationSettings(settings);
+      await storeApi.updateNotificationSettings(settings);
       alert('Settings saved successfully!');
     } catch (error) {
       console.error('Failed to save settings:', error);

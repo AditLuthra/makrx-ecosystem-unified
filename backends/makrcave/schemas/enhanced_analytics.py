@@ -313,7 +313,7 @@ class AnalyticsReportCreate(BaseModel):
     filters_applied: Optional[Dict[str, Any]] = None
     report_start_date: datetime
     report_end_date: datetime
-    file_format: str = Field(..., regex="^(pdf|xlsx|csv|json)$")
+    file_format: str = Field(..., pattern="^(pdf|xlsx|csv|json)$")
     is_public: bool = False
     access_permissions: Optional[List[str]] = None
     expires_at: Optional[datetime] = None
@@ -436,7 +436,7 @@ class AnalyticsQuery(BaseModel):
     limit: int = Field(1000, gt=0, le=10000)
     offset: int = Field(0, ge=0)
     sort_by: Optional[str] = None
-    sort_order: str = Field("desc", regex="^(asc|desc)$")
+    sort_order: str = Field("desc", pattern="^(asc|desc)$")
 
 
 class AnalyticsQueryResult(BaseModel):
@@ -471,8 +471,8 @@ class ForecastResult(BaseModel):
 
 # Export and Import Schemas
 class AnalyticsExportRequest(BaseModel):
-    export_type: str = Field(..., regex="^(dashboard|metrics|reports|all)$")
-    format: str = Field(..., regex="^(json|csv|xlsx|pdf)$")
+    export_type: str = Field(..., pattern="^(dashboard|metrics|reports|all)$")
+    format: str = Field(..., pattern="^(json|csv|xlsx|pdf)$")
     date_range: Optional[Dict[str, datetime]] = None
     filters: Optional[Dict[str, Any]] = None
     include_raw_data: bool = False

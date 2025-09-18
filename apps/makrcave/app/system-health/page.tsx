@@ -80,8 +80,10 @@ export default function SystemHealth() {
         degradedServices: latestHealth.services.filter((s) => s.status === 'degraded').length,
         unhealthyServices: latestHealth.services.filter((s) => s.status === 'unhealthy').length,
         averageResponseTime:
-          latestHealth.services.reduce((acc, s) => acc + s.responseTime, 0) /
-          latestHealth.services.length,
+          latestHealth.services.length === 0
+            ? 0
+            : latestHealth.services.reduce((acc, s) => acc + (s.responseTime ?? 0), 0) /
+              latestHealth.services.length,
       },
     };
 

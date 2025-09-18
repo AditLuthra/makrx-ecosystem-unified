@@ -1,45 +1,10 @@
 /**
- * Mock products data - used as fallback when backend is not available
- * This will be replaced with real API data once backend integration is complete
+ * Mock products data - used as fallback when backend is not available.
+ * This will be replaced with real API data once backend integration is complete.
  */
 
-export interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  short_description: string;
-  brand: string;
-  category: string;
-  price: number;
-  sale_price?: number;
-  sku: string;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-  stock_qty: number;
-  tags: string[];
-  specifications: Array<{ key: string; value: string }>;
-  variants?: Array<{
-    id: number;
-    name: string;
-    price: number;
-    stock: number;
-  }>;
-}
-
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  image: string;
-  icon: string;
-  subcategories: Category[];
-  featured: boolean;
-  productCount: number;
-}
+import type { Product, Category } from '@/types';
+export type { Product, Category } from '@/types';
 
 export const products: Product[] = [];
 export const categories: Category[] = [];
@@ -61,5 +26,13 @@ export const sortProducts = (products: Product[], sortBy: string): Product[] => 
 };
 
 export const getProductsByCategory = (category: string): Product[] => {
-  return products.filter((product) => product.category === category);
+  return products.filter((product) => {
+    const categoryRef = product.category;
+    const slugMatch = typeof categoryRef !== 'string' && categoryRef?.slug === category;
+    const nameMatch = typeof categoryRef !== 'string' && categoryRef?.name === category;
+    const stringMatch = typeof categoryRef === 'string' && categoryRef === category;
+    const idMatch =
+      product.category_id !== undefined && String(product.category_id) === category;
+    return slugMatch || nameMatch || idMatch || stringMatch;
+  });
 };

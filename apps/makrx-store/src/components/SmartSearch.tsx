@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, Clock, TrendingUp, Package, User, ArrowRight, X } from 'lucide-react';
-import { products, categories, searchProducts, type Product } from '@/data/products';
+import { products, categories } from '@/data/products';
+import type { Product, Category } from '@/types';
 
 interface SearchResult {
   type: 'product' | 'category' | 'brand' | 'suggestion';
@@ -22,6 +23,29 @@ interface SmartSearchProps {
   autoFocus?: boolean;
   className?: string;
 }
+
+const formatCurrency = (price: number, currency = 'USD'): string => {
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2,
+    }).format(price);
+  } catch {
+    const symbol = currency === 'INR' ? '₹' : '$';
+    return `${symbol}${price}`;
+  }
+};
+
+const resolveProductCategory = (category: Product['category']): string => {
+  if (!category) return '';
+  if (typeof category === 'string') return category;
+  return category.slug || category.name || `${category.id}`;
+};
+
+const resolveCategoryProductCount = (category: Category): number => {
+  return category.product_count ?? category.productCount ?? 0;
+};
 
 export default function SmartSearch({
   placeholder = 'Search products, brands, or parts...',
@@ -82,23 +106,25 @@ export default function SmartSearch({
           (term) =>
             product.name.toLowerCase().includes(term) ||
             product.description.toLowerCase().includes(term) ||
-            product.brand.toLowerCase().includes(term) ||
-            product.tags.some((tag) => tag.toLowerCase().includes(term)) ||
-            product.sku.toLowerCase().includes(term),
+            (product.brand?.toLowerCase() ?? '').includes(term) ||
+            (product.sku?.toLowerCase() ?? '').includes(term) ||
+            (product.tags ?? []).some((tag) => tag.toLowerCase().includes(term)),
         );
       })
       .slice(0, 6);
 
     foundProducts.forEach((product) => {
+      const brandLabel = product.brand ? `${product.brand} • ` : '';
+      const productCategory = resolveProductCategory(product.category);
       results.push({
         type: 'product',
         id: product.id,
         title: product.name,
-        subtitle: `${product.brand} • $${product.price}`,
-        image: product.images[0],
+        subtitle: `${brandLabel}${formatCurrency(product.price, product.currency)}`,
+        image: product.images?.[0] ?? undefined,
         price: product.price,
-        category: product.category,
-        url: `/product/${product.id}`,
+        category: productCategory,
+        url: `/p/${product.slug ?? product.id}`,
       });
     });
 
@@ -108,7 +134,7 @@ export default function SmartSearch({
         expandedTerms.some(
           (term) =>
             category.name.toLowerCase().includes(term) ||
-            category.description.toLowerCase().includes(term),
+            (category.description ?? '').toLowerCase().includes(term),
         ),
       )
       .slice(0, 3);
@@ -118,19 +144,20 @@ export default function SmartSearch({
         type: 'category',
         id: category.id,
         title: category.name,
-        subtitle: `${category.productCount} products`,
+        subtitle: `${resolveCategoryProductCount(category)} products`,
         url: `/catalog/${category.slug}`,
       });
     });
 
     // Search brands
-    const brands = [...new Set(products.map((p) => p.brand))];
+    const brands = [...new Set(products.map((p) => p.brand).filter((brand): brand is string => !!brand))];
     const foundBrands = brands
       .filter((brand) => expandedTerms.some((term) => brand.toLowerCase().includes(term)))
       .slice(0, 2);
 
     foundBrands.forEach((brand) => {
-      const brandProducts = products.filter((p) => p.brand === brand).length;
+      const normalizedBrand = brand.toLowerCase();
+      const brandProducts = products.filter((p) => (p.brand ?? '').toLowerCase() === normalizedBrand).length;
       results.push({
         type: 'brand',
         id: brand.toLowerCase().replace(/\s+/g, '-'),

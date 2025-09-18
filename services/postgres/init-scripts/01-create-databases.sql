@@ -1,13 +1,16 @@
--- Create databases for MakrX ecosystem
-CREATE DATABASE makrx_ecosystem;
-CREATE DATABASE keycloak;
+-- Postgres entrypoint already creates ${POSTGRES_DB}, so we skip creating databases here
 
--- Create user for applications
-CREATE USER makrx_app WITH PASSWORD 'makrx_app_password';
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'makrx_app') THEN
+        CREATE ROLE makrx_app LOGIN PASSWORD 'makrx_app_password';
+    END IF;
+END
+$$;
 
 -- Grant permissions
 GRANT ALL PRIVILEGES ON DATABASE makrx_ecosystem TO makrx_app;
-GRANT ALL PRIVILEGES ON DATABASE keycloak TO makrx;
+-- Keycloak shares the same database instance; grant access only to the primary DB
 
 -- Connect to makrx_ecosystem database to set up schemas
 \c makrx_ecosystem;

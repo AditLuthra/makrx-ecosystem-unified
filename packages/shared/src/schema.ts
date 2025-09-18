@@ -68,15 +68,67 @@ export const insertEventSchema = createInsertSchema(events).pick({
 }) as unknown as z.ZodTypeAny;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 
-// Microsites and sub-events (minimal columns used by routes)
+// Microsites and sub-events
 export const microsites = pgTable("microsites", {
   id: varchar("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   slug: text("slug").notNull(),
-  title: text("title"),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  description: text("description"),
+  status: varchar("status").default("draft"),
+  visibility: varchar("visibility").default("private"),
+  hostType: varchar("host_type"),
+  hostRef: varchar("host_ref"),
+  organizer: text("organizer"),
+  website: text("website"),
+  heroImage: text("hero_image"),
+  location: text("location"),
+  startsAt: timestamp("starts_at"),
+  endsAt: timestamp("ends_at"),
+  templateId: varchar("template_id"),
+  themeId: varchar("theme_id"),
+  highlights: jsonb("highlights"),
+  settings: jsonb("settings"),
+  seo: jsonb("seo"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  publishedAt: timestamp("published_at"),
 });
+export type Microsite = typeof microsites.$inferSelect;
+const baseMicrositeInsertSchema = createInsertSchema(microsites, {
+  startsAt: (field) => field.optional(),
+  endsAt: (field) => field.optional(),
+  highlights: (field) => field.optional(),
+  settings: (field) => field.optional(),
+  seo: (field) => field.optional(),
+});
+export const insertMicrositeSchema = baseMicrositeInsertSchema.extend({
+  slug: baseMicrositeInsertSchema.shape.slug.optional(),
+}) as unknown as z.ZodTypeAny;
+export type InsertMicrosite = z.infer<typeof insertMicrositeSchema>;
+
+export const micrositeSections = pgTable("microsite_sections", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  micrositeId: varchar("microsite_id").notNull(),
+  type: varchar("type").notNull(),
+  order: integer("order").default(0),
+  isVisible: boolean("is_visible").default(true),
+  contentJson: jsonb("content_json"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+export type MicrositeSection = typeof micrositeSections.$inferSelect;
+const baseMicrositeSectionInsertSchema = createInsertSchema(micrositeSections, {
+  order: (field) => field.optional(),
+  isVisible: (field) => field.optional(),
+  contentJson: (field) => field.optional(),
+});
+export const insertPageSectionSchema = baseMicrositeSectionInsertSchema as unknown as z.ZodTypeAny;
+export type InsertMicrositeSection = z.infer<typeof insertPageSectionSchema>;
 
 export const subEvents = pgTable("sub_events", {
   id: varchar("id")
@@ -287,6 +339,8 @@ export const emailQueue = pgTable("email_queue", {
     .default(sql`gen_random_uuid()`),
   to: text("to"),
   recipient: text("recipient"),
+  eventId: varchar("event_id"),
+  userId: varchar("user_id"),
   subject: text("subject").notNull(),
   body: text("body"),
   htmlContent: text("html_content"),
@@ -392,8 +446,6 @@ export const exportJobs = pgTable("export_jobs", {
 export const insertTicketingProfileSchema = z.any();
 export const insertThemeSchema = z.any();
 export const insertSubEventSchema = z.any();
-export const insertPageSectionSchema = z.any();
-export const insertMicrositeSchema = z.any();
 export const insertMicrositeRegistrationSchema = z.any();
 export const insertTicketTierSchema = z.any();
 export const insertCouponSchema = z.any();

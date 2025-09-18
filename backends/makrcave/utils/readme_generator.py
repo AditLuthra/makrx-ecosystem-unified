@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from datetime import datetime
-from models.project import Project
-from crud.project import get_project
+from ..models.project import Project
+from ..crud.project import get_project
 
 
 def generate_project_readme(project: Project) -> str:
@@ -429,7 +429,7 @@ A comprehensive project management platform designed specifically for makerspace
 def create_github_readme(db, project_id: str, user_id: str) -> bool:
     """Create and commit a README.md file to the connected GitHub repository"""
     from .github_service import GitHubService
-    from crud.project import get_project
+    from ..crud.project import get_project
 
     project = get_project(db, project_id, user_id)
     if not project or not project.github_integration_enabled:

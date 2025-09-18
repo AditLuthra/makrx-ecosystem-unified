@@ -1,65 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertMicrositeSchema } from '@shared/schema';
+import { db } from '@/lib/db';
+import { InsertMicrosite, insertMicrositeSchema, microsites } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 // GET /api/microsites/[slug] - Get microsite by slug
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = await params;
 
-    // Mock data - replace with actual database query
-    const mockMicrosite = {
-      id: '1',
-      slug: 'makerfest-2024',
-      title: 'MakerFest 2024',
-      subtitle: 'The Ultimate Maker Experience',
-      description:
-        'Join thousands of makers, inventors, and technology enthusiasts for the largest maker festival on the West Coast.',
-      status: 'published',
-      hostType: 'MakrCave',
-      hostRef: null,
-      startsAt: '2024-03-15T09:00:00Z',
-      endsAt: '2024-03-17T18:00:00Z',
-      templateId: 'festival-classic',
-      themeId: 'blue-theme',
-      visibility: 'public',
-      seo: {
-        title: 'MakerFest 2024 - The Ultimate Maker Experience',
-        description:
-          'Join thousands of makers for the largest maker festival on the West Coast. March 15-17, 2024.',
-        ogImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
-      },
-      settings: {
-        enableTracks: true,
-        enableSpeakers: true,
-        enableRegistration: true,
-        enableTicketing: true,
-        enableSponsors: true,
-      },
-      theme: {
-        id: 'blue-theme',
-        name: 'Blue Theme',
-        tokens: {
-          primary: '#3B82F6',
-          accent: '#8B5CF6',
-          background: '#FFFFFF',
-          foreground: '#1F2937',
-        },
-        assets: {
-          logoUrl: null,
-          heroUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
-          faviconUrl: null,
-        },
-      },
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-02-01T15:30:00Z',
-    };
+    const [microsite] = await db
+      .select()
+      .from(microsites)
+      .where(eq(microsites.slug, slug))
+      .limit(1);
 
-    if (mockMicrosite.slug !== slug) {
+    if (!microsite) {
       return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
     }
 
-    return NextResponse.json(mockMicrosite);
+    return NextResponse.json(microsite);
   } catch (error) {
     console.error('Error fetching microsite:', error);
     return NextResponse.json({ error: 'Failed to fetch microsite' }, { status: 500 });
@@ -72,30 +32,45 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
     const { slug } = await params;
     const body = await request.json();
 
-    // Partial validation - only validate provided fields
-    const partialSchema = insertMicrositeSchema.partial();
-    const validatedData = partialSchema.parse(body);
+    const updates = insertMicrositeSchema.partial().parse(body) as Partial<InsertMicrosite>;
 
-    // Mock update - replace with actual database update
-    const updatedMicrosite = {
-      id: '1',
-      slug,
-      title: validatedData.title || 'MakerFest 2024',
-      subtitle: validatedData.subtitle || 'The Ultimate Maker Experience',
-      description: validatedData.description || 'Join thousands of makers...',
-      status: validatedData.status || 'published',
-      hostType: validatedData.hostType || 'MakrCave',
-      startsAt: validatedData.startsAt || '2024-03-15T09:00:00Z',
-      endsAt: validatedData.endsAt || '2024-03-17T18:00:00Z',
-      templateId: validatedData.templateId || 'festival-classic',
-      themeId: validatedData.themeId || 'blue-theme',
-      visibility: validatedData.visibility || 'public',
-      seo: validatedData.seo || {},
-      settings: validatedData.settings || {},
-      updatedAt: new Date().toISOString(),
-    };
+    const [existing] = await db
+      .select()
+      .from(microsites)
+      .where(eq(microsites.slug, slug))
+      .limit(1);
 
-    return NextResponse.json(updatedMicrosite);
+    if (!existing) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
+
+    const [updated] = await db
+      .update(microsites)
+      .set({
+        title: updates.title ?? existing.title,
+        subtitle: updates.subtitle ?? existing.subtitle,
+        description: updates.description ?? existing.description,
+        status: updates.status ?? existing.status,
+        visibility: updates.visibility ?? existing.visibility,
+        hostType: updates.hostType ?? existing.hostType,
+        hostRef: updates.hostRef ?? existing.hostRef,
+        organizer: updates.organizer ?? existing.organizer,
+        website: updates.website ?? existing.website,
+        heroImage: updates.heroImage ?? existing.heroImage,
+        location: updates.location ?? existing.location,
+        startsAt: updates.startsAt ?? existing.startsAt,
+        endsAt: updates.endsAt ?? existing.endsAt,
+        templateId: updates.templateId ?? existing.templateId,
+        themeId: updates.themeId ?? existing.themeId,
+        highlights: updates.highlights ?? existing.highlights,
+        settings: updates.settings ?? existing.settings,
+        seo: updates.seo ?? existing.seo,
+        updatedAt: new Date(),
+      })
+      .where(eq(microsites.id, existing.id))
+      .returning();
+
+    return NextResponse.json(updated);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -117,14 +92,19 @@ export async function DELETE(request: NextRequest, { params }: { params: { slug:
   try {
     const { slug } = await params;
 
-    // TODO: Check if user has permission to delete this microsite
-    // TODO: Check if microsite has active registrations/payments
-    // TODO: Handle cascading deletes for sections, events, registrations
+    const [existing] = await db
+      .select({ id: microsites.id })
+      .from(microsites)
+      .where(eq(microsites.slug, slug))
+      .limit(1);
 
-    // Mock deletion - replace with actual database delete
-    console.log(`Deleting microsite: ${slug}`);
+    if (!existing) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
 
-    return NextResponse.json({ message: 'Microsite deleted successfully' }, { status: 200 });
+    await db.delete(microsites).where(eq(microsites.id, existing.id));
+
+    return NextResponse.json({ message: 'Microsite deleted successfully' });
   } catch (error) {
     console.error('Error deleting microsite:', error);
     return NextResponse.json({ error: 'Failed to delete microsite' }, { status: 500 });

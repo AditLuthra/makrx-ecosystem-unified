@@ -16,7 +16,7 @@ import json
 
 from ..database import get_db
 from ..dependencies import get_current_user
-from schemas.notifications import (
+from ..schemas.notifications import (
     NotificationCreate,
     NotificationUpdate,
     NotificationResponse,
@@ -48,7 +48,7 @@ from schemas.notifications import (
     NotificationType,
     NotificationStatus,
 )
-from crud import notifications as crud_notifications
+from ..crud import notifications as crud_notifications
 
 router = APIRouter()
 
@@ -583,7 +583,7 @@ async def delete_notification_rule(
 # Analytics Routes
 @router.get("/analytics/", response_model=List[NotificationAnalyticsResponse])
 async def get_notification_analytics(
-    period_type: str = Query("daily", regex="^(hourly|daily|weekly|monthly)$"),
+    period_type: str = Query("daily", pattern="^(hourly|daily|weekly|monthly)$"),
     start_date: Optional[datetime] = Query(None),
     end_date: Optional[datetime] = Query(None),
     current_user=Depends(get_current_user),
@@ -714,7 +714,7 @@ async def websocket_endpoint(
 # Digest Routes
 @router.get("/digest/preview", response_model=Dict[str, Any])
 async def preview_digest(
-    digest_type: str = Query("daily", regex="^(daily|weekly)$"),
+    digest_type: str = Query("daily", pattern="^(daily|weekly)$"),
     date: Optional[datetime] = Query(None),
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),

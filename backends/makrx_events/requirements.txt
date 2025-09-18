@@ -1,0 +1,14 @@
+fastapi==0.111.1
+uvicorn[standard]==0.30.1
+sqlalchemy==2.0.32
+psycopg[binary]
+alembic==1.13.2
+python-jose==3.3.0
+httpx==0.27.2
+pydantic==2.8.2
+python-dotenv==1.0.1
+structlog==24.1.0
+prometheus-fastapi-instrumentator==6.1.0
+redis==5.0.7
+sentry-sdk==2.8.0
+gunicorn==21.2.0

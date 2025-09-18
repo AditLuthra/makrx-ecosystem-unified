@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import type { User } from '@/types';
+
+const resolveUserId = (account: User | null): string | null => {
+  if (!account) return null;
+  return account.id || account.sub || null;
+};
 
 interface EventMessage {
   type: 'event' | 'subscription_confirmed' | 'unsubscription_confirmed';
@@ -47,14 +53,16 @@ export function useRealTimeUpdates(options: UseRealTimeUpdatesOptions = {}) {
   const eventServiceUrl = process.env.NEXT_PUBLIC_EVENT_SERVICE_URL || 'ws://localhost:8004';
 
   const connect = useCallback(() => {
-    if (!isAuthenticated || !user || wsRef.current) {
+    const userId = resolveUserId(user);
+
+    if (!isAuthenticated || !userId || wsRef.current) {
       return;
     }
 
     setConnectionStatus('connecting');
 
     try {
-      const wsUrl = `${eventServiceUrl}/ws/${user.id}`;
+      const wsUrl = `${eventServiceUrl}/ws/${userId}`;
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {

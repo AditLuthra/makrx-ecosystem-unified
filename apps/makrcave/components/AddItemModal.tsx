@@ -384,7 +384,7 @@ export default function AddItemModal({ isOpen, onClose, editItem, onSubmit }: Ad
                     const newName = e.target.value;
                     setFormData({ ...formData, name: newName });
                     // Check for duplicates
-                    checkForDuplicates(newName, formData.sku);
+                    checkForDuplicates(newName, formData.productCode);
                   }}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-makrx-teal ${
                     duplicateWarning ? 'border-red-300 bg-red-50' : 'border-border'

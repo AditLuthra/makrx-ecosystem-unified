@@ -1,41 +1,54 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import uvicorn
 import os
 import structlog
 import uuid
 import time
-import logging
-from logging_config import configure_logging
+from .logging_config import configure_logging
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+
 from sqlalchemy import text
 
 # Import security middleware
-from middleware.security import add_security_middleware
-from middleware.error_handling import ErrorHandlingMiddleware
+from .middleware.security import add_security_middleware
+from .middleware.error_handling import ErrorHandlingMiddleware
 
-from routes import api_router
-from routes.health import router as health_router
-from dependencies import get_keycloak_public_key
-from database import engine
+from .routes import api_router
+from .routes.health import router as health_router
+from .dependencies import get_keycloak_public_key
+from .database import engine
 from .redis_utils import check_redis_connection
 
 # Configure logging early
 configure_logging()
 log = structlog.get_logger(__name__)
 
-# Create FastAPI application
+# Create FastAPI app
 app = FastAPI(
-    title="MakrCave Backend API",
-    description="Backend API for MakrCave Inventory Management System",
+    title="MakrCave API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
 
-# CORS middleware configuration - Updated for unified ecosystem
+# Sentry integration
+try:
+    import sentry_sdk
+
+    dsn = os.getenv("SENTRY_DSN")
+    if dsn:
+        sentry_sdk.init(
+            dsn=dsn,
+            traces_sample_rate=float(
+                os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")
+            ),
+            environment=os.getenv("ENVIRONMENT", "development"),
+        )
+        log.info("sentry_initialized")
+except Exception as e:
+    log.info(f"sentry_not_enabled: {e}")
+
 allowed_origins = [
     "https://makrx.org",
     "https://makrcave.com",
@@ -83,19 +96,34 @@ app.add_middleware(
 add_security_middleware(app)
 app.add_middleware(ErrorHandlingMiddleware)
 
+
 # Request middleware with request_id and structlog context enrichment
 @app.middleware("http")
 async def request_middleware(request: Request, call_next):
-    request_id = str(uuid.uuid4())
-    request.state.request_id = request_id
-    structlog.contextvars.bind_contextvars(request_id=request_id)
+    # Check for incoming correlation ID, or generate a new one
+    correlation_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    
+    # Make it available to the application state
+    request.state.request_id = correlation_id
+
+    # Bind to structlog context for logging
+    structlog.contextvars.bind_contextvars(request_id=correlation_id)
+    
     start_time = time.time()
+    
     response = await call_next(request)
+    
     process_time = (time.time() - start_time) * 1000
-    response.headers["X-Request-ID"] = request_id
+    
+    # Ensure the correlation ID is in the response headers
+    response.headers["X-Request-ID"] = correlation_id
     response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
+    
+    # Clear context variables for the next request
     structlog.contextvars.clear_contextvars()
+    
     return response
+
 
 # Optional network safety: trusted hosts and proxy headers
 trusted_hosts = os.getenv("TRUSTED_HOSTS")
@@ -104,14 +132,12 @@ if trusted_hosts:
     if hosts:
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=hosts)
 
-if os.getenv("TRUST_PROXY", "false").lower() in ("1", "true", "yes"):
-    app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
-
 
 # Liveness probe
 @app.get("/health", status_code=status.HTTP_200_OK)
 async def liveness_check():
     return {"status": "healthy", "service": "makrcave-backend"}
+
 
 # Readiness probe
 @app.get("/healthz", status_code=status.HTTP_200_OK)
@@ -168,6 +194,26 @@ app.include_router(health_router, prefix="/api/v1")
 app.include_router(api_router, prefix="/api")
 app.include_router(health_router, prefix="/api")
 
+# Optional Prometheus metrics
+if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"):
+    try:
+        from prometheus_fastapi_instrumentator import Instrumentator
+        from prometheus_fastapi_instrumentator.metrics import latency
+
+        # Define custom buckets for latency in seconds.
+        LATENCY_BUCKETS = (0.1, 0.5, 1.0, 2.5, 5.0, 10.0)
+
+        instrumentator = Instrumentator()
+        instrumentator.add(latency(buckets=LATENCY_BUCKETS))
+
+        instrumentator.instrument(app).expose(
+            app, endpoint="/metrics", include_in_schema=False
+        )
+        log.info("metrics_enabled", endpoint="/metrics")
+    except Exception as e:
+        log.warning("metrics_not_enabled_missing_dependency", error=str(e))
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8001))
     log.info("starting_makrcave_backend", port=port)
@@ -189,19 +235,31 @@ if __name__ == "__main__":
         "handlers": {
             "default": {
                 "class": "logging.StreamHandler",
-                "formatter": "console_formatter" if os.getenv("ENVIRONMENT") == "development" else "json_formatter",
+                "formatter": (
+                    "console_formatter"
+                    if os.getenv("ENVIRONMENT") == "development"
+                    else "json_formatter"
+                ),
                 "level": "INFO",
             },
             "access": {
                 "class": "logging.StreamHandler",
-                "formatter": "json_formatter", # Always JSON for access logs
+                "formatter": "json_formatter",  # Always JSON for access logs
                 "level": "INFO",
             },
         },
         "loggers": {
-            "uvicorn": {"handlers": ["default"], "level": "INFO", "propagate": False},
+            "uvicorn": {
+                "handlers": ["default"],
+                "level": "INFO",
+                "propagate": False
+            },
             "uvicorn.error": {"level": "INFO"},
-            "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
+            "uvicorn.access": {
+                "handlers": ["access"],
+                "level": "INFO",
+                "propagate": False
+            },
         },
     }
 
@@ -210,16 +268,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=os.getenv("ENVIRONMENT") == "development",
-        log_config=LOGGING_CONFIG, # Pass the logging configuration
+        log_config=LOGGING_CONFIG,  # Pass the logging configuration
     )
-# Optional Prometheus metrics
-if os.getenv("METRICS_ENABLED", "false").lower() in ("1", "true", "yes"):
-    try:
-        from prometheus_fastapi_instrumentator import Instrumentator
-
-        Instrumentator().instrument(app).expose(
-            app, endpoint="/metrics", include_in_schema=False
-        )
-        log.info("metrics_enabled", endpoint="/metrics")
-    except Exception as e:
-        log.warning("metrics_not_enabled_missing_dependency", error=str(e))

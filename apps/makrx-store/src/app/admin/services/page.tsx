@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   Search,
@@ -19,6 +19,8 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 
+import { storeApi } from '@/services/storeApi';
+
 interface ServiceJob {
   id: string;
   jobNumber: string;
@@ -28,20 +30,13 @@ interface ServiceJob {
   fileName: string;
   material: string;
   quantity: number;
-  status:
-    | 'queued'
-    | 'printing'
-    | 'post-processing'
-    | 'quality-check'
-    | 'completed'
-    | 'failed'
-    | 'cancelled';
+  status: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   assignedTo?: string;
   dateSubmitted: string;
   estimatedCompletion?: string;
   actualCompletion?: string;
-  printTime: string;
+  printTime?: string;
   price: number;
   specifications: {
     layerHeight: string;
@@ -49,139 +44,46 @@ interface ServiceJob {
     supports: boolean;
     quality: string;
   };
-  progress: number;
+  progress?: number;
   notes?: string;
+  currency?: string;
 }
 
-const mockServiceJobs: ServiceJob[] = [
-  {
-    id: '1',
-    jobNumber: 'SJ-2024-001',
-    customerName: 'Alex Chen',
-    customerEmail: 'alex.chen@email.com',
-    service: '3D Printing',
-    fileName: 'custom_bracket.stl',
-    material: 'PLA+',
-    quantity: 2,
-    status: 'printing',
-    priority: 'normal',
-    assignedTo: 'Tech Station 1',
-    dateSubmitted: '2024-01-15T10:30:00',
-    estimatedCompletion: '2024-01-16T14:00:00',
-    printTime: '8h 45m',
-    price: 45.99,
-    specifications: {
-      layerHeight: '0.2mm',
-      infill: '20%',
-      supports: true,
-      quality: 'Standard',
-    },
-    progress: 65,
-    notes: 'Customer requested blue color',
-  },
-  {
-    id: '2',
-    jobNumber: 'SJ-2024-002',
-    customerName: 'Maria Rodriguez',
-    customerEmail: 'maria.r@email.com',
-    service: '3D Printing',
-    fileName: 'prototype_housing.stl',
-    material: 'PETG',
-    quantity: 1,
-    status: 'queued',
-    priority: 'high',
-    assignedTo: undefined,
-    dateSubmitted: '2024-01-14T16:45:00',
-    estimatedCompletion: '2024-01-17T10:00:00',
-    printTime: '12h 30m',
-    price: 89.5,
-    specifications: {
-      layerHeight: '0.15mm',
-      infill: '25%',
-      supports: false,
-      quality: 'High',
-    },
-    progress: 0,
-    notes: 'Rush order - customer needs by Friday',
-  },
-  {
-    id: '3',
-    jobNumber: 'SJ-2024-003',
-    customerName: 'David Johnson',
-    customerEmail: 'david.j@email.com',
-    service: 'CNC Machining',
-    fileName: 'aluminum_plate.step',
-    material: 'Aluminum 6061',
-    quantity: 5,
-    status: 'post-processing',
-    priority: 'normal',
-    assignedTo: 'CNC Station A',
-    dateSubmitted: '2024-01-13T09:15:00',
-    estimatedCompletion: '2024-01-15T17:00:00',
-    printTime: '4h 20m',
-    price: 234.75,
-    specifications: {
-      layerHeight: 'N/A',
-      infill: 'N/A',
-      supports: false,
-      quality: 'Precision',
-    },
-    progress: 85,
-    notes: 'Anodizing required after machining',
-  },
-  {
-    id: '4',
-    jobNumber: 'SJ-2024-004',
-    customerName: 'Lisa Wong',
-    customerEmail: 'lisa.w@email.com',
-    service: '3D Printing',
-    fileName: 'miniature_set.stl',
-    material: 'Resin (Clear)',
-    quantity: 10,
-    status: 'completed',
-    priority: 'low',
-    assignedTo: 'Resin Station 1',
-    dateSubmitted: '2024-01-12T14:20:00',
-    estimatedCompletion: '2024-01-14T12:00:00',
-    actualCompletion: '2024-01-14T11:30:00',
-    printTime: '6h 15m',
-    price: 156.25,
-    specifications: {
-      layerHeight: '0.05mm',
-      infill: 'Solid',
-      supports: true,
-      quality: 'Ultra High',
-    },
-    progress: 100,
-  },
-  {
-    id: '5',
-    jobNumber: 'SJ-2024-005',
-    customerName: 'Robert Smith',
-    customerEmail: 'robert.s@email.com',
-    service: 'Laser Cutting',
-    fileName: 'acrylic_panels.dxf',
-    material: 'Acrylic 3mm',
-    quantity: 8,
-    status: 'failed',
-    priority: 'urgent',
-    assignedTo: 'Laser Station B',
-    dateSubmitted: '2024-01-11T11:00:00',
-    estimatedCompletion: '2024-01-12T15:00:00',
-    printTime: '2h 45m',
-    price: 78.9,
-    specifications: {
-      layerHeight: 'N/A',
-      infill: 'N/A',
-      supports: false,
-      quality: 'Standard',
-    },
-    progress: 0,
-    notes: 'Material defect detected - need to reorder acrylic',
-  },
-];
+const getProgressFromStatus = (status: string): number => {
+  const normalized = status?.toLowerCase();
+
+  if (!normalized) return 0;
+
+  if (['completed', 'delivered', 'shipped'].includes(normalized)) {
+    return 100;
+  }
+  if (['post-processing', 'quality-check', 'in_production', 'ready'].includes(normalized)) {
+    return 80;
+  }
+  if (['printing', 'in_progress', 'accepted', 'production'].includes(normalized)) {
+    return 60;
+  }
+  if (['queued', 'pending', 'dispatched', 'routed'].includes(normalized)) {
+    return 30;
+  }
+  if (['failed', 'cancelled'].includes(normalized)) {
+    return 0;
+  }
+
+  return 50;
+};
+
+const formatCurrency = (amount: number, currency: string) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 2,
+  }).format(amount);
 
 export default function AdminServices() {
+  const [jobs, setJobs] = useState<ServiceJob[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [serviceFilter, setServiceFilter] = useState('all');
@@ -190,13 +92,83 @@ export default function AdminServices() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
 
+  const loadJobs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await storeApi.getProviderJobs();
+      const rawJobs: any[] = Array.isArray(response?.jobs) ? response.jobs : Array.isArray(response) ? response : [];
+
+      const mapped: ServiceJob[] = rawJobs.map((job, index) => {
+        const id = job.id ? String(job.id) : `job-${index}`;
+        const submittedAt = job.accepted_at ?? job.created_at ?? new Date().toISOString();
+        const priority = (job.priority?.toLowerCase?.() || 'normal') as ServiceJob['priority'];
+        const status = job.status ?? 'queued';
+        const specs = job.specifications ?? {};
+
+        const rawService = (job.service_type ?? job.service ?? 'Service').replace(/_/g, ' ');
+        const serviceName = rawService
+          .split(' ')
+          .filter(Boolean)
+          .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+          .join(' ');
+
+        const layerHeight = specs.layerHeight ?? specs.layer_height;
+        const infill = specs.infill ?? specs.infill_percentage;
+
+        return {
+          id,
+          jobNumber: job.service_order_number ?? job.job_number ?? id,
+          customerName: job.customer_name ?? job.customer_id ?? '—',
+          customerEmail: job.customer_email ?? '—',
+          service: serviceName,
+          fileName: job.file_name ?? (job.file_url ? job.file_url.split('/').pop() : '—'),
+          material: job.material ?? '—',
+          quantity: job.quantity ?? 1,
+          status,
+          priority: ['low', 'normal', 'high', 'urgent'].includes(priority) ? priority : 'normal',
+          assignedTo: job.assigned_to ?? job.assigned_station ?? undefined,
+          dateSubmitted: submittedAt,
+          estimatedCompletion: job.estimated_completion ?? undefined,
+          actualCompletion: job.actual_completion ?? job.completed_at ?? undefined,
+          printTime: job.print_time ?? undefined,
+          price: typeof job.price === 'number' ? job.price : 0,
+          specifications: {
+            layerHeight: layerHeight != null ? String(layerHeight) : '—',
+            infill: infill != null ? String(infill) : '—',
+            supports: Boolean(job.supports ?? specs.supports ?? false),
+            quality: specs.quality ?? job.quality ?? 'Standard',
+          },
+          progress: getProgressFromStatus(status),
+          notes: job.customer_notes ?? job.provider_notes ?? undefined,
+          currency: job.currency ?? 'INR',
+        };
+      });
+
+      setJobs(mapped);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load provider jobs';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadJobs();
+  }, [loadJobs]);
+
   const filteredAndSortedJobs = useMemo(() => {
-    let filtered = mockServiceJobs.filter((job) => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    const filtered = jobs.filter((job) => {
+      const fields = [job.customerName, job.customerEmail, job.jobNumber, job.fileName]
+        .filter(Boolean)
+        .map((value) => value!.toLowerCase());
+
       const matchesSearch =
-        job.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.jobNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.fileName.toLowerCase().includes(searchTerm.toLowerCase());
+        !normalizedSearch || fields.some((value) => value.includes(normalizedSearch));
       const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
       const matchesService = serviceFilter === 'all' || job.service === serviceFilter;
       const matchesPriority = priorityFilter === 'all' || job.priority === priorityFilter;
@@ -215,46 +187,87 @@ export default function AdminServices() {
 
       if (sortOrder === 'asc') {
         return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
+      }
+
+      return aValue < bValue ? 1 : -1;
+    });
+  }, [jobs, searchTerm, statusFilter, serviceFilter, priorityFilter, sortBy, sortOrder]);
+
+  const currency = jobs[0]?.currency ?? 'INR';
+  const queuedCount = jobs.filter((job) => job.status?.toLowerCase() === 'queued').length;
+  const inProgressCount = jobs.filter((job) =>
+    ['printing', 'post-processing', 'quality-check', 'in_progress', 'in production'].includes(
+      job.status?.toLowerCase?.() ?? '',
+    ),
+  ).length;
+  const completedCount = jobs.filter((job) => job.status?.toLowerCase() === 'completed').length;
+  const issueCount = jobs.filter((job) =>
+    ['failed', 'cancelled'].includes(job.status?.toLowerCase() ?? ''),
+  ).length;
+  const revenue = jobs
+    .filter((job) => job.status?.toLowerCase() === 'completed')
+    .reduce((sum, job) => sum + (job.price || 0), 0);
+
+  const statusOptions = useMemo(() => {
+    const values = new Set<string>();
+    jobs.forEach((job) => {
+      if (job.status) {
+        values.add(job.status);
       }
     });
-  }, [searchTerm, statusFilter, serviceFilter, priorityFilter, sortBy, sortOrder]);
+    return Array.from(values);
+  }, [jobs]);
+
+  const serviceOptions = useMemo(() => {
+    const values = new Set<string>();
+    jobs.forEach((job) => {
+      if (job.service) {
+        values.add(job.service);
+      }
+    });
+    return Array.from(values);
+  }, [jobs]);
 
   const getStatusIcon = (status: ServiceJob['status']) => {
-    switch (status) {
-      case 'queued':
-        return <Clock className="w-4 h-4" />;
+    const normalized = status?.toLowerCase() ?? '';
+
+    switch (normalized) {
       case 'printing':
+      case 'in_progress':
+      case 'in production':
         return <Printer className="w-4 h-4" />;
       case 'post-processing':
-        return <Settings className="w-4 h-4" />;
       case 'quality-check':
-        return <Eye className="w-4 h-4" />;
+        return <Settings className="w-4 h-4" />;
       case 'completed':
         return <Check className="w-4 h-4" />;
       case 'failed':
-        return <X className="w-4 h-4" />;
       case 'cancelled':
         return <X className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
   const getStatusColor = (status: ServiceJob['status']) => {
-    switch (status) {
+    const normalized = status?.toLowerCase() ?? '';
+
+    switch (normalized) {
       case 'queued':
         return 'bg-gray-100 text-gray-800';
       case 'printing':
+      case 'in_progress':
         return 'bg-blue-100 text-blue-800';
       case 'post-processing':
-        return 'bg-yellow-100 text-yellow-800';
       case 'quality-check':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-yellow-100 text-yellow-800';
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'failed':
         return 'bg-red-100 text-red-800';
       case 'cancelled':
+        return 'bg-gray-100 text-gray-800';
+      default:
         return 'bg-gray-100 text-gray-800';
     }
   };
@@ -299,6 +312,34 @@ export default function AdminServices() {
     return new Date(dateString).toLocaleString();
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center text-gray-600">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+          <p>Loading service jobs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white shadow-md rounded-lg p-8 max-w-md text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Unable to load service jobs</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={loadJobs}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -333,9 +374,7 @@ export default function AdminServices() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Queued</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockServiceJobs.filter((j) => j.status === 'queued').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{queuedCount}</p>
               </div>
             </div>
           </div>
@@ -346,13 +385,7 @@ export default function AdminServices() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">In Progress</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {
-                    mockServiceJobs.filter((j) =>
-                      ['printing', 'post-processing', 'quality-check'].includes(j.status),
-                    ).length
-                  }
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{inProgressCount}</p>
               </div>
             </div>
           </div>
@@ -363,9 +396,7 @@ export default function AdminServices() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockServiceJobs.filter((j) => j.status === 'completed').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{completedCount}</p>
               </div>
             </div>
           </div>
@@ -376,9 +407,7 @@ export default function AdminServices() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Issues</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockServiceJobs.filter((j) => j.status === 'failed').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{issueCount}</p>
               </div>
             </div>
           </div>
@@ -389,13 +418,7 @@ export default function AdminServices() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  $
-                  {mockServiceJobs
-                    .filter((j) => j.status === 'completed')
-                    .reduce((sum, j) => sum + j.price, 0)
-                    .toFixed(2)}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(revenue, currency)}</p>
               </div>
             </div>
           </div>
@@ -426,13 +449,11 @@ export default function AdminServices() {
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Status</option>
-                <option value="queued">Queued</option>
-                <option value="printing">Printing</option>
-                <option value="post-processing">Post-Processing</option>
-                <option value="quality-check">Quality Check</option>
-                <option value="completed">Completed</option>
-                <option value="failed">Failed</option>
-                <option value="cancelled">Cancelled</option>
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status.replace(/_/g, ' ')}
+                  </option>
+                ))}
               </select>
 
               <select
@@ -441,9 +462,11 @@ export default function AdminServices() {
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Services</option>
-                <option value="3D Printing">3D Printing</option>
-                <option value="CNC Machining">CNC Machining</option>
-                <option value="Laser Cutting">Laser Cutting</option>
+                {serviceOptions.map((service) => (
+                  <option key={service} value={service}>
+                    {service}
+                  </option>
+                ))}
               </select>
 
               <select
@@ -554,13 +577,19 @@ export default function AdminServices() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAndSortedJobs.map((job) => (
-                  <tr key={job.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <input
-                        type="checkbox"
-                        checked={selectedJobs.includes(job.id)}
-                        onChange={() => handleSelectJob(job.id)}
+                {filteredAndSortedJobs.map((job) => {
+                  const progressValue = typeof job.progress === 'number' ? job.progress : 0;
+                  const progressLabel = typeof job.progress === 'number' ? `${job.progress}%` : '—';
+                  const priceLabel = formatCurrency(job.price || 0, job.currency ?? currency);
+                  const statusLabel = job.status ? job.status.replace(/_/g, ' ') : '—';
+
+                  return (
+                    <tr key={job.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedJobs.includes(job.id)}
+                          onChange={() => handleSelectJob(job.id)}
                         className="rounded border-gray-300"
                       />
                     </td>
@@ -602,7 +631,7 @@ export default function AdminServices() {
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(job.status)}`}
                       >
                         {getStatusIcon(job.status)}
-                        <span className="ml-1 capitalize">{job.status.replace('-', ' ')}</span>
+                        <span className="ml-1 capitalize">{statusLabel}</span>
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -610,12 +639,14 @@ export default function AdminServices() {
                         <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
                           <div
                             className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${job.progress}%` }}
+                            style={{ width: `${progressValue}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm text-gray-600">{job.progress}%</span>
+                        <span className="text-sm text-gray-600">{progressLabel}</span>
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">{job.printTime}</div>
+                      {job.printTime && (
+                        <div className="text-sm text-gray-500 mt-1">{job.printTime}</div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -625,7 +656,7 @@ export default function AdminServices() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">${job.price}</div>
+                      <div className="text-sm font-medium text-gray-900">{priceLabel}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
@@ -651,7 +682,8 @@ export default function AdminServices() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -669,7 +701,7 @@ export default function AdminServices() {
         {filteredAndSortedJobs.length > 0 && (
           <div className="flex items-center justify-between mt-6">
             <div className="text-sm text-gray-700">
-              Showing {filteredAndSortedJobs.length} of {mockServiceJobs.length} jobs
+              Showing {filteredAndSortedJobs.length} of {jobs.length} jobs
             </div>
             <div className="flex items-center space-x-2">
               <button className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">

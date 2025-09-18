@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { withAuth } from '@/contexts/AuthContext';
-import { api, type Product, type Category, type AdminStats, formatPrice } from '@/lib/api';
+import { storeApi, type Product, type Category, type AdminStats, formatPrice } from '@/services/storeApi';
 import {
   Package,
   Plus,
@@ -44,7 +44,7 @@ function AdminPortal() {
 
       // Load admin stats (optional; backend may not implement yet)
       try {
-        const adminStats = await api.getAdminStats();
+        const adminStats = await storeApi.getAdminStats();
         setStats(adminStats);
         setStatsNotice(null);
       } catch (e) {
@@ -55,7 +55,7 @@ function AdminPortal() {
       }
 
       // Load categories
-      const categoriesData = await api.getCategories();
+      const categoriesData = await storeApi.getCategories();
       setCategories(categoriesData);
 
       // Load products with filters
@@ -71,7 +71,7 @@ function AdminPortal() {
         if (cat) filters.category_id = cat.id;
       }
 
-      const productsData = await api.getProducts(filters);
+      const productsData = await storeApi.getProducts(filters);
       setProducts(productsData.products);
       setTotalPages(Math.ceil(productsData.total / 20));
     } catch (err) {
@@ -88,7 +88,7 @@ function AdminPortal() {
     }
 
     try {
-      await api.deleteProduct(productId);
+      await storeApi.deleteProduct(productId);
       setProducts(products.filter((p) => p.id !== productId));
     } catch (err) {
       console.error('Failed to delete product:', err);

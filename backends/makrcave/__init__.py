@@ -1,1 +1,1 @@
-# MakrCave backend package (unified)
+"""MakrCave backend package setup."""

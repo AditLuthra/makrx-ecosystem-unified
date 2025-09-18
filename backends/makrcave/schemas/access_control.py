@@ -369,7 +369,7 @@ class UserAccessSummary(BaseModel):
 class BulkRoleAssignment(BaseModel):
     user_ids: List[str]
     role_ids: List[str]
-    action: str = Field(..., regex="^(assign|revoke)$")
+    action: str = Field(..., pattern="^(assign|revoke)$")
     reason: Optional[str] = None
     effective_date: Optional[datetime] = None
     expiry_date: Optional[datetime] = None
@@ -451,7 +451,7 @@ class EnhancedMemberResponse(BaseModel):
 
 # Import/Export schemas
 class RoleExport(BaseModel):
-    format: str = Field("json", regex="^(json|csv|xlsx)$")
+    format: str = Field("json", pattern="^(json|csv|xlsx)$")
     include_permissions: bool = True
     include_users: bool = False
     makerspace_id: Optional[str] = None
@@ -464,7 +464,7 @@ class RoleImport(BaseModel):
 
 
 class PermissionExport(BaseModel):
-    format: str = Field("json", regex="^(json|csv|xlsx)$")
+    format: str = Field("json", pattern="^(json|csv|xlsx)$")
     include_roles: bool = True
     system_permissions_only: bool = False
 
@@ -483,7 +483,7 @@ class AuditLogFilter(BaseModel):
 class SecurityAlert(BaseModel):
     id: str
     alert_type: str
-    severity: str = Field(..., regex="^(low|medium|high|critical)$")
+    severity: str = Field(..., pattern="^(low|medium|high|critical)$")
     title: str
     description: str
     user_id: Optional[str] = None

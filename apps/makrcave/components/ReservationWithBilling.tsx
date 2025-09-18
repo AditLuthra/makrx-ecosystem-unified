@@ -466,10 +466,10 @@ const ReservationWithBilling: React.FC<ReservationWithBillingProps> = ({
                     <Separator className="my-3" />
 
                     <div className="space-y-1 text-sm text-gray-600">
-                      {costEstimate.breakdown.map((line, index) => (
+                      {costEstimate.breakdown.map((entry, index) => (
                         <div key={index} className="flex justify-between">
-                          <span>{line.split(':')[0]}:</span>
-                          <span>{line.split(':')[1]}</span>
+                          <span>{entry.label}</span>
+                          <span>{entry.value}</span>
                         </div>
                       ))}
                     </div>

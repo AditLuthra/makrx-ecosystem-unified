@@ -27,7 +27,7 @@ import {
   ShoppingCart,
   Layers,
 } from 'lucide-react';
-import { api, formatPrice } from '@/lib/api';
+import { storeApi, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { STLPreview } from '@/components/STLPreview';
 import { SVGPreview } from '@/components/SVGPreview';
@@ -266,7 +266,7 @@ export default function PrintingServicesPage() {
 
       try {
         // Get upload URL
-        const uploadResponse = await api.createUploadUrl(
+        const uploadResponse = await storeApi.createUploadUrl(
           file.name,
           file.type || 'application/octet-stream',
           file.size,
@@ -289,7 +289,7 @@ export default function PrintingServicesPage() {
         }
 
         // Mark upload as complete
-        await api.completeUpload(uploadResponse.upload_id, uploadResponse.file_key);
+        await storeApi.completeUpload(uploadResponse.upload_id, uploadResponse.file_key);
 
         // Update status to processing
         setUploadedFiles((prev) =>
@@ -315,7 +315,7 @@ export default function PrintingServicesPage() {
 
     const poll = async () => {
       try {
-        const upload = await api.getUpload(uploadId);
+        const upload = await storeApi.getUpload(uploadId);
 
         if (upload.status === 'processed') {
           setUploadedFiles((prev) =>
@@ -416,7 +416,7 @@ export default function PrintingServicesPage() {
       // For now, use the first file for quote generation
       const file = processedFiles[0];
 
-      const quoteData = await api.createQuote({
+      const quoteData = await storeApi.createQuote({
         upload_id: file.id,
         material: selectedMaterial,
         quality: selectedQuality,

@@ -18,7 +18,7 @@ import {
   AlertCircle,
   Gift,
 } from 'lucide-react';
-import { api, type Cart, type Address, formatPrice } from '@/lib/api';
+import { storeApi, type Cart, type Address, formatPrice } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { withAuth } from '@/contexts/AuthContext';
 
@@ -76,7 +76,7 @@ function CheckoutPage() {
   useEffect(() => {
     const loadCart = async () => {
       try {
-        const cartData = await api.getCart();
+        const cartData = await storeApi.getCart();
         setCart(cartData);
 
         if (!cartData || cartData.items.length === 0) {
@@ -188,7 +188,7 @@ function CheckoutPage() {
         notes: orderNotes || undefined,
       };
 
-      const response = await api.checkout(orderData);
+      const response = await storeApi.checkout(orderData);
 
       // In a real implementation, handle payment processing here
       // For now, simulate success

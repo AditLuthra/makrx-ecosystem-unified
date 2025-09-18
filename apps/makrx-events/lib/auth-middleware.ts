@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRemoteJWKSet, jwtVerify, JWTPayload } from 'jose';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: {
@@ -10,22 +11,45 @@ export interface AuthenticatedRequest extends NextRequest {
   };
 }
 
-async function verifyKeycloakToken(token: string): Promise<any> {
+type KeycloakJwtPayload = JWTPayload & {
+  email?: string;
+  given_name?: string;
+  family_name?: string;
+  preferred_username?: string;
+  realm_access?: {
+    roles?: string[];
+  };
+};
+
+const keycloakIssuer =
+  process.env.KEYCLOAK_BASE_URL && process.env.KEYCLOAK_REALM
+    ? `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}`
+    : null;
+
+const keycloakJwks = keycloakIssuer
+  ? createRemoteJWKSet(
+      new URL(`${keycloakIssuer}/protocol/openid-connect/certs`),
+    )
+  : null;
+
+async function verifyKeycloakToken(token: string): Promise<KeycloakJwtPayload> {
+  if (!keycloakIssuer || !keycloakJwks) {
+    throw new Error('Keycloak environment not fully configured');
+  }
+
+  if (!process.env.KEYCLOAK_CLIENT_ID) {
+    throw new Error('KEYCLOAK_CLIENT_ID is not set');
+  }
+
   try {
-    // Get Keycloak public key and verify token
-    const keycloakUrl = `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/certs`;
+    const { payload } = await jwtVerify<KeycloakJwtPayload>(token, keycloakJwks, {
+      issuer: keycloakIssuer,
+      audience: process.env.KEYCLOAK_CLIENT_ID,
+      clockTolerance: 30,
+    });
 
-    // For development - simple decode (in production, verify signature)
-    const tokenParts = token.split('.');
-    if (tokenParts.length !== 3) {
-      throw new Error('Invalid token format');
-    }
-
-    const payload = JSON.parse(atob(tokenParts[1]));
-
-    // Check token expiration
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
-      throw new Error('Token expired');
+    if (!payload.sub) {
+      throw new Error('Missing subject claim');
     }
 
     return payload;
@@ -46,14 +70,10 @@ export async function requireAuth(request: NextRequest): Promise<NextResponse | 
 
     const payload = await verifyKeycloakToken(token);
 
-    if (!payload.sub) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     // Add user info to request
     (request as AuthenticatedRequest).user = {
       id: payload.sub,
-      email: payload.email,
+      email: payload.email || payload.preferred_username || '',
       firstName: payload.given_name,
       lastName: payload.family_name,
       roles: payload.realm_access?.roles || [],
@@ -80,27 +100,24 @@ export async function requireRole(role: string) {
   };
 }
 
-export function optionalAuth(request: NextRequest): void {
+export async function optionalAuth(request: NextRequest): Promise<void> {
   try {
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access_token')?.value;
 
-    if (token) {
-      const tokenParts = token.split('.');
-      if (tokenParts.length === 3) {
-        const payload = JSON.parse(atob(tokenParts[1]));
-
-        if (payload.sub && payload.exp > Math.floor(Date.now() / 1000)) {
-          (request as AuthenticatedRequest).user = {
-            id: payload.sub,
-            email: payload.email,
-            firstName: payload.given_name,
-            lastName: payload.family_name,
-            roles: payload.realm_access?.roles || [],
-          };
-        }
-      }
+    if (!token) {
+      return;
     }
+
+    const payload = await verifyKeycloakToken(token);
+
+    (request as AuthenticatedRequest).user = {
+      id: payload.sub as string,
+      email: payload.email || payload.preferred_username || '',
+      firstName: payload.given_name,
+      lastName: payload.family_name,
+      roles: payload.realm_access?.roles || [],
+    };
   } catch (error) {
     // Silent fail for optional auth
     console.debug('Optional auth failed:', error);

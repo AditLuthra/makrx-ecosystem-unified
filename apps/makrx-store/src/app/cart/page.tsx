@@ -16,20 +16,40 @@ import {
   CreditCard,
   ShieldCheck,
 } from 'lucide-react';
-import { api, type Cart, type CartItem, formatPrice } from '@/lib/api';
+import {
+  useGetStoreCartQuery,
+  useUpdateStoreCartItemMutation,
+  useRemoveFromStoreCartMutation,
+} from '@/services/storeApi';
+import type { Cart, CartItem } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import ShippingEstimator, { useCartCalculations } from '@/components/ShippingEstimator';
+
+function formatPrice(price: number, currency: string = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+    }).format(price);
+}
 
 export default function CartPage() {
   const router = useRouter();
   const { isAuthenticated, login } = useAuth();
   const { addNotification } = useNotifications();
 
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState<{ [key: number]: boolean }>({});
   const [couponCode, setCouponCode] = useState('');
+
+  const {
+    data: cart,
+    isLoading: cartLoading,
+    isFetching: cartFetching,
+  } = useGetStoreCartQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
+  const [updateCartItem, { isLoading: isUpdating }] = useUpdateStoreCartItemMutation();
+  const [removeFromCart, { isLoading: isRemoving }] = useRemoveFromStoreCartMutation();
 
   // Enhanced cart calculations
   const {
@@ -45,96 +65,44 @@ export default function CartPage() {
   } = useCartCalculations();
 
   useEffect(() => {
-    const loadCart = async () => {
-      if (!isAuthenticated) {
-        setLoading(false);
-        return;
-      }
+    if (cart) {
+      setSubtotal(cart.subtotal);
+    }
+  }, [cart, setSubtotal]);
 
+  const handleUpdateCartItem = async (itemId: number, newQuantity: number) => {
+    if (newQuantity === 0) {
+      await handleRemoveCartItem(itemId);
+    } else {
       try {
-        const cartData = await api.getCart();
-        setCart(cartData);
-        setSubtotal(cartData.subtotal);
-      } catch (error) {
-        console.error('Failed to load cart:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCart();
-  }, [isAuthenticated]);
-
-  const updateCartItem = async (itemId: number, newQuantity: number) => {
-    if (!cart) return;
-
-    setUpdating((prev) => ({ ...prev, [itemId]: true }));
-
-    try {
-      if (newQuantity === 0) {
-        await api.removeFromCart(itemId);
-        const removedItem = cart.items.find((item) => item.id === itemId);
-        setCart((prev) =>
-          prev
-            ? {
-                ...prev,
-                items: prev.items.filter((item) => item.id !== itemId),
-                item_count: prev.item_count - 1,
-                subtotal:
-                  prev.subtotal - (prev.items.find((item) => item.id === itemId)?.total_price || 0),
-              }
-            : null,
-        );
-        addNotification({
-          type: 'success',
-          title: 'Item Removed',
-          message: `${removedItem?.product.name} removed from cart`,
-        });
-      } else {
-        await api.updateCartItem(itemId, newQuantity);
-        const updatedCart = await api.getCart();
-        setCart(updatedCart);
+        await updateCartItem({ itemId, quantity: newQuantity }).unwrap();
         addNotification({
           type: 'success',
           title: 'Cart Updated',
           message: 'Quantity updated successfully',
         });
+      } catch (error) {
+        console.error('Failed to update cart item:', error);
+        addNotification({
+          type: 'error',
+          title: 'Update Failed',
+          message: 'Failed to update cart item. Please try again.',
+        });
       }
-    } catch (error) {
-      console.error('Failed to update cart item:', error);
-      addNotification({
-        type: 'error',
-        title: 'Update Failed',
-        message: 'Failed to update cart item. Please try again.',
-      });
-    } finally {
-      setUpdating((prev) => ({ ...prev, [itemId]: false }));
     }
   };
 
-  const removeCartItem = async (itemId: number) => {
-    if (!cart) return;
-
-    setUpdating((prev) => ({ ...prev, [itemId]: true }));
-
+  const handleRemoveCartItem = async (itemId: number) => {
     try {
-      await api.removeFromCart(itemId);
-      setCart((prev) =>
-        prev
-          ? {
-              ...prev,
-              items: prev.items.filter((item) => item.id !== itemId),
-              item_count: prev.item_count - 1,
-              subtotal:
-                prev.subtotal - (prev.items.find((item) => item.id === itemId)?.total_price || 0),
-            }
-          : null,
-      );
+      await removeFromCart(itemId).unwrap();
+      addNotification({
+        type: 'success',
+        title: 'Item Removed',
+        message: `Item removed from cart`,
+      });
     } catch (error) {
       console.error('Failed to remove cart item:', error);
       alert('Failed to remove cart item');
-    } finally {
-      setUpdating((prev) => ({ ...prev, [itemId]: false }));
     }
   };
 
@@ -145,7 +113,7 @@ export default function CartPage() {
       // In a real implementation, this would validate the coupon via API
       // For now, we'll simulate a 10% discount
       const discount = cartSubtotal * 0.1;
-      setCouponDiscount(discount);
+      handleDiscountChange(discount);
       alert('Coupon applied successfully!');
     } catch (error) {
       console.error('Failed to apply coupon:', error);
@@ -162,7 +130,7 @@ export default function CartPage() {
     router.push('/checkout');
   };
 
-  if (loading) {
+  if (cartLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -228,7 +196,7 @@ export default function CartPage() {
   const qualifiesForFreeShipping = cartSubtotal >= freeShippingThreshold;
   const finalShippingCost = qualifiesForFreeShipping ? 0 : shippingCost;
   const tax = cartSubtotal * 0.08; // 8% tax
-  const cartTotal = cartSubtotal - couponDiscount + finalShippingCost + tax;
+  const cartTotal = cartSubtotal - discountAmount + finalShippingCost + tax;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -294,8 +262,8 @@ export default function CartPage() {
                             )}
                           </div>
                           <button
-                            onClick={() => removeCartItem(item.id)}
-                            disabled={updating[item.id]}
+                            onClick={() => handleRemoveCartItem(item.id)}
+                            disabled={isRemoving}
                             className="text-red-600 hover:text-red-700 p-1"
                           >
                             <Trash2 className="h-5 w-5" />
@@ -306,16 +274,16 @@ export default function CartPage() {
                         <div className="mt-4 flex items-center justify-between">
                           <div className="flex items-center">
                             <button
-                              onClick={() => updateCartItem(item.id, item.quantity - 1)}
-                              disabled={item.quantity <= 1 || updating[item.id]}
+                              onClick={() => handleUpdateCartItem(item.id, item.quantity - 1)}
+                              disabled={item.quantity <= 1 || isUpdating}
                               className="p-1 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <Minus className="h-4 w-4" />
                             </button>
                             <span className="mx-4 text-gray-900 font-medium">{item.quantity}</span>
                             <button
-                              onClick={() => updateCartItem(item.id, item.quantity + 1)}
-                              disabled={updating[item.id]}
+                              onClick={() => handleUpdateCartItem(item.id, item.quantity + 1)}
+                              disabled={isUpdating}
                               className="p-1 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <Plus className="h-4 w-4" />
@@ -369,14 +337,7 @@ export default function CartPage() {
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
-                    onClick={() => {
-                      // Simulate coupon application
-                      if (couponCode.toLowerCase() === 'save10') {
-                        handleDiscountChange(cartSubtotal * 0.1);
-                      } else {
-                        handleDiscountChange(0);
-                      }
-                    }}
+                    onClick={applyCoupon}
                     className="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-200"
                   >
                     Apply

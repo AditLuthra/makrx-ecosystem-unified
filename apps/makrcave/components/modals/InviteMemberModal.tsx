@@ -14,6 +14,22 @@ interface InviteMemberModalProps {
   membershipPlans: MembershipPlan[];
 }
 
+type MemberRole = 'user' | 'service_provider' | 'admin' | 'makerspace_admin';
+
+interface InviteFormState {
+  email: string;
+  role: MemberRole;
+  membership_plan_id: string;
+  message: string;
+}
+
+const buildDefaultFormState = (): InviteFormState => ({
+  email: '',
+  role: 'user',
+  membership_plan_id: '',
+  message: '',
+});
+
 const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   open,
   onOpenChange,
@@ -24,14 +40,16 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const [formData, setFormData] = useState({
-    email: '',
-    role: 'user',
-    membership_plan_id: '',
-    message: '',
-  });
+  const safePlans = Array.isArray(membershipPlans) ? membershipPlans : [];
 
-  const handleInputChange = (field: string, value: string) => {
+  const [formData, setFormData] = useState<InviteFormState>(() => buildDefaultFormState());
+
+  const resetForm = () => setFormData(buildDefaultFormState());
+
+  const handleInputChange = <Field extends keyof InviteFormState>(
+    field: Field,
+    value: InviteFormState[Field],
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
     setSuccess(false);
@@ -57,19 +75,15 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
       await sendInvite({
         email: formData.email,
         role: formData.role,
-        membership_plan_id: formData.membership_plan_id,
+        membership_plan_id: formData.membership_plan_id || undefined,
+        message: formData.message || undefined,
       });
 
       setSuccess(true);
 
       // Reset form after a delay
       setTimeout(() => {
-        setFormData({
-          email: '',
-          role: 'user',
-          membership_plan_id: '',
-          message: '',
-        });
+        resetForm();
         setSuccess(false);
         onOpenChange(false);
       }, 2000);
@@ -81,18 +95,22 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   };
 
   const handleCancel = () => {
-    setFormData({
-      email: '',
-      role: 'user',
-      membership_plan_id: '',
-      message: '',
-    });
+    resetForm();
     setError(null);
     setSuccess(false);
     onOpenChange(false);
   };
 
-  const selectedPlan = membershipPlans.find((p) => p.id === formData.membership_plan_id);
+  const selectedPlan = safePlans.find((plan) => plan.id === formData.membership_plan_id);
+  const selectedPlanFeatures = selectedPlan?.features ?? [];
+  const selectedPlanDuration =
+    selectedPlan && typeof selectedPlan.duration_days === 'number' && Number.isFinite(selectedPlan.duration_days)
+      ? `${selectedPlan.duration_days} days`
+      : 'N/A';
+  const selectedPlanPrice =
+    selectedPlan && typeof selectedPlan.price === 'number' && Number.isFinite(selectedPlan.price)
+      ? `$${selectedPlan.price.toFixed(2)}`
+      : '$—';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -144,7 +162,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             <Label htmlFor="invite-role">Role *</Label>
             <Select
               value={formData.role}
-              onValueChange={(value) => handleInputChange('role', value)}
+              onValueChange={(value) => handleInputChange('role', value as MemberRole)}
               disabled={isLoading || success}
             >
               <SelectTrigger className="mt-1">
@@ -170,11 +188,18 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
                 <SelectValue placeholder="Select membership plan" />
               </SelectTrigger>
               <SelectContent>
-                {membershipPlans.map((plan) => (
-                  <SelectItem key={plan.id} value={plan.id}>
-                    {plan.name} - ${plan.price}
-                  </SelectItem>
-                ))}
+                {safePlans.map((plan) => {
+                  const label = plan.name || 'Untitled plan';
+                  const price =
+                    typeof plan.price === 'number' && Number.isFinite(plan.price)
+                      ? `$${plan.price.toFixed(2)}`
+                      : 'No price listed';
+                  return (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {label} - {price}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -185,11 +210,11 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
               <h4 className="font-medium text-blue-900 mb-1">{selectedPlan.name}</h4>
               <p className="text-sm text-blue-700 mb-2">{selectedPlan.description}</p>
               <div className="text-xs text-blue-600">
-                <p>Duration: {selectedPlan.duration_days} days</p>
-                <p>Price: ${selectedPlan.price}</p>
+                <p>Duration: {selectedPlanDuration}</p>
+                <p>Price: {selectedPlanPrice}</p>
                 <p>
-                  Features: {selectedPlan.features.slice(0, 2).join(', ')}
-                  {selectedPlan.features.length > 2 ? '...' : ''}
+                  Features: {selectedPlanFeatures.slice(0, 2).join(', ') || 'None listed'}
+                  {selectedPlanFeatures.length > 2 ? '...' : ''}
                 </p>
               </div>
             </div>

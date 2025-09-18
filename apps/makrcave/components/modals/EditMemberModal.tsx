@@ -14,6 +14,28 @@ interface EditMemberModalProps {
   membershipPlans: MembershipPlan[];
 }
 
+type MemberRole = 'user' | 'service_provider' | 'admin' | 'makerspace_admin';
+
+interface EditMemberFormState {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: MemberRole;
+  membership_plan_id: string;
+  skills: string;
+}
+
+const buildDefaultFormState = (): EditMemberFormState => ({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  role: 'user',
+  membership_plan_id: '',
+  skills: '',
+});
+
 const EditMemberModal: React.FC<EditMemberModalProps> = ({
   open,
   onOpenChange,
@@ -24,32 +46,29 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    role: 'user',
-    membership_plan_id: '',
-    skills: '',
-  });
+  const safePlans = Array.isArray(membershipPlans) ? membershipPlans : [];
+
+  const [formData, setFormData] = useState<EditMemberFormState>(() => buildDefaultFormState());
 
   // Update form data when member changes
   useEffect(() => {
     if (member) {
       setFormData({
-        firstName: member.firstName,
-        lastName: member.lastName,
-        email: member.email,
-        phone: member.phone || '',
-        role: member.role,
-        membership_plan_id: member.membership_plan_id,
-        skills: member.skills.join(', '),
+        firstName: member.firstName ?? '',
+        lastName: member.lastName ?? '',
+        email: member.email ?? '',
+        phone: member.phone ?? '',
+        role: (member.role as MemberRole) || 'user',
+        membership_plan_id: member.membership_plan_id ?? '',
+        skills: (member.skills ?? []).join(', '),
       });
     }
   }, [member]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = <Field extends keyof EditMemberFormState>(
+    field: Field,
+    value: EditMemberFormState[Field],
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
@@ -80,9 +99,11 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
     try {
       await updateMember(member.id, {
         ...formData,
-        skills: formData.skills ? formData.skills.split(',').map((s) => s.trim()) : [],
+        skills: formData.skills
+          ? formData.skills.split(',').map((skill) => skill.trim()).filter(Boolean)
+          : [],
         membership_plan_name:
-          membershipPlans.find((p) => p.id === formData.membership_plan_id)?.name || '',
+          safePlans.find((plan) => plan.id === formData.membership_plan_id)?.name || '',
       });
 
       onOpenChange(false);
@@ -174,7 +195,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
             <Label htmlFor="edit-role">Role *</Label>
             <Select
               value={formData.role}
-              onValueChange={(value) => handleInputChange('role', value)}
+              onValueChange={(value) => handleInputChange('role', value as MemberRole)}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select role" />
@@ -198,11 +219,18 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({
                 <SelectValue placeholder="Select membership plan" />
               </SelectTrigger>
               <SelectContent>
-                {membershipPlans.map((plan) => (
-                  <SelectItem key={plan.id} value={plan.id}>
-                    {plan.name} - ${plan.price}
-                  </SelectItem>
-                ))}
+                {safePlans.map((plan) => {
+                  const label = plan.name || 'Untitled plan';
+                  const price =
+                    typeof plan.price === 'number' && Number.isFinite(plan.price)
+                      ? `$${plan.price.toFixed(2)}`
+                      : 'No price listed';
+                  return (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {label} - {price}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>

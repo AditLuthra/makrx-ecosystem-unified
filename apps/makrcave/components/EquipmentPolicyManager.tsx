@@ -327,7 +327,7 @@ const EquipmentPolicyManager: React.FC<EquipmentPolicyManagerProps> = ({ classNa
                 <SelectContent>
                   {equipment.map((eq) => (
                     <SelectItem key={eq.id} value={eq.id}>
-                      {eq.name} ({eq.type.replace('_', ' ')})
+                      {eq.name} ({(eq.type ?? 'unspecified').replace('_', ' ')})
                     </SelectItem>
                   ))}
                 </SelectContent>

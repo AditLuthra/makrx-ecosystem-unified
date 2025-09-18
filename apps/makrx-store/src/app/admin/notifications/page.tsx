@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { withAuth } from '@/contexts/AuthContext';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { Button } from '@/components/ui/Button';
 
 interface AdminNotification {
@@ -53,7 +53,7 @@ function AdminNotificationsPage() {
       if (dateFrom) params.date_from = new Date(dateFrom).toISOString();
       if (dateTo) params.date_to = new Date(dateTo).toISOString();
 
-      const res = await api.getAdminNotifications(params);
+      const res = await storeApi.getAdminNotifications(params);
       setItems(res.notifications || []);
       setTotal(res.total);
       setPages(res.pages);
@@ -77,7 +77,7 @@ function AdminNotificationsPage() {
   const seed = async () => {
     try {
       setLoading(true);
-      await api.seedAdminNotifications(userId || undefined, 5);
+      await storeApi.seedAdminNotifications(userId || undefined, 5);
       await load();
       alert('Seeded sample notifications');
     } catch (e: any) {

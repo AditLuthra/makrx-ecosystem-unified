@@ -5,7 +5,7 @@ from datetime import datetime
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_admin_user
-from schemas.makerspace_settings import (
+from ..schemas.makerspace_settings import (
     MakerspaceSettingsResponse,
     MakerspaceSettingsUpdate,
     MakerspaceSettingsPublic,
@@ -19,7 +19,7 @@ from schemas.makerspace_settings import (
     ServiceModeUpdate,
     AppearanceUpdate,
 )
-from crud.makerspace_settings import get_makerspace_settings_crud
+from ..crud.makerspace_settings import get_makerspace_settings_crud
 
 router = APIRouter(prefix="/makerspace/settings", tags=["Makerspace Settings"])
 

@@ -21,7 +21,7 @@
     "docker:down": "docker-compose down -v",
     "setup": "npm ci && npm run setup:env && npm run setup:infrastructure",
     "dev:apps": "concurrently \"npm run dev --workspace=apps/gateway-frontend\" \"npm run dev --workspace=apps/gateway-frontend-hacker\" \"npm run dev --workspace=apps/makrcave\" \"npm run dev --workspace=apps/makrx-store\" \"npm run dev --workspace=apps/makrx-events\"",
-    "dev:backends": "concurrently \"cd backends/makrcave && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload\" \"cd backends/makrx-events && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload\" \"cd backends/makrx-store && . venv/bin/activate && venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8003 --reload\"",
+    "dev:backends": "concurrently \"PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrcave/venv/bin/pip install -r backends/makrcave/requirements.txt && PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrcave/venv/bin/python -m uvicorn backends.makrcave.main:app --host 0.0.0.0 --port 8001 --reload\" \"PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrx_events/venv/bin/pip install -r backends/makrx_events/requirements.txt && PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrx_events/venv/bin/python -m uvicorn backends.makrx_events.main:app --host 0.0.0.0 --port 8002 --reload\" \"PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrx_store/venv/bin/pip install -r backends/makrx_store/requirements.txt && PYTHONPATH=/home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified backends/makrx_store/venv/bin/python -m uvicorn backends.makrx_store.main:app --host 0.0.0.0 --port 8003 --reload\"",
     "dev:infrastructure": "docker-compose up -d postgres redis keycloak minio",
     "build:apps": "npm run build --workspaces --if-present",
     "test:unit": "npm run test --workspaces --if-present",
@@ -31,10 +31,10 @@
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "type-check": "npm run type-check --workspaces --if-present",
-    "db:migrate": "cd backends/makrcave && alembic upgrade head && cd ../makrx-store && alembic upgrade head",
+    "db:migrate": "cd backends/makrcave && PYTHONPATH=../.. ./venv/bin/alembic upgrade head && cd ../makrx_store && if [ -z \"$DATABASE_URL\" ]; then echo 'WARNING: Skipping MakrX Store migrations. Set DATABASE_URL to your Postgres connection string first.'; else PYTHONPATH=../.. ./venv/bin/alembic upgrade head; fi && cd ../makrx_events && PYTHONPATH=../.. ./venv/bin/alembic upgrade head",
     "db:seed": "npm run db:seed:makrcave && npm run db:seed:store && npm run db:seed:events",
-    "db:seed:makrcave": "cd backends/makrcave && python scripts/seed_database.py",
-    "db:seed:store": "cd backends/makrx-store && python scripts/seed_database.py",
+    "db:seed:makrcave": "cd backends/makrcave && PYTHONPATH=../.. ./venv/bin/python seed.py",
+    "db:seed:store": "cd backends/makrx_store && if [ -z \"$DATABASE_URL\" ]; then echo 'WARNING: Skipping MakrX Store seed. Set DATABASE_URL before seeding.'; else PYTHONPATH=../.. ./venv/bin/python seed_data.py; fi",
     "db:seed:events": "echo 'No seed for events backend' && exit 0",
     "docker:logs": "docker-compose logs -f",
     "docker:clean": "docker system prune -af && docker volume prune -f",
@@ -81,7 +81,9 @@
     "eslint-config-prettier": "^9.1.0",
     "next": "14.2.32",
     "prettier": "^3.1.0",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "@sentry/nextjs": "^7.x.x",
+    "@sentry/react": "^7.x.x"
   },
   "overrides": {
     "react": "18.3.1",

@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import uuid
 
-from models.skill import (
+from ..models.skill import (
     Skill,
     UserSkill,
     SkillRequest,
@@ -12,7 +12,7 @@ from models.skill import (
     SkillStatus,
     RequestStatus,
 )
-from schemas.skill import (
+from ..schemas.skill import (
     SkillCreate,
     SkillUpdate,
     UserSkillCreate,
@@ -367,7 +367,7 @@ def check_equipment_access(
     db: Session, user_id: str, equipment_id: str
 ) -> EquipmentAccessCheck:
     # Get equipment's required skills
-    from models.equipment import Equipment
+    from ..models.equipment import Equipment
 
     equipment = (
         db.query(Equipment)
@@ -434,7 +434,7 @@ def check_equipment_access(
 def get_user_accessible_equipment(
     db: Session, user_id: str, makerspace_id: Optional[str] = None
 ) -> List[str]:
-    from models.equipment import Equipment
+    from ..models.equipment import Equipment
 
     query = db.query(Equipment)
     if makerspace_id:

@@ -7,7 +7,7 @@ import uuid
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_user_optional
-from models.machine_access import (
+from ..models.machine_access import (
     MachineAccessRule,
     UserCertification,
     Badge,
@@ -21,9 +21,9 @@ from models.machine_access import (
     AccessAttemptResult,
     CertificationStatus,
 )
-from models.equipment import Equipment
-from models.skill import Skill
-from schemas.machine_access import (
+from ..models.equipment import Equipment
+from ..models.skill import Skill
+from ..schemas.machine_access import (
     MachineAccessRuleCreate,
     MachineAccessRuleUpdate,
     MachineAccessRuleResponse,

@@ -10,36 +10,9 @@ import ProductGrid from '@/components/ProductGrid';
 import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
 import { CategorySEO } from '@/components/SEOMetaTags';
 import SortSelect from '@/components/SortSelect';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  path: string;
-  description?: string;
-  banner_image?: string;
-  seo_title?: string;
-  seo_description?: string;
-  parent_id?: number;
-  children: Category[];
-  product_count: number;
-}
-
-interface Product {
-  id: number;
-  slug: string;
-  name: string;
-  brand?: string;
-  price: number;
-  sale_price?: number;
-  images: string[];
-  in_stock: boolean;
-  rating?: {
-    average: number;
-    count: number;
-  };
-}
+import type { Category, Product } from '@/types';
 
 interface SearchFacet {
   name: string;
@@ -82,7 +55,7 @@ export default function CategoryPage() {
       setLoading(true);
       try {
         // Resolve category by traversing category tree
-        const tree = await api.getCategoryTree(true);
+        const tree = await storeApi.getCategoryTree(true);
         const parts = categoryPath.split('/').filter(Boolean);
         const findByPath = (nodes: any[], idx = 0): any | null => {
           if (idx >= parts.length) return null;
@@ -123,7 +96,7 @@ export default function CategoryPage() {
         setBreadcrumbs(crumbs);
 
         // Fetch products in category
-        const productsData = await api.advancedSearch({
+        const productsData = await storeApi.advancedSearch({
           filters: { category_ids: [cat.id], ...filters },
           sort_by: sort,
           page,

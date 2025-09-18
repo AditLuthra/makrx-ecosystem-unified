@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 from ..database import get_db
 from ..dependencies import get_current_user
-from schemas.access_control import (
+from ..schemas.access_control import (
     PermissionCreate,
     PermissionUpdate,
     PermissionResponse,
@@ -42,8 +42,8 @@ from schemas.access_control import (
     AuditLogFilter,
     SecurityAlert,
 )
-from crud import access_control as crud_access_control
-from models.access_control import PermissionType, RoleType, AccessScope
+from ..crud import access_control as crud_access_control
+from ..models.access_control import PermissionType, RoleType, AccessScope
 
 router = APIRouter()
 security = HTTPBearer()

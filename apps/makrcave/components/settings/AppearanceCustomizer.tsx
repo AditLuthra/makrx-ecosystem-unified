@@ -156,6 +156,9 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
   };
 
   const customColors = settings.custom_theme_colors || {};
+  const themeModeLabel = settings.theme_mode
+    ? `${settings.theme_mode.charAt(0).toUpperCase()}${settings.theme_mode.slice(1)}`
+    : 'Light';
 
   return (
     <div className="space-y-6">
@@ -592,10 +595,7 @@ const AppearanceCustomizer: React.FC<AppearanceCustomizerProps> = ({
               <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Theme Mode:</span>
-                  <Badge variant="outline">
-                    {settings.theme_mode?.charAt(0).toUpperCase() + settings.theme_mode?.slice(1) ||
-                      'Light'}
-                  </Badge>
+                  <Badge variant="outline">{themeModeLabel}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Custom Colors:</span>

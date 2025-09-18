@@ -1,23 +1,13 @@
 import { MetadataRoute } from 'next';
+import { db } from '@/lib/db';
+import { microsites } from '@shared/schema';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://makrx.events';
 
-  // Mock microsites data - replace with actual database query
-  const mockMicrosites = [
-    {
-      slug: 'makerfest-2024',
-      updatedAt: '2024-02-01T10:00:00Z',
-    },
-    {
-      slug: 'techcon-spring',
-      updatedAt: '2024-02-01T12:00:00Z',
-    },
-    {
-      slug: 'innovation-expo',
-      updatedAt: '2024-02-01T14:00:00Z',
-    },
-  ];
+  const micrositeRecords = await db
+    .select({ slug: microsites.slug, updatedAt: microsites.updatedAt })
+    .from(microsites);
 
   const staticRoutes = [
     {
@@ -47,22 +37,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // Add microsite routes
-  const micrositeRoutes = mockMicrosites.flatMap((microsite) => [
+  const micrositeRoutes = micrositeRecords.flatMap((microsite) => [
     {
       url: `${baseUrl}/m/${microsite.slug}`,
-      lastModified: new Date(microsite.updatedAt),
+      lastModified: microsite.updatedAt ?? new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     {
       url: `${baseUrl}/m/${microsite.slug}/events`,
-      lastModified: new Date(microsite.updatedAt),
+      lastModified: microsite.updatedAt ?? new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.7,
     },
     {
       url: `${baseUrl}/m/${microsite.slug}/about`,
-      lastModified: new Date(microsite.updatedAt),
+      lastModified: microsite.updatedAt ?? new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     },

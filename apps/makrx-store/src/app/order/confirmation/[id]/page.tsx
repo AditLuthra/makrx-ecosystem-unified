@@ -18,7 +18,7 @@ import {
   ArrowRight,
   Share2,
 } from 'lucide-react';
-import { api, type Order, formatPrice, formatDateTime } from '@/lib/api';
+import { storeApi, type Order, formatPrice, formatDateTime } from '@/services/storeApi';
 import { withAuth } from '@/contexts/AuthContext';
 
 function OrderConfirmationPage() {
@@ -32,7 +32,7 @@ function OrderConfirmationPage() {
   useEffect(() => {
     const loadOrder = async () => {
       try {
-        const orderData = await api.getOrder(parseInt(orderId));
+        const orderData = await storeApi.getOrder(parseInt(orderId));
         setOrder(orderData);
       } catch (err) {
         console.error('Failed to load order:', err);

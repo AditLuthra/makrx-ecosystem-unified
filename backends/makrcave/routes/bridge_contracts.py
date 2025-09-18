@@ -11,9 +11,9 @@ from datetime import datetime
 import httpx
 
 from ..database import get_db
-from models.project import Job, JobStatus
-from models.inventory import InventoryItem, InventoryTransaction
-from utils.auth import verify_service_jwt
+from ..models.project import Job, JobStatus
+from ..models.inventory import InventoryItem, InventoryTransaction
+from ..utils.auth import verify_service_jwt
 
 router = APIRouter()
 

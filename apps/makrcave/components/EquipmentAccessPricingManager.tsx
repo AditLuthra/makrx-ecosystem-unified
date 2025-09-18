@@ -128,12 +128,18 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
       baseCost = actualChargeableMinutes * (currentPolicy.price_per_unit || 0);
     }
 
-    const breakdown = [
-      `Duration: ${durationMinutes} minutes`,
-      `Grace period: ${gracePeriod} minutes (free)`,
-      `Chargeable: ${chargeableMinutes} minutes`,
-      `Minimum billing: ${minimumBilling} minutes`,
-      `Rate: ₹${currentPolicy.price_per_unit}/${currentPolicy.cost_unit}`,
+    const breakdown: CostEstimate['breakdown'] = [
+      { label: 'Duration', value: `${durationMinutes} minutes` },
+      { label: 'Grace period', value: `${gracePeriod} minutes (free)` },
+      { label: 'Chargeable', value: `${chargeableMinutes} minutes` },
+      { label: 'Minimum billing', value: `${minimumBilling} minutes` },
+      {
+        label: 'Rate',
+        value:
+          currentPolicy.price_per_unit != null
+            ? `₹${currentPolicy.price_per_unit}/${currentPolicy.cost_unit || 'minute'}`
+            : 'Not set',
+      },
     ];
 
     const estimate: CostEstimate = {
@@ -236,7 +242,7 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                         {getAccessTypeIcon(
                           policies.find((p) => p.equipment_id === eq.id)?.access_type || 'free',
                         )}
-                        {eq.name} ({eq.type.replace('_', ' ')})
+                        {eq.name} ({(eq.type ?? 'unspecified').replace('_', ' ')})
                       </div>
                     </SelectItem>
                   ))}
@@ -497,8 +503,11 @@ const EquipmentAccessPricingManager: React.FC<EquipmentAccessPricingManagerProps
                             </div>
                           </div>
                           <div className="space-y-1 text-sm text-gray-600">
-                            {costEstimate.breakdown.map((line, index) => (
-                              <div key={index}>{line}</div>
+                            {costEstimate.breakdown.map((entry, index) => (
+                              <div key={index} className="flex justify-between gap-4">
+                                <span>{entry.label}</span>
+                                <span className="font-medium text-gray-800">{entry.value}</span>
+                              </div>
                             ))}
                           </div>
                         </CardContent>

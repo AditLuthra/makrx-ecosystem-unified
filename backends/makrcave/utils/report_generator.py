@@ -48,7 +48,7 @@ class ReportGenerator:
     ) -> str:
         """Generate usage analytics CSV report"""
         # Query usage events
-        from models.analytics import UsageEvent
+        from ..models.analytics import UsageEvent
 
         events = (
             self.db.query(UsageEvent)
@@ -118,7 +118,7 @@ class ReportGenerator:
         self, makerspace_id: str, start_date: date, end_date: date
     ) -> str:
         """Generate inventory analytics Excel report"""
-        from models.analytics import InventoryAnalytics
+        from ..models.analytics import InventoryAnalytics
 
         # Query inventory data
         inventory_data = (
@@ -209,7 +209,7 @@ class ReportGenerator:
         self, makerspace_id: str, start_date: date, end_date: date
     ) -> str:
         """Generate revenue analytics PDF report"""
-        from models.analytics import RevenueAnalytics
+        from ..models.analytics import RevenueAnalytics
 
         # Query revenue data
         revenue_data = (
@@ -389,7 +389,7 @@ class ReportGenerator:
         self, makerspace_id: str, start_date: date, end_date: date
     ) -> str:
         """Generate equipment metrics Excel report"""
-        from models.analytics import EquipmentUsageLog
+        from ..models.analytics import EquipmentUsageLog
 
         usage_logs = (
             self.db.query(EquipmentUsageLog)
@@ -482,7 +482,7 @@ class ReportGenerator:
         self, makerspace_id: str, start_date: date, end_date: date
     ) -> str:
         """Generate project analytics CSV report"""
-        from models.analytics import ProjectAnalytics
+        from ..models.analytics import ProjectAnalytics
 
         projects = (
             self.db.query(ProjectAnalytics)

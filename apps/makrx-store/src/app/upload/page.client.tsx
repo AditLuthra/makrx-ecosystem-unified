@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -19,7 +19,7 @@ import {
   Package,
   Zap,
 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { storeApi, QuoteSummary, Upload } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface UploadedFile {
@@ -28,13 +28,11 @@ interface UploadedFile {
   preview?: string;
   status: 'uploading' | 'processing' | 'completed' | 'error';
   progress: number;
+  uploadId?: string;
+  fileKey?: string;
+  analysis?: Partial<Upload>;
+  quote?: QuoteSummary;
   error?: string;
-  quote?: {
-    price: number;
-    material: string;
-    print_time: string;
-    volume: number;
-  };
 }
 
 export default function UploadPage() {
@@ -100,93 +98,230 @@ export default function UploadPage() {
     },
   ];
 
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      if (!isAuthenticated) {
-        alert('Please sign in to upload files');
-        login();
-        return;
-      }
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      const newFiles: UploadedFile[] = acceptedFiles.map((file) => ({
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        file,
-        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-        status: 'uploading',
-        progress: 0,
-      }));
+  const uploadToPresignedUrl = async (
+    uploadUrl: string,
+    fields: Record<string, string>,
+    file: File,
+    onProgress: (percent: number) => void,
+  ) => {
+    await new Promise<void>((resolve, reject) => {
+      const formData = new FormData();
+      Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
+      formData.append('file', file);
 
-      setUploadedFiles((prev) => [...prev, ...newFiles]);
-      setProcessingCount((prev) => prev + newFiles.length);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadUrl);
 
-      // Simulate file upload and processing
-      for (const uploadFile of newFiles) {
-        await processFile(uploadFile);
-      }
-    },
-    [isAuthenticated, login],
-  );
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const percent = (event.loaded / event.total) * 100;
+          onProgress(Math.min(100, percent));
+        }
+      });
 
-  const processFile = async (uploadFile: UploadedFile) => {
-    try {
-      // Simulate upload progress
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        setUploadedFiles((prev) =>
-          prev.map((f) => (f.id === uploadFile.id ? { ...f, progress } : f)),
-        );
-      }
-
-      // Change to processing
-      setUploadedFiles((prev) =>
-        prev.map((f) => (f.id === uploadFile.id ? { ...f, status: 'processing', progress: 0 } : f)),
-      );
-
-      // Simulate processing (file analysis)
-      for (let progress = 0; progress <= 100; progress += 5) {
-        await new Promise((resolve) => setTimeout(resolve, 80));
-        setUploadedFiles((prev) =>
-          prev.map((f) => (f.id === uploadFile.id ? { ...f, progress } : f)),
-        );
-      }
-
-      // Generate mock quote
-      const materialData = materials.find((m) => m.id === selectedMaterial);
-      const qualityData = qualities.find((q) => q.id === selectedQuality);
-
-      const mockQuote = {
-        price: Math.round((15 + Math.random() * 50) * 100) / 100,
-        material: selectedMaterial,
-        print_time: `${Math.round(2 + Math.random() * 8)}h ${Math.round(Math.random() * 60)}m`,
-        volume: Math.round((5 + Math.random() * 45) * 100) / 100,
+      xhr.onerror = () => reject(new Error('Upload failed'));
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
       };
 
+      xhr.send(formData);
+    });
+  };
+
+  const pollForProcessing = async (remoteUploadId: string, localId: string) => {
+    const maxAttempts = 30;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const details = await storeApi.getUpload(remoteUploadId);
+
+      if (details.status === 'processed') {
+        return details;
+      }
+
+      if (details.status === 'failed') {
+        throw new Error(details.error_message || 'Processing failed');
+      }
+
+      const progressBump = 70 + Math.min(20, (attempt / maxAttempts) * 20);
       setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadFile.id
+        prev.map((file) =>
+          file.id === localId
             ? {
-                ...f,
-                status: 'completed',
-                progress: 100,
-                quote: mockQuote,
+                ...file,
+                progress: Math.max(file.progress, Math.round(progressBump)),
               }
-            : f,
+            : file,
         ),
       );
-    } catch (error) {
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadFile.id
-            ? {
-                ...f,
-                status: 'error',
-                error: 'Failed to process file',
-              }
-            : f,
-        ),
-      );
-    } finally {
-      setProcessingCount((prev) => prev - 1);
+
+      await sleep(2000);
+    }
+
+    throw new Error('Processing timed out');
+  };
+
+  const formatCurrency = (amount: number, currency = 'INR') =>
+    new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2,
+    }).format(amount);
+
+  const formatDuration = (minutes?: number) => {
+    if (minutes == null || Number.isNaN(minutes)) {
+      return '—';
+    }
+    const hrs = Math.floor(minutes / 60);
+    const mins = Math.round(minutes % 60);
+    return `${hrs}h ${mins}m`;
+  };
+
+  const formatVolume = (volume?: number) => {
+    if (volume == null || Number.isNaN(volume)) {
+      return '—';
+    }
+    return `${volume.toFixed(2)} cm³`;
+  };
+
+  const getMaterialLabel = (id?: string) => {
+    if (!id) return '—';
+    const match = materials.find((m) => m.id === id.toUpperCase());
+    return match?.name ?? id;
+  };
+
+  const processFile = async (uploadFile: UploadedFile, materialId: string, qualityId: string) => {
+      try {
+        const contentType = uploadFile.file.type || 'application/octet-stream';
+        const uploadResponse = await storeApi.createUploadUrl(
+          uploadFile.file.name,
+          contentType,
+          uploadFile.file.size,
+        );
+
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadFile.id
+              ? {
+                  ...file,
+                  uploadId: uploadResponse.upload_id,
+                  fileKey: uploadResponse.file_key,
+                }
+              : file,
+          ),
+        );
+
+        await uploadToPresignedUrl(uploadResponse.upload_url, uploadResponse.fields, uploadFile.file, (percent) => {
+          setUploadedFiles((prev) =>
+            prev.map((file) =>
+              file.id === uploadFile.id
+                ? {
+                    ...file,
+                    progress: Math.max(file.progress, Math.round((percent / 100) * 60)),
+                  }
+                : file,
+            ),
+          );
+        });
+
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadFile.id
+              ? {
+                  ...file,
+                  status: 'processing',
+                  progress: Math.max(file.progress, 70),
+                }
+              : file,
+          ),
+        );
+
+        await storeApi.completeUpload(uploadResponse.upload_id, uploadResponse.file_key);
+
+        const uploadDetails = await pollForProcessing(uploadResponse.upload_id, uploadFile.id);
+
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadFile.id
+              ? {
+                  ...file,
+                  analysis: uploadDetails,
+                  progress: Math.max(file.progress, 90),
+                }
+              : file,
+          ),
+        );
+
+        const normalizedQuality = qualityId === 'fine' ? 'high' : qualityId;
+
+        const quote = await storeApi.createQuote({
+          upload_id: uploadResponse.upload_id,
+          material: materialId,
+          quality: normalizedQuality,
+          infill_percentage: 20,
+          supports: false,
+          quantity: 1,
+        });
+
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadFile.id
+              ? {
+                  ...file,
+                  status: 'completed',
+                  progress: 100,
+                  quote,
+                }
+              : file,
+          ),
+        );
+      } catch (error) {
+        console.error('Failed to process upload', error);
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadFile.id
+              ? {
+                  ...file,
+                  status: 'error',
+                  error: error instanceof Error ? error.message : 'Failed to process file',
+                }
+              : file,
+          ),
+        );
+      } finally {
+        setProcessingCount((prev) => Math.max(0, prev - 1));
+      }
+    };
+
+  const handleFileDrop = async (acceptedFiles: File[]) => {
+    if (!isAuthenticated) {
+      alert('Please sign in to upload files');
+      login();
+      return;
+    }
+
+    if (!acceptedFiles.length) {
+      return;
+    }
+
+    const newFiles: UploadedFile[] = acceptedFiles.map((file) => ({
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      file,
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+      status: 'uploading',
+      progress: 0,
+    }));
+
+    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    setProcessingCount((prev) => prev + newFiles.length);
+
+    for (const uploadFile of newFiles) {
+      await processFile(uploadFile, selectedMaterial, selectedQuality);
     }
   };
 
@@ -202,7 +337,7 @@ export default function UploadPage() {
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: handleFileDrop,
     accept: {
       'model/stl': ['.stl'],
       'model/obj': ['.obj'],
@@ -223,6 +358,9 @@ export default function UploadPage() {
   const totalQuotePrice = uploadedFiles
     .filter((f) => f.status === 'completed' && f.quote)
     .reduce((sum, f) => sum + (f.quote?.price || 0), 0);
+  const totalQuoteCurrency =
+    uploadedFiles.find((f) => f.status === 'completed' && f.quote)?.quote?.currency ?? 'INR';
+  const totalQuoteDisplay = formatCurrency(totalQuotePrice, totalQuoteCurrency);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -263,96 +401,95 @@ export default function UploadPage() {
               {/* Uploaded Files */}
               {uploadedFiles.length > 0 && (
                 <div className="mt-6 space-y-4">
-                  {uploadedFiles.map((file) => (
-                    <div key={file.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <File className="h-6 w-6 text-gray-400" />
-                          <div>
-                            <p className="font-medium text-gray-900">{file.file.name}</p>
-                            <p className="text-sm text-gray-500">
-                              {(file.file.size / (1024 * 1024)).toFixed(2)} MB
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => removeFile(file.id)}
-                          className="text-gray-400 hover:text-red-500"
-                          aria-label="Remove file"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      </div>
+                  {uploadedFiles.map((file) => {
+                    const quote = file.quote;
+                    const currency = quote?.currency ?? 'INR';
+                    const priceLabel = quote ? formatCurrency(quote.price, currency) : undefined;
+                    const materialLabel = getMaterialLabel(quote?.print_parameters?.material);
+                    const timeLabel = formatDuration(quote?.estimated_time_minutes);
+                    const volumeLabel = formatVolume(quote?.material_usage.volume_cm3);
 
-                      {/* Progress */}
-                      <div className="mt-3">
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full ${
-                              file.status === 'error'
-                                ? 'bg-red-500'
-                                : file.status === 'completed'
-                                  ? 'bg-green-500'
-                                  : 'bg-blue-500'
-                            }`}
-                            style={{ width: `${file.progress}%` }}
-                          ></div>
-                        </div>
-                        <div className="mt-1 text-sm text-gray-600">
-                          {file.status === 'uploading' && 'Uploading...'}
-                          {file.status === 'processing' && 'Analyzing model...'}
-                          {file.status === 'completed' && 'Quote generated'}
-                          {file.status === 'error' && (
-                            <span className="text-red-600">{file.error}</span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Quote */}
-                      {file.status === 'completed' && file.quote && (
-                        <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="flex items-center space-x-2">
-                              <DollarSign className="h-5 w-5 text-green-600" />
-                              <div>
-                                <div className="text-sm text-gray-500">Estimated Price</div>
-                                <div className="font-semibold text-gray-900">
-                                  ₹{file.quote.price.toLocaleString()}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Package className="h-5 w-5 text-blue-600" />
-                              <div>
-                                <div className="text-sm text-gray-500">Material</div>
-                                <div className="font-semibold text-gray-900">
-                                  {file.quote.material}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Clock className="h-5 w-5 text-purple-600" />
-                              <div>
-                                <div className="text-sm text-gray-500">Print Time</div>
-                                <div className="font-semibold text-gray-900">
-                                  {file.quote.print_time}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Calculator className="h-5 w-5 text-orange-600" />
-                              <div>
-                                <div className="text-sm text-gray-500">Volume</div>
-                                <div className="font-semibold text-gray-900">
-                                  {file.quote.volume} cm³
-                                </div>
-                              </div>
+                    return (
+                      <div key={file.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <File className="h-6 w-6 text-gray-400" />
+                            <div>
+                              <p className="font-medium text-gray-900">{file.file.name}</p>
+                              <p className="text-sm text-gray-500">
+                                {(file.file.size / (1024 * 1024)).toFixed(2)} MB
+                              </p>
                             </div>
                           </div>
+                          <button
+                            onClick={() => removeFile(file.id)}
+                            className="text-gray-400 hover:text-red-500"
+                            aria-label="Remove file"
+                          >
+                            <X className="h-5 w-5" />
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  ))}
+
+                        <div className="mt-3">
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${
+                                file.status === 'error'
+                                  ? 'bg-red-500'
+                                  : file.status === 'completed'
+                                    ? 'bg-green-500'
+                                    : 'bg-blue-500'
+                              }`}
+                              style={{ width: `${file.progress}%` }}
+                            ></div>
+                          </div>
+                          <div className="mt-1 text-sm text-gray-600">
+                            {file.status === 'uploading' && 'Uploading...'}
+                            {file.status === 'processing' && 'Analyzing model...'}
+                            {file.status === 'completed' && 'Quote generated'}
+                            {file.status === 'error' && (
+                              <span className="text-red-600">{file.error}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {file.status === 'completed' && quote && (
+                          <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="flex items-center space-x-2">
+                                <DollarSign className="h-5 w-5 text-green-600" />
+                                <div>
+                                  <div className="text-sm text-gray-500">Estimated Price</div>
+                                  <div className="font-semibold text-gray-900">{priceLabel}</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Package className="h-5 w-5 text-blue-600" />
+                                <div>
+                                  <div className="text-sm text-gray-500">Material</div>
+                                  <div className="font-semibold text-gray-900">{materialLabel}</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Clock className="h-5 w-5 text-purple-600" />
+                                <div>
+                                  <div className="text-sm text-gray-500">Print Time</div>
+                                  <div className="font-semibold text-gray-900">{timeLabel}</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Calculator className="h-5 w-5 text-orange-600" />
+                                <div>
+                                  <div className="text-sm text-gray-500">Volume</div>
+                                  <div className="font-semibold text-gray-900">{volumeLabel}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -406,7 +543,7 @@ export default function UploadPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Estimated Total</span>
-                    <span className="font-semibold">₹{totalQuotePrice.toLocaleString()}</span>
+                    <span className="font-semibold">{totalQuoteDisplay}</span>
                   </div>
                 </div>
                 <button

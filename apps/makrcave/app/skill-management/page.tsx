@@ -81,39 +81,80 @@ const SkillManagement: React.FC = () => {
 
   // Mock data for members and equipment
   const mockMembers = [
-    { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
-    { id: 'user-2', firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com' },
-  ];
+    {
+      id: 'user-1',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      role: 'maker',
+    },
+    {
+      id: 'user-2',
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      role: 'maker',
+    },
+  ] satisfies Array<{ id: string; name: string; email: string; role: string }>;
 
   const mockEquipment = [
-    { id: 'eq-1', name: '3D Printer Pro', type: 'printer_3d' },
-    { id: 'eq-2', name: 'Laser Cutter X1', type: 'laser_cutter' },
-  ];
+    {
+      id: 'eq-1',
+      name: '3D Printer Pro',
+      category: 'fabrication',
+      model: 'MKX-3000',
+    },
+    {
+      id: 'eq-2',
+      name: 'Laser Cutter X1',
+      category: 'fabrication',
+      model: 'LC-100',
+    },
+  ] satisfies Array<{ id: string; name: string; category: string; model?: string }>;
 
-  const mockSkills = [
+  const mockSkills: Skill[] = [
     {
       id: 'skill-1',
-      name: '3D Printing',
-      category: 'manufacturing',
-      description: 'Basic 3D printing skills',
-      level: 'beginner' as const,
-      equipment_ids: ['eq-1'],
-      requirements: ['Complete safety training'],
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2023-01-01T00:00:00Z',
+      name: '3D Printing Fundamentals',
+      category: 'Manufacturing',
+      description: 'Operate standard FDM printers and handle post-processing safely.',
+      level: 'beginner',
+      prerequisites: ['Complete makerspace orientation'],
+      equipment: ['3D Printer Pro'],
+      status: 'active',
+    },
+    {
+      id: 'skill-2',
+      name: 'Laser Cutter Operation',
+      category: 'Manufacturing',
+      description: 'Set up and execute laser cutting jobs with proper safety protocols.',
+      level: 'intermediate',
+      prerequisites: ['Basic safety training'],
+      equipment: ['Laser Cutter X1'],
+      status: 'active',
     },
   ];
 
-  const mockUserSkills = [
+  const mockUserSkills: UserSkill[] = [
     {
-      id: 'user-skill-1',
-      user_id: 'user-1',
-      skill_id: 'skill-1',
-      status: 'certified' as const,
+      userId: 'user-1',
+      userName: 'John Doe',
+      userEmail: 'john.doe@example.com',
+      skillId: 'skill-1',
+      skillName: '3D Printing Fundamentals',
+      status: 'certified',
       certifiedAt: '2023-06-01T10:00:00Z',
       expiresAt: '2024-06-01T10:00:00Z',
       certifiedBy: 'Tech Lead',
       notes: 'Needs recertification',
+    },
+    {
+      userId: 'user-2',
+      userName: 'Jane Smith',
+      userEmail: 'jane.smith@example.com',
+      skillId: 'skill-2',
+      skillName: 'Laser Cutter Operation',
+      status: 'pending',
+      certifiedBy: 'Lab Manager',
+      notes: 'Awaiting skills assessment',
     },
   ];
 
@@ -122,7 +163,7 @@ const SkillManagement: React.FC = () => {
     setSkills(mockSkills);
     setUserSkills(mockUserSkills);
     setLoading(false);
-  }, [mockSkills, mockUserSkills]);
+  }, []);
 
   // Check if user has skill management access
   if (!hasPermission('admin', 'globalDashboard') && user?.role !== 'makerspace_admin') {

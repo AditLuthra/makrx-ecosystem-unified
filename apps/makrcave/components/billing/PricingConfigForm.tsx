@@ -82,26 +82,40 @@ const PricingConfigForm: React.FC = () => {
   });
 
   const handleInputChange = (section: string, field: string, value: any) => {
-    setPricingConfig((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section as keyof typeof prev],
-        [field]: value,
-      },
-    }));
+    setPricingConfig((prev) => {
+      const currentSection = prev[section as keyof typeof prev];
+      const sectionData =
+        typeof currentSection === 'object' && currentSection !== null ? currentSection : {};
+      return {
+        ...prev,
+        [section]: {
+          ...(sectionData as Record<string, unknown>),
+          [field]: value,
+        },
+      };
+    });
   };
 
   const handleNestedChange = (section: string, subsection: string, field: string, value: any) => {
-    setPricingConfig((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section as keyof typeof prev],
-        [subsection]: {
-          ...(prev[section as keyof typeof prev] as any)[subsection],
-          [field]: value,
+    setPricingConfig((prev) => {
+      const sectionValue = prev[section as keyof typeof prev];
+      const sectionData =
+        typeof sectionValue === 'object' && sectionValue !== null ? sectionValue : {};
+      const subsectionValue = (sectionData as Record<string, unknown>)[subsection];
+      const subsectionData =
+        typeof subsectionValue === 'object' && subsectionValue !== null ? subsectionValue : {};
+
+      return {
+        ...prev,
+        [section]: {
+          ...(sectionData as Record<string, unknown>),
+          [subsection]: {
+            ...(subsectionData as Record<string, unknown>),
+            [field]: value,
+          },
         },
-      },
-    }));
+      };
+    });
   };
 
   const handleSave = async () => {

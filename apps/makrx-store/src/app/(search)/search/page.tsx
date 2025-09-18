@@ -8,7 +8,7 @@ import SearchFilters from '@/components/SearchFilters';
 import ProductGrid from '@/components/ProductGrid';
 import SearchSuggestions from '@/components/SearchSuggestions';
 import SortSelect from '@/components/SortSelect';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
 interface SearchResult {
   products: any[];
@@ -66,7 +66,7 @@ function SearchPageContent() {
         include_facets: true,
       };
 
-      const data = await api.advancedSearch(requestBody);
+      const data = await storeApi.advancedSearch(requestBody);
       setSearchResults(data);
     } catch (err) {
       setError('Search failed. Please try again.');

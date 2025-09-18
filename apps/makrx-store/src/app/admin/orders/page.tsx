@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   Search,
@@ -18,101 +18,38 @@ import {
   CreditCard,
 } from 'lucide-react';
 
-interface Order {
+import { storeApi } from '@/services/storeApi';
+import { useAuth } from '@/contexts/AuthContext';
+
+interface OrderRow {
   id: string;
-  customerName: string;
-  customerEmail: string;
+  customerName?: string;
+  customerEmail?: string;
   orderNumber: string;
-  date: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  date?: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'completed' | 'refunded';
   type: 'product' | 'service';
   total: number;
   items: number;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   paymentStatus: 'paid' | 'pending' | 'failed' | 'refunded';
-  shippingMethod: string;
+  shippingMethod?: string;
   estimatedDelivery?: string;
+  currency: string;
 }
 
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    customerName: 'Sarah Johnson',
-    customerEmail: 'sarah.j@email.com',
-    orderNumber: 'MX-2024-001',
-    date: '2024-01-15',
-    status: 'processing',
-    type: 'product',
-    total: 159.99,
-    items: 3,
-    priority: 'normal',
-    paymentStatus: 'paid',
-    shippingMethod: 'Standard',
-    estimatedDelivery: '2024-01-20',
-  },
-  {
-    id: '2',
-    customerName: 'Mike Chen',
-    customerEmail: 'mike.chen@email.com',
-    orderNumber: 'MX-2024-002',
-    date: '2024-01-14',
-    status: 'shipped',
-    type: 'service',
-    total: 89.5,
-    items: 1,
-    priority: 'high',
-    paymentStatus: 'paid',
-    shippingMethod: 'Express',
-    estimatedDelivery: '2024-01-18',
-  },
-  {
-    id: '3',
-    customerName: 'Emily Rodriguez',
-    customerEmail: 'emily.r@email.com',
-    orderNumber: 'MX-2024-003',
-    date: '2024-01-13',
-    status: 'delivered',
-    type: 'product',
-    total: 234.75,
-    items: 5,
-    priority: 'normal',
-    paymentStatus: 'paid',
-    shippingMethod: 'Standard',
-    estimatedDelivery: '2024-01-19',
-  },
-  {
-    id: '4',
-    customerName: 'David Wilson',
-    customerEmail: 'david.w@email.com',
-    orderNumber: 'MX-2024-004',
-    date: '2024-01-12',
-    status: 'pending',
-    type: 'service',
-    total: 45.0,
-    items: 1,
-    priority: 'urgent',
-    paymentStatus: 'pending',
-    shippingMethod: 'Digital',
-    estimatedDelivery: '2024-01-16',
-  },
-  {
-    id: '5',
-    customerName: 'Lisa Thompson',
-    customerEmail: 'lisa.t@email.com',
-    orderNumber: 'MX-2024-005',
-    date: '2024-01-11',
-    status: 'cancelled',
-    type: 'product',
-    total: 178.25,
-    items: 2,
-    priority: 'low',
-    paymentStatus: 'refunded',
-    shippingMethod: 'Express',
-    estimatedDelivery: undefined,
-  },
-];
+const formatCurrency = (amount: number, currency: string) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 2,
+  }).format(amount);
 
 export default function AdminOrders() {
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -121,12 +58,70 @@ export default function AdminOrders() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
+  const loadOrders = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await storeApi.getOrders();
+      const mapped: OrderRow[] = (response.orders ?? []).map((order: any, index: number) => {
+        const id = order.id != null ? String(order.id) : `${order.order_number || index}`;
+        const createdAt = order.created_at ?? order.createdAt ?? null;
+        const totalAmount =
+          order.total_amount ?? order.total ?? order.summary?.total_amount ?? order.summary?.total ?? 0;
+        const itemCount =
+          typeof order.items_count === 'number'
+            ? order.items_count
+            : Array.isArray(order.items)
+              ? order.items.length
+              : 0;
+        const status = (order.status ?? 'pending') as OrderRow['status'];
+        const paymentStatus = (order.payment_status ?? 'pending') as OrderRow['paymentStatus'];
+        const shippingMethod = order.shipping_method ?? order.shippingMethod ?? 'Standard';
+        const currency = order.currency ?? order.summary?.currency ?? 'INR';
+
+        return {
+          id,
+          orderNumber: order.order_number ?? `ORD-${id}`,
+          date: createdAt ? new Date(createdAt).toISOString().slice(0, 10) : undefined,
+          status,
+          type: 'product',
+          total: Number(totalAmount) || 0,
+          items: itemCount,
+          priority: 'normal',
+          paymentStatus,
+          shippingMethod,
+          estimatedDelivery: order.estimated_delivery ?? order.delivered_at ?? undefined,
+          customerName:
+            order.customer_name ?? order.addresses?.shipping?.name ?? user?.name ?? 'Customer',
+          customerEmail: order.email ?? user?.email ?? undefined,
+          currency,
+        };
+      });
+
+      setOrders(mapped);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load orders';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.email, user?.name]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
   const filteredAndSortedOrders = useMemo(() => {
-    let filtered = mockOrders.filter((order) => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    const filtered = orders.filter((order) => {
+      const fields = [order.customerName, order.customerEmail, order.orderNumber]
+        .filter(Boolean)
+        .map((value) => value!.toLowerCase());
+
       const matchesSearch =
-        order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        !normalizedSearch || fields.some((value) => value.includes(normalizedSearch));
       const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
       const matchesType = typeFilter === 'all' || order.type === typeFilter;
       const matchesPriority = priorityFilter === 'all' || order.priority === priorityFilter;
@@ -135,23 +130,33 @@ export default function AdminOrders() {
     });
 
     return filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof Order];
-      let bValue: any = b[sortBy as keyof Order];
+      let aValue: any = (a as any)[sortBy];
+      let bValue: any = (b as any)[sortBy];
 
       if (sortBy === 'date') {
-        aValue = new Date(aValue).getTime();
-        bValue = new Date(bValue).getTime();
+        aValue = a.date ? new Date(a.date).getTime() : 0;
+        bValue = b.date ? new Date(b.date).getTime() : 0;
       }
 
       if (sortOrder === 'asc') {
         return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
       }
-    });
-  }, [searchTerm, statusFilter, typeFilter, priorityFilter, sortBy, sortOrder]);
 
-  const getStatusIcon = (status: Order['status']) => {
+      return aValue < bValue ? 1 : -1;
+    });
+  }, [orders, searchTerm, statusFilter, typeFilter, priorityFilter, sortBy, sortOrder]);
+
+  const primaryCurrency = orders[0]?.currency ?? 'INR';
+  const completedCount = orders.filter((o) => o.status === 'delivered' || o.status === 'completed')
+    .length;
+  const pendingCount = orders.filter((o) => o.status === 'pending' || o.status === 'processing')
+    .length;
+  const paidRevenue = orders.reduce(
+    (sum, order) => (order.paymentStatus === 'paid' ? sum + order.total : sum),
+    0,
+  );
+
+  const getStatusIcon = (status: OrderRow['status']) => {
     switch (status) {
       case 'pending':
         return <Clock className="w-4 h-4" />;
@@ -161,12 +166,15 @@ export default function AdminOrders() {
         return <Truck className="w-4 h-4" />;
       case 'delivered':
         return <Check className="w-4 h-4" />;
+      case 'completed':
+        return <Check className="w-4 h-4" />;
       case 'cancelled':
+      case 'refunded':
         return <X className="w-4 h-4" />;
     }
   };
 
-  const getStatusColor = (status: Order['status']) => {
+  const getStatusColor = (status: OrderRow['status']) => {
     switch (status) {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
@@ -175,13 +183,16 @@ export default function AdminOrders() {
       case 'shipped':
         return 'bg-purple-100 text-purple-800';
       case 'delivered':
+      case 'completed':
         return 'bg-green-100 text-green-800';
       case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      case 'refunded':
         return 'bg-red-100 text-red-800';
     }
   };
 
-  const getPriorityColor = (priority: Order['priority']) => {
+  const getPriorityColor = (priority: OrderRow['priority']) => {
     switch (priority) {
       case 'low':
         return 'bg-gray-100 text-gray-800';
@@ -194,7 +205,7 @@ export default function AdminOrders() {
     }
   };
 
-  const getPaymentStatusColor = (status: Order['paymentStatus']) => {
+  const getPaymentStatusColor = (status: OrderRow['paymentStatus']) => {
     switch (status) {
       case 'paid':
         return 'bg-green-100 text-green-800';
@@ -230,6 +241,34 @@ export default function AdminOrders() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center text-gray-600">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white shadow-md rounded-lg p-8 max-w-md text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Unable to load orders</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={loadOrders}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -264,7 +303,7 @@ export default function AdminOrders() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">{mockOrders.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
               </div>
             </div>
           </div>
@@ -275,9 +314,7 @@ export default function AdminOrders() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {mockOrders.filter((o) => o.status === 'delivered').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{completedCount}</p>
               </div>
             </div>
           </div>
@@ -288,12 +325,7 @@ export default function AdminOrders() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {
-                    mockOrders.filter((o) => o.status === 'pending' || o.status === 'processing')
-                      .length
-                  }
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{pendingCount}</p>
               </div>
             </div>
           </div>
@@ -305,10 +337,7 @@ export default function AdminOrders() {
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  $
-                  {mockOrders
-                    .reduce((sum, o) => (o.paymentStatus === 'paid' ? sum + o.total : sum), 0)
-                    .toFixed(2)}
+                  {formatCurrency(paidRevenue, primaryCurrency)}
                 </p>
               </div>
             </div>
@@ -465,7 +494,14 @@ export default function AdminOrders() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAndSortedOrders.map((order) => (
+              {filteredAndSortedOrders.map((order) => {
+                const orderDate = order.date ? new Date(order.date) : null;
+                const estimatedDate = order.estimatedDelivery
+                  ? new Date(order.estimatedDelivery)
+                  : null;
+                const totalLabel = formatCurrency(order.total, order.currency);
+
+                return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <input
@@ -484,18 +520,18 @@ export default function AdminOrders() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
-                          {order.customerName}
+                          {order.customerName ?? '—'}
                         </div>
-                        <div className="text-sm text-gray-500">{order.customerEmail}</div>
+                        <div className="text-sm text-gray-500">{order.customerEmail ?? '—'}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {new Date(order.date).toLocaleDateString()}
+                        {orderDate ? orderDate.toLocaleDateString() : '—'}
                       </div>
-                      {order.estimatedDelivery && (
+                      {estimatedDate && (
                         <div className="text-sm text-gray-500">
-                          Est: {new Date(order.estimatedDelivery).toLocaleDateString()}
+                          Est: {estimatedDate.toLocaleDateString()}
                         </div>
                       )}
                     </td>
@@ -518,7 +554,7 @@ export default function AdminOrders() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">${order.total}</div>
+                      <div className="text-sm font-medium text-gray-900">{totalLabel}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -541,7 +577,8 @@ export default function AdminOrders() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                );
+              })}
               </tbody>
             </table>
           </div>
@@ -559,7 +596,7 @@ export default function AdminOrders() {
         {filteredAndSortedOrders.length > 0 && (
           <div className="flex items-center justify-between mt-6">
             <div className="text-sm text-gray-700">
-              Showing {filteredAndSortedOrders.length} of {mockOrders.length} orders
+              Showing {filteredAndSortedOrders.length} of {orders.length} orders
             </div>
             <div className="flex items-center space-x-2">
               <button className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">

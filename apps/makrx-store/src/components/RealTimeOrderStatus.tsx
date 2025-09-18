@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { CheckCircle, Clock, Package, Truck, MapPin } from 'lucide-react';
 
@@ -85,7 +85,7 @@ export default function RealTimeOrderStatus({ orderId, currentStatus }: OrderSta
     // Fallback polling every 30 seconds
     const pollStatus = async () => {
       try {
-        const order = await api.getOrder(orderId);
+        const order = await storeApi.getOrder(orderId);
         if (order.status !== status) {
           setStatus(order.status);
           setStatusHistory((prev) => [

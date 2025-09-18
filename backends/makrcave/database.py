@@ -11,7 +11,7 @@ load_dotenv()
 # Database configuration - Updated for unified ecosystem
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem",
+    "postgresql://makrx:makrx_dev_password@localhost:5432/makrx_ecosystem",
 )
 
 # Create SQLAlchemy engine

@@ -159,7 +159,7 @@ const Profile: React.FC = () => {
     setProfile((prev) => ({
       ...prev,
       [section]: {
-        ...prev[section as keyof UserProfile],
+        ...((prev[section as keyof UserProfile] as Record<string, unknown>) || {}),
         [field]: value,
       },
     }));

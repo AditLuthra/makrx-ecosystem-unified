@@ -7,7 +7,7 @@ from uuid import UUID
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_admin_user
-from models.announcements import (
+from ..models.announcements import (
     Announcement,
     AnnouncementAcknowledgment,
     AnnouncementView,
@@ -15,7 +15,7 @@ from models.announcements import (
     Priority,
     TargetAudience,
 )
-from models.enhanced_member import Member
+from ..models.enhanced_member import Member
 
 router = APIRouter(prefix="/api/v1/announcements", tags=["Announcements"])
 
@@ -47,8 +47,8 @@ class AnnouncementCreate(BaseModel):
     attachments: Optional[List[str]] = None
     action_button_text: Optional[str] = Field(None, max_length=100)
     action_button_url: Optional[str] = Field(None, max_length=500)
-    background_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
-    text_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    background_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
+    text_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     icon: Optional[str] = Field(None, max_length=50)
     event_date: Optional[datetime] = None
     event_location: Optional[str] = Field(None, max_length=255)
@@ -82,8 +82,8 @@ class AnnouncementUpdate(BaseModel):
     attachments: Optional[List[str]] = None
     action_button_text: Optional[str] = Field(None, max_length=100)
     action_button_url: Optional[str] = Field(None, max_length=500)
-    background_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
-    text_color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    background_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
+    text_color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     icon: Optional[str] = Field(None, max_length=50)
     event_date: Optional[datetime] = None
     event_location: Optional[str] = Field(None, max_length=255)

@@ -6,12 +6,23 @@ export interface Member {
   id: string;
   name: string;
   email?: string;
+  username?: string;
+  avatar?: string;
+  title?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  github?: string;
+  twitter?: string;
+  linkedin?: string;
   role?: string;
   status?: string;
   plan?: string;
   membership_plan_id?: string;
   firstName?: string;
   lastName?: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string;
   join_date?: string;
   projects_count?: number;
@@ -22,7 +33,30 @@ export interface Member {
   start_date?: string;
   end_date?: string;
   keycloak_user_id?: string;
-  skills?: { id: string; name: string }[];
+  skills?: string[];
+  last_login?: string;
+  is_active?: boolean;
+  isOnline?: boolean;
+  projects?: number;
+  connections?: number;
+  reputation?: number;
+  interests?: string[];
+  badges?: Array<{ icon: string; label: string; color: string }>;
+  account_locked?: boolean;
+  can_access_makerspace?: boolean;
+  membership_expired?: boolean;
+  requires_password_change?: boolean;
+  active_sessions?: number;
+  two_factor_enabled?: boolean;
+  roles?: string[];
+  timezone?: string;
+  preferred_language?: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  country?: string;
 }
 
 export interface MembershipPlan {
@@ -58,7 +92,9 @@ interface MemberContextValue {
   createMembershipPlan: (plan: Partial<MembershipPlan>) => Promise<void> | void;
   updateMember: (id: string, patch: Partial<Member>) => Promise<void> | void;
   addMember: (member: Partial<Member>) => Promise<void> | void;
-  sendInvite: (email: string, planId?: string) => Promise<void> | void;
+  sendInvite: (
+    invite: { email: string; role?: string; membership_plan_id?: string; message?: string },
+  ) => Promise<void> | void;
 }
 
 const Ctx = createContext<MemberContextValue | null>(null);

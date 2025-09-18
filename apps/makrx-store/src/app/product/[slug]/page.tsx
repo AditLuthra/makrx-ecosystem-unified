@@ -20,9 +20,21 @@ import {
   X,
   Info,
 } from 'lucide-react';
-import { api, type Product, formatPrice } from '@/lib/api';
+import {
+  useGetStoreProductBySlugQuery,
+  useGetStoreProductsQuery,
+  storeApi,
+} from '@/services/storeApi';
+import type { Product } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import ProductReviews from '@/components/ProductReviews';
+
+function formatPrice(price: number, currency: string = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+    }).format(price);
+}
 
 export default function ProductPage() {
   const params = useParams();
@@ -30,10 +42,6 @@ export default function ProductPage() {
   const { isAuthenticated, user } = useAuth();
   const slug = params.slug as string;
 
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>(
@@ -42,39 +50,26 @@ export default function ProductPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [showSpecifications, setShowSpecifications] = useState(false);
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        setLoading(true);
-        setSelectedImageIndex(0); // Reset image index when loading new product
-        const productData = await api.getProductBySlug(slug);
-        setProduct(productData);
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useGetStoreProductBySlugQuery(slug, {
+    skip: !slug,
+  });
 
-        // Ensure selectedImageIndex is valid for the loaded product
-        if (productData.images && productData.images.length > 0) {
-          setSelectedImageIndex(0);
-        }
+  const { data: relatedProductsData } = useGetStoreProductsQuery(
+    {
+      category_id: product?.category_id,
+      per_page: 4,
+    },
+    {
+      skip: !product?.category_id,
+    },
+  );
 
-        // Load related products from the same category
-        if (productData.category_id) {
-          const relatedData = await api.getProductsByCategory(productData.category_id, {
-            per_page: 4,
-          });
-          const filtered = relatedData.products.filter((p) => p.id !== productData.id);
-          setRelatedProducts(filtered);
-        }
-      } catch (err) {
-        console.error('Failed to load product:', err);
-        setError('Product not found');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug) {
-      loadProduct();
-    }
-  }, [slug]);
+  const relatedProducts =
+    relatedProductsData?.products.filter((p) => p.id !== product?.id) || [];
 
   // Ensure selectedImageIndex is valid when product changes
   useEffect(() => {
@@ -88,7 +83,7 @@ export default function ProductPage() {
 
     setAddingToCart(true);
     try {
-      await api.addToCart(product.id, quantity);
+      await storeApi.addToCart(product.id, quantity);
       alert('Product added to cart!');
     } catch (error) {
       console.error('Failed to add to cart:', error);
@@ -133,7 +128,7 @@ export default function ProductPage() {
     }
   };
 
-  if (loading) {
+  if (productLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -141,7 +136,7 @@ export default function ProductPage() {
     );
   }
 
-  if (error || !product) {
+  if (productError || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">

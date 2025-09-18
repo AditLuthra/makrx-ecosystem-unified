@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import uuid
 
-from models.equipment import (
+from ..models.equipment import (
     Equipment,
     EquipmentMaintenanceLog,
     EquipmentReservation,
@@ -13,7 +13,7 @@ from models.equipment import (
     EquipmentStatus,
     ReservationStatus,
 )
-from schemas.equipment import (
+from ..schemas.equipment import (
     EquipmentCreate,
     EquipmentUpdate,
     EquipmentFilter,
@@ -658,3 +658,12 @@ class EquipmentCRUD:
             "reservations": reservations,
             "equipment_status": equipment.status,
         }
+
+
+_EQUIPMENT_CRUD_SINGLETON = EquipmentCRUD()
+
+
+def get_equipment_crud(_: Session) -> EquipmentCRUD:
+    """Provide a reusable CRUD helper instance."""
+
+    return _EQUIPMENT_CRUD_SINGLETON

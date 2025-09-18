@@ -18,6 +18,8 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const { user, logout } = useKeycloak();
+  const primaryRole = user?.roles?.[0] ?? 'user';
+  const primaryRoleLabel = primaryRole.replace(/_/g, ' ');
   const { theme, toggleTheme } = useTheme();
 
   const appsRef = useRef<HTMLDivElement>(null);
@@ -220,7 +222,7 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
                       {formatUserDisplayName(user)}
                     </div>
                     <div className="hidden md:block text-xs text-blue-400 capitalize truncate">
-                      {(user?.role || user?.roles?.[0] || 'user').replace('_', ' ')}
+                      {primaryRoleLabel}
                     </div>
                   </div>
                   <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
@@ -232,9 +234,7 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
                       <div className="text-sm font-medium text-white truncate">
                         {formatUserDisplayName(user)}
                       </div>
-                      <div className="text-xs text-blue-400 capitalize">
-                        {(user?.role || user?.roles?.[0] || 'user').replace('_', ' ')}
-                      </div>
+                      <div className="text-xs text-blue-400 capitalize">{primaryRoleLabel}</div>
                     </div>
                     <div className="p-2">
                       <Link

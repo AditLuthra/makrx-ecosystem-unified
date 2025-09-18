@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 
-from models.equipment_reservations import (
+from ..models.equipment_reservations import (
     ReservationStatus,
     PaymentStatus,
     CostRuleType,
@@ -250,7 +250,7 @@ class SkillGateCreate(BaseModel):
     # Skill requirements
     required_skill_id: Optional[str] = None
     required_skill_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced|expert)$"
+        None, pattern="^(beginner|intermediate|advanced|expert)$"
     )
     required_certification: Optional[str] = None
     required_training_modules: Optional[List[str]] = None
@@ -262,7 +262,7 @@ class SkillGateCreate(BaseModel):
     # Supervisor requirements
     requires_supervisor: bool = False
     supervisor_skill_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced|expert)$"
+        None, pattern="^(beginner|intermediate|advanced|expert)$"
     )
     supervisor_roles: Optional[List[str]] = None
 
@@ -276,7 +276,7 @@ class SkillGateCreate(BaseModel):
     emergency_bypass_allowed: bool = False
     auto_verify_from_system: bool = True
     manual_verification_required: bool = False
-    enforcement_level: str = Field("block", regex="^(block|warn|log_only)$")
+    enforcement_level: str = Field("block", pattern="^(block|warn|log_only)$")
     warning_message: Optional[str] = None
 
     # Activation
@@ -290,7 +290,7 @@ class SkillGateUpdate(BaseModel):
     description: Optional[str] = None
     required_skill_id: Optional[str] = None
     required_skill_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced|expert)$"
+        None, pattern="^(beginner|intermediate|advanced|expert)$"
     )
     required_certification: Optional[str] = None
     required_training_modules: Optional[List[str]] = None
@@ -298,7 +298,7 @@ class SkillGateUpdate(BaseModel):
     minimum_project_count: Optional[int] = Field(None, ge=0)
     requires_supervisor: Optional[bool] = None
     supervisor_skill_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced|expert)$"
+        None, pattern="^(beginner|intermediate|advanced|expert)$"
     )
     supervisor_roles: Optional[List[str]] = None
     allowed_hours: Optional[Dict[str, Any]] = None
@@ -308,7 +308,7 @@ class SkillGateUpdate(BaseModel):
     emergency_bypass_allowed: Optional[bool] = None
     auto_verify_from_system: Optional[bool] = None
     manual_verification_required: Optional[bool] = None
-    enforcement_level: Optional[str] = Field(None, regex="^(block|warn|log_only)$")
+    enforcement_level: Optional[str] = Field(None, pattern="^(block|warn|log_only)$")
     warning_message: Optional[str] = None
     is_active: Optional[bool] = None
     effective_from: Optional[datetime] = None
@@ -425,7 +425,7 @@ class AvailabilityResponse(BaseModel):
 
 # Bulk operations
 class BulkReservationAction(BaseModel):
-    action: str = Field(..., regex="^(approve|reject|cancel|update_status)$")
+    action: str = Field(..., pattern="^(approve|reject|cancel|update_status)$")
     reservation_ids: List[str] = Field(..., min_items=1)
     reason: Optional[str] = None
     admin_notes: Optional[str] = None

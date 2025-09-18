@@ -3,7 +3,7 @@ from sqlalchemy import and_, or_, desc, asc, func
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 
-from models.job_management import (
+from ..models.job_management import (
     ServiceJob,
     ServiceJobFile,
     JobStatusUpdate,
@@ -18,7 +18,7 @@ from models.job_management import (
     JobType,
     FilamentType,
 )
-from schemas.job_management import (
+from ..schemas.job_management import (
     ServiceJobCreate,
     ServiceJobUpdate,
     ServiceJobFileUpload,

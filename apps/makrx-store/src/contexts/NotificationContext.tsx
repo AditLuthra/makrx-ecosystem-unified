@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { useAuth } from './AuthContext';
 
 export interface Notification {
@@ -95,9 +95,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     const pollNotifications = async () => {
       try {
-        const notifications = await api.getNotifications();
+        const response = await storeApi.getNotifications();
+        const rawNotifications = (response as any)?.notifications ?? response;
+        const items = Array.isArray(rawNotifications) ? rawNotifications : [];
+
         setNotifications(
-          notifications.map((n: any) => ({
+          items.map((n: any) => ({
             ...n,
             timestamp: new Date(n.timestamp),
           })),
@@ -151,7 +154,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
 
     try {
-      await api.markNotificationAsRead(id);
+      await storeApi.markNotificationAsRead(id);
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
@@ -161,7 +164,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
 
     try {
-      await api.markAllNotificationsAsRead();
+      await storeApi.markAllNotificationsAsRead();
     } catch (error) {
       console.error('Failed to mark all notifications as read:', error);
     }

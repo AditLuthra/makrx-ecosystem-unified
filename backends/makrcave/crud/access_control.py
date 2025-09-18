@@ -5,7 +5,7 @@ from typing import List, Optional
 from sqlalchemy import and_, desc, func, or_
 from sqlalchemy.orm import Session, joinedload
 
-from models.access_control import (
+from ..models.access_control import (
     AccessLog,
     AccessScope,
     PasswordPolicy,
@@ -18,8 +18,8 @@ from models.access_control import (
     create_default_permissions,
     create_default_roles,
 )
-from models.enhanced_member import Member
-from schemas.access_control import (
+from ..models.enhanced_member import Member
+from ..schemas.access_control import (
     AccessControlFilter,
     AccessLogCreate,
     PasswordPolicyCreate,
@@ -32,7 +32,7 @@ from schemas.access_control import (
     RoleUpdate,
     UserSessionCreate,
 )
-from security.events import SecurityEventType, log_security_event
+from ..security.events import SecurityEventType, log_security_event
 
 
 # Permission CRUD operations

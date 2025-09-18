@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import uuid
 import secrets
 
-from models.enhanced_member import (
+from ..models.enhanced_member import (
     Member,
     MemberActivityLog,
     MembershipTransaction,
@@ -13,9 +13,9 @@ from models.enhanced_member import (
     MemberStatus,
     InviteStatus,
 )
-from models.membership_plans import MembershipPlan
-from models.invites import MemberInvite
-from schemas.member import (
+from ..models.membership_plans import MembershipPlan
+from ..models.invites import MemberInvite
+from ..schemas.member import (
     MemberCreate,
     MemberUpdate,
     MemberSuspend,

@@ -7,7 +7,7 @@ import uuid
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_user_optional
-from models.enhanced_bom import (
+from ..models.enhanced_bom import (
     BOMTemplate,
     EnhancedBOMItem,
     BOMPurchaseOrder,
@@ -21,7 +21,7 @@ from models.enhanced_bom import (
     ComponentCategory,
     SupplierRating,
 )
-from schemas.enhanced_bom import (
+from ..schemas.enhanced_bom import (
     BOMTemplateCreate,
     BOMTemplateUpdate,
     BOMTemplateResponse,

@@ -6,7 +6,7 @@ from datetime import datetime
 import re
 from urllib.parse import urlparse
 
-from schemas.project import (
+from ..schemas.project import (
     GitHubRepoInfo,
     GitHubCommit,
     GitHubFile,

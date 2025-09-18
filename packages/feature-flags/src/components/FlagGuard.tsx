@@ -1,31 +1,75 @@
 import React from "react";
 
-export interface FlagGuardProps {
+interface BaseGuardProps {
   flagKey: string;
   children: React.ReactNode;
+  fallback?: React.ReactNode;
+}
+
+export interface FlagGuardProps extends BaseGuardProps {
   showComingSoon?: boolean;
+}
+
+export const FlagGuard: React.FC<FlagGuardProps> = ({ children }) => {
+  return <>{children}</>;
+};
+
+export interface ModuleGuardProps extends FlagGuardProps {
   moduleName?: string;
   className?: string;
 }
 
-export const FlagGuard: React.FC<FlagGuardProps> = ({ children }) => (
-  <>{children}</>
-);
-export const ModuleGuard: React.FC<FlagGuardProps> = ({
+export const ModuleGuard: React.FC<ModuleGuardProps> = ({
   children,
   className,
-}) => <div className={className}>{children}</div>;
-export const NavLinkGuard: React.FC<FlagGuardProps> = ({ children }) => (
-  <>{children}</>
-);
-export const KillSwitchGuard: React.FC<FlagGuardProps> = ({ children }) => (
-  <>{children}</>
-);
-export const ButtonGuard: React.FC<FlagGuardProps> = ({ children }) => (
-  <>{children}</>
-);
-export const AdminGuard: React.FC<FlagGuardProps> = ({ children }) => (
-  <>{children}</>
-);
+}) => {
+  return <div className={className}>{children}</div>;
+};
+
+export interface NavLinkGuardProps extends FlagGuardProps {
+  href?: string;
+  className?: string;
+}
+
+export const NavLinkGuard: React.FC<NavLinkGuardProps> = ({
+  children,
+  href,
+  className,
+}) => {
+  if (href) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+  return <span className={className}>{children}</span>;
+};
+
+export interface KillSwitchGuardProps extends FlagGuardProps {
+  maintenanceMessage?: string;
+}
+
+export const KillSwitchGuard: React.FC<KillSwitchGuardProps> = ({
+  children,
+}) => {
+  return <>{children}</>;
+};
+
+export interface ButtonGuardProps extends FlagGuardProps {
+  className?: string;
+  type?: "button" | "submit" | "reset";
+}
+
+export const ButtonGuard: React.FC<ButtonGuardProps> = ({
+  children,
+  className,
+}) => {
+  return <div className={className}>{children}</div>;
+};
+
+export const AdminGuard: React.FC<FlagGuardProps> = ({ children }) => {
+  return <>{children}</>;
+};
 
 export default FlagGuard;

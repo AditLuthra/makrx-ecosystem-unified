@@ -44,9 +44,10 @@ pip install -r requirements.txt
 
 # Start backend in background
 echo -e "${GREEN}Starting MakrCave backend on port 8001...${NC}"
-PORT=8001 python main.py >../../logs/makrcave-backend.log 2>&1 &
+PYTHONPATH="$(pwd)/../.." uvicorn main:app --host 0.0.0.0 --port 8001 --reload >../../logs/makrcave-backend.log 2>&1 &
 MAKRCAVE_BACKEND_PID=$!
 echo $MAKRCAVE_BACKEND_PID >../../.makrcave-backend.pid
+deactivate
 
 cd ../..
 
@@ -68,7 +69,7 @@ pip install -r requirements.txt >/dev/null 2>&1 || true
 
 # Start backend in background
 echo -e "${GREEN}Starting MakrX Events backend on port 8002...${NC}"
-nohup uvicorn main:app --host 0.0.0.0 --port 8002 --reload >../../logs/makrx-events-backend.log 2>&1 &
+PYTHONPATH="$(pwd)/../.." uvicorn main:app --host 0.0.0.0 --port 8002 --reload >../../logs/makrx-events-backend.log 2>&1 &
 EVENTS_BACKEND_PID=$!
 echo $EVENTS_BACKEND_PID >../../.makrx-events-backend.pid
 deactivate
@@ -76,7 +77,7 @@ deactivate
 cd ../..
 
 echo -e "${BLUE}🛒 Starting MakrX Store Backend (Python FastAPI)...${NC}"
-cd backends/makrx-store
+cd backends/makrx_store
 
 # Create virtual environment if it doesn't exist
 if [ ! -d ".venv" ]; then
@@ -93,9 +94,10 @@ pip install -r requirements.txt
 
 # Start backend in background
 echo -e "${GREEN}Starting MakrX Store backend on port 8003...${NC}"
-PORT=8003 python main.py >../../logs/makrx-store-backend.log 2>&1 &
+PYTHONPATH="$(pwd)/../.." uvicorn main:app --host 0.0.0.0 --port 8003 --reload >../../logs/makrx-store-backend.log 2>&1 &
 STORE_BACKEND_PID=$!
 echo $STORE_BACKEND_PID >../../.makrx-store-backend.pid
+deactivate
 
 cd ../..
 

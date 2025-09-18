@@ -228,7 +228,7 @@ function EnhancedMakerspaceAdminDashboard() {
   const reservationsEnabled = useSpaceFlag('cave.reservations.enabled', currentMakerspace?.id);
   const inventoryEnabled = useSpaceFlag('cave.inventory.enabled', currentMakerspace?.id);
   const projectsEnabled = useSpaceFlag('cave.projects.enabled', currentMakerspace?.id);
-  const paidReservations = useSpaceFlag('cave.reservations.paid_usage', currentMakerspace?.id);
+  const paidReservationsEnabled = useSpaceFlag('cave.reservations.paid_usage', currentMakerspace?.id);
 
   return (
     <div className="space-y-6">
@@ -268,9 +268,9 @@ function EnhancedMakerspaceAdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                {paidReservations.enabled ? 'Revenue Today' : 'Bookings Today'}
+                {paidReservationsEnabled ? 'Revenue Today' : 'Bookings Today'}
               </p>
-              <p className="text-2xl font-bold">{paidReservations.enabled ? '₹2,340' : '12'}</p>
+              <p className="text-2xl font-bold">{paidReservationsEnabled ? '₹2,340' : '12'}</p>
             </div>
             <Calendar className="w-8 h-8 text-green-600" />
           </div>

@@ -32,6 +32,7 @@ export default function NotificationWidget({
       case 'equipment':
         return <Wrench className="w-4 h-4 text-purple-500" />;
       case 'project':
+      case 'projects':
         return <FolderOpen className="w-4 h-4 text-makrx-teal" />;
       case 'system':
         return <Settings className="w-4 h-4 text-gray-500" />;

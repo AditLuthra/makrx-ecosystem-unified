@@ -20,7 +20,6 @@ import {
 import { Bell, LogOut, Settings, User, Building2, Activity, ChevronDown } from 'lucide-react';
 import HealthStatusIndicator from './HealthStatusIndicator';
 import { useHealth, useHealthStatus } from '../contexts/HealthContext';
-import { ThemeToggle } from '../../../packages/ui/components/ThemeToggle';
 
 interface HeaderWithHealthProps {
   showHealthStatus?: boolean;
@@ -198,9 +197,6 @@ export default function HeaderWithHealth({
           <div className="flex items-center gap-2">
             {/* Health Status (on smaller screens) */}
             <div className="lg:hidden">{renderHealthStatus()}</div>
-
-            {/* Theme Toggle */}
-            <ThemeToggle variant="icon-only" />
 
             {/* Notifications */}
             {renderNotifications()}

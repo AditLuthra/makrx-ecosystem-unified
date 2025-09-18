@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { type Category } from '@/lib/api';
+import type { Category } from '@/types';
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -34,15 +34,15 @@ export default function CategoryCarousel({
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
 
   // Add "All Categories" option at the beginning
-  const allCategoriesOption = {
+  const allCategoriesOption: Category = {
     id: 0,
     name: 'All Categories',
+    slug: 'all-categories',
     description: 'Browse all products',
-    image_url: undefined,
     product_count: 0,
   };
 
-  const displayCategories = [allCategoriesOption, ...categories] as any[];
+  const displayCategories: Category[] = [allCategoriesOption, ...categories];
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,9 +72,7 @@ export default function CategoryCarousel({
     }
   };
 
-  const handleCategoryClick = (
-    category: Category | { id: number; name: string; description: string; image?: string },
-  ) => {
+  const handleCategoryClick = (category: Category) => {
     if (onCategorySelect) {
       onCategorySelect(category.id);
     }
@@ -183,9 +181,9 @@ export default function CategoryCarousel({
                           : 'bg-gradient-to-br from-gray-100 to-gray-200'
                       }`}
                     >
-                      {category.image_url || (category as any).image ? (
+                      {category.image_url || category.image ? (
                         <Image
-                          src={category.image_url || (category as any).image}
+                          src={category.image_url || category.image || '/placeholder.svg'}
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -217,9 +215,9 @@ export default function CategoryCarousel({
 
                       {/* Product Count Badge */}
                       {category.id !== 0 &&
-                        (category.product_count || (category as any).productCount) > 0 && (
+                        (category.product_count ?? category.productCount ?? 0) > 0 && (
                           <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded-full">
-                            {category.product_count || (category as any).productCount}
+                            {category.product_count ?? category.productCount ?? 0}
                           </div>
                         )}
                     </div>

@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertPageSectionSchema } from '@shared/schema';
+import { db } from '@/lib/db';
+import { insertPageSectionSchema, micrositeSections, microsites } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
+
+const findMicrosite = async (slug: string) => {
+  const [record] = await db
+    .select({ id: microsites.id })
+    .from(microsites)
+    .where(eq(microsites.slug, slug))
+    .limit(1);
+  return record;
+};
+
+const findSection = async (micrositeId: string, id: string) => {
+  const [record] = await db
+    .select()
+    .from(micrositeSections)
+    .where(and(eq(micrositeSections.id, id), eq(micrositeSections.micrositeId, micrositeId)))
+    .limit(1);
+  return record;
+};
 
 // GET /api/microsites/[slug]/sections/[id] - Get specific section
 export async function GET(
@@ -9,27 +29,18 @@ export async function GET(
 ) {
   try {
     const { slug, id } = await params;
+    const microsite = await findMicrosite(slug);
 
-    // Mock data - replace with actual database query
-    const mockSection = {
-      id,
-      micrositeId: '1',
-      type: 'hero',
-      order: 1,
-      isVisible: true,
-      contentJson: {
-        title: 'MakerFest 2024',
-        subtitle: 'The Ultimate Maker Experience',
-        description: 'Join thousands of makers for the largest maker festival.',
-        backgroundImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
-        ctaText: 'Register Now',
-        ctaUrl: `/m/${slug}/register`,
-      },
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-02-01T15:30:00Z',
-    };
+    if (!microsite) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
 
-    return NextResponse.json(mockSection);
+    const section = await findSection(microsite.id, id);
+    if (!section) {
+      return NextResponse.json({ error: 'Section not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(section);
   } catch (error) {
     console.error('Error fetching section:', error);
     return NextResponse.json({ error: 'Failed to fetch section' }, { status: 500 });
@@ -43,24 +54,33 @@ export async function PATCH(
 ) {
   try {
     const { slug, id } = await params;
+    const microsite = await findMicrosite(slug);
+
+    if (!microsite) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
+
+    const section = await findSection(microsite.id, id);
+    if (!section) {
+      return NextResponse.json({ error: 'Section not found' }, { status: 404 });
+    }
+
     const body = await request.json();
+    const parsed = insertPageSectionSchema.partial().parse({ ...body, micrositeId: microsite.id });
 
-    // Partial validation
-    const partialSchema = insertPageSectionSchema.partial();
-    const validatedData = partialSchema.parse(body);
+    const [updated] = await db
+      .update(micrositeSections)
+      .set({
+        type: parsed.type ?? section.type,
+        order: parsed.order ?? section.order,
+        isVisible: parsed.isVisible ?? section.isVisible,
+        contentJson: parsed.contentJson ?? section.contentJson,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(micrositeSections.id, id), eq(micrositeSections.micrositeId, microsite.id)))
+      .returning();
 
-    // Mock update - replace with actual database update
-    const updatedSection = {
-      id,
-      micrositeId: '1',
-      type: validatedData.type || 'hero',
-      order: validatedData.order || 1,
-      isVisible: validatedData.isVisible ?? true,
-      contentJson: validatedData.contentJson || {},
-      updatedAt: new Date().toISOString(),
-    };
-
-    return NextResponse.json(updatedSection);
+    return NextResponse.json(updated);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -84,11 +104,22 @@ export async function DELETE(
 ) {
   try {
     const { slug, id } = await params;
+    const microsite = await findMicrosite(slug);
 
-    // Mock deletion - replace with actual database delete
-    console.log(`Deleting section ${id} from microsite ${slug}`);
+    if (!microsite) {
+      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+    }
 
-    return NextResponse.json({ message: 'Section deleted successfully' }, { status: 200 });
+    const deleted = await db
+      .delete(micrositeSections)
+      .where(and(eq(micrositeSections.id, id), eq(micrositeSections.micrositeId, microsite.id)))
+      .returning({ id: micrositeSections.id });
+
+    if (deleted.length === 0) {
+      return NextResponse.json({ error: 'Section not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Section deleted successfully' });
   } catch (error) {
     console.error('Error deleting section:', error);
     return NextResponse.json({ error: 'Failed to delete section' }, { status: 500 });

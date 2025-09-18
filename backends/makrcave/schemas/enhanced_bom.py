@@ -63,7 +63,7 @@ class BOMTemplateCreate(BaseModel):
     template_data: Dict[str, Any] = Field(..., min_items=1)
     estimated_cost: Optional[float] = Field(None, ge=0)
     complexity_level: str = Field(
-        default="beginner", regex="^(beginner|intermediate|advanced)$"
+        default="beginner", pattern="^(beginner|intermediate|advanced)$"
     )
 
 
@@ -76,7 +76,7 @@ class BOMTemplateUpdate(BaseModel):
     template_data: Optional[Dict[str, Any]] = None
     estimated_cost: Optional[float] = Field(None, ge=0)
     complexity_level: Optional[str] = Field(
-        None, regex="^(beginner|intermediate|advanced)$"
+        None, pattern="^(beginner|intermediate|advanced)$"
     )
 
 
@@ -512,7 +512,7 @@ class SupplierManagementCreate(BaseModel):
     supplier_name: str = Field(..., min_length=1, max_length=200)
 
     contact_person: Optional[str] = Field(None, max_length=200)
-    email: Optional[str] = Field(None, regex=r"^[^@]+@[^@]+\.[^@]+$")
+    email: Optional[str] = Field(None, pattern=r"^[^@]+@[^@]+\.[^@]+$")
     phone: Optional[str] = Field(None, max_length=50)
     website: Optional[str] = Field(None, max_length=500)
 
@@ -528,14 +528,14 @@ class SupplierManagementCreate(BaseModel):
     shipping_methods: Optional[List[str]] = None
 
     is_preferred: bool = False
-    risk_level: str = Field(default="medium", regex="^(low|medium|high)$")
+    risk_level: str = Field(default="medium", pattern="^(low|medium|high)$")
 
 
 class SupplierManagementUpdate(BaseModel):
     supplier_name: Optional[str] = Field(None, min_length=1, max_length=200)
 
     contact_person: Optional[str] = Field(None, max_length=200)
-    email: Optional[str] = Field(None, regex=r"^[^@]+@[^@]+\.[^@]+$")
+    email: Optional[str] = Field(None, pattern=r"^[^@]+@[^@]+\.[^@]+$")
     phone: Optional[str] = Field(None, max_length=50)
     website: Optional[str] = Field(None, max_length=500)
 
@@ -552,7 +552,7 @@ class SupplierManagementUpdate(BaseModel):
 
     is_active: Optional[bool] = None
     is_preferred: Optional[bool] = None
-    risk_level: Optional[str] = Field(None, regex="^(low|medium|high)$")
+    risk_level: Optional[str] = Field(None, pattern="^(low|medium|high)$")
 
 
 class SupplierManagementResponse(BaseModel):
@@ -642,7 +642,7 @@ class MakrXStoreProductLink(BaseModel):
 class MakrXStoreOrderRequest(BaseModel):
     items: List[MakrXStoreProductLink]
     delivery_address: Optional[Dict[str, str]] = None
-    priority: str = Field(default="normal", regex="^(low|normal|high|urgent)$")
+    priority: str = Field(default="normal", pattern="^(low|normal|high|urgent)$")
     project_id: Optional[str] = None
 
 

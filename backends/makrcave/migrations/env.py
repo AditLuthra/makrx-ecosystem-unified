@@ -27,6 +27,7 @@ def run_migrations_offline():
         literal_binds=True,
         compare_type=True,
         compare_server_default=True,
+        version_table="makrcave_alembic_version",
     )
 
     with context.begin_transaction():
@@ -50,6 +51,7 @@ def run_migrations_online():
             target_metadata=target_metadata,
             compare_type=True,
             compare_server_default=True,
+            version_table="makrcave_alembic_version",
         )
 
         with context.begin_transaction():

@@ -18,6 +18,11 @@ import {
   FolderOpen,
 } from 'lucide-react';
 
+interface RoleBasedSidebarProps {
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
 function AdminSidebar() {
   const { user, logout } = useAuth();
   const location = useLocation();
@@ -243,12 +248,17 @@ function ServiceProviderSidebar() {
 }
 
 // Main Role-Based Sidebar Component
-export default function RoleBasedSidebar() {
+export default function RoleBasedSidebar({
+  isMobileOpen: _isMobileOpen,
+  onMobileClose: _onMobileClose,
+}: RoleBasedSidebarProps = {}) {
   const { user } = useAuth();
 
   if (!user) return null;
 
-  switch (user.role) {
+  const primaryRole = user.role || user.roles?.[0] || 'user';
+
+  switch (primaryRole) {
     case 'super_admin':
       return <SuperAdminSidebar />;
     case 'admin':

@@ -12,8 +12,8 @@ from ..dependencies import (
     get_current_makerspace,
     require_permission,
 )
-from services.real_analytics_service import get_real_analytics_service
-from utils.analytics_mock_data import AnalyticsMockData  # Fallback only
+from ..services.real_analytics_service import get_real_analytics_service
+from ..utils.analytics_mock_data import AnalyticsMockData  # Fallback only
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

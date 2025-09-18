@@ -5,7 +5,10 @@ import { createContext, ReactNode, useContext, useState } from 'react';
 interface Makerspace {
   id: string;
   name: string;
+  slug?: string;
+  timezone?: string;
 }
+
 interface InventoryItem {
   id: string;
   name: string;
@@ -15,15 +18,58 @@ interface InventoryItem {
   status?: string;
   history?: any[];
   sku?: string;
+  location?: string;
+  description?: string;
+  lastUpdatedAt?: string;
 }
+
 interface EquipmentItem {
   id: string;
   equipment_id?: string;
   name: string;
   status?: string;
   category?: string;
+  sub_category?: string;
   type?: string;
+  location?: string;
+  linked_makerspace_id?: string;
+  requires_certification?: boolean;
+  certification_required?: string;
   requiredCertifications?: string[];
+  required_skills?: string[];
+  skillsRequired?: string[];
+  hourlyRate?: number;
+  hourly_rate?: number;
+  deposit_required?: boolean;
+  total_usage_hours?: number;
+  usage_count?: number;
+  average_rating?: number;
+  total_ratings?: number;
+  manufacturer?: string;
+  model?: string;
+  description?: string;
+  image_url?: string;
+  imageUrl?: string;
+  last_maintenance?: string;
+  next_maintenance?: string;
+  lastMaintenance?: string;
+  nextMaintenance?: string;
+  last_maintenance_date?: string;
+  next_maintenance_date?: string;
+  healthScore?: number;
+  utilizationRate?: number;
+  sensors?: Array<{ id: string; type: string; status: string }>;
+  totalDowntime?: number;
+  maintenanceCost?: number;
+  operating_hours?: Record<string, unknown>;
+  is_available?: boolean;
+  current_issue?: string;
+  estimated_repair_time?: string;
+  maintenance_status?: string;
+  peak_usage_times?: string[];
+  uptime_percentage?: number;
+  reservation_count?: number;
+  nextAvailable?: string;
 }
 
 interface MakerspaceContextValue {

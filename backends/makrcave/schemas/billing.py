@@ -198,7 +198,7 @@ class CreditWalletUpdate(BaseModel):
 class CreditTransactionCreate(BaseModel):
     wallet_id: str
     user_id: str
-    type: str = Field(..., regex="^(earned|spent|refund|manual_adjustment)$")
+    type: str = Field(..., pattern="^(earned|spent|refund|manual_adjustment)$")
     amount: int
     description: Optional[str] = None
     service_type: Optional[str] = None
@@ -232,7 +232,7 @@ class RefundCreate(BaseModel):
     amount: float = Field(..., gt=0)
     currency: str = Field(default="INR", max_length=3)
     reason: str = Field(..., min_length=1)
-    type: str = Field(default="full", regex="^(full|partial)$")
+    type: str = Field(default="full", pattern="^(full|partial)$")
     processed_by: str
 
 
@@ -259,7 +259,7 @@ class RefundResponse(BaseModel):
 class PaymentMethodCreate(BaseModel):
     user_id: str
     member_id: Optional[str] = None
-    type: str = Field(..., regex="^(card|upi|bank_account)$")
+    type: str = Field(..., pattern="^(card|upi|bank_account)$")
     gateway: PaymentGateway
     gateway_method_id: str
     last_four: Optional[str] = Field(None, max_length=4)

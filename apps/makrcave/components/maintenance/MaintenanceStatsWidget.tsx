@@ -24,8 +24,18 @@ import {
   CartesianGrid,
 } from 'recharts';
 
+interface MaintenanceLogSummary {
+  id: string;
+  status: string;
+  type: string;
+  priority: string;
+  created_at: string;
+  cost?: number;
+  actual_duration?: number;
+}
+
 interface MaintenanceStatsWidgetProps {
-  logs: any[];
+  logs: MaintenanceLogSummary[];
 }
 
 const MaintenanceStatsWidget: React.FC<MaintenanceStatsWidgetProps> = ({ logs }) => {
@@ -41,9 +51,12 @@ const MaintenanceStatsWidget: React.FC<MaintenanceStatsWidgetProps> = ({ logs })
   const totalCost = logs.reduce((sum, log) => sum + (log.cost || 0), 0);
   const avgCost = totalLogs > 0 ? Math.round(totalCost / totalLogs) : 0;
 
-  const avgDuration = logs
-    .filter((log) => log.actual_duration)
-    .reduce((sum, log, _, arr) => sum + log.actual_duration / arr.length, 0);
+  const durationLogs = logs.filter((log) => typeof log.actual_duration === 'number');
+  const avgDuration =
+    durationLogs.length > 0
+      ? durationLogs.reduce((sum, log) => sum + (log.actual_duration || 0), 0) /
+        durationLogs.length
+      : 0;
 
   // Data for charts
   const statusData = [
@@ -53,33 +66,27 @@ const MaintenanceStatsWidget: React.FC<MaintenanceStatsWidgetProps> = ({ logs })
     { name: 'Overdue', value: overdueLog, color: '#EF4444' },
   ].filter((item) => item.value > 0);
 
-  const typeData = logs.reduce(
-    (acc, log) => {
-      const existing = acc.find((item) => item.name === log.type);
-      if (existing) {
-        existing.value += 1;
-      } else {
-        acc.push({ name: log.type, value: 1 });
-      }
-      return acc;
-    },
-    [] as { name: string; value: number }[],
-  );
+  const typeData = logs.reduce<{ name: string; value: number }[]>((acc, log) => {
+    const existing = acc.find((item) => item.name === log.type);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({ name: log.type, value: 1 });
+    }
+    return acc;
+  }, []);
 
-  const priorityData = logs.reduce(
-    (acc, log) => {
-      const existing = acc.find((item) => item.name === log.priority);
-      if (existing) {
-        existing.value += 1;
-      } else {
-        acc.push({ name: log.priority, value: 1 });
-      }
-      return acc;
-    },
-    [] as { name: string; value: number }[],
-  );
+  const priorityData = logs.reduce<{ name: string; value: number }[]>((acc, log) => {
+    const existing = acc.find((item) => item.name === log.priority);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({ name: log.priority, value: 1 });
+    }
+    return acc;
+  }, []);
 
-  const monthlyData = logs.reduce(
+  const monthlyData = logs.reduce<{ month: string; completed: number; total: number }[]>(
     (acc, log) => {
       const month = new Date(log.created_at).toLocaleDateString('en-US', { month: 'short' });
       const existing = acc.find((item) => item.month === month);
@@ -95,12 +102,18 @@ const MaintenanceStatsWidget: React.FC<MaintenanceStatsWidgetProps> = ({ logs })
       }
       return acc;
     },
-    [] as { month: string; completed: number; total: number }[],
+    [],
   );
 
   const COLORS = ['#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#F97316'];
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{ value: number }>;
+    label?: string;
+  }
+
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border rounded-lg shadow-lg">

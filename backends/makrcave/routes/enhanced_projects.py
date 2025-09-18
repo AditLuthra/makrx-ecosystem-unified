@@ -8,7 +8,7 @@ from datetime import datetime
 from ..models import *
 from ..database import get_db
 from ..dependencies import get_current_user
-from schemas.project import (
+from ..schemas.project import (
     ProjectForkCreate,
     ProjectForkResponse,
     ProjectCommentCreate,
@@ -43,9 +43,9 @@ async def get_public_projects(
     search: Optional[str] = Query(None),
     sort_by: str = Query(
         "updated_at",
-        regex="^(updated_at|created_at|like_count|view_count|name)$",
+        pattern="^(updated_at|created_at|like_count|view_count|name)$",
     ),
-    sort_direction: str = Query("desc", regex="^(asc|desc)$"),
+    sort_direction: str = Query("desc", pattern="^(asc|desc)$"),
     db: Session = Depends(get_db),
 ):
     """Get public projects with enhanced filtering for discovery"""
@@ -442,7 +442,7 @@ async def create_bom_order(
 ):
     """Create order for BOM item through MakrX Store"""
     # Check project access
-    from crud.project import has_project_edit_access
+    from ..crud.project import has_project_edit_access
 
     if not has_project_edit_access(db, project_id, current_user["user_id"]):
         raise HTTPException(
@@ -528,7 +528,7 @@ async def assign_team_role(
     db: Session = Depends(get_db),
 ):
     """Assign custom team role to project collaborator"""
-    from crud.project import has_project_edit_access
+    from ..crud.project import has_project_edit_access
 
     if not has_project_edit_access(db, project_id, current_user["user_id"]):
         raise HTTPException(
@@ -592,7 +592,7 @@ async def share_resource(
     db: Session = Depends(get_db),
 ):
     """Share project resource with another project"""
-    from crud.project import has_project_edit_access
+    from ..crud.project import has_project_edit_access
 
     if not has_project_edit_access(db, project_id, current_user["user_id"]):
         raise HTTPException(

@@ -49,6 +49,7 @@ export default function NotificationPanel() {
       case 'equipment':
         return <Wrench className="w-5 h-5 text-purple-500" />;
       case 'project':
+      case 'projects':
         return <FolderOpen className="w-5 h-5 text-makrx-teal" />;
       case 'system':
         return <Settings className="w-5 h-5 text-gray-500" />;
@@ -57,7 +58,7 @@ export default function NotificationPanel() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority?: string) => {
     switch (priority) {
       case 'urgent':
         return 'border-red-500 bg-red-50';

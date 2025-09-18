@@ -48,5 +48,7 @@ const healthCheckService = {
   },
 };
 
+export type HealthCheckResult = SystemHealthStatus;
+
 export default healthCheckService;
 export { healthCheckService };

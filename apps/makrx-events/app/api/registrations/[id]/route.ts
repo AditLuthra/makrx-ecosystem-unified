@@ -11,6 +11,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const [registration] = await db
       .select({
         id: registrations.id,
+        eventId: registrations.eventId,
+        subEventId: registrations.subEventId,
+        userId: registrations.userId,
         status: registrations.status,
         participantInfo: registrations.participantInfo,
         registeredAt: registrations.registeredAt,
@@ -51,13 +54,16 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const response = {
       registration: {
         id: registration.id,
+        eventId: registration.eventId,
+        subEventId: registration.subEventId,
+        userId: registration.userId,
         eventTitle: `${registration.micrositeTitle} - ${registration.eventTitle}`,
         eventDate: registration.eventStartsAt,
         eventLocation: registration.eventLocation || 'TBD',
         participantName:
           `${registration.userFirstName || ''} ${registration.userLastName || ''}`.trim(),
         email: registration.userEmail,
-        amount: registration.eventPrice || 0,
+        amount: registration.eventPrice ? Number(registration.eventPrice) : 0,
         currency: registration.eventCurrency || 'USD',
         status: registration.status,
         registeredAt: registration.registeredAt,

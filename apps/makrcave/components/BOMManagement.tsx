@@ -517,10 +517,9 @@ const BOMManagement: React.FC<BOMManagementProps> = ({
                           <h4 className="font-medium flex items-center gap-2">
                             {item.item_name}
                             {item.is_critical && (
-                              <Star
-                                className="h-4 w-4 text-red-500 fill-current"
-                                title="Critical Item"
-                              />
+                              <span aria-label="Critical item" title="Critical item">
+                                <Star className="h-4 w-4 text-red-500 fill-current" />
+                              </span>
                             )}
                           </h4>
                           <p className="text-sm text-gray-600">

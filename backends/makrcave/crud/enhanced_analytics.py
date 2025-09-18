@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 import uuid
 import json
 
-from models.enhanced_analytics import (
+from ..models.enhanced_analytics import (
     EnhancedUsageMetrics,
     EquipmentUtilizationMetrics,
     RevenueAnalyticsEnhanced,
@@ -18,7 +18,7 @@ from models.enhanced_analytics import (
     MetricType,
     TrendDirection,
 )
-from schemas.enhanced_analytics import (
+from ..schemas.enhanced_analytics import (
     EnhancedUsageMetricsCreate,
     EquipmentUtilizationMetricsCreate,
     RevenueAnalyticsEnhancedCreate,

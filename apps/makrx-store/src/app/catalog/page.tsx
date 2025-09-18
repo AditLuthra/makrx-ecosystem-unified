@@ -16,7 +16,13 @@ import {
   SlidersHorizontal,
   ArrowUpDown,
 } from 'lucide-react';
-import { api, type Product, type Category, formatPrice } from '@/lib/api';
+import {
+  useGetStoreProductsQuery,
+  useGetStoreCategoriesQuery,
+  useGetStoreBrandsQuery,
+  storeApi,
+} from '@/services/storeApi';
+import type { Product, Category } from '@/types';
 import CategoryCarousel from '@/components/CategoryCarousel';
 
 const SORT_OPTIONS = [
@@ -28,14 +34,17 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Price High to Low' },
 ];
 
+function formatPrice(price: number, currency: string = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+    }).format(price);
+}
+
 export default function CatalogPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -55,8 +64,6 @@ export default function CatalogPage() {
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 20,
-    total: 0,
-    pages: 0,
   });
 
   // Filter state
@@ -77,61 +84,23 @@ export default function CatalogPage() {
     sort: searchParams.get('sort') || 'created_desc',
   });
 
-  // Load initial data
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const [categoriesData, brandsData] = await Promise.all([
-          api.getCategories(),
-          api.getBrands(),
-        ]);
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    isFetching: productsFetching,
+  } = useGetStoreProductsQuery({
+    ...filters,
+    page: pagination.page,
+    per_page: pagination.per_page,
+  });
+  
+  const { data: categoriesData } = useGetStoreCategoriesQuery();
+  const { data: brandsData } = useGetStoreBrandsQuery();
 
-        setCategories(categoriesData);
-        setBrands((brandsData.brands || []).map((b: any) => (typeof b === 'string' ? b : b.name)));
-      } catch (error) {
-        console.error('Failed to load initial data:', error);
-      }
-    };
-
-    loadInitialData();
-  }, []);
-
-  // Load products when filters change
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = {
-        ...filters,
-        page: pagination.page,
-        per_page: pagination.per_page,
-      };
-
-      // Remove undefined values
-      Object.keys(params).forEach((key) => {
-        if (params[key as keyof typeof params] === undefined) {
-          delete params[key as keyof typeof params];
-        }
-      });
-
-      const response = await api.getProducts(params);
-
-      setProducts(response.products);
-      setPagination({
-        page: response.page,
-        per_page: response.per_page,
-        total: response.total,
-        pages: response.pages,
-      });
-    } catch (error) {
-      console.error('Failed to load products:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, pagination.page, pagination.per_page]);
-
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+  const products = productsData?.products || [];
+  const categories = categoriesData || [];
+  const brands = brandsData?.brands || [];
+  const paginationInfo = productsData?.pagination || { total: 0, pages: 0 };
 
   // Update URL when filters change
   useEffect(() => {
@@ -180,7 +149,7 @@ export default function CatalogPage() {
 
   const handleAddToCart = async (product: Product) => {
     try {
-      await api.addToCart(product.id, 1);
+      await storeApi.addToCart(product.id, 1);
       // Show success message or update cart count
       alert('Product added to cart!');
     } catch (error) {
@@ -202,6 +171,8 @@ export default function CatalogPage() {
   const activeFiltersCount = Object.values(filters).filter(
     (value) => value !== undefined && value !== '' && value !== 'created_desc',
   ).length;
+  
+  const loading = productsLoading || productsFetching;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -409,7 +380,7 @@ export default function CatalogPage() {
             {/* Results Info */}
             <div className="flex items-center justify-between mb-6">
               <div className="text-sm text-gray-600">
-                Showing {products.length} of {pagination.total} products
+                Showing {products.length} of {paginationInfo.total} products
                 {filters.category_id && ` in ${getCategoryName(filters.category_id)}`}
               </div>
             </div>
@@ -431,7 +402,7 @@ export default function CatalogPage() {
               </div>
             ) : (
               <div
-                className={`grid gap-6 ${
+                className={`grid gap-6 ${ 
                   viewMode === 'grid'
                     ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                     : 'grid-cols-1'
@@ -440,7 +411,7 @@ export default function CatalogPage() {
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ${
+                    className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ${ 
                       viewMode === 'list' ? 'flex items-center p-4' : 'overflow-hidden'
                     }`}
                   >
@@ -449,7 +420,7 @@ export default function CatalogPage() {
                       className={viewMode === 'list' ? 'flex-shrink-0' : 'block'}
                     >
                       <div
-                        className={`bg-gray-100 relative ${
+                        className={`bg-gray-100 relative ${ 
                           viewMode === 'list' ? 'w-24 h-24 rounded-lg' : 'aspect-square'
                         }`}
                       >
@@ -524,7 +495,7 @@ export default function CatalogPage() {
             )}
 
             {/* Pagination */}
-            {pagination.pages > 1 && (
+            {paginationInfo.pages > 1 && (
               <div className="flex items-center justify-center mt-12 space-x-2">
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
@@ -534,15 +505,15 @@ export default function CatalogPage() {
                   Previous
                 </button>
 
-                {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+                {Array.from({ length: Math.min(5, paginationInfo.pages) }, (_, i) => {
                   const page = Math.max(1, pagination.page - 2) + i;
-                  if (page > pagination.pages) return null;
+                  if (page > paginationInfo.pages) return null;
 
                   return (
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`px-3 py-2 text-sm rounded-lg ${
+                      className={`px-3 py-2 text-sm rounded-lg ${ 
                         page === pagination.page
                           ? 'bg-blue-600 text-white'
                           : 'border border-gray-300 hover:bg-gray-50'
@@ -555,7 +526,7 @@ export default function CatalogPage() {
 
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.pages}
+                  disabled={pagination.page === paginationInfo.pages}
                   className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next

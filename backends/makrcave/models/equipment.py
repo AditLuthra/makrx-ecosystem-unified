@@ -119,7 +119,19 @@ class Equipment(Base):
 
     # Relationships
     reservations = relationship("EquipmentReservation", back_populates="equipment")
-    maintenance_logs = relationship("EquipmentMaintenance", back_populates="equipment")
+    maintenance_logs = relationship(
+        "EquipmentMaintenanceLog", back_populates="equipment", cascade="all, delete-orphan"
+    )
+    enhanced_reservations = relationship(
+        "EnhancedEquipmentReservation",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    usage_sessions = relationship(
+        "EquipmentUsageSession",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
 
 
 class EquipmentReservation(Base):
@@ -146,31 +158,92 @@ class EquipmentReservation(Base):
     equipment = relationship("Equipment", back_populates="reservations")
 
 
-class EquipmentMaintenance(Base):
-    __tablename__ = "equipment_maintenance"
+class EquipmentMaintenanceLog(Base):
+    __tablename__ = "equipment_maintenance_logs"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    equipment_id = Column(String, ForeignKey("equipment.id"), nullable=False)
+    equipment_id = Column(String, ForeignKey("equipment.id"), nullable=False, index=True)
 
-    # Maintenance details
+    # Maintenance metadata
     maintenance_type = Column(Enum(MaintenanceType), nullable=False)
-    description = Column(Text, nullable=False)
-    performed_by = Column(String, nullable=False)
-    performed_at = Column(DateTime, default=datetime.utcnow)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    scheduled_date = Column(DateTime, nullable=True)
+    started_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+    duration_hours = Column(Float, nullable=True)
+    supervised_by = Column(String(255), nullable=True)
 
-    # Cost tracking
-    cost = Column(Float, nullable=True)
-    parts_used = Column(JSON, nullable=True)  # List of parts as JSON
+    # Personnel information
+    performed_by_user_id = Column(String, nullable=False)
+    performed_by_name = Column(String(255), nullable=False)
 
-    # Additional information
-    notes = Column(Text, nullable=True)
+    # Cost and parts tracking
+    parts_used = Column(JSON, nullable=True)
+    labor_cost = Column(Float, nullable=True)
+    parts_cost = Column(Float, nullable=True)
+    total_cost = Column(Float, nullable=True)
+
+    # Maintenance outcomes
+    issues_found = Column(Text, nullable=True)
+    actions_taken = Column(Text, nullable=True)
+    recommendations = Column(Text, nullable=True)
     next_maintenance_due = Column(DateTime, nullable=True)
+    notes = Column(Text, nullable=True)
+
+    # Compliance tracking
+    certification_valid = Column(Boolean, default=True)
+    is_completed = Column(Boolean, default=False)
 
     # Record keeping
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
     equipment = relationship("Equipment", back_populates="maintenance_logs")
+
+
+class EquipmentUsageSession(Base):
+    __tablename__ = "equipment_usage_sessions"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    equipment_id = Column(String, ForeignKey("equipment.id"), nullable=False, index=True)
+    reservation_id = Column(
+        String, ForeignKey("equipment_reservations.id"), nullable=True, index=True
+    )
+
+    # User context
+    user_id = Column(String, nullable=False, index=True)
+    user_name = Column(String(255), nullable=False)
+
+    # Timing
+    start_time = Column(DateTime, default=datetime.utcnow)
+    end_time = Column(DateTime, nullable=True)
+    duration_hours = Column(Float, nullable=True)
+
+    # Project linkage
+    project_id = Column(String, nullable=True)
+    project_name = Column(String(255), nullable=True)
+
+    # Session details
+    materials_used = Column(JSON, nullable=True)
+    settings_used = Column(JSON, nullable=True)
+    job_successful = Column(Boolean, nullable=True)
+    output_quality = Column(String(32), nullable=True)
+    issues_encountered = Column(Text, nullable=True)
+    notes = Column(Text, nullable=True)
+
+    # Metrics
+    power_consumed_kwh = Column(Float, nullable=True)
+    material_consumed = Column(JSON, nullable=True)
+    efficiency_score = Column(Float, nullable=True)
+    cost_incurred = Column(Float, nullable=True)
+
+    # Record keeping
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    equipment = relationship("Equipment", back_populates="usage_sessions")
+    reservation = relationship("EquipmentReservation", backref="usage_sessions")
 
 
 # New: Equipment Rating model to back user ratings/feedback

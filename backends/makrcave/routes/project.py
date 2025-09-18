@@ -7,7 +7,7 @@ from datetime import datetime
 
 from ..database import get_db
 from ..dependencies import get_current_user, require_roles, check_permission, CurrentUser
-from models.project import (
+from ..models.project import (
     Project,
     ProjectTask,
     ProjectMilestone,

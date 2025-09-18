@@ -1,8 +1,10 @@
+import enum
+
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
-from models.project import (
+from ..models.project import (
     ProjectStatus,
     ProjectVisibility,
     CollaboratorRole,
@@ -29,13 +31,13 @@ class ProjectBase(BaseModel):
 
     # Enhanced public project fields
     difficulty_level: str = Field(
-        "beginner", regex="^(beginner|intermediate|advanced|expert)$"
+        "beginner", pattern="^(beginner|intermediate|advanced|expert)$"
     )
     estimated_duration: Optional[str] = None
     required_skills: Optional[List[str]] = []
     learning_objectives: Optional[List[str]] = []
     license_type: str = Field(
-        "cc-by-sa", regex="^(cc-by-sa|cc-by|cc-by-nc|mit|apache|proprietary)$"
+        "cc-by-sa", pattern="^(cc-by-sa|cc-by|cc-by-nc|mit|apache|proprietary)$"
     )
     required_equipment: Optional[List[str]] = []
     space_requirements: Optional[str] = None
@@ -47,7 +49,7 @@ class InitialMilestone(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
     target_date: Optional[datetime] = None
-    priority: str = Field("medium", regex="^(low|medium|high|critical)$")
+    priority: str = Field("medium", pattern="^(low|medium|high|critical)$")
 
 
 # Enhanced collaborator schema for project creation
@@ -114,7 +116,7 @@ class ProjectBOMResponse(BaseModel):
     unit_cost: Optional[float] = None
     total_cost: Optional[float] = None
     usage_notes: Optional[str] = None
-    alternatives: Optional[List[BOMAlternative]] = []
+    alternatives: Optional[List["BOMAlternative"]] = []
     is_critical: bool = False
     procurement_status: str = "needed"
     availability_status: str = "unknown"
@@ -269,20 +271,20 @@ class BOMAlternative(BaseModel):
     part_code: Optional[str] = None
     unit_cost: Optional[float] = Field(None, ge=0)
     availability_status: str = Field(
-        "unknown", regex="^(in-stock|low-stock|out-of-stock|unknown)$"
+        "unknown", pattern="^(in-stock|low-stock|out-of-stock|unknown)$"
     )
     compatibility_notes: Optional[str] = None
 
 
 class BOMItemCreate(BaseModel):
-    item_type: str = Field(..., regex="^(inventory|makrx_store)$")
+    item_type: str = Field(..., pattern="^(inventory|makrx_store)$")
     item_id: str = Field(..., min_length=1)
     item_name: str = Field(..., min_length=1, max_length=200)
     part_code: Optional[str] = None
     quantity: int = Field(..., gt=0)
     unit_cost: Optional[float] = Field(None, ge=0)
     usage_notes: Optional[str] = None
-    alternatives: Optional[List[BOMAlternative]] = []
+    alternatives: Optional[List["BOMAlternative"]] = []
     is_critical: bool = False
 
     # Enhanced MakrX Store integration
@@ -301,7 +303,7 @@ class BOMItemUpdate(BaseModel):
     quantity: Optional[int] = Field(None, gt=0)
     unit_cost: Optional[float] = Field(None, ge=0)
     usage_notes: Optional[str] = None
-    alternatives: Optional[List[BOMAlternative]] = None
+    alternatives: Optional[List["BOMAlternative"]] = None
     is_critical: Optional[bool] = None
     procurement_status: Optional[str] = None
     availability_status: Optional[str] = None
@@ -344,14 +346,14 @@ class MilestoneCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
     target_date: Optional[datetime] = None
-    priority: str = Field("medium", regex="^(low|medium|high|critical)$")
+    priority: str = Field("medium", pattern="^(low|medium|high|critical)$")
 
 
 class MilestoneUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
     target_date: Optional[datetime] = None
-    priority: Optional[str] = Field(None, regex="^(low|medium|high|critical)$")
+    priority: Optional[str] = Field(None, pattern="^(low|medium|high|critical)$")
     is_completed: Optional[bool] = None
     order_index: Optional[int] = None
 
@@ -378,9 +380,9 @@ class ProjectFilter(BaseModel):
 class ProjectSort(BaseModel):
     field: str = Field(
         "updated_at",
-        regex="^(name|created_at|updated_at|start_date|end_date)$",
+        pattern="^(name|created_at|updated_at|start_date|end_date)$",
     )
-    direction: str = Field("desc", regex="^(asc|desc)$")
+    direction: str = Field("desc", pattern="^(asc|desc)$")
 
 
 # Batch operation schemas
@@ -413,7 +415,7 @@ class UserProjectStatistics(BaseModel):
 
 # GitHub Integration Schemas
 class GitHubRepoConnect(BaseModel):
-    repo_url: str = Field(..., regex=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$")
+    repo_url: str = Field(..., pattern=r"^https://github\.com/[\w\-\.]+/[\w\-\.]+/?$")
     access_token: Optional[str] = None  # For private repos
     default_branch: str = "main"
 
@@ -584,7 +586,7 @@ class ProjectTeamRoleResponse(BaseModel):
 class ResourceSharingCreate(BaseModel):
     target_project_id: str = Field(..., min_length=1)
     resource_type: str = Field(
-        ..., regex="^(bom_item|file|milestone_template|equipment_config)$"
+        ..., pattern="^(bom_item|file|milestone_template|equipment_config)$"
     )
     resource_id: str = Field(..., min_length=1)
     sharing_notes: Optional[str] = None

@@ -126,7 +126,8 @@ export default function HealthStatusDashboard({
     return <Zap className="w-4 h-4" />;
   };
 
-  const formatResponseTime = (ms: number) => {
+  const formatResponseTime = (ms?: number) => {
+    if (ms === undefined || ms === null) return 'N/A';
     if (ms < 1000) return `${Math.round(ms)}ms`;
     return `${(ms / 1000).toFixed(2)}s`;
   };
@@ -237,7 +238,7 @@ export default function HealthStatusDashboard({
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Last Check:</span>
                 <span className="font-medium">
-                  {new Date(service.timestamp).toLocaleTimeString()}
+                  {service.timestamp ? new Date(service.timestamp).toLocaleTimeString() : 'Unknown'}
                 </span>
               </div>
               {service.details && (

@@ -360,7 +360,9 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
                     </div>
                     <div className="flex items-center space-x-1">
                       {file.is_public && (
-                        <Globe className="h-3 w-3 text-green-600" title="Public file" />
+                        <span aria-label="Public file" title="Public file">
+                          <Globe className="h-3 w-3 text-green-600" />
+                        </span>
                       )}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -490,9 +492,9 @@ const ProjectFiles: React.FC<ProjectFilesProps> = ({
             <GitHubIntegration
               projectId={projectId}
               isConnected={githubIntegrationEnabled}
-              repoUrl={githubRepoUrl}
-              repoName={githubRepoName}
-              defaultBranch={githubDefaultBranch}
+              repoUrl={githubRepoUrl ?? ''}
+              repoName={githubRepoName ?? ''}
+              defaultBranch={githubDefaultBranch ?? 'main'}
               canEdit={canEdit}
               onUpdate={onUpdate}
             />

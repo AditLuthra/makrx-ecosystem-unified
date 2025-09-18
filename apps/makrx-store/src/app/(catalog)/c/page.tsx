@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -24,9 +24,9 @@ export default function CategoriesPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const tree = await api.getCategoryTree(true);
+        const tree = await storeApi.getCategoryTree(true);
         setCategories(tree.categories || []);
-        const tags = await api.getPopularTags();
+        const tags = await storeApi.getPopularTags();
         setPopularTags(tags.tags || []);
       } catch (error) {
         console.error('Failed to fetch categories:', error);

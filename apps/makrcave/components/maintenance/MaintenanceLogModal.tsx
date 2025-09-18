@@ -45,28 +45,56 @@ interface Technician {
   available: boolean;
 }
 
+type MaintenanceType = 'preventive' | 'breakdown' | 'repair' | 'inspection' | 'upgrade';
+type MaintenanceStatus = 'scheduled' | 'in_progress' | 'resolved' | 'overdue';
+type MaintenancePriority = 'low' | 'medium' | 'high' | 'critical';
+
+interface MaintenanceLogFormState {
+  equipment_id: string;
+  type: MaintenanceType;
+  status: MaintenanceStatus;
+  priority: MaintenancePriority;
+  title: string;
+  description: string;
+  assigned_to: string;
+  scheduled_date: Date | null;
+  estimated_duration: string;
+  estimated_cost: string;
+  parts_needed: string[];
+  safety_requirements: string;
+  notes: string;
+  attachments: File[];
+}
+
+const buildDefaultFormState = (): MaintenanceLogFormState => ({
+  equipment_id: '',
+  type: 'preventive',
+  status: 'scheduled',
+  priority: 'medium',
+  title: '',
+  description: '',
+  assigned_to: '',
+  scheduled_date: null,
+  estimated_duration: '',
+  estimated_cost: '',
+  parts_needed: [],
+  safety_requirements: '',
+  notes: '',
+  attachments: [],
+});
+
 const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
   isOpen,
   onClose,
   log,
   onSave,
 }) => {
-  const [formData, setFormData] = useState({
-    equipment_id: '',
-    type: 'preventive',
-    status: 'scheduled',
-    priority: 'medium',
-    title: '',
-    description: '',
-    assigned_to: '',
-    scheduled_date: null as Date | null,
-    estimated_duration: '',
-    estimated_cost: '',
-    parts_needed: [] as string[],
-    safety_requirements: '',
-    notes: '',
-    attachments: [] as File[],
-  });
+  const generateFallbackId = () =>
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `temp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const [formData, setFormData] = useState<MaintenanceLogFormState>(() => buildDefaultFormState());
 
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [technicians, setTechnicians] = useState<Technician[]>([]);
@@ -80,39 +108,26 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
       if (log) {
         // Editing existing log
         setFormData({
-          equipment_id: log.equipment_id || '',
-          type: log.type || 'preventive',
-          status: log.status || 'scheduled',
-          priority: log.priority || 'medium',
-          title: log.title || '',
-          description: log.description || '',
-          assigned_to: log.assigned_to || '',
+          equipment_id: String(log.equipment_id ?? ''),
+          type: (log.type as MaintenanceType) || 'preventive',
+          status: (log.status as MaintenanceStatus) || 'scheduled',
+          priority: (log.priority as MaintenancePriority) || 'medium',
+          title: log.title ?? '',
+          description: log.description ?? '',
+          assigned_to: String(log.assigned_to ?? ''),
           scheduled_date: log.scheduled_date ? new Date(log.scheduled_date) : null,
-          estimated_duration: log.estimated_duration?.toString() || '',
-          estimated_cost: log.cost?.toString() || '',
-          parts_needed: log.parts_used || [],
-          safety_requirements: log.safety_requirements || '',
-          notes: log.notes || '',
+          estimated_duration: log.estimated_duration?.toString() ?? '',
+          estimated_cost: log.cost?.toString() ?? '',
+          parts_needed: Array.isArray(log.parts_used)
+            ? log.parts_used.map((part: unknown) => String(part)).filter(Boolean)
+            : [],
+          safety_requirements: log.safety_requirements ?? '',
+          notes: log.notes ?? '',
           attachments: [],
         });
       } else {
         // Reset form for new log
-        setFormData({
-          equipment_id: '',
-          type: 'preventive',
-          status: 'scheduled',
-          priority: 'medium',
-          title: '',
-          description: '',
-          assigned_to: '',
-          scheduled_date: null,
-          estimated_duration: '',
-          estimated_cost: '',
-          parts_needed: [],
-          safety_requirements: '',
-          notes: '',
-          attachments: [],
-        });
+        setFormData(buildDefaultFormState());
       }
     }
   }, [isOpen, log]);
@@ -126,8 +141,21 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
       const equipmentResponse = await fetch('/api/v1/equipment', { headers });
 
       if (equipmentResponse.ok) {
-        const equipmentData = await equipmentResponse.json();
-        setEquipment(equipmentData);
+        const equipmentPayload = await equipmentResponse.json();
+        const resolvedEquipment = Array.isArray(equipmentPayload)
+          ? equipmentPayload
+          : Array.isArray(equipmentPayload?.data)
+            ? equipmentPayload.data
+            : [];
+
+        setEquipment(
+          resolvedEquipment.map((item: Partial<Equipment>) => ({
+            id: String(item.id ?? generateFallbackId()),
+            name: item.name ?? 'Unnamed equipment',
+            type: item.type ?? 'Unknown',
+            location: item.location ?? 'Unassigned',
+          })),
+        );
       } else {
         // Mock data
         setEquipment([
@@ -158,13 +186,15 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
     setLoading(true);
 
     try {
+      const estimatedDuration = Number.parseInt(formData.estimated_duration, 10);
+      const estimatedCost = Number.parseFloat(formData.estimated_cost);
+
       const submitData = {
         ...formData,
-        estimated_duration: formData.estimated_duration
-          ? parseInt(formData.estimated_duration)
-          : null,
-        estimated_cost: formData.estimated_cost ? parseFloat(formData.estimated_cost) : null,
-        scheduled_date: formData.scheduled_date?.toISOString(),
+        estimated_duration: Number.isFinite(estimatedDuration) ? estimatedDuration : null,
+        estimated_cost: Number.isFinite(estimatedCost) ? estimatedCost : null,
+        scheduled_date: formData.scheduled_date ? formData.scheduled_date.toISOString() : null,
+        parts_needed: formData.parts_needed.map((part) => part.trim()).filter(Boolean),
       };
 
       onSave(submitData);
@@ -177,9 +207,12 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
 
   const addPart = () => {
     if (newPart.trim()) {
+      const trimmed = newPart.trim();
       setFormData((prev) => ({
         ...prev,
-        parts_needed: [...prev.parts_needed, newPart.trim()],
+        parts_needed: prev.parts_needed.includes(trimmed)
+          ? prev.parts_needed
+          : [...prev.parts_needed, trimmed],
       }));
       setNewPart('');
     }
@@ -258,7 +291,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="type">Maintenance Type *</Label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, type: value as MaintenanceType }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -279,7 +314,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="status">Status</Label>
               <Select
                 value={formData.status}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, status: value as MaintenanceStatus }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -317,7 +354,9 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, priority: value as MaintenancePriority }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -389,16 +428,16 @@ const MaintenanceLogModal: React.FC<MaintenanceLogModalProps> = ({
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full justify-start text-left font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.scheduled_date
-                      ? format(formData.scheduled_date, 'PPP')
-                      : 'Pick a date'}
+                  {formData.scheduled_date ? format(formData.scheduled_date, 'PPP') : 'Pick a date'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
-                    selected={formData.scheduled_date}
-                    onSelect={(date) => setFormData((prev) => ({ ...prev, scheduled_date: date }))}
+                    selected={formData.scheduled_date ?? undefined}
+                    onSelect={(date) =>
+                      setFormData((prev) => ({ ...prev, scheduled_date: date ?? null }))
+                    }
                     initialFocus
                   />
                 </PopoverContent>

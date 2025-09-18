@@ -212,7 +212,7 @@ class InventoryFilter(BaseModel):
 
     # Sorting
     sort_by: str = "updated_at"
-    sort_order: str = Field("desc", regex="^(asc|desc)$")
+    sort_order: str = Field("desc", pattern="^(asc|desc)$")
 
 
 class InventoryResponse(BaseModel):

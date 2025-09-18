@@ -13,8 +13,8 @@ import uuid
 from datetime import datetime
 
 from ..database import get_db
-from ..dependencies import get_current_user, require_roles
-from schemas.member import (
+from ..dependencies import get_current_user, require_roles, CurrentUser
+from ..schemas.member import (
     MemberCreate,
     MemberUpdate,
     MemberResponse,
@@ -33,8 +33,8 @@ from schemas.member import (
     MemberStatistics,
     BulkMemberOperation,
 )
-from crud import member as crud_member
-from utils.email_service import send_member_invite_email
+from ..crud import member as crud_member
+from ..utils.email_service import send_member_invite_email
 
 router = APIRouter()
 security = HTTPBearer()

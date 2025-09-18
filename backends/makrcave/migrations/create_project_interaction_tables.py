@@ -15,7 +15,7 @@ import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import engine
-from models.project import Base, ProjectLike, ProjectBookmark
+from ..models.project import Base, ProjectLike, ProjectBookmark
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

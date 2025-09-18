@@ -8,13 +8,13 @@ import uuid
 from ..database import get_db
 from ..dependencies import get_current_user, require_roles, check_permission
 from ..dependencies import CurrentUser
-from models.equipment import (
+from ..models.equipment import (
     EquipmentStatus,
     EquipmentCategory,
     Equipment,
     EquipmentReservation,
 )
-from schemas.equipment import (
+from ..schemas.equipment import (
     EquipmentResponse,
     EquipmentCreate,
     EquipmentUpdate,
@@ -23,7 +23,7 @@ from schemas.equipment import (
     EquipmentRatingCreate,
     EquipmentRatingResponse,
 )
-from crud.equipment import get_equipment_crud
+from ..crud.equipment import get_equipment_crud
 
 router = APIRouter()
 security = HTTPBearer()

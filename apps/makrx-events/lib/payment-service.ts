@@ -81,7 +81,14 @@ class PaymentService {
     paymentMethod: 'razorpay' | 'upi',
     eventId: string,
     userId: string,
-  ): Promise<{ orderId?: string; paymentUrl?: string }> {
+    currency: string = 'INR',
+  ): Promise<{
+    orderId?: string;
+    paymentUrl?: string;
+    amount?: number;
+    currency?: string;
+    transactionId: string;
+  }> {
     try {
       const receipt = `reg_${registrationId}_${Date.now()}`;
 
@@ -89,16 +96,18 @@ class PaymentService {
       const [transaction] = await db
         .insert(paymentTransactions)
         .values({
+          registrationId,
           eventId,
           userId,
-          amount: amount.toString(),
-          currency: 'INR',
+          amount,
+          currency,
           status: 'pending',
           paymentMethod,
           transactionId: receipt,
           metadata: {
             registrationId,
             type: 'event_registration',
+            currency,
           },
         })
         .returning();
@@ -106,7 +115,7 @@ class PaymentService {
       if (paymentMethod === 'razorpay') {
         const order = await this.createRazorpayOrder({
           amount: amount * 100, // Convert to paise
-          currency: 'INR',
+          currency,
           receipt,
           notes: {
             eventId,
@@ -127,7 +136,7 @@ class PaymentService {
           })
           .where(eq(paymentTransactions.id, transaction.id));
 
-        return { orderId: order.id };
+        return { orderId: order.id, amount: order.amount, currency: order.currency, transactionId: receipt };
       } else if (paymentMethod === 'upi') {
         // Generate UPI payment URL
         const upiUrl = this.generateUPIUrl({
@@ -137,10 +146,10 @@ class PaymentService {
           merchantTransactionId: transaction.id,
         });
 
-        return { paymentUrl: upiUrl };
+        return { paymentUrl: upiUrl, transactionId: receipt };
       }
 
-      return {};
+      return { transactionId: receipt };
     } catch (error) {
       console.error('Error processing registration payment:', error);
       throw error;
@@ -264,7 +273,7 @@ class PaymentService {
         );
 
         const refundData = {
-          amount: amount ? amount * 100 : parseInt(transaction.amount) * 100,
+          amount: amount ? amount * 100 : Number(transaction.amount) * 100,
           speed: 'normal',
           notes: {
             reason: 'Event cancellation refund',

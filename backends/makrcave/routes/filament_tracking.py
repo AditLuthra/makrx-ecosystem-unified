@@ -15,7 +15,7 @@ import json
 
 from ..database import get_db
 from ..dependencies import get_current_user
-from models.filament_tracking import (
+from ..models.filament_tracking import (
     FilamentRoll,
     FilamentUsageLog,
     FilamentReorderRequest,
@@ -37,7 +37,7 @@ class FilamentRollCreate(BaseModel):
     brand: FilamentBrand
     material: FilamentMaterial
     color_name: str = Field(..., min_length=1, max_length=100)
-    color_hex: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    color_hex: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     diameter: float = Field(default=1.75, gt=0)
     original_weight_g: float = Field(..., gt=0)
     spool_weight_g: Optional[float] = Field(default=200.0, ge=0)
@@ -68,7 +68,7 @@ class FilamentRollUpdate(BaseModel):
     brand: Optional[FilamentBrand] = None
     material: Optional[FilamentMaterial] = None
     color_name: Optional[str] = Field(None, min_length=1, max_length=100)
-    color_hex: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    color_hex: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     current_weight_g: Optional[float] = Field(None, ge=0)
     location: Optional[str] = None
     status: Optional[FilamentRollStatus] = None

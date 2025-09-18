@@ -15,7 +15,7 @@ import AddToCartForm from '@/components/AddToCartForm';
 import CompatibilityInfo from '@/components/CompatibilityInfo';
 import ProductVariantSelector, { useProductVariants } from '@/components/ProductVariantSelector';
 import { ProductSEO } from '@/components/SEOMetaTags';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 import { getRelatedProducts, getFrequentlyBoughtTogether } from '@/lib/recommendations';
 import ProductStructuredDataClient from '@/components/ProductStructuredData';
 import ProductPageErrorBoundary from '@/components/ProductPageErrorBoundary';
@@ -275,7 +275,7 @@ export default function ProductPage() {
       setLoading(true);
       try {
         // Fetch product details using API client
-        const productData = await api.getProductBySlug(slug);
+        const productData = await storeApi.getProductBySlug(slug);
 
         // Only update state if component is still mounted
         if (isMountedRef.current) {
@@ -292,7 +292,7 @@ export default function ProductPage() {
           setBreadcrumbs(crumbs);
 
           // Use recommendation system to get related and complementary products
-          const allProducts = await api.getProducts();
+          const allProducts = await storeApi.getProducts();
           let recommendations: Product[] = [];
           let complementary: Product[] = [];
           if (productData) {

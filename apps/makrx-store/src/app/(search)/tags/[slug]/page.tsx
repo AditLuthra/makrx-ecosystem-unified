@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProductGrid from '@/components/ProductGrid';
 import SortSelect from '@/components/SortSelect';
-import { api } from '@/lib/api';
+import { storeApi } from '@/services/storeApi';
 
 interface TagInfo {
   name: string;
@@ -50,7 +50,7 @@ export default function TagPage() {
       setLoading(true);
       try {
         try {
-          const tagData = await api.getTag(tagName);
+          const tagData = await storeApi.getTag(tagName);
           setTagInfo(tagData);
         } catch {
           setTagInfo({
@@ -62,7 +62,7 @@ export default function TagPage() {
           });
         }
 
-        const productsData = await api.advancedSearch({
+        const productsData = await storeApi.advancedSearch({
           query: tagName,
           sort_by: sort,
           page,

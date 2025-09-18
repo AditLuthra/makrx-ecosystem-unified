@@ -13,14 +13,14 @@ import asyncio
 from collections import defaultdict
 
 from ..database import get_db
-from models.projects import Project
-from models.collaboration import (
+from ..models.projects import Project
+from ..models.collaboration import (
     CollaborationMessage,
     DocumentVersion,
     WhiteboardAction,
     UserPresence,
 )
-from schemas.collaboration import (
+from ..schemas.collaboration import (
     MessageCreate,
     MessageResponse,
     CursorUpdate,
