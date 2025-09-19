@@ -1,0 +1,304 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-frontend
+  labels:
+    app.kubernetes.io/name: gateway-frontend
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gateway-frontend
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: app
+          image: makrx/gateway-frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-frontend
+  labels:
+    app.kubernetes.io/name: gateway-frontend
+    app.kubernetes.io/component: frontend
+spec:
+  selector:
+    app.kubernetes.io/name: gateway-frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-frontend-hacker
+  labels:
+    app.kubernetes.io/name: gateway-frontend-hacker
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway-frontend-hacker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gateway-frontend-hacker
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: app
+          image: makrx/gateway-frontend-hacker:latest
+          ports:
+            - containerPort: 3001
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-frontend-hacker
+  labels:
+    app.kubernetes.io/name: gateway-frontend-hacker
+    app.kubernetes.io/component: frontend
+spec:
+  selector:
+    app.kubernetes.io/name: gateway-frontend-hacker
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: makrcave
+  labels:
+    app.kubernetes.io/name: makrcave
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: makrcave
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: makrcave
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: app
+          image: makrx/makrcave:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3002
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: makrcave
+  labels:
+    app.kubernetes.io/name: makrcave
+    app.kubernetes.io/component: frontend
+spec:
+  selector:
+    app.kubernetes.io/name: makrcave
+  ports:
+    - name: http
+      port: 3002
+      targetPort: 3002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: makrx-store
+  labels:
+    app.kubernetes.io/name: makrx-store
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: makrx-store
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: makrx-store
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: app
+          image: makrx/makrx-store:latest
+          ports:
+            - containerPort: 3003
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3003
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3003
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: makrx-store
+  labels:
+    app.kubernetes.io/name: makrx-store
+    app.kubernetes.io/component: frontend
+spec:
+  selector:
+    app.kubernetes.io/name: makrx-store
+  ports:
+    - name: http
+      port: 3003
+      targetPort: 3003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: makrx-events
+  labels:
+    app.kubernetes.io/name: makrx-events
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: makrx-events
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: makrx-events
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: app
+          image: makrx/makrx-events:latest
+          ports:
+            - containerPort: 3004
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3004
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3004
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: makrx-events
+  labels:
+    app.kubernetes.io/name: makrx-events
+    app.kubernetes.io/component: frontend
+spec:
+  selector:
+    app.kubernetes.io/name: makrx-events
+  ports:
+    - name: http
+      port: 3004
+      targetPort: 3004

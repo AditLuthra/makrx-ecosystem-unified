@@ -7,6 +7,8 @@
 
 A comprehensive ecosystem of interconnected applications and services built for modern event management, marketplace functionality, and community engagement.
 
+> Documentation: See the full Repository Overview at [docs/REPOSITORY_OVERVIEW.md](docs/REPOSITORY_OVERVIEW.md)
+
 ## 🏗️ Architecture Overview
 
 ```mermaid

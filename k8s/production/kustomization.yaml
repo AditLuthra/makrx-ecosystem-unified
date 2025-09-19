@@ -87,3 +87,5 @@ images:
 resources:
   - namespace-production.yaml
   - ingress.yaml
+  - apps.yaml
+  - backends.yaml

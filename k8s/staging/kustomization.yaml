@@ -60,3 +60,6 @@ replicas:
 
 resources:
   - namespace-staging.yaml
+  - apps.yaml
+  - backends.yaml
+  - ingress.yaml

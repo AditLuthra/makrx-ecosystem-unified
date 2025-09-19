@@ -1,0 +1,97 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: makrx-ingress
+  namespace: makrx-ecosystem-staging
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+spec:
+  tls:
+    - hosts:
+        - app.staging.makrx.com
+        - hacker.staging.makrx.com
+        - cave.staging.makrx.com
+        - store.staging.makrx.com
+        - events.staging.makrx.com
+        - api.staging.makrx.com
+      secretName: makrx-staging-tls
+  rules:
+    - host: app.staging.makrx.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-frontend
+                port:
+                  number: 3000
+    - host: hacker.staging.makrx.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-frontend-hacker
+                port:
+                  number: 3001
+    - host: cave.staging.makrx.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrcave
+                port:
+                  number: 3002
+    - host: store.staging.makrx.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-store
+                port:
+                  number: 3003
+    - host: events.staging.makrx.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-events
+                port:
+                  number: 3004
+    - host: api.staging.makrx.com
+      http:
+        paths:
+          - path: /makrcave
+            pathType: Prefix
+            backend:
+              service:
+                name: makrcave-backend
+                port:
+                  number: 8001
+          - path: /events
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-events-backend
+                port:
+                  number: 8002
+          - path: /store
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-store-backend
+                port:
+                  number: 8003
