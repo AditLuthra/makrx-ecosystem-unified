@@ -3,7 +3,10 @@
 echo "🚀 MakrX Ecosystem Full Startup"
 echo "==============================="
 
-cd /home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified
+# Move to repository root based on this script's location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$SCRIPT_DIR"
+cd "$REPO_ROOT"
 
 # Check system requirements
 echo "🔍 Checking system requirements..."

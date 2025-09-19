@@ -3,7 +3,10 @@
 echo "🚀 Starting MakrX Ecosystem (Simple Mode)"
 echo "========================================"
 
-cd /home/adit/Downloads/MakrX-AI/makrx-ecosystem-unified
+# Move to repository root based on this script's location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$SCRIPT_DIR"
+cd "$REPO_ROOT"
 
 # Start infrastructure first (skip Keycloak to avoid auth issues)
 echo "🐳 Starting infrastructure services..."
