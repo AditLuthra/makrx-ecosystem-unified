@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import { storage } from '@/server/storage';
-import { sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { events, eventRegistrations } from '@shared/schema';
+import { eventRegistrations, events } from '@shared/schema';
+import { sql } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {

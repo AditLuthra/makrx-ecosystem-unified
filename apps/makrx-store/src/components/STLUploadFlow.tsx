@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, Eye, File, RotateCcw, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
@@ -90,75 +90,55 @@ const STLUploadFlow: React.FC = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
 
-  const materials = [
-    { value: 'pla', label: 'PLA - Biodegradable, Easy to Print', price: 0.5 },
-    { value: 'abs', label: 'ABS - Strong, Heat Resistant', price: 0.6 },
-    { value: 'petg', label: 'PETG - Chemical Resistant, Clear', price: 0.7 },
-    { value: 'tpu', label: 'TPU - Flexible, Rubber-like', price: 1.2 },
-    { value: 'wood_pla', label: 'Wood PLA - Natural Look & Feel', price: 0.8 },
-    { value: 'carbon_fiber', label: 'Carbon Fiber - Ultra Strong', price: 2.0 },
-  ];
+  const materials = useMemo(
+    () => [
+      { value: 'pla', label: 'PLA - Biodegradable, Easy to Print', price: 0.5 },
+      { value: 'abs', label: 'ABS - Strong, Heat Resistant', price: 0.6 },
+      { value: 'petg', label: 'PETG - Chemical Resistant, Clear', price: 0.7 },
+      { value: 'tpu', label: 'TPU - Flexible, Rubber-like', price: 1.2 },
+      { value: 'wood_pla', label: 'Wood PLA - Natural Look & Feel', price: 0.8 },
+      { value: 'carbon_fiber', label: 'Carbon Fiber - Ultra Strong', price: 2.0 },
+    ],
+    [],
+  );
 
-  const qualities = [
-    {
-      value: 'draft',
-      label: 'Draft (0.3mm) - Fast & Economical',
-      multiplier: 0.8,
-    },
-    {
-      value: 'standard',
-      label: 'Standard (0.2mm) - Good Quality',
-      multiplier: 1.0,
-    },
-    { value: 'high', label: 'High (0.15mm) - Fine Details', multiplier: 1.3 },
-    {
-      value: 'ultra',
-      label: 'Ultra (0.1mm) - Maximum Detail',
-      multiplier: 1.6,
-    },
-  ];
+  const qualities = useMemo(
+    () => [
+      {
+        value: 'draft',
+        label: 'Draft (0.3mm) - Fast & Economical',
+        multiplier: 0.8,
+      },
+      {
+        value: 'standard',
+        label: 'Standard (0.2mm) - Good Quality',
+        multiplier: 1.0,
+      },
+      { value: 'high', label: 'High (0.15mm) - Fine Details', multiplier: 1.3 },
+      {
+        value: 'ultra',
+        label: 'Ultra (0.1mm) - Maximum Detail',
+        multiplier: 1.6,
+      },
+    ],
+    [],
+  );
 
-  const priorities = [
-    { value: 'low', label: 'Low Priority (7-10 days)', multiplier: 0.9 },
-    { value: 'normal', label: 'Normal (3-5 days)', multiplier: 1.0 },
-    { value: 'high', label: 'High Priority (1-2 days)', multiplier: 1.3 },
-    { value: 'urgent', label: 'Urgent (24 hours)', multiplier: 1.8 },
-  ];
+  const priorities = useMemo(
+    () => [
+      { value: 'low', label: 'Low Priority (7-10 days)', multiplier: 0.9 },
+      { value: 'normal', label: 'Normal (3-5 days)', multiplier: 1.0 },
+      { value: 'high', label: 'High Priority (1-2 days)', multiplier: 1.3 },
+      { value: 'urgent', label: 'Urgent (24 hours)', multiplier: 1.8 },
+    ],
+    [],
+  );
 
-  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-
-    files.forEach((file) => {
-      const allowedTypes = ['.stl', '.obj', '.3mf', '.ply'];
-      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-
-      if (!allowedTypes.includes(fileExtension)) {
-        alert(
-          `Unsupported file type: ${fileExtension}. Please upload STL, OBJ, 3MF, or PLY files.`,
-        );
-        return;
-      }
-
-      const newFile: UploadedFile = {
-        id: Math.random().toString(36).substr(2, 9),
-        file,
-        status: 'uploading',
-      };
-
-      setUploadedFiles((prev) => [...prev, newFile]);
-      uploadAndAnalyzeFile(newFile);
-    });
-
-    // Clear the input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  }, []);
-
-  const uploadAndAnalyzeFile = async (uploadedFile: UploadedFile) => {
-    try {
-      // Simulate file upload
-      const formData = new FormData();
+  const uploadAndAnalyzeFile = useCallback(
+    async (uploadedFile: UploadedFile) => {
+      try {
+        // Simulate file upload
+        const formData = new FormData();
       formData.append('file', uploadedFile.file);
 
       // Update status to analyzing
@@ -208,15 +188,49 @@ const STLUploadFlow: React.FC = () => {
           status: 'ready',
         });
       }
-    } catch (error) {
-      console.error('Upload error:', error);
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadedFile.id ? { ...f, status: 'error', error: 'Upload failed' } : f,
-        ),
-      );
-    }
-  };
+      } catch (error) {
+        console.error('Upload error:', error);
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === uploadedFile.id ? { ...f, status: 'error', error: 'Upload failed' } : f,
+          ),
+        );
+      }
+    },
+    [uploadedFiles],
+  );
+
+  const handleFileSelect = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(event.target.files || []);
+
+      files.forEach((file) => {
+        const allowedTypes = ['.stl', '.obj', '.3mf', '.ply'];
+        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+
+        if (!allowedTypes.includes(fileExtension)) {
+          alert(
+            `Unsupported file type: ${fileExtension}. Please upload STL, OBJ, 3MF, or PLY files.`,
+          );
+          return;
+        }
+
+        const newFile: UploadedFile = {
+          id: Math.random().toString(36).substr(2, 9),
+          file,
+          status: 'uploading',
+        };
+
+        setUploadedFiles((prev) => [...prev, newFile]);
+        uploadAndAnalyzeFile(newFile);
+      });
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    },
+    [uploadAndAnalyzeFile],
+  );
 
   const load3DPreview = useCallback(
     async (file: UploadedFile) => {

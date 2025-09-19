@@ -53,7 +53,9 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
             response.headers["X-Process-Time"] = f"{process_time:.4f}"
 
             # Log successful request
-            self._log_request_success(request, response, request_id, process_time)
+            self._log_request_success(
+                request, response, request_id, process_time
+            )
 
             return response
 
@@ -80,7 +82,9 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
             "headers": {
                 "user-agent": request.headers.get("user-agent"),
                 "authorization": (
-                    "Bearer ***" if request.headers.get("authorization") else None
+                    "Bearer ***"
+                    if request.headers.get("authorization")
+                    else None
                 ),
                 "content-type": request.headers.get("content-type"),
                 "x-forwarded-for": request.headers.get("x-forwarded-for"),
@@ -258,7 +262,9 @@ class MetricsCollector:
     def __init__(self):
         self.metrics = {}
 
-    def increment_counter(self, name: str, labels: Optional[Dict[str, str]] = None):
+    def increment_counter(
+        self, name: str, labels: Optional[Dict[str, str]] = None
+    ):
         """Increment counter metric"""
         key = f"{name}:{json.dumps(labels or {}, sort_keys=True)}"
         self.metrics[key] = self.metrics.get(key, 0) + 1
@@ -312,7 +318,9 @@ metrics = MetricsCollector()
 # ==========================================
 
 
-def track_quote_to_order_conversion(quote_id: str, converted: bool, request_id: str):
+def track_quote_to_order_conversion(
+    quote_id: str, converted: bool, request_id: str
+):
     """Track quote → order conversion rate"""
     metrics.increment_counter(
         "store_quote_to_order_total", {"converted": str(converted).lower()}

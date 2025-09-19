@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Inter } from 'next/font/google';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { KeycloakProvider, useAuthHeaders } from '@makrx/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Inter } from 'next/font/google';
+import React, { useState } from 'react';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -17,10 +17,9 @@ const authConfig = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { getAuthHeaders } = useAuthHeaders();
+  const getAuthHeaders = useAuthHeaders();
   const [queryClient] = useState(
-    ()
-      =>
+    () =>
       new QueryClient({
         defaultOptions: {
           queries: {

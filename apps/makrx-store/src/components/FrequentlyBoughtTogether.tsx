@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { storeApi, Product, formatPrice } from '@/services/storeApi';
+import { storeApi, formatPrice } from '@/services/storeApi';
+import type { Product } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { ShoppingCart, Plus, Check } from 'lucide-react';
@@ -154,7 +155,7 @@ export default function FrequentlyBoughtTogether({
                   <div className="flex items-center mt-1">
                     <span className="text-xs text-yellow-500">★</span>
                     <span className="text-xs text-gray-500 ml-1">
-                      {product.rating} ({product.reviewCount})
+                      {typeof product.rating === 'object' ? product.rating.average : product.rating} ({product.reviewCount})
                     </span>
                   </div>
                 )}

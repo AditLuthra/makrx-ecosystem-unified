@@ -1,13 +1,44 @@
+// Award Recipients table for certificates and awards
+export const awardRecipients = pgTable("award_recipients", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id"),
+  teamId: varchar("team_id"),
+  awardId: varchar("award_id").notNull(),
+  eventId: varchar("event_id"),
+  certificateUrl: text("certificate_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+export type AwardRecipient = typeof awardRecipients.$inferSelect;
+// Bulk communications (for campaigns, announcements, etc)
+export const bulkCommunications = pgTable("bulk_communications", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  targetAudience: varchar("target_audience").default("all"),
+  status: varchar("status").default("scheduled"),
+  scheduledFor: timestamp("scheduled_for"),
+  sentAt: timestamp("sent_at"),
+  totalRecipients: integer("total_recipients"),
+  sentCount: integer("sent_count").default(0),
+  failedCount: integer("failed_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 import { sql } from "drizzle-orm";
 import {
+  boolean,
+  integer,
+  jsonb,
+  numeric,
   pgTable,
-  varchar,
   text,
   timestamp,
-  integer,
-  boolean,
-  numeric,
-  jsonb,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -32,7 +63,7 @@ export type User = typeof users.$inferSelect;
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
-}) as unknown as z.ZodTypeAny;
+}) as unknown as z.ZodObject<any>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
 // Events
@@ -65,7 +96,7 @@ export const insertEventSchema = createInsertSchema(events).pick({
   status: true,
   startDate: true,
   endDate: true,
-}) as unknown as z.ZodTypeAny;
+}) as unknown as z.ZodObject<any>;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 
 // Microsites and sub-events
@@ -106,7 +137,7 @@ const baseMicrositeInsertSchema = createInsertSchema(microsites, {
 });
 export const insertMicrositeSchema = baseMicrositeInsertSchema.extend({
   slug: baseMicrositeInsertSchema.shape.slug.optional(),
-}) as unknown as z.ZodTypeAny;
+}) as unknown as z.ZodObject<any>;
 export type InsertMicrosite = z.infer<typeof insertMicrositeSchema>;
 
 export const micrositeSections = pgTable("microsite_sections", {
@@ -127,7 +158,8 @@ const baseMicrositeSectionInsertSchema = createInsertSchema(micrositeSections, {
   isVisible: (field) => field.optional(),
   contentJson: (field) => field.optional(),
 });
-export const insertPageSectionSchema = baseMicrositeSectionInsertSchema as unknown as z.ZodTypeAny;
+export const insertPageSectionSchema =
+  baseMicrositeSectionInsertSchema as unknown as z.ZodObject<any>;
 export type InsertMicrositeSection = z.infer<typeof insertPageSectionSchema>;
 
 export const subEvents = pgTable("sub_events", {
@@ -145,7 +177,42 @@ export const subEvents = pgTable("sub_events", {
   registrationDeadline: timestamp("registration_deadline"),
   startsAt: timestamp("starts_at"),
   location: text("location"),
+  track: varchar("track"),
+  shortDesc: text("short_desc"),
+  longDesc: text("long_desc"),
+  rulesMd: text("rules_md"),
+  prizesMd: text("prizes_md"),
+  endsAt: timestamp("ends_at"),
+  venueId: varchar("venue_id"),
+  waitlist: boolean("waitlist").default(false),
+  badgeId: varchar("badge_id"),
+  ticketingProfileId: varchar("ticketing_profile_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
+export type SubEvent = typeof subEvents.$inferSelect;
+export const insertSubEventSchema = createInsertSchema(subEvents, {
+  capacity: (field) => field.optional(),
+  price: (field) => field.optional(),
+  currency: (field) => field.optional(),
+  registrationType: (field) => field.optional(),
+  registrationDeadline: (field) => field.optional(),
+  startsAt: (field) => field.optional(),
+  location: (field) => field.optional(),
+  track: (field) => field.optional(),
+  shortDesc: (field) => field.optional(),
+  longDesc: (field) => field.optional(),
+  rulesMd: (field) => field.optional(),
+  prizesMd: (field) => field.optional(),
+  endsAt: (field) => field.optional(),
+  venueId: (field) => field.optional(),
+  waitlist: (field) => field.optional(),
+  badgeId: (field) => field.optional(),
+  ticketingProfileId: (field) => field.optional(),
+  createdAt: (field) => field.optional(),
+  updatedAt: (field) => field.optional(),
+}) as unknown as z.ZodObject<any>;
+export type InsertSubEvent = z.infer<typeof insertSubEventSchema>;
 
 // Event Features
 export const eventFeatures = pgTable("event_features", {
@@ -157,7 +224,7 @@ export const eventFeatures = pgTable("event_features", {
 });
 export type EventFeatures = typeof eventFeatures.$inferSelect;
 export const insertEventFeaturesSchema = createInsertSchema(
-  eventFeatures,
+  eventFeatures
 ) as unknown as z.ZodTypeAny;
 export type InsertEventFeatures = z.infer<typeof insertEventFeaturesSchema>;
 
@@ -187,12 +254,11 @@ export const eventRegistrations = pgTable("event_registrations", {
   metadata: jsonb("metadata"),
 });
 export type EventRegistration = typeof eventRegistrations.$inferSelect;
-export const insertRegistrationSchema = createInsertSchema(
-  eventRegistrations,
-).pick({
-  eventId: true,
-  userId: true,
-  status: true,
+export const insertRegistrationSchema = createInsertSchema(eventRegistrations, {
+  id: (field) => field.optional(),
+  registeredAt: (field) => field.optional(),
+  createdAt: (field) => field.optional(),
+  updatedAt: (field) => field.optional(),
 }) as unknown as z.ZodTypeAny;
 export type InsertRegistration = z.infer<typeof insertRegistrationSchema>;
 
@@ -219,13 +285,19 @@ export const insertActivitySchema = createInsertSchema(userActivities).pick({
 }) as unknown as z.ZodTypeAny;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 
-// Teams and members (basic)
+// Teams and members
 export const teams = pgTable("teams", {
   id: varchar("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
   name: text("name").notNull(),
+  description: text("description"),
+  maxMembers: integer("max_members").notNull(),
+  captainId: varchar("captain_id"),
+  status: varchar("status").default("forming"),
+  inviteCode: varchar("invite_code"),
+  avatar: text("avatar"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 export const teamMembers = pgTable("team_members", {
@@ -235,18 +307,41 @@ export const teamMembers = pgTable("team_members", {
   teamId: varchar("team_id").notNull(),
   userId: varchar("user_id").notNull(),
   role: varchar("role").default("member"),
+  status: varchar("status").default("active"),
+  joinedAt: timestamp("joined_at").defaultNow(),
 });
 
-// Tournaments (minimal)
+// Activities (for tournaments)
+export const activities = pgTable("activities", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  type: varchar("type"),
+  description: text("description"),
+  eventId: varchar("event_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Tournaments
 export const tournaments = pgTable("tournaments", {
   id: varchar("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
+  activityId: varchar("activity_id"),
   name: text("name").notNull(),
+  description: text("description"),
+  format: varchar("format"),
+  status: varchar("status").default("setup"),
+  maxParticipants: integer("max_participants"),
+  currentRound: integer("current_round").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
 });
 
-// Sponsors (minimal)
+// Sponsors
 export const sponsors = pgTable("sponsors", {
   id: varchar("id")
     .primaryKey()
@@ -254,6 +349,11 @@ export const sponsors = pgTable("sponsors", {
   eventId: varchar("event_id").notNull(),
   name: text("name").notNull(),
   tier: varchar("tier"),
+  status: varchar("status").default("active"),
+  logo: text("logo"),
+  website: text("website"),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Payment transactions (minimal)
@@ -303,7 +403,7 @@ export const eventCheckIns = pgTable("event_check_ins", {
   checkedInAt: timestamp("checked_in_at").defaultNow(),
 });
 
-// Push subscriptions and live announcements (minimal)
+// Push subscriptions and live announcements
 export const pushSubscriptions = pgTable("push_subscriptions", {
   id: varchar("id")
     .primaryKey()
@@ -312,13 +412,20 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
   endpoint: text("endpoint").notNull(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
+  userAgent: text("user_agent"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 export const liveAnnouncements = pgTable("live_announcements", {
   id: varchar("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull(),
+  title: text("title"),
   message: text("message").notNull(),
+  sendPushNotification: boolean("send_push_notification").default(false),
+  priority: integer("priority").default(1),
+  targetAudience: varchar("target_audience").default("all"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -421,7 +528,7 @@ export const micrositeRegistrations = pgTable("microsite_registrations", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Roles and other enums (minimal)
+// Roles and other enums
 export const eventRoles = pgTable("event_roles", {
   id: varchar("id")
     .primaryKey()
@@ -429,6 +536,11 @@ export const eventRoles = pgTable("event_roles", {
   eventId: varchar("event_id").notNull(),
   userId: varchar("user_id").notNull(),
   role: varchar("role").notNull(),
+  permissions: jsonb("permissions"),
+  assignedBy: varchar("assigned_by"),
+  assignedAt: timestamp("assigned_at").defaultNow(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Export jobs placeholder (used for exports API)
@@ -438,14 +550,27 @@ export const exportJobs = pgTable("export_jobs", {
     .default(sql`gen_random_uuid()`),
   eventId: varchar("event_id"),
   type: varchar("type"),
+  format: varchar("format"),
+  filters: jsonb("filters"),
+  includeFields: jsonb("include_fields"),
   status: varchar("status").default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Misc validation-only insert schemas referenced in code
-export const insertTicketingProfileSchema = z.any();
-export const insertThemeSchema = z.any();
-export const insertSubEventSchema = z.any();
+export const insertTicketingProfileSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  eventId: z.string(),
+  pricing: z.any().optional(),
+  settings: z.any().optional(),
+}) as unknown as z.ZodObject<any>;
+export const insertThemeSchema = z.object({
+  name: z.string(),
+  colors: z.any().optional(),
+  fonts: z.any().optional(),
+  eventId: z.string().optional(),
+}) as unknown as z.ZodObject<any>;
 export const insertMicrositeRegistrationSchema = z.any();
 export const insertTicketTierSchema = z.any();
 export const insertCouponSchema = z.any();

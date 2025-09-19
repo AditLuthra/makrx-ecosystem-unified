@@ -31,11 +31,72 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { user, isAuthenticated } = useAuth();
 
+  const removeNotification = React.useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
+  const addNotification = React.useCallback(
+    (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+      const newNotification: Notification = {
+        ...notification,
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        read: false,
+      };
+
+      setNotifications((prev) => [newNotification, ...prev]);
+
+    // Show browser notification if permission granted
+    if (
+      typeof window !== 'undefined' &&
+      'Notification' in window &&
+      Notification.permission === 'granted'
+    ) {
+      new Notification(notification.title, {
+        body: notification.message,
+        icon: '/favicon.ico',
+        tag: newNotification.id,
+      });
+    }
+
+      // Auto-remove success notifications after 5 seconds
+      if (notification.type === 'success') {
+        setTimeout(() => {
+          removeNotification(newNotification.id);
+        }, 5000);
+      }
+    },
+    [removeNotification],
+  );
+
+  const markAsRead = async (id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+
+    try {
+      await storeApi.markNotificationAsRead(id);
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+
+    try {
+      await storeApi.markAllNotificationsAsRead();
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
+    }
+  };
+
+  const clearAll = () => {
+    setNotifications([]);
+  };
+
   // Real-time connection setup
   useEffect(() => {
     if (!isAuthenticated || !user) return;
 
-    // Setup WebSocket for real-time notifications
     let ws: WebSocket;
     let reconnectTimeout: NodeJS.Timeout;
 
@@ -87,7 +148,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         clearTimeout(reconnectTimeout);
       }
     };
-  }, [isAuthenticated, user]);
+  }, [addNotification, isAuthenticated, user]);
 
   // Polling for notifications fallback
   useEffect(() => {
@@ -110,73 +171,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    // Initial load
     pollNotifications();
 
-    // Poll every 30 seconds as fallback
     const interval = setInterval(pollNotifications, 30000);
 
     return () => clearInterval(interval);
   }, [isAuthenticated]);
-
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    const newNotification: Notification = {
-      ...notification,
-      id: Date.now().toString(),
-      timestamp: new Date(),
-      read: false,
-    };
-
-    setNotifications((prev) => [newNotification, ...prev]);
-
-    // Show browser notification if permission granted
-    if (
-      typeof window !== 'undefined' &&
-      'Notification' in window &&
-      Notification.permission === 'granted'
-    ) {
-      new Notification(notification.title, {
-        body: notification.message,
-        icon: '/favicon.ico',
-        tag: newNotification.id,
-      });
-    }
-
-    // Auto-remove success notifications after 5 seconds
-    if (notification.type === 'success') {
-      setTimeout(() => {
-        removeNotification(newNotification.id);
-      }, 5000);
-    }
-  };
-
-  const markAsRead = async (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-
-    try {
-      await storeApi.markNotificationAsRead(id);
-    } catch (error) {
-      console.error('Failed to mark notification as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-
-    try {
-      await storeApi.markAllNotificationsAsRead();
-    } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
-    }
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

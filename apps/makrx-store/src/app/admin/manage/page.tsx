@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { withAuth } from '@/contexts/AuthContext';
 import QRCode from 'qrcode';
 import {
@@ -25,6 +26,11 @@ import {
 } from 'lucide-react';
 
 // Types for our admin system
+interface FilterFormOption {
+  value: string;
+  label: string;
+}
+
 interface AdminCategory {
   id: string;
   name: string;
@@ -123,10 +129,24 @@ function AdminManagementPage() {
   // Filter management state
   const [showFilterForm, setShowFilterForm] = useState(false);
   const [editingFilter, setEditingFilter] = useState<AdminFilter | null>(null);
-  const [filterForm, setFilterForm] = useState({
+  const [filterForm, setFilterForm] = useState<{
+    id: string;
+    name: string;
+    type: 'checkbox' | 'range' | 'select' | 'toggle' | 'multiselect';
+    optionsInput: string; // For textarea input
+    options?: FilterFormOption[]; // For actual data
+    min: number;
+    max: number;
+    unit: string;
+    required: boolean;
+    helpText: string;
+    categories: string[];
+  }>({
+    id: '',
     name: '',
-    type: 'checkbox' as const,
-    options: '',
+    type: 'checkbox',
+    optionsInput: '',
+    options: undefined,
     min: 0,
     max: 100,
     unit: '',
@@ -138,7 +158,8 @@ function AdminManagementPage() {
   // Product management state
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<AdminProduct>({
+    id: '',
     name: '',
     description: '',
     shortDescription: '',
@@ -151,25 +172,37 @@ function AdminManagementPage() {
     brand: '',
     model: '',
     sku: '',
-    images: '/placeholder.svg',
-    tags: '',
-    specifications: '',
-    compatibility: '',
+    images: [],
+    rating: 0,
+    reviewCount: 0,
+    tags: [],
+    specifications: {},
+    compatibility: [],
     featured: false,
     popular: false,
     newArrival: false,
     onSale: false,
     weight: 0,
-    dimensions: '{"length": 0, "width": 0, "height": 0}',
-    shippingClass: 'standard' as const,
+    dimensions: { length: 0, width: 0, height: 0 },
+    shippingClass: 'standard',
     warranty: '',
     origin: '',
   });
 
   // QR Code management state
   const [showQRForm, setShowQRForm] = useState(false);
-  const [qrForm, setQrForm] = useState({
-    type: 'product' as const,
+  const [qrForm, setQrForm] = useState<{
+    type: QRCodeData['type'];
+    title: string;
+    productId: string;
+    categoryId: string;
+    customData: string;
+    includeWarehouse: boolean;
+    includeBilling: boolean;
+    includeInventory: boolean;
+    expirationDays: number;
+  }>({
+    type: 'product',
     title: '',
     productId: '',
     categoryId: '',
@@ -285,11 +318,11 @@ function AdminManagementPage() {
       id: editingFilter?.id || Date.now().toString(),
       name: filterForm.name,
       type: filterForm.type,
-      options: filterForm.options
-        ? filterForm.options.split('\n').map((line) => {
+      options: filterForm.optionsInput
+        ? filterForm.optionsInput.split('\n').map(line => {
             const [value, label] = line.split('|');
             return { value: value.trim(), label: (label || value).trim() };
-          })
+          }).filter(option => option.value !== '')
         : undefined,
       min: filterForm.min,
       max: filterForm.max,
@@ -315,9 +348,11 @@ function AdminManagementPage() {
 
   const resetFilterForm = () => {
     setFilterForm({
+      id: '',
       name: '',
       type: 'checkbox',
-      options: '',
+      optionsInput: '',
+      options: undefined,
       min: 0,
       max: 100,
       unit: '',
@@ -332,11 +367,13 @@ function AdminManagementPage() {
   const handleEditFilter = (filter: AdminFilter) => {
     setEditingFilter(filter);
     setFilterForm({
+      id: filter.id,
       name: filter.name,
       type: filter.type,
-      options: filter.options
-        ? filter.options.map((opt) => `${opt.value}|${opt.label}`).join('\n')
+      optionsInput: filter.options
+        ? filter.options.map(o => `${o.value}|${o.label}`).join('\n')
         : '',
+      options: filter.options,
       min: filter.min || 0,
       max: filter.max || 100,
       unit: filter.unit || '',
@@ -372,27 +409,18 @@ function AdminManagementPage() {
         brand: productForm.brand,
         model: productForm.model,
         sku: productForm.sku,
-        images: productForm.images
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        rating: 4.5,
-        reviewCount: 0,
-        tags: productForm.tags
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        specifications: productForm.specifications ? JSON.parse(productForm.specifications) : {},
-        compatibility: productForm.compatibility
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
+        images: productForm.images,
+        rating: productForm.rating,
+        reviewCount: productForm.reviewCount,
+        tags: productForm.tags,
+        specifications: productForm.specifications,
+        compatibility: productForm.compatibility,
         featured: productForm.featured,
         popular: productForm.popular,
         newArrival: productForm.newArrival,
         onSale: productForm.onSale,
         weight: productForm.weight,
-        dimensions: JSON.parse(productForm.dimensions),
+        dimensions: productForm.dimensions,
         shippingClass: productForm.shippingClass,
         warranty: productForm.warranty,
         origin: productForm.origin,
@@ -430,6 +458,7 @@ function AdminManagementPage() {
 
   const resetProductForm = () => {
     setProductForm({
+      id: '',
       name: '',
       description: '',
       shortDescription: '',
@@ -442,16 +471,18 @@ function AdminManagementPage() {
       brand: '',
       model: '',
       sku: '',
-      images: '/placeholder.svg',
-      tags: '',
-      specifications: '',
-      compatibility: '',
+      images: [],
+      rating: 0,
+      reviewCount: 0,
+      tags: [],
+      specifications: {},
+      compatibility: [],
       featured: false,
       popular: false,
       newArrival: false,
       onSale: false,
       weight: 0,
-      dimensions: '{"length": 0, "width": 0, "height": 0}',
+      dimensions: { length: 0, width: 0, height: 0 },
       shippingClass: 'standard',
       warranty: '',
       origin: '',
@@ -463,6 +494,7 @@ function AdminManagementPage() {
   const handleEditProduct = (product: AdminProduct) => {
     setEditingProduct(product);
     setProductForm({
+      id: product.id,
       name: product.name,
       description: product.description,
       shortDescription: product.shortDescription,
@@ -475,16 +507,18 @@ function AdminManagementPage() {
       brand: product.brand,
       model: product.model,
       sku: product.sku,
-      images: product.images.join(', '),
-      tags: product.tags.join(', '),
-      specifications: JSON.stringify(product.specifications, null, 2),
-      compatibility: product.compatibility.join(', '),
+      images: product.images,
+      rating: product.rating,
+      reviewCount: product.reviewCount,
+      tags: product.tags,
+      specifications: product.specifications,
+      compatibility: product.compatibility,
       featured: product.featured,
       popular: product.popular,
       newArrival: product.newArrival,
       onSale: product.onSale,
       weight: product.weight,
-      dimensions: JSON.stringify(product.dimensions, null, 2),
+      dimensions: product.dimensions,
       shippingClass: product.shippingClass,
       warranty: product.warranty,
       origin: product.origin,
@@ -643,7 +677,7 @@ function AdminManagementPage() {
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase()),
+      (product.category as string).toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const filteredQRCodes = qrCodes.filter(
@@ -670,8 +704,7 @@ function AdminManagementPage() {
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
-            {[
-              { id: 'categories', label: 'Categories', icon: FolderPlus },
+            {[ { id: 'categories', label: 'Categories', icon: FolderPlus },
               { id: 'filters', label: 'Filters', icon: Filter },
               { id: 'products', label: 'Products', icon: Package },
               { id: 'qrcodes', label: 'QR Codes', icon: QrCode },
@@ -681,7 +714,7 @@ function AdminManagementPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as AdminTab)}
-                  className={`${
+                  className={`${ 
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -704,7 +737,7 @@ function AdminManagementPage() {
               placeholder={`Search ${activeTab}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 w-full"
+              className="w-full p-2 border border-gray-300 rounded-md pl-10 pr-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             />
           </div>
           <button
@@ -765,7 +798,7 @@ function AdminManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ 
                             category.featured
                               ? 'bg-green-100 text-green-800'
                               : 'bg-gray-100 text-gray-800'
@@ -844,7 +877,7 @@ function AdminManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ 
                             filter.required
                               ? 'bg-red-100 text-red-800'
                               : 'bg-gray-100 text-gray-800'
@@ -909,9 +942,11 @@ function AdminManagementPage() {
                     <tr key={product.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <img
+                          <Image
                             src={product.images[0] || '/placeholder.svg'}
                             alt={product.name}
+                            width={40}
+                            height={40}
                             className="h-10 w-10 rounded-lg object-cover"
                           />
                           <div className="ml-4">
@@ -990,9 +1025,11 @@ function AdminManagementPage() {
                   {filteredQRCodes.map((qrCode) => (
                     <tr key={qrCode.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img
+                        <Image
                           src={qrCode.qrCodeUrl}
                           alt="QR Code"
+                          width={48}
+                          height={48}
                           className="h-12 w-12 rounded border"
                         />
                       </td>
@@ -1002,7 +1039,7 @@ function AdminManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ 
                             qrCode.type === 'product'
                               ? 'bg-blue-100 text-blue-800'
                               : qrCode.type === 'category'
@@ -1182,7 +1219,7 @@ function AdminManagementPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Filter Type</label>
                 <select
                   value={filterForm.type}
-                  onChange={(e) => setFilterForm({ ...filterForm, type: e.target.value as any })}
+                  onChange={(e) => setFilterForm({ ...filterForm, type: e.target.value as AdminFilter['type'] })}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="checkbox">Checkbox</option>
@@ -1200,8 +1237,8 @@ function AdminManagementPage() {
                     Options (one per line, format: value|label)
                   </label>
                   <textarea
-                    value={filterForm.options}
-                    onChange={(e) => setFilterForm({ ...filterForm, options: e.target.value })}
+                    value={filterForm.optionsInput}
+                    onChange={(e) => setFilterForm({ ...filterForm, optionsInput: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     rows={5}
                     placeholder="option1|Option 1 Label&#10;option2|Option 2 Label"
@@ -1462,8 +1499,8 @@ function AdminManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={productForm.images}
-                  onChange={(e) => setProductForm({ ...productForm, images: e.target.value })}
+                  value={productForm.images.join(', ')}
+                  onChange={(e) => setProductForm({ ...productForm, images: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder="/placeholder.svg, /image2.jpg"
                 />
@@ -1474,8 +1511,8 @@ function AdminManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={productForm.tags}
-                  onChange={(e) => setProductForm({ ...productForm, tags: e.target.value })}
+                  value={productForm.tags.join(', ')}
+                  onChange={(e) => setProductForm({ ...productForm, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder="tag1, tag2, tag3"
                 />
@@ -1485,9 +1522,9 @@ function AdminManagementPage() {
                   Specifications (JSON format)
                 </label>
                 <textarea
-                  value={productForm.specifications}
+                  value={JSON.stringify(productForm.specifications, null, 2)}
                   onChange={(e) =>
-                    setProductForm({ ...productForm, specifications: e.target.value })
+                    setProductForm({ ...productForm, specifications: JSON.parse(e.target.value) })
                   }
                   className="w-full p-2 border border-gray-300 rounded-md"
                   rows={4}
@@ -1500,9 +1537,9 @@ function AdminManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={productForm.compatibility}
+                  value={productForm.compatibility.join(', ')}
                   onChange={(e) =>
-                    setProductForm({ ...productForm, compatibility: e.target.value })
+                    setProductForm({ ...productForm, compatibility: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })
                   }
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder="Product 1, Product 2, Product 3"
@@ -1527,8 +1564,8 @@ function AdminManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={productForm.dimensions}
-                  onChange={(e) => setProductForm({ ...productForm, dimensions: e.target.value })}
+                  value={JSON.stringify(productForm.dimensions, null, 2)}
+                  onChange={(e) => setProductForm({ ...productForm, dimensions: JSON.parse(e.target.value) })}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder='{"length": 100, "width": 50, "height": 25}'
                 />
@@ -1540,7 +1577,7 @@ function AdminManagementPage() {
                 <select
                   value={productForm.shippingClass}
                   onChange={(e) =>
-                    setProductForm({ ...productForm, shippingClass: e.target.value as any })
+                    setProductForm({ ...productForm, shippingClass: e.target.value as AdminProduct['shippingClass'] })
                   }
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
@@ -1682,7 +1719,7 @@ function AdminManagementPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">QR Code Type</label>
                 <select
                   value={qrForm.type}
-                  onChange={(e) => setQrForm({ ...qrForm, type: e.target.value as any })}
+                  onChange={(e) => setQrForm({ ...qrForm, type: e.target.value as QRCodeData['type'] })}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="product">Product QR Code</option>

@@ -6,7 +6,7 @@ import {
   Download,
   ExternalLink,
   FileText,
-  Image,
+  Image as ImageIcon,
   Mail,
   Phone,
   Users,
@@ -314,7 +314,7 @@ export default function PressPage() {
                         <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       )}
                       {item.type === 'photo' && (
-                        <Image className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        <ImageIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
                       )}
                       {item.type === 'document' && (
                         <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />

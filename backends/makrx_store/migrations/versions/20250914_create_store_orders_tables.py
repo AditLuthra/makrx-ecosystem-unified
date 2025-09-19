@@ -30,7 +30,9 @@ def upgrade() -> None:
             server_default=sa.text("NOW()"),
         ),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True
+        ),
     )
 
     op.create_table(
@@ -46,7 +48,9 @@ def upgrade() -> None:
             server_default=sa.text("NOW()"),
         ),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True
+        ),
         sa.ForeignKeyConstraint(
             ["order_id"], ["store_orders.id"], name="fk_order_item_order"
         ),

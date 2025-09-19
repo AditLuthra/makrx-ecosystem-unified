@@ -1,7 +1,7 @@
+import { liveAnnouncements, pushSubscriptions, userActivities } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
 import webpush from 'web-push';
 import { db } from './db';
-import { pushSubscriptions, liveAnnouncements, userActivities } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
 
 // Configure web-push with VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
@@ -154,11 +154,11 @@ export class PushNotificationService {
           .from(userActivities)
           .where(and(eq(userActivities.eventId, eventId), eq(userActivities.activity, 'register')));
 
-        userIds = [...userIds, ...registeredUsers.map((u) => u.userId)];
+        userIds = [...userIds, ...registeredUsers.map((u) => u.userId as string)];
       }
 
-      // Remove duplicates
-      userIds = [...new Set(userIds)];
+      // Remove duplicates (ES2015 compatible)
+      userIds = Array.from(new Set(userIds));
 
       const results = await Promise.allSettled(
         userIds.map((userId) => this.sendToUser(userId, payload)),
@@ -199,9 +199,10 @@ export class PushNotificationService {
         return { sent: 0, failed: 0 };
       }
 
+      const safePriority = announcement.priority ?? 0;
       const payload: PushNotificationPayload = {
-        title: announcement.title,
-        body: announcement.message,
+        title: announcement.title ?? '',
+        body: announcement.message ?? '',
         icon: '/icons/notification-icon.png',
         badge: '/icons/badge-icon.png',
         tag: `announcement-${announcementId}`,
@@ -209,14 +210,14 @@ export class PushNotificationService {
           announcementId,
           eventId: announcement.eventId,
           type: 'announcement',
-          priority: announcement.priority,
+          priority: safePriority,
         },
-        requireInteraction: announcement.priority >= 3,
+        requireInteraction: safePriority >= 3,
         ...customPayload,
       };
 
       // Add action buttons for high priority announcements
-      if (announcement.priority >= 3) {
+      if (safePriority >= 3) {
         payload.actions = [
           {
             action: 'view',

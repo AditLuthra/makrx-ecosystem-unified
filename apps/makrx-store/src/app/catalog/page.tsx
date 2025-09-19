@@ -16,12 +16,7 @@ import {
   SlidersHorizontal,
   ArrowUpDown,
 } from 'lucide-react';
-import {
-  useGetStoreProductsQuery,
-  useGetStoreCategoriesQuery,
-  useGetStoreBrandsQuery,
-  storeApi,
-} from '@/services/storeApi';
+import { storeApi } from '@/services/storeApi';
 import type { Product, Category } from '@/types';
 import CategoryCarousel from '@/components/CategoryCarousel';
 
@@ -84,23 +79,60 @@ export default function CatalogPage() {
     sort: searchParams.get('sort') || 'created_desc',
   });
 
-  const {
-    data: productsData,
-    isLoading: productsLoading,
-    isFetching: productsFetching,
-  } = useGetStoreProductsQuery({
-    ...filters,
-    page: pagination.page,
-    per_page: pagination.per_page,
-  });
-  
-  const { data: categoriesData } = useGetStoreCategoriesQuery();
-  const { data: brandsData } = useGetStoreBrandsQuery();
+  const [productsData, setProductsData] = useState<{ products: Product[]; total: number; page: number; per_page: number; pages: number } | null>(null);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [productsFetching, setProductsFetching] = useState(false); // Added for consistency, though not directly used in storeApi calls
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setProductsLoading(true);
+      setProductsFetching(true);
+      try {
+        const result = await storeApi.getProducts({
+          ...filters,
+          page: pagination.page,
+          per_page: pagination.per_page,
+        });
+        setProductsData(result);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        setProductsData(null);
+      } finally {
+        setProductsLoading(false);
+        setProductsFetching(false);
+      }
+    };
+    fetchProducts();
+  }, [filters, pagination.page, pagination.per_page]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await storeApi.getCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const result = await storeApi.getBrands();
+        setBrands(result.brands.map((b: any) => b.name));
+      } catch (error) {
+        console.error('Failed to fetch brands:', error);
+      }
+    };
+    fetchBrands();
+  }, []);
 
   const products = productsData?.products || [];
-  const categories = categoriesData || [];
-  const brands = brandsData?.brands || [];
-  const paginationInfo = productsData?.pagination || { total: 0, pages: 0 };
+  const paginationInfo = productsData || { total: 0, pages: 0 };
 
   // Update URL when filters change
   useEffect(() => {
@@ -163,7 +195,7 @@ export default function CatalogPage() {
     handleFilterChange('category_id', categoryId === 0 ? undefined : categoryId);
   };
 
-  const getCategoryName = (categoryId?: number) => {
+  const getCategoryName = (categoryId: number) => {
     const category = categories.find((c) => c.id === categoryId);
     return category?.name || 'All Categories';
   };
@@ -381,7 +413,7 @@ export default function CatalogPage() {
             <div className="flex items-center justify-between mb-6">
               <div className="text-sm text-gray-600">
                 Showing {products.length} of {paginationInfo.total} products
-                {filters.category_id && ` in ${getCategoryName(filters.category_id)}`}
+                {filters.category_id ? ` in ${getCategoryName(filters.category_id)}` : ''}
               </div>
             </div>
 
@@ -458,7 +490,7 @@ export default function CatalogPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="font-bold text-gray-900">
-                            {formatPrice(product.effective_price, product.currency)}
+                            {formatPrice(product.effective_price || 0, product.currency)}
                           </span>
                           {product.sale_price && (
                             <span className="text-sm text-gray-500 line-through">

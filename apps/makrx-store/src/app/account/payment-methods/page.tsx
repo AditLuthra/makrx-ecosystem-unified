@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -46,15 +46,7 @@ export default function PaymentMethodsPage() {
     'card',
   );
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login?redirect=/account/payment-methods');
-      return;
-    }
-    loadPaymentMethods();
-  }, [isAuthenticated, router]);
-
-  const loadPaymentMethods = async () => {
+  const loadPaymentMethods = useCallback(async () => {
     try {
       setLoading(true);
       // Mock API call - replace with actual API
@@ -96,10 +88,18 @@ export default function PaymentMethodsPage() {
       }, 1000);
     } catch (error) {
       console.error('Failed to load payment methods:', error);
-      addNotification('Failed to load payment methods', 'error');
+      addNotification({ title: 'Error', message: 'Failed to load payment methods', type: 'error' });
       setLoading(false);
     }
-  };
+  }, [addNotification]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/account/payment-methods');
+      return;
+    }
+    loadPaymentMethods();
+  }, [isAuthenticated, loadPaymentMethods, router]);
 
   const deletePaymentMethod = async (methodId: string) => {
     if (!confirm('Are you sure you want to remove this payment method?')) return;
@@ -109,9 +109,9 @@ export default function PaymentMethodsPage() {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 500));
       setPaymentMethods((prev) => prev.filter((method) => method.id !== methodId));
-      addNotification('Payment method removed', 'success');
+      addNotification({ title: 'Success', message: 'Payment method removed', type: 'success' });
     } catch (error) {
-      addNotification('Failed to remove payment method', 'error');
+      addNotification({ title: 'Error', message: 'Failed to remove payment method', type: 'error' });
     } finally {
       setDeleting((prev) => ({ ...prev, [methodId]: false }));
     }
@@ -127,9 +127,9 @@ export default function PaymentMethodsPage() {
           is_default: method.id === methodId,
         })),
       );
-      addNotification('Default payment method updated', 'success');
+      addNotification({ title: 'Success', message: 'Default payment method updated', type: 'success' });
     } catch (error) {
-      addNotification('Failed to update default payment method', 'error');
+      addNotification({ title: 'Error', message: 'Failed to update default payment method', type: 'error' });
     }
   };
 

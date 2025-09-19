@@ -6,7 +6,7 @@ import type { User } from '@/types';
 
 const resolveUserId = (account: User | null): string | null => {
   if (!account) return null;
-  return account.id || account.sub || null;
+  return account.id || account.sub || account.preferred_username || null;
 };
 
 interface EventMessage {
@@ -14,7 +14,7 @@ interface EventMessage {
   event_type?: string;
   event_id?: string;
   source?: string;
-  payload?: any;
+  payload?: unknown;
   timestamp?: string;
   event_types?: string[];
 }
@@ -23,7 +23,7 @@ interface RealTimeEvent {
   id: string;
   type: string;
   source: string;
-  payload: any;
+  payload: unknown;
   timestamp: Date;
 }
 

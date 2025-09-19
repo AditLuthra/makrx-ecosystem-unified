@@ -31,10 +31,18 @@ class MaterialProperties(BaseModel):
 
 
 class PrintSettings(BaseModel):
-    material: str = Field(..., description="Material type (PLA, ABS, PETG, etc.)")
-    quality: str = Field(..., description="Print quality (draft, standard, high)")
-    infill_percentage: int = Field(20, ge=0, le=100, description="Infill percentage")
-    layer_height: float = Field(0.2, ge=0.1, le=0.4, description="Layer height in mm")
+    material: str = Field(
+        ..., description="Material type (PLA, ABS, PETG, etc.)"
+    )
+    quality: str = Field(
+        ..., description="Print quality (draft, standard, high)"
+    )
+    infill_percentage: int = Field(
+        20, ge=0, le=100, description="Infill percentage"
+    )
+    layer_height: float = Field(
+        0.2, ge=0.1, le=0.4, description="Layer height in mm"
+    )
     supports: bool = Field(False, description="Enable supports")
     brim: bool = Field(False, description="Enable brim")
     quantity: int = Field(1, ge=1, le=100, description="Number of copies")
@@ -44,8 +52,12 @@ class PrintSettings(BaseModel):
 class FileAnalysis(BaseModel):
     volume_mm3: float = Field(..., description="Volume in mm³")
     surface_area_mm2: float = Field(..., description="Surface area in mm²")
-    bounding_box: Dict[str, float] = Field(..., description="Bounding box dimensions")
-    estimated_print_time_hours: float = Field(..., description="Estimated print time")
+    bounding_box: Dict[str, float] = Field(
+        ..., description="Bounding box dimensions"
+    )
+    estimated_print_time_hours: float = Field(
+        ..., description="Estimated print time"
+    )
     complexity_score: float = Field(..., description="Complexity score 1-10")
     overhangs_detected: bool = Field(
         False, description="Whether overhangs are detected"
@@ -182,7 +194,9 @@ class QuoteCalculator:
         if settings.brim:
             # Estimate brim based on perimeter
             estimated_perimeter = math.sqrt(file_analysis.surface_area_mm2) * 4
-            brim_volume_mm3 = estimated_perimeter * 5 * 0.2  # 5mm brim, 0.2mm height
+            brim_volume_mm3 = (
+                estimated_perimeter * 5 * 0.2
+            )  # 5mm brim, 0.2mm height
 
         # Total volume including waste (10% waste factor)
         total_volume_mm3 = (
@@ -220,13 +234,17 @@ class QuoteCalculator:
         speed_multiplier = quality_info["speed_multiplier"]
 
         # Layer height adjustment
-        layer_adjustment = (0.2 / settings.layer_height) ** 0.7  # Non-linear adjustment
+        layer_adjustment = (
+            0.2 / settings.layer_height
+        ) ** 0.7  # Non-linear adjustment
 
         # Infill adjustment
         infill_adjustment = 0.5 + (settings.infill_percentage / 100.0) * 0.5
 
         # Complexity adjustment
-        complexity_adjustment = 1.0 + (file_analysis.complexity_score - 5) * 0.1
+        complexity_adjustment = (
+            1.0 + (file_analysis.complexity_score - 5) * 0.1
+        )
 
         # Support adjustment
         support_adjustment = 1.3 if settings.supports else 1.0
@@ -274,14 +292,18 @@ class QuoteCalculator:
         )
 
         # Setup time (fixed per job)
-        setup_time_hours = 0.5 + (0.2 * settings.quantity)  # Setup scales with quantity
+        setup_time_hours = 0.5 + (
+            0.2 * settings.quantity
+        )  # Setup scales with quantity
 
         # Active monitoring time (percentage of print time)
         monitoring_rate = 0.1  # 10% of print time requires active monitoring
         monitoring_time_hours = time_info["total_time_hours"] * monitoring_rate
 
         # Post-processing time
-        post_processing_time_hours = 0.3 * settings.quantity  # 20 minutes per piece
+        post_processing_time_hours = (
+            0.3 * settings.quantity
+        )  # 20 minutes per piece
 
         # Quality multiplier
         quality_info = QUALITY_SETTINGS.get(
@@ -293,10 +315,14 @@ class QuoteCalculator:
         rush_multiplier = 1.8 if settings.rush_order else 1.0
 
         total_labor_time = (
-            setup_time_hours + monitoring_time_hours + post_processing_time_hours
+            setup_time_hours
+            + monitoring_time_hours
+            + post_processing_time_hours
         ) * quality_multiplier
         machine_cost = (
-            time_info["total_time_hours"] * machine_rate_per_hour * rush_multiplier
+            time_info["total_time_hours"]
+            * machine_rate_per_hour
+            * rush_multiplier
         )
         labor_cost = total_labor_time * labor_rate_per_hour * rush_multiplier
 
@@ -415,12 +441,12 @@ async def create_quote(
 
         # Total cost
         total_before_delivery = subtotal + tax_amount
-        total_cost = total_before_delivery + delivery_breakdown["delivery_cost"]
+        total_cost = (
+            total_before_delivery + delivery_breakdown["delivery_cost"]
+        )
 
         # Generate quote ID
-        quote_id = (
-            f"QT-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
-        )
+        quote_id = f"QT-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
 
         # Calculate delivery estimate
         base_delivery_days = delivery_breakdown.get("estimated_days", 3)
@@ -502,19 +528,23 @@ async def get_quote(
                 "supports": False,
                 "brim": False,
                 "quantity": 1,
-                "rush_order": False
+                "rush_order": False,
             },
             "file_analysis": {
                 "volume_mm3": 15000.0,
                 "surface_area_mm2": 8500.0,
-                "bounding_box": {"length": 50.0, "width": 40.0, "height": 30.0},
+                "bounding_box": {
+                    "length": 50.0,
+                    "width": 40.0,
+                    "height": 30.0,
+                },
                 "estimated_print_time_hours": 3.5,
                 "complexity_score": 6.2,
                 "overhangs_detected": True,
                 "thin_walls_detected": False,
-            }
+            },
         }
-    
+
     # In a real application, you would fetch the quote from the database
     # and then check if current_user.user_id matches the quote's user_id
     # For example:
@@ -534,7 +564,9 @@ async def accept_quote(
 ):
     """Accept a quote and create service order"""
     # In production, create ServiceOrder from Quote
-    return MessageResponse(message=f"Quote {quote_id} accepted - service order created")
+    return MessageResponse(
+        message=f"Quote {quote_id} accepted - service order created"
+    )
 
 
 @router.get("/materials/")

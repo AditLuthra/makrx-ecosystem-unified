@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import {
   Search,
@@ -21,15 +22,11 @@ import {
   ArrowRight,
   Home,
 } from 'lucide-react';
-import {
-  products,
-  categories,
-  filterProducts,
-  sortProducts,
-  type Product,
-  getProductsByCategory,
-} from '@/data/products';
+import { products, categories, filterProducts, sortProducts, getProductsByCategory } from '@/data/products';
+import type { Product } from '@/types';
 import { getAllFiltersForCategory, type CategoryFilter } from '@/data/categoryFilters';
+
+import ProductGrid from '@/components/ProductGrid'; // Added import
 
 export default function CategoryPage() {
   const params = useParams();
@@ -47,6 +44,8 @@ export default function CategoryPage() {
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'relevance');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Show filters by default on desktop, hide on mobile
   useEffect(() => {
@@ -66,10 +65,11 @@ export default function CategoryPage() {
 
   // Update products when filters or search change
   useEffect(() => {
+    const PRODUCTS_PER_PAGE = 20; // Define here or as a constant outside
+
     // Get category products inside useEffect to avoid infinite loop
-    const categoryProducts = getProductsByCategory(categorySlug);
-    setCategoryProductsCount(categoryProducts.length);
-    let filtered = categoryProducts;
+    const allCategoryProducts = getProductsByCategory(categorySlug);
+    let filtered = allCategoryProducts;
 
     // Apply search
     if (searchQuery.trim()) {
@@ -78,7 +78,7 @@ export default function CategoryPage() {
         (product) =>
           product.name.toLowerCase().includes(searchTerm) ||
           product.description.toLowerCase().includes(searchTerm) ||
-          product.brand.toLowerCase().includes(searchTerm) ||
+          product.brand?.toLowerCase().includes(searchTerm) || // Added optional chaining for brand
           product.tags.some((tag) => tag.toLowerCase().includes(searchTerm)),
       );
     }
@@ -91,8 +91,14 @@ export default function CategoryPage() {
     // Apply sorting
     filtered = sortProducts(filtered, sortBy);
 
-    setFilteredProducts(filtered);
-  }, [searchQuery, selectedFilters, sortBy, categorySlug]);
+    setCategoryProductsCount(filtered.length); // Update total count after filtering/sorting
+    setTotalPages(Math.ceil(filtered.length / PRODUCTS_PER_PAGE));
+
+    // Apply pagination
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    setFilteredProducts(filtered.slice(startIndex, endIndex));
+  }, [searchQuery, selectedFilters, sortBy, categorySlug, currentPage]);
 
   const handleFilterChange = (filterId: string, value: any, checked?: boolean) => {
     setSelectedFilters((prev) => {
@@ -182,10 +188,12 @@ export default function CategoryPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-6">
-            <img
-              src={category.image}
+            <Image
+              src={category.image ?? '/placeholder.svg'}
               alt={category.name}
-              className="w-20 h-20 object-cover rounded-xl"
+              width={80}
+              height={80}
+              className="h-20 w-20 rounded-xl object-cover"
             />
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-store-text mb-2">{category.name}</h1>
@@ -454,11 +462,12 @@ export default function CategoryPage() {
                     {viewMode === 'grid' ? (
                       <>
                         {/* Grid View */}
-                        <div className="relative">
-                          <img
+                        <div className="relative h-48 w-full overflow-hidden">
+                          <Image
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-full h-48 object-cover"
+                            fill
+                            className="object-cover"
                           />
                           {/* {product.onSale && (
                               <span className="absolute top-2 left-2 bg-store-error text-white px-2 py-1 rounded text-xs font-semibold">
@@ -501,7 +510,7 @@ export default function CategoryPage() {
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                  className={`h-3 w-3 ${i < Math.floor(product.rating?.average || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                                 />
                               ))}
                             </div>
@@ -544,11 +553,14 @@ export default function CategoryPage() {
                     ) : (
                       <>
                         {/* List View - Same as main catalog */}
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
-                        />
+                        <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+                          <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                         <div className="flex-1 ml-4">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
@@ -561,7 +573,7 @@ export default function CategoryPage() {
                                   {[...Array(5)].map((_, i) => (
                                     <Star
                                       key={i}
-                                      className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                      className={`h-3 w-3 ${i < Math.floor(product.rating?.average || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                                     />
                                   ))}
                                   <span className="ml-1">({product.reviewCount})</span>

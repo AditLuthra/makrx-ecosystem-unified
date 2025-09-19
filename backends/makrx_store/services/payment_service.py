@@ -116,7 +116,9 @@ class PaymentService:
                 stripe.api_key = stripe_key
                 return stripe
             else:
-                logger.warning("Stripe not configured - missing STRIPE_SECRET_KEY")
+                logger.warning(
+                    "Stripe not configured - missing STRIPE_SECRET_KEY"
+                )
                 return None
         except Exception as e:
             logger.error(f"Failed to initialize Stripe: {e}")
@@ -137,7 +139,9 @@ class PaymentService:
             logger.error(f"Failed to initialize Razorpay: {e}")
             return None
 
-    async def create_payment_intent(self, request: PaymentRequest) -> PaymentResponse:
+    async def create_payment_intent(
+        self, request: PaymentRequest
+    ) -> PaymentResponse:
         """Create payment intent based on method"""
         try:
             payment_id = f"pay_{uuid.uuid4().hex[:16]}"
@@ -170,7 +174,9 @@ class PaymentService:
     ) -> PaymentResponse:
         """Create Stripe payment intent"""
         if not self.stripe_client:
-            raise HTTPException(status_code=503, detail="Stripe not configured")
+            raise HTTPException(
+                status_code=503, detail="Stripe not configured"
+            )
 
         try:
             # Convert amount to cents for Stripe
@@ -203,14 +209,18 @@ class PaymentService:
 
         except stripe.error.StripeError as e:
             logger.error(f"Stripe error: {e}")
-            raise HTTPException(status_code=400, detail=f"Stripe error: {str(e)}")
+            raise HTTPException(
+                status_code=400, detail=f"Stripe error: {str(e)}"
+            )
 
     async def _create_razorpay_payment(
         self, payment_id: str, request: PaymentRequest
     ) -> PaymentResponse:
         """Create Razorpay order"""
         if not self.razorpay_client:
-            raise HTTPException(status_code=503, detail="Razorpay not configured")
+            raise HTTPException(
+                status_code=503, detail="Razorpay not configured"
+            )
 
         try:
             # Convert amount to paise for Razorpay
@@ -251,7 +261,9 @@ class PaymentService:
 
         except Exception as e:
             logger.error(f"Razorpay error: {e}")
-            raise HTTPException(status_code=400, detail=f"Razorpay error: {str(e)}")
+            raise HTTPException(
+                status_code=400, detail=f"Razorpay error: {str(e)}"
+            )
 
     async def _create_upi_payment(
         self, payment_id: str, request: PaymentRequest
@@ -287,7 +299,8 @@ class PaymentService:
                     "payment_method": "upi",
                     "amount": amount_paise,
                 },
-                expires_at=datetime.now() + timedelta(minutes=15),  # UPI expires faster
+                expires_at=datetime.now()
+                + timedelta(minutes=15),  # UPI expires faster
             )
 
         except Exception as e:
@@ -330,7 +343,9 @@ class PaymentService:
 
         except Exception as e:
             logger.error(f"Manual UPI creation failed: {e}")
-            raise HTTPException(status_code=500, detail="UPI payment creation failed")
+            raise HTTPException(
+                status_code=500, detail="UPI payment creation failed"
+            )
 
     async def _create_cod_payment(
         self, payment_id: str, request: PaymentRequest
@@ -374,7 +389,9 @@ class PaymentService:
 
         # Mock: COD available for major cities
         major_city_prefixes = ["110", "400", "560", "600", "500", "700", "411"]
-        return any(pincode.startswith(prefix) for prefix in major_city_prefixes)
+        return any(
+            pincode.startswith(prefix) for prefix in major_city_prefixes
+        )
 
     def _calculate_cod_charges(self, amount: float) -> float:
         """Calculate COD handling charges"""
@@ -426,7 +443,9 @@ class PaymentService:
             razorpay_order_id = data.get("razorpay_order_id")
             razorpay_signature = data.get("razorpay_signature")
 
-            if not all([razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+            if not all(
+                [razorpay_payment_id, razorpay_order_id, razorpay_signature]
+            ):
                 return False
 
             # Verify signature
@@ -443,10 +462,14 @@ class PaymentService:
             logger.error(f"Razorpay verification failed: {e}")
             return False
 
-    async def create_refund(self, refund_request: RefundRequest) -> RefundResponse:
+    async def create_refund(
+        self, refund_request: RefundRequest
+    ) -> RefundResponse:
         """Create refund for a payment"""
         try:
-            payment_method = self._get_payment_method_from_id(refund_request.payment_id)
+            payment_method = self._get_payment_method_from_id(
+                refund_request.payment_id
+            )
 
             if payment_method == PaymentMethod.STRIPE:
                 return await self._create_stripe_refund(refund_request)
@@ -462,13 +485,19 @@ class PaymentService:
             raise
         except Exception as e:
             logger.error(f"Refund creation failed: {e}")
-            raise HTTPException(status_code=500, detail=f"Refund failed: {str(e)}")
+            raise HTTPException(
+                status_code=500, detail=f"Refund failed: {str(e)}"
+            )
 
-    async def _create_stripe_refund(self, request: RefundRequest) -> RefundResponse:
+    async def _create_stripe_refund(
+        self, request: RefundRequest
+    ) -> RefundResponse:
         """Create Stripe refund"""
         try:
             # Get original payment intent
-            payment_intent_id = self._get_stripe_payment_intent_id(request.payment_id)
+            payment_intent_id = self._get_stripe_payment_intent_id(
+                request.payment_id
+            )
 
             refund_data = {
                 "payment_intent": payment_intent_id,
@@ -480,7 +509,9 @@ class PaymentService:
             }
 
             if request.amount:
-                refund_data["amount"] = int(request.amount * 100)  # Convert to cents
+                refund_data["amount"] = int(
+                    request.amount * 100
+                )  # Convert to cents
 
             refund = stripe.Refund.create(**refund_data)
 
@@ -498,11 +529,15 @@ class PaymentService:
                 status_code=400, detail=f"Stripe refund failed: {str(e)}"
             )
 
-    async def _create_razorpay_refund(self, request: RefundRequest) -> RefundResponse:
+    async def _create_razorpay_refund(
+        self, request: RefundRequest
+    ) -> RefundResponse:
         """Create Razorpay refund"""
         try:
             # Get original payment ID
-            razorpay_payment_id = self._get_razorpay_payment_id(request.payment_id)
+            razorpay_payment_id = self._get_razorpay_payment_id(
+                request.payment_id
+            )
 
             refund_data = {
                 "amount": (
@@ -515,7 +550,9 @@ class PaymentService:
             }
 
             # Remove None values
-            refund_data = {k: v for k, v in refund_data.items() if v is not None}
+            refund_data = {
+                k: v for k, v in refund_data.items() if v is not None
+            }
 
             refund = self.razorpay_client.payment.refund(
                 razorpay_payment_id, refund_data
@@ -539,7 +576,9 @@ class PaymentService:
         """Extract payment method from payment ID"""
         # In production, store this in database
         # For now, mock based on prefix or database lookup
-        return PaymentMethod.RAZORPAY  # Default to Razorpay for Indian customers
+        return (
+            PaymentMethod.RAZORPAY
+        )  # Default to Razorpay for Indian customers
 
     def _get_stripe_payment_intent_id(self, payment_id: str) -> str:
         """Get Stripe payment intent ID from internal payment ID"""

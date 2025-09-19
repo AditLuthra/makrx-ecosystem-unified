@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   Star,
   ThumbsUp,
@@ -450,10 +451,12 @@ export default function ProductReviews({
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   {review.userAvatar ? (
-                    <img
+                    <Image
                       src={review.userAvatar}
                       alt={review.userName}
-                      className="w-10 h-10 rounded-full"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
@@ -489,12 +492,14 @@ export default function ProductReviews({
               {review.images && review.images.length > 0 && (
                 <div className="flex gap-2 mb-4">
                   {review.images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`Review image ${index + 1}`}
-                      className="w-20 h-20 object-cover rounded-lg"
-                    />
+                    <div key={index} className="relative h-20 w-20 overflow-hidden rounded-lg">
+                      <Image
+                        src={image}
+                        alt={`Review image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   ))}
                 </div>
               )}

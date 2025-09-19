@@ -19,7 +19,9 @@ if config.config_file_name is not None:
 # Patch sys.path to allow import from parent directory
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
 from backends.makrx_store.base import Base  # noqa: E402
 from backends.makrx_store.models import (  # noqa: F401
     admin,

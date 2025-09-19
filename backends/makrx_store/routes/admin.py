@@ -58,25 +58,39 @@ async def get_admin_stats(
     total_revenue = await db.scalar(
         select(func.coalesce(func.sum(Order.total_amount), 0))
     )
-    total_customers = await db.scalar(
-        select(func.count(func.distinct(Order.user_id))).where(Order.user_id.isnot(None))
-    ) or 0
-
-    pending_orders = await db.scalar(
-        select(func.count(Order.id)).where(Order.status == "pending")
-    ) or 0
-    active_orders = await db.scalar(
-        select(func.count(Order.id)).where(
-            Order.status.in_(["processing", "shipped"])
+    total_customers = (
+        await db.scalar(
+            select(func.count(func.distinct(Order.user_id))).where(
+                Order.user_id.isnot(None)
+            )
         )
-    ) or 0
+        or 0
+    )
 
-    low_stock_products = await db.scalar(
-        select(func.count(Product.id)).where(
-            Product.track_inventory.is_(True),
-            Product.stock_quantity <= 5,
+    pending_orders = (
+        await db.scalar(
+            select(func.count(Order.id)).where(Order.status == "pending")
         )
-    ) or 0
+        or 0
+    )
+    active_orders = (
+        await db.scalar(
+            select(func.count(Order.id)).where(
+                Order.status.in_(["processing", "shipped"])
+            )
+        )
+        or 0
+    )
+
+    low_stock_products = (
+        await db.scalar(
+            select(func.count(Product.id)).where(
+                Product.track_inventory.is_(True),
+                Product.stock_quantity <= 5,
+            )
+        )
+        or 0
+    )
 
     recent_orders_result = await db.execute(
         select(Order)
@@ -96,7 +110,9 @@ async def get_admin_stats(
                 "tax_amount": _to_number(order.tax_amount),
                 "shipping_amount": _to_number(order.shipping_amount),
                 "total_amount": _to_number(order.total_amount),
-                "created_at": order.created_at.isoformat() if order.created_at else None,
+                "created_at": (
+                    order.created_at.isoformat() if order.created_at else None
+                ),
                 "items_count": len(order.items or []),
             }
         )
@@ -138,7 +154,9 @@ async def get_admin_stats(
     revenue_chart_stmt = (
         select(
             func.date_trunc("day", Order.created_at).label("chart_day"),
-            func.coalesce(func.sum(Order.total_amount), 0).label("day_revenue"),
+            func.coalesce(func.sum(Order.total_amount), 0).label(
+                "day_revenue"
+            ),
             func.count(Order.id).label("day_orders"),
         )
         .where(Order.created_at >= start_date)

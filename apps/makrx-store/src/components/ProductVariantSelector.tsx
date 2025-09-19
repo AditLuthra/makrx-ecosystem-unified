@@ -2,15 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Check, AlertTriangle, Package } from 'lucide-react';
-
-interface ProductVariant {
-  id: number;
-  sku: string;
-  attributes: Record<string, string>;
-  price: number;
-  sale_price?: number;
-  stock_qty: number;
-}
+import { ProductVariant } from '@/types';
 
 interface VariantAttribute {
   name: string;
@@ -52,7 +44,7 @@ export default function ProductVariantSelector({
         if (!attributeMap.has(key)) {
           attributeMap.set(key, new Set());
         }
-        attributeMap.get(key)!.add(value);
+        attributeMap.get(key)!.add(String(value));
       });
     });
 
@@ -60,7 +52,7 @@ export default function ProductVariantSelector({
     attributeMap.forEach((values, attributeName) => {
       const attributeValues = Array.from(values).map((value) => {
         // Count how many variants have this attribute value
-        const count = variants.filter((v) => v.attributes[attributeName] === value).length;
+        const count = variants.filter((v) => String(v.attributes[attributeName]) === value).length;
 
         // Check if this value is available given current selections
         const available = variants.some((variant) => {
@@ -334,8 +326,9 @@ export function useProductVariants(variants: ProductVariant[]) {
     setSelectedAttributes(attributes);
   };
 
-  const canAddToCart = selectedVariant && selectedVariant.stock_qty > 0;
-  const isInStock = selectedVariant ? selectedVariant.stock_qty > 0 : false;
+  const variantStockQuantity = selectedVariant?.stock_qty ?? 0;
+  const canAddToCart = variantStockQuantity > 0;
+  const isInStock = canAddToCart;
   const currentPrice = selectedVariant ? selectedVariant.sale_price || selectedVariant.price : 0;
 
   return {

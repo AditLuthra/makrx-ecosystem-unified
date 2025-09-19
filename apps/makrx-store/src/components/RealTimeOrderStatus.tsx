@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { storeApi } from '@/services/storeApi';
 import { useNotifications } from '@/contexts/NotificationContext';
-import { CheckCircle, Clock, Package, Truck, MapPin } from 'lucide-react';
+import { storeApi } from '@/services/storeApi';
+import { CheckCircle, Clock, MapPin, Package, Truck } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface OrderStatusProps {
   orderId: string;
@@ -59,7 +59,7 @@ export default function RealTimeOrderStatus({ orderId, currentStatus }: OrderSta
                 type: 'info',
                 title: 'Order Status Updated',
                 message: `Your order #${orderId.slice(-8)} is now ${statusStep?.label || update.status}`,
-                actionUrl: `/account/orders/${orderId}`,
+                actionUrl: `/account/orders/${String(orderId)}`,
                 actionLabel: 'View Order',
               });
             }
@@ -85,7 +85,9 @@ export default function RealTimeOrderStatus({ orderId, currentStatus }: OrderSta
     // Fallback polling every 30 seconds
     const pollStatus = async () => {
       try {
-        const order = await storeApi.getOrder(orderId);
+        const numericId = Number.parseInt(orderId, 10);
+        if (Number.isNaN(numericId)) return;
+        const order = await storeApi.getOrder(numericId);
         if (order.status !== status) {
           setStatus(order.status);
           setStatusHistory((prev) => [

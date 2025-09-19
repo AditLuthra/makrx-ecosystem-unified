@@ -53,7 +53,11 @@ def get_member_by_email(
     query = db.query(Member).options(joinedload(Member.membership_plan))
 
     if makerspace_id:
-        query = query.filter(Member.makerspace_id == makerspace_id)
+        try:
+            ms_id = uuid.UUID(makerspace_id) if isinstance(makerspace_id, str) else makerspace_id
+        except Exception:
+            ms_id = makerspace_id
+        query = query.filter(Member.makerspace_id == ms_id)
 
     return query.filter(Member.email == email).first()
 
@@ -137,7 +141,54 @@ def create_member(db: Session, member: MemberCreate, created_by: str) -> Member:
     if not plan:
         raise ValueError("Invalid membership plan")
 
-    end_date = member.end_date or (start_date + timedelta(days=plan.duration_days))
+    # Derive duration from billing_cycle when explicit duration not present on model
+    def _duration_days_from_cycle(p) -> int:
+        try:
+            from ..models.membership_plans import BillingCycle
+
+            cycle = getattr(p, "billing_cycle", None)
+            if isinstance(cycle, str):
+                # normalize to enum if passed as string
+                try:
+                    cycle = BillingCycle(cycle)
+                except Exception:
+                    cycle = None
+            if cycle is None:
+                return 30
+            mapping = {
+                BillingCycle.HOURLY: 1,
+                BillingCycle.DAILY: 1,
+                BillingCycle.WEEKLY: 7,
+                BillingCycle.MONTHLY: 30,
+                BillingCycle.QUARTERLY: 90,
+                BillingCycle.YEARLY: 365,
+                BillingCycle.LIFETIME: 36500,
+            }
+            return mapping.get(cycle, 30)
+        except Exception:
+            return 30
+
+    duration_days = _duration_days_from_cycle(plan)
+    end_date = member.end_date or (start_date + timedelta(days=duration_days))
+
+    # Ensure UUID-typed columns receive UUID objects
+    makerspace_uuid = (
+        uuid.UUID(member.makerspace_id)
+        if isinstance(member.makerspace_id, str)
+        else member.makerspace_id
+    )
+    plan_uuid = (
+        uuid.UUID(member.membership_plan_id)
+        if isinstance(member.membership_plan_id, str)
+        else member.membership_plan_id
+    )
+
+    # Coerce schema enum to model enum for role field
+    try:
+        role_value = member.role.value  # type: ignore[attr-defined]
+    except Exception:
+        role_value = str(member.role)
+    role_model = MemberRole(role_value)
 
     db_member = Member(
         keycloak_user_id=member.keycloak_user_id,
@@ -145,13 +196,13 @@ def create_member(db: Session, member: MemberCreate, created_by: str) -> Member:
         first_name=member.first_name,
         last_name=member.last_name,
         phone=member.phone,
-        role=member.role,
-        membership_plan_id=member.membership_plan_id,
+        role=role_model,
+        membership_plan_id=plan_uuid,
         start_date=start_date,
         end_date=end_date,
         skills=member.skills,
         bio=member.bio,
-        makerspace_id=member.makerspace_id,
+        makerspace_id=makerspace_uuid,
         status=MemberStatus.ACTIVE,
         is_active=True,
     )
@@ -298,8 +349,23 @@ def delete_member(db: Session, member_id: str, deleted_by: str) -> bool:
 
 # Membership Plan CRUD operations
 def get_membership_plan(db: Session, plan_id: str) -> Optional[MembershipPlan]:
-    """Get a membership plan by ID"""
-    return db.query(MembershipPlan).filter(MembershipPlan.id == plan_id).first()
+    """Get a membership plan by ID.
+
+    Accepts either a UUID instance or a string UUID and coerces as needed so the
+    comparison works across SQLite/Postgres backends during tests.
+    """
+    # Coerce string IDs to UUID for SQLAlchemy UUID columns
+    try:
+        coerced_id = uuid.UUID(plan_id) if isinstance(plan_id, str) else plan_id
+    except Exception:
+        # Invalid UUID string
+        return None
+
+    return (
+        db.query(MembershipPlan)
+        .filter(MembershipPlan.id == coerced_id)
+        .first()
+    )
 
 
 def get_membership_plans(

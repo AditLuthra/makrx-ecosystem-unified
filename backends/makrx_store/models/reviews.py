@@ -25,8 +25,12 @@ from ..base import Base
 class Review(Base):
     __tablename__ = "reviews"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    user_id = Column(String(255), nullable=False, index=True)  # From JWT sub claim
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
+    user_id = Column(
+        String(255), nullable=False, index=True
+    )  # From JWT sub claim
     email = Column(String(255), nullable=False, index=True)
     username = Column(String(255))  # Display name
 
@@ -46,7 +50,9 @@ class Review(Base):
     content = Column(Text, nullable=False)
 
     # Detailed ratings (for products)
-    detailed_ratings = Column(JSONB, default={})  # quality, value, shipping, etc.
+    detailed_ratings = Column(
+        JSONB, default={}
+    )  # quality, value, shipping, etc.
 
     # Media attachments
     images = Column(JSONB, default=[])  # Array of image URLs
@@ -105,7 +111,9 @@ class ReviewVote(Base):
     __tablename__ = "review_votes"
 
     id = Column(Integer, primary_key=True, index=True)
-    review_id = Column(UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False)
+    review_id = Column(
+        UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False
+    )
     user_id = Column(String(255), nullable=False, index=True)
 
     # Vote details
@@ -119,15 +127,21 @@ class ReviewVote(Base):
 
     # Indexes
     __table_args__ = (
-        Index("ix_review_votes_user_review", "user_id", "review_id", unique=True),
+        Index(
+            "ix_review_votes_user_review", "user_id", "review_id", unique=True
+        ),
     )
 
 
 class ReviewResponse(Base):
     __tablename__ = "review_responses"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    review_id = Column(UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
+    review_id = Column(
+        UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False
+    )
 
     # Response author
     responder_type = Column(
@@ -162,19 +176,27 @@ class ProductRatingSummary(Base):
     verified_reviews = Column(Integer, default=0)
 
     # Rating distribution
-    rating_distribution = Column(JSONB, default={})  # {1: count, 2: count, ...}
+    rating_distribution = Column(
+        JSONB, default={}
+    )  # {1: count, 2: count, ...}
 
     # Detailed ratings averages
-    detailed_averages = Column(JSONB, default={})  # quality, value, shipping averages
+    detailed_averages = Column(
+        JSONB, default={}
+    )  # quality, value, shipping averages
 
     # Recommendation stats
     recommendation_percentage = Column(Numeric(5, 2), default=0.0)
 
     # Last update
-    last_calculated = Column(DateTime(timezone=True), server_default=func.now())
+    last_calculated = Column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     # Indexes
-    __table_args__ = (Index("ix_product_rating_summaries_rating", "average_rating"),)
+    __table_args__ = (
+        Index("ix_product_rating_summaries_rating", "average_rating"),
+    )
 
 
 class ServiceProviderRating(Base):
@@ -199,14 +221,18 @@ class ServiceProviderRating(Base):
     customer_satisfaction_rate = Column(Numeric(5, 2), default=0.0)
 
     # Last update
-    last_calculated = Column(DateTime(timezone=True), server_default=func.now())
+    last_calculated = Column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class ReviewFlag(Base):
     __tablename__ = "review_flags"
 
     id = Column(Integer, primary_key=True, index=True)
-    review_id = Column(UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False)
+    review_id = Column(
+        UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False
+    )
     flagger_id = Column(String(255), nullable=False, index=True)
 
     # Flag details
@@ -229,7 +255,9 @@ class ReviewFlag(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Indexes
-    __table_args__ = (Index("ix_review_flags_review_status", "review_id", "status"),)
+    __table_args__ = (
+        Index("ix_review_flags_review_status", "review_id", "status"),
+    )
 
 
 class ReviewTemplate(Base):
@@ -237,11 +265,15 @@ class ReviewTemplate(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    category = Column(String(100), nullable=False)  # product_category, service_type
+    category = Column(
+        String(100), nullable=False
+    )  # product_category, service_type
 
     # Template content
     questions = Column(JSONB, default=[])  # Structured review questions
-    rating_criteria = Column(JSONB, default=[])  # What to rate (quality, value, etc.)
+    rating_criteria = Column(
+        JSONB, default=[]
+    )  # What to rate (quality, value, etc.)
 
     # Usage
     is_active = Column(Boolean, default=True)
@@ -260,7 +292,9 @@ class ReviewIncentive(Base):
     description = Column(Text)
 
     # Incentive details
-    incentive_type = Column(String(50), nullable=False)  # credits, discount, points
+    incentive_type = Column(
+        String(50), nullable=False
+    )  # credits, discount, points
     incentive_value = Column(Numeric(10, 2), nullable=False)
 
     # Conditions
@@ -288,17 +322,25 @@ class ReviewIncentiveRedemption(Base):
     __tablename__ = "review_incentive_redemptions"
 
     id = Column(Integer, primary_key=True, index=True)
-    review_id = Column(UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False)
-    incentive_id = Column(Integer, ForeignKey("review_incentives.id"), nullable=False)
+    review_id = Column(
+        UUID(as_uuid=True), ForeignKey("reviews.id"), nullable=False
+    )
+    incentive_id = Column(
+        Integer, ForeignKey("review_incentives.id"), nullable=False
+    )
     user_id = Column(String(255), nullable=False, index=True)
 
     # Redemption details
     redeemed_value = Column(Numeric(10, 2), nullable=False)
-    redemption_method = Column(String(50))  # credit_wallet, discount_code, etc.
+    redemption_method = Column(
+        String(50)
+    )  # credit_wallet, discount_code, etc.
     reference_id = Column(String(255))  # Credit transaction ID, etc.
 
     # Status
-    status = Column(String(50), default="pending")  # pending, processed, failed
+    status = Column(
+        String(50), default="pending"
+    )  # pending, processed, failed
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -306,5 +348,7 @@ class ReviewIncentiveRedemption(Base):
 
     # Indexes
     __table_args__ = (
-        Index("ix_review_incentive_redemptions_user", "user_id", "incentive_id"),
+        Index(
+            "ix_review_incentive_redemptions_user", "user_id", "incentive_id"
+        ),
     )

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -46,9 +46,13 @@ export default function CategoryPage() {
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ name: string; href: string }>>([]);
 
   // URL query params
-  const page = parseInt(searchParams.get('page') || '1');
-  const sort = searchParams.get('sort') || 'popularity';
-  const filters = Object.fromEntries(searchParams.entries());
+  const searchParamsKey = useMemo(() => searchParams.toString(), [searchParams]);
+  const filters = useMemo(
+    () => Object.fromEntries(new URLSearchParams(searchParamsKey).entries()),
+    [searchParamsKey],
+  );
+  const page = parseInt((filters.page as string | undefined) ?? '1', 10);
+  const sort = (filters.sort as string | undefined) ?? 'popularity';
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -57,35 +61,31 @@ export default function CategoryPage() {
         // Resolve category by traversing category tree
         const tree = await storeApi.getCategoryTree(true);
         const parts = categoryPath.split('/').filter(Boolean);
-        const findByPath = (nodes: any[], idx = 0): any | null => {
+        const findByPath = (nodes: Category[], idx = 0): Category | null => {
           if (idx >= parts.length) return null;
           const node = nodes.find((n) => n.slug === parts[idx]);
           if (!node) return null;
           if (idx === parts.length - 1) return node;
-          return findByPath(node.children || [], idx + 1);
+          return findByPath(node.children ?? [], idx + 1);
         };
-        const node = findByPath(tree.categories || []);
+        const node = findByPath(tree.categories ?? []);
         if (!node) throw new Error('Category not found');
         // Construct category shape
-        const cat = {
-          id: node.id,
-          name: node.name,
-          slug: node.slug,
-          path: categoryPath,
-          description: node.description,
-          banner_image: node.banner_image,
-          seo_title: node.seo_title,
-          seo_description: node.seo_description,
-          parent_id: node.parent_id,
-          children: node.children || [],
+        const cat: Category = {
+          ...node,
+          path: node.path ?? categoryPath,
+          description: node.description ?? '',
           product_count: node.product_count ?? 0,
-        } as any;
+          productCount: node.productCount ?? node.product_count ?? 0,
+          children: node.children ?? [],
+          subcategories: node.subcategories ?? node.children ?? [],
+        };
         setCategory(cat);
 
         // Build breadcrumbs
         const crumbs = [{ name: 'Home', href: '/' }];
-        if (categoryData.path) {
-          const pathParts = categoryData.path.split('/');
+        if (cat.path) {
+          const pathParts = cat.path.split('/');
           let currentPath = '';
           for (const part of pathParts) {
             currentPath += (currentPath ? '/' : '') + part;
@@ -112,7 +112,7 @@ export default function CategoryPage() {
     };
 
     fetchCategoryData();
-  }, [categoryPath, page, sort, searchParams]);
+  }, [categoryPath, filters, page, sort]);
 
   if (loading) {
     return <CategoryPageSkeleton />;
@@ -167,7 +167,7 @@ export default function CategoryPage() {
         )}
 
         {/* Subcategories */}
-        {category.children.length > 0 && (
+        {category.children && category.children.length > 0 && (
           <div className="container mx-auto px-4 py-6 border-t border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Browse Subcategories

@@ -213,6 +213,13 @@ class Project(Base):
         cascade="all, delete-orphan",
     )
 
+    # Collaboration relationships
+    collaboration_messages = relationship(
+        "CollaborationMessage",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
+
     def __init__(self, **kwargs):  # type: ignore[override]
         provided_project_id = kwargs.get("project_id")
         provided_id = kwargs.get("id")

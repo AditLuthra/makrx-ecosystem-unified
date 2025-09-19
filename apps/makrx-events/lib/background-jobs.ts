@@ -1,5 +1,6 @@
+import { bulkCommunications, emailQueue, exportJobs } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
 import { db } from './db';
-import { eq, and } from 'drizzle-orm';
 import { emailService } from './email-service';
 
 export class BackgroundJobProcessor {
@@ -74,10 +75,13 @@ export class BackgroundJobProcessor {
             .update(exportJobs)
             .set({
               status: 'completed',
-              fileUrl: result.fileUrl,
-              fileSize: result.fileSize,
-              recordCount: result.recordCount,
-              completedAt: new Date(),
+              filters: {
+                ...(job.filters || {}),
+                fileUrl: result.fileUrl,
+                fileSize: result.fileSize,
+                recordCount: result.recordCount,
+                completedAt: new Date(),
+              },
             })
             .where(eq(exportJobs.id, job.id));
         } catch (error) {
@@ -85,7 +89,10 @@ export class BackgroundJobProcessor {
             .update(exportJobs)
             .set({
               status: 'failed',
-              error: error instanceof Error ? error.message : 'Unknown error',
+              filters: {
+                ...(job.filters || {}),
+                error: error instanceof Error ? error.message : 'Unknown error',
+              },
             })
             .where(eq(exportJobs.id, job.id));
         }
@@ -124,19 +131,25 @@ export class BackgroundJobProcessor {
 
   private async sendEmail(email: any): Promise<boolean> {
     try {
-      // Use the email service to send
+      // If templateId is present, render and send as template
       if (email.templateId) {
-        return await this.emailService.sendTemplateEmail(
-          email.to,
+        const { subject, html, text } = await this.emailService.renderTemplate(
           email.templateId,
-          email.templateData,
+          email.templateData || {},
         );
+        return await this.emailService.sendEmail({
+          to: email.to,
+          subject,
+          html,
+          text,
+        });
       } else {
-        return await this.emailService.sendPlainEmail(
-          email.to,
-          email.subject,
-          email.htmlContent || email.textContent,
-        );
+        return await this.emailService.sendEmail({
+          to: email.to,
+          subject: email.subject,
+          html: email.htmlContent,
+          text: email.textContent,
+        });
       }
     } catch (error) {
       console.error('Error sending email:', error);
@@ -181,11 +194,12 @@ export class BackgroundJobProcessor {
       // Send to each recipient
       for (const recipient of recipients) {
         try {
-          await this.emailService.sendPlainEmail(
-            recipient.email,
-            communication.title,
-            communication.content,
-          );
+          await this.emailService.sendEmail({
+            to: recipient.email,
+            subject: communication.title,
+            html: communication.content,
+            text: communication.content,
+          });
           sentCount++;
         } catch (error) {
           failedCount++;

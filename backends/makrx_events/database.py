@@ -35,9 +35,11 @@ if not DATABASE_URL.startswith("sqlite"):
     )
 
 engine = create_engine(DATABASE_URL, **engine_kwargs)
-# Force SQLAlchemy to use psycopg3 instead of psycopg2
-import psycopg
-engine.dialect.dbapi = psycopg
+# Force SQLAlchemy to use psycopg3 only for PostgreSQL URLs; skip for SQLite
+if DATABASE_URL.startswith("postgresql"):
+    import psycopg  # type: ignore
+
+    engine.dialect.dbapi = psycopg
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -53,4 +55,12 @@ def get_db():
 def init_db():
     from . import models  # register models
 
+    Base.metadata.create_all(bind=engine)
+
+
+def reset_db():
+    """Drop and recreate all tables. Intended for use in tests only."""
+    from . import models  # register models
+
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)

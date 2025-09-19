@@ -1,11 +1,11 @@
+import { db } from '@/lib/db';
+import { sendRegistrationConfirmationEmail } from '@/lib/email';
+import { generateQRCodeImage, generateQRPayload } from '@/lib/qr-utils';
+import { microsites, registrations, subEvents, users } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { registrations, subEvents, microsites, users } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
-import { generateQRPayload, generateQRCodeImage } from '@/lib/qr-utils';
-import { sendRegistrationConfirmationEmail } from '@/lib/email';
-import { nanoid } from 'nanoid';
 
 const registrationSchema = z.object({
   subEventId: z.string(),
@@ -18,7 +18,7 @@ const registrationSchema = z.object({
     dietary: z.string().optional(),
     accessibility: z.string().optional(),
   }),
-  answers: z.record(z.string()).optional(),
+  answers: z.record(z.string(), z.any()).optional(),
   termsAccepted: z.boolean().refine((val) => val === true, 'Terms must be accepted'),
   marketingConsent: z.boolean().optional(),
 });
@@ -109,7 +109,6 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
     const registration = await db
       .insert(registrations)
       .values({
-        id: registrationId,
         userId: user.id,
         micrositeId: microsite.id,
         subEventId: subEvent.id,
@@ -121,7 +120,7 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
         registeredAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
-      })
+      } as any)
       .returning();
 
     // Generate QR code for check-in
@@ -133,11 +132,11 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
       try {
         await sendRegistrationConfirmationEmail(validatedData.participantInfo.email, {
           eventTitle: subEvent.title,
-          eventDate: new Date(subEvent.startsAt).toLocaleDateString(),
+          eventDate: subEvent.startsAt ? new Date(subEvent.startsAt).toLocaleDateString() : 'TBD',
           eventLocation: subEvent.location || 'TBD',
           eventSlug: slug,
           participantName: `${validatedData.participantInfo.firstName} ${validatedData.participantInfo.lastName}`,
-          registrationType: subEvent.type,
+          registrationType: subEvent.type || 'standard',
           registrationId: registrationId,
           paymentStatus: subEvent.registrationType === 'free' ? 'free' : 'pending',
         });

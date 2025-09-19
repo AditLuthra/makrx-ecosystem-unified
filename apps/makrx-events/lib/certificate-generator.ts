@@ -1,5 +1,6 @@
+import { awardRecipients } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 import { db } from './db';
-import { eq, and } from 'drizzle-orm';
 
 interface CertificateData {
   recipientName: string;

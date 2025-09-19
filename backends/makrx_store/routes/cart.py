@@ -42,7 +42,9 @@ async def add_to_cart(
         raise HTTPException(status_code=400, detail="Product is out of stock")
 
     # Get or create cart for user
-    cart_query = select(Cart).where(Cart.user_id == user_id, Cart.status == "active")
+    cart_query = select(Cart).where(
+        Cart.user_id == user_id, Cart.status == "active"
+    )
     cart_result = await db.execute(cart_query)
     cart = cart_result.scalar_one_or_none()
 
@@ -132,7 +134,9 @@ async def get_cart(
                 "quantity": item.quantity,
                 "price_at_time": float(item.price_at_time),
                 "item_total": item_total,
-                "added_at": (item.created_at.isoformat() if item.created_at else None),
+                "added_at": (
+                    item.created_at.isoformat() if item.created_at else None
+                ),
             }
         )
 
@@ -141,8 +145,12 @@ async def get_cart(
             "id": cart.id,
             "user_id": cart.user_id,
             "status": cart.status,
-            "created_at": (cart.created_at.isoformat() if cart.created_at else None),
-            "updated_at": (cart.updated_at.isoformat() if cart.updated_at else None),
+            "created_at": (
+                cart.created_at.isoformat() if cart.created_at else None
+            ),
+            "updated_at": (
+                cart.updated_at.isoformat() if cart.updated_at else None
+            ),
         },
         "items": items,
         "summary": {
@@ -200,7 +208,9 @@ async def update_cart_item(
     user_id = current_user.user_id
 
     if request.quantity <= 0:
-        raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
+        raise HTTPException(
+            status_code=400, detail="Quantity must be greater than 0"
+        )
 
     # Find cart item belonging to user
     cart_item_query = (

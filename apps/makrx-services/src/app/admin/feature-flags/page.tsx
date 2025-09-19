@@ -1,24 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useKeycloak } from "@makrx/auth";
-import {
-  AccessLevel,
-  FEATURE_FLAGS,
-  FEATURE_TAGS,
-  SERVICE_FEATURES,
-  ADMIN_FEATURES,
-  EXPERIMENTAL_FEATURES,
-} from "@/lib/features/types";
 import { useAdminFeatures } from "@/lib/features/context";
 import { useAdminFeatureFlags } from "@/lib/features/hooks";
-import { featureFlagsClient } from "@/lib/features/client";
+import {
+  AccessLevel,
+  ADMIN_FEATURES,
+  EXPERIMENTAL_FEATURES,
+  SERVICE_FEATURES,
+} from "@/lib/features/types";
+import { useKeycloak } from "@makrx/auth";
+import { useEffect, useState } from "react";
 
 interface FeatureFlagRowProps {
   flag: any;
-  onUpdate: (key: string, level: AccessLevel) => void;
-  onCreateOverride: (key: string, level: AccessLevel) => void;
-  onRemoveOverride: (key: string) => void;
+  onUpdate: (
+    featureKey: string,
+    updates: Partial<{
+      access_level: AccessLevel;
+      name: string;
+      description: string;
+    }>
+  ) => Promise<void> | void;
+  onCreateOverride: (key: string, level: AccessLevel) => void | Promise<void>;
+  onRemoveOverride: (key: string) => void | Promise<void>;
 }
 
 function FeatureFlagRow({
@@ -32,7 +36,7 @@ function FeatureFlagRow({
   const handleLevelChange = async (newLevel: AccessLevel) => {
     setIsUpdating(true);
     try {
-      await onUpdate(flag.key, newLevel);
+      await onUpdate(flag.key, { access_level: newLevel });
     } finally {
       setIsUpdating(false);
     }
@@ -151,7 +155,7 @@ export default function FeatureFlagsAdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterLevel, setFilterLevel] = useState<AccessLevel | "all">("all");
   const [bulkAction, setBulkAction] = useState<AccessLevel>(
-    AccessLevel.ENABLED,
+    AccessLevel.ENABLED
   );
   const [selectedFlags, setSelectedFlags] = useState<Set<string>>(new Set());
 

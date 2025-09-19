@@ -1,42 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useNotifications } from "@/contexts/NotificationContext";
+import servicesAPI from "@/lib/api";
 import {
-  Bell,
-  Package,
-  TrendingUp,
-  Clock,
-  Settings,
-  CheckCircle,
-  AlertTriangle,
-  Camera,
-  MessageSquare,
-  Star,
-  DollarSign,
-  BarChart3,
-  Printer,
-  Scissors,
-  RefreshCw,
-  Plus,
-  Minus,
-  ExternalLink,
-  Wrench,
-  Users,
-  Calendar,
-  Activity,
-  Eye,
-  Download,
-} from "lucide-react";
-import { useKeycloak, useAuthHeaders } from "@makrx/auth";
-import {
-  formatPrice,
   formatDateRelative,
+  formatPrice,
   getStatusColor,
   getStatusLabel,
 } from "@/lib/utils";
-import servicesAPI from "@/lib/api";
-import { useNotifications } from "@/contexts/NotificationContext";
+import { useAuthHeaders, useKeycloak } from "@makrx/auth";
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Camera,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  ExternalLink,
+  Eye,
+  MessageSquare,
+  Minus,
+  Package,
+  Plus,
+  Printer,
+  RefreshCw,
+  Scissors,
+  Settings,
+  Star,
+  TrendingUp,
+  Wrench,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AvailableJob {
   id: string;
@@ -146,7 +144,7 @@ export default function ProviderDashboard() {
     // Set up real-time updates
     const interval = setInterval(loadAvailableJobs, 30000);
     const wsConnection = servicesAPI.setupWebSocketConnection(
-      handleWebSocketMessage,
+      handleWebSocketMessage
     );
 
     return () => {
@@ -163,7 +161,7 @@ export default function ProviderDashboard() {
         loadAvailableJobs();
         info(
           "New Job Available",
-          "A new job matching your capabilities is available",
+          "A new job matching your capabilities is available"
         );
         break;
       case "job_accepted":
@@ -252,7 +250,7 @@ export default function ProviderDashboard() {
       await servicesAPI.acceptJob(jobId);
       success(
         "Job Accepted",
-        "Job accepted successfully! Check your active jobs.",
+        "Job accepted successfully! Check your active jobs."
       );
       loadAvailableJobs();
       loadAcceptedJobs();
@@ -261,7 +259,7 @@ export default function ProviderDashboard() {
       console.error("Failed to accept job:", error);
       showError(
         "Accept Failed",
-        "Failed to accept job. It may have been taken by another provider.",
+        "Failed to accept job. It may have been taken by another provider."
       );
     }
   };
@@ -269,7 +267,7 @@ export default function ProviderDashboard() {
   const updateJobStatus = async (
     jobId: string,
     status: string,
-    notes?: string,
+    notes?: string
   ) => {
     try {
       await servicesAPI.updateJobStatus(jobId, status, notes);
@@ -285,14 +283,14 @@ export default function ProviderDashboard() {
   const updateInventory = async (
     materialId: string,
     quantity: number,
-    action: "add" | "subtract",
+    action: "add" | "subtract"
   ) => {
     try {
       await servicesAPI.updateProviderInventory(materialId, quantity, action);
       loadInventory();
       success(
         "Inventory Updated",
-        `Stock ${action === "add" ? "added" : "removed"} successfully`,
+        `Stock ${action === "add" ? "added" : "removed"} successfully`
       );
     } catch (error) {
       console.error("Failed to update inventory:", error);
@@ -683,7 +681,7 @@ export default function ProviderDashboard() {
                     ))}
 
                   {inventory.filter(
-                    (item) => item.current_stock <= item.minimum_stock,
+                    (item) => item.current_stock <= item.minimum_stock
                   ).length === 0 && (
                     <p className="text-sm text-gray-500">
                       All materials in stock
@@ -958,7 +956,7 @@ export default function ProviderDashboard() {
                                 updateJobStatus(
                                   job.id,
                                   "in_progress",
-                                  "Started working on the job",
+                                  "Started working on the job"
                                 )
                               }
                               className="bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-700 font-medium"
@@ -973,7 +971,7 @@ export default function ProviderDashboard() {
                                 updateJobStatus(
                                   job.id,
                                   "completed",
-                                  "Job completed and ready for pickup",
+                                  "Job completed and ready for pickup"
                                 )
                               }
                               className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 font-medium"
@@ -1131,7 +1129,7 @@ export default function ProviderDashboard() {
                         {item.current_stock <= item.minimum_stock && (
                           <AlertTriangle
                             className="h-5 w-5 text-red-500"
-                            title="Low Stock Alert"
+                            aria-label="Low Stock Alert"
                           />
                         )}
                       </div>

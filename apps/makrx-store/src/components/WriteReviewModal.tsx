@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { X, Star, Upload, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -135,10 +136,12 @@ export default function WriteReviewModal({
             <div className="p-6">
               {/* Product Info */}
               <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                <img
+                <Image
                   src={item.image}
                   alt={item.name}
-                  className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                  width={64}
+                  height={64}
+                  className="h-16 w-16 rounded-lg border border-gray-200 object-cover"
                 />
                 <div>
                   <h3 className="font-semibold text-gray-900">{item.name}</h3>

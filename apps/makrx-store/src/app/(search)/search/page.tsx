@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
@@ -28,23 +28,17 @@ function SearchPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const query = searchParams.get('q') || '';
-  const brand = searchParams.get('brand') || '';
-  const material = searchParams.get('material') || '';
-  const minPrice = searchParams.get('min') || '';
-  const maxPrice = searchParams.get('max') || '';
-  const sort = searchParams.get('sort') || 'relevance';
-  const page = parseInt(searchParams.get('page') || '1');
+  const searchParamsKey = useMemo(() => searchParams.toString(), [searchParams]);
+  const params = useMemo(() => new URLSearchParams(searchParamsKey), [searchParamsKey]);
+  const query = params.get('q') || '';
+  const brand = params.get('brand') || '';
+  const material = params.get('material') || '';
+  const minPrice = params.get('min') || '';
+  const maxPrice = params.get('max') || '';
+  const sort = params.get('sort') || 'relevance';
+  const page = parseInt(params.get('page') || '1', 10);
 
-  useEffect(() => {
-    if (query || brand || material || minPrice || maxPrice) {
-      performSearch();
-    } else {
-      setSearchResults(null);
-    }
-  }, [searchParams]);
-
-  const performSearch = async () => {
+  const performSearch = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -74,7 +68,15 @@ function SearchPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [brand, material, maxPrice, minPrice, page, query, sort]);
+
+  useEffect(() => {
+    if (query || brand || material || minPrice || maxPrice) {
+      performSearch();
+    } else {
+      setSearchResults(null);
+    }
+  }, [brand, material, maxPrice, minPrice, performSearch, query]);
 
   const updateSearchParam = (key: string, value: string) => {
     const url = new URL(window.location.href);

@@ -122,18 +122,18 @@ function CheckoutPage() {
     switch (stepIndex) {
       case 0: // Contact & Shipping
         return (
-          billingAddress.name.trim() !== '' &&
-          billingAddress.line1.trim() !== '' &&
-          billingAddress.city.trim() !== '' &&
-          billingAddress.state.trim() !== '' &&
-          billingAddress.postal_code.trim() !== '' &&
-          billingAddress.phone.trim() !== '' &&
+          (billingAddress.name || '').trim() !== '' &&
+          (billingAddress.line1 || '').trim() !== '' &&
+          (billingAddress.city || '').trim() !== '' &&
+          (billingAddress.state || '').trim() !== '' &&
+          (billingAddress.postal_code || '').trim() !== '' &&
+          (billingAddress.phone || '').trim() !== '' &&
           (sameAsBilling ||
-            (shippingAddress.name.trim() !== '' &&
-              shippingAddress.line1.trim() !== '' &&
-              shippingAddress.city.trim() !== '' &&
-              shippingAddress.state.trim() !== '' &&
-              shippingAddress.postal_code.trim() !== ''))
+            ((shippingAddress.name || '').trim() !== '' &&
+              (shippingAddress.line1 || '').trim() !== '' &&
+              (shippingAddress.city || '').trim() !== '' &&
+              (shippingAddress.state || '').trim() !== '' &&
+              (shippingAddress.postal_code || '').trim() !== ''))
         );
       case 1: // Shipping Method
         return shippingMethod !== '';
@@ -722,10 +722,10 @@ function CheckoutPage() {
                 {cart.items.map((item) => (
                   <div key={item.id} className="flex items-center">
                     <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
-                      {item.product?.images[0] && (
+                      {item.product?.images?.[0] && (
                         <Image
-                          src={item.product.images[0]}
-                          alt={item.product.name}
+                          src={item.product.images[0] ?? '/placeholder.svg'}
+                          alt={item.product.name ?? ''}
                           width={48}
                           height={48}
                           className="w-full h-full object-cover"

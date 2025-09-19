@@ -159,6 +159,16 @@ class Member(Base):
         "UserSession", back_populates="user", cascade="all, delete-orphan"
     )
     access_logs = relationship("AccessLog", back_populates="user")
+    # Billing relationships
+    transactions = relationship("Transaction", back_populates="member")
+    # Notifications relationship
+    notifications = relationship(
+        "Notification", back_populates="recipient", cascade="all, delete-orphan"
+    )
+    notification_preferences = relationship(
+        "NotificationPreference", back_populates="user", uselist=False,
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Member(email={self.email}, name={self.first_name} {self.last_name})>"
@@ -516,7 +526,11 @@ class MembershipTransaction(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    member = relationship("Member")
+    member = relationship(
+        "Member",
+        foreign_keys=[member_id],
+        backref="membership_transactions",
+    )
     membership_plan = relationship("MembershipPlan")
     processed_by_user = relationship("Member", foreign_keys=[processed_by])
 

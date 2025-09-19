@@ -31,9 +31,13 @@ from ..services.keycloak_client import get_service_token
 logger = logging.getLogger(__name__)
 
 # Configuration
-MAKRCAVE_API_URL = os.getenv("MAKRCAVE_API_URL", "http://makrcave-backend:8000")
+MAKRCAVE_API_URL = os.getenv(
+    "MAKRCAVE_API_URL", "http://makrcave-backend:8000"
+)
 
-router = APIRouter(prefix="/service-orders", tags=["3D Printing Service Orders"])
+router = APIRouter(
+    prefix="/service-orders", tags=["3D Printing Service Orders"]
+)
 
 
 # Enums
@@ -240,10 +244,14 @@ async def generate_service_quote(
                 file_analyses.append(analysis)
                 total_volume += analysis.volume
                 total_print_time += analysis.estimated_print_time
-                supports_required = supports_required or analysis.supports_required
+                supports_required = (
+                    supports_required or analysis.supports_required
+                )
 
         if not file_analyses:
-            raise HTTPException(status_code=400, detail="No valid 3D files found")
+            raise HTTPException(
+                status_code=400, detail="No valid 3D files found"
+            )
 
         # Calculate pricing
         pricing = calculate_service_pricing(
@@ -272,8 +280,12 @@ async def generate_service_quote(
             )
 
         # Calculate delivery estimate
-        base_delivery_days = 3 if quote_request.priority == JobPriority.URGENT else 7
-        estimated_delivery = datetime.utcnow() + timedelta(days=base_delivery_days)
+        base_delivery_days = (
+            3 if quote_request.priority == JobPriority.URGENT else 7
+        )
+        estimated_delivery = datetime.utcnow() + timedelta(
+            days=base_delivery_days
+        )
 
         # Store quote in cache/database
         quote_data = {
@@ -283,7 +295,9 @@ async def generate_service_quote(
             "pricing": pricing,
             "providers": providers,
             "created_at": datetime.utcnow().isoformat(),
-            "expires_at": (datetime.utcnow() + timedelta(hours=24)).isoformat(),
+            "expires_at": (
+                datetime.utcnow() + timedelta(hours=24)
+            ).isoformat(),
         }
 
         # TODO: Store in Redis or database
@@ -319,7 +333,9 @@ async def create_service_order(
         # Retrieve quote
         quote_data = await get_quote(order_request.quote_id)
         if not quote_data:
-            raise HTTPException(status_code=404, detail="Quote not found or expired")
+            raise HTTPException(
+                status_code=404, detail="Quote not found or expired"
+            )
 
         # Create main order record
         service_order_id = str(uuid4())
@@ -390,7 +406,9 @@ async def create_service_order(
             status=ServiceOrderStatus.PAYMENT_PENDING,
             total_amount=quote_data["pricing"]["total"],
             estimated_delivery=(
-                datetime.fromisoformat(quote_data["request"]["estimated_delivery"])
+                datetime.fromisoformat(
+                    quote_data["request"]["estimated_delivery"]
+                )
                 if "estimated_delivery" in quote_data["request"]
                 else datetime.utcnow() + timedelta(days=7)
             ),
@@ -403,26 +421,35 @@ async def create_service_order(
     except Exception as e:
         logger.error(f"Service order creation error: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="Service order creation failed")
+        raise HTTPException(
+            status_code=500, detail="Service order creation failed"
+        )
 
 
 @router.get("/order/{service_order_id}", response_model=ServiceOrderResponse)
-async def get_service_order(service_order_id: str, db: AsyncSession = Depends(get_db)):
+async def get_service_order(
+    service_order_id: str, db: AsyncSession = Depends(get_db)
+):
     """Get service order status and details"""
     try:
         # Find order by service_order_id in OrderItem meta JSONB
         from sqlalchemy import cast, String
 
         q = select(OrderItem).where(
-            cast(OrderItem.meta["service_order_id"], String) == service_order_id
+            cast(OrderItem.meta["service_order_id"], String)
+            == service_order_id
         )
         res = await db.execute(q)
         order_item = res.scalar_one_or_none()
 
         if not order_item:
-            raise HTTPException(status_code=404, detail="Service order not found")
+            raise HTTPException(
+                status_code=404, detail="Service order not found"
+            )
 
-        res2 = await db.execute(select(Order).where(Order.id == order_item.order_id))
+        res2 = await db.execute(
+            select(Order).where(Order.id == order_item.order_id)
+        )
         order = res2.scalar_one_or_none()
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
@@ -447,13 +474,17 @@ async def get_service_order(service_order_id: str, db: AsyncSession = Depends(ge
         raise
     except Exception as e:
         logger.error(f"Service order retrieval error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve service order")
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve service order"
+        )
 
 
 # Helper Functions
 
 
-async def analyze_3d_file(file_url: str, filename: str, file_size: int) -> FileAnalysis:
+async def analyze_3d_file(
+    file_url: str, filename: str, file_size: int
+) -> FileAnalysis:
     """Analyze 3D file for printing requirements"""
     try:
         # This is a simplified analysis - in production, integrate with 3D analysis library
@@ -666,7 +697,8 @@ async def dispatch_job_to_providers(
                 "quality": quote_data["request"]["quality"],
                 "priority": quote_data["request"]["priority"],
                 "supports_required": any(
-                    fa["supports_required"] for fa in quote_data["file_analyses"]
+                    fa["supports_required"]
+                    for fa in quote_data["file_analyses"]
                 ),
                 "special_instructions": order_request.special_instructions,
             },
@@ -757,4 +789,6 @@ async def process_service_order_payment(
     """Process payment for service order"""
     # TODO: Implement payment processing
     # This would integrate with Stripe/payment processor
-    logger.info(f"Processing payment for service order {service_order_id}: ${amount}")
+    logger.info(
+        f"Processing payment for service order {service_order_id}: ${amount}"
+    )

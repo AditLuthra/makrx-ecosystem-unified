@@ -82,7 +82,9 @@ class Provider(Base):
     rating = Column(Float, default=0.0)
     total_jobs = Column(Integer, default=0)
     completed_jobs = Column(Integer, default=0)
-    response_time_minutes = Column(Integer, default=30)  # average response time
+    response_time_minutes = Column(
+        Integer, default=30
+    )  # average response time
 
     # Status and Verification
     status = Column(SQLEnum(ProviderStatus), default=ProviderStatus.ACTIVE)
@@ -92,13 +94,19 @@ class Provider(Base):
     # Operational
     auto_accept_jobs = Column(Boolean, default=False)
     max_concurrent_jobs = Column(Integer, default=5)
-    working_hours = Column(JSON)  # {"monday": {"start": "09:00", "end": "17:00"}}
+    working_hours = Column(
+        JSON
+    )  # {"monday": {"start": "09:00", "end": "17:00"}}
 
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
 
     # Relationships
-    inventory_items = relationship("ProviderInventory", back_populates="provider")
+    inventory_items = relationship(
+        "ProviderInventory", back_populates="provider"
+    )
     service_orders = relationship("ServiceOrder", back_populates="provider")
 
 
@@ -118,13 +126,19 @@ class ProviderInventory(Base):
     material_type = Column(
         String(100), nullable=False
     )  # "pla", "abs", "wood-mdf", etc.
-    color_finish = Column(String(100))  # color for printing, finish for engraving
+    color_finish = Column(
+        String(100)
+    )  # color for printing, finish for engraving
     brand = Column(String(100))
     grade = Column(String(50))  # "premium", "standard", "economy"
 
     # Inventory
-    current_stock = Column(Float, nullable=False)  # kg for printing, m² for engraving
-    reserved_stock = Column(Float, default=0.0)  # temporarily allocated to jobs
+    current_stock = Column(
+        Float, nullable=False
+    )  # kg for printing, m² for engraving
+    reserved_stock = Column(
+        Float, default=0.0
+    )  # temporarily allocated to jobs
     minimum_stock = Column(Float, default=0.0)  # reorder threshold
     cost_per_unit = Column(Float, nullable=False)  # cost to provider
 
@@ -133,12 +147,16 @@ class ProviderInventory(Base):
 
     # Reorder Info
     supplier_name = Column(String(255))
-    supplier_url = Column(String(500))  # Link back to MakrX.Store for reordering
+    supplier_url = Column(
+        String(500)
+    )  # Link back to MakrX.Store for reordering
     reorder_quantity = Column(Float)
     last_reorder_date = Column(DateTime)
 
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
 
     # Relationships
     provider = relationship("Provider", back_populates="inventory_items")
@@ -155,7 +173,9 @@ class JobDispatch(Base):
         primary_key=True,
         default=lambda: f"jd_{func.gen_random_uuid()}",
     )
-    service_order_id = Column(String, ForeignKey("service_orders.id"), nullable=False)
+    service_order_id = Column(
+        String, ForeignKey("service_orders.id"), nullable=False
+    )
     provider_id = Column(String, ForeignKey("providers.id"), nullable=False)
 
     # Dispatch Info
@@ -186,7 +206,9 @@ class ProviderReview(Base):
         primary_key=True,
         default=lambda: f"rv_{func.gen_random_uuid()}",
     )
-    service_order_id = Column(String, ForeignKey("service_orders.id"), nullable=False)
+    service_order_id = Column(
+        String, ForeignKey("service_orders.id"), nullable=False
+    )
     customer_id = Column(String, nullable=False)
     provider_id = Column(String, ForeignKey("providers.id"), nullable=False)
 
@@ -209,7 +231,9 @@ class ProviderReview(Base):
     helpful_votes = Column(Integer, default=0)
 
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
 
 
 class MaterialCatalog(Base):
@@ -224,7 +248,9 @@ class MaterialCatalog(Base):
     )
 
     # Basic Info
-    material_id = Column(String(100), unique=True, nullable=False)  # "pla", "abs", etc.
+    material_id = Column(
+        String(100), unique=True, nullable=False
+    )  # "pla", "abs", etc.
     name = Column(String(255), nullable=False)
     category = Column(String(100), nullable=False)  # "printing", "engraving"
     subcategory = Column(String(100))  # "filament", "resin", "wood", etc.
@@ -259,4 +285,6 @@ class MaterialCatalog(Base):
     is_premium = Column(Boolean, default=False)
 
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )

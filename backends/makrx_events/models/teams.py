@@ -3,6 +3,7 @@ from sqlalchemy import (
     String,
     Text,
     DateTime,
+    Integer,
     ForeignKey,
     UniqueConstraint,
 )
@@ -21,6 +22,12 @@ class Team(Base):
         nullable=False,
     )
     name = Column(Text, nullable=False)
+    description = Column(Text)
+    max_members = Column(Integer)
+    captain_id = Column(String, ForeignKey("users.id", ondelete="SET NULL"))
+    status = Column(String, default="active")
+    invite_code = Column(String)
+    avatar = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
 
 
@@ -41,6 +48,8 @@ class TeamMember(Base):
         nullable=False,
     )
     role = Column(String, default="member")
+    status = Column(String, default="active")
+    joined_at = Column(DateTime, server_default=func.now())
 
     __table_args__ = (
         UniqueConstraint("team_id", "user_id", name="uq_team_members_team_user"),

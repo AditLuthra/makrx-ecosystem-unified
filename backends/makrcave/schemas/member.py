@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
+import uuid
 
 
 # Enums
@@ -101,9 +102,9 @@ class MemberSuspend(BaseModel):
 
 
 class MemberResponse(MemberBase):
-    id: str
+    id: uuid.UUID
     keycloak_user_id: str
-    membership_plan_id: str
+    membership_plan_id: uuid.UUID
     membership_plan_name: Optional[str] = None
     start_date: datetime
     end_date: datetime
@@ -124,7 +125,7 @@ class MemberResponse(MemberBase):
     created_at: datetime
     updated_at: Optional[datetime]
     join_date: datetime
-    makerspace_id: str
+    makerspace_id: uuid.UUID
 
     class Config:
         from_attributes = True

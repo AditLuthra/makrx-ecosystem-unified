@@ -1,17 +1,16 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Calendar,
-  MapPin,
-  Users,
-  Clock,
-  Trophy,
-  Wrench,
-  DollarSign,
-  User,
   CheckCircle,
+  DollarSign,
+  MapPin,
+  Trophy,
+  User,
+  Users,
+  Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -22,9 +21,62 @@ interface EventPageProps {
   };
 }
 
+// Event type definitions
+type BaseEvent = {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  fullDescription: string;
+  type: 'festival' | 'competition' | 'workshop';
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  location: string;
+  address?: string;
+  attendees: number;
+  price?: string;
+  organizer: string;
+  image: string;
+  tags?: string[];
+  features?: string[];
+  schedule?: any[];
+};
+type FestivalEvent = BaseEvent & {
+  type: 'festival';
+  features: string[];
+  subEvents?: Array<{
+    title: string;
+    description: string;
+    type: string;
+    prize?: string;
+    duration?: string;
+  }>;
+  schedule: Array<{ day: string; events: string[] }>;
+};
+type CompetitionEvent = BaseEvent & {
+  type: 'competition';
+  features: string[];
+  requirements?: string[];
+  schedule: Array<{ time: string; event: string }>;
+};
+type WorkshopEvent = BaseEvent & {
+  type: 'workshop';
+  features: string[];
+  includes?: string[];
+  topics?: string[];
+  instructor?: {
+    name: string;
+    bio: string;
+    credentials: string;
+  };
+  schedule: Array<{ time?: string; event?: string }>;
+};
+type EventType = FestivalEvent | CompetitionEvent | WorkshopEvent;
+
 // Mock event data - in a real app this would come from an API
-const getEventData = (eventId: string) => {
-  const events = {
+const getEventData = (eventId: string): EventType | null => {
+  const events: Record<string, EventType> = {
     'maker-fest-2024': {
       id: 'maker-fest-2024',
       title: 'Maker Fest 2024',
@@ -102,6 +154,8 @@ const getEventData = (eventId: string) => {
           ],
         },
       ],
+
+      // removed invalid workshop-style schedule from festival event
     },
     'robotics-championship': {
       id: 'robotics-championship',
@@ -193,6 +247,16 @@ const getEventData = (eventId: string) => {
         bio: 'Industrial designer with 8+ years in additive manufacturing',
         credentials: 'Certified Fusion 360 Instructor, Former SpaceX Engineer',
       },
+      schedule: [
+        { time: '9:00 AM', event: 'Welcome & Introduction' },
+        { time: '9:30 AM', event: '3D Design Fundamentals' },
+        { time: '10:30 AM', event: 'CAD Software (Fusion 360)' },
+        { time: '11:30 AM', event: 'Print Settings & Optimization' },
+        { time: '12:30 PM', event: 'Lunch Break' },
+        { time: '1:00 PM', event: 'Material Properties' },
+        { time: '2:00 PM', event: 'Post-Processing Techniques' },
+        { time: '3:00 PM', event: 'Q&A and Wrap-up' },
+      ],
     },
   };
 
@@ -200,11 +264,12 @@ const getEventData = (eventId: string) => {
 };
 
 export default async function EventPage({ params }: EventPageProps) {
-  const { eventId } = await params;
+  const { eventId } = params;
   const event = getEventData(eventId);
 
   if (!event) {
     notFound();
+    return null;
   }
 
   const isCompetition = event.type === 'competition';
@@ -280,25 +345,27 @@ export default async function EventPage({ params }: EventPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {(event.features || event.topics || []).map((item, index) => (
-                    <div key={index} className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-sm">{item}</span>
-                    </div>
-                  ))}
+                  {(isWorkshop && event.topics ? event.topics : event.features)?.map(
+                    (item: string, index: number) => (
+                      <div key={index} className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm">{item}</span>
+                      </div>
+                    ),
+                  )}
                 </div>
               </CardContent>
             </Card>
 
             {/* Sub-events for festivals */}
-            {isFestival && event.subEvents && (
+            {isFestival && Array.isArray((event as FestivalEvent).subEvents) && (
               <Card>
                 <CardHeader>
                   <CardTitle>Featured Events</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {event.subEvents.map((subEvent, index) => (
+                    {(event as FestivalEvent).subEvents!.map((subEvent: any, index: number) => (
                       <div key={index} className="border rounded-lg p-4">
                         <div className="flex items-center mb-2">
                           {subEvent.type === 'competition' ? (
@@ -327,14 +394,14 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
 
             {/* Requirements for competitions */}
-            {isCompetition && event.requirements && (
+            {isCompetition && Array.isArray((event as CompetitionEvent).requirements) && (
               <Card>
                 <CardHeader>
                   <CardTitle>Competition Requirements</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {event.requirements.map((req, index) => (
+                    {(event as CompetitionEvent).requirements!.map((req: string, index: number) => (
                       <li key={index} className="flex items-start">
                         <CheckCircle className="h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{req}</span>
@@ -346,7 +413,7 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
 
             {/* Instructor for workshops */}
-            {isWorkshop && event.instructor && (
+            {isWorkshop && (event as WorkshopEvent).instructor && (
               <Card>
                 <CardHeader>
                   <CardTitle>Your Instructor</CardTitle>
@@ -357,9 +424,15 @@ export default async function EventPage({ params }: EventPageProps) {
                       <User className="h-8 w-8 text-gray-400" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-lg">{event.instructor.name}</h4>
-                      <p className="text-gray-600 text-sm mb-2">{event.instructor.bio}</p>
-                      <p className="text-xs text-gray-500">{event.instructor.credentials}</p>
+                      <h4 className="font-semibold text-lg">
+                        {(event as WorkshopEvent).instructor!.name}
+                      </h4>
+                      <p className="text-gray-600 text-sm mb-2">
+                        {(event as WorkshopEvent).instructor!.bio}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(event as WorkshopEvent).instructor!.credentials}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -428,7 +501,7 @@ export default async function EventPage({ params }: EventPageProps) {
             </Card>
 
             {/* Schedule */}
-            {(event.schedule || event.topics) && (
+            {Array.isArray(event.schedule) && event.schedule.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>
@@ -441,16 +514,15 @@ export default async function EventPage({ params }: EventPageProps) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {event.schedule?.map((item, index) => (
+                    {event.schedule.map((item: any, index: number) => (
                       <div key={index} className="text-sm">
                         <div className="font-semibold text-gray-900">
                           {'day' in item ? item.day : item.time}
                         </div>
                         {'events' in item ? (
                           <ul className="text-gray-600 mt-1 space-y-1">
-                            {item.events.map((evt, i) => (
-                              <li key={i}>• {evt}</li>
-                            ))}
+                            {Array.isArray(item.events) &&
+                              item.events.map((evt: string, i: number) => <li key={i}>• {evt}</li>)}
                           </ul>
                         ) : (
                           <div className="text-gray-600">{item.event}</div>
@@ -463,14 +535,14 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
 
             {/* What's Included for workshops */}
-            {isWorkshop && event.includes && (
+            {isWorkshop && Array.isArray((event as WorkshopEvent).includes) && (
               <Card>
                 <CardHeader>
                   <CardTitle>What's Included</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {event.includes.map((item, index) => (
+                    {(event as WorkshopEvent).includes!.map((item: string, index: number) => (
                       <div key={index} className="flex items-center text-sm">
                         <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                         {item}

@@ -31,8 +31,12 @@ class Coupon(Base):
     description = Column(Text)
 
     # Discount configuration
-    type = Column(String(20), nullable=False)  # percentage, fixed_amount, free_shipping
-    value = Column(Numeric(10, 2), nullable=False)  # percentage (0-100) or amount
+    type = Column(
+        String(20), nullable=False
+    )  # percentage, fixed_amount, free_shipping
+    value = Column(
+        Numeric(10, 2), nullable=False
+    )  # percentage (0-100) or amount
     currency = Column(String(3), default="INR")
 
     # Usage constraints
@@ -91,7 +95,9 @@ class AuditLog(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     # Actor information
-    actor_type = Column(String(50), nullable=False)  # user, admin, system, service
+    actor_type = Column(
+        String(50), nullable=False
+    )  # user, admin, system, service
     actor_id = Column(String(255), nullable=True, index=True)
     actor_email = Column(String(255), nullable=True)
     actor_ip = Column(String(45))  # IPv4 or IPv6
@@ -121,8 +127,12 @@ class AuditLog(Base):
     description = Column(Text)
 
     # Classification
-    severity = Column(String(20), default="info")  # info, warning, error, critical
-    category = Column(String(50), index=True)  # security, business, system, etc.
+    severity = Column(
+        String(20), default="info"
+    )  # info, warning, error, critical
+    category = Column(
+        String(50), index=True
+    )  # security, business, system, etc.
 
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -145,11 +155,15 @@ class SystemConfig(Base):
 
     # Metadata
     description = Column(Text)
-    category = Column(String(50), index=True)  # pricing, features, limits, etc.
+    category = Column(
+        String(50), index=True
+    )  # pricing, features, limits, etc.
     data_type = Column(String(20))  # string, number, boolean, object, array
 
     # Access control
-    is_public = Column(Boolean, default=False)  # Can be read by non-admin users
+    is_public = Column(
+        Boolean, default=False
+    )  # Can be read by non-admin users
     is_readonly = Column(Boolean, default=False)  # Cannot be modified via API
 
     # Validation
@@ -166,7 +180,9 @@ class SystemConfig(Base):
 class Notification(Base):
     __tablename__ = "notifications"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
 
     # Recipient
     user_id = Column(String(255), nullable=True, index=True)
@@ -174,7 +190,9 @@ class Notification(Base):
     phone = Column(String(20), nullable=True)
 
     # Notification details
-    type = Column(String(50), nullable=False, index=True)  # email, sms, push, webhook
+    type = Column(
+        String(50), nullable=False, index=True
+    )  # email, sms, push, webhook
     template = Column(String(100), nullable=False)  # Template identifier
     subject = Column(String(255))
     message = Column(Text, nullable=False)
@@ -198,7 +216,9 @@ class Notification(Base):
 
     # Metadata
     meta = Column("metadata", JSONB, default={})
-    priority = Column(String(20), default="normal")  # low, normal, high, urgent
+    priority = Column(
+        String(20), default="normal"
+    )  # low, normal, high, urgent
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -230,7 +250,9 @@ class ApiKey(Base):
     )  # First few chars for identification
 
     # Owner
-    owner_type = Column(String(50), nullable=False)  # user, service, integration
+    owner_type = Column(
+        String(50), nullable=False
+    )  # user, service, integration
     owner_id = Column(String(255), nullable=False, index=True)
 
     # Permissions and scopes

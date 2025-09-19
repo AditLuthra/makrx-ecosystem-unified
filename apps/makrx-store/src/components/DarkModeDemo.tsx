@@ -4,7 +4,7 @@ import { useTheme } from '@/contexts/SharedThemeProvider';
 import { Sun, Moon, Monitor, Palette } from 'lucide-react';
 
 export function DarkModeDemo() {
-  const { theme, effectiveTheme, setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   return (
     <div className="p-6 max-w-md mx-auto bg-card border border-border rounded-lg shadow-lg">
@@ -15,7 +15,6 @@ export function DarkModeDemo() {
 
       <p className="text-sm text-muted-foreground mb-4">
         Current theme: <span className="font-medium">{theme}</span>
-        {theme === 'system' && <span> (using {effectiveTheme} mode)</span>}
       </p>
 
       <div className="grid grid-cols-3 gap-2">

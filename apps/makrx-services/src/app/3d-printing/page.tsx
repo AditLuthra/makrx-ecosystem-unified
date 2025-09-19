@@ -1,25 +1,5 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Link from "next/link";
-import {
-  Printer,
-  Upload,
-  FileText,
-  Zap,
-  Shield,
-  Clock,
-  CheckCircle,
-  ArrowRight,
-  Star,
-  AlertCircle,
-  ArrowLeft,
-  Wrench,
-  Settings,
-  Package,
-  DollarSign,
-  Info,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,14 +8,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useServiceOrders } from "@/contexts/ServiceOrderContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useServiceOrders } from "@/contexts/ServiceOrderContext";
 import {
-  validateSTLFile,
-  formatFileSize,
   calculateEstimatedPrice,
+  formatFileSize,
+  validateSTLFile,
 } from "@/lib/utils";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  FileText,
+  Info,
+  Package,
+  Printer,
+  Settings,
+  Shield,
+  Upload,
+  Wrench,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useRef, useState } from "react";
 
 const materials = [
   {
@@ -157,6 +151,10 @@ export default function ThreeDPrintingPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileAnalysis, setFileAnalysis] = useState<any>(null);
   const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<{
+    url: string;
+    previewUrl?: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -165,7 +163,7 @@ export default function ThreeDPrintingPage() {
     if (!validation.isValid) {
       showError(
         "Invalid File",
-        validation.error || "Please select a valid STL file",
+        validation.error || "Please select a valid STL file"
       );
       return;
     }
@@ -175,6 +173,7 @@ export default function ThreeDPrintingPage() {
 
     try {
       const uploadResult = await uploadFile(file, "printing");
+      setUploadedFile(uploadResult);
 
       // Mock file analysis - in production this would be real analysis
       const mockAnalysis = {
@@ -195,7 +194,7 @@ export default function ThreeDPrintingPage() {
         "printing",
         selectedMaterial.name,
         quantity,
-        mockAnalysis.volume,
+        mockAnalysis.volume
       );
       setEstimatedPrice(price);
 
@@ -231,7 +230,7 @@ export default function ThreeDPrintingPage() {
         "printing",
         material.name,
         quantity,
-        fileAnalysis.volume,
+        fileAnalysis.volume
       );
       setEstimatedPrice(price);
     }
@@ -245,17 +244,17 @@ export default function ThreeDPrintingPage() {
         "printing",
         selectedMaterial.name,
         newQuantity,
-        fileAnalysis.volume,
+        fileAnalysis.volume
       );
       setEstimatedPrice(price);
     }
   };
 
   const handlePlaceOrder = async () => {
-    if (!selectedFile || !fileAnalysis || !estimatedPrice) {
+    if (!selectedFile || !fileAnalysis || !estimatedPrice || !uploadedFile) {
       showError(
         "Missing Information",
-        "Please upload a file and wait for analysis",
+        "Please upload a file and wait for analysis"
       );
       return;
     }
@@ -263,9 +262,11 @@ export default function ThreeDPrintingPage() {
     try {
       const order = await createOrder({
         service_type: "printing",
+        file_url: uploadedFile.url,
         file_name: selectedFile.name,
         file_size: selectedFile.size,
         file_type: selectedFile.type,
+        preview_url: uploadedFile.previewUrl,
         material: selectedMaterial.name,
         color_finish: selectedColor,
         quantity: quantity,
@@ -289,13 +290,14 @@ export default function ThreeDPrintingPage() {
 
       success(
         "Order Placed",
-        "Your 3D printing order has been submitted successfully!",
+        "Your 3D printing order has been submitted successfully!"
       );
 
       // Reset form
       setSelectedFile(null);
       setFileAnalysis(null);
       setEstimatedPrice(null);
+      setUploadedFile(null);
       setCustomerNotes("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -530,7 +532,7 @@ export default function ThreeDPrintingPage() {
                               <span className="text-sm text-gray-600">
                                 {quality.multiplier < 1 ? "-" : "+"}
                                 {Math.abs(
-                                  (quality.multiplier - 1) * 100,
+                                  (quality.multiplier - 1) * 100
                                 ).toFixed(0)}
                                 %
                               </span>

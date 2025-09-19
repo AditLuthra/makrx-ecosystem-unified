@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server';
 import { requireAuth, type AuthenticatedRequest } from '@/lib/auth-middleware';
-import { storage } from '@/server/storage';
+import { db } from '@/lib/db';
+import { events, registrations, type Event, type EventRegistration } from '@shared/schema';
+import { eq } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   try {
@@ -18,12 +20,23 @@ export async function GET(request: Request) {
     }
 
     // Fetch user registrations from database
-    const registrations = await storage.getUserRegistrations(user.id);
+    // Fetch user registrations from the database
+    const userRegistrations: EventRegistration[] = await db
+      .select()
+      .from(registrations)
+      .where(eq(registrations.userId, user.id));
 
     // Transform data to include event details
     const registrationsWithEvents = await Promise.all(
-      registrations.map(async (registration) => {
-        const event = await storage.getEvent(registration.eventId);
+      userRegistrations.map(async (registration: EventRegistration) => {
+        let event: Event | undefined = undefined;
+        if (registration.eventId) {
+          const eventResult = await db
+            .select()
+            .from(events)
+            .where(eq(events.id, registration.eventId));
+          event = eventResult[0];
+        }
         return {
           id: registration.id,
           type: registration.type,

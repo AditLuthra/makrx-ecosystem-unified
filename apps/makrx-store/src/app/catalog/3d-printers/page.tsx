@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Grid, List, Filter } from 'lucide-react';
-import { storeApi, type Product } from '@/services/storeApi';
+import { storeApi } from '@/services/storeApi';
+import type { Product } from '@/types';
 import ProductGrid from '@/components/ProductGrid';
 import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
 import SortSelect from '@/components/SortSelect';
@@ -15,6 +16,8 @@ export default function ThreeDPrintersPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('featured');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -28,10 +31,12 @@ export default function ThreeDPrintersPage() {
         // Filter products by 3D printer category
         const productsData = await storeApi.getProducts({
           category: '3d-printers',
+          page: currentPage,
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
+        setTotalPages(productsData.pages);
       } catch (err) {
         console.error('Failed to load 3D printers:', err);
         setError('Failed to load products');
@@ -41,7 +46,7 @@ export default function ThreeDPrintersPage() {
     };
 
     loadProducts();
-  }, [sortBy]);
+  }, [sortBy, currentPage]);
 
   const handleFilterChange = (filters: Record<string, string[]>) => {
     setActiveFilters(filters);
@@ -191,7 +196,14 @@ export default function ThreeDPrintersPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
+              <ProductGrid
+                products={products}
+                loading={loading}
+                viewMode={viewMode}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             )}
           </div>
         </div>

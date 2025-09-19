@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/lib/db';
 import { registrations } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const paymentUpdateSchema = z.object({
   paymentIntentId: z.string(),
@@ -44,8 +44,17 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     if (validatedData.paymentMethod) {
+      // Ensure registration.metadata is an object before spreading
+      let baseMetadata: Record<string, any> = {};
+      if (
+        registration.metadata &&
+        typeof registration.metadata === 'object' &&
+        !Array.isArray(registration.metadata)
+      ) {
+        baseMetadata = registration.metadata;
+      }
       updateData.metadata = {
-        ...registration.metadata,
+        ...baseMetadata,
         paymentMethod: validatedData.paymentMethod,
         transactionId: validatedData.transactionId,
       };
@@ -66,7 +75,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 },
       );
@@ -105,7 +114,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         paymentIntentId: registration.paymentIntentId,
         paidAt: registration.paidAt,
         isPaid: registration.status === 'confirmed' || registration.status === 'paid',
-        paymentMethod: registration.metadata?.paymentMethod,
+        paymentMethod:
+          registration.metadata &&
+          typeof registration.metadata === 'object' &&
+          !Array.isArray(registration.metadata)
+            ? (registration.metadata as Record<string, any>).paymentMethod
+            : undefined,
       },
     });
   } catch (error) {

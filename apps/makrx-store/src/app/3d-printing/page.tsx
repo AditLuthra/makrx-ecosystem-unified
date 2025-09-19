@@ -240,6 +240,16 @@ export default function PrintingServicesPage() {
     handleFiles(files);
   };
 
+  const determineFileType = (file: File): '3d' | '2d' => {
+    const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (SUPPORTED_3D_FORMATS.includes(extension)) {
+      return '3d';
+    } else if (SUPPORTED_2D_FORMATS.includes(extension)) {
+      return '2d';
+    }
+    return '3d'; // default
+  };
+
   const handleFiles = async (files: File[]) => {
     if (!isAuthenticated) {
       login();
@@ -253,12 +263,15 @@ export default function PrintingServicesPage() {
       }
 
       const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const fileType = determineFileType(file);
 
       // Add file to state
       const uploadedFile: UploadedFile = {
         id: uploadId,
         name: file.name,
         size: file.size,
+        type: fileType,
+        file: file,
         status: 'uploading',
       };
 
@@ -390,8 +403,8 @@ export default function PrintingServicesPage() {
   const validateFile = (file: File): boolean => {
     // Check file type
     const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-    if (!SUPPORTED_FORMATS.includes(extension)) {
-      alert(`Unsupported file format. Please use: ${SUPPORTED_FORMATS.join(', ')}`);
+    if (!ALL_SUPPORTED_FORMATS.includes(extension)) {
+      alert(`Unsupported file format. Please use: ${ALL_SUPPORTED_FORMATS.join(', ')}`);
       return false;
     }
 
@@ -518,7 +531,7 @@ export default function PrintingServicesPage() {
                   Drop files here or click to upload
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Supported formats: {SUPPORTED_FORMATS.join(', ')}
+                  Supported formats: {ALL_SUPPORTED_FORMATS.join(', ')}
                 </p>
                 <p className="text-sm text-gray-500 mb-4">
                   Maximum file size: {MAX_FILE_SIZE / 1024 / 1024}MB
@@ -535,7 +548,7 @@ export default function PrintingServicesPage() {
                   ref={fileInputRef}
                   type="file"
                   multiple
-                  accept={SUPPORTED_FORMATS.join(',')}
+                  accept={ALL_SUPPORTED_FORMATS.join(',')}
                   onChange={handleFileInput}
                   className="hidden"
                 />
@@ -564,7 +577,7 @@ export default function PrintingServicesPage() {
                             {file.dimensions && (
                               <p className="text-sm text-gray-600">
                                 Size: {file.dimensions.x.toFixed(1)} ×{' '}
-                                {file.dimensions.y.toFixed(1)} × {file.dimensions.z.toFixed(1)} mm
+                                {file.dimensions.y.toFixed(1)}{file.dimensions.z && ` × ${file.dimensions.z.toFixed(1)}`} mm
                               </p>
                             )}
                           </div>
@@ -619,7 +632,7 @@ export default function PrintingServicesPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">Material</label>
                   <div className="space-y-2">
-                    {MATERIALS.map((material) => (
+                    {PRINTING_MATERIALS.map((material) => (
                       <label
                         key={material.id}
                         className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"

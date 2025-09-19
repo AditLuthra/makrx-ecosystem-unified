@@ -34,6 +34,7 @@ class EventRegistration(Base):
     marketing_consent = Column(String)
     amount_paid = Column(String)
     payment_status = Column(String)
+    format = Column(String)
     registered_at = Column(DateTime, server_default=func.now())
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

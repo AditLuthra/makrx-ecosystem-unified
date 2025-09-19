@@ -4,7 +4,240 @@
  */
 
 import { getToken } from '@/lib/auth';
-import type { Product, Category } from '@/types';
+import type { Product, Category, ProductVariant } from '@/types';
+
+const PLACEHOLDER_IMAGE = '/placeholder.svg';
+
+const isString = (value: unknown): value is string => typeof value === 'string';
+
+function normalizeVariantAttributes(attributes: any): Record<string, string | number> {
+  if (!attributes || typeof attributes !== 'object' || Array.isArray(attributes)) {
+    return {};
+  }
+
+  return Object.entries(attributes).reduce<Record<string, string | number>>(
+    (acc, [key, value]) => {
+      if (typeof value === 'string' || typeof value === 'number') {
+        acc[key] = value;
+      } else if (value != null) {
+        acc[key] = String(value);
+      }
+      return acc;
+    },
+    {},
+  );
+}
+
+function normalizeProductVariant(raw: any): ProductVariant {
+  const stockQty =
+    typeof raw?.stock_qty === 'number'
+      ? raw.stock_qty
+      : typeof raw?.stock === 'number'
+        ? raw.stock
+        : 0;
+
+  return {
+    id: raw?.id ?? '',
+    name: raw?.name ?? undefined,
+    sku: raw?.sku ?? undefined,
+    price: typeof raw?.price === 'number' ? raw.price : Number(raw?.price ?? 0),
+    sale_price:
+      raw?.sale_price != null
+        ? typeof raw.sale_price === 'number'
+          ? raw.sale_price
+          : Number(raw.sale_price)
+        : undefined,
+    stock_qty: stockQty,
+    stock: typeof raw?.stock === 'number' ? raw.stock : stockQty,
+    attributes: normalizeVariantAttributes(raw?.attributes),
+  };
+}
+
+function normalizeCategory(raw: any, ancestors: string[] = []): Category {
+  const slug = isString(raw?.slug) ? raw.slug : '';
+  const pathFromAncestors = [...ancestors, slug].filter(Boolean).join('/');
+  const explicitPath = isString(raw?.path) ? raw.path : undefined;
+  const categoryPath = explicitPath ?? pathFromAncestors;
+  const childNodes = Array.isArray(raw?.children) ? raw.children : [];
+
+  const normalizedChildren = childNodes.map((child: any) =>
+    normalizeCategory(child, [...ancestors, slug].filter(Boolean)),
+  );
+
+  return {
+    id: Number(raw?.id ?? 0),
+    name: raw?.name ?? '',
+    slug,
+    path: categoryPath,
+    description: raw?.description ?? '',
+    banner_image: raw?.banner_image ?? raw?.bannerImage ?? undefined,
+    seo_title: raw?.seo_title ?? raw?.seoTitle ?? undefined,
+    seo_description: raw?.seo_description ?? raw?.seoDescription ?? undefined,
+    parent_id: raw?.parent_id ?? raw?.parentId ?? null,
+    image_url: raw?.image_url ?? raw?.imageUrl ?? undefined,
+    image: raw?.image ?? raw?.image_url ?? raw?.imageUrl ?? undefined,
+    icon: raw?.icon ?? undefined,
+    sort_order: raw?.sort_order ?? raw?.sortOrder ?? undefined,
+    is_active: raw?.is_active ?? raw?.isActive ?? true,
+    created_at: raw?.created_at ?? raw?.createdAt ?? undefined,
+    updated_at: raw?.updated_at ?? raw?.updatedAt ?? undefined,
+    featured: raw?.featured ?? false,
+    product_count: raw?.product_count ?? raw?.productCount ?? 0,
+    productCount: raw?.productCount ?? raw?.product_count ?? 0,
+    children: normalizedChildren,
+    subcategories:
+      Array.isArray(raw?.subcategories) && raw.subcategories.length > 0
+        ? raw.subcategories.map((child: any) =>
+            normalizeCategory(child, [...ancestors, slug].filter(Boolean)),
+          )
+        : normalizedChildren,
+  };
+}
+
+function normalizeProduct(raw: any): Product {
+  if (!raw) {
+    return {
+      id: 0,
+      slug: '',
+      name: '',
+      description: '',
+      short_description: '',
+      shortDescription: '',
+      price: 0,
+      currency: 'INR',
+      stock_qty: 0,
+      compatibility: [],
+      images: [PLACEHOLDER_IMAGE],
+      tags: [],
+      in_stock: false,
+      variants: [],
+    } as Product;
+  }
+
+  const stockQty =
+    typeof raw.stock_qty === 'number'
+      ? raw.stock_qty
+      : typeof raw.stockQty === 'number'
+        ? raw.stockQty
+        : typeof raw.stock_quantity === 'number'
+          ? raw.stock_quantity
+          : 0;
+
+  const price = typeof raw.price === 'number' ? raw.price : Number(raw.price ?? 0);
+  const salePrice =
+    raw.sale_price != null
+      ? typeof raw.sale_price === 'number'
+        ? raw.sale_price
+        : Number(raw.sale_price)
+      : undefined;
+  const effectivePrice =
+    raw.effective_price != null
+      ? typeof raw.effective_price === 'number'
+        ? raw.effective_price
+        : Number(raw.effective_price)
+      : salePrice ?? price;
+
+  const images = Array.isArray(raw.images)
+    ? raw.images.filter((img: unknown) => isString(img) && img.length > 0)
+    : [];
+  const normalizedImages = images.length > 0 ? images : [PLACEHOLDER_IMAGE];
+
+  const compatibility = Array.isArray(raw.compatibility)
+    ? raw.compatibility.filter(isString)
+    : [];
+
+  const tags = Array.isArray(raw.tags) ? raw.tags.filter(isString) : [];
+
+  const attributes =
+    raw.attributes && typeof raw.attributes === 'object' && !Array.isArray(raw.attributes)
+      ? (raw.attributes as Record<string, unknown>)
+      : {};
+
+  const specifications =
+    raw.specifications && typeof raw.specifications === 'object'
+      ? raw.specifications
+      : {};
+
+  const normalizedCategory =
+    raw.category && typeof raw.category === 'object' && !Array.isArray(raw.category)
+      ? normalizeCategory(raw.category)
+      : raw.category;
+
+  const variants = Array.isArray(raw.variants)
+    ? raw.variants.map(normalizeProductVariant)
+    : [];
+
+  const rating =
+    raw.rating && typeof raw.rating === 'object'
+      ? raw.rating
+      : typeof raw.rating === 'number'
+        ? { average: raw.rating, count: raw.review_count ?? raw.reviewCount ?? 0 }
+        : undefined;
+
+  const categoryIdFromObject =
+    typeof normalizedCategory === 'object' && normalizedCategory
+      ? normalizedCategory.id
+      : undefined;
+  const categorySlugFromObject =
+    typeof normalizedCategory === 'object' && normalizedCategory
+      ? normalizedCategory.slug
+      : undefined;
+  const categoryNameFromObject =
+    typeof normalizedCategory === 'object' && normalizedCategory
+      ? normalizedCategory.name
+      : undefined;
+
+  return {
+    id: Number(raw.id ?? 0),
+    slug: isString(raw.slug) ? raw.slug : String(raw.id ?? ''),
+    name: raw.name ?? '',
+    description: raw.description ?? '',
+    short_description: raw.short_description ?? raw.shortDescription ?? '',
+    shortDescription: raw.shortDescription ?? raw.short_description ?? '',
+    brand: raw.brand ?? undefined,
+    sku: raw.sku ?? undefined,
+    category: normalizedCategory,
+    category_id: raw.category_id ?? raw.categoryId ?? categoryIdFromObject,
+    categoryId: raw.categoryId ?? raw.category_id ?? categoryIdFromObject,
+    category_slug: raw.category_slug ?? raw.categorySlug ?? categorySlugFromObject,
+    categorySlug: raw.categorySlug ?? raw.category_slug ?? categorySlugFromObject,
+    category_name: raw.category_name ?? raw.categoryName ?? categoryNameFromObject,
+    categoryName: raw.categoryName ?? raw.category_name ?? categoryNameFromObject,
+    category_image: raw.category_image ?? raw.categoryImage ?? undefined,
+    categoryImage: raw.categoryImage ?? raw.category_image ?? undefined,
+    price,
+    sale_price: salePrice,
+    currency: raw.currency ?? 'INR',
+    stock_qty: stockQty,
+    stockQty: raw.stockQty ?? raw.stock_quantity ?? stockQty,
+    track_inventory: raw.track_inventory ?? undefined,
+    allow_backorder: raw.allow_backorder ?? undefined,
+    attributes,
+    specifications,
+    compatibility,
+    images: normalizedImages,
+    videos: Array.isArray(raw.videos) ? raw.videos : undefined,
+    meta_title: raw.meta_title ?? raw.metaTitle ?? undefined,
+    meta_description: raw.meta_description ?? raw.metaDescription ?? undefined,
+    tags,
+    is_active: raw.is_active ?? raw.isActive ?? undefined,
+    is_featured: raw.is_featured ?? raw.isFeatured ?? undefined,
+    is_digital: raw.is_digital ?? raw.isDigital ?? undefined,
+    weight: typeof raw.weight === 'number' ? raw.weight : undefined,
+    dimensions:
+      raw.dimensions && typeof raw.dimensions === 'object' ? raw.dimensions : undefined,
+    created_at: raw.created_at ?? raw.createdAt ?? undefined,
+    updated_at: raw.updated_at ?? raw.updatedAt ?? undefined,
+    effective_price: effectivePrice,
+    in_stock: raw.in_stock ?? raw.inStock ?? stockQty > 0,
+    inStock: raw.inStock ?? raw.in_stock ?? stockQty > 0,
+    rating,
+    ratingScore: raw.ratingScore ?? undefined,
+    review_count: raw.review_count ?? undefined,
+    reviewCount: raw.reviewCount ?? undefined,
+    variants,
+  };
+}
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
@@ -442,17 +675,7 @@ class StoreApiClient {
     if (params.q) apiParams.set('search', params.q);
 
     const res = await this.request<any>(`/api/products?${apiParams}`);
-    const products: Product[] = (res.products || []).map((p: any) => ({
-      ...p,
-      currency: p.currency || 'INR',
-      effective_price:
-        p.effective_price != null
-          ? p.effective_price
-          : p.sale_price != null
-            ? p.sale_price
-            : p.price,
-      stock_qty: p.stock_qty != null ? p.stock_qty : p.stock_quantity,
-    }));
+    const products: Product[] = (res.products || []).map((p: any) => normalizeProduct(p));
     return {
       products,
       total: res.total,
@@ -465,13 +688,16 @@ class StoreApiClient {
   async getProduct(id: number) {
     // Accept both raw and wrapped responses for safety
     const res = await this.request<any>(`/api/products/${id}`);
-    if (res && (res as any).product) return (res as any).product as Product;
-    if (res && (res as any).id) return res as Product;
+    if (res && (res as any).product) return normalizeProduct((res as any).product);
+    if (res && (res as any).id) return normalizeProduct(res);
     throw new Error('Product not found');
   }
 
   async getProductBySlug(slug: string) {
-    return this.request<Product>(`/api/products/slug/${encodeURIComponent(slug)}`);
+    const product = await this.request<any>(
+      `/api/products/slug/${encodeURIComponent(slug)}`,
+    );
+    return normalizeProduct(product);
   }
 
   async getFeaturedProducts(limit = 10) {
@@ -489,7 +715,7 @@ class StoreApiClient {
       }),
     });
 
-    return result.products ?? [];
+    return (result.products ?? []).map((product) => normalizeProduct(product));
   }
 
   async getPopularProducts(params: { category_id?: number; limit?: number; days?: number } = {}) {
@@ -525,22 +751,23 @@ class StoreApiClient {
       }
     });
 
-    const res = await this.request<{ categories?: Category[] }>(`/api/categories?${searchParams}`);
-    return res?.categories ?? [];
+    const res = await this.request<{ categories?: any[] }>(`/api/categories?${searchParams}`);
+    return (res?.categories ?? []).map((category) => normalizeCategory(category));
   }
 
   async getCategory(id: number) {
-    return this.request<Category>(`/api/categories/${id}`);
+    const category = await this.request<any>(`/api/categories/${id}`);
+    return normalizeCategory(category);
   }
 
   async getCategoryBySlug(slug: string) {
     // Not available on backend; fetch all categories and filter locally
-    const { categories = [] } = await this.request<{ categories?: Category[] }>(
+    const { categories = [] } = await this.request<{ categories?: any[] }>(
       `/api/categories`,
     );
     const cat = categories.find((c: any) => c.slug === slug);
     if (!cat) throw new Error('Category not found');
-    return cat;
+    return normalizeCategory(cat);
   }
 
   async getProductsByCategory(
@@ -554,17 +781,7 @@ class StoreApiClient {
     searchParams.set('limit', String(perPage));
 
     const res = await this.request<any>(`/api/categories/${categoryId}/products?${searchParams}`);
-    const products: Product[] = (res.products || []).map((p: any) => ({
-      ...p,
-      currency: p.currency || 'INR',
-      effective_price:
-        p.effective_price != null
-          ? p.effective_price
-          : p.sale_price != null
-            ? p.sale_price
-            : p.price,
-      stock_qty: p.stock_qty != null ? p.stock_qty : p.stock_quantity,
-    }));
+    const products: Product[] = (res.products || []).map((p: any) => normalizeProduct(p));
     return {
       products,
       total: res.total,
@@ -957,16 +1174,24 @@ class StoreApiClient {
 
   async getCategoryTree(include_product_counts = true) {
     const sp = include_product_counts ? '?include_product_counts=true' : '';
-    return this.request<{ categories: any[] }>(
+    const response = await this.request<{ categories: any[] }>(
       `/api/enhanced-catalog/catalog/categories/tree${sp}`,
     );
+
+    return {
+      categories: (response.categories ?? []).map((category) => normalizeCategory(category)),
+    };
   }
 
   async advancedSearch(body: any) {
-    return this.request<any>(`/api/enhanced-catalog/catalog/search/advanced`, {
+    const response = await this.request<any>(`/api/enhanced-catalog/catalog/search/advanced`, {
       method: 'POST',
       body: JSON.stringify(body),
     });
+    if (Array.isArray(response?.products)) {
+      response.products = response.products.map((product: any) => normalizeProduct(product));
+    }
+    return response;
   }
 
   // User notification settings

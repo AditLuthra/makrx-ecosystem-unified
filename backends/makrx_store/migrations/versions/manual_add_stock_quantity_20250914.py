@@ -17,7 +17,9 @@ depends_on = None
 
 def upgrade() -> None:
     with op.batch_alter_table("store_products") as batch_op:
-        batch_op.add_column(sa.Column("stock_quantity", sa.Integer(), nullable=True))
+        batch_op.add_column(
+            sa.Column("stock_quantity", sa.Integer(), nullable=True)
+        )
 
 
 def downgrade() -> None:

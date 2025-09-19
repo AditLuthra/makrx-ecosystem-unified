@@ -28,7 +28,9 @@ class ServiceOrderRequest(BaseModel):
     quality: str
     est_weight_g: float
     est_time_min: int
-    delivery: dict  # {"mode": "ship", "city": "Chandigarh", "pincode": "160012"}
+    delivery: (
+        dict  # {"mode": "ship", "city": "Chandigarh", "pincode": "160012"}
+    )
     capabilities: dict  # {"min_nozzle_mm": 0.4, "bed_min_mm": [220,220,250]}
 
 
@@ -52,7 +54,8 @@ async def publish_job_to_cave(
         # Call MakrCave backend with exact data shape
         base_url = getattr(settings, "S3_BASE_URL", None) or (
             f"{settings.S3_ENDPOINT.rstrip('/')}/{settings.S3_BUCKET}"
-            if hasattr(settings, "S3_ENDPOINT") and hasattr(settings, "S3_BUCKET")
+            if hasattr(settings, "S3_ENDPOINT")
+            and hasattr(settings, "S3_BUCKET")
             else ""
         )
         cave_payload = {
@@ -114,7 +117,9 @@ class JobStatusUpdate(BaseModel):
     """Exact shape for Cave → Store status updates"""
 
     service_order_id: int
-    status: str  # PUBLISHED|ACCEPTED|PRINTING|READY|SHIPPED|COMPLETED|CANCELLED
+    status: (
+        str  # PUBLISHED|ACCEPTED|PRINTING|READY|SHIPPED|COMPLETED|CANCELLED
+    )
     milestone: JobMilestone
 
 
@@ -178,7 +183,9 @@ async def receive_job_status_update(
         from sqlalchemy import select
 
         res = await db.execute(
-            select(ServiceOrder).where(ServiceOrder.id == update.service_order_id)
+            select(ServiceOrder).where(
+                ServiceOrder.id == update.service_order_id
+            )
         )
         service_order = res.scalars().first()
 

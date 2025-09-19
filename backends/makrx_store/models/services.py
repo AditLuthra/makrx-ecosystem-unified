@@ -25,24 +25,34 @@ from ..base import Base
 class Upload(Base):
     __tablename__ = "uploads"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     user_id = Column(
         String(255), nullable=True, index=True
     )  # From JWT, nullable for anonymous
-    session_id = Column(String(255), nullable=True, index=True)  # For anonymous uploads
+    session_id = Column(
+        String(255), nullable=True, index=True
+    )  # For anonymous uploads
 
     # File information
-    file_key = Column(String(500), nullable=False, unique=True)  # S3 object key
+    file_key = Column(
+        String(500), nullable=False, unique=True
+    )  # S3 object key
     file_name = Column(String(255), nullable=False)
     file_hash = Column(String(64), nullable=True, index=True)  # SHA-256 hash
     file_size = Column(Integer, nullable=False)  # bytes
     mime_type = Column(String(100), nullable=False)
 
     # 3D model properties (computed after upload)
-    dimensions = Column(JSONB, default={})  # {"x": 10.5, "y": 15.2, "z": 8.3} in mm
+    dimensions = Column(
+        JSONB, default={}
+    )  # {"x": 10.5, "y": 15.2, "z": 8.3} in mm
     volume_mm3 = Column(Numeric(15, 3))  # Volume in cubic millimeters
     surface_area_mm2 = Column(Numeric(15, 3))  # Surface area
-    mesh_info = Column(JSONB, default={})  # vertices, faces, manifold status, etc.
+    mesh_info = Column(
+        JSONB, default={}
+    )  # vertices, faces, manifold status, etc.
 
     # Processing status
     status = Column(String(50), default="uploaded", index=True)
@@ -71,15 +81,21 @@ class Upload(Base):
 class Quote(Base):
     __tablename__ = "quotes"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    upload_id = Column(UUID(as_uuid=True), ForeignKey("uploads.id"), nullable=False)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
+    upload_id = Column(
+        UUID(as_uuid=True), ForeignKey("uploads.id"), nullable=False
+    )
     user_id = Column(String(255), nullable=True, index=True)
 
     # Print specifications
     material = Column(
         String(50), nullable=False, index=True
     )  # pla, abs, petg, resin, etc.
-    quality = Column(String(50), nullable=False)  # draft, standard, high, ultra
+    quality = Column(
+        String(50), nullable=False
+    )  # draft, standard, high, ultra
     color = Column(String(50), default="natural")
     infill_percentage = Column(Integer, default=20)
     layer_height = Column(Numeric(4, 2), default=0.2)  # mm
@@ -136,7 +152,9 @@ class ServiceProviderRef(Base):
     )  # Reference to MakrCave
 
     # Capabilities and equipment
-    capabilities = Column(JSONB, default={})  # materials, max_volume, technologies
+    capabilities = Column(
+        JSONB, default={}
+    )  # materials, max_volume, technologies
     equipment = Column(JSONB, default=[])  # list of printers/machines
 
     # Location and contact
@@ -165,16 +183,26 @@ class ServiceProviderRef(Base):
 class ServiceOrder(Base):
     __tablename__ = "service_orders"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     order_id = Column(
         Integer, ForeignKey("store_orders.id"), nullable=True
     )  # Link to main order
-    quote_id = Column(UUID(as_uuid=True), ForeignKey("quotes.id"), nullable=False)
-    provider_id = Column(Integer, ForeignKey("service_providers.id"), nullable=True)
+    quote_id = Column(
+        UUID(as_uuid=True), ForeignKey("quotes.id"), nullable=False
+    )
+    provider_id = Column(
+        Integer, ForeignKey("service_providers.id"), nullable=True
+    )
 
     # Service order details
-    service_order_number = Column(String(50), nullable=False, unique=True, index=True)
-    priority = Column(String(20), default="normal")  # low, normal, high, urgent
+    service_order_number = Column(
+        String(50), nullable=False, unique=True, index=True
+    )
+    priority = Column(
+        String(20), default="normal"
+    )  # low, normal, high, urgent
 
     # Status tracking
     status = Column(String(50), default="pending", index=True)
@@ -182,12 +210,16 @@ class ServiceOrder(Base):
     # quality_check, ready, shipped, delivered, cancelled
 
     # Timeline and milestones
-    milestones = Column(JSONB, default={})  # timestamp tracking for each status
+    milestones = Column(
+        JSONB, default={}
+    )  # timestamp tracking for each status
     estimated_completion = Column(DateTime(timezone=True))
     actual_completion = Column(DateTime(timezone=True))
 
     # Production tracking
-    tracking = Column(JSONB, default={})  # printer used, actual time, materials, etc.
+    tracking = Column(
+        JSONB, default={}
+    )  # printer used, actual time, materials, etc.
     production_notes = Column(Text)
     quality_notes = Column(Text)
 
@@ -213,7 +245,9 @@ class ServiceOrder(Base):
     # Relationships
     order = relationship("Order", back_populates="service_orders")
     quote = relationship("Quote", back_populates="service_orders")
-    provider = relationship("ServiceProviderRef", back_populates="service_orders")
+    provider = relationship(
+        "ServiceProviderRef", back_populates="service_orders"
+    )
 
     # Indexes
     __table_args__ = (

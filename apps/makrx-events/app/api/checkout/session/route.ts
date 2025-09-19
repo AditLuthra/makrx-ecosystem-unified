@@ -27,7 +27,7 @@ const checkoutSessionSchema = z.object({
         .optional(),
     })
     .optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // POST /api/checkout/session - Create checkout session for paid events

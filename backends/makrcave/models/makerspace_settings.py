@@ -123,7 +123,7 @@ class MakerspaceSettings(Base):
     updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
-    makerspace = relationship("Makerspace", back_populates="settings")
+    makerspace = relationship("Makerspace", back_populates="makerspace_settings")
     updated_by_user = relationship("User", foreign_keys=[updated_by])
 
     def __repr__(self):

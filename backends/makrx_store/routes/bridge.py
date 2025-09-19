@@ -71,11 +71,15 @@ async def call_makrcave_api(
     async with httpx.AsyncClient() as client:
         try:
             if method.upper() == "POST":
-                response = await client.post(url, json=data, headers=default_headers)
+                response = await client.post(
+                    url, json=data, headers=default_headers
+                )
             elif method.upper() == "GET":
                 response = await client.get(url, headers=default_headers)
             elif method.upper() == "PATCH":
-                response = await client.patch(url, json=data, headers=default_headers)
+                response = await client.patch(
+                    url, json=data, headers=default_headers
+                )
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
 
@@ -100,7 +104,9 @@ async def publish_job_to_makrcave(
     try:
         # Verify service order exists and belongs to user
         res = await db.execute(
-            select(ServiceOrder).where(ServiceOrder.id == job_request.service_order_id)
+            select(ServiceOrder).where(
+                ServiceOrder.id == job_request.service_order_id
+            )
         )
         service_order = res.scalar_one_or_none()
 
@@ -128,7 +134,9 @@ async def publish_job_to_makrcave(
             "priority": job_request.priority,
             "deadline": service_order.estimated_delivery,
             "budget": (
-                float(service_order.total_price) if service_order.total_price else None
+                float(service_order.total_price)
+                if service_order.total_price
+                else None
             ),
         }
 
@@ -178,7 +186,8 @@ async def update_job_status(
         # Find the service order by MakrCave job ID via tracking JSONB
         res = await db.execute(
             select(ServiceOrder).where(
-                cast(ServiceOrder.tracking["makrcave_job_id"], String) == job_id
+                cast(ServiceOrder.tracking["makrcave_job_id"], String)
+                == job_id
             )
         )
         service_order = res.scalar_one_or_none()
@@ -203,7 +212,9 @@ async def update_job_status(
             "failed": "failed",
         }
 
-        new_status = status_mapping.get(status_update.status, status_update.status)
+        new_status = status_mapping.get(
+            status_update.status, status_update.status
+        )
         service_order.status = new_status
 
         # Update tracking with progress info
@@ -231,7 +242,9 @@ async def update_job_status(
 
         await db.commit()
 
-        logger.info(f"Updated service order {service_order.id} status to {new_status}")
+        logger.info(
+            f"Updated service order {service_order.id} status to {new_status}"
+        )
 
         # TODO: Send customer notification about status update
         # await send_status_notification(service_order, status_update)

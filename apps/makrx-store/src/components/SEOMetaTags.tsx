@@ -194,6 +194,7 @@ export default function SEOMetaTags({
     prevPage,
     nextPage,
     canonicalUrl,
+    title,
   ]);
 
   return null;

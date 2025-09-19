@@ -40,7 +40,9 @@ class CreateQuickReorderRequest(BaseModel):
     reorder_frequency: Optional[str] = Field(
         None, pattern="^(weekly|monthly|as_needed)$"
     )
-    reorder_threshold: Optional[Dict[str, int]] = None  # Product ID -> threshold
+    reorder_threshold: Optional[Dict[str, int]] = (
+        None  # Product ID -> threshold
+    )
 
 
 class UpdateQuickReorderRequest(BaseModel):
@@ -179,7 +181,9 @@ async def create_quick_reorder(
     except Exception as e:
         logger.error(f"Create quick reorder error: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="Failed to create quick reorder")
+        raise HTTPException(
+            status_code=500, detail="Failed to create quick reorder"
+        )
 
 
 @router.get("/list", response_model=List[QuickReorderResponse])
@@ -225,7 +229,9 @@ async def list_quick_reorders(
 
     except Exception as e:
         logger.error(f"List quick reorders error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to list quick reorders")
+        raise HTTPException(
+            status_code=500, detail="Failed to list quick reorders"
+        )
 
 
 @router.get("/{reorder_id}", response_model=QuickReorderResponse)
@@ -249,7 +255,9 @@ async def get_quick_reorder(
         reorder = res.scalars().first()
 
         if not reorder:
-            raise HTTPException(status_code=404, detail="Quick reorder not found")
+            raise HTTPException(
+                status_code=404, detail="Quick reorder not found"
+            )
 
         # Update pricing for items
         updated_items = []
@@ -300,7 +308,9 @@ async def get_quick_reorder(
         raise
     except Exception as e:
         logger.error(f"Get quick reorder error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get quick reorder")
+        raise HTTPException(
+            status_code=500, detail="Failed to get quick reorder"
+        )
 
 
 @router.put("/{reorder_id}", response_model=QuickReorderResponse)
@@ -325,7 +335,9 @@ async def update_quick_reorder(
         reorder = res.scalars().first()
 
         if not reorder:
-            raise HTTPException(status_code=404, detail="Quick reorder not found")
+            raise HTTPException(
+                status_code=404, detail="Quick reorder not found"
+            )
 
         # Update fields
         if request.name is not None:
@@ -347,7 +359,9 @@ async def update_quick_reorder(
             product_ids = [item.product_id for item in request.items]
             pres = await db.execute(
                 select(Product).where(
-                    and_(Product.id.in_(product_ids), Product.is_active == True)
+                    and_(
+                        Product.id.in_(product_ids), Product.is_active == True
+                    )
                 )
             )
             products = pres.scalars().all()
@@ -411,7 +425,9 @@ async def update_quick_reorder(
     except Exception as e:
         logger.error(f"Update quick reorder error: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="Failed to update quick reorder")
+        raise HTTPException(
+            status_code=500, detail="Failed to update quick reorder"
+        )
 
 
 @router.post("/execute", response_model=ReorderExecutionResponse)
@@ -444,7 +460,9 @@ async def execute_quick_reorder(
         # Get or create cart if adding to cart
         cart = None
         if request.add_to_cart:
-            cres = await db.execute(select(Cart).where(Cart.user_id == user_id))
+            cres = await db.execute(
+                select(Cart).where(Cart.user_id == user_id)
+            )
             cart = cres.scalars().first()
             if not cart:
                 cart = Cart(
@@ -481,10 +499,15 @@ async def execute_quick_reorder(
                 continue
 
             # Calculate quantity with multiplier
-            final_quantity = int(item["quantity"] * request.quantity_multiplier)
+            final_quantity = int(
+                item["quantity"] * request.quantity_multiplier
+            )
 
             # Check stock
-            if request.exclude_out_of_stock and product.stock_qty < final_quantity:
+            if (
+                request.exclude_out_of_stock
+                and product.stock_qty < final_quantity
+            ):
                 items_skipped += 1
                 skipped_items.append(
                     {
@@ -552,7 +575,9 @@ async def execute_quick_reorder(
         await db.commit()
 
         # Schedule inventory threshold check
-        background_tasks.add_task(check_reorder_thresholds, user_id, str(reorder.id))
+        background_tasks.add_task(
+            check_reorder_thresholds, user_id, str(reorder.id)
+        )
 
         return ReorderExecutionResponse(
             success=True,
@@ -570,7 +595,9 @@ async def execute_quick_reorder(
     except Exception as e:
         logger.error(f"Execute quick reorder error: {e}")
         await db.rollback()
-        raise HTTPException(status_code=500, detail="Failed to execute quick reorder")
+        raise HTTPException(
+            status_code=500, detail="Failed to execute quick reorder"
+        )
 
 
 @router.delete("/{reorder_id}")
@@ -594,7 +621,9 @@ async def delete_quick_reorder(
         reorder = res.scalars().first()
 
         if not reorder:
-            raise HTTPException(status_code=404, detail="Quick reorder not found")
+            raise HTTPException(
+                status_code=404, detail="Quick reorder not found"
+            )
 
         await db.delete(reorder)
         await db.commit()
@@ -606,7 +635,9 @@ async def delete_quick_reorder(
     except Exception as e:
         logger.error(f"Delete quick reorder error: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="Failed to delete quick reorder")
+        raise HTTPException(
+            status_code=500, detail="Failed to delete quick reorder"
+        )
 
 
 @router.post("/from-order/{order_id}")
@@ -623,7 +654,9 @@ async def create_reorder_from_order(
     try:
         # Get order and verify ownership
         res = await db.execute(
-            select(Order).where(and_(Order.id == order_id, Order.user_id == user_id))
+            select(Order).where(
+                and_(Order.id == order_id, Order.user_id == user_id)
+            )
         )
         order = res.scalars().first()
 
@@ -664,7 +697,8 @@ async def create_reorder_from_order(
         # Create quick reorder
         create_request = CreateQuickReorderRequest(
             name=name,
-            description=description or f"Recreated from order #{order.order_number}",
+            description=description
+            or f"Recreated from order #{order.order_number}",
             items=reorder_items,
         )
 
@@ -736,7 +770,9 @@ async def get_reorder_suggestions(
                         "product_id": product.id,
                         "product_name": product.name,
                         "brand": product.brand,
-                        "current_price": float(product.sale_price or product.price),
+                        "current_price": float(
+                            product.sale_price or product.price
+                        ),
                         "suggested_quantity": int(item.avg_quantity),
                         "order_frequency": item.order_count,
                         "total_ordered": item.total_quantity,
@@ -749,7 +785,9 @@ async def get_reorder_suggestions(
 
     except Exception as e:
         logger.error(f"Get reorder suggestions error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get reorder suggestions")
+        raise HTTPException(
+            status_code=500, detail="Failed to get reorder suggestions"
+        )
 
 
 # Background Tasks

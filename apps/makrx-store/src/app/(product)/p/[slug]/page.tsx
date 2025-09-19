@@ -19,47 +19,7 @@ import { storeApi } from '@/services/storeApi';
 import { getRelatedProducts, getFrequentlyBoughtTogether } from '@/lib/recommendations';
 import ProductStructuredDataClient from '@/components/ProductStructuredData';
 import ProductPageErrorBoundary from '@/components/ProductPageErrorBoundary';
-
-interface Product {
-  id: number;
-  slug: string;
-  name: string;
-  brand?: string;
-  description: string;
-  short_description?: string;
-  price: number;
-  sale_price?: number;
-  currency: string;
-  stock_qty: number;
-  in_stock: boolean;
-  is_featured: boolean;
-  images: string[];
-  attributes: Record<string, any>;
-  specifications: Record<string, any>;
-  compatibility: string[];
-  tags: string[];
-  category: {
-    id: number;
-    name: string;
-    slug: string;
-    path: string;
-  };
-  rating?: {
-    average: number;
-    count: number;
-    verified_count?: number;
-  };
-  variants?: Array<{
-    id: number;
-    sku: string;
-    attributes: Record<string, string>;
-    price: number;
-    sale_price?: number;
-    stock_qty: number;
-  }>;
-  created_at: string;
-  updated_at: string;
-}
+import { Product, Category, ProductVariant, RatingSummary } from '@/types';
 
 interface RelatedProduct {
   id: number;
@@ -219,7 +179,7 @@ export default function ProductPage() {
     ];
 
     // Return all available reviews up to the actual rating count
-    const maxReviews = Math.min(product.rating?.count || 0, reviewTemplates.length);
+    const maxReviews = Math.min(product.rating && typeof product.rating === 'object' ? product.rating.count : 0, reviewTemplates.length);
     return reviewTemplates.slice(0, maxReviews);
   };
 
@@ -240,7 +200,7 @@ export default function ProductPage() {
 
       // Only update state if component is still mounted
       if (isMountedRef.current) {
-        const newCount = Math.min(displayedReviewsCount + 6, product?.rating?.count || 0);
+        const newCount = Math.min(displayedReviewsCount + 6, (product?.rating as RatingSummary)?.count || 0);
 
         setDisplayedReviewsCount(newCount);
       }
@@ -266,7 +226,7 @@ export default function ProductPage() {
     canAddToCart,
     isInStock,
     currentPrice,
-  } = useProductVariants(product?.variants || []);
+  } = useProductVariants(product?.variants as ProductVariant[] || []);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -283,10 +243,10 @@ export default function ProductPage() {
 
           // Build breadcrumbs
           const crumbs = [{ name: 'Home', href: '/' }];
-          if (productData.category?.slug) {
+          if (productData.category && typeof productData.category === 'object') {
             // Use category slug to build breadcrumb
-            const categoryName = productData.category.name;
-            crumbs.push({ name: categoryName, href: `/catalog/${productData.category.slug}` });
+            const categoryName = (productData.category as Category).name;
+            crumbs.push({ name: categoryName, href: `/catalog/${(productData.category as Category).slug}` });
           }
           crumbs.push({ name: productData.name, href: `/p/${productData.slug}` });
           setBreadcrumbs(crumbs);
@@ -296,13 +256,13 @@ export default function ProductPage() {
           let recommendations: Product[] = [];
           let complementary: Product[] = [];
           if (productData) {
-            recommendations = getRelatedProducts(productData, allProducts, 6);
-            complementary = getFrequentlyBoughtTogether(productData, allProducts, 4);
+            recommendations = getRelatedProducts(productData, allProducts.products, 6);
+            complementary = getFrequentlyBoughtTogether(productData, allProducts.products, 4);
           }
           setRelatedProducts(recommendations);
           setComplementaryProducts(complementary);
         }
-      } catch (error) {
+      } catch (error: any) {
         // Only log if not an abort error and component is still mounted
         if (isMountedRef.current && !error.toString().includes('abort')) {
           console.error('Failed to fetch product data:', error);
@@ -335,6 +295,7 @@ export default function ProductPage() {
 
   const effectivePrice = currentPrice || product.sale_price || product.price;
   const originalPrice = selectedVariant?.price || product.price;
+  const hasVariants = (product.variants?.length ?? 0) > 0;
 
   const isOnSale = product.sale_price && product.sale_price < product.price;
   const stockStatus = product.stock_qty > 0 ? 'In Stock' : 'Out of Stock';
@@ -381,13 +342,13 @@ export default function ProductPage() {
                     </Link>
                   </p>
                 )}
-                {product.rating && (
+                {product.rating && typeof product.rating === 'object' && (
                   <div className="flex items-center gap-2">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < Math.floor((product.rating as RatingSummary).average) ? 'text-yellow-400' : 'text-gray-300'}`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -396,7 +357,7 @@ export default function ProductPage() {
                       ))}
                     </div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {product.rating.average.toFixed(1)} ({product.rating.count} reviews)
+                      {(product.rating as RatingSummary).average.toFixed(1)} ({(product.rating as RatingSummary).count} reviews)
                     </span>
                   </div>
                 )}
@@ -427,9 +388,9 @@ export default function ProductPage() {
               </div>
 
               {/* Enhanced Variant Selection */}
-              {product.variants && product.variants.length > 0 ? (
+              {hasVariants ? (
                 <ProductVariantSelector
-                  variants={product.variants}
+                  variants={product.variants as ProductVariant[]}
                   onVariantChange={handleVariantChange}
                   basePrice={product.price}
                   currency={product.currency}
@@ -458,9 +419,9 @@ export default function ProductPage() {
               {/* Add to Cart */}
               <AddToCartForm
                 productId={product.id}
-                variantId={selectedVariant?.id || null}
+                variantId={selectedVariant ? (typeof selectedVariant.id === 'string' ? parseInt(selectedVariant.id, 10) : selectedVariant.id) : null}
                 maxQuantity={selectedVariant?.stock_qty || product.stock_qty}
-                inStock={product.variants?.length > 0 ? canAddToCart : product.stock_qty > 0}
+                inStock={hasVariants ? canAddToCart : (product.stock_qty ?? 0) > 0}
               />
 
               {/* Key Features */}
@@ -525,7 +486,7 @@ export default function ProductPage() {
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
                 >
-                  Reviews ({product.rating?.count || 0})
+                  Reviews ({typeof product.rating === 'object' ? product.rating.count : 0})
                 </button>
               </nav>
             </div>
@@ -564,7 +525,7 @@ export default function ProductPage() {
 
               {activeTab === 'reviews' && (
                 <div className="space-y-6">
-                  {product.rating && product.rating.count > 0 ? (
+                  {product.rating && typeof product.rating === 'object' && product.rating.count > 0 ? (
                     <>
                       <div className="flex items-center gap-4 mb-6">
                         <div className="flex items-center gap-2">
@@ -572,7 +533,7 @@ export default function ProductPage() {
                             {[...Array(5)].map((_, i) => (
                               <svg
                                 key={i}
-                                className={`w-5 h-5 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
+                                className={`w-5 h-5 ${i < Math.floor((product.rating as RatingSummary).average) ? 'text-yellow-400' : 'text-gray-300'}`}
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -581,11 +542,11 @@ export default function ProductPage() {
                             ))}
                           </div>
                           <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                            {product.rating.average.toFixed(1)}
+                            {(product.rating as RatingSummary).average.toFixed(1)}
                           </span>
                         </div>
                         <span className="text-gray-600 dark:text-gray-400">
-                          Based on {product.rating.count} reviews
+                          Based on {(product.rating as RatingSummary).count} reviews
                         </span>
                       </div>
                       {/* Individual Reviews */}
@@ -674,7 +635,7 @@ export default function ProductPage() {
                         ))}
 
                         {/* Load More Reviews Button */}
-                        {product.rating && displayedReviewsCount < product.rating.count && (
+                        {product.rating && typeof product.rating === 'object' && displayedReviewsCount < product.rating.count && (
                           <div className="text-center pt-6">
                             <button
                               onClick={loadMoreReviews}
@@ -706,7 +667,7 @@ export default function ProductPage() {
                                 </>
                               ) : (
                                 <>
-                                  Load More Reviews ({product.rating.count - displayedReviewsCount}{' '}
+                                  Load More Reviews ({(product.rating as RatingSummary).count - displayedReviewsCount}{' '}
                                   remaining)
                                   <svg
                                     className="w-4 h-4"
@@ -728,11 +689,11 @@ export default function ProductPage() {
                         )}
 
                         {/* All Reviews Loaded Message */}
-                        {product.rating &&
+                        {product.rating && typeof product.rating === 'object' &&
                           displayedReviewsCount >= product.rating.count &&
                           product.rating.count > 6 && (
                             <div className="text-center pt-6 text-gray-500 dark:text-gray-400">
-                              <p className="text-sm">All {product.rating.count} reviews loaded</p>
+                              <p className="text-sm">All {(product.rating as RatingSummary).count} reviews loaded</p>
                             </div>
                           )}
                       </div>

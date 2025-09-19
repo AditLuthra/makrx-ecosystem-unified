@@ -299,16 +299,23 @@ function AdminNotificationsPage() {
   );
 }
 
-function Th({ children }: { children: any }) {
+function Th({ children, className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+    <th
+      className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap ${className || ''}`}
+      {...props}
+    >
       {children}
     </th>
   );
 }
 
-function Td({ children }: { children: any }) {
-  return <td className="px-4 py-3 text-sm text-gray-900 align-top">{children}</td>;
+function Td({ children, className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
+  return (
+    <td className={`px-4 py-3 text-sm text-gray-900 align-top ${className || ''}`} {...props}>
+      {children}
+    </td>
+  );
 }
 
 export default withAuth(AdminNotificationsPage, ['admin']);

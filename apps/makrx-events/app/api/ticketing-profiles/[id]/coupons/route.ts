@@ -1,6 +1,6 @@
+import { insertCouponSchema } from '@shared/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertCouponSchema } from '@shared/schema';
 
 // GET /api/ticketing-profiles/[id]/coupons - Get all coupons for a ticketing profile
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 },
       );

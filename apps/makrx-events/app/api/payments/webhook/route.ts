@@ -11,7 +11,7 @@ const webhookSchema = z.object({
       amount: z.number(),
       currency: z.string(),
       status: z.string(),
-      metadata: z.record(z.string()).optional(),
+      metadata: z.record(z.string(), z.string()).optional(),
     }),
   }),
   created: z.number(),

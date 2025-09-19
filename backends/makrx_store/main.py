@@ -89,7 +89,9 @@ try:
     if dsn:
         sentry_sdk.init(
             dsn=dsn,
-            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+            traces_sample_rate=float(
+                os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")
+            ),
             environment=settings.ENVIRONMENT,
         )
         logger.info("Sentry initialized")
@@ -105,7 +107,9 @@ if settings.ENVIRONMENT == "production" and os.getenv("METRICS_TOKEN"):
         if request.url.path == "/metrics":
             token = request.headers.get("X-Metrics-Token")
             if token != METRICS_TOKEN:
-                return JSONResponse(status_code=403, content={"detail": "Forbidden"})
+                return JSONResponse(
+                    status_code=403, content={"detail": "Forbidden"}
+                )
         return await call_next(request)
 
 
@@ -117,26 +121,26 @@ if settings.ENVIRONMENT == "production" and os.getenv("METRICS_TOKEN"):
 async def request_middleware(request: Request, call_next):
     # Check for incoming correlation ID, or generate a new one
     correlation_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
-    
+
     # Make it available to the application state
     request.state.request_id = correlation_id
 
     # Bind to structlog context for logging
     structlog.contextvars.bind_contextvars(request_id=correlation_id)
-    
+
     start_time = time.time()
-    
+
     response = await call_next(request)
-    
+
     process_time = (time.time() - start_time) * 1000
-    
+
     # Ensure the correlation ID is in the response headers
     response.headers["X-Request-ID"] = correlation_id
     response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
-    
+
     # Clear context variables for the next request
     structlog.contextvars.clear_contextvars()
-    
+
     return response
 
 
@@ -155,7 +159,9 @@ app.include_router(
     tags=["Enhanced Catalog"],
 )
 app.include_router(webhooks.router, prefix="/api/webhooks", tags=["Webhooks"])
-app.include_router(bom_import.router, prefix="/api/bom-import", tags=["BOM Import"])
+app.include_router(
+    bom_import.router, prefix="/api/bom-import", tags=["BOM Import"]
+)
 app.include_router(
     feature_flags.router, prefix="/api/feature-flags", tags=["Feature Flags"]
 )
@@ -170,7 +176,9 @@ app.include_router(notifications.router, prefix="/api", tags=["Notifications"])
 @app.on_event("startup")
 async def startup_event():
     """Initialize database and other startup tasks"""
-    logger.info("startup_begin", message="Starting MakrX Store API...", stage="startup")
+    logger.info(
+        "startup_begin", message="Starting MakrX Store API...", stage="startup"
+    )
     try:
         if os.getenv("ENVIRONMENT", "development") != "production":
             create_tables()
@@ -203,7 +211,10 @@ async def startup_event():
 
 
 # Sample data initialization endpoint (for development)
-@app.post("/api/admin/init-sample-data", dependencies=[Depends(require_roles(["admin", "super_admin"]))])
+@app.post(
+    "/api/admin/init-sample-data",
+    dependencies=[Depends(require_roles(["admin", "super_admin"]))],
+)
 async def init_sample_data():
     """Initialize sample data for development"""
     # This would populate the database with sample categories and products

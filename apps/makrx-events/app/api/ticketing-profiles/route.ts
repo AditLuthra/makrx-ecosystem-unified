@@ -1,6 +1,6 @@
+import { insertTicketingProfileSchema } from '@shared/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertTicketingProfileSchema } from '@shared/schema';
 
 // GET /api/ticketing-profiles - Get ticketing profiles with filtering
 export async function GET(request: NextRequest) {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 },
       );

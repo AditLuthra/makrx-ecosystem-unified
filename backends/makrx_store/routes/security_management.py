@@ -69,7 +69,9 @@ async def request_data_export(
         requested_categories = None
         if categories:
             try:
-                requested_categories = [DataCategory(cat) for cat in categories]
+                requested_categories = [
+                    DataCategory(cat) for cat in categories
+                ]
             except ValueError as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -123,7 +125,9 @@ async def request_data_deletion(
         requested_categories = None
         if categories:
             try:
-                requested_categories = [DataCategory(cat) for cat in categories]
+                requested_categories = [
+                    DataCategory(cat) for cat in categories
+                ]
             except ValueError as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -131,8 +135,10 @@ async def request_data_deletion(
                 )
 
         # Process deletion request
-        deletion_result = await user_rights_manager.handle_data_deletion_request(
-            target_user_id, reason, requested_categories
+        deletion_result = (
+            await user_rights_manager.handle_data_deletion_request(
+                target_user_id, reason, requested_categories
+            )
         )
 
         # Log admin action if applicable
@@ -336,7 +342,9 @@ async def setup_mfa(
         # Use user's email from token or fetch from user service
         user_email = f"user_{current_user.user_id}@makrx.org"  # Placeholder
 
-        mfa_setup = await mfa_manager.setup_mfa(current_user.user_id, user_email)
+        mfa_setup = await mfa_manager.setup_mfa(
+            current_user.user_id, user_email
+        )
 
         await security_logger.log_security_event(
             event_type="mfa_setup",
@@ -365,7 +373,9 @@ async def verify_mfa(
 ):
     """Verify MFA token"""
     try:
-        is_valid = await mfa_manager.verify_mfa_token(current_user.user_id, token)
+        is_valid = await mfa_manager.verify_mfa_token(
+            current_user.user_id, token
+        )
 
         return {"valid": is_valid}
 
@@ -385,7 +395,9 @@ async def disable_mfa(
     try:
         target_user_id = user_id or current_user.user_id
 
-        success = await mfa_manager.disable_mfa(target_user_id, current_user.user_id)
+        success = await mfa_manager.disable_mfa(
+            target_user_id, current_user.user_id
+        )
 
         if success:
             await security_logger.log_admin_action(

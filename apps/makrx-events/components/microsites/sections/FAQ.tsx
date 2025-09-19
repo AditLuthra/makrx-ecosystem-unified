@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface FAQItem {
   question: string;
@@ -50,7 +50,9 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
 
   const categories = content.categories || [
     'all',
-    ...Array.from(new Set(content.items.map((item) => item.category).filter(Boolean))),
+    ...Array.from(
+      new Set(content.items.map((item) => item.category ?? '').filter((c): c is string => !!c)),
+    ),
   ];
 
   return (
@@ -70,7 +72,7 @@ export default function FAQ({ content, variant = 'accordion', theme }: FAQProps)
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => setSelectedCategory(category || 'all')}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category
                     ? 'text-white'

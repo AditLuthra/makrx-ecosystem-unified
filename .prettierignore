@@ -1,0 +1,32 @@
+# Ignore Python virtual environments and site-packages
+.venv/
+**/.venv/
+**/venv/
+**/venv*/
+**/site-packages/
+
+# Node and build artifacts
+node_modules/
+**/dist/
+**/build/
+
+# Python cache
+**/__pycache__/
+
+# Generated coverage and reports
+coverage/
+**/coverage/
+coverage.*
+*.lcov
+reports/
+**/reports/
+
+# Logs
+*.log
+**/*.log
+
+# Next.js outputs
+**/.next/
+
+# Docker local volumes
+**/.docker/

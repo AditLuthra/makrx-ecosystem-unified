@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { eventRegistrations, events, users } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
 import { sendRegistrationConfirmationEmail } from '@/lib/email';
+import { eventRegistrations, events, users } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
@@ -50,19 +50,21 @@ export async function POST(request: NextRequest, { params }: { params: { eventId
 
     // Send confirmation email
     if (user[0].email) {
-      const eventDate = new Date(event[0].startDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      const eventDate = event[0].startDate
+        ? new Date(event[0].startDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : 'Date TBD';
 
       const emailResult = await sendRegistrationConfirmationEmail(user[0].email, {
-        eventTitle: event[0].title,
+        eventTitle: event[0].title || 'Untitled Event',
         eventDate,
-        eventLocation: event[0].location,
+        eventLocation: event[0].location || 'Location TBD',
         eventSlug: event[0].slug,
         participantName:
           `${user[0].firstName || ''} ${user[0].lastName || ''}`.trim() || 'Participant',

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Grid, List, Filter } from 'lucide-react';
-import { storeApi, type Product } from '@/services/storeApi';
+import { storeApi } from '@/services/storeApi';
+import type { Product } from '@/types';
 import ProductGrid from '@/components/ProductGrid';
 import EnhancedCategoryFilters, { useFiltersToggle } from '@/components/EnhancedCategoryFilters';
 import SortSelect from '@/components/SortSelect';
@@ -15,6 +16,8 @@ export default function ElectronicsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('featured');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const { isFiltersOpen, toggleFilters, closeFilters } = useFiltersToggle();
 
@@ -27,10 +30,12 @@ export default function ElectronicsPage() {
         setLoading(true);
         const productsData = await storeApi.getProducts({
           category: 'electronics',
+          page: currentPage,
           per_page: 20,
           sort: sortBy,
         });
         setProducts(productsData.products || []);
+        setTotalPages(productsData.pages);
       } catch (err) {
         console.error('Failed to load electronics:', err);
         setError('Failed to load products');
@@ -40,7 +45,7 @@ export default function ElectronicsPage() {
     };
 
     loadProducts();
-  }, [sortBy]);
+  }, [sortBy, currentPage]);
 
   const handleFilterChange = (filters: Record<string, string[]>) => {
     setActiveFilters(filters);
@@ -190,7 +195,14 @@ export default function ElectronicsPage() {
                 </button>
               </div>
             ) : (
-              <ProductGrid products={products} loading={loading} viewMode={viewMode} />
+              <ProductGrid
+                products={products}
+                loading={loading}
+                viewMode={viewMode}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             )}
           </div>
         </div>
@@ -207,7 +219,7 @@ export default function ElectronicsPage() {
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
                 <li>
-                  ��� <strong>Arduino Ecosystem:</strong> Boards, shields, sensors, and accessories
+                  • <strong>Arduino Ecosystem:</strong> Boards, shields, sensors, and accessories
                 </li>
                 <li>
                   • <strong>Raspberry Pi:</strong> Single-board computers and HATs

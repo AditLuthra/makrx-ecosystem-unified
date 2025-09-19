@@ -5,16 +5,7 @@ import { storeApi } from '@/services/storeApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string;
-  image_url?: string;
-  product_count?: number;
-  children: Category[];
-}
+import type { Category } from '@/types';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -96,9 +87,10 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category }: CategoryCardProps) {
+  const targetPath = category.path ?? category.slug;
   return (
     <Link
-      href={`/c/${category.slug}`}
+      href={`/c/${targetPath}`}
       className="group block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
     >
       <div className="aspect-w-16 aspect-h-9 relative overflow-hidden rounded-t-lg">

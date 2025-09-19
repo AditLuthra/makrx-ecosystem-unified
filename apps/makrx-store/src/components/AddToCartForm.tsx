@@ -34,7 +34,7 @@ export default function AddToCartForm({
     setIsAdding(true);
     try {
       if (onAddToCart) {
-        await onAddToCart(productId, variantId, quantity);
+        await onAddToCart(productId, variantId ?? null, quantity);
       } else {
         // Default implementation - could make API call here
         console.log('Adding to cart:', { productId, variantId, quantity });

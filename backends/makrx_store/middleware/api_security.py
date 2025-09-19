@@ -154,7 +154,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app, redis_url: str = None):
         super().__init__(app)
-        self.redis_client = AsyncRedis.from_url(redis_url) if redis_url else None
+        self.redis_client = (
+            AsyncRedis.from_url(redis_url) if redis_url else None
+        )
 
     def _get_endpoint_type(self, path: str) -> str:
         """Determine endpoint type for rate limiting"""
@@ -193,7 +195,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         return ip, user_id
 
-    async def _check_rate_limit(self, key: str, limit: int, window: int) -> bool:
+    async def _check_rate_limit(
+        self, key: str, limit: int, window: int
+    ) -> bool:
         """Check rate limit using Redis token bucket"""
         if not self.redis_client:
             return True  # Allow if Redis unavailable
@@ -250,7 +254,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         )
 
         if not ip_allowed:
-            logger.warning(f"Rate limit exceeded for IP {ip} on {endpoint_type}")
+            logger.warning(
+                f"Rate limit exceeded for IP {ip} on {endpoint_type}"
+            )
             return JSONResponse(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 content={
@@ -355,7 +361,9 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
         # Verify CSRF for state-changing methods
         if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             if not self._verify_csrf_token(request):
-                logger.warning(f"CSRF verification failed for {request.client.host}")
+                logger.warning(
+                    f"CSRF verification failed for {request.client.host}"
+                )
                 return JSONResponse(
                     status_code=status.HTTP_403_FORBIDDEN,
                     content={"detail": "CSRF token missing or invalid"},
@@ -500,7 +508,9 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
             )
 
         # Add request ID for tracing
-        request_id = request.headers.get("X-Request-ID", secrets.token_urlsafe(16))
+        request_id = request.headers.get(
+            "X-Request-ID", secrets.token_urlsafe(16)
+        )
 
         # Log request
         logger.info(

@@ -1,6 +1,6 @@
+import { insertTicketingProfileSchema } from '@shared/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertTicketingProfileSchema } from '@shared/schema';
 
 // GET /api/ticketing-profiles/[id] - Get specific ticketing profile
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -91,7 +91,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 },
       );

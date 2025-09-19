@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -61,15 +61,7 @@ export default function SavedCartsPage() {
   const [restoring, setRestoring] = useState<{ [key: string]: boolean }>({});
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login?redirect=/account/saved-carts');
-      return;
-    }
-    loadSavedCarts();
-  }, [isAuthenticated, router]);
-
-  const loadSavedCarts = async () => {
+  const loadSavedCarts = useCallback(async () => {
     try {
       setLoading(true);
       // Mock API call - replace with actual API
@@ -157,10 +149,18 @@ export default function SavedCartsPage() {
       }, 1000);
     } catch (error) {
       console.error('Failed to load saved carts:', error);
-      addNotification('Failed to load saved carts', 'error');
+      addNotification({ title: 'Error', message: 'Failed to load saved carts', type: 'error' });
       setLoading(false);
     }
-  };
+  }, [addNotification]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/account/saved-carts');
+      return;
+    }
+    loadSavedCarts();
+  }, [isAuthenticated, loadSavedCarts, router]);
 
   const deleteSavedCart = async (cartId: string) => {
     if (!confirm('Are you sure you want to delete this saved cart?')) return;
@@ -170,9 +170,9 @@ export default function SavedCartsPage() {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 500));
       setSavedCarts((prev) => prev.filter((cart) => cart.id !== cartId));
-      addNotification('Saved cart deleted', 'success');
+      addNotification({ title: 'Success', message: 'Saved cart deleted', type: 'success' });
     } catch (error) {
-      addNotification('Failed to delete saved cart', 'error');
+      addNotification({ title: 'Error', message: 'Failed to delete saved cart', type: 'error' });
     } finally {
       setDeleting((prev) => ({ ...prev, [cartId]: false }));
     }
@@ -183,10 +183,10 @@ export default function SavedCartsPage() {
     try {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      addNotification('Cart restored successfully', 'success');
+      addNotification({ title: 'Success', message: 'Cart restored successfully', type: 'success' });
       router.push('/cart');
     } catch (error) {
-      addNotification('Failed to restore cart', 'error');
+      addNotification({ title: 'Error', message: 'Failed to restore cart', type: 'error' });
     } finally {
       setRestoring((prev) => ({ ...prev, [cartId]: false }));
     }

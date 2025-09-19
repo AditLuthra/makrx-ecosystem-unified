@@ -86,11 +86,15 @@ class NotificationRequest(BaseModel):
     template_data: Dict[str, Any] = Field(default_factory=dict)
 
     # Scheduling
-    scheduled_at: Optional[datetime] = Field(None, description="Schedule for later")
+    scheduled_at: Optional[datetime] = Field(
+        None, description="Schedule for later"
+    )
     expires_at: Optional[datetime] = Field(None, description="Expiry time")
 
     # Options
-    attachments: List[str] = Field(default_factory=list, description="File paths")
+    attachments: List[str] = Field(
+        default_factory=list, description="File paths"
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
     user_preferences: Dict[str, bool] = Field(default_factory=dict)
 
@@ -265,7 +269,9 @@ class NotificationService:
 
             # Schedule if needed
             if request.scheduled_at and request.scheduled_at > datetime.now():
-                return await self._schedule_notification(notification_id, request)
+                return await self._schedule_notification(
+                    notification_id, request
+                )
 
             # Check if expired
             if request.expires_at and request.expires_at < datetime.now():
@@ -361,7 +367,9 @@ class NotificationService:
             if self.email_config.use_tls:
                 server.starttls()
 
-            server.login(self.email_config.username, self.email_config.password)
+            server.login(
+                self.email_config.username, self.email_config.password
+            )
             server.send_message(msg)
             server.quit()
 
@@ -449,7 +457,9 @@ class NotificationService:
                     "title": request.subject,
                     "body": request.message,
                     "icon": "https://makrx.store/icon.png",
-                    "click_action": request.metadata.get("url", "https://makrx.store"),
+                    "click_action": request.metadata.get(
+                        "url", "https://makrx.store"
+                    ),
                 },
                 "data": request.metadata,
             }

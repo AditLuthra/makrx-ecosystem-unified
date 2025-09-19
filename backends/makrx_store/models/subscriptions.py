@@ -34,12 +34,16 @@ class SubscriptionPlan(Base):
     # Pricing
     price = Column(Numeric(10, 2), nullable=False)
     currency = Column(String(3), default="INR")
-    billing_cycle = Column(String(20), nullable=False)  # monthly, quarterly, yearly
+    billing_cycle = Column(
+        String(20), nullable=False
+    )  # monthly, quarterly, yearly
     billing_interval = Column(Integer, default=1)  # every N cycles
 
     # Plan features and contents
     features = Column(JSONB, default=[])  # Array of features
-    included_items = Column(JSONB, default=[])  # Products included in subscription
+    included_items = Column(
+        JSONB, default=[]
+    )  # Products included in subscription
 
     # Subscription metadata
     max_subscribers = Column(Integer, nullable=True)  # null = unlimited
@@ -63,9 +67,15 @@ class SubscriptionPlan(Base):
 class Subscription(Base):
     __tablename__ = "subscriptions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    plan_id = Column(Integer, ForeignKey("subscription_plans.id"), nullable=False)
-    user_id = Column(String(255), nullable=False, index=True)  # From JWT sub claim
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
+    plan_id = Column(
+        Integer, ForeignKey("subscription_plans.id"), nullable=False
+    )
+    user_id = Column(
+        String(255), nullable=False, index=True
+    )  # From JWT sub claim
     email = Column(String(255), nullable=False, index=True)
 
     # Subscription status
@@ -103,7 +113,9 @@ class Subscription(Base):
 
     # Relationships
     plan = relationship("SubscriptionPlan", back_populates="subscriptions")
-    deliveries = relationship("SubscriptionDelivery", back_populates="subscription")
+    deliveries = relationship(
+        "SubscriptionDelivery", back_populates="subscription"
+    )
 
     # Indexes
     __table_args__ = (
@@ -115,7 +127,9 @@ class Subscription(Base):
 class SubscriptionDelivery(Base):
     __tablename__ = "subscription_deliveries"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     subscription_id = Column(
         UUID(as_uuid=True), ForeignKey("subscriptions.id"), nullable=False
     )
@@ -155,7 +169,9 @@ class SubscriptionDelivery(Base):
 class CreditWallet(Base):
     __tablename__ = "credit_wallets"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     user_id = Column(String(255), nullable=False, unique=True, index=True)
     email = Column(String(255), nullable=False, index=True)
 
@@ -187,7 +203,9 @@ class CreditWallet(Base):
 class CreditTransaction(Base):
     __tablename__ = "credit_transactions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     wallet_id = Column(
         UUID(as_uuid=True), ForeignKey("credit_wallets.id"), nullable=False
     )
@@ -242,7 +260,9 @@ class CreditTransaction(Base):
 class BOMIntegration(Base):
     __tablename__ = "bom_integrations"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     makrcave_project_id = Column(String(255), nullable=False, index=True)
     makrcave_user_id = Column(String(255), nullable=False, index=True)
 
@@ -259,7 +279,9 @@ class BOMIntegration(Base):
     failed_items = Column(Integer, default=0)
 
     # Mapping information
-    item_mappings = Column(JSONB, default={})  # MakrCave item ID -> Store product ID
+    item_mappings = Column(
+        JSONB, default={}
+    )  # MakrCave item ID -> Store product ID
     unmapped_items = Column(JSONB, default=[])  # Items that couldn't be mapped
 
     # Cart integration
@@ -282,14 +304,18 @@ class BOMIntegration(Base):
             "makrcave_project_id",
             "makrcave_user_id",
         ),
-        Index("ix_bom_integrations_status_created", "import_status", "created_at"),
+        Index(
+            "ix_bom_integrations_status_created", "import_status", "created_at"
+        ),
     )
 
 
 class QuickReorder(Base):
     __tablename__ = "quick_reorders"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+    )
     user_id = Column(String(255), nullable=False, index=True)
     makrcave_id = Column(
         String(255), nullable=True, index=True
@@ -300,7 +326,9 @@ class QuickReorder(Base):
     description = Column(Text)
 
     # Product list
-    products = Column(JSONB, default=[])  # Array of {product_id, quantity, notes}
+    products = Column(
+        JSONB, default=[]
+    )  # Array of {product_id, quantity, notes}
     total_items = Column(Integer, default=0)
     estimated_total = Column(Numeric(10, 2), default=0)
 

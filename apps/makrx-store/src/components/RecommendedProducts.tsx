@@ -2,23 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Product, RatingSummary } from '@/types';
 // Using inline SVGs instead of Heroicons
 
-interface RecommendedProduct {
-  id: number;
-  slug: string;
-  name: string;
-  price: number;
-  sale_price?: number;
-  images: string[];
-  rating?: {
-    average: number;
-    count: number;
-  };
-}
-
 interface RecommendedProductsProps {
-  products: RecommendedProduct[];
+  products: Product[];
   title?: string;
 }
 
@@ -43,9 +31,11 @@ export default function RecommendedProducts({
   );
 }
 
-function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
+function RecommendedProductCard({ product }: { product: Product }) {
   const effectivePrice = product.sale_price || product.price;
   const isOnSale = product.sale_price && product.sale_price < product.price;
+
+  const rating = typeof product.rating === 'object' ? product.rating : null;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
@@ -82,13 +72,13 @@ function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
         </Link>
 
         {/* Rating */}
-        {product.rating && (
+        {rating && (
           <div className="flex items-center gap-1 mb-2">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-3 h-3 ${i < Math.floor(product.rating!.average) ? 'text-yellow-400' : 'text-gray-300'}`}
+                  className={`w-3 h-3 ${i < Math.floor(rating.average) ? 'text-yellow-400' : 'text-gray-300'}`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -97,7 +87,7 @@ function RecommendedProductCard({ product }: { product: RecommendedProduct }) {
               ))}
             </div>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              ({product.rating.count})
+              ({rating.count})
             </span>
           </div>
         )}

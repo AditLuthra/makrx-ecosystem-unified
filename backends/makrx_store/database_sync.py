@@ -16,8 +16,13 @@ _RAW_DATABASE_URL = os.getenv(
     "postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem",
 )
 
-if _RAW_DATABASE_URL.startswith("postgresql://") and "+" not in _RAW_DATABASE_URL.split("://", 1)[0]:
-    DATABASE_URL = _RAW_DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
+if (
+    _RAW_DATABASE_URL.startswith("postgresql://")
+    and "+" not in _RAW_DATABASE_URL.split("://", 1)[0]
+):
+    DATABASE_URL = _RAW_DATABASE_URL.replace(
+        "postgresql://", "postgresql+psycopg://", 1
+    )
 else:
     DATABASE_URL = _RAW_DATABASE_URL
 
@@ -56,7 +61,9 @@ def create_tables():
     except Exception:
         pass
     if _parsed_url.get_backend_name() != "sqlite":
-        print("ℹ️ Skipping Base.metadata.create_all for non-SQLite backend; run Alembic migrations instead.")
+        print(
+            "ℹ️ Skipping Base.metadata.create_all for non-SQLite backend; run Alembic migrations instead."
+        )
         return
 
     Base.metadata.create_all(bind=engine)

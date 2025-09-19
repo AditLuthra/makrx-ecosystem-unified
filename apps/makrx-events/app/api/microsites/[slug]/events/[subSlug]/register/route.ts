@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { insertMicrositeRegistrationSchema } from '@shared/schema';
 
 const registrationSchema = z.object({
   userId: z.string().optional(), // May be null for guest registrations
@@ -29,7 +28,7 @@ const registrationSchema = z.object({
   ticketTierId: z.string().optional(), // For paid events
   quantity: z.number().min(1).max(10).default(1),
   couponCode: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // POST /api/microsites/[slug]/events/[subSlug]/register - Register for free event
@@ -136,7 +135,7 @@ export async function POST(
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 },
       );

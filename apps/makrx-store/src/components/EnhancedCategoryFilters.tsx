@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { X, Filter, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
-import { getAllFiltersForCategory, type CategoryFilter } from '@/data/categoryFilters';
+import { getAllFiltersForCategory } from '@/data/categoryFilters';
+import { ChevronDown, ChevronUp, Filter, SlidersHorizontal, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface FilterFacet {
   name: string;
@@ -172,7 +172,7 @@ function CategoryBasedFilters({
               const filter = categoryFilters.find((f) => f.id === filterId);
               const filterName = filter?.name || filterId;
 
-              return values.map((value: string) => {
+              return (values || []).map((value: string) => {
                 const option = filter?.options?.find((opt) => opt.value === value);
                 const displayValue = option?.label || value;
 
@@ -262,8 +262,6 @@ function CategoryBasedFilters({
                     onChange={(e) => {
                       if (e.target.value) {
                         handleFilterChange(filter.id, e.target.value, true);
-                      } else {
-                        removeFilter(filter.id);
                       }
                     }}
                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -312,6 +310,7 @@ function CategoryBasedFilters({
   );
 }
 
+// Main EnhancedCategoryFilters component
 export default function EnhancedCategoryFilters({
   facets,
   activeFilters,
@@ -395,7 +394,7 @@ export default function EnhancedCategoryFilters({
     if (onFilterChange) {
       onFilterChange({
         ...safeActiveFilters,
-        [filterType]: newValues.length > 0 ? newValues : undefined,
+        [filterType]: newValues.length > 0 ? newValues : [],
       });
     }
   };
@@ -403,7 +402,109 @@ export default function EnhancedCategoryFilters({
   const hasActiveFilters = Object.keys(activeFilters || {}).length > 0;
   const activeFilterCount = Object.values(activeFilters || {}).flat().length;
 
-  const FilterContent = () => (
+  return (
+    <>
+      {/* Mobile Filter Button */}
+      <button
+        onClick={onToggle}
+        className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+      >
+        <Filter className="h-4 w-4" />
+        <span className="text-sm font-medium">Filters</span>
+        {activeFilterCount > 0 && (
+          <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium px-2 py-0.5 rounded-full">
+            {activeFilterCount}
+          </span>
+        )}
+      </button>
+
+      {/* Desktop Left Rail */}
+      <div className={`hidden lg:block ${className}`}>
+        <div className="sticky top-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
+          <FilterContent
+            facets={facets}
+            activeFilters={activeFilters}
+            onFilterChange={onFilterChange}
+            onToggle={onToggle}
+            expandedSections={expandedSections}
+            setExpandedSections={setExpandedSections}
+            clearAllFilters={clearAllFilters}
+            removeFilter={removeFilter}
+            addFilter={addFilter}
+            hasActiveFilters={hasActiveFilters}
+            activeFilterCount={activeFilterCount}
+          />
+        </div>
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onToggle} />
+          <div className="absolute inset-y-0 right-0 flex max-w-full pl-10">
+            <div className="w-screen max-w-md">
+              <div className="h-full bg-white dark:bg-gray-800 shadow-xl">
+                <FilterContent
+                  facets={facets}
+                  activeFilters={activeFilters}
+                  onFilterChange={onFilterChange}
+                  onToggle={onToggle}
+                  expandedSections={expandedSections}
+                  setExpandedSections={setExpandedSections}
+                  clearAllFilters={clearAllFilters}
+                  removeFilter={removeFilter}
+                  addFilter={addFilter}
+                  hasActiveFilters={hasActiveFilters}
+                  activeFilterCount={activeFilterCount}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// FilterContent component (moved outside)
+interface FilterContentProps {
+  facets?: FilterFacet[];
+  activeFilters?: Record<string, string[]>;
+  onFilterChange?: (filters: Record<string, string[]>) => void;
+  onToggle?: () => void;
+  expandedSections: Set<string>;
+  setExpandedSections: React.Dispatch<React.SetStateAction<Set<string>>>;
+  clearAllFilters: () => void;
+  removeFilter: (filterType: string, value?: string) => void;
+  addFilter: (filterType: string, value: string) => void;
+  hasActiveFilters: boolean;
+  activeFilterCount: number;
+}
+
+function FilterContent({
+  facets,
+  activeFilters,
+  onFilterChange,
+  onToggle,
+  expandedSections,
+  setExpandedSections,
+  clearAllFilters,
+  removeFilter,
+  addFilter,
+  hasActiveFilters,
+  activeFilterCount,
+}: FilterContentProps) {
+  const toggleSection = (sectionName: string) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(sectionName)) {
+      newExpanded.delete(sectionName);
+    } else {
+      newExpanded.add(sectionName);
+    }
+    setExpandedSections(newExpanded);
+  };
+
+  return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -425,12 +526,14 @@ export default function EnhancedCategoryFilters({
               Clear All
             </button>
           )}
-          <button
-            onClick={onToggle}
-            className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          {onToggle && (
+            <button
+              onClick={onToggle}
+              className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -440,7 +543,7 @@ export default function EnhancedCategoryFilters({
           <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Active Filters</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters ?? {}).map(([key, values]) =>
-              values.map((value: string) => (
+              (values || []).map((value: string) => (
                 <span
                   key={`${key}-${value}`}
                   className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
@@ -519,45 +622,6 @@ export default function EnhancedCategoryFilters({
       </div>
     </div>
   );
-
-  return (
-    <>
-      {/* Mobile Filter Button */}
-      <button
-        onClick={onToggle}
-        className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-      >
-        <Filter className="h-4 w-4" />
-        <span className="text-sm font-medium">Filters</span>
-        {activeFilterCount > 0 && (
-          <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium px-2 py-0.5 rounded-full">
-            {activeFilterCount}
-          </span>
-        )}
-      </button>
-
-      {/* Desktop Left Rail */}
-      <div className={`hidden lg:block ${className}`}>
-        <div className="sticky top-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
-          <FilterContent />
-        </div>
-      </div>
-
-      {/* Mobile Drawer Overlay */}
-      {isOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onToggle} />
-          <div className="absolute inset-y-0 right-0 flex max-w-full pl-10">
-            <div className="w-screen max-w-md">
-              <div className="h-full bg-white dark:bg-gray-800 shadow-xl">
-                <FilterContent />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
 }
 
 // Mobile Filter Toggle Hook
@@ -569,15 +633,15 @@ export function useFiltersToggle() {
 
   // Show filters by default on desktop, hide on mobile
   useEffect(() => {
-    const checkScreenSize = () => {
-      const isDesktop = window.innerWidth >= 1024; // lg breakpoint
-      setIsFiltersOpen(isDesktop);
+    const handleResize = () => {
+      if (window.innerWidth >= 1024 && isFiltersOpen) {
+        closeFilters();
+      }
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isFiltersOpen]);
 
   // Close on escape key
   useEffect(() => {

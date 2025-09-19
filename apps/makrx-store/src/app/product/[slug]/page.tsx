@@ -20,12 +20,8 @@ import {
   X,
   Info,
 } from 'lucide-react';
-import {
-  useGetStoreProductBySlugQuery,
-  useGetStoreProductsQuery,
-  storeApi,
-} from '@/services/storeApi';
-import type { Product } from '@/types';
+import { storeApi } from '@/services/storeApi';
+import type { Product, Category } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import ProductReviews from '@/components/ProductReviews';
 
@@ -50,26 +46,48 @@ export default function ProductPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [showSpecifications, setShowSpecifications] = useState(false);
 
-  const {
-    data: product,
-    isLoading: productLoading,
-    error: productError,
-  } = useGetStoreProductBySlugQuery(slug, {
-    skip: !slug,
-  });
+  const [product, setProduct] = useState<Product | null>(null);
+  const [productLoading, setProductLoading] = useState(true);
+  const [productError, setProductError] = useState<Error | null>(null);
+  const [relatedProductsData, setRelatedProductsData] = useState<{ products: Product[]; total: number; page: number; per_page: number; pages: number } | null>(null);
 
-  const { data: relatedProductsData } = useGetStoreProductsQuery(
-    {
-      category_id: product?.category_id,
-      per_page: 4,
-    },
-    {
-      skip: !product?.category_id,
-    },
-  );
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!slug) return;
+      setProductLoading(true);
+      setProductError(null);
+      try {
+        const fetchedProduct = await storeApi.getProductBySlug(slug);
+        setProduct(fetchedProduct);
+      } catch (error: any) {
+        console.error('Failed to fetch product:', error);
+        setProductError(error);
+        setProduct(null);
+      } finally {
+        setProductLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [slug]);
 
-  const relatedProducts =
-    relatedProductsData?.products.filter((p) => p.id !== product?.id) || [];
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      if (!product?.category_id) return;
+      try {
+        const result = await storeApi.getProducts({
+          category_id: product.category_id,
+          per_page: 4,
+        });
+        setRelatedProductsData(result);
+      } catch (error) {
+        console.error('Failed to fetch related products:', error);
+        setRelatedProductsData(null);
+      }
+    };
+    fetchRelatedProducts();
+  }, [product?.category_id]);
+
+  const relatedProducts = relatedProductsData?.products.filter((p) => p.id !== product?.id) || [];
 
   // Ensure selectedImageIndex is valid when product changes
   useEffect(() => {
@@ -155,8 +173,8 @@ export default function ProductPage() {
     );
   }
 
-  const savingsAmount = product.sale_price ? product.price - product.sale_price : 0;
-  const savingsPercentage = product.sale_price
+  const savingsAmount = product.sale_price && product.price ? product.price - product.sale_price : 0;
+  const savingsPercentage = product.sale_price && product.price
     ? Math.round((savingsAmount / product.price) * 100)
     : 0;
 
@@ -172,7 +190,7 @@ export default function ProductPage() {
           <Link href="/catalog" className="hover:text-blue-600">
             Catalog
           </Link>
-          {product.category && (
+          {product.category && typeof product.category !== 'string' && (
             <>
               <ChevronRight className="h-4 w-4" />
               <Link href={`/catalog/${product.category.slug}`} className="hover:text-blue-600">
@@ -282,15 +300,15 @@ export default function ProductPage() {
               {/* Price */}
               <div className="flex items-center space-x-4 mb-6">
                 <span className="text-3xl font-bold text-gray-900">
-                  {formatPrice(product.effective_price, product.currency)}
+                  {formatPrice(product.effective_price || 0, product.currency)}
                 </span>
-                {product.sale_price && (
+                {product.sale_price && product.price && (
                   <>
                     <span className="text-xl text-gray-500 line-through">
                       {formatPrice(product.price, product.currency)}
                     </span>
                     <span className="text-lg text-green-600 font-semibold">
-                      Save {formatPrice(savingsAmount, product.currency)}
+                      {formatPrice(savingsAmount, product.currency)}
                     </span>
                   </>
                 )}
@@ -332,7 +350,7 @@ export default function ProductPage() {
                     .map(([key, value]) => (
                       <div key={key} className="flex justify-between py-2 border-b border-gray-100">
                         <span className="text-sm text-gray-600 capitalize">{key}:</span>
-                        <span className="text-sm font-medium text-gray-900">{value}</span>
+                        <span className="text-sm font-medium text-gray-900">{value as any}</span>
                       </div>
                     ))}
                 </div>
@@ -474,7 +492,7 @@ export default function ProductPage() {
                             className="flex justify-between py-2 border-b border-gray-100"
                           >
                             <span className="text-gray-600 capitalize">{key}:</span>
-                            <span className="font-medium text-gray-900">{value}</span>
+                            <span className="font-medium text-gray-900">{value as any}</span>
                           </div>
                         ))}
                       </div>
@@ -490,7 +508,7 @@ export default function ProductPage() {
                               className="flex justify-between py-2 border-b border-gray-100"
                             >
                               <span className="text-gray-600 capitalize">{key}:</span>
-                              <span className="font-medium text-gray-900">{value}</span>
+                              <span className="font-medium text-gray-900">{value as any}</span>
                             </div>
                           ))}
                         </div>
@@ -540,7 +558,7 @@ export default function ProductPage() {
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-gray-900">
-                        {formatPrice(relatedProduct.effective_price, relatedProduct.currency)}
+                        {relatedProduct.effective_price && formatPrice(relatedProduct.effective_price, relatedProduct.currency)}
                       </span>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />

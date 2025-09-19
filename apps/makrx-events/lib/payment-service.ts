@@ -1,7 +1,7 @@
+import { eventRegistrations, paymentTransactions } from '@shared/schema';
 import crypto from 'crypto';
-import { db } from './db';
-import { paymentTransactions, eventRegistrations } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { db } from './db';
 
 interface RazorpayOrderData {
   amount: number; // in paise
@@ -99,7 +99,7 @@ class PaymentService {
           registrationId,
           eventId,
           userId,
-          amount,
+          amount: amount.toString(),
           currency,
           status: 'pending',
           paymentMethod,
@@ -130,13 +130,20 @@ class PaymentService {
           .set({
             gatewayOrderId: order.id,
             metadata: {
-              ...transaction.metadata,
+              ...(typeof transaction.metadata === 'object' && transaction.metadata !== null
+                ? transaction.metadata
+                : {}),
               razorpayOrderId: order.id,
             },
           })
           .where(eq(paymentTransactions.id, transaction.id));
 
-        return { orderId: order.id, amount: order.amount, currency: order.currency, transactionId: receipt };
+        return {
+          orderId: order.id,
+          amount: order.amount,
+          currency: order.currency,
+          transactionId: receipt,
+        };
       } else if (paymentMethod === 'upi') {
         // Generate UPI payment URL
         const upiUrl = this.generateUPIUrl({
@@ -205,20 +212,34 @@ class PaymentService {
             gatewayPaymentId: paymentData.razorpay_payment_id || paymentData.paymentId,
             completedAt: new Date(),
             metadata: {
-              ...transaction.metadata,
+              ...(typeof transaction.metadata === 'object' && transaction.metadata !== null
+                ? transaction.metadata
+                : {}),
               paymentResponse: paymentData,
             },
           })
           .where(eq(paymentTransactions.id, transaction.id));
 
         // Update registration status
-        const registrationId = transaction.metadata?.registrationId;
+        let registrationId: string | undefined = undefined;
+        if (
+          transaction.metadata &&
+          typeof transaction.metadata === 'object' &&
+          'registrationId' in transaction.metadata
+        ) {
+          registrationId = (transaction.metadata as any).registrationId;
+        }
         if (registrationId) {
           await db
             .update(eventRegistrations)
             .set({
               paymentStatus: 'paid',
-              amountPaid: transaction.amount,
+              amountPaid:
+                typeof transaction.amount === 'string'
+                  ? transaction.amount
+                  : transaction.amount
+                    ? (transaction.amount as any).toString()
+                    : undefined,
             })
             .where(eq(eventRegistrations.id, registrationId));
         }
@@ -304,7 +325,9 @@ class PaymentService {
           .set({
             status: 'refunded',
             metadata: {
-              ...transaction.metadata,
+              ...(typeof transaction.metadata === 'object' && transaction.metadata !== null
+                ? transaction.metadata
+                : {}),
               refund,
             },
           })
@@ -353,8 +376,10 @@ class PaymentService {
           analytics.pendingPayments++;
         }
 
-        analytics.paymentMethods[transaction.paymentMethod] =
-          (analytics.paymentMethods[transaction.paymentMethod] || 0) + 1;
+        if (transaction.paymentMethod) {
+          analytics.paymentMethods[transaction.paymentMethod] =
+            (analytics.paymentMethods[transaction.paymentMethod] || 0) + 1;
+        }
       }
 
       return analytics;

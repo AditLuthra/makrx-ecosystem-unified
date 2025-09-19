@@ -20,7 +20,7 @@ const keycloak: KeycloakInstance = new Keycloak({
   clientId: CLIENT_ID,
 });
 
-const redirectToSSO = (): void => {
+export const redirectToSSO = (): void => {
   if (!isClient) return;
   keycloak.login();
 };
@@ -191,6 +191,7 @@ export const auth = {
   hasScope,
   addAuthListener,
   removeAuthListener,
+  redirectToSSO,
 };
 
 export default auth;

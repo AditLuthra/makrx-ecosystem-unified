@@ -1,12 +1,12 @@
 import {
-  ServiceOrder,
   Quote,
+  ServiceOrder,
   StatusUpdate,
 } from "@/contexts/ServiceOrderContext";
 import { createStoreOrderPayload } from "./utils";
 
 type AuthHeaderBuilder = (
-  base?: Record<string, string>,
+  base?: Record<string, string>
 ) => Promise<Record<string, string>>;
 
 class ServicesAPI {
@@ -27,7 +27,7 @@ class ServicesAPI {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<T> {
     let headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -53,7 +53,7 @@ class ServicesAPI {
 
   private async storeRequest<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<T> {
     let headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -87,7 +87,7 @@ class ServicesAPI {
     // Create corresponding order in main store
     try {
       const storeOrderPayload = createStoreOrderPayload(order);
-      const storeOrder = await this.storeRequest("/orders", {
+      const storeOrder = await this.storeRequest<{ id?: string }>("/orders", {
         method: "POST",
         body: JSON.stringify(storeOrderPayload),
       });
@@ -124,7 +124,7 @@ class ServicesAPI {
 
   async updateOrder(
     id: string,
-    updates: Partial<ServiceOrder>,
+    updates: Partial<ServiceOrder>
   ): Promise<ServiceOrder> {
     const order = await this.request<ServiceOrder>(`/orders/${id}`, {
       method: "PATCH",
@@ -147,13 +147,13 @@ class ServicesAPI {
   }
 
   async acceptQuote(
-    quoteId: string,
+    quoteId: string
   ): Promise<{ order: ServiceOrder; quote: Quote }> {
     return this.request<{ order: ServiceOrder; quote: Quote }>(
       `/quotes/${quoteId}/accept`,
       {
         method: "POST",
-      },
+      }
     );
   }
 
@@ -165,14 +165,14 @@ class ServicesAPI {
   // Status Updates
   async addStatusUpdate(
     orderId: string,
-    update: Omit<StatusUpdate, "id">,
+    update: Omit<StatusUpdate, "id">
   ): Promise<StatusUpdate> {
     const statusUpdate = await this.request<StatusUpdate>(
       `/orders/${orderId}/status`,
       {
         method: "POST",
         body: JSON.stringify(update),
-      },
+      }
     );
 
     // Sync with store
@@ -184,7 +184,7 @@ class ServicesAPI {
   // File Upload
   async uploadFile(
     file: File,
-    orderType: string,
+    orderType: string
   ): Promise<{ url: string; previewUrl?: string }> {
     const formData = new FormData();
     formData.append("file", file);
@@ -252,7 +252,7 @@ class ServicesAPI {
   async updateJobStatus(
     jobId: string,
     status: string,
-    notes?: string,
+    notes?: string
   ): Promise<void> {
     await this.request(`/provider/jobs/${jobId}/status`, {
       method: "PATCH",
@@ -275,7 +275,7 @@ class ServicesAPI {
   async updateProviderInventory(
     materialId: string,
     quantity: number,
-    action: "add" | "subtract",
+    action: "add" | "subtract"
   ): Promise<void> {
     await this.request(`/provider/inventory/${materialId}`, {
       method: "PATCH",
@@ -286,9 +286,14 @@ class ServicesAPI {
   // Cross-platform synchronization
   private async syncOrderWithStore(order: ServiceOrder | { id: string }) {
     try {
-      if ("status" in order || "status_updates" in order) {
-        const fullOrder =
-          "status" in order ? order : await this.getOrder(order.id);
+      if (
+        (order as ServiceOrder).status !== undefined ||
+        (order as ServiceOrder).status_updates !== undefined
+      ) {
+        const fullOrder: ServiceOrder =
+          (order as ServiceOrder).status !== undefined
+            ? (order as ServiceOrder)
+            : await this.getOrder(order.id);
         const storeOrderPayload = createStoreOrderPayload(fullOrder);
 
         if (fullOrder.store_order_id) {
@@ -309,7 +314,7 @@ class ServicesAPI {
 
   // Real-time updates
   setupWebSocketConnection(
-    onMessage: (message: any) => void,
+    onMessage: (message: any) => void
   ): WebSocket | null {
     try {
       const wsUrl = this.baseUrl.replace("http", "ws").replace("/api", "/ws");

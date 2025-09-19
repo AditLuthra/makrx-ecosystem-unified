@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, Clock, TrendingUp, Package, User, ArrowRight, X } from 'lucide-react';
 import { products, categories } from '@/data/products';
@@ -65,39 +66,45 @@ export default function SmartSearch({
   const router = useRouter();
 
   // Synonyms and query understanding
-  const synonymMap: { [key: string]: string[] } = {
-    'pla-lw': ['lightweight pla', 'pla lw', 'light pla'],
-    fdm: ['fused deposition modeling', 'fused deposition', 'filament printer'],
-    sla: ['stereolithography', 'resin printer', 'resin'],
-    cnc: ['computer numerical control', 'milling', 'machining'],
-    pcb: ['printed circuit board', 'circuit board', 'board'],
-    mcu: ['microcontroller', 'microcontroller unit', 'controller'],
-    iot: ['internet of things', 'connected device', 'smart device'],
-  };
+  const synonymMap = useMemo(
+    () => ({
+      'pla-lw': ['lightweight pla', 'pla lw', 'light pla'],
+      fdm: ['fused deposition modeling', 'fused deposition', 'filament printer'],
+      sla: ['stereolithography', 'resin printer', 'resin'],
+      cnc: ['computer numerical control', 'milling', 'machining'],
+      pcb: ['printed circuit board', 'circuit board', 'board'],
+      mcu: ['microcontroller', 'microcontroller unit', 'controller'],
+      iot: ['internet of things', 'connected device', 'smart device'],
+    }),
+    [],
+  );
 
-  // Expand query with synonyms
-  const expandQuery = (searchTerm: string): string[] => {
-    const terms = [searchTerm.toLowerCase()];
+  const expandQuery = useCallback(
+    (searchTerm: string): string[] => {
+      const terms = [searchTerm.toLowerCase()];
 
-    Object.entries(synonymMap).forEach(([key, synonyms]) => {
-      if (synonyms.some((synonym) => searchTerm.toLowerCase().includes(synonym))) {
-        terms.push(key);
+      Object.entries(synonymMap).forEach(([key, synonyms]) => {
+        if (synonyms.some((synonym) => searchTerm.toLowerCase().includes(synonym))) {
+          terms.push(key);
       }
       if (searchTerm.toLowerCase().includes(key)) {
         terms.push(...synonyms);
       }
-    });
+      });
 
-    return terms;
-  };
+      return terms;
+    },
+    [synonymMap],
+  );
 
   // Smart search function
-  const performSearch = async (searchTerm: string): Promise<SearchResult[]> => {
-    if (!searchTerm.trim()) return [];
+  const performSearch = useCallback(
+    async (searchTerm: string): Promise<SearchResult[]> => {
+      if (!searchTerm.trim()) return [];
 
-    setIsLoading(true);
-    const results: SearchResult[] = [];
-    const expandedTerms = expandQuery(searchTerm);
+      setIsLoading(true);
+      const results: SearchResult[] = [];
+      const expandedTerms = expandQuery(searchTerm);
 
     // Search products
     const foundProducts = products
@@ -118,7 +125,7 @@ export default function SmartSearch({
       const productCategory = resolveProductCategory(product.category);
       results.push({
         type: 'product',
-        id: product.id,
+        id: String(product.id),
         title: product.name,
         subtitle: `${brandLabel}${formatCurrency(product.price, product.currency)}`,
         image: product.images?.[0] ?? undefined,
@@ -142,7 +149,7 @@ export default function SmartSearch({
     foundCategories.forEach((category) => {
       results.push({
         type: 'category',
-        id: category.id,
+        id: String(category.id),
         title: category.name,
         subtitle: `${resolveCategoryProductCount(category)} products`,
         url: `/catalog/${category.slug}`,
@@ -194,9 +201,11 @@ export default function SmartSearch({
       });
     }
 
-    setIsLoading(false);
-    return results;
-  };
+      setIsLoading(false);
+      return results;
+    },
+    [expandQuery],
+  );
 
   // Handle search with debouncing
   useEffect(() => {
@@ -212,9 +221,35 @@ export default function SmartSearch({
     }, 200);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [performSearch, query]);
 
   // Handle keyboard navigation
+  // Auto focus
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+
+  const handleResultClick = useCallback(
+    (result: SearchResult) => {
+      router.push(result.url);
+      setIsOpen(false);
+      setQuery('');
+      onClose?.();
+    },
+    [onClose, router],
+  );
+
+  const handleSearch = useCallback(() => {
+    if (query.trim()) {
+      router.push(`/catalog?q=${encodeURIComponent(query.trim())}`);
+      setIsOpen(false);
+      setQuery('');
+      onClose?.();
+    }
+  }, [onClose, query, router]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -247,30 +282,7 @@ export default function SmartSearch({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex, results, query]);
-
-  // Auto focus
-  useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus]);
-
-  const handleResultClick = (result: SearchResult) => {
-    router.push(result.url);
-    setIsOpen(false);
-    setQuery('');
-    onClose?.();
-  };
-
-  const handleSearch = () => {
-    if (query.trim()) {
-      router.push(`/catalog?q=${encodeURIComponent(query.trim())}`);
-      setIsOpen(false);
-      setQuery('');
-      onClose?.();
-    }
-  };
+  }, [handleResultClick, handleSearch, isOpen, onClose, query, results, selectedIndex]);
 
   const handleRecentSearch = (search: string) => {
     setQuery(search);
@@ -381,10 +393,12 @@ export default function SmartSearch({
                     }`}
                   >
                     {result.image ? (
-                      <img
+                      <Image
                         src={result.image}
                         alt={result.title}
-                        className="w-10 h-10 object-cover rounded-lg mr-3"
+                        width={40}
+                        height={40}
+                        className="mr-3 h-10 w-10 rounded-lg object-cover"
                       />
                     ) : (
                       <div

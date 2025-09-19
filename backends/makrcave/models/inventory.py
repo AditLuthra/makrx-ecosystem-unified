@@ -15,6 +15,7 @@ from datetime import datetime
 import enum
 
 from ..database import Base
+from .skill import UserSkill, SkillRequest
 
 
 class ItemStatus(enum.Enum):
@@ -176,9 +177,35 @@ class Makerspace(Base):
 
     # Settings
     settings = Column(JSON)  # Store makerspace-specific settings
+    makerspace_settings = relationship(
+        "MakerspaceSettings",
+        back_populates="makerspace",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+    membership_plans = relationship(
+        "MembershipPlan",
+        back_populates="makerspace",
+        cascade="all, delete-orphan",
+    )
+    skills = relationship(
+        "Skill",
+        back_populates="makerspace",
+        cascade="all, delete-orphan",
+    )
 
     # Relationships
     inventory_items = relationship("InventoryItem", back_populates="makerspace")
+    announcements = relationship(
+        "Announcement",
+        back_populates="makerspace",
+        cascade="all, delete-orphan",
+    )
+    filament_rolls = relationship(
+        "FilamentRoll",
+        back_populates="makerspace",
+        cascade="all, delete-orphan",
+    )
 
 
 class User(Base):
@@ -197,8 +224,17 @@ class User(Base):
     last_login = Column(DateTime)
     is_active = Column(Boolean, default=True)
 
-
-
+    # Reverse relationships for skills system
+    skills = relationship(
+        "UserSkill",
+        back_populates="user",
+        foreign_keys=[UserSkill.user_id],
+    )
+    skill_requests = relationship(
+        "SkillRequest",
+        back_populates="user",
+        foreign_keys=[SkillRequest.user_id],
+    )
 
 
 class Job(Base):

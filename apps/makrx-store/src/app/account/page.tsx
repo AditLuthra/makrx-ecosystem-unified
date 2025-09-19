@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import {
@@ -174,10 +175,12 @@ export default function AccountDashboard() {
           <div className="bg-gradient-to-r from-store-primary to-store-secondary rounded-xl p-6 text-white mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <img
+                <Image
                   src={user.profileImage}
                   alt={user.name}
-                  className="w-16 h-16 rounded-full border-2 border-white/20"
+                  width={64}
+                  height={64}
+                  className="h-16 w-16 rounded-full border-2 border-white/20 object-cover"
                 />
                 <div>
                   <h2 className="text-2xl font-bold">{user.name}</h2>
@@ -400,10 +403,12 @@ export default function AccountDashboard() {
                 <div className="space-y-3">
                   {wishlistItems.slice(0, 3).map((item) => (
                     <div key={item.id} className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={item.product.images[0]}
                         alt={item.product.name}
-                        className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 rounded-lg border border-gray-200 object-cover"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-store-text text-sm line-clamp-1">

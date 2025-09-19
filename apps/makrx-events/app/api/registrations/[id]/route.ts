@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { registrations, subEvents, microsites, users } from '@shared/schema';
+import { microsites, registrations, subEvents, users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/registrations/[id] - Get registration details
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -44,12 +44,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Calculate payment expiry (24 hours from registration for pending payments)
-    const paymentExpiresAt =
-      registration.status === 'pending'
-        ? new Date(
-            new Date(registration.registeredAt).getTime() + 24 * 60 * 60 * 1000,
-          ).toISOString()
-        : null;
+    let paymentExpiresAt: string | null = null;
+    if (registration.status === 'pending' && registration.registeredAt) {
+      paymentExpiresAt = new Date(
+        new Date(registration.registeredAt).getTime() + 24 * 60 * 60 * 1000,
+      ).toISOString();
+    }
 
     const response = {
       registration: {

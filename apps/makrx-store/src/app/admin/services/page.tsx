@@ -111,7 +111,7 @@ export default function AdminServices() {
         const serviceName = rawService
           .split(' ')
           .filter(Boolean)
-          .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+                    .map((segment: string) => segment.charAt(0).toUpperCase() + segment.slice(1))
           .join(' ');
 
         const layerHeight = specs.layerHeight ?? specs.layer_height;

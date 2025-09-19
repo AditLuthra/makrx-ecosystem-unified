@@ -1,8 +1,8 @@
-import QRCode from 'qrcode';
+import { eventCheckIns, qrCodes, userActivities } from '@shared/schema';
+import { and, eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import QRCode from 'qrcode';
 import { db } from './db';
-import { qrCodes, eventCheckIns, userActivities } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
 
 export interface QRCodeData {
   eventId: string;
@@ -89,6 +89,10 @@ export class QRCodeService {
       const parsed = JSON.parse(qrCodeData);
       const { id, code, type, event: eventId, session: sessionId, user: userId } = parsed;
 
+      if (!userId) {
+        return { success: false, message: 'Invalid QR code: missing user' };
+      }
+
       // Find QR code record
       const [qrCodeRecord] = await db
         .select()
@@ -159,7 +163,13 @@ export class QRCodeService {
   }
 
   static async getUserQRCodes(userId: string, eventId?: string) {
-    let query = db
+    const conditions = [eq(qrCodes.userId, userId)];
+
+    if (eventId) {
+      conditions.push(eq(qrCodes.eventId, eventId));
+    }
+
+    const query = db
       .select({
         id: qrCodes.id,
         eventId: qrCodes.eventId,
@@ -172,13 +182,7 @@ export class QRCodeService {
         createdAt: qrCodes.createdAt,
       })
       .from(qrCodes)
-      .where(eq(qrCodes.userId, userId));
-
-    if (eventId) {
-      query = query.where(and(eq(qrCodes.userId, userId), eq(qrCodes.eventId, eventId)));
-    } else {
-      query = query.where(eq(qrCodes.userId, userId));
-    }
+      .where(and(...conditions));
 
     return await query.orderBy(qrCodes.createdAt);
   }
@@ -201,8 +205,8 @@ export class QRCodeService {
     const newQR = await this.generateQRCode(
       {
         eventId: existingQR.eventId,
-        sessionId: existingQR.sessionId || undefined,
-        userId: existingQR.userId,
+        sessionId: existingQR.sessionId ?? undefined,
+        userId: existingQR.userId ?? '',
         type: existingQR.type as 'event' | 'session',
       },
       options,

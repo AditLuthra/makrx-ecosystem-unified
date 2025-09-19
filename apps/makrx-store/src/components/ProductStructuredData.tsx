@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { RatingSummary } from '@/types';
 
 interface ProductStructuredDataProps {
   product: {
@@ -12,10 +13,7 @@ interface ProductStructuredDataProps {
     images: string[];
     currency: string;
     stock_qty: number;
-    rating?: {
-      average: number;
-      count: number;
-    };
+    rating?: RatingSummary;
   };
   effectivePrice: number;
 }

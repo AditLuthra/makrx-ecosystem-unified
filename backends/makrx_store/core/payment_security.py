@@ -112,7 +112,10 @@ class WebhookSecurityVerifier:
 
             # Check timestamp (prevent replay attacks)
             current_time = datetime.utcnow().timestamp()
-            if abs(current_time - timestamp) > PaymentSecurityConfig.WEBHOOK_TIMEOUT:
+            if (
+                abs(current_time - timestamp)
+                > PaymentSecurityConfig.WEBHOOK_TIMEOUT
+            ):
                 raise Exception("Webhook timestamp too old")
 
             # Verify signature
@@ -249,7 +252,9 @@ class IdempotentPaymentProcessor:
             logger.error(f"Payment event processing failed: {e}")
             raise Exception(f"Payment processing failed: {str(e)}")
 
-    async def _process_stripe_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+    async def _process_stripe_event(
+        self, event: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Process Stripe webhook events"""
         event_type = event.get("type")
         data_object = event.get("data", {}).get("object", {})
@@ -270,7 +275,9 @@ class IdempotentPaymentProcessor:
             logger.info(f"Unhandled Stripe event type: {event_type}")
             return {"status": "ignored", "event_type": event_type}
 
-    async def _process_razorpay_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+    async def _process_razorpay_event(
+        self, event: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Process Razorpay webhook events"""
         event_type = event.get("event")
         payload = event.get("payload", {})
@@ -393,7 +400,9 @@ class SecureRefundManager:
         """
         try:
             # Verify admin permissions
-            if not await self._verify_refund_authorization(admin_user_id, mfa_token):
+            if not await self._verify_refund_authorization(
+                admin_user_id, mfa_token
+            ):
                 raise Exception("Refund authorization failed")
 
             # Rate limiting
@@ -468,7 +477,9 @@ class SecureRefundManager:
             }
 
             if amount:
-                refund_params["amount"] = int(amount * 100)  # Stripe uses cents
+                refund_params["amount"] = int(
+                    amount * 100
+                )  # Stripe uses cents
 
             refund = self.stripe_client.Refund.create(**refund_params)
 
@@ -488,12 +499,18 @@ class SecureRefundManager:
     ) -> Dict[str, Any]:
         """Process Razorpay refund"""
         try:
-            refund_data = {"notes": {"reason": reason, "processed_by": "makrx_admin"}}
+            refund_data = {
+                "notes": {"reason": reason, "processed_by": "makrx_admin"}
+            }
 
             if amount:
-                refund_data["amount"] = int(amount * 100)  # Razorpay uses paise
+                refund_data["amount"] = int(
+                    amount * 100
+                )  # Razorpay uses paise
 
-            refund = self.razorpay_client.payment.refund(payment_id, refund_data)
+            refund = self.razorpay_client.payment.refund(
+                payment_id, refund_data
+            )
 
             return {
                 "refund_id": refund["id"],

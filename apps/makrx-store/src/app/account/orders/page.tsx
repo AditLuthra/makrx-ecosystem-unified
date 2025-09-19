@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import WriteReviewModal, { ReviewData } from '@/components/WriteReviewModal';
@@ -433,10 +434,12 @@ export default function AccountOrdersPage() {
                   <div className="space-y-3 mb-4">
                     {order.items.map((item, index) => (
                       <div key={item.id} className="flex items-center gap-3">
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
-                          className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 rounded-lg border border-gray-200 object-cover"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-store-text text-sm line-clamp-1">

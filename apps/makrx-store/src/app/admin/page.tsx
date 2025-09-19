@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { withAuth } from '@/contexts/AuthContext';
-import { storeApi, type Product, type Category, type AdminStats, formatPrice } from '@/services/storeApi';
+import { storeApi, type AdminStats, formatPrice } from '@/services/storeApi';
+import type { Product, Category } from '@/types';
 import {
   Package,
   Plus,
@@ -34,11 +36,7 @@ function AdminPortal() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    loadAdminData();
-  }, [currentPage, searchQuery, selectedCategory]);
-
-  const loadAdminData = async () => {
+  const loadAdminData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -73,14 +71,18 @@ function AdminPortal() {
 
       const productsData = await storeApi.getProducts(filters);
       setProducts(productsData.products);
-      setTotalPages(Math.ceil(productsData.total / 20));
+      setTotalPages(Math.ceil((productsData.total ?? 0) / 20));
     } catch (err) {
       console.error('Failed to load admin data:', err);
       setError('Failed to load admin data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, searchQuery, selectedCategory]);
+
+  useEffect(() => {
+    loadAdminData();
+  }, [loadAdminData]);
 
   const handleDeleteProduct = async (productId: number) => {
     if (!confirm('Are you sure you want to delete this product?')) {
@@ -323,9 +325,11 @@ function AdminPortal() {
                       <tr key={product.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <img
+                            <Image
                               src={product.images[0] || '/placeholder.svg'}
                               alt={product.name}
+                              width={40}
+                              height={40}
                               className="h-10 w-10 rounded-lg object-cover"
                             />
                             <div className="ml-4">
@@ -338,13 +342,15 @@ function AdminPortal() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900">
-                            {product.category?.name || 'Uncategorized'}
+                            {typeof product.category === 'object' && product.category?.name
+                              ? product.category.name
+                              : 'Uncategorized'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <span className="font-medium text-gray-900">
-                              {formatPrice(product.effective_price, product.currency)}
+                              {formatPrice(product.effective_price || 0, product.currency)}
                             </span>
                             {product.sale_price && product.sale_price < product.price && (
                               <div className="text-xs text-gray-500 line-through">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -61,15 +61,7 @@ export default function WishlistPage() {
   const [removing, setRemoving] = useState<{ [key: number]: boolean }>({});
   const [addingToCart, setAddingToCart] = useState<{ [key: number]: boolean }>({});
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login?redirect=/account/wishlist');
-      return;
-    }
-    loadWishlist();
-  }, [isAuthenticated, router]);
-
-  const loadWishlist = async () => {
+  const loadWishlist = useCallback(async () => {
     try {
       setLoading(true);
       // Mock API call - replace with actual API
@@ -119,10 +111,18 @@ export default function WishlistPage() {
       }, 1000);
     } catch (error) {
       console.error('Failed to load wishlist:', error);
-      addNotification('Failed to load wishlist', 'error');
+      addNotification({ title: 'Error', message: 'Failed to load wishlist', type: 'error' });
       setLoading(false);
     }
-  };
+  }, [addNotification]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/account/wishlist');
+      return;
+    }
+    loadWishlist();
+  }, [isAuthenticated, loadWishlist, router]);
 
   const removeFromWishlist = async (itemId: number) => {
     setRemoving((prev) => ({ ...prev, [itemId]: true }));
@@ -130,9 +130,9 @@ export default function WishlistPage() {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 500));
       setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
-      addNotification('Item removed from wishlist', 'success');
+      addNotification({ title: 'Success', message: 'Item removed from wishlist', type: 'success' });
     } catch (error) {
-      addNotification('Failed to remove item', 'error');
+      addNotification({ title: 'Error', message: 'Failed to remove item', type: 'error' });
     } finally {
       setRemoving((prev) => ({ ...prev, [itemId]: false }));
     }
@@ -143,9 +143,9 @@ export default function WishlistPage() {
     try {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 800));
-      addNotification('Item added to cart', 'success');
+      addNotification({ title: 'Success', message: 'Item added to cart', type: 'success' });
     } catch (error) {
-      addNotification('Failed to add to cart', 'error');
+      addNotification({ title: 'Error', message: 'Failed to add to cart', type: 'error' });
     } finally {
       setAddingToCart((prev) => ({ ...prev, [productId]: false }));
     }
@@ -164,7 +164,7 @@ export default function WishlistPage() {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      addNotification('Wishlist link copied to clipboard', 'success');
+      addNotification({ title: 'Success', message: 'Wishlist link copied to clipboard', type: 'success' });
     }
   };
 

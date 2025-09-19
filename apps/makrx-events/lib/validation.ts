@@ -48,7 +48,7 @@ export const createTournamentSchema = z.object({
 
 export const completeMatchSchema = z.object({
   winnerId: idSchema,
-  score: z.record(z.any()).optional(),
+  score: z.record(z.string(), z.any()).optional(),
 });
 
 // Communication validation schemas
@@ -65,7 +65,7 @@ export const createCommunicationSchema = z.object({
 export const createExportSchema = z.object({
   type: z.enum(['attendees', 'payments', 'analytics', 'certificates']),
   format: z.enum(['csv', 'xlsx', 'pdf']),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   includeFields: z.array(z.string()).optional(),
   eventId: idSchema,
 });

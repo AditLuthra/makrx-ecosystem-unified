@@ -1,25 +1,5 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Link from "next/link";
-import {
-  Scissors,
-  Upload,
-  FileText,
-  Zap,
-  Shield,
-  Clock,
-  CheckCircle,
-  ArrowRight,
-  Star,
-  AlertCircle,
-  ArrowLeft,
-  Wrench,
-  Settings,
-  Package,
-  DollarSign,
-  Info,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,14 +8,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useServiceOrders } from "@/contexts/ServiceOrderContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useServiceOrders } from "@/contexts/ServiceOrderContext";
 import {
-  validateSVGFile,
-  formatFileSize,
   calculateEstimatedPrice,
+  formatFileSize,
+  validateSVGFile,
 } from "@/lib/utils";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  FileText,
+  Info,
+  Package,
+  Scissors,
+  Settings,
+  Shield,
+  Upload,
+  Wrench,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useRef, useState } from "react";
 
 const materials = [
   {
@@ -116,10 +110,10 @@ export default function LaserEngravingPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState(materials[0]);
   const [selectedThickness, setSelectedThickness] = useState(
-    materials[0].thickness[0],
+    materials[0].thickness[0]
   );
   const [selectedServiceType, setSelectedServiceType] = useState(
-    serviceTypes[1],
+    serviceTypes[1]
   );
   const [quantity, setQuantity] = useState(1);
   const [priority, setPriority] = useState<"normal" | "rush">("normal");
@@ -127,6 +121,10 @@ export default function LaserEngravingPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [fileAnalysis, setFileAnalysis] = useState<any>(null);
   const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<{
+    url: string;
+    previewUrl?: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -135,7 +133,7 @@ export default function LaserEngravingPage() {
     if (!validation.isValid) {
       showError(
         "Invalid File",
-        validation.error || "Please select a valid SVG file",
+        validation.error || "Please select a valid SVG file"
       );
       return;
     }
@@ -145,6 +143,7 @@ export default function LaserEngravingPage() {
 
     try {
       const uploadResult = await uploadFile(file, "engraving");
+      setUploadedFile(uploadResult);
 
       // Mock file analysis - in production this would be real SVG analysis
       const mockAnalysis = {
@@ -165,7 +164,7 @@ export default function LaserEngravingPage() {
         selectedMaterial.name,
         quantity,
         undefined,
-        mockAnalysis.area,
+        mockAnalysis.area
       );
       setEstimatedPrice(price);
 
@@ -202,7 +201,7 @@ export default function LaserEngravingPage() {
         material.name,
         quantity,
         undefined,
-        fileAnalysis.area,
+        fileAnalysis.area
       );
       setEstimatedPrice(price);
     }
@@ -217,17 +216,17 @@ export default function LaserEngravingPage() {
         selectedMaterial.name,
         newQuantity,
         undefined,
-        fileAnalysis.area,
+        fileAnalysis.area
       );
       setEstimatedPrice(price);
     }
   };
 
   const handlePlaceOrder = async () => {
-    if (!selectedFile || !fileAnalysis || !estimatedPrice) {
+    if (!selectedFile || !fileAnalysis || !estimatedPrice || !uploadedFile) {
       showError(
         "Missing Information",
-        "Please upload a design and wait for analysis",
+        "Please upload a design and wait for analysis"
       );
       return;
     }
@@ -235,16 +234,20 @@ export default function LaserEngravingPage() {
     try {
       const order = await createOrder({
         service_type: "engraving",
+        file_url: uploadedFile.url,
         file_name: selectedFile.name,
         file_size: selectedFile.size,
         file_type: selectedFile.type,
+        preview_url: uploadedFile.previewUrl,
         material: selectedMaterial.name,
         color_finish: selectedThickness,
         quantity: quantity,
         priority: priority,
-        dimensions_x: fileAnalysis.dimensions.width,
-        dimensions_y: fileAnalysis.dimensions.height,
-        dimensions_z: parseFloat(selectedThickness.replace("mm", "")),
+        dimensions: {
+          x: fileAnalysis.dimensions.width,
+          y: fileAnalysis.dimensions.height,
+          z: parseFloat(selectedThickness.replace("mm", "")),
+        },
         base_price: estimatedPrice,
         material_cost: fileAnalysis.area * (selectedMaterial.price / 100),
         labor_cost: estimatedPrice * 0.4,
@@ -259,13 +262,14 @@ export default function LaserEngravingPage() {
 
       success(
         "Order Placed",
-        "Your laser engraving order has been submitted successfully!",
+        "Your laser engraving order has been submitted successfully!"
       );
 
       // Reset form
       setSelectedFile(null);
       setFileAnalysis(null);
       setEstimatedPrice(null);
+      setUploadedFile(null);
       setCustomerNotes("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";

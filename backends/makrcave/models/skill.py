@@ -95,6 +95,11 @@ class Skill(Base):
     # Skill requests
     skill_requests = relationship("SkillRequest", back_populates="skill")
 
+    # Machine access and certifications relationships
+    access_rules = relationship("MachineAccessRule", back_populates="skill")
+    certifications = relationship("UserCertification", back_populates="skill")
+    assessments = relationship("SkillAssessment", back_populates="skill")
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -107,7 +112,7 @@ class UserSkill(Base):
 
     # User relationship
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", back_populates="skills")
+    user = relationship("User", back_populates="skills", foreign_keys=[user_id])
 
     # Skill relationship
     skill_id = Column(String, ForeignKey("skills.id"), nullable=False)
@@ -138,7 +143,7 @@ class SkillRequest(Base):
 
     # User requesting the skill
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", back_populates="skill_requests")
+    user = relationship("User", back_populates="skill_requests", foreign_keys=[user_id])
 
     # Skill being requested
     skill_id = Column(String, ForeignKey("skills.id"), nullable=False)
@@ -169,7 +174,7 @@ class SkillAuditLog(Base):
 
     # Who was affected
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User")
+    user = relationship("User", foreign_keys=[user_id])
 
     # Which skill
     skill_id = Column(String, ForeignKey("skills.id"), nullable=False)

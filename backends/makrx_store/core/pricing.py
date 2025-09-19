@@ -23,7 +23,9 @@ class PricingEngine:
 
     def __init__(self):
         self.setup_fee = Decimal(str(settings.PRICE_SETUP_FEE))
-        self.material_rates = {k: Decimal(str(v)) for k, v in MATERIAL_RATES.items()}
+        self.material_rates = {
+            k: Decimal(str(v)) for k, v in MATERIAL_RATES.items()
+        }
         self.material_densities = MATERIAL_DENSITIES.copy()
         self.quality_multipliers = QUALITY_MULTIPLIERS.copy()
 
@@ -85,14 +87,20 @@ class PricingEngine:
 
             # Calculate machine time cost (based on print time)
             machine_rate_per_minute = Decimal("0.50")  # ₹0.50 per minute
-            machine_cost = Decimal(str(print_time_minutes)) * machine_rate_per_minute
+            machine_cost = (
+                Decimal(str(print_time_minutes)) * machine_rate_per_minute
+            )
 
             # Calculate labor cost (setup, finishing, quality check)
-            labor_cost = self._calculate_labor_cost(quantity, supports, quality)
+            labor_cost = self._calculate_labor_cost(
+                quantity, supports, quality
+            )
 
             # Support cost adjustment
             support_cost = (
-                Decimal("0") if not supports else material_cost * Decimal("0.15")
+                Decimal("0")
+                if not supports
+                else material_cost * Decimal("0.15")
             )
 
             # Quality adjustment
@@ -113,7 +121,9 @@ class PricingEngine:
             total_cost = subtotal + self.setup_fee
 
             # Round to 2 decimal places
-            total_cost = total_cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            total_cost = total_cost.quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
 
             # Prepare breakdown
             breakdown = {
@@ -251,7 +261,9 @@ class PricingEngine:
         # Calculate volumetric weight (length * width * height / 5000)
         if all(k in dimensions for k in ["length", "width", "height"]):
             volumetric_weight = (
-                dimensions["length"] * dimensions["width"] * dimensions["height"]
+                dimensions["length"]
+                * dimensions["width"]
+                * dimensions["height"]
             ) / 5000
         else:
             volumetric_weight = weight_kg

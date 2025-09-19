@@ -152,9 +152,13 @@ class SecureFileValidator:
         if len(content) >= 80:
             # Binary STL has 80-byte header, then 4-byte triangle count
             try:
-                triangle_count = int.from_bytes(content[80:84], byteorder="little")
+                triangle_count = int.from_bytes(
+                    content[80:84], byteorder="little"
+                )
                 expected_size = 80 + 4 + (triangle_count * 50)  # STL structure
-                if abs(len(content) - expected_size) <= 100:  # Allow some tolerance
+                if (
+                    abs(len(content) - expected_size) <= 100
+                ):  # Allow some tolerance
                     return FileType.STL
             except Exception:
                 pass
@@ -286,7 +290,10 @@ class SecureFileValidator:
                     total_uncompressed = sum(
                         info.file_size for info in zip_file.infolist()
                     )
-                    if total_uncompressed > FileSecurityConfig.MAX_STL_SIZE * 2:
+                    if (
+                        total_uncompressed
+                        > FileSecurityConfig.MAX_STL_SIZE * 2
+                    ):
                         return False, "3MF uncompressed size too large"
 
             return True, "3MF security validation passed"
@@ -296,7 +303,9 @@ class SecureFileValidator:
         except Exception as e:
             return False, f"3MF validation failed: {str(e)}"
 
-    async def _validate_image_security(self, content: bytes) -> Tuple[bool, str]:
+    async def _validate_image_security(
+        self, content: bytes
+    ) -> Tuple[bool, str]:
         """Image-specific security validation"""
         try:
             # Use PIL to validate image structure
@@ -456,7 +465,9 @@ class SecureStorageManager:
         """Verify user has access to file"""
         try:
             # Get file metadata
-            response = self.s3_client.head_object(Bucket=self.bucket_name, Key=file_key)
+            response = self.s3_client.head_object(
+                Bucket=self.bucket_name, Key=file_key
+            )
 
             # Check if user owns the file
             file_owner = response.get("Metadata", {}).get("user-id")
@@ -552,7 +563,9 @@ class WatermarkService:
                 )
 
                 # Composite watermark onto image
-                watermarked = Image.alpha_composite(img.convert("RGBA"), watermark)
+                watermarked = Image.alpha_composite(
+                    img.convert("RGBA"), watermark
+                )
 
                 # Convert back to original format
                 output = io.BytesIO()

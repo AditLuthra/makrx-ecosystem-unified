@@ -84,7 +84,9 @@ class BridgeService:
     """Service to bridge Store orders with MakrCave providers"""
 
     def __init__(self):
-        self.makrcave_api_base = os.getenv("MAKRCAVE_API_URL", "http://localhost:8001")
+        self.makrcave_api_base = os.getenv(
+            "MAKRCAVE_API_URL", "http://localhost:8001"
+        )
         self.api_key = os.getenv("BRIDGE_API_KEY", "")
         self.timeout = 30  # seconds
 
@@ -124,7 +126,9 @@ class BridgeService:
             },
         }
 
-    async def find_providers(self, service_request: ServiceRequest) -> BridgeResponse:
+    async def find_providers(
+        self, service_request: ServiceRequest
+    ) -> BridgeResponse:
         """Find suitable providers for a service request"""
         try:
             # Get available providers
@@ -135,14 +139,20 @@ class BridgeService:
                     matches=[],
                     total_matches=0,
                     search_criteria=service_request.dict(),
-                    alternatives=["No providers available for this service type"],
+                    alternatives=[
+                        "No providers available for this service type"
+                    ],
                 )
 
             # Score and match providers
             matches = []
             for provider in providers:
-                match = await self._evaluate_provider_match(provider, service_request)
-                if match and match.compatibility_score > 50:  # Minimum threshold
+                match = await self._evaluate_provider_match(
+                    provider, service_request
+                )
+                if (
+                    match and match.compatibility_score > 50
+                ):  # Minimum threshold
                     matches.append(match)
 
             # Sort by compatibility score
@@ -151,7 +161,9 @@ class BridgeService:
             # Generate alternatives if no good matches
             alternatives = []
             if not matches:
-                alternatives = await self._generate_alternatives(service_request)
+                alternatives = await self._generate_alternatives(
+                    service_request
+                )
 
             return BridgeResponse(
                 matches=matches[:10],  # Top 10 matches
@@ -164,7 +176,9 @@ class BridgeService:
             logger.error(f"Provider search failed: {e}")
             raise
 
-    async def _get_providers(self, service_type: ServiceType) -> List[Provider]:
+    async def _get_providers(
+        self, service_type: ServiceType
+    ) -> List[Provider]:
         """Get providers from MakrCave API with caching"""
         try:
             # Check cache
@@ -198,11 +212,15 @@ class BridgeService:
 
                         # Cache results
                         self._provider_cache[service_type] = providers
-                        self._cache_expiry = datetime.now() + timedelta(minutes=15)
+                        self._cache_expiry = datetime.now() + timedelta(
+                            minutes=15
+                        )
 
                         return providers
                     else:
-                        logger.warning(f"Failed to fetch providers: {response.status}")
+                        logger.warning(
+                            f"Failed to fetch providers: {response.status}"
+                        )
                         return []
 
         except asyncio.TimeoutError:
@@ -332,7 +350,9 @@ class BridgeService:
             )
 
             # Generate reasons and constraints
-            reasons = self._generate_match_reasons(provider, capability, request, score)
+            reasons = self._generate_match_reasons(
+                provider, capability, request, score
+            )
             constraints = self._identify_constraints(capability, request)
 
             return ProviderMatch(
@@ -371,8 +391,10 @@ class BridgeService:
             # Check if dimensions fit
             if (
                 length <= capability.max_dimensions.get("length", float("inf"))
-                and width <= capability.max_dimensions.get("width", float("inf"))
-                and height <= capability.max_dimensions.get("height", float("inf"))
+                and width
+                <= capability.max_dimensions.get("width", float("inf"))
+                and height
+                <= capability.max_dimensions.get("height", float("inf"))
             ):
                 score += 25
 
@@ -477,7 +499,9 @@ class BridgeService:
             base_cost = 100.0  # Base service cost
 
             # Get service type specific factors
-            service_info = self.service_mapping.get(capability.service_type, {})
+            service_info = self.service_mapping.get(
+                capability.service_type, {}
+            )
             cost_factors = service_info.get("cost_factors", [])
 
             file_analysis = request.file_analysis
@@ -503,7 +527,9 @@ class BridgeService:
                     "ACRYLIC": 1.4,
                     "ALUMINUM": 3.0,
                 }
-                material_multiplier = material_multipliers.get(material.upper(), 1.0)
+                material_multiplier = material_multipliers.get(
+                    material.upper(), 1.0
+                )
                 base_cost *= material_multiplier
 
             # Quality multiplier
@@ -650,7 +676,9 @@ class BridgeService:
 
         return constraints
 
-    async def _generate_alternatives(self, request: ServiceRequest) -> List[str]:
+    async def _generate_alternatives(
+        self, request: ServiceRequest
+    ) -> List[str]:
         """Generate alternative suggestions when no providers match"""
         alternatives = []
 
@@ -721,7 +749,9 @@ class BridgeService:
                         return order
                     else:
                         error = await response.text()
-                        raise Exception(f"Service order creation failed: {error}")
+                        raise Exception(
+                            f"Service order creation failed: {error}"
+                        )
 
         except Exception as e:
             logger.error(f"Service order creation failed: {e}")

@@ -23,7 +23,7 @@ import {
   MapPin,
   Truck,
 } from 'lucide-react';
-import { storeApi, formatPrice } from '@/services/storeApi';
+import { storeApi, formatPrice, QuoteSummary, QuoteBreakdownSummary } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { STLPreview } from '@/components/STLPreview';
 import { SVGPreview } from '@/components/SVGPreview';
@@ -164,26 +164,8 @@ interface UploadedFile {
   error?: string;
 }
 
-interface Quote {
-  id: string;
-  file_id: string;
-  service_type: 'printing' | 'engraving';
-  material: string;
-  finish: string;
-  quantity: number;
-  price: number;
-  currency: string;
-  breakdown: {
-    material_cost: number;
-    machine_cost: number;
-    labor_cost: number;
-    setup_fee: number;
-  };
-  estimated_time_hours: number;
-  estimated_weight_g?: number;
-  estimated_area_cm2?: number;
-  created_at: string;
-}
+// Updated Quote interface to match QuoteSummary from storeApi.ts
+interface Quote extends QuoteSummary {}
 
 export default function Enhanced3DPrintingPage() {
   const router = useRouter();
@@ -276,7 +258,7 @@ export default function Enhanced3DPrintingPage() {
         // Get upload URL
         const uploadResponse = await storeApi.createUploadUrl(
           file.name,
-          file.type || 'application/octet-stream',
+          file.type as string || 'application/octet-stream',
           file.size,
         );
 
@@ -333,8 +315,8 @@ export default function Enhanced3DPrintingPage() {
                     ...f,
                     status: 'processed',
                     volume_mm3: upload.volume_mm3 ? Number(upload.volume_mm3) : undefined,
-                    area_mm2: upload.area_mm2 ? Number(upload.area_mm2) : undefined,
-                    dimensions: upload.dimensions || undefined,
+                    area_mm2: upload.surface_area_mm2 ? Number(upload.surface_area_mm2) : undefined,
+                    dimensions: upload.dimensions ? { x: upload.dimensions.x, y: upload.dimensions.y, z: upload.dimensions.z } : undefined,
                   }
                 : f,
             ),
@@ -417,11 +399,9 @@ export default function Enhanced3DPrintingPage() {
       const file = processedFiles[0];
 
       const quoteData = await storeApi.createQuote({
-        upload_id: file.id,
-        service_type: activeService,
+        upload_id: file.id as string,
         material: selectedMaterial,
-        finish: selectedFinish,
-        quality: activeService === 'printing' ? selectedQuality : undefined,
+        quality: activeService === 'printing' ? (selectedQuality || '') : '',
         infill_percentage: activeService === 'printing' ? infillPercentage : undefined,
         supports: activeService === 'printing' ? supports : undefined,
         quantity,
@@ -442,7 +422,7 @@ export default function Enhanced3DPrintingPage() {
 
     try {
       // Create service order
-      const order = await storeApi.createServiceOrder(quote.id, {
+      const order = await storeApi.createServiceOrder(quote.quote_id, {
         delivery_method: 'pickup', // This would be user-selected
         notes: '',
       });
@@ -480,7 +460,7 @@ export default function Enhanced3DPrintingPage() {
           ? {
               ...f,
               volume_mm3: analysis.volume_mm3,
-              area_mm2: analysis.area_mm2,
+              area_mm2: analysis.area_mm2 as number | undefined,
               dimensions: analysis.dimensions,
             }
           : f,
@@ -563,7 +543,7 @@ export default function Enhanced3DPrintingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:col-span-3 gap-8">
           {/* File Upload and Preview Section */}
           <div className="lg:col-span-2 space-y-8">
             {/* Upload Area */}
@@ -951,10 +931,10 @@ export default function Enhanced3DPrintingPage() {
                               <span>{quote.estimated_weight_g}g</span>
                             </div>
                           )}
-                          {quote.estimated_area_cm2 && (
+                          {quote.file_analysis?.area_mm2 && (
                             <div className="flex justify-between">
                               <span>Area:</span>
-                              <span>{quote.estimated_area_cm2}cm²</span>
+                              <span>{(quote.file_analysis.area_mm2 / 100).toFixed(2)}cm²</span>
                             </div>
                           )}
                         </div>
@@ -976,7 +956,7 @@ export default function Enhanced3DPrintingPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Setup Fee:</span>
-                          <span>{formatPrice(quote.breakdown.setup_fee, quote.currency)}</span>
+                          <span>{formatPrice(quote.breakdown.setup_fee ?? 0, quote.currency)}</span>
                         </div>
                         <div className="border-t pt-2 flex justify-between font-semibold">
                           <span>Total:</span>

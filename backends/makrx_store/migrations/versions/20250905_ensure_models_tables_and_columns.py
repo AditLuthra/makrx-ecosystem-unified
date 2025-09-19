@@ -66,7 +66,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("slug", sa.String(length=120), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
-        sa.Column("usage_count", sa.Integer(), server_default="0", nullable=False),
+        sa.Column(
+            "usage_count", sa.Integer(), server_default="0", nullable=False
+        ),
         sa.Column(
             "is_active",
             sa.Boolean(),
@@ -110,7 +112,9 @@ def upgrade() -> None:
         sa.Column("banner_image", sa.String(length=500), nullable=True),
         sa.Column("curator_name", sa.String(length=255), nullable=True),
         sa.Column("curator_bio", sa.Text(), nullable=True),
-        sa.Column("tags", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "tags", postgresql.JSONB(astext_type=sa.Text()), nullable=True
+        ),
         sa.Column(
             "featured_categories",
             postgresql.JSONB(astext_type=sa.Text()),
@@ -149,7 +153,9 @@ def upgrade() -> None:
             server_default=sa.text("false"),
             nullable=False,
         ),
-        sa.Column("sort_order", sa.Integer(), server_default="0", nullable=False),
+        sa.Column(
+            "sort_order", sa.Integer(), server_default="0", nullable=False
+        ),
         sa.ForeignKeyConstraint(
             ["collection_id"],
             ["store_collections.id"],

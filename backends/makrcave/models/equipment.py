@@ -17,6 +17,7 @@ import enum
 import uuid
 
 from ..database import Base
+from .skill import skill_equipment
 
 
 class EquipmentStatus(enum.Enum):
@@ -131,6 +132,52 @@ class Equipment(Base):
         "EquipmentUsageSession",
         back_populates="equipment",
         cascade="all, delete-orphan",
+    )
+
+    # Pricing and access control relationships (defined in other modules)
+    cost_rules = relationship(
+        "EquipmentCostRule",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    skill_gates = relationship(
+        "EquipmentSkillGate",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+
+    # Machine access module relationships
+    access_rules = relationship(
+        "MachineAccessRule",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    certifications = relationship(
+        "UserCertification",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    access_attempts = relationship(
+        "MachineAccessAttempt",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    safety_incidents = relationship(
+        "SafetyIncident",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+    assessments = relationship(
+        "SkillAssessment",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
+    )
+
+    # Skills required to operate this equipment (many-to-many via association table)
+    required_skills = relationship(
+        "Skill",
+        secondary=skill_equipment,
+        back_populates="equipment",
     )
 
 

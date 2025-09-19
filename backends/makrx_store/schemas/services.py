@@ -130,7 +130,9 @@ class QuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8"))
+    layer_height: Decimal = Field(
+        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
+    )
     supports: bool = False
     quantity: int = Field(1, ge=1, le=100)
     rush_order: bool = False
@@ -351,7 +353,9 @@ class BatchQuoteRequest(BaseModel):
     quality: PrintQuality
     color: str = "natural"
     infill_percentage: int = Field(20, ge=10, le=100)
-    layer_height: Decimal = Field(Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8"))
+    layer_height: Decimal = Field(
+        Decimal("0.2"), ge=Decimal("0.05"), le=Decimal("0.8")
+    )
     supports: bool = False
     rush_order: bool = False
 

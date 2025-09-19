@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 
 from .logging_config import configure_logging
 
-from .database import init_db
+from .database import init_db, reset_db
 from .routes import health, events, auth
 from .routes import (
     teams,
@@ -78,6 +78,7 @@ except Exception as e:
     logger.info(f"sentry_not_enabled: {e}")
 
 from .middleware.security import add_security_middleware
+from .routes import health as _health_mod
 
 add_security_middleware(app)
 app.add_middleware(ErrorHandlingMiddleware)
@@ -144,8 +145,27 @@ app.include_router(
     health.router, prefix="/api", tags=["Health"]
 )  # /api/health, /api/readyz
 
+# Provide legacy alias for /readyz at both root and /api for tests
+from .routes import health as _health_mod
+app.add_api_route(
+    "/readyz", _health_mod.readyz, methods=["GET"], tags=["Health"]
+)  # type: ignore[arg-type]
+app.add_api_route(
+    "/api/readyz", _health_mod.readyz, methods=["GET"], tags=["Health"]
+)  # type: ignore[arg-type]
+
 # WebSocket (no prefix)
 app.include_router(ws.router)
+
+# In test environment, ensure tables are created eagerly at import time.
+# This avoids timing issues with TestClient startup/lifespan and monkeypatches.
+if os.getenv("ENVIRONMENT") == "test":
+    try:
+        # Ensure a clean database on each test module import to avoid unique collisions
+        reset_db()
+        logger.info("Database tables ensured (test mode, eager)")
+    except Exception as e:
+        logger.warning(f"Test table init skipped: {e}")
 
 
 @app.on_event("startup")
@@ -189,19 +209,31 @@ if __name__ == "__main__":
         "handlers": {
             "default": {
                 "class": "logging.StreamHandler",
-                "formatter": "console_formatter" if os.getenv("ENVIRONMENT") == "development" else "json_formatter",
+                "formatter": (
+                    "console_formatter"
+                    if os.getenv("ENVIRONMENT") == "development"
+                    else "json_formatter"
+                ),
                 "level": "INFO",
             },
             "access": {
                 "class": "logging.StreamHandler",
-                "formatter": "json_formatter", # Always JSON for access logs
+                "formatter": "json_formatter",  # Always JSON for access logs
                 "level": "INFO",
             },
         },
         "loggers": {
-            "uvicorn": {"handlers": ["default"], "level": "INFO", "propagate": False},
+            "uvicorn": {
+                "handlers": ["default"],
+                "level": "INFO",
+                "propagate": False,
+            },
             "uvicorn.error": {"level": "INFO"},
-            "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
+            "uvicorn.access": {
+                "handlers": ["access"],
+                "level": "INFO",
+                "propagate": False,
+            },
         },
     }
 
@@ -210,5 +242,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=True,
-        log_config=LOGGING_CONFIG, # Pass the logging configuration
+        log_config=LOGGING_CONFIG,  # Pass the logging configuration
     )

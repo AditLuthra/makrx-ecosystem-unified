@@ -1,7 +1,7 @@
+import { emailQueue, emailTemplates } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 import nodemailer from 'nodemailer';
 import { db } from './db';
-import { emailTemplates, emailQueue } from '@shared/schema';
-import { eq } from 'drizzle-orm';
 
 interface EmailConfig {
   host: string;
@@ -28,7 +28,7 @@ interface EmailData {
 }
 
 class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter!: nodemailer.Transporter;
   private defaultFrom: string;
 
   constructor() {
@@ -58,8 +58,8 @@ class EmailService {
         subject: emailData.subject,
         html: emailData.html,
         text: emailData.text,
-        bcc: emailData.bcc,
-        attachments: emailData.attachments,
+        bcc: Array.isArray(emailData.bcc) ? emailData.bcc : undefined,
+        attachments: Array.isArray(emailData.attachments) ? emailData.attachments : undefined,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
@@ -119,13 +119,28 @@ class EmailService {
 
       for (const email of pendingEmails) {
         try {
+          const recipient: string = email.recipient ?? '';
+          let bcc: string[] | undefined = undefined;
+          let attachments: any[] | undefined = undefined;
+          if (email.metadata && typeof email.metadata === 'object') {
+            if ('bcc' in email.metadata && Array.isArray((email.metadata as any).bcc)) {
+              bcc = (email.metadata as any).bcc;
+            }
+            if (
+              'attachments' in email.metadata &&
+              Array.isArray((email.metadata as any).attachments)
+            ) {
+              attachments = (email.metadata as any).attachments;
+            }
+          }
+          const attempts = (email.attempts ?? 0) + 1;
           const success = await this.sendEmail({
-            to: email.recipient,
+            to: recipient,
             subject: email.subject,
             html: email.htmlContent || undefined,
             text: email.textContent || undefined,
-            bcc: email.metadata?.bcc as string[],
-            attachments: email.metadata?.attachments as any[],
+            bcc,
+            attachments,
           });
 
           await db
@@ -134,16 +149,17 @@ class EmailService {
               status: success ? 'sent' : 'failed',
               sentAt: success ? new Date() : undefined,
               error: success ? null : 'Failed to send email',
-              attempts: email.attempts + 1,
+              attempts,
             })
             .where(eq(emailQueue.id, email.id));
         } catch (error) {
+          const attempts = (email.attempts ?? 0) + 1;
           await db
             .update(emailQueue)
             .set({
               status: 'failed',
               error: (error as Error).message,
-              attempts: email.attempts + 1,
+              attempts,
             })
             .where(eq(emailQueue.id, email.id));
         }

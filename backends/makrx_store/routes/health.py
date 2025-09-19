@@ -71,13 +71,15 @@ async def detailed_health_check(db: AsyncSession = Depends(get_db)):
     try:
         keycloak_url = os.getenv("KEYCLOAK_URL", "http://localhost:8081")
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{keycloak_url}/health/ready", timeout=5)
+            response = await client.get(
+                f"{keycloak_url}/health/ready", timeout=5
+            )
             if response.status_code == 200:
                 health_status["checks"]["keycloak"] = "healthy"
             else:
-                health_status["checks"]["keycloak"] = (
-                    f"unhealthy: status {response.status_code}"
-                )
+                health_status["checks"][
+                    "keycloak"
+                ] = f"unhealthy: status {response.status_code}"
                 health_status["status"] = "unhealthy"
     except Exception as e:
         health_status["checks"]["keycloak"] = f"unhealthy: {str(e)}"

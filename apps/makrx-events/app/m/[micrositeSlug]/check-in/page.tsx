@@ -1,27 +1,26 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import {
+  AlertTriangle,
+  ArrowLeft,
   Camera,
   CameraOff,
   Check,
-  X,
+  CheckCircle,
+  Clock,
   Search,
   Users,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 interface CheckInResult {
   success: boolean;
@@ -55,20 +54,28 @@ export default function CheckInPage() {
   });
 
   // Mock data - replace with real API calls
-  const [recentCheckIns, setRecentCheckIns] = useState([
+  type RecentCheckIn = {
+    id: string;
+    participantName: string;
+    eventTitle: string;
+    checkedInAt: string;
+    status: 'checked_in' | 'already_checked_in';
+  };
+
+  const [recentCheckIns, setRecentCheckIns] = useState<RecentCheckIn[]>([
     {
       id: '1',
       participantName: 'Sarah Johnson',
       eventTitle: 'Arduino Workshop',
       checkedInAt: new Date().toISOString(),
-      status: 'checked_in' as const,
+      status: 'checked_in',
     },
     {
       id: '2',
       participantName: 'Mike Chen',
       eventTitle: '3D Printing Basics',
       checkedInAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-      status: 'checked_in' as const,
+      status: 'checked_in',
     },
   ]);
 
@@ -439,7 +446,7 @@ export default function CheckInPage() {
                           {new Date(checkIn.checkedInAt).toLocaleTimeString()}
                         </div>
                         <Badge variant="outline" className="mt-1">
-                          {checkIn.status === 'checked_in' ? 'Checked In' : 'Already In'}
+                          {checkIn.status === 'checked_in' ? 'Checked In' : 'Already Checked In'}
                         </Badge>
                       </div>
                     </div>

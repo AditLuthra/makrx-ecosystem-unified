@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   CheckCircle,
   Clock,
@@ -107,25 +108,12 @@ export default function OrderTracking() {
   const orderId = params.orderId as string;
   const { isAuthenticated } = useAuth();
 
-  const [order, setOrder] = useState<OrderStatus | null>(null);
+  const [order, setOrder] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadOrder();
-
-    // Set up polling for active orders
-    const interval = setInterval(() => {
-      if (order && !['completed', 'delivered'].includes(order.status)) {
-        refreshOrder();
-      }
-    }, 30000); // Poll every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [orderId, order?.status]);
-
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -137,9 +125,9 @@ export default function OrderTracking() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
 
-  const refreshOrder = async () => {
+  const refreshOrder = useCallback(async () => {
     try {
       setRefreshing(true);
       const response = await storeApi.getServiceOrder(orderId);
@@ -149,7 +137,21 @@ export default function OrderTracking() {
     } finally {
       setRefreshing(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    loadOrder();
+
+    const currentOrder = order;
+
+    const interval = setInterval(() => {
+      if (currentOrder && !['completed', 'delivered'].includes(currentOrder.status)) {
+        refreshOrder();
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [loadOrder, order, refreshOrder]);
 
   const getCurrentStepIndex = (status: string) => {
     return STATUS_STEPS.findIndex((step) => step.key === status);
@@ -412,7 +414,7 @@ export default function OrderTracking() {
               <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Updates</h3>
                 <div className="space-y-4">
-                  {order.status_messages.reverse().map((message, index) => (
+                  {order.status_messages.reverse().map((message: any, index: any) => (
                     <div key={index} className="border-l-4 border-blue-500 pl-4">
                       <div className="flex items-center justify-between">
                         <p className="font-medium text-gray-900">{message.message}</p>
@@ -422,13 +424,10 @@ export default function OrderTracking() {
                       </div>
                       {message.images && message.images.length > 0 && (
                         <div className="mt-2 grid grid-cols-3 gap-2">
-                          {message.images.map((image, imgIndex) => (
-                            <img
-                              key={imgIndex}
-                              src={image}
-                              alt="Update"
-                              className="w-full h-20 object-cover rounded"
-                            />
+                          {message.images.map((image: any, imgIndex: any) => (
+                            <div key={imgIndex} className="relative h-20 w-full overflow-hidden rounded">
+                              <Image src={image} alt="Order update" fill className="object-cover" />
+                            </div>
                           ))}
                         </div>
                       )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Bell,
@@ -89,20 +89,46 @@ export default function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
+  const loadDashboardStats = useCallback(async () => {
+    try {
+      const response = await storeApi.getProviderDashboard();
+      setStats(response.stats);
+      setNotifications(response.notifications || []);
+    } catch (error) {
+      console.error('Failed to load dashboard stats:', error);
     }
+  }, []);
 
-    loadDashboardData();
+  const loadAvailableJobs = useCallback(async () => {
+    try {
+      const response = await storeApi.getAvailableJobs();
+      const jobs = Array.isArray(response) ? response : (response as any).available_jobs || [];
+      setAvailableJobs(jobs);
+    } catch (error) {
+      console.error('Failed to load available jobs:', error);
+    }
+  }, []);
 
-    // Set up real-time updates
-    const interval = setInterval(loadAvailableJobs, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [isAuthenticated]);
+  const loadAcceptedJobs = useCallback(async () => {
+    try {
+      const response = await storeApi.getProviderJobs();
+      setAcceptedJobs(response.jobs || []);
+    } catch (error) {
+      console.error('Failed to load accepted jobs:', error);
+    }
+  }, []);
 
-  const loadDashboardData = async () => {
+  const loadInventory = useCallback(async () => {
+    try {
+      const response = await storeApi.getProviderInventory();
+      const items = (response as any).inventory || response || [];
+      setInventory(items);
+    } catch (error) {
+      console.error('Failed to load inventory:', error);
+    }
+  }, []);
+
+  const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       await Promise.all([
@@ -116,46 +142,19 @@ export default function ProviderDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadAcceptedJobs, loadAvailableJobs, loadDashboardStats, loadInventory]);
 
-  const loadDashboardStats = async () => {
-    try {
-      const response = await storeApi.getProviderDashboard();
-      setStats(response.stats);
-      setNotifications(response.notifications || []);
-    } catch (error) {
-      console.error('Failed to load dashboard stats:', error);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
     }
-  };
 
-  const loadAvailableJobs = async () => {
-    try {
-      const response = await storeApi.getAvailableJobs();
-      const jobs = Array.isArray(response) ? response : (response as any).available_jobs || [];
-      setAvailableJobs(jobs);
-    } catch (error) {
-      console.error('Failed to load available jobs:', error);
-    }
-  };
+    loadDashboardData();
 
-  const loadAcceptedJobs = async () => {
-    try {
-      const response = await storeApi.getProviderJobs();
-      setAcceptedJobs(response.jobs || []);
-    } catch (error) {
-      console.error('Failed to load accepted jobs:', error);
-    }
-  };
-
-  const loadInventory = async () => {
-    try {
-      const response = await storeApi.getProviderInventory();
-      const items = (response as any).inventory || response || [];
-      setInventory(items);
-    } catch (error) {
-      console.error('Failed to load inventory:', error);
-    }
-  };
+    const interval = setInterval(loadAvailableJobs, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, loadAvailableJobs, loadDashboardData, router]);
 
   const acceptJob = async (jobId: string) => {
     try {
@@ -600,7 +599,6 @@ export default function ProviderDashboard() {
                             {item.current_stock <= item.minimum_stock && (
                               <AlertTriangle
                                 className="h-5 w-5 text-red-500 ml-2"
-                                title="Low Stock"
                               />
                             )}
                           </div>

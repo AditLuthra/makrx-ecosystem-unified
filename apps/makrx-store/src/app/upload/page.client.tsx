@@ -336,6 +336,9 @@ export default function UploadPage() {
     });
   };
 
+  const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100MB
+  const MAX_FILES_ALLOWED = 10;
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleFileDrop,
     accept: {
@@ -344,7 +347,8 @@ export default function UploadPage() {
       'model/3mf': ['.3mf'],
       'model/ply': ['.ply'],
     },
-    maxFileSize: 100 * 1024 * 1024, // 100MB
+    maxSize: MAX_FILE_SIZE_BYTES,
+    maxFiles: MAX_FILES_ALLOWED,
     multiple: true,
   });
 
@@ -382,10 +386,9 @@ export default function UploadPage() {
               <div
                 {...getRootProps()}
                 className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition ${
-                  {
-                    true: 'border-blue-400 bg-blue-50',
-                    false: 'border-gray-300 hover:border-blue-400 hover:bg-blue-50',
-                  }[String(isDragActive) as any]
+                  isDragActive
+                    ? 'border-blue-400 bg-blue-50'
+                    : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
                 }`}
               >
                 <input {...getInputProps()} />

@@ -3,17 +3,18 @@
 import React from 'react';
 import { categories as defaultCategories, products as defaultProducts } from '@/data/products';
 import { categoryFilterSets as defaultFilters } from '@/data/categoryFilters';
+import { Category, RatingSummary } from '@/types';
 
 export interface AdminCategory {
   id: number;
   name: string;
   slug: string;
   description: string;
-  image: string;
-  icon: string;
+  image?: string;
+  icon?: string;
   subcategories: AdminCategory[];
-  featured: boolean;
-  productCount: number;
+  featured?: boolean;
+  productCount?: number;
 }
 
 export interface AdminFilter {
@@ -35,16 +36,16 @@ export interface AdminProduct {
   slug: string;
   description: string;
   short_description: string;
-  brand: string;
-  category: string;
+  brand?: string;
+  category?: Category | string;
   price: number;
   sale_price?: number;
-  sku: string;
+  sku?: string;
   images: string[];
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-  stock_qty: number;
+  rating?: RatingSummary;
+  reviewCount?: number;
+  inStock?: boolean;
+  stock_qty?: number;
   tags: string[];
   specifications: Array<{ key: string; value: string }>;
   variants?: Array<{
@@ -80,11 +81,25 @@ class AdminDataService {
       name: cat.name,
       slug: cat.slug,
       description: cat.description,
-      image: cat.image,
-      icon: cat.icon,
-      subcategories: cat.subcategories,
-      featured: cat.featured,
-      productCount: cat.productCount,
+      image: cat.image ?? '',
+      icon: cat.icon ?? '',
+      subcategories: cat.subcategories.map(subcat => ({
+        id: subcat.id,
+        name: subcat.name,
+        slug: subcat.slug,
+        description: subcat.description,
+        image: subcat.image ?? '',
+        icon: subcat.icon ?? '',
+        subcategories: subcat.subcategories.map(nestedSubcat => ({
+          ...nestedSubcat,
+          image: nestedSubcat.image ?? '',
+          icon: nestedSubcat.icon ?? '',
+        })),
+        featured: subcat.featured ?? false,
+        productCount: subcat.productCount ?? 0,
+      })),
+      featured: cat.featured ?? false,
+      productCount: cat.productCount ?? 0,
     }));
 
     this.saveCategories(adminCategories);
@@ -115,19 +130,34 @@ class AdminDataService {
       slug: prod.slug,
       description: prod.description,
       short_description: prod.short_description,
-      brand: prod.brand,
-      category: prod.category,
+      brand: prod.brand ?? '',
+      category: (typeof prod.category === 'object' ? prod.category.slug : prod.category) ?? '',
       price: prod.price,
       sale_price: prod.sale_price,
-      sku: prod.sku,
+      sku: prod.sku ?? '',
       images: prod.images,
       rating: prod.rating,
-      reviewCount: prod.reviewCount,
-      inStock: prod.inStock,
-      stock_qty: prod.stock_qty,
+      reviewCount: prod.reviewCount ?? 0,
+      inStock: prod.inStock ?? false,
+      stock_qty: prod.stock_qty ?? 0,
       tags: prod.tags,
-      specifications: prod.specifications,
-      variants: prod.variants,
+      specifications: Array.isArray(prod.specifications)
+        ? prod.specifications.map(spec => ({
+            key: spec.key,
+            value: String(spec.value),
+          }))
+        : (prod.specifications && typeof prod.specifications === 'object'
+          ? Object.entries(prod.specifications).map(([key, value]) => ({
+              key,
+              value: String(value),
+            }))
+          : []),
+      variants: prod.variants?.map(variant => ({
+        id: Number(variant.id),
+        name: variant.name || '',
+        price: variant.price,
+        stock: variant.stock_qty,
+      })),
     }));
 
     this.saveProducts(adminProducts);
@@ -212,9 +242,12 @@ class AdminDataService {
       (product) =>
         product.name.toLowerCase().includes(searchTerm) ||
         product.description.toLowerCase().includes(searchTerm) ||
-        product.brand.toLowerCase().includes(searchTerm) ||
+        (product.brand && product.brand.toLowerCase().includes(searchTerm)) ||
         product.tags.some((tag) => tag.toLowerCase().includes(searchTerm)) ||
-        product.category.toLowerCase().includes(searchTerm),
+        (product.category &&
+          (typeof product.category === 'string'
+            ? product.category.toLowerCase().includes(searchTerm)
+            : product.category.name.toLowerCase().includes(searchTerm))),
     );
   }
 

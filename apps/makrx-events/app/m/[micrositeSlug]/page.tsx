@@ -25,11 +25,21 @@ export default async function MicrositePage({ params }: MicrositePageProps) {
     notFound();
   }
 
-  const sections = await db
+  const rawSections = await db
     .select()
     .from(micrositeSections)
     .where(eq(micrositeSections.micrositeId, microsite.id))
     .orderBy(asc(micrositeSections.order), asc(micrositeSections.createdAt));
+
+  // Map DB rows to SectionRenderer PageSection type
+  const sections = rawSections.map((section) => ({
+    id: section.id,
+    type: section.type,
+    order: section.order ?? 0,
+    contentJson: section.contentJson,
+    variant: (section as any).variant,
+    isVisible: section.isVisible ?? true,
+  }));
 
   const settings = (microsite.settings ?? {}) as Record<string, unknown>;
   const metaTitle =
@@ -40,12 +50,13 @@ export default async function MicrositePage({ params }: MicrositePageProps) {
     (microsite.seo as Record<string, unknown> | null | undefined)?.['description']?.toString() ??
     microsite.description ??
     '';
-  const theme = settings.theme as
-    | {
-        tokens?: Record<string, string>;
-        assets?: Record<string, string>;
-      }
-    | undefined;
+  const theme =
+    settings.theme && typeof settings.theme === 'object'
+      ? {
+          tokens: (settings.theme as any).tokens ?? {},
+          assets: (settings.theme as any).assets ?? {},
+        }
+      : undefined;
   const registerPath = `/m/${micrositeSlug}/register`;
   const hasSections = sections.length > 0;
 
@@ -77,13 +88,15 @@ export default async function MicrositePage({ params }: MicrositePageProps) {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {!hasSections ? (
             <div className="rounded-xl border border-dashed border-muted-foreground/40 bg-muted/30 p-8 text-center">
-              <h2 className="text-xl font-semibold text-foreground">Microsite under construction</h2>
+              <h2 className="text-xl font-semibold text-foreground">
+                Microsite under construction
+              </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Published sections will appear here once they are configured for this microsite.
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
-                Need to add content? Navigate to the microsite admin pages to create hero, about, schedule, and
-                sponsor sections.
+                Need to add content? Navigate to the microsite admin pages to create hero, about,
+                schedule, and sponsor sections.
               </p>
             </div>
           ) : (
@@ -97,7 +110,9 @@ export default async function MicrositePage({ params }: MicrositePageProps) {
               <div>
                 <h3 className="text-lg font-semibold text-white">{microsite.title}</h3>
                 {microsite.description && (
-                  <p className="mt-3 text-sm leading-relaxed text-gray-400">{microsite.description}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-400">
+                    {microsite.description}
+                  </p>
                 )}
               </div>
               <div>
@@ -140,7 +155,12 @@ export default async function MicrositePage({ params }: MicrositePageProps) {
                   </li>
                   {microsite.website && (
                     <li>
-                      <a href={microsite.website} className="hover:text-white" target="_blank" rel="noreferrer">
+                      <a
+                        href={microsite.website}
+                        className="hover:text-white"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Official site
                       </a>
                     </li>

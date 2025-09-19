@@ -46,11 +46,27 @@ from ..schemas.billing import (
 )
 from ..crud import billing as crud_billing
 from ..utils.payment_service import payment_service, calculate_service_charge
-from ..utils.invoice_generator import (
-    generate_invoice_pdf,
-    save_invoice_to_file,
-    generate_invoice_filename,
-)
+# Optional heavy utilities: provide fallbacks if reportlab isn't installed
+try:  # pragma: no cover - import cost only
+    from ..utils.invoice_generator import (
+        generate_invoice_pdf,
+        save_invoice_to_file,
+        generate_invoice_filename,
+    )
+except Exception:  # pragma: no cover - test env without reportlab
+    def generate_invoice_pdf(*_args, **_kwargs):
+        raise RuntimeError(
+            "Invoice generation requires optional dependency 'reportlab'."
+        )
+
+    def save_invoice_to_file(*_args, **_kwargs):
+        raise RuntimeError(
+            "Invoice saving requires optional dependency 'reportlab'."
+        )
+
+    def generate_invoice_filename(invoice_number: str, makerspace_id: str = None) -> str:
+        base = invoice_number or "invoice"
+        return f"{base}.pdf"
 
 router = APIRouter()
 security = HTTPBearer()

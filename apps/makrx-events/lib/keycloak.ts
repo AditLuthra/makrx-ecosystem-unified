@@ -1,13 +1,12 @@
-import { discovery } from 'openid-client';
+// import { discovery } from 'openid-client';
+import { users } from '@shared/schema';
+import connectPg from 'connect-pg-simple';
+import { eq } from 'drizzle-orm';
+import session from 'express-session';
+import memoize from 'memoizee';
 import passport from 'passport';
 import { Strategy as OpenIDConnectStrategy } from 'passport-openidconnect';
-import session from 'express-session';
-import type { Express, RequestHandler } from 'express';
-import memoize from 'memoizee';
-import connectPg from 'connect-pg-simple';
 import { db } from './db';
-import { users } from '@shared/schema';
-import { eq } from 'drizzle-orm';
 
 if (!process.env.KEYCLOAK_BASE_URL) {
   throw new Error('Environment variable KEYCLOAK_BASE_URL not provided');
@@ -134,7 +133,7 @@ async function upsertUser(keycloakUser: KeycloakUser) {
   }
 }
 
-export async function setupKeycloakAuth(app: Express) {
+export async function setupKeycloakAuth(app: any) {
   app.set('trust proxy', 1);
   app.use(getSession());
   app.use(passport.initialize());
@@ -165,11 +164,11 @@ export async function setupKeycloakAuth(app: Express) {
 
   passport.use('openidconnect', strategy);
 
-  passport.serializeUser((user: any, done) => {
+  passport.serializeUser((user: any, done: any) => {
     done(null, user.id);
   });
 
-  passport.deserializeUser(async (id: string, done) => {
+  passport.deserializeUser(async (id: string, done: any) => {
     try {
       const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
 
@@ -190,32 +189,47 @@ export async function setupKeycloakAuth(app: Express) {
     }),
   );
 
-  app.get('/api/auth/logout', (req, res) => {
+  // ...existing code...
+  app.get('/api/auth/logout', (req: any, res: any) => {
     const logoutUrl = `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/logout`;
     const redirectUri = encodeURIComponent(
       `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'}/`,
     );
 
-    req.logout(() => {
-      res.redirect(`${logoutUrl}?redirect_uri=${redirectUri}`);
-    });
+    if (typeof req.logout === 'function') {
+      req.logout(() => {
+        if (typeof res.redirect === 'function') {
+          res.redirect(`${logoutUrl}?redirect_uri=${redirectUri}`);
+        } else {
+          res.status(200).send('Logged out');
+        }
+      });
+    } else {
+      if (typeof res.redirect === 'function') {
+        res.redirect(`${logoutUrl}?redirect_uri=${redirectUri}`);
+      } else {
+        res.status(200).send('Logged out');
+      }
+    }
   });
 }
 
-export const requireAuth: RequestHandler = (req, res, next) => {
-  if (!req.isAuthenticated()) {
+// Middleware to require authentication (no explicit Express types)
+export const requireAuth = (req: any, res: any, next: any) => {
+  if (typeof req.isAuthenticated !== 'function' || !req.isAuthenticated()) {
     return res.status(401).json({ error: 'Authentication required' });
   }
   next();
 };
 
-export const requireRole = (role: string): RequestHandler => {
-  return (req, res, next) => {
-    if (!req.isAuthenticated()) {
+// Middleware to require a specific role (no explicit Express types)
+export const requireRole = (role: string) => {
+  return (req: any, res: any, next: any) => {
+    if (typeof req.isAuthenticated !== 'function' || !req.isAuthenticated()) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const user = req.user as any;
+    const user = req.user;
     if (!user || user.role !== role) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
@@ -224,13 +238,14 @@ export const requireRole = (role: string): RequestHandler => {
   };
 };
 
-export const requireRoles = (roles: string[]): RequestHandler => {
-  return (req, res, next) => {
-    if (!req.isAuthenticated()) {
+// Middleware to require one of several roles (no explicit Express types)
+export const requireRoles = (roles: string[]) => {
+  return (req: any, res: any, next: any) => {
+    if (typeof req.isAuthenticated !== 'function' || !req.isAuthenticated()) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const user = req.user as any;
+    const user = req.user;
     if (!user || !roles.includes(user.role)) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }

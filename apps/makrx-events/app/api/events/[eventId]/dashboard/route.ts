@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import {
-  eventRegistrations,
   eventCheckIns,
-  userActivities,
+  eventRegistrations,
   eventSessions,
-  sessionRegistrations,
   livestreams,
+  sessionRegistrations,
+  userActivities,
 } from '@shared/schema';
-import { eq, gte, count, sql } from 'drizzle-orm';
+import { count, eq, gte, sql } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: { eventId: string } }) {
   try {
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest, { params }: { params: { eventId:
       id: activity.id,
       type: activity.activity,
       user: `User ${activity.userId.slice(0, 8)}`,
-      timestamp: activity.timestamp.toISOString(),
+      timestamp: activity.timestamp ? activity.timestamp.toISOString() : null,
       details: getActivityDetails(activity.activity),
     }));
 

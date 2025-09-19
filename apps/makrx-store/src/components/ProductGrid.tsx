@@ -3,23 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Product } from '@/types';
 
-interface Product {
-  id: number;
-  slug: string;
-  name: string;
-  brand?: string;
-  price: number;
-  sale_price?: number;
-  images: string[];
-  in_stock: boolean;
-  is_featured?: boolean;
-  rating?: {
-    average: number;
-    count: number;
-  };
-  currency?: string;
-}
 
 interface ProductGridProps {
   products: Product[];

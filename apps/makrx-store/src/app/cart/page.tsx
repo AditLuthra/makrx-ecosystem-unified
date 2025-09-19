@@ -16,11 +16,7 @@ import {
   CreditCard,
   ShieldCheck,
 } from 'lucide-react';
-import {
-  useGetStoreCartQuery,
-  useUpdateStoreCartItemMutation,
-  useRemoveFromStoreCartMutation,
-} from '@/services/storeApi';
+import { storeApi } from '@/services/storeApi';
 import type { Cart, CartItem } from '@/services/storeApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
@@ -40,16 +36,10 @@ export default function CartPage() {
 
   const [couponCode, setCouponCode] = useState('');
 
-  const {
-    data: cart,
-    isLoading: cartLoading,
-    isFetching: cartFetching,
-  } = useGetStoreCartQuery(undefined, {
-    skip: !isAuthenticated,
-  });
-
-  const [updateCartItem, { isLoading: isUpdating }] = useUpdateStoreCartItemMutation();
-  const [removeFromCart, { isLoading: isRemoving }] = useRemoveFromStoreCartMutation();
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [cartLoading, setCartLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   // Enhanced cart calculations
   const {
@@ -65,6 +55,32 @@ export default function CartPage() {
   } = useCartCalculations();
 
   useEffect(() => {
+    const fetchCart = async () => {
+      if (!isAuthenticated) {
+        setCart(null);
+        setCartLoading(false);
+        return;
+      }
+      setCartLoading(true);
+      try {
+        const fetchedCart = await storeApi.getCart();
+        setCart(fetchedCart);
+      } catch (error) {
+        console.error('Failed to fetch cart:', error);
+        setCart(null);
+        addNotification({
+          type: 'error',
+          title: 'Cart Error',
+          message: 'Failed to load cart. Please try again.',
+        });
+      } finally {
+        setCartLoading(false);
+      }
+    };
+    fetchCart();
+  }, [isAuthenticated, addNotification]);
+
+  useEffect(() => {
     if (cart) {
       setSubtotal(cart.subtotal);
     }
@@ -74,8 +90,12 @@ export default function CartPage() {
     if (newQuantity === 0) {
       await handleRemoveCartItem(itemId);
     } else {
+      setIsUpdating(true);
       try {
-        await updateCartItem({ itemId, quantity: newQuantity }).unwrap();
+        await storeApi.updateCartItem(itemId, newQuantity);
+        // Re-fetch cart to get updated state
+        const updatedCart = await storeApi.getCart();
+        setCart(updatedCart);
         addNotification({
           type: 'success',
           title: 'Cart Updated',
@@ -88,13 +108,19 @@ export default function CartPage() {
           title: 'Update Failed',
           message: 'Failed to update cart item. Please try again.',
         });
+      } finally {
+        setIsUpdating(false);
       }
     }
   };
 
   const handleRemoveCartItem = async (itemId: number) => {
+    setIsRemoving(true);
     try {
-      await removeFromCart(itemId).unwrap();
+      await storeApi.removeFromCart(itemId);
+      // Re-fetch cart to get updated state
+      const updatedCart = await storeApi.getCart();
+      setCart(updatedCart);
       addNotification({
         type: 'success',
         title: 'Item Removed',
@@ -103,6 +129,8 @@ export default function CartPage() {
     } catch (error) {
       console.error('Failed to remove cart item:', error);
       alert('Failed to remove cart item');
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -227,10 +255,10 @@ export default function CartPage() {
                     <div className="flex items-center">
                       {/* Product Image */}
                       <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
-                        {item.product?.images[0] ? (
+                        {item.product && item.product.images && item.product.images.length > 0 ? (
                           <Image
-                            src={item.product.images[0]}
-                            alt={item.product.name}
+                            src={item.product.images[0] ?? '/placeholder.svg'}
+                            alt={item.product?.name || 'Product image'}
                             width={96}
                             height={96}
                             className="w-full h-full object-cover"

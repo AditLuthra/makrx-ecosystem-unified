@@ -1,5 +1,5 @@
+import { createRemoteJWKSet, JWTPayload, jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
-import { createRemoteJWKSet, jwtVerify, JWTPayload } from 'jose';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: {
@@ -27,9 +27,7 @@ const keycloakIssuer =
     : null;
 
 const keycloakJwks = keycloakIssuer
-  ? createRemoteJWKSet(
-      new URL(`${keycloakIssuer}/protocol/openid-connect/certs`),
-    )
+  ? createRemoteJWKSet(new URL(`${keycloakIssuer}/protocol/openid-connect/certs`))
   : null;
 
 async function verifyKeycloakToken(token: string): Promise<KeycloakJwtPayload> {
@@ -42,17 +40,18 @@ async function verifyKeycloakToken(token: string): Promise<KeycloakJwtPayload> {
   }
 
   try {
-    const { payload } = await jwtVerify<KeycloakJwtPayload>(token, keycloakJwks, {
+    const { payload } = await jwtVerify(token, keycloakJwks, {
       issuer: keycloakIssuer,
       audience: process.env.KEYCLOAK_CLIENT_ID,
       clockTolerance: 30,
     });
 
-    if (!payload.sub) {
-      throw new Error('Missing subject claim');
+    // Defensive: ensure sub is a string
+    if (!payload || typeof payload.sub !== 'string') {
+      throw new Error('Missing or invalid subject claim');
     }
 
-    return payload;
+    return payload as KeycloakJwtPayload;
   } catch (error) {
     throw new Error('Token verification failed');
   }
@@ -72,7 +71,7 @@ export async function requireAuth(request: NextRequest): Promise<NextResponse | 
 
     // Add user info to request
     (request as AuthenticatedRequest).user = {
-      id: payload.sub,
+      id: payload.sub as string,
       email: payload.email || payload.preferred_username || '',
       firstName: payload.given_name,
       lastName: payload.family_name,

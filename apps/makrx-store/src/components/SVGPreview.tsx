@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Maximize2, RotateCcw, ZoomIn, ZoomOut, Ruler, AlertCircle } from 'lucide-react';
 
 interface SVGPreviewProps {
@@ -23,11 +23,7 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = '', on
   const [zoom, setZoom] = useState(1);
   const [showDimensions, setShowDimensions] = useState(true);
 
-  useEffect(() => {
-    loadSVGFile();
-  }, [file]);
-
-  const loadSVGFile = async () => {
+  const loadSVGFile = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -102,7 +98,11 @@ export const SVGPreview: React.FC<SVGPreviewProps> = ({ file, className = '', on
       setError('Failed to load SVG file');
       setIsLoading(false);
     }
-  };
+  }, [file, onAnalysis]);
+
+  useEffect(() => {
+    loadSVGFile();
+  }, [loadSVGFile]);
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.2, 5));
   const handleZoomOut = () => setZoom((prev) => Math.max(prev / 1.2, 0.1));

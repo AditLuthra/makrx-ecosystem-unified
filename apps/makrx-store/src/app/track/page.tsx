@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Search,
   Package,
@@ -302,10 +303,12 @@ export default function TrackOrderPage() {
                 <div className="space-y-3">
                   {orderStatus.products.map((product, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={product.image}
                         alt={product.name}
-                        className="w-12 h-12 rounded-lg object-cover"
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 rounded-lg object-cover"
                       />
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{product.name}</p>

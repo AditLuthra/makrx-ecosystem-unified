@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Star, Users, Package, Truck, Clock, QrCode } from 'lucide-react';
-import {
-  useGetStoreFeaturedProductsQuery,
-  useGetStoreCategoriesQuery,
-} from '@/services/storeApi';
+import { storeApi } from '@/services/storeApi';
 import type { Product, Category } from '@/types';
 
 function formatPrice(price: number, currency: string = 'USD') {
@@ -18,11 +15,43 @@ function formatPrice(price: number, currency: string = 'USD') {
 }
 
 export default function HomePage() {
-  const { data: featuredProductsData, isLoading: featuredProductsLoading } = useGetStoreFeaturedProductsQuery(8);
-  const { data: categoriesData, isLoading: categoriesLoading } = useGetStoreCategoriesQuery();
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [featuredProductsLoading, setFeaturedProductsLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  const featuredProducts = featuredProductsData || [];
-  const categories = categoriesData || [];
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      setFeaturedProductsLoading(true);
+      try {
+        const result = await storeApi.getFeaturedProducts(8);
+        setFeaturedProducts(result);
+      } catch (error) {
+        console.error('Failed to fetch featured products:', error);
+        setFeaturedProducts([]);
+      } finally {
+        setFeaturedProductsLoading(false);
+      }
+    };
+    fetchFeaturedProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setCategoriesLoading(true);
+      try {
+        const fetchedCategories = await storeApi.getCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const loading = featuredProductsLoading || categoriesLoading;
 
   const handleCategoryClick = (category: Category) => {
@@ -183,9 +212,9 @@ export default function HomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="font-bold text-card-foreground">
-                        {formatPrice(product.effective_price, product.currency)}
+                        {formatPrice(product.effective_price || 0, product.currency)}
                       </span>
-                      {product.sale_price && (
+                      {product.sale_price && product.price && (
                         <span className="text-sm text-muted-foreground line-through">
                           {formatPrice(product.price, product.currency)}
                         </span>

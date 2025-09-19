@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Calendar,
   Clock,
@@ -302,11 +303,9 @@ export default function BlogPage() {
                       className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => setSelectedPost(post)}
                     >
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="w-full h-48 object-cover"
-                      />
+                      <div className="relative h-48 w-full">
+                        <Image src={post.imageUrl} alt={post.title} fill className="object-cover" />
+                      </div>
                       <div className="p-6">
                         <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
                           <div className="flex items-center gap-1">
@@ -329,10 +328,12 @@ export default function BlogPage() {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <img
+                            <Image
                               src={post.author.avatar}
                               alt={post.author.name}
-                              className="w-6 h-6 rounded-full"
+                              width={24}
+                              height={24}
+                              className="h-6 w-6 rounded-full object-cover"
                             />
                             <span className="text-sm text-gray-600 dark:text-gray-300">
                               {post.author.name}
@@ -368,11 +369,9 @@ export default function BlogPage() {
                     onClick={() => setSelectedPost(post)}
                   >
                     <div className="flex gap-6">
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="w-32 h-24 object-cover rounded-lg flex-shrink-0"
-                      />
+                      <div className="relative h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg">
+                        <Image src={post.imageUrl} alt={post.title} fill className="object-cover" />
+                      </div>
 
                       <div className="flex-1">
                         <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
@@ -399,10 +398,12 @@ export default function BlogPage() {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <img
+                            <Image
                               src={post.author.avatar}
                               alt={post.author.name}
-                              className="w-6 h-6 rounded-full"
+                              width={24}
+                              height={24}
+                              className="h-6 w-6 rounded-full object-cover"
                             />
                             <div className="text-sm">
                               <span className="text-gray-900 dark:text-white font-medium">
@@ -446,11 +447,12 @@ export default function BlogPage() {
         {selectedPost && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="relative">
-                <img
+              <div className="relative h-64 w-full">
+                <Image
                   src={selectedPost.imageUrl}
                   alt={selectedPost.title}
-                  className="w-full h-64 object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <button
                   onClick={() => setSelectedPost(null)}
@@ -480,10 +482,12 @@ export default function BlogPage() {
                 </h1>
 
                 <div className="flex items-center gap-3 mb-6 pb-6 border-b dark:border-gray-600">
-                  <img
+                  <Image
                     src={selectedPost.author.avatar}
                     alt={selectedPost.author.name}
-                    className="w-10 h-10 rounded-full"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">

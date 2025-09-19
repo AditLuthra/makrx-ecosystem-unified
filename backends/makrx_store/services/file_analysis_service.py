@@ -99,7 +99,9 @@ class FileAnalysisService:
             geometric_analysis = self._analyze_geometry(mesh_analysis["mesh"])
 
             # Printability analysis
-            printability_analysis = self._analyze_printability(mesh_analysis["mesh"])
+            printability_analysis = self._analyze_printability(
+                mesh_analysis["mesh"]
+            )
 
             # Cost estimation
             cost_analysis = self._analyze_cost_factors(
@@ -112,7 +114,9 @@ class FileAnalysisService:
             )
 
             # Quality recommendations
-            quality_analysis = self._analyze_quality_requirements(mesh_analysis["mesh"])
+            quality_analysis = self._analyze_quality_requirements(
+                mesh_analysis["mesh"]
+            )
 
             # Material recommendations
             material_analysis = self._recommend_materials(
@@ -162,7 +166,9 @@ class FileAnalysisService:
             "modified_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
         }
 
-    async def _analyze_mesh(self, file_path: str, file_ext: str) -> Dict[str, Any]:
+    async def _analyze_mesh(
+        self, file_path: str, file_ext: str
+    ) -> Dict[str, Any]:
         """Load and perform basic mesh analysis"""
         try:
             # Load mesh using appropriate method
@@ -248,7 +254,9 @@ class FileAnalysisService:
                         # Extract and parse 3MF model file
                         # This is a simplified implementation
                         # Full 3MF support would require XML parsing
-                        with tempfile.NamedTemporaryFile(suffix=".stl") as temp_file:
+                        with tempfile.NamedTemporaryFile(
+                            suffix=".stl"
+                        ) as temp_file:
                             # Convert 3MF to STL (simplified)
                             return trimesh.load_mesh(file_path)
 
@@ -299,7 +307,9 @@ class FileAnalysisService:
         """Analyze geometric properties"""
         try:
             # Calculate complexity metrics
-            vertex_density = len(mesh.vertices) / mesh.area if mesh.area > 0 else 0
+            vertex_density = (
+                len(mesh.vertices) / mesh.area if mesh.area > 0 else 0
+            )
             face_density = len(mesh.faces) / mesh.area if mesh.area > 0 else 0
 
             # Surface roughness estimation
@@ -334,7 +344,9 @@ class FileAnalysisService:
             # Calculate face normal variation as roughness indicator
             if len(mesh.face_normals) > 1:
                 normal_variations = np.std(mesh.face_normals, axis=0)
-                roughness_score = np.mean(normal_variations) * 10  # Scale to 0-10
+                roughness_score = (
+                    np.mean(normal_variations) * 10
+                )  # Scale to 0-10
                 return float(min(10, max(0, roughness_score)))
             return 0.0
         except:
@@ -350,13 +362,17 @@ class FileAnalysisService:
             symmetry_scores = {}
             for axis, name in enumerate(["x", "y", "z"]):
                 # Simple symmetry check by comparing vertices on either side of center
-                vertices_positive = mesh.vertices[mesh.vertices[:, axis] > center[axis]]
-                vertices_negative = mesh.vertices[mesh.vertices[:, axis] < center[axis]]
+                vertices_positive = mesh.vertices[
+                    mesh.vertices[:, axis] > center[axis]
+                ]
+                vertices_negative = mesh.vertices[
+                    mesh.vertices[:, axis] < center[axis]
+                ]
 
                 if len(vertices_positive) > 0 and len(vertices_negative) > 0:
-                    ratio = min(len(vertices_positive), len(vertices_negative)) / max(
+                    ratio = min(
                         len(vertices_positive), len(vertices_negative)
-                    )
+                    ) / max(len(vertices_positive), len(vertices_negative))
                     symmetry_scores[f"{name}_axis"] = float(ratio)
                 else:
                     symmetry_scores[f"{name}_axis"] = 0.0
@@ -435,7 +451,9 @@ class FileAnalysisService:
             # Check mesh quality
             if not mesh.is_watertight:
                 printability_score -= 30
-                issues.append("Mesh is not watertight - may cause slicing issues")
+                issues.append(
+                    "Mesh is not watertight - may cause slicing issues"
+                )
 
             if not mesh.is_winding_consistent:
                 printability_score -= 20
@@ -473,7 +491,9 @@ class FileAnalysisService:
             features = self._detect_features(mesh)
             if features.get("overhangs"):
                 printability_score -= 15
-                warnings.append("Overhangs detected - supports may be required")
+                warnings.append(
+                    "Overhangs detected - supports may be required"
+                )
 
             if features.get("thin_walls"):
                 printability_score -= 10
@@ -582,7 +602,9 @@ class FileAnalysisService:
                 "cost_factors": {
                     "quality_multiplier": quality_multiplier,
                     "complexity_multiplier": 1.0
-                    + (len(mesh.vertices) / 50000),  # More vertices = more complex
+                    + (
+                        len(mesh.vertices) / 50000
+                    ),  # More vertices = more complex
                     "support_required": features.get("overhangs", False),
                     "estimated_waste_factor": 1.1,  # 10% waste
                 },
@@ -600,7 +622,9 @@ class FileAnalysisService:
             quality = options.get("quality", "standard")
             material = options.get("material", "PLA")
 
-            profile = self.print_profiles.get(quality, self.print_profiles["standard"])
+            profile = self.print_profiles.get(
+                quality, self.print_profiles["standard"]
+            )
             layer_height = profile["layer_height"]
             print_speed = profile["speed_mm_s"]
 
@@ -615,7 +639,9 @@ class FileAnalysisService:
                 mesh, options.get("infill", 20)
             )
 
-            total_extrusion_length = (perimeter_length + infill_length) * layer_count
+            total_extrusion_length = (
+                perimeter_length + infill_length
+            ) * layer_count
 
             # Base print time
             print_time_seconds = total_extrusion_length / print_speed
@@ -632,7 +658,9 @@ class FileAnalysisService:
             if temp_range[0] > 220:  # High-temp materials print slower
                 print_time_seconds *= 1.2
 
-            total_time_seconds = print_time_seconds + setup_time + finishing_time
+            total_time_seconds = (
+                print_time_seconds + setup_time + finishing_time
+            )
 
             return {
                 "time_breakdown": {
@@ -676,7 +704,9 @@ class FileAnalysisService:
         """Estimate infill extrusion length per layer"""
         try:
             bounds = mesh.bounds
-            layer_area = (bounds[1][0] - bounds[0][0]) * (bounds[1][1] - bounds[0][1])
+            layer_area = (bounds[1][0] - bounds[0][0]) * (
+                bounds[1][1] - bounds[0][1]
+            )
 
             # Infill pattern affects length - using rectangular pattern estimate
             infill_density = infill_percentage / 100
@@ -692,7 +722,9 @@ class FileAnalysisService:
         except:
             return 0.0
 
-    def _analyze_quality_requirements(self, mesh: trimesh.Trimesh) -> Dict[str, Any]:
+    def _analyze_quality_requirements(
+        self, mesh: trimesh.Trimesh
+    ) -> Dict[str, Any]:
         """Analyze what quality settings are needed"""
         try:
             features = self._detect_features(mesh)
@@ -702,17 +734,23 @@ class FileAnalysisService:
 
             if features.get("small_details"):
                 recommended_quality = "high"
-                recommendations.append("High quality recommended for small details")
+                recommendations.append(
+                    "High quality recommended for small details"
+                )
 
             if features.get("thin_walls"):
                 if recommended_quality == "standard":
                     recommended_quality = "high"
-                recommendations.append("High quality recommended for thin walls")
+                recommendations.append(
+                    "High quality recommended for thin walls"
+                )
 
             # Check surface complexity
             if len(mesh.vertices) > 100000:
                 recommended_quality = "high"
-                recommendations.append("High quality recommended for complex geometry")
+                recommendations.append(
+                    "High quality recommended for complex geometry"
+                )
 
             # Layer height recommendations
             bounds = mesh.bounds
@@ -762,7 +800,9 @@ class FileAnalysisService:
                         reasons.append("Flexible material good for thin walls")
                     elif material in ["PLA", "PETG"]:
                         score += 10
-                        reasons.append("Good balance of flexibility and rigidity")
+                        reasons.append(
+                            "Good balance of flexibility and rigidity"
+                        )
 
                 # Detail requirements
                 if features.get("small_details"):

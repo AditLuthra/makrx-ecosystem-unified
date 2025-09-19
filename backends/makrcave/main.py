@@ -17,7 +17,7 @@ from .middleware.error_handling import ErrorHandlingMiddleware
 from .routes import api_router
 from .routes.health import router as health_router
 from .dependencies import get_keycloak_public_key
-from .database import engine
+from .database import engine, reset_db
 from .redis_utils import check_redis_connection
 
 # Configure logging early
@@ -172,6 +172,13 @@ async def readiness_check():
 # Startup checks: warm Keycloak JWKS/public key and verify DB connection
 @app.on_event("startup")
 async def on_startup():
+    # In test environment, start with a clean database to avoid state leakage across runs
+    if os.getenv("ENVIRONMENT") == "test":
+        try:
+            reset_db()
+            log.info("test_db_reset_done")
+        except Exception as e:
+            log.warning("test_db_reset_failed", error=str(e))
     try:
         await get_keycloak_public_key(force=True)
         log.info("keycloak_public_key_warmed")

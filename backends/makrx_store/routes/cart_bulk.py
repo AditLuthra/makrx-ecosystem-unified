@@ -35,7 +35,9 @@ class BulkCartItem(BaseModel):
 
 
 class BulkCartRequest(BaseModel):
-    user_email: EmailStr = Field(..., description="User email for cart identification")
+    user_email: EmailStr = Field(
+        ..., description="User email for cart identification"
+    )
     items: List[BulkCartItem] = Field(
         ..., min_items=1, description="Items to add to cart"
     )
@@ -43,7 +45,9 @@ class BulkCartRequest(BaseModel):
         default="api", description="Source system (makrcave_bom, manual, etc.)"
     )
     project_id: Optional[str] = Field(None, description="Source project ID")
-    project_name: Optional[str] = Field(None, description="Source project name")
+    project_name: Optional[str] = Field(
+        None, description="Source project name"
+    )
     merge_strategy: str = Field(
         default="add", description="add|replace|update quantities"
     )
@@ -89,7 +93,9 @@ async def bulk_add_to_cart(
     """
     try:
         # Validate products and prepare cart items
-        validation_result = await validate_bulk_cart_items(bulk_request.items, db)
+        validation_result = await validate_bulk_cart_items(
+            bulk_request.items, db
+        )
 
         if not validation_result.valid_items:
             return BulkCartResponse(
@@ -145,7 +151,9 @@ async def bulk_add_to_cart(
     except Exception as e:
         logger.error(f"Bulk cart addition error: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="Bulk cart addition failed")
+        raise HTTPException(
+            status_code=500, detail="Bulk cart addition failed"
+        )
 
 
 async def validate_bulk_cart_items(
@@ -160,7 +168,9 @@ async def validate_bulk_cart_items(
     skus = [item.sku for item in items]
 
     # Batch fetch products
-    products_result = await db.execute(select(Product).where(Product.sku.in_(skus)))
+    products_result = await db.execute(
+        select(Product).where(Product.sku.in_(skus))
+    )
     products = products_result.scalars().all()
     sku_to_product = {p.sku: p for p in products}
 
@@ -192,7 +202,10 @@ async def validate_bulk_cart_items(
                 continue
 
             # Check inventory availability
-            if product.track_inventory and product.stock_quantity < item.quantity:
+            if (
+                product.track_inventory
+                and product.stock_quantity < item.quantity
+            ):
                 invalid_items.append(
                     {
                         "sku": item.sku,
@@ -358,7 +371,8 @@ async def process_bulk_cart_additions(
                         {
                             "sku": bulk_item.sku,
                             "status": "updated",
-                            "old_quantity": existing_item.quantity - bulk_item.quantity,
+                            "old_quantity": existing_item.quantity
+                            - bulk_item.quantity,
                             "new_quantity": new_quantity,
                             "action": "quantity_added",
                         }
@@ -386,7 +400,9 @@ async def process_bulk_cart_additions(
                     # Update quantity only if new quantity is higher
                     if bulk_item.quantity > existing_item.quantity:
                         existing_item.quantity = bulk_item.quantity
-                        existing_item.line_total = unit_price * bulk_item.quantity
+                        existing_item.line_total = (
+                            unit_price * bulk_item.quantity
+                        )
                         existing_item.updated_at = datetime.utcnow()
 
                         updated_items += 1
@@ -480,7 +496,9 @@ async def recalculate_cart_totals(cart: Cart, db: AsyncSession):
         cart.discount_amount = discount_amount
         cart.tax_amount = tax_amount
         cart.shipping_amount = shipping_amount
-        cart.total_amount = subtotal - discount_amount + tax_amount + shipping_amount
+        cart.total_amount = (
+            subtotal - discount_amount + tax_amount + shipping_amount
+        )
         cart.item_count = len(cart.items)
         cart.updated_at = datetime.utcnow()
 
@@ -528,7 +546,9 @@ async def validate_bulk_cart_items_endpoint(
                     {
                         "sku": item.sku,
                         "quantity": item.quantity,
-                        "product_name": validation_result.product_map[item.sku].name,
+                        "product_name": validation_result.product_map[
+                            item.sku
+                        ].name,
                         "unit_price": float(
                             validation_result.product_map[item.sku].price
                         ),
