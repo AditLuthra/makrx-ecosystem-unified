@@ -12,6 +12,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime
 import os
+import logging
 
 from ..database import get_db
 from ..dependencies import get_current_user, require_roles, CurrentUser
@@ -35,10 +36,11 @@ from ..schemas.member import (
     BulkMemberOperation,
 )
 from ..crud import member as crud_member
-from ..utils.email_service import send_member_invite_email
+from ..utils.email_service import send_member_welcome_email
 
 router = APIRouter()
 security = HTTPBearer()
+logger = logging.getLogger(__name__)
 
 
 # Member management routes
@@ -66,14 +68,28 @@ async def create_member(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Member with this email already exists",
             )
+        # Also check by keycloak_user_id to avoid unique constraint violations
+        existing_by_kc = crud_member.get_member_by_keycloak_id(
+            db, member.keycloak_user_id
+        )
+        if existing_by_kc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Member with this keycloak_user_id already exists",
+            )
 
         # Create member
         db_member = crud_member.create_member(db, member, current_user.user_id)
 
-        # Send welcome email in background (use the correct helper)
-        if background_tasks:
+        # Prepare response using schema to ensure serialization correctness
+        response = MemberResponse.from_orm(db_member)
+        if db_member.membership_plan:
+            response.membership_plan_name = db_member.membership_plan.name
+
+        # Send welcome email in background (skip in test env)
+        if background_tasks and os.getenv("ENVIRONMENT") != "test":
             background_tasks.add_task(
-                send_member_invite_email,
+                send_member_welcome_email,
                 db_member.email,
                 db_member.first_name,
                 (
@@ -83,9 +99,13 @@ async def create_member(
                 ),
             )
 
-        return db_member
+        return response
 
     except Exception as e:
+        # Log underlying exception for diagnostics in test runs
+        logger.exception("create_member_failed", extra={
+            "error": str(e)
+        })
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create member: {str(e)}",

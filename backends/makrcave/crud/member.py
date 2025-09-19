@@ -573,11 +573,13 @@ def log_member_activity(
     session_id: str = None,
 ):
     """Log member activity"""
+    # Note: SQLAlchemy's declarative Base uses `metadata` internally, so the
+    # model defines the JSON column as `log_log_metadata`. Use that field here.
     activity = MemberActivityLog(
         member_id=member_id,
         activity_type=activity_type,
         description=description,
-        metadata=metadata or {},
+        log_log_metadata=metadata or {},
         ip_address=ip_address,
         user_agent=user_agent,
         session_id=session_id,
