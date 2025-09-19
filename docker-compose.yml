@@ -271,6 +271,39 @@ services:
       timeout: 10s
       retries: 3
 
+  makrx-services:
+    build:
+      context: .
+      dockerfile: apps/makrx-services/Dockerfile
+    container_name: makrx-services
+    environment:
+      NODE_ENV: production
+      SERVICES_API_URL: http://makrx-services-backend:8006/api
+      NEXT_PUBLIC_SERVICES_API_URL: http://makrx-services-backend:8006/api
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
+      NEXT_PUBLIC_KEYCLOAK_URL: http://keycloak:8080
+      NEXT_PUBLIC_KEYCLOAK_REALM: makrx
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: makrx-services
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD:-makrx_dev_password}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+    depends_on:
+      - keycloak
+      - postgres
+      - redis
+    networks:
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
+    profiles:
+      - production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Backend Services
   makrcave-backend:
     build:
@@ -382,6 +415,48 @@ services:
       timeout: 10s
       retries: 3
 
+  makrx-services-backend:
+    build:
+      context: backends/makrx-services
+      dockerfile: Dockerfile
+    container_name: makrx-services-backend
+    environment:
+      ENVIRONMENT: production
+      PORT: 8006
+      USE_GUNICORN: "true"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-makrx}:${POSTGRES_PASSWORD:-makrx_dev_password}@postgres:5432/${POSTGRES_DB:-makrx_ecosystem}
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: makrx
+      KEYCLOAK_CLIENT_ID: makrx-services-api
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
+      REDIS_URL: redis://redis:6379/2
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
+    profiles:
+      - production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Reverse Proxy
   nginx:
     build:
@@ -397,6 +472,8 @@ services:
       - makrcave
       - makrx-store
       - makrx-events
+      - makrx-services
+      - makrx-services-backend
     networks:
       - public-network
       - internal-network
