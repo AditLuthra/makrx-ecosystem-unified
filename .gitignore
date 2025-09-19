@@ -20,6 +20,14 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.venv/
+# Ignore virtualenvs anywhere in the tree
+**/.venv/
+**/venv/
+**/ENV/
+**/env.bak/
+**/venv.bak/
+.venv.bak/
 .pytest_cache/
 .coverage
 htmlcov/
