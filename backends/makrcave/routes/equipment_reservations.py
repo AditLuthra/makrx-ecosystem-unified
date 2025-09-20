@@ -1,40 +1,33 @@
+import uuid
+from datetime import datetime, timedelta
+from typing import List, Optional
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     HTTPException,
-    status,
     Query,
-    BackgroundTasks,
+    status,
 )
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from datetime import datetime, timedelta
-import uuid
 
 from .. import models
-from ..models import *  # Access SQLAlchemy models via module
 from ..database import get_db
 from ..dependencies import get_current_user
 from ..schemas.equipment_reservations import (
-    EnhancedReservationCreate,
-    EnhancedReservationUpdate,
-    EnhancedReservationResponse,
-    CostRuleCreate,
-    CostRuleUpdate,
-    CostRuleResponse,
-    SkillGateCreate,
-    SkillGateUpdate,
-    SkillGateResponse,
-    ReservationApprovalRequest,
-    SkillVerificationRequest,
-    CostEstimateRequest,
-    CostEstimateResponse,
     AvailabilityCheckRequest,
     AvailabilityResponse,
-    BulkReservationAction,
-    BulkReservationResult,
-    ReservationAnalytics,
-    EquipmentReservationSummary,
+    CostEstimateRequest,
+    CostEstimateResponse,
+    CostRuleCreate,
+    CostRuleResponse,
+    EnhancedReservationCreate,
+    EnhancedReservationResponse,
+    EnhancedReservationUpdate,
+    ReservationApprovalRequest,
+    SkillGateCreate,
+    SkillGateResponse,
 )
 
 router = APIRouter(prefix="/equipment-reservations", tags=["equipment-reservations"])
@@ -52,7 +45,7 @@ async def create_enhanced_reservation(
     db: Session = Depends(get_db),
     background_tasks: BackgroundTasks = None,
 ):
-    """Create enhanced equipment reservation with cost calculation and skill verification"""
+    """Create reservation with cost and skill checks"""
     try:
         # Check if equipment exists
         equipment = (

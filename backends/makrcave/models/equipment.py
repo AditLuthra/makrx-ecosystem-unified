@@ -1,20 +1,20 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Float,
-    DateTime,
-    Text,
-    Boolean,
-    ForeignKey,
-    Enum,
-    JSON,
-)
-from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import ARRAY
-from datetime import datetime
 import enum
 import uuid
+from datetime import datetime
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import relationship
 
 from ..database import Base
 from .skill import skill_equipment

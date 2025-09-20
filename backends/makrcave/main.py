@@ -1,25 +1,25 @@
-from fastapi import FastAPI, HTTPException, status, Request
-from contextlib import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 import os
-import structlog
-import uuid
 import time
-from .logging_config import configure_logging
+import uuid
+from contextlib import asynccontextmanager
+
+import structlog
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from sqlalchemy import text
+from .database import engine, reset_db
+from .dependencies import get_keycloak_public_key
+from .logging_config import configure_logging
+from .middleware.error_handling import ErrorHandlingMiddleware
 
 # Import security middleware
 from .middleware.security import add_security_middleware
-from .middleware.error_handling import ErrorHandlingMiddleware
-
+from .redis_utils import check_redis_connection
 from .routes import api_router
 from .routes.health import router as health_router
-from .dependencies import get_keycloak_public_key
-from .database import engine, reset_db
-from .redis_utils import check_redis_connection
 
 # Configure logging early
 configure_logging()
@@ -135,11 +135,8 @@ async def request_middleware(request: Request, call_next):
     structlog.contextvars.bind_contextvars(request_id=correlation_id)
 
     start_time = time.time()
-
     response = await call_next(request)
-
     process_time = (time.time() - start_time) * 1000
-
     # Ensure the correlation ID is in the response headers
     response.headers["X-Request-ID"] = correlation_id
     response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
@@ -158,13 +155,13 @@ if trusted_hosts:
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=hosts)
 
 
-# Liveness probe
+# Plain root health for infra tools (kept minimal; readiness is under /api/v1)
 @app.get("/health", status_code=status.HTTP_200_OK)
-async def liveness_check():
-    return {"status": "healthy", "service": "makrcave-backend"}
+async def root_health():
+    return {"status": "ok", "service": "makrcave-backend"}
 
 
-# Readiness probe
+# Back-compat readiness (prefer /api/v1/health/readyz)
 @app.get("/healthz", status_code=status.HTTP_200_OK)
 async def readiness_check():
     db_ok = False
@@ -198,7 +195,6 @@ async def readiness_check():
 
 
 # Include API routes
-# Primary versioned mount
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(health_router, prefix="/api/v1")
 

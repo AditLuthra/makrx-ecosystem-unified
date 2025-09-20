@@ -1,26 +1,23 @@
-import os
 import io
+import logging
+import os
 from datetime import datetime
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List
+
+import qrcode
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.enums import TA_RIGHT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
+    HRFlowable,
+    Paragraph,
     SimpleDocTemplate,
+    Spacer,
     Table,
     TableStyle,
-    Paragraph,
-    Spacer,
-    Image,
-    HRFlowable,
 )
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
-from reportlab.graphics.shapes import Drawing, Rect
-from reportlab.graphics import renderPDF
-import qrcode
-from PIL import Image as PILImage
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -484,7 +481,7 @@ class InvoiceGenerator:
                 date_obj = date_value
 
             return date_obj.strftime("%B %d, %Y")
-        except:
+        except Exception:
             return str(date_value)
 
     def _format_currency(self, amount: float, currency: str = "INR") -> str:

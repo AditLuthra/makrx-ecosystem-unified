@@ -1,22 +1,22 @@
+import enum
+import uuid
+
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Float,
-    DateTime,
     JSON,
-    Text,
     Boolean,
+    Column,
+    DateTime,
+    Float,
     ForeignKey,
     Index,
+    Integer,
+    String,
+    Text,
 )
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.sql import func
+
 from ..database import Base
-import uuid
-import enum
-from datetime import datetime, timedelta
 
 
 class MetricType(str, enum.Enum):

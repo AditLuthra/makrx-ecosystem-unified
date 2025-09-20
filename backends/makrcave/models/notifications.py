@@ -1,22 +1,28 @@
+import enum
+import uuid
+from datetime import datetime
+
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
+    JSON,
     Boolean,
+    Column,
     DateTime,
     Float,
-    Text,
     ForeignKey,
-    JSON,
+    Index,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy import (
     Enum as SQLEnum,
 )
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from ..database import Base
-import uuid
-import enum
-from datetime import datetime, timedelta
 
 
 class NotificationType(str, enum.Enum):
@@ -164,7 +170,10 @@ class Notification(Base):
     )
 
     def __repr__(self):
-        return f"<Notification(id={self.id}, type={self.notification_type}, recipient={self.recipient_id})>"
+        return (
+            f"<Notification(id={self.id}, type={self.notification_type}, "
+            f"recipient={self.recipient_id})>"
+        )
 
     def is_expired(self) -> bool:
         """Check if notification is expired"""
@@ -478,10 +487,6 @@ class NotificationAnalytics(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-# Add relationship to Member model
-from sqlalchemy.ext.declarative import declared_attr
-
-
 class NotificationMixin:
     """Mixin to add to Member model"""
 
@@ -497,7 +502,6 @@ class NotificationMixin:
 
 
 # Indexes for performance
-from sqlalchemy import Index
 
 Index(
     "idx_notifications_recipient_status",

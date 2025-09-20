@@ -3,6 +3,7 @@ Security Middleware for MakrCave Backend
 Rate limiting, security headers, and request validation
 """
 
+import hashlib
 import logging
 import os
 import random
@@ -10,11 +11,11 @@ import time
 import uuid
 from collections import defaultdict
 from typing import Optional
-import hashlib
-import redis
 
+import redis.asyncio as redis
 from fastapi import HTTPException, Request, status
 from starlette.middleware.base import BaseHTTPMiddleware
+
 from ..security.helpers import get_request_context
 
 logger = logging.getLogger(__name__)
@@ -87,16 +88,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             key_raw = f"rl:{client_ip}:{endpoint_category}:{window_start}"
             key = hashlib.sha256(key_raw.encode()).hexdigest()
             try:
-                current_raw = self.redis_client.incr(key)
-                current: int = (
-                    int(current_raw)
-                    if not isinstance(current_raw, int)
-                    else current_raw
-                )
-                ttl_raw = self.redis_client.ttl(key)
-                ttl: int = int(ttl_raw) if not isinstance(ttl_raw, int) else ttl_raw
+                current_raw = await self.redis_client.incr(key)
+                current: int = int(current_raw)
+                ttl_raw = await self.redis_client.ttl(key)
+                ttl: int = int(ttl_raw)
                 if ttl == -1:
-                    self.redis_client.expire(key, period)
+                    await self.redis_client.expire(key, period)
                 if current > calls_limit:
                     raise HTTPException(
                         status_code=status.HTTP_429_TOO_MANY_REQUESTS,

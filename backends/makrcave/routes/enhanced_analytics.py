@@ -1,50 +1,48 @@
+from datetime import date
+from typing import List, Optional
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     HTTPException,
-    BackgroundTasks,
     Query,
     status,
 )
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta, date
-import uuid
 
+from ..crud import enhanced_analytics as crud_analytics
 from ..database import get_db
 from ..dependencies import get_current_user
 from ..schemas.enhanced_analytics import (
+    AggregationPeriod,
+    AlertSeverity,
+    AnalyticsAlertCreate,
+    AnalyticsAlertResponse,
+    AnalyticsAlertUpdate,
+    AnalyticsConfigurationCreate,
+    AnalyticsConfigurationResponse,
+    AnalyticsExportRequest,
+    AnalyticsExportResponse,
+    AnalyticsQuery,
+    AnalyticsQueryResult,
+    AnalyticsReportCreate,
+    AnalyticsReportResponse,
+    ComprehensiveDashboardResponse,
     EnhancedUsageMetricsCreate,
     EnhancedUsageMetricsResponse,
     EquipmentUtilizationMetricsCreate,
     EquipmentUtilizationMetricsResponse,
-    RevenueAnalyticsEnhancedCreate,
-    RevenueAnalyticsEnhancedResponse,
-    MemberEngagementMetricsCreate,
-    MemberEngagementMetricsResponse,
-    AnalyticsAlertCreate,
-    AnalyticsAlertUpdate,
-    AnalyticsAlertResponse,
-    PerformanceBenchmarkCreate,
-    PerformanceBenchmarkResponse,
-    AnalyticsReportCreate,
-    AnalyticsReportResponse,
-    AnalyticsConfigurationCreate,
-    AnalyticsConfigurationResponse,
-    ComprehensiveDashboardResponse,
-    AnalyticsQuery,
-    AnalyticsQueryResult,
     ForecastRequest,
     ForecastResult,
-    AnalyticsExportRequest,
-    AnalyticsExportResponse,
-    AggregationPeriod,
-    MetricType,
-    AlertSeverity,
-    TrendDirection,
+    MemberEngagementMetricsCreate,
+    MemberEngagementMetricsResponse,
+    PerformanceBenchmarkCreate,
+    PerformanceBenchmarkResponse,
+    RevenueAnalyticsEnhancedCreate,
+    RevenueAnalyticsEnhancedResponse,
 )
-from ..crud import enhanced_analytics as crud_analytics
 
 router = APIRouter()
 

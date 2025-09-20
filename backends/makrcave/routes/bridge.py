@@ -1,19 +1,19 @@
 """Bridge API routes for Cave <-> Store communication"""
 
-import httpx
 import logging
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from sqlalchemy.orm import Session
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from ..core.config import settings
 from ..database import get_db
 from ..models.project import Job, JobStatus
-from ..schemas.project import JobCreate, JobUpdate
-from ..utils.auth import get_current_user
+from ..schemas.project import JobUpdate
+from ..dependencies import get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

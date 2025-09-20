@@ -1,41 +1,38 @@
+import logging
+import os
+from typing import List, Optional
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     HTTPException,
-    status,
     Query,
-    BackgroundTasks,
+    status,
 )
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
-from typing import List, Optional
-import uuid
-from datetime import datetime
-import os
-import logging
 
+from ..crud import member as crud_member
 from ..database import get_db
-from ..dependencies import get_current_user, require_roles, CurrentUser
+from ..dependencies import CurrentUser, get_current_user, require_roles
 from ..schemas.member import (
-    MemberCreate,
-    MemberUpdate,
-    MemberResponse,
-    MemberSummaryResponse,
-    MemberSuspend,
-    MembershipPlanCreate,
-    MembershipPlanUpdate,
-    MembershipPlanResponse,
-    MemberInviteCreate,
-    MemberInviteUpdate,
-    MemberInviteResponse,
+    BulkMemberOperation,
     MemberActivityLogResponse,
-    MembershipTransactionResponse,
+    MemberCreate,
     MemberFilter,
+    MemberInviteCreate,
+    MemberInviteResponse,
+    MemberResponse,
+    MembershipPlanCreate,
+    MembershipPlanResponse,
+    MembershipPlanUpdate,
     MemberSort,
     MemberStatistics,
-    BulkMemberOperation,
+    MemberSummaryResponse,
+    MemberSuspend,
+    MemberUpdate,
 )
-from ..crud import member as crud_member
 from ..utils.email_service import send_member_welcome_email
 
 router = APIRouter()
@@ -623,9 +620,9 @@ async def bulk_member_operations(
                     reason=operation.data.get("reason", "Bulk suspension"),
                     suspended_by=current_user.user_id,
                 )
-                result = crud_member.suspend_member(db, member_id, suspend_data)
+                crud_member.suspend_member(db, member_id, suspend_data)
             elif operation.operation == "reactivate":
-                result = crud_member.reactivate_member(
+                crud_member.reactivate_member(
                     db, member_id, current_user.user_id
                 )
             else:

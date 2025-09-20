@@ -1,49 +1,43 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import and_, or_, desc, asc, func
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_user_optional
 from ..models.enhanced_bom import (
-    BOMTemplate,
-    EnhancedBOMItem,
-    BOMPurchaseOrder,
-    BOMUsageHistory,
-    BOMInventoryTransaction,
-    BOMAnalytics,
-    BOMCostHistory,
-    SupplierManagement,
-    ProcurementStatus,
     AvailabilityStatus,
+    BOMInventoryTransaction,
+    BOMPurchaseOrder,
+    BOMTemplate,
+    BOMUsageHistory,
     ComponentCategory,
-    SupplierRating,
+    EnhancedBOMItem,
+    ProcurementStatus,
+    SupplierManagement,
 )
 from ..schemas.enhanced_bom import (
-    BOMTemplateCreate,
-    BOMTemplateUpdate,
-    BOMTemplateResponse,
-    EnhancedBOMItemCreate,
-    EnhancedBOMItemUpdate,
-    EnhancedBOMItemResponse,
-    BOMPurchaseOrderCreate,
-    BOMPurchaseOrderUpdate,
-    BOMPurchaseOrderResponse,
-    BOMUsageHistoryCreate,
-    BOMUsageHistoryResponse,
+    BOMCostAnalysis,
+    BOMDashboardStats,
     BOMInventoryTransactionCreate,
     BOMInventoryTransactionResponse,
-    BOMAnalyticsResponse,
-    SupplierManagementCreate,
-    SupplierManagementUpdate,
-    SupplierManagementResponse,
-    BOMSearchFilters,
     BOMListResponse,
-    BOMDashboardStats,
+    BOMPurchaseOrderCreate,
+    BOMPurchaseOrderResponse,
+    BOMSearchFilters,
+    BOMTemplateCreate,
+    BOMTemplateResponse,
+    BOMUsageHistoryCreate,
+    BOMUsageHistoryResponse,
+    EnhancedBOMItemCreate,
+    EnhancedBOMItemResponse,
+    EnhancedBOMItemUpdate,
     MakrXStoreOrderRequest,
-    BOMCostAnalysis,
+    SupplierManagementCreate,
+    SupplierManagementResponse,
 )
 
 router = APIRouter(prefix="/enhanced-bom", tags=["enhanced-bom"])

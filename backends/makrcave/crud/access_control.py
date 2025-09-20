@@ -316,7 +316,7 @@ def get_user_sessions(
     if user_id:
         query = query.filter(UserSession.user_id == user_id)
     if active_only:
-        query = query.filter(UserSession.is_active.is_(True))
+        query = query.filter_by(is_active=True)
 
     return query.order_by(desc(UserSession.created_at)).offset(skip).limit(limit).all()
 
@@ -384,7 +384,7 @@ def get_password_policies(
     db: Session, makerspace_id: Optional[str] = None
 ) -> List[PasswordPolicy]:
     """Get password policies"""
-    query = db.query(PasswordPolicy).filter(PasswordPolicy.is_active.is_(True))
+    query = db.query(PasswordPolicy).filter_by(is_active=True)
 
     if makerspace_id:
         query = query.filter(
@@ -503,7 +503,10 @@ def get_enhanced_members(
             query = query.filter(Member.is_active == filters.is_active)
             if filters.has_active_session is not None:
                 if filters.has_active_session:
-                    query = query.join(UserSession).filter(UserSession.is_active.is_(True))
+                    query = (
+                        query.join(UserSession)
+                        .filter(UserSession.is_active == True)  # noqa: E712
+                    )
                 else:
                     query = query.outerjoin(UserSession).filter(
                         or_(
@@ -537,23 +540,25 @@ def get_access_control_stats(db: Session, makerspace_id: Optional[str] = None) -
 
     # User statistics
     total_users = user_query.count()
-    active_users = user_query.filter(Member.is_active.is_(True)).count()
-    locked_users = user_query.filter(Member.account_locked.is_(True)).count()
-    users_requiring_password_change = user_query.filter(
-        Member.requires_password_change.is_(True)
+    active_users = user_query.filter_by(is_active=True).count()
+    locked_users = user_query.filter_by(account_locked=True).count()
+    users_requiring_password_change = user_query.filter_by(
+        requires_password_change=True
     ).count()
-    users_with_2fa = user_query.filter(Member.two_factor_enabled.is_(True)).count()
+    users_with_2fa = user_query.filter_by(two_factor_enabled=True).count()
 
     # Role statistics
     total_roles = role_query.count()
-    system_roles = role_query.filter(Role.is_system == True).count()
+    system_roles = role_query.filter_by(is_system=True).count()
     custom_roles = total_roles - system_roles
 
     # Permission statistics
-    total_permissions = db.query(Permission).filter(Permission.is_active.is_(True)).count()
+    total_permissions = (
+        db.query(Permission).filter_by(is_active=True).count()
+    )
 
     # Session statistics
-    active_sessions = session_query.filter(UserSession.is_active.is_(True)).count()
+    active_sessions = session_query.filter_by(is_active=True).count()
 
     # Recent activity
     yesterday = datetime.utcnow() - timedelta(days=1)
@@ -611,7 +616,7 @@ def get_security_alerts(
         .filter(
             and_(
                 AccessLog.action == "login",
-                AccessLog.success == False,
+                AccessLog.success == False,  # noqa: E712
                 AccessLog.created_at >= datetime.utcnow() - timedelta(hours=24),
             )
         )
@@ -627,7 +632,10 @@ def get_security_alerts(
                 "alert_type": "multiple_failed_logins",
                 "severity": "medium",
                 "title": "Multiple Failed Login Attempts",
-                "description": f"Multiple failed login attempts from IP {failure.ip_address}",
+                "description": (
+                    "Multiple failed login attempts from IP "
+                    f"{failure.ip_address}"
+                ),
                 "ip_address": failure.ip_address,
                 "details": {"attempt_count": 5},  # Simplified
                 "resolved": False,
@@ -780,7 +788,7 @@ def import_roles(db: Session, import_data: RoleImport, imported_by: str) -> dict
                 results["updated"].append(role_data.name)
             else:
                 # Create new role
-                db_role = create_role(db, role_data, imported_by)
+                create_role(db, role_data, imported_by)
                 results["created"].append(role_data.name)
 
         except Exception as e:

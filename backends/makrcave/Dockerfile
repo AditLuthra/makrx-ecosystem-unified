@@ -30,7 +30,7 @@ ENV USE_GUNICORN=true \
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD sh -c 'curl -f http://localhost:${PORT:-8001}/health || exit 1'
+  CMD sh -c 'curl -f http://localhost:${PORT:-8001}/api/v1/health/readyz || exit 1'
 
 # Start application
 CMD ["/bin/sh", "start.sh"]

@@ -2,14 +2,16 @@
 Health check endpoints for makrcave backend
 """
 
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Any, Dict
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from ..database import get_db
-import redis
 import os
 from datetime import datetime
+from typing import Any, Dict
+
+import redis
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from ..database import get_db
 
 router = APIRouter(prefix="/health", tags=["health"])
 

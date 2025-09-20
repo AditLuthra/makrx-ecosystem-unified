@@ -1,23 +1,24 @@
 """Analytics API routes with real database integration"""
 
+import logging
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from datetime import datetime
-import logging
 
 from ..database import get_db
 from ..dependencies import (
-    get_current_user,
     get_current_makerspace,
+    get_current_user,
     require_permission,
 )
 from ..services.real_analytics_service import get_real_analytics_service
 from ..utils.analytics_mock_data import (
     AnalyticsMockData,
     get_mock_analytics_overview,
-    get_mock_usage_stats,
-    get_mock_revenue_analytics,
     get_mock_equipment_metrics,
+    get_mock_revenue_analytics,
+    get_mock_usage_stats,
 )
 
 router = APIRouter()

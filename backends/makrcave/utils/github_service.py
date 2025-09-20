@@ -1,16 +1,15 @@
-import requests
 import base64
-import json
-from typing import List, Optional, Dict, Any
-from datetime import datetime
 import re
-from urllib.parse import urlparse
+from datetime import datetime
+from typing import Dict, List, Optional
+
+import requests
 
 from ..schemas.project import (
-    GitHubRepoInfo,
+    GitHubActivity,
     GitHubCommit,
     GitHubFile,
-    GitHubActivity,
+    GitHubRepoInfo,
 )
 
 
@@ -412,7 +411,7 @@ class GitHubService:
         try:
             repo_info = self.get_repository_info(repo_url)
             return repo_info is not None
-        except:
+        except Exception:
             return False
 
     def create_file(

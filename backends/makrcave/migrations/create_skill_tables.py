@@ -10,9 +10,11 @@ This migration creates all tables needed for the skill management system:
 - skill_equipment: Many-to-many relationships between skills and equipment
 """
 
-from sqlalchemy import text
-from ..database import engine, Base
 import logging
+
+from sqlalchemy import text
+
+from ..database import Base, engine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -27,11 +29,11 @@ def upgrade():
         # Create tables using SQLAlchemy
         from ..models.skill import (
             Skill,
-            UserSkill,
-            SkillRequest,
             SkillAuditLog,
-            skill_prerequisites,
+            SkillRequest,
+            UserSkill,
             skill_equipment,
+            skill_prerequisites,
         )
 
         # Create all skill-related tables

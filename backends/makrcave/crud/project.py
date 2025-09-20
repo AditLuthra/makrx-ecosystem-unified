@@ -1,39 +1,34 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, func, text
-from typing import List, Optional, Dict, Any
 from datetime import datetime
-import uuid
+from typing import Dict, List, Optional
 
-from ..utils.github_service import GitHubService
+from sqlalchemy import and_, func, or_
+from sqlalchemy.orm import Session, joinedload
 
 from ..models.project import (
+    ActivityType,
+    CollaboratorRole,
     Project,
-    ProjectCollaborator,
-    ProjectBOM,
-    ProjectEquipmentReservation,
-    ProjectFile,
-    ProjectMilestone,
     ProjectActivityLog,
+    ProjectBOM,
+    ProjectCollaborator,
+    ProjectEquipmentReservation,
+    ProjectMilestone,
     ProjectStatus,
     ProjectVisibility,
-    CollaboratorRole,
-    ActivityType,
 )
 from ..schemas.project import (
-    ProjectCreate,
-    ProjectUpdate,
-    ProjectFilter,
-    ProjectSort,
-    CollaboratorAdd,
-    CollaboratorUpdate,
     BOMItemCreate,
     BOMItemUpdate,
+    CollaboratorAdd,
+    CollaboratorUpdate,
     EquipmentReservationCreate,
-    EquipmentReservationUpdate,
     MilestoneCreate,
-    MilestoneUpdate,
-    ActivityLogCreate,
+    ProjectCreate,
+    ProjectFilter,
+    ProjectSort,
+    ProjectUpdate,
 )
+from ..utils.github_service import GitHubService
 
 
 # Project CRUD operations
@@ -108,7 +103,10 @@ def create_project(db: Session, project: ProjectCreate, owner_id: str) -> Projec
             project_id=project.project_id,
             activity_type=ActivityType.MILESTONE_ADDED,
             title="Initial milestones added",
-            description=f"{len(project.initial_milestones)} milestones added during project creation",
+            description=(
+                f"{len(project.initial_milestones)} milestones added during "
+                "project creation"
+            ),
             user_id=owner_id,
             user_name="Project Owner",
         )
@@ -120,7 +118,10 @@ def create_project(db: Session, project: ProjectCreate, owner_id: str) -> Projec
             project_id=project.project_id,
             activity_type=ActivityType.MEMBER_ADDED,
             title="Team members invited",
-            description=f"{len(project.initial_collaborators)} team members invited during project creation",
+            description=(
+                f"{len(project.initial_collaborators)} team members invited during "
+                "project creation"
+            ),
             user_id=owner_id,
             user_name="Project Owner",
         )
@@ -844,7 +845,10 @@ def sync_github_activity(
                 activity_log = ProjectActivityLog(
                     project_id=project_id,
                     activity_type=ActivityType.GITHUB_COMMIT_PUSHED,
-                    title=f"Commit: {commit.message[:50]}{'...' if len(commit.message) > 50 else ''}",
+                    title=(
+                        f"Commit: {commit.message[:50]}"
+                        f"{'...' if len(commit.message) > 50 else ''}"
+                    ),
                     description=commit.message,
                     user_id=commit.author_email,
                     user_name=commit.author_name,

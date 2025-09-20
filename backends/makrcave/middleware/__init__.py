@@ -5,8 +5,8 @@ Security, rate limiting, and request processing middleware
 
 from .security import (
     RateLimitMiddleware,
-    SecurityHeadersMiddleware,
     RequestLoggingMiddleware,
+    SecurityHeadersMiddleware,
     add_security_middleware,
 )
 

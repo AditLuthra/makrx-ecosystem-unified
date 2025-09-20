@@ -1,44 +1,43 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, desc, func, text, case
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta, date
 import uuid
-import json
+from datetime import date, datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
 
 from ..models.enhanced_analytics import (
+    AggregationPeriod,
+    AnalyticsAlert,
+    AnalyticsConfiguration,
+    AnalyticsReport,
     EnhancedUsageMetrics,
     EquipmentUtilizationMetrics,
-    RevenueAnalyticsEnhanced,
     MemberEngagementMetrics,
-    AnalyticsAlert,
     PerformanceBenchmark,
-    AnalyticsReport,
-    AnalyticsConfiguration,
-    AggregationPeriod,
-    MetricType,
+    RevenueAnalyticsEnhanced,
     TrendDirection,
 )
 from ..schemas.enhanced_analytics import (
-    EnhancedUsageMetricsCreate,
-    EquipmentUtilizationMetricsCreate,
-    RevenueAnalyticsEnhancedCreate,
-    MemberEngagementMetricsCreate,
     AnalyticsAlertCreate,
     AnalyticsAlertUpdate,
-    PerformanceBenchmarkCreate,
-    AnalyticsReportCreate,
+    AnalyticsChart,
     AnalyticsConfigurationCreate,
-    AnalyticsQuery,
-    AnalyticsQueryResult,
-    ForecastRequest,
-    ForecastResult,
     AnalyticsExportRequest,
     AnalyticsExportResponse,
-    ComprehensiveDashboardResponse,
-    KPIMetric,
-    AnalyticsChart,
-    DashboardSection,
+    AnalyticsQuery,
+    AnalyticsQueryResult,
+    AnalyticsReportCreate,
     ChartDataPoint,
+    ComprehensiveDashboardResponse,
+    DashboardSection,
+    EnhancedUsageMetricsCreate,
+    EquipmentUtilizationMetricsCreate,
+    ForecastRequest,
+    ForecastResult,
+    KPIMetric,
+    MemberEngagementMetricsCreate,
+    PerformanceBenchmarkCreate,
+    RevenueAnalyticsEnhancedCreate,
 )
 
 
@@ -964,7 +963,7 @@ def get_reports(
             AnalyticsReport.makerspace_id == makerspace_id,
             or_(
                 AnalyticsReport.generated_by == user_id,
-                AnalyticsReport.is_public == True,
+                AnalyticsReport.is_public,
             ),
         )
     )
@@ -986,7 +985,7 @@ def get_report(db: Session, report_id: str, user_id: str) -> Optional[AnalyticsR
                 AnalyticsReport.id == report_id,
                 or_(
                     AnalyticsReport.generated_by == user_id,
-                    AnalyticsReport.is_public == True,
+                    AnalyticsReport.is_public,
                 ),
             )
         )

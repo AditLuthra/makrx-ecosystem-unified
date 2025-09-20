@@ -230,11 +230,16 @@ function normalizeProduct(raw: any): Product {
 }
 
 // API Configuration
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:8003';
-const SERVICES_BASE_URL = process.env.NEXT_PUBLIC_SERVICES_API_URL;
+// Prefer same-origin by default (nginx maps /api -> store backend on makrx.store)
+// Allow overriding via NEXT_PUBLIC_API_BASE_URL or NEXT_PUBLIC_API_URL
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  ''
+).replace(/\/+$/, '');
+
+// Services backend base URL (e.g., https://services.makrx.store/api)
+const SERVICES_BASE_URL = (process.env.NEXT_PUBLIC_SERVICES_API_URL ?? '').replace(/\/+$/, '');
 const API_VERSION = 'v1';
 
 // Types

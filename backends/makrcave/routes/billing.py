@@ -1,55 +1,56 @@
+import io
+import logging
+import os
+from datetime import datetime, timedelta
+from typing import List, Optional
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     HTTPException,
-    status,
     Query,
-    BackgroundTasks,
     Request,
+    status,
 )
-from fastapi.security import HTTPBearer
 from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
-from typing import List, Optional
-import os
-import io
-from datetime import datetime, timedelta
-import logging
 
+from ..crud import billing as crud_billing
 from ..database import get_db
 from ..dependencies import get_current_user
 from ..schemas.billing import (
-    TransactionCreate,
-    TransactionUpdate,
-    TransactionResponse,
-    InvoiceCreate,
-    InvoiceUpdate,
-    InvoiceResponse,
-    CreditWalletResponse,
-    CreditWalletUpdate,
-    CreditTransactionResponse,
-    RefundCreate,
-    RefundResponse,
-    PaymentMethodCreate,
-    PaymentMethodResponse,
+    BillingAnalytics,
     CheckoutSessionCreate,
     CheckoutSessionResponse,
-    BillingAnalytics,
-    TransactionFilter,
-    TransactionSort,
+    CreditAdjustment,
+    CreditTransactionResponse,
+    CreditWalletResponse,
+    CreditWalletUpdate,
+    InvoiceCreate,
+    InvoiceResponse,
+    InvoiceUpdate,
+    PaymentMethodCreate,
+    PaymentMethodResponse,
+    RefundCreate,
+    RefundResponse,
     ServiceBillingCreate,
     ServiceBillingResponse,
-    CreditAdjustment,
+    TransactionCreate,
+    TransactionFilter,
+    TransactionResponse,
+    TransactionSort,
+    TransactionUpdate,
 )
-from ..crud import billing as crud_billing
-from ..utils.payment_service import payment_service, calculate_service_charge
+from ..utils.payment_service import calculate_service_charge, payment_service
 
 # Optional heavy utilities: provide fallbacks if reportlab isn't installed
 try:  # pragma: no cover - import cost only
     from ..utils.invoice_generator import (
+        generate_invoice_filename,
         generate_invoice_pdf,
         save_invoice_to_file,
-        generate_invoice_filename,
     )
 except Exception:  # pragma: no cover - test env without reportlab
 
@@ -81,8 +82,9 @@ async def get_usage_by_category(
     """Return usage data for pie chart, aggregated by service_type."""
     makerspace_id = _get_user_makerspace_id(current_user)
     # Aggregate successful transactions by service_type
-    from ..models.billing import Transaction, TransactionStatus
     from sqlalchemy import func
+
+    from ..models.billing import Transaction, TransactionStatus
 
     results = (
         db.query(

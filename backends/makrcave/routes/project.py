@@ -1,23 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List, Optional
 import uuid
 from datetime import datetime
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.security import HTTPBearer
+from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..dependencies import (
     get_current_user,
-    require_roles,
-    check_permission,
-    CurrentUser,
 )
 from ..models.project import (
     Project,
-    ProjectTask,
     ProjectMilestone,
-    ProjectStatus,
     ProjectPriority,
+    ProjectStatus,
+    ProjectTask,
 )
 from ..security.input_validation import InputSanitizer
 

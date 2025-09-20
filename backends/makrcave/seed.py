@@ -24,6 +24,31 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
+from backends.makrcave.database import get_db_session, init_db  # type: ignore
+from backends.makrcave.models.enhanced_member import (  # type: ignore
+    Member,
+    MemberRole,
+    MemberStatus,
+)
+from backends.makrcave.models.inventory import (
+    InventoryItem,
+    ItemStatus,
+    Makerspace,
+    SupplierType,
+)  # type: ignore
+from backends.makrcave.models.membership_plans import (  # type: ignore
+    AccessType,
+    BillingCycle,
+    MembershipPlan,
+    PlanType,
+)
+from backends.makrcave.models.notifications import (  # type: ignore
+    NotificationChannel,
+    NotificationPriority,
+    NotificationTemplate,
+    NotificationType,
+)
+
 load_dotenv()
 
 try:
@@ -33,31 +58,6 @@ try:
     )
 except Exception:
     pass
-
-from backends.makrcave.database import init_db, get_db_session  # type: ignore
-from backends.makrcave.models.inventory import (
-    Makerspace,
-    InventoryItem,
-    ItemStatus,
-    SupplierType,
-)  # type: ignore
-from backends.makrcave.models.membership_plans import (  # type: ignore
-    MembershipPlan,
-    PlanType,
-    BillingCycle,
-    AccessType,
-)
-from backends.makrcave.models.enhanced_member import (  # type: ignore
-    Member,
-    MemberRole,
-    MemberStatus,
-)
-from backends.makrcave.models.notifications import (  # type: ignore
-    NotificationTemplate,
-    NotificationType,
-    NotificationChannel,
-    NotificationPriority,
-)
 
 
 def get_or_create_makerspace(session) -> Makerspace:
@@ -194,7 +194,9 @@ def get_or_create_notification_template(
             channel=NotificationChannel.IN_APP,
             language="en",
             title_template="Low stock: {{ item_name }}",
-            message_template="{{ item_name }} is low ({{ current }} {{ unit }}) at {{ location }}.",
+            message_template=(
+                "{{ item_name }} is low ({{ current }} {{ unit }}) at {{ location }}."
+            ),
             is_active=True,
             is_default=True,
             priority=NotificationPriority.HIGH,
@@ -221,7 +223,8 @@ def main() -> None:
         "yes",
     ):
         print(
-            "[seed] Refusing to run: ENVIRONMENT=production. Set SEED_ALLOW_PROD=true to override."
+            "[seed] Refusing to run: ENVIRONMENT=production. "
+            "Set SEED_ALLOW_PROD=true to override."
         )
         sys.exit(1)
     print("[seed] Initializing database (apply metadata if needed)...")

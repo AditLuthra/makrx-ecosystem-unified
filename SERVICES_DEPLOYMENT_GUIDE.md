@@ -41,7 +41,7 @@ This section summarizes the key ports and reverse-proxy routes for the Services 
 | API base                   | https://services.makrx.store/api/*       | `services_api`    | 8006 | REST API endpoints                      |
 | File upload                | https://services.makrx.store/api/upload  | `services_api`    | 8006 | 100MB limit (client_max_body_size 100M) |
 | WebSocket                  | wss://services.makrx.store/ws            | `services_api`    | 8006 | Real-time updates                       |
-| Store API proxy (optional) | https://services.makrx.store/store-api/* | `store_api`       | 8003 | Proxies to Store backend `/api/*`       |
+| Store API proxy (optional) | https://services.makrx.store/store-api/* | `store_api`       | 8000 | Proxies to Store backend `/api/*`       |
 | Health (frontend)          | https://services.makrx.store/health      | —                 | —    | nginx returns 200 "healthy"             |
 | Health (API)               | https://services.makrx.store/api/health  | `services_api`    | 8006 | API health endpoint                     |
 
@@ -51,7 +51,7 @@ This section summarizes the key ports and reverse-proxy routes for the Services 
 | --------------------------- | -------------------------- | ------------------------------------------------------------- |
 | Services frontend (Next.js) | 3005                       | Same internally; public via nginx: 443                        |
 | Services backend (API)      | 8006                       | Same internally; public via nginx under `/api`                |
-| Store backend (API)         | 8003                       | Accessed directly in dev; proxied under `/store-api` in nginx |
+| Store backend (API)         | 8000                       | Accessed directly in dev; proxied under `/store-api` in nginx |
 | PostgreSQL                  | 5432                       | Staging compose: 5434                                         |
 | Redis                       | 6380                       | Staging compose: 6381                                         |
 | Keycloak                    | 8081                       | Staging compose: 8082                                         |

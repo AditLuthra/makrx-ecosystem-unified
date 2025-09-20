@@ -2,9 +2,8 @@
 Create project interaction tables (likes, bookmarks) via legacy helper
 """
 
-from alembic import op  # noqa: F401
 import sqlalchemy as sa  # noqa: F401
-
+from alembic import op  # noqa: F401
 
 revision = "0004_project_interaction_tables"
 down_revision = "0003_skill_tables"

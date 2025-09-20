@@ -3,21 +3,21 @@
 BOM Export Routes - Export Bill of Materials to MakrX Store Cart
 """
 
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List, Dict, Any, Optional
-import httpx
 import logging
 import os
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
+import httpx
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from ..database import get_db
-from ..models.project import Project, BOMItem
+from ..models.project import BOMItem, Project
 
 # Removed unused import of models.member to avoid model duplication
-from ..schemas.project import BOMItemResponse
 
 logger = logging.getLogger(__name__)
 

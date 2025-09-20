@@ -4,8 +4,6 @@ Initial Alembic baseline revision.
 Run `alembic revision --autogenerate -m "baseline"` to regenerate from models if needed.
 """
 
-from alembic import op
-import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.

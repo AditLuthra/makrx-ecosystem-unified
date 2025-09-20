@@ -1,19 +1,20 @@
 import os
 import uuid
+
 import pytest
 from fastapi.testclient import TestClient
 
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test.db")
 os.environ.setdefault("ENVIRONMENT", "test")
 
-from backends.makrcave.main import app
+from backends.makrcave.database import get_db_session, init_db
 from backends.makrcave.dependencies import CurrentUser, get_current_user
-from backends.makrcave.database import init_db, get_db_session
+from backends.makrcave.main import app
 from backends.makrcave.models.inventory import Makerspace
 from backends.makrcave.models.membership_plans import (
+    BillingCycle,
     MembershipPlan,
     PlanType,
-    BillingCycle,
 )
 
 

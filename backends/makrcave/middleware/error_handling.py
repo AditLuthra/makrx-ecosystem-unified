@@ -4,18 +4,20 @@ Provides consistent error responses, input validation, and security logging
 """
 
 import logging
+import time
 import traceback
-from typing import Optional, Dict, Any
-from fastapi import Request, Response, HTTPException, status
-from fastapi.responses import JSONResponse
+import uuid
+from typing import Any, Dict, Optional
+
+from fastapi import Request
 from fastapi.exceptions import (
-    RequestValidationError,
     HTTPException as FastAPIHTTPException,
 )
-from pydantic import ValidationError
+from fastapi.exceptions import (
+    RequestValidationError,
+)
+from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-import time
-import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -100,9 +102,9 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
 
         process_time = (time.time() - start_time) * 1000
 
-        # Extract client info for logging
-        client_ip = request.client.host if request.client else "unknown"
-        user_agent = request.headers.get("User-Agent", "Unknown")
+    # Extract client info for logging (reserved for future use)
+    # client_ip = request.client.host if request.client else "unknown"
+    # user_agent = request.headers.get("User-Agent", "Unknown")
 
         if isinstance(exc, APIError):
             return await self._handle_api_error(exc, request_id, request, process_time)
@@ -306,7 +308,7 @@ def raise_validation_error(
     raise ValidationAPIError(field_errors, message)
 
 
-def raise_not_found(resource: str, identifier: str = None):
+def raise_not_found(resource: str, identifier: Optional[str] = None):
     """Raise a standardized not found error"""
     message = f"{resource} not found"
     if identifier:
@@ -325,7 +327,7 @@ def raise_forbidden(message: str = "Access denied"):
     raise APIError(message=message, error_code=ErrorCode.FORBIDDEN, status_code=403)
 
 
-def raise_conflict(resource: str, reason: str = None):
+def raise_conflict(resource: str, reason: Optional[str] = None):
     """Raise a standardized conflict error"""
     message = f"{resource} already exists"
     if reason:
@@ -335,7 +337,7 @@ def raise_conflict(resource: str, reason: str = None):
 
 
 def raise_internal_error(
-    message: str = "Internal server error", details: Dict[str, Any] = None
+    message: str = "Internal server error", details: Optional[Dict[str, Any]] = None
 ):
     """Raise a standardized internal server error"""
     raise APIError(

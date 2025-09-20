@@ -1,25 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
-from sqlalchemy.orm import Session
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any, Dict
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from ..crud.makerspace_settings import get_makerspace_settings_crud
 from ..database import get_db
-from ..dependencies import get_current_user, get_current_admin_user
+from ..dependencies import get_current_admin_user
 from ..schemas.makerspace_settings import (
+    AccessControlUpdate,
+    AppearanceUpdate,
+    BillingConfigUpdate,
+    FeatureToggleRequest,
+    GeneralInformationUpdate,
+    InventorySettingsUpdate,
+    MakerspaceSettingsPublic,
     MakerspaceSettingsResponse,
     MakerspaceSettingsUpdate,
-    MakerspaceSettingsPublic,
-    FeatureToggleRequest,
+    ServiceModeUpdate,
     SettingsExportResponse,
     SettingsImportRequest,
-    GeneralInformationUpdate,
-    AccessControlUpdate,
-    InventorySettingsUpdate,
-    BillingConfigUpdate,
-    ServiceModeUpdate,
-    AppearanceUpdate,
 )
-from ..crud.makerspace_settings import get_makerspace_settings_crud
 
 router = APIRouter(prefix="/makerspace/settings", tags=["Makerspace Settings"])
 

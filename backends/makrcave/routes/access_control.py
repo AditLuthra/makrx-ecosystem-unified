@@ -1,49 +1,44 @@
+from typing import List, Optional
+
 from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
-    status,
     Query,
-    BackgroundTasks,
-    Request,
+    status,
 )
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
-import uuid
-from datetime import datetime, timedelta
 
+from ..crud import access_control as crud_access_control
 from ..database import get_db
 from ..dependencies import get_current_user
+from ..models.access_control import AccessScope, PermissionType, RoleType
 from ..schemas.access_control import (
-    PermissionCreate,
-    PermissionUpdate,
-    PermissionResponse,
-    RoleCreate,
-    RoleUpdate,
-    RoleResponse,
-    UserSessionResponse,
+    AccessControlFilter,
+    AccessControlStats,
     AccessLogResponse,
-    RoleAssignmentCreate,
-    RoleAssignmentResponse,
+    AuditLogFilter,
+    BulkRoleAssignment,
+    EnhancedMemberResponse,
     PasswordPolicyCreate,
-    PasswordPolicyUpdate,
     PasswordPolicyResponse,
     PasswordValidationRequest,
     PasswordValidationResponse,
-    UserAccessSummary,
-    BulkRoleAssignment,
-    AccessControlFilter,
-    AccessControlStats,
-    EnhancedMemberResponse,
+    PermissionCreate,
+    PermissionResponse,
+    PermissionUpdate,
+    RoleAssignmentCreate,
+    RoleAssignmentResponse,
+    RoleCreate,
     RoleExport,
     RoleImport,
-    PermissionExport,
-    AuditLogFilter,
+    RoleResponse,
+    RoleUpdate,
     SecurityAlert,
+    UserAccessSummary,
+    UserSessionResponse,
 )
-from ..crud import access_control as crud_access_control
-from ..models.access_control import PermissionType, RoleType, AccessScope
 
 router = APIRouter()
 security = HTTPBearer()
@@ -383,11 +378,11 @@ async def bulk_assign_roles(
                         effective_date=bulk_assignment.effective_date,
                         expiry_date=bulk_assignment.expiry_date,
                     )
-                    result = crud_access_control.assign_role_to_user(
+                    crud_access_control.assign_role_to_user(
                         db, assignment, current_user.user_id
                     )
                 elif bulk_assignment.action == "revoke":
-                    result = crud_access_control.revoke_role_from_user(
+                    crud_access_control.revoke_role_from_user(
                         db,
                         role_id,
                         user_id,
@@ -795,7 +790,10 @@ async def send_role_assignment_notification(
 ):
     """Send notification when role is assigned"""
     print(
-        f"Sending role assignment notification to {user_email}: {role_name} assigned by {assigned_by}"
+        (
+            f"Sending role assignment notification to {user_email}: "
+            f"{role_name} assigned by {assigned_by}"
+        )
     )
 
 

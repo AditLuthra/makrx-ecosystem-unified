@@ -6,6 +6,7 @@ Next.js API routes missing: Several pages call Next /api/catalog/... that don’
 Backend gaps: Some endpoints expected by the frontend don’t exist (admin stats, notifications settings), or use different shapes (no product slug endpoint).
 Provider dashboard endpoints: Frontend calls /api/v1/providers/...; the provider service exposes /api/v1/provider/... (singular) and is a different backend entirely.
 Mock/placeholder usage: Store app still includes mock fallback in api.ts. Other apps (MakrCave, Events) include mock data in UI components.
+
 Frontend API Client (apps/makrx-store/src/lib/api.ts)
 
 Wrong base routes used across methods (examples):
@@ -20,7 +21,7 @@ checkout → /orders/checkout needs /api/orders/checkout
 backends/makrx-store/routes/orders.py:132
 cart → all need /api/cart* not /cart*
 backends/makrx-store/routes/cart.py:21,88,154,188
-uploads → need /api/uploads/sign|complete|:id not /uploads/_
+uploads → need /api/uploads/sign|complete|:id not /uploads/
 backends/makrx-store/routes/uploads.py:268,329,464
 quotes → /api/quotes not /quotes; materials are under /api/quotes/materials/
 backends/makrx-store/routes/quotes.py:318,426,436,446
@@ -34,11 +35,11 @@ backends/makrx-store/routes/admin.py:8
 user/notifications (settings) → no backend route exists; methods will 404 if called
 apps/makrx-store/src/lib/api.ts:845,852
 Mock fallback logic present:
-Uses NEXT_PUBLIC_USE_MOCK_DATA and network-error fallback to getMockData<T>().
+Uses NEXT*PUBLIC_USE_MOCK_DATA and network-error fallback to getMockData<T>().
 apps/makrx-store/src/lib/api.ts:210–238, 248–285, 401–429
 Contains mock data generators for products, categories, cart, user
 apps/makrx-store/src/lib/api.ts:861–1248
-Provider APIs in api.ts point to /api/v1/providers/_ and /api/v1/service-orders/_ (wrong service and path):
+Provider APIs in api.ts point to /api/v1/providers/* and /api/v1/service-orders/_ (wrong service and path):
 makrx-services provider routes are /api/v1/provider/_ (singular)
 backends/makrx-services/app/routes/providers.py:13,20,76,173,301
 Store service-orders are /api/service-orders/\*

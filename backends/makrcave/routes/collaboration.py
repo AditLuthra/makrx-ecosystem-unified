@@ -1,3 +1,10 @@
+import asyncio
+import atexit
+import json
+from collections import defaultdict
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -6,30 +13,22 @@ from fastapi import (
     WebSocketDisconnect,
 )
 from sqlalchemy.orm import Session
-from typing import List, Dict, Optional
-import json
-from datetime import datetime, timedelta
-import asyncio
-from collections import defaultdict
 
 from ..database import get_db
-from ..models.projects import Project
+from ..dependencies import get_current_user
 from ..models.collaboration import (
     CollaborationMessage,
-    DocumentVersion,
     WhiteboardAction,
-    UserPresence,
 )
+from ..models.projects import Project
 from ..schemas.collaboration import (
+    CursorUpdate,
+    DocumentChangeCreate,
+    EditingStatus,
     MessageCreate,
     MessageResponse,
-    CursorUpdate,
-    EditingStatus,
     WhiteboardActionCreate,
-    DocumentChangeCreate,
-    DocumentVersionCreate,
 )
-from ..dependencies import get_current_user
 from ..security.input_validation import InputSanitizer
 
 router = APIRouter(prefix="/collaboration", tags=["collaboration"])
@@ -102,7 +101,7 @@ class CollaborationManager:
 
             try:
                 await websocket.send_text(message_str)
-            except:
+            except Exception:
                 disconnected.append(websocket)
 
         # Clean up disconnected websockets
@@ -116,7 +115,7 @@ class CollaborationManager:
             websocket = self.user_presence[user_id]["websocket"]
             try:
                 await websocket.send_text(json.dumps(message))
-            except:
+            except Exception:
                 # Clean up disconnected user
                 del self.user_presence[user_id]
 
@@ -496,7 +495,5 @@ async def cleanup_inactive_users():
 
 
 # Start cleanup task when module loads
-import atexit
-
 cleanup_task = asyncio.create_task(cleanup_inactive_users())
 atexit.register(lambda: cleanup_task.cancel())

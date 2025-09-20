@@ -1,31 +1,32 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+
+from ..crud import skill as skill_crud
 from ..database import get_db
 from ..dependencies import get_current_user, require_roles
-from ..models.skill import SkillStatus, RequestStatus
+from ..models.skill import RequestStatus, SkillStatus
 from ..schemas.skill import (
+    BulkAccessCheck,
+    EquipmentAccessCheck,
+    EquipmentSkillRequirements,
+    MakerspaceSkillOverview,
     Skill,
+    SkillAnalytics,
     SkillCreate,
-    SkillUpdate,
-    SkillWithRelations,
-    UserSkill,
-    UserSkillCreate,
-    UserSkillUpdate,
-    UserSkillWithDetails,
     SkillRequest,
     SkillRequestCreate,
     SkillRequestUpdate,
     SkillRequestWithDetails,
-    EquipmentSkillRequirements,
+    SkillUpdate,
+    SkillWithRelations,
+    UserSkill,
+    UserSkillCreate,
     UserSkillSummary,
-    EquipmentAccessCheck,
-    BulkAccessCheck,
-    SkillAnalytics,
-    MakerspaceSkillOverview,
+    UserSkillUpdate,
+    UserSkillWithDetails,
 )
-from ..crud import skill as skill_crud
 
 router = APIRouter(prefix="/skills", tags=["skills"])
 
@@ -391,7 +392,8 @@ async def get_equipment_skill_requirements(
                         "skill_id": skill.id,
                         "skill_name": skill.name,
                         "skill_level": skill.level,
-                        "required_level": skill.level,  # Could be different if equipment requires higher level
+                        # Could be different if equipment requires higher level
+                        "required_level": skill.level,
                         "category": skill.category,
                         "is_required": True,
                     }

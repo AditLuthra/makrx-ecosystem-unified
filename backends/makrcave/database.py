@@ -1,11 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
 import os
+
 from dotenv import load_dotenv
-from sqlalchemy.pool import QueuePool
-from sqlalchemy.ext.compiler import compiles
+from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import ARRAY as PG_ARRAY
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.pool import QueuePool
 
 # Load environment variables
 load_dotenv()
@@ -78,7 +78,6 @@ def get_db():
 def init_db():
     """Initialize database tables"""
     # Import all models to register them with Base
-    from . import models  # Import all models in the models package
 
     Base.metadata.create_all(bind=engine)
 

@@ -1,0 +1,54 @@
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+exclude = [
+	".git",
+	"__pycache__",
+	".mypy_cache",
+	".pytest_cache",
+	"node_modules",
+	"dist",
+	"build",
+	"venv",
+	".venv",
+	"backends/makrcave/venv",
+	"backends/makrcave/.venv",
+	"backends/makrcave/migrations",
+]
+
+[tool.ruff.lint]
+# Align with Black formatting
+extend-select = ["E", "F", "W", "I"]
+extend-ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+"backends/makrcave/models/__init__.py" = ["F401", "F403"]
+"backends/makrcave/utils/email_service.py" = ["E501", "W293"]
+"backends/makrcave/utils/readme_generator.py" = ["E501"]
+"backends/makrcave/utils/report_generator.py" = ["E501"]
+"backends/makrcave/utils/invoice_generator.py" = ["E501"]
+"backends/makrcave/middleware/security.py" = ["E501"]
+"backends/makrcave/routes/project_showcase.py" = ["E501"]
+"backends/makrcave/security/helpers.py" = ["E501"]
+"backends/makrcave/crud/skill.py" = ["E501"]
+"backends/makrcave/crud/equipment.py" = ["E501"]
+"backends/makrcave/routes/enhanced_bom.py" = ["E501"]
+"backends/makrcave/routes/machine_access.py" = ["E501"]
+"backends/makrcave/routes/equipment.py" = ["E501"]
+"backends/makrcave/routes/job_management.py" = ["E501"]
+"backends/makrcave/routes/bridge.py" = ["E501"]
+"backends/makrcave/routes/bom_export.py" = ["E501"]
+"backends/makrcave/models/analytics.py" = ["E501"]
+"backends/makrcave/models/announcements.py" = ["E501"]
+"backends/makrcave/models/makerspace_settings.py" = ["E501"]
+"backends/makrcave/models/membership_plans.py" = ["E501"]
+"backends/makrcave/models/filament_tracking.py" = ["E501"]
+"backends/makrcave/seed.py" = ["E501"]
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["backends", "apps"]

@@ -1,15 +1,14 @@
 import enum
-
-from pydantic import BaseModel, Field, validator, field_validator
-from pydantic import ConfigDict
-from typing import List, Optional, Dict, Any
 from datetime import datetime
-from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 from ..models.project import (
+    ActivityType,
+    CollaboratorRole,
     ProjectStatus,
     ProjectVisibility,
-    CollaboratorRole,
-    ActivityType,
 )
 
 

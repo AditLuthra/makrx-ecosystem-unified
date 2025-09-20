@@ -1,26 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List, Optional
 import uuid
 from datetime import datetime
+from typing import List, Optional
 
-from ..models import *
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.security import HTTPBearer
+from sqlalchemy.orm import Session
+
+from .. import models
 from ..database import get_db
 from ..dependencies import get_current_user
 from ..schemas.project import (
-    ProjectForkCreate,
-    ProjectForkResponse,
-    ProjectCommentCreate,
-    ProjectCommentResponse,
     BOMOrderCreate,
     BOMOrderResponse,
+    EnhancedProjectSummaryResponse,
+    ProjectCommentCreate,
+    ProjectCommentResponse,
+    ProjectForkCreate,
+    ProjectForkResponse,
     ProjectTeamRoleCreate,
     ProjectTeamRoleResponse,
     ResourceSharingCreate,
     ResourceSharingResponse,
-    PublicProjectsFilter,
-    EnhancedProjectSummaryResponse,
 )
 
 router = APIRouter()
@@ -157,7 +157,10 @@ async def fork_project(
     forked_project = models.Project(
         project_id=new_project_id,
         name=fork_data.new_project_name,
-        description=f"Forked from: {original_project.name}\n\n{original_project.description or ''}",
+        description=(
+            f"Forked from: {original_project.name}\n\n"
+            f"{original_project.description or ''}"
+        ),
         project_type=original_project.project_type,
         owner_id=current_user["user_id"],
         visibility=models.ProjectVisibility.PRIVATE,  # Forks start as private
@@ -250,7 +253,11 @@ async def fork_project(
         project_id=project_id,
         activity_type=models.ActivityType.PROJECT_UPDATED,
         title="Project forked",
-        description=f"Project forked by {current_user.get('user_name', 'Unknown User')} as '{fork_data.new_project_name}'",
+        description=(
+            "Project forked by "
+            f"{current_user.get('user_name', 'Unknown User')} "
+            f"as '{fork_data.new_project_name}'"
+        ),
         user_id=current_user["user_id"],
         user_name=current_user.get("user_name", "Unknown User"),
         metadata={"forked_project_id": new_project_id},
@@ -492,7 +499,7 @@ async def create_bom_order(
             # Update BOM item procurement status
             bom_item.procurement_status = "ordered"
 
-        except Exception as e:
+        except Exception:
             order.order_status = "failed"
 
     db.add(order)

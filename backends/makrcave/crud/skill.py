@@ -1,25 +1,26 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, func, desc
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, desc, or_
+from sqlalchemy.orm import Session, joinedload
 
 from ..models.skill import (
-    Skill,
-    UserSkill,
-    SkillRequest,
-    SkillAuditLog,
-    SkillStatus,
     RequestStatus,
+    Skill,
+    SkillAuditLog,
+    SkillRequest,
+    SkillStatus,
+    UserSkill,
 )
 from ..schemas.skill import (
+    EquipmentAccessCheck,
     SkillCreate,
+    SkillRequestCreate,
+    SkillRequestUpdate,
     SkillUpdate,
     UserSkillCreate,
     UserSkillUpdate,
-    SkillRequestCreate,
-    SkillRequestUpdate,
-    EquipmentAccessCheck,
 )
 
 

@@ -1,54 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import and_, or_, desc, asc, func
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, asc, desc, func
+from sqlalchemy.orm import Session, selectinload
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_user_optional
+from ..models.equipment import Equipment
 from ..models.machine_access import (
-    MachineAccessRule,
-    UserCertification,
+    AccessAttemptResult,
     Badge,
-    UserBadge,
+    BadgeRarity,
+    BadgeType,
+    CertificationStatus,
     MachineAccessAttempt,
+    MachineAccessRule,
     SafetyIncident,
     SkillAssessment,
-    AccessLevel,
-    BadgeType,
-    BadgeRarity,
-    AccessAttemptResult,
-    CertificationStatus,
+    UserBadge,
+    UserCertification,
 )
-from ..models.equipment import Equipment
 from ..models.skill import Skill
 from ..schemas.machine_access import (
-    MachineAccessRuleCreate,
-    MachineAccessRuleUpdate,
-    MachineAccessRuleResponse,
-    UserCertificationCreate,
-    UserCertificationUpdate,
-    UserCertificationResponse,
     BadgeCreate,
-    BadgeUpdate,
     BadgeResponse,
-    UserBadgeAward,
-    UserBadgeResponse,
+    EquipmentAccessStats,
     MachineAccessRequest,
     MachineAccessResponse,
-    MachineAccessAttemptResponse,
-    SafetyIncidentCreate,
-    SafetyIncidentUpdate,
-    SafetyIncidentResponse,
-    SkillAssessmentCreate,
-    SkillAssessmentUpdate,
-    SkillAssessmentResponse,
-    UserAccessProfile,
-    EquipmentAccessStats,
+    MachineAccessRuleCreate,
+    MachineAccessRuleResponse,
     MakerspaceAccessDashboard,
-    BadgeProgress,
-    CertificationRenewalAlert,
+    SafetyIncidentCreate,
+    SafetyIncidentResponse,
+    UserAccessProfile,
+    UserBadgeAward,
+    UserBadgeResponse,
+    UserCertificationCreate,
+    UserCertificationResponse,
 )
 
 router = APIRouter(prefix="/machine-access", tags=["machine-access"])

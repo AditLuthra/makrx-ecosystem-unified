@@ -1,27 +1,20 @@
-import pandas as pd
-import io
 import os
-from datetime import datetime, date
-from typing import Dict, List, Any, Optional
+from datetime import date, datetime
+
+import openpyxl  # noqa: F401 - required for Excel export engine
+import pandas as pd
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
+    Paragraph,
     SimpleDocTemplate,
+    Spacer,
     Table,
     TableStyle,
-    Paragraph,
-    Spacer,
-    Image,
 )
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.graphics.shapes import Drawing
-from reportlab.graphics.charts.lineplots import LinePlot
-from reportlab.graphics.charts.piecharts import Pie
-from reportlab.graphics.charts.barcharts import VerticalBarChart
-from reportlab.graphics.widgetbase import Widget
 from sqlalchemy.orm import Session
-import openpyxl  # noqa: F401 - required for Excel export engine
 
 
 class ReportGenerator:
@@ -229,7 +222,7 @@ class ReportGenerator:
         elements = []
 
         # Title
-        title = Paragraph(f"Revenue Analytics Report", self.title_style)
+        title = Paragraph("Revenue Analytics Report", self.title_style)
         elements.append(title)
         elements.append(Spacer(1, 20))
 

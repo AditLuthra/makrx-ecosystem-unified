@@ -1,21 +1,21 @@
-from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Float,
-    DateTime,
-    JSON,
-    Text,
-    Boolean,
-    ForeignKey,
-)
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from ..database import Base
 import uuid
 from datetime import datetime
 from enum import Enum
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.dialects.postgresql import UUID
+
+from ..database import Base
 
 
 class EventType(str, Enum):

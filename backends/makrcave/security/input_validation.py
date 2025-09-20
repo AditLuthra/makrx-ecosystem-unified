@@ -3,8 +3,8 @@ Input Validation and Sanitization Module
 Adapted from legacy MakrCave backend for unified repo.
 """
 
-import re
 import html
+import re
 from typing import List
 
 try:

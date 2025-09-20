@@ -1,33 +1,30 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, func, desc, asc
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
-import uuid
 import secrets
+import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, asc, desc, func, or_
+from sqlalchemy.orm import Session, joinedload
 
 from ..models.enhanced_member import (
+    InviteStatus,
     Member,
     MemberActivityLog,
-    MembershipTransaction,
     MemberRole,
     MemberStatus,
-    InviteStatus,
 )
-from ..models.membership_plans import MembershipPlan
 from ..models.invites import MemberInvite
+from ..models.membership_plans import MembershipPlan
 from ..schemas.member import (
     MemberCreate,
-    MemberUpdate,
-    MemberSuspend,
     MemberFilter,
-    MemberSort,
-    MembershipPlanCreate,
-    MembershipPlanUpdate,
     MemberInviteCreate,
     MemberInviteUpdate,
-    MemberActivityLogCreate,
-    MembershipTransactionCreate,
-    MembershipTransactionUpdate,
+    MembershipPlanCreate,
+    MembershipPlanUpdate,
+    MemberSort,
+    MemberSuspend,
+    MemberUpdate,
 )
 
 
@@ -384,7 +381,8 @@ def get_membership_plans(
     )
 
     if active_only:
-        query = query.filter(MembershipPlan.is_active == True)
+        # Use column truthiness instead of explicit comparison to True
+        query = query.filter(MembershipPlan.is_active)
 
     return query.order_by(MembershipPlan.price).all()
 

@@ -3,21 +3,23 @@
 Provider Network Routes - Manage service providers and job dispatch
 """
 
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List, Dict, Any, Optional
 import logging
-from uuid import uuid4
 from datetime import datetime, timedelta
-from pydantic import BaseModel, Field, EmailStr
 from enum import Enum
+from typing import Any, Dict, List, Optional
+from uuid import uuid4
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..security.input_validation import InputSanitizer
+
 # from ..models.project import Project
 # from ..models.equipment import Equipment
 from ..models.makerspace_settings import MakerspaceSettings
+from ..security.input_validation import InputSanitizer
 
 # Remove Member import to avoid model duplication; use CRUD/services for data access
 

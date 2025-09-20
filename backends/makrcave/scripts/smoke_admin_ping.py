@@ -9,11 +9,11 @@ Usage:
 
 Returns non-zero exit if request fails or status != 200.
 """
+import json
 import os
 import sys
-import json
-import urllib.request
 import urllib.error
+import urllib.request
 
 API_BASE = os.getenv("API_BASE", "http://localhost:8001/api/v1")
 TOKEN = os.getenv("TOKEN")

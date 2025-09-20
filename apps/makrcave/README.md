@@ -22,6 +22,8 @@ npm run dev
 ```env
 NEXT_PUBLIC_USE_MOCK_DATA=false
 NEXT_PUBLIC_API_URL=http://localhost:8001
+# In production, ensure the frontend targets the services domain:
+# NEXT_PUBLIC_API_BASE_URL=https://services.makrx.store
 ```
 
 #### Mock Data (Development/Demo)

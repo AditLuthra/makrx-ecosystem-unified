@@ -1,11 +1,9 @@
-import qrcode
-import io
 import base64
-from typing import List, Dict, Any, Optional
-import csv
+import io
 from datetime import datetime, timedelta
-import requests
-from sqlalchemy.orm import Session
+from typing import Any, Dict, List, Optional
+
+import qrcode
 
 
 def generate_qr_code(data: str) -> str:

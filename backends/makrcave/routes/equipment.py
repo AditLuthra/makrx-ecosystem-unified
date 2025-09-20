@@ -1,29 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from datetime import datetime
-import uuid
 
+from ..crud.equipment import get_equipment_crud
 from ..database import get_db
-from ..dependencies import get_current_user, require_roles, check_permission
-from ..dependencies import CurrentUser
+from ..dependencies import (
+    CurrentUser,
+    check_permission,
+    get_current_user,
+)
 from ..models.equipment import (
-    EquipmentStatus,
-    EquipmentCategory,
     Equipment,
+    EquipmentCategory,
     EquipmentReservation,
+    EquipmentStatus,
 )
 from ..schemas.equipment import (
-    EquipmentResponse,
     EquipmentCreate,
-    EquipmentUpdate,
-    EquipmentReservationCreate,
-    EquipmentReservationResponse,
     EquipmentRatingCreate,
     EquipmentRatingResponse,
+    EquipmentReservationCreate,
+    EquipmentReservationResponse,
+    EquipmentResponse,
 )
-from ..crud.equipment import get_equipment_crud
 
 router = APIRouter()
 security = HTTPBearer()

@@ -19,7 +19,7 @@ const nextConfig = {
         source: '/api/:path*',
         destination:
           process.env.NODE_ENV === 'production'
-            ? 'https://api.makrcave.com/api/:path*'
+            ? 'https://services.makrx.store/api/:path*'
             : 'http://localhost:8001/api/:path*', // Proxy to FastAPI backend (dev on :8001) and preserve /api prefix
       },
     ];

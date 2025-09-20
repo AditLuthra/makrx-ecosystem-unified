@@ -1,34 +1,35 @@
+import uuid
+from datetime import datetime
+from typing import List, Optional
+
+import multipart  # noqa: F401 - ensure python-multipart is installed
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
+    File,
     HTTPException,
     Query,
-    UploadFile,
-    File,
-    BackgroundTasks,
     Response,
+    UploadFile,
 )
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from datetime import datetime
-import uuid
-import multipart  # noqa: F401 - ensure python-multipart is installed
 
-from ..schemas.inventory import (
-    InventoryItemResponse,
-    InventoryItemCreate,
-    InventoryItemUpdate,
-    IssueItemRequest,
-    ReorderRequest,
-    InventoryUsageLogResponse,
-    InventoryStatsResponse,
-    LowStockAlertResponse,
-)
+from ..crud.inventory import InventoryCRUD
 
 # Models used via CRUD operations; direct imports not required here
 from ..database import get_db
-from ..crud.inventory import InventoryCRUD
-from ..dependencies import get_current_user, check_permission
+from ..dependencies import check_permission, get_current_user
+from ..schemas.inventory import (
+    InventoryItemCreate,
+    InventoryItemResponse,
+    InventoryItemUpdate,
+    InventoryStatsResponse,
+    InventoryUsageLogResponse,
+    IssueItemRequest,
+    LowStockAlertResponse,
+    ReorderRequest,
+)
 
 # Router without local prefix; mounted under '/inventory'
 router = APIRouter(tags=["inventory"])

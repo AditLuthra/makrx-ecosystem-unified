@@ -1,21 +1,24 @@
+import enum
+import uuid
+
 from sqlalchemy import (
-    Column,
-    String,
-    Boolean,
-    Integer,
-    Float,
-    ForeignKey,
     JSON,
+    Boolean,
+    Column,
     DateTime,
-    Text,
-    Enum as SQLEnum,
+    ForeignKey,
+    Integer,
+    String,
     Table,
+    Text,
 )
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy import (
+    Enum as SQLEnum,
+)
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-import uuid
-import enum
+
 from ..database import Base
 
 # Association tables for many-to-many relationships
@@ -489,7 +492,8 @@ class PasswordPolicy(Base):
         if self.require_special_chars:
             if not any(c in self.allowed_special_chars for c in password):
                 errors.append(
-                    f"Password must contain at least one special character: {self.allowed_special_chars}"
+                    "Password must contain at least one special character: "
+                    f"{self.allowed_special_chars}"
                 )
 
         return {

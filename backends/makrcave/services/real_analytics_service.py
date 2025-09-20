@@ -1,11 +1,12 @@
 """Real analytics service replacing mock data with actual database queries"""
 
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
-from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, extract, text
-from sqlalchemy.sql import case
 import logging
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
+
+from sqlalchemy import and_, extract, func, text
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import case
 
 from ..database import get_db
 from ..models.enhanced_analytics import EquipmentUtilizationMetrics
@@ -15,10 +16,9 @@ try:
     from ..models.skill import MemberSkill
 except ImportError:  # Backward compatibility when MemberSkill model is absent
     MemberSkill = None
-from ..models.machine_access import UserCertification, SafetyIncident
+from ..models.billing import CreditTransaction, Transaction
 from ..models.equipment import Equipment, EquipmentReservation
-
-from ..models.billing import Transaction, CreditTransaction
+from ..models.machine_access import SafetyIncident, UserCertification
 
 logger = logging.getLogger(__name__)
 

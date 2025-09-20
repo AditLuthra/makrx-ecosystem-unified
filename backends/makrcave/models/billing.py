@@ -1,21 +1,23 @@
+import enum
+import uuid
+
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Boolean,
-    DateTime,
-    Float,
-    Text,
-    ForeignKey,
     JSON,
+    Boolean,
+    Column,
+    DateTime,
     Enum,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
+
 from ..database import Base
-import uuid
-import enum
 
 
 class TransactionType(str, enum.Enum):
@@ -329,7 +331,6 @@ class BillingPlan(Base):
 
 
 # Indexes for better performance
-from sqlalchemy import Index
 
 # Create indexes
 Index("idx_transaction_user", Transaction.user_id)

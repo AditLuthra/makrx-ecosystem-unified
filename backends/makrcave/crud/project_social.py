@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Session
-from ..models.project import ProjectLike, ProjectBookmark, ProjectFollow
 from datetime import datetime
 from typing import Optional
+
+from sqlalchemy.orm import Session
+
+from ..models.project import ProjectBookmark, ProjectFollow, ProjectLike
 
 
 # --- Project Like ---

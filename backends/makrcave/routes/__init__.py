@@ -1,23 +1,24 @@
 """MakrCave API Router - Unified Ecosystem Version"""
 
 from fastapi import APIRouter, Depends
+
 from ..dependencies import get_current_user, require_roles, require_scope
+from .analytics import router as analytics_router
+from .billing import router as billing_router
+from .enhanced_bom import router as enhanced_bom_router
+from .equipment import router as equipment_router
+from .equipment_reservations import router as reservations_router
+from .inventory import router as inventory_router
+from .machine_access import router as machine_access_router
+from .makerspace_settings import router as makerspace_settings_router
 
 # Import all route routers at top-level to satisfy linters
 from .member import router as member_router
-from .inventory import router as inventory_router
-from .equipment import router as equipment_router
-from .project import router as project_router
-from .enhanced_bom import router as enhanced_bom_router
-from .project_showcase import router as project_showcase_router
-from .equipment_reservations import router as reservations_router
-from .notifications import router as notifications_router
-from .analytics import router as analytics_router
-from .billing import router as billing_router
-from .makerspace_settings import router as makerspace_settings_router
 from .membership_plans import router as membership_plans_router
-from .machine_access import router as machine_access_router
-
+from .notifications import router as notifications_router
+from .project import router as project_router
+from .project_showcase import router as project_showcase_router
+from .providers import router as providers_router
 
 api_router = APIRouter()
 
@@ -84,6 +85,14 @@ api_router.include_router(
     reservations_router,
     prefix="",
     tags=["reservations"],
+    dependencies=[Depends(get_current_user)],
+)
+
+# Providers network routes
+api_router.include_router(
+    providers_router,
+    prefix="",
+    tags=["providers"],
     dependencies=[Depends(get_current_user)],
 )
 

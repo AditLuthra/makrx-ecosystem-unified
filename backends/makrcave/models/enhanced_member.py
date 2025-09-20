@@ -1,26 +1,28 @@
-from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Boolean,
-    DateTime,
-    Float,
-    Text,
-    ForeignKey,
-    JSON,
-    Enum,
-    Table,
-)
-from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
-from sqlalchemy.sql import func
-from ..database import Base
-import uuid
 import enum
+import uuid
 from datetime import datetime
 
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from ..database import Base
+
 # Import access control models
-from .access_control import user_roles, UserSession, AccessLog
+from .access_control import user_roles
 
 
 class MemberRole(str, enum.Enum):
@@ -538,7 +540,6 @@ class MembershipTransaction(Base):
 
 
 # Indexes for better performance
-from sqlalchemy import Index
 
 # Create comprehensive indexes
 Index("idx_enhanced_member_email", Member.email)

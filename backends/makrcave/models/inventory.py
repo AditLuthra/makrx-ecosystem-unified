@@ -1,21 +1,22 @@
+import enum
+from datetime import datetime
+
 from sqlalchemy import (
+    Boolean,
     Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
     Integer,
     String,
-    Float,
-    DateTime,
     Text,
-    Boolean,
-    ForeignKey,
-    Enum,
 )
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSON
-from datetime import datetime
-import enum
+from sqlalchemy.orm import relationship
 
 from ..database import Base
-from .skill import UserSkill, SkillRequest
+from .skill import SkillRequest, UserSkill
 
 
 class ItemStatus(enum.Enum):

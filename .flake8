@@ -3,7 +3,7 @@
 max-line-length = 88
 
 # Ignore rules that conflict with Black formatting
-extend-ignore = E203, W503
+extend-ignore = E203
 
 # Exclude common build/cache dirs and virtual environments
 exclude =
@@ -17,4 +17,13 @@ exclude =
     venv,
     .venv,
     backends/makrcave/venv,
-    backends/makrcave/.venv
+    backends/makrcave/.venv,
+    backends/makrcave/migrations,
+
+# Allow star re-exports in models package init only
+per-file-ignores =
+    backends/makrcave/models/__init__.py: F401, F403
+    backends/makrcave/utils/email_service.py: E501, W293
+    backends/makrcave/utils/readme_generator.py: E501
+    backends/makrcave/utils/report_generator.py: E501
+    backends/makrcave/utils/invoice_generator.py: E501

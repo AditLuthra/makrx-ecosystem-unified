@@ -3,7 +3,8 @@
 FastAPI backend for MakrCave, integrated into the MakrX unified monorepo with Keycloak SSO and shared infra.
 
 - Auth: Keycloak (realm `makrx`), JWT validation in `dependencies.py`
-- Entrypoints: `main.py` (full), `main_simple.py` (simplified), `main_simple_py313.py`
+- Entrypoints: `main.py` (full), `main_simple.py` (simplified, Python <=3.12), `main_simple_py313.py` (Python 3.13-friendly)
+  - Use `main.py` in containers and most dev runs. The "simple" variants are lightweight app shells useful for quick smoke tests without wiring all middleware/deps. Keep only one running at a time.
 - Routes: see `routes/` (inventory, equipment, projects, analytics, billing, health, etc.)
 - Models/CRUD/Schemas: under `models/`, `crud/`, `schemas/`
 

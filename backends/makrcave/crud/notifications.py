@@ -8,7 +8,6 @@ initialise. Individual endpoints will fail fast if these stubs are invoked.
 from __future__ import annotations
 
 from typing import Any
-from sqlalchemy.orm import Session
 
 
 class _NotImplementedNotificationStub(RuntimeError):

@@ -3,10 +3,11 @@
 Simplified MakrCave backend for testing
 """
 
+import os
+import time
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import time
-import os
 
 # Create FastAPI app
 app = FastAPI(

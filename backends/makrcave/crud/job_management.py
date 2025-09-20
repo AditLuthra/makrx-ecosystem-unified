@@ -1,36 +1,31 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, asc, func
-from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
 
 from ..models.job_management import (
+    FilamentType,
+    JobMaterialUsage,
+    JobPriority,
+    JobStatus,
+    JobStatusUpdate,
+    JobType,
+    ProviderEquipment,
     ServiceJob,
     ServiceJobFile,
-    JobStatusUpdate,
-    JobMaterialUsage,
-    JobTimeLog,
-    JobQualityCheck,
     ServiceProvider,
-    ProviderEquipment,
-    JobTemplate,
-    JobStatus,
-    JobPriority,
-    JobType,
-    FilamentType,
 )
 from ..schemas.job_management import (
-    ServiceJobCreate,
-    ServiceJobUpdate,
-    ServiceJobFileUpload,
-    JobStatusUpdateCreate,
     JobMaterialUsageCreate,
-    JobTimeLogCreate,
-    JobQualityCheckCreate,
+    JobSearchFilters,
+    JobStatusUpdateCreate,
+    ProviderEquipmentCreate,
+    ServiceJobCreate,
+    ServiceJobFileUpload,
+    ServiceJobUpdate,
     ServiceProviderCreate,
     ServiceProviderUpdate,
-    ProviderEquipmentCreate,
-    JobTemplateCreate,
-    JobSearchFilters,
 )
 
 
@@ -303,7 +298,8 @@ def get_job_status_updates(
     query = db.query(JobStatusUpdate).filter(JobStatusUpdate.job_id == job_id)
 
     if customer_visible_only:
-        query = query.filter(JobStatusUpdate.is_customer_visible == True)
+        # Filter updates visible to customers without explicit boolean comparison
+        query = query.filter(JobStatusUpdate.is_customer_visible)
 
     return query.order_by(desc(JobStatusUpdate.updated_at)).all()
 

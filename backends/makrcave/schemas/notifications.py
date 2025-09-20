@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field, validator, EmailStr
-from pydantic.config import ConfigDict
-from typing import Optional, List, Dict, Any, Union
+import uuid
 from datetime import datetime
 from enum import Enum
-import uuid
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, EmailStr, Field
+from pydantic.config import ConfigDict
 
 
 # Enums

@@ -333,10 +333,9 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in dev
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/readyz"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -366,8 +365,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -406,8 +404,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -448,8 +445,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
       interval: 30s
@@ -485,8 +481,7 @@ services:
       - ./services/nginx/conf.d:/etc/nginx/conf.d
       - nginx_logs:/var/log/nginx
       - ./services/nginx/ssl:/etc/nginx/ssl
-    profiles:
-      - production
+    # No profile so it runs by default in dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s

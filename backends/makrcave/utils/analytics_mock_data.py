@@ -5,10 +5,10 @@ This utility provides mock data for analytics endpoints when real data is not av
 Useful for frontend development and testing without requiring a full database.
 """
 
-from datetime import datetime, date, timedelta
-from typing import Dict, List, Any, Optional
 import random
 import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
 
 
 class AnalyticsMockData:

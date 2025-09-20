@@ -1,7 +1,8 @@
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 from pydantic.config import ConfigDict
-from typing import Optional, Dict, List, Any
-from datetime import datetime
 
 
 # Message schemas

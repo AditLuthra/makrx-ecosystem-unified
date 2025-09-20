@@ -1,30 +1,27 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, func, desc, asc
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, asc, desc, func, or_
+from sqlalchemy.orm import Session
 
 from ..models.equipment import (
     Equipment,
     EquipmentMaintenanceLog,
-    EquipmentReservation,
     EquipmentRating,
-    EquipmentUsageSession,
+    EquipmentReservation,
     EquipmentStatus,
     ReservationStatus,
 )
 from ..schemas.equipment import (
     EquipmentCreate,
-    EquipmentUpdate,
     EquipmentFilter,
-    ReservationCreate,
-    ReservationUpdate,
+    EquipmentRatingCreate,
+    EquipmentUpdate,
     MaintenanceLogCreate,
     MaintenanceLogUpdate,
-    EquipmentRatingCreate,
-    EquipmentRatingUpdate,
-    UsageSessionCreate,
-    UsageSessionUpdate,
+    ReservationCreate,
+    ReservationUpdate,
 )
 
 

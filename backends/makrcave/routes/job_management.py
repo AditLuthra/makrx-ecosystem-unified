@@ -1,63 +1,49 @@
+import hashlib
+import uuid
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 from fastapi import (
     APIRouter,
     Depends,
+    File,
+    Form,
     HTTPException,
     Query,
     UploadFile,
-    File,
-    Form,
     status,
 )
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import and_, or_, desc, asc, func
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
-import uuid
-import json
-import hashlib
-import os
-from pathlib import Path
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..dependencies import get_current_user, get_current_user_optional
+from ..dependencies import get_current_user
 from ..models.job_management import (
+    FilamentType,
+    JobMaterialUsage,
+    JobPriority,
+    JobStatus,
+    JobStatusUpdate,
+    JobType,
     ServiceJob,
     ServiceJobFile,
-    JobStatusUpdate,
-    JobMaterialUsage,
-    JobTimeLog,
-    JobQualityCheck,
     ServiceProvider,
-    ProviderEquipment,
-    JobTemplate,
-    JobStatus,
-    JobPriority,
-    JobType,
-    FilamentType,
 )
 from ..schemas.job_management import (
-    ServiceJobCreate,
-    ServiceJobUpdate,
-    ServiceJobResponse,
-    ServiceJobFileUpload,
-    ServiceJobFileResponse,
-    JobStatusUpdateCreate,
-    JobStatusUpdateResponse,
+    JobDashboardStats,
+    JobListResponse,
     JobMaterialUsageCreate,
     JobMaterialUsageResponse,
-    JobTimeLogCreate,
-    JobQualityCheckCreate,
-    ServiceProviderCreate,
-    ServiceProviderUpdate,
-    ServiceProviderResponse,
-    ProviderEquipmentCreate,
-    JobTemplateCreate,
-    JobDashboardStats,
-    JobAnalytics,
     JobSearchFilters,
-    JobListResponse,
-    GCodeAnalysisResult,
-    ModelAnalysisResult,
+    JobStatusUpdateCreate,
+    JobStatusUpdateResponse,
+    ServiceJobCreate,
+    ServiceJobFileResponse,
+    ServiceJobResponse,
+    ServiceJobUpdate,
+    ServiceProviderCreate,
+    ServiceProviderResponse,
 )
 
 router = APIRouter(prefix="/jobs", tags=["job-management"])

@@ -7,15 +7,16 @@ database. Run after the main database initialization when enabling project
 interaction features.
 """
 
+import logging
 import os
 import sys
-import logging
 
 # Add the backend directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import engine
-from ..models.project import Base, ProjectLike, ProjectBookmark
+
+from ..models.project import Base, ProjectBookmark, ProjectLike
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

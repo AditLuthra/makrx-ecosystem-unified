@@ -3,19 +3,20 @@ MakrCave Bridge API - Exact contracts as specified
 Cave side of the Store ↔ Cave integration
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
 from datetime import datetime
-import httpx
+from typing import Any, Dict, List, Optional
 
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from ..core.config import settings
 from ..database import get_db
+from ..models.inventory import InventoryItem as InventoryItemModel
 from ..models.inventory import Job as CaveJob
 from ..models.job_management import JobStatus
-from ..models.inventory import InventoryItem as InventoryItemModel
-from ..utils.auth import verify_service_jwt
-from ..core.config import settings
+from backends.makrx_store.core.unified_auth import verify_service_jwt
 
 router = APIRouter()
 

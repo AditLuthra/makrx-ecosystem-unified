@@ -6,25 +6,23 @@ This script creates all the analytics tables in the database.
 Run this after the main database initialization to add analytics capabilities.
 """
 
-import sys
 import os
+import sys
 from datetime import datetime
 
 # Add the backend directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from sqlalchemy import text
+
 from ..database import engine, get_db_session
 from ..models.analytics import Base as AnalyticsBase
 from ..models.analytics import (
-    UsageEvent,
-    AnalyticsSnapshot,
-    ReportRequest,
     EquipmentUsageLog,
     InventoryAnalytics,
-    ProjectAnalytics,
     RevenueAnalytics,
+    UsageEvent,
 )
-from sqlalchemy import text
 
 
 def create_analytics_tables():

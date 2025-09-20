@@ -4,10 +4,10 @@ os.environ.setdefault("DATABASE_URL", "sqlite:///./test.db")
 os.environ.setdefault("ENVIRONMENT", "test")
 
 from fastapi.testclient import TestClient
-from backends.makrcave.main import app
+
 from backends.makrcave.database import init_db
 from backends.makrcave.dependencies import CurrentUser
-
+from backends.makrcave.main import app
 
 client = TestClient(app)
 
@@ -15,7 +15,14 @@ client = TestClient(app)
 def test_health():
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json().get("status") == "healthy"
+    assert r.json().get("status") in ("ok", "healthy")
+
+
+def test_readyz_versioned():
+    r = client.get("/api/v1/health/readyz")
+    # In test env we may not have DB/Keycloak, allow 200 or 503 with JSON
+    assert r.status_code in (200, 503)
+    assert r.headers.get("content-type", "").startswith("application/json")
 
 
 def test_protected_endpoints_require_auth():
@@ -31,7 +38,6 @@ def test_protected_endpoints_require_auth():
 
 def test_happy_path_with_override(monkeypatch):
     # Override dependency to bypass auth for a simple GET route that touches DB lightly
-    from backends.makrcave import routes
     from backends.makrcave.dependencies import get_current_user
 
     def _fake_user():

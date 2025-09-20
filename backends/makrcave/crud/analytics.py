@@ -1,28 +1,28 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, and_, or_, extract
-from typing import List, Dict, Any, Optional, Tuple
-from datetime import datetime, date, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, desc, extract, func
+from sqlalchemy.orm import Session
 
 from ..models.analytics import (
-    UsageEvent,
-    AnalyticsSnapshot,
-    ReportRequest,
     EquipmentUsageLog,
+    EventType,
     InventoryAnalytics,
     ProjectAnalytics,
+    ReportRequest,
     RevenueAnalytics,
-    EventType,
+    UsageEvent,
 )
 from ..schemas.analytics import (
-    UsageEventCreate,
-    ReportRequestCreate,
+    AnalyticsFilters,
     EquipmentUsageLogCreate,
     InventoryAnalyticsCreate,
     ProjectAnalyticsCreate,
+    ReportRequestCreate,
     RevenueAnalyticsCreate,
-    AnalyticsFilters,
     TimePeriodEnum,
+    UsageEventCreate,
 )
 
 
@@ -343,7 +343,7 @@ class AnalyticsCRUD:
             .filter(
                 and_(
                     InventoryAnalytics.makerspace_id == uuid.UUID(makerspace_id),
-                    InventoryAnalytics.reorder_triggered == True,
+                    InventoryAnalytics.reorder_triggered,
                     InventoryAnalytics.date
                     >= datetime.now().date() - timedelta(days=7),
                 )
@@ -404,7 +404,8 @@ class AnalyticsCRUD:
             metrics.append(
                 {
                     "equipment_id": str(stat.equipment_id),
-                    "equipment_name": f"Equipment {stat.equipment_id}",  # Would join with equipment table
+                    # TODO: join with equipment table to get display name
+                    "equipment_name": f"Equipment {stat.equipment_id}",
                     "total_usage_hours": total_hours,
                     "reservation_count": stat.usage_count,
                     "uptime_percentage": uptime_percentage,
@@ -598,8 +599,8 @@ class AnalyticsCRUD:
         self,
         request_id: str,
         status: str,
-        file_url: str = None,
-        error_message: str = None,
+        file_url: Optional[str] = None,
+        error_message: Optional[str] = None,
     ) -> ReportRequest:
         db_request = (
             self.db.query(ReportRequest)

@@ -1,8 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from ..models.project import ProjectLike, ProjectBookmark, ProjectFollow
 from datetime import datetime
 from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from ..models.project import ProjectBookmark, ProjectFollow, ProjectLike
 
 
 # --- Project Like ---

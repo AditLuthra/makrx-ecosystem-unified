@@ -1,17 +1,17 @@
-from sqlalchemy import (
-    Column,
-    String,
-    DateTime,
-    JSON,
-    Text,
-    Boolean,
-    Integer,
-    ForeignKey,
-)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from datetime import datetime
 import uuid
+from datetime import datetime
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import relationship
 
 from ..database import Base
 

@@ -3,11 +3,11 @@ Simple FastAPI backend compatible with Python 3.13
 Minimal setup to get the ecosystem working
 """
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 import os
-from typing import Dict, Any
+
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # Create FastAPI app
 app = FastAPI(

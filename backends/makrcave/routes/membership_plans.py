@@ -1,5 +1,5 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -8,7 +8,7 @@ from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..dependencies import get_current_user, get_current_admin_user
+from ..dependencies import get_current_admin_user, get_current_user
 
 # Use enhanced member model
 from ..models.enhanced_member import Member
@@ -386,7 +386,10 @@ async def delete_membership_plan(
     if member_count > 0 and not force:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete plan with {member_count} active members. Use force=true to override.",
+            detail=(
+                f"Cannot delete plan with {member_count} active members. "
+                "Use force=true to override."
+            ),
         )
 
     # If forcing delete, update members to remove plan assignment

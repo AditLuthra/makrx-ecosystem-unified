@@ -1,41 +1,36 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, func, desc, asc, extract
-from typing import List, Optional, Dict, Any, Tuple
 from datetime import datetime, timedelta
-import uuid
-import secrets
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import and_, asc, desc, extract, func
+from sqlalchemy.orm import Session
 
 from ..models.billing import (
-    Transaction,
-    Invoice,
-    CreditWallet,
     CreditTransaction,
-    Refund,
-    PaymentMethod,
-    BillingPlan,
-    TransactionType,
-    TransactionStatus,
-    PaymentGateway,
+    CreditWallet,
+    Invoice,
     InvoiceStatus,
+    PaymentMethod,
+    Refund,
+    Transaction,
+    TransactionStatus,
 )
 from ..schemas.billing import (
-    TransactionCreate,
-    TransactionUpdate,
-    TransactionFilter,
-    TransactionSort,
+    CreditTransactionCreate,
+    CreditWalletUpdate,
     InvoiceCreate,
     InvoiceUpdate,
-    CreditWalletUpdate,
-    CreditTransactionCreate,
-    RefundCreate,
     PaymentMethodCreate,
-    CheckoutSessionCreate,
+    RefundCreate,
+    TransactionCreate,
+    TransactionFilter,
+    TransactionSort,
+    TransactionUpdate,
 )
 
 
 # Transaction CRUD operations
 def get_transaction(
-    db: Session, transaction_id: str, user_id: str = None
+    db: Session, transaction_id: str, user_id: Optional[str] = None
 ) -> Optional[Transaction]:
     """Get a transaction by ID"""
     query = db.query(Transaction)
@@ -48,7 +43,7 @@ def get_transaction(
 
 def get_transactions(
     db: Session,
-    user_id: str = None,
+    user_id: Optional[str] = None,
     skip: int = 0,
     limit: int = 100,
     filters: Optional[TransactionFilter] = None,
@@ -156,8 +151,8 @@ def complete_transaction(
     db: Session,
     transaction_id: str,
     gateway_transaction_id: str,
-    gateway_payment_id: str = None,
-    gateway_signature: str = None,
+    gateway_payment_id: Optional[str] = None,
+    gateway_signature: Optional[str] = None,
 ) -> Optional[Transaction]:
     """Mark transaction as completed"""
     db_transaction = get_transaction(db, transaction_id)
@@ -182,7 +177,7 @@ def complete_transaction(
 
 
 def fail_transaction(
-    db: Session, transaction_id: str, reason: str = None
+    db: Session, transaction_id: str, reason: Optional[str] = None
 ) -> Optional[Transaction]:
     """Mark transaction as failed"""
     db_transaction = get_transaction(db, transaction_id)
@@ -202,7 +197,9 @@ def fail_transaction(
 
 
 # Invoice CRUD operations
-def get_invoice(db: Session, invoice_id: str, user_id: str = None) -> Optional[Invoice]:
+def get_invoice(
+    db: Session, invoice_id: str, user_id: Optional[str] = None
+) -> Optional[Invoice]:
     """Get an invoice by ID"""
     query = db.query(Invoice)
 
@@ -219,8 +216,8 @@ def get_invoice_by_number(db: Session, invoice_number: str) -> Optional[Invoice]
 
 def get_invoices(
     db: Session,
-    user_id: str = None,
-    makerspace_id: str = None,
+    user_id: Optional[str] = None,
+    makerspace_id: Optional[str] = None,
     status: Optional[InvoiceStatus] = None,
     skip: int = 0,
     limit: int = 100,
@@ -498,7 +495,7 @@ def create_refund(db: Session, refund: RefundCreate) -> Refund:
 
 
 def process_refund(
-    db: Session, refund_id: str, gateway_refund_id: str = None
+    db: Session, refund_id: str, gateway_refund_id: Optional[str] = None
 ) -> Optional[Refund]:
     """Mark refund as processed"""
     refund = db.query(Refund).filter(Refund.id == refund_id).first()
@@ -522,7 +519,7 @@ def get_payment_methods(db: Session, user_id: str) -> List[PaymentMethod]:
         .filter(
             and_(
                 PaymentMethod.user_id == user_id,
-                PaymentMethod.is_active == True,
+                PaymentMethod.is_active,
             )
         )
         .order_by(desc(PaymentMethod.is_default), desc(PaymentMethod.last_used_at))
@@ -539,7 +536,7 @@ def create_payment_method(
         db.query(PaymentMethod).filter(
             and_(
                 PaymentMethod.user_id == payment_method.user_id,
-                PaymentMethod.is_default == True,
+                PaymentMethod.is_default,
             )
         ).update({"is_default": False})
 
@@ -556,7 +553,7 @@ def set_default_payment_method(
     """Set a payment method as default"""
     # Unset all default methods for user
     db.query(PaymentMethod).filter(
-        and_(PaymentMethod.user_id == user_id, PaymentMethod.is_default == True)
+        and_(PaymentMethod.user_id == user_id, PaymentMethod.is_default)
     ).update({"is_default": False})
 
     # Set new default
@@ -596,8 +593,8 @@ def delete_payment_method(db: Session, user_id: str, payment_method_id: str) -> 
 def get_billing_analytics(
     db: Session,
     makerspace_id: str,
-    start_date: datetime = None,
-    end_date: datetime = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
 ) -> Dict[str, Any]:
     """Get billing analytics for a makerspace"""
     if not start_date:
@@ -800,8 +797,8 @@ def charge_credits(
     makerspace_id: str,
     amount: int,
     description: str,
-    service_type: str = None,
-    service_id: str = None,
+    service_type: Optional[str] = None,
+    service_id: Optional[str] = None,
 ) -> bool:
     """Charge credits from user wallet"""
     wallet = get_or_create_credit_wallet(db, user_id, makerspace_id)
@@ -829,7 +826,7 @@ def add_credits(
     makerspace_id: str,
     amount: int,
     description: str,
-    processed_by: str = None,
+    processed_by: Optional[str] = None,
 ) -> CreditTransaction:
     """Add credits to user wallet"""
     wallet = get_or_create_credit_wallet(db, user_id, makerspace_id)

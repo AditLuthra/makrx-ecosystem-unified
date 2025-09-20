@@ -1,27 +1,28 @@
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     HTTPException,
-    status,
     Query,
-    BackgroundTasks,
+    status,
 )
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 from pydantic import BaseModel, Field
+from sqlalchemy import and_, desc, or_
+from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..dependencies import get_current_user, get_current_admin_user
+from ..dependencies import get_current_admin_user, get_current_user
 from ..models.filament_tracking import (
-    FilamentRoll,
-    FilamentUsageLog,
-    FilamentReorderRequest,
-    FilamentMaterial,
-    FilamentBrand,
-    FilamentRollStatus,
     DeductionMethod,
+    FilamentBrand,
+    FilamentMaterial,
+    FilamentReorderRequest,
+    FilamentRoll,
+    FilamentRollStatus,
+    FilamentUsageLog,
 )
 
 router = APIRouter(prefix="/filament", tags=["Filament Tracking"])

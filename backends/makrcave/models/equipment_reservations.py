@@ -1,20 +1,20 @@
+import enum
+import uuid
+
 from sqlalchemy import (
+    JSON,
+    Boolean,
     Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
     String,
     Text,
-    DateTime,
-    Boolean,
-    ForeignKey,
-    Float,
-    Integer,
-    JSON,
-    Enum,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-import enum
-import uuid
-from datetime import datetime
 
 from ..database import Base
 

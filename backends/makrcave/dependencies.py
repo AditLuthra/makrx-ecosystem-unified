@@ -3,17 +3,17 @@ Authentication and dependency injection for MakrCave Backend - Unified
 Ecosystem. Integrates with Keycloak SSO system.
 """
 
+import os
+import time
+from typing import List, Optional
+
+import httpx
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from typing import List, Optional
-import os
-import httpx
-import time
 
 # from functools import wraps  # unused
-
 from .database import get_db
 from .models.enhanced_member import Member
 
@@ -22,7 +22,8 @@ security = HTTPBearer()
 security_optional = HTTPBearer(auto_error=False)
 
 # Keycloak configuration
-KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://localhost:8081")
+# Default to docker-compose service name for in-container defaults
+KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
 KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "makrx")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "makrcave-api")
 

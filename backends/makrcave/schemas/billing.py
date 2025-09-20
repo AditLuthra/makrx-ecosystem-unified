@@ -1,9 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from pydantic import ConfigDict
-from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 from enum import Enum
-from decimal import Decimal
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 # Enums

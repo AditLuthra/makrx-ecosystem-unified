@@ -6,9 +6,8 @@ the current SQLAlchemy models capture the desired state. Prefer creating
 an auto-generated revision against models for exact DDL.
 """
 
-from alembic import op  # noqa: F401
 import sqlalchemy as sa  # noqa: F401
-
+from alembic import op  # noqa: F401
 
 revision = "0002_member_tables"
 down_revision = "0001_initial"

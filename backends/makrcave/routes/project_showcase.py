@@ -1,29 +1,30 @@
+from datetime import datetime, timedelta
+from typing import List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func
-from typing import List, Optional
-from datetime import datetime, timedelta
 
+from ..crud.project_social_async import (
+    get_project_bookmark,
+    get_project_follow,
+    get_project_like,
+)
 from ..database import get_db
+from ..dependencies import get_current_user
+from ..models.enhanced_member import Member
 
 # Models
 from ..models.project import Project, ProjectCollaborator, ProjectVisibility
-from ..models.enhanced_member import Member
 
 # Schemas
 from ..schemas.project_showcase import (
-    ShowcaseProjectResponse,
-    ShowcaseBOMItem,
     ProjectAward,
     ProjectStatsResponse,
+    ShowcaseBOMItem,
     ShowcaseFiltersResponse,
-)
-from ..dependencies import get_current_user
-from ..crud.project_social_async import (
-    get_project_like,
-    get_project_bookmark,
-    get_project_follow,
+    ShowcaseProjectResponse,
 )
 
 router = APIRouter(prefix="/projects", tags=["project-showcase"])
@@ -88,7 +89,7 @@ async def get_showcase_projects(
                 owner_result.scalars().first() if hasattr(project, "owner_id") else None
             )
             # Get collaborator count
-            collab_result = await db.execute(
+            await db.execute(
                 select(ProjectCollaborator).where(
                     ProjectCollaborator.project_id == project.project_id
                 )
@@ -512,6 +513,7 @@ async def like_project(
 ):
     """Like a project"""
     from sqlalchemy import select
+
     from ..crud.project_social_async import add_project_like
 
     project_result = await db.execute(
@@ -532,6 +534,7 @@ async def unlike_project(
 ):
     """Unlike a project"""
     from sqlalchemy import select
+
     from ..crud.project_social_async import remove_project_like
 
     project_result = await db.execute(
@@ -552,6 +555,7 @@ async def bookmark_project(
 ):
     """Bookmark a project"""
     from sqlalchemy import select
+
     from ..crud.project_social_async import add_project_bookmark
 
     project_result = await db.execute(
@@ -572,6 +576,7 @@ async def unbookmark_project(
 ):
     """Remove bookmark from a project"""
     from sqlalchemy import select
+
     from ..crud.project_social_async import remove_project_bookmark
 
     project_result = await db.execute(

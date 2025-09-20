@@ -4,9 +4,10 @@ Uses synchronous psycopg2 instead of asyncpg
 """
 
 import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 # Database URL from environment
