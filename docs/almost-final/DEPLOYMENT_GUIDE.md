@@ -17,8 +17,8 @@ This guide covers deploying the MakrCave system to production servers with all n
 - **Docker**: 20.10+
 - **Docker Compose**: 2.0+
 - **Nginx**: 1.18+ (for reverse proxy)
-- **Node.js**: 18+ (for frontend builds)
-- **Python**: 3.9+ (for backend)
+- **Node.js**: 20+ (for frontend builds)
+- **Python**: 3.12+ (for backend)
 - **PostgreSQL**: 13+ (recommended over SQLite for production)
 
 ### Environment Variables
@@ -48,7 +48,7 @@ sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install Python and pip

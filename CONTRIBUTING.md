@@ -2,7 +2,7 @@
 
 We welcome contributions to the MakrX Ecosystem! This document will guide you through the contribution process.
 
-## Table of Contents
+## Table of contents
 
 - [Code of Conduct](#code-of-conduct)
 - [Getting Started](#getting-started)
@@ -18,7 +18,7 @@ We welcome contributions to the MakrX Ecosystem! This document will guide you th
 
 This project adheres to a Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to the project maintainers.
 
-## Getting Started
+## Getting started
 
 1. Fork the repository on GitHub
 2. Clone your fork locally
@@ -28,16 +28,16 @@ This project adheres to a Code of Conduct. By participating, you are expected to
 6. Test your changes
 7. Submit a pull request
 
-## Development Setup
+## Development setup
 
 ### Prerequisites
 
-- **Node.js** 20.x or higher
-- **Docker** and **Docker Compose**
-- **Git**
-- **pnpm** (recommended) or **npm**
+- Node.js 20+ (required by repo engines)
+- Docker and Docker Compose
+- Git
+- npm (repo uses npm workspaces)
 
-### Initial Setup
+### Initial setup
 
 ```bash
 # Clone your fork
@@ -46,16 +46,24 @@ cd makrx-ecosystem-unified
 
 # Copy environment variables
 cp .env.example .env
-# Edit .env with your preferred values (see Development Configuration below)
+# Edit .env with your preferred values (see Development configuration below)
 
 # Install dependencies
-npm install
+npm ci --legacy-peer-deps
 
-# Set up and start development services
-./setup_and_start.sh
+# Start infrastructure
+docker-compose up -d postgres redis keycloak minio
+
+# Set up Python 3.12 venvs for backends (one-time)
+for d in backends/makrcave backends/makrx_store backends/makrx_events; do \
+	cd $d && python3.12 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate && cd -; \
+done
+
+# Run migrations (requires Postgres up)
+npm run db:migrate
 ```
 
-### Development Configuration
+### Development configuration
 
 Edit your `.env` file with the following recommended development values:
 
@@ -68,15 +76,15 @@ MINIO_ROOT_PASSWORD=minio_secure_pass123
 S3_SECRET_KEY=minio_secret_key_123
 ```
 
-### Starting the Development Environment
+### Starting the development environment
 
 ```bash
 # Start all services
-./start-dev.sh
+npm run dev
 
 # Or start individual components:
-./start-backends.sh    # Start backend APIs only
-npm run dev           # Start frontend apps only
+npm run dev:backends     # Start backend APIs only
+npm run dev:apps         # Start frontend apps only
 ```
 
 ### Development URLs
@@ -88,9 +96,9 @@ Once running, access the applications at:
 - **MakrCave**: http://localhost:3002
 - **MakrX Store**: http://localhost:3003
 - **MakrX Events**: http://localhost:3004
-- **Keycloak Admin**: http://localhost:8081 (admin/your_admin_password)
+- **Keycloak Admin**: http://localhost:8081 (admin/admin123 by default)
 
-## Project Structure
+## Project structure
 
 ```
 makrx-ecosystem-unified/
@@ -98,12 +106,12 @@ makrx-ecosystem-unified/
 │   ├── gateway-frontend/          # Main gateway (Next.js)
 │   ├── gateway-frontend-hacker/   # Alternative gateway (Next.js)
 │   ├── makrcave/                  # Makerspace portal (Next.js)
-│   ├── makrx-store/              # E-commerce platform (Next.js)
-│   └── makrx-events/             # Events management (Next.js)
+│   ├── makrx-store/               # E-commerce platform (Next.js)
+│   └── makrx-events/              # Events management (Next.js)
 ├── backends/                      # Backend APIs
-│   ├── makrcave/                 # MakrCave API (FastAPI)
-│   ├── makrx_events/            # Events API (FastAPI)
-│   └── makrx-store/              # Store API (FastAPI)
+│   ├── makrcave/                  # MakrCave API (FastAPI)
+│   ├── makrx_events/              # Events API (FastAPI)
+│   └── makrx-store/               # Store API (FastAPI)
 ├── packages/                      # Shared packages
 │   ├── shared-ui/                # Shared React components
 │   ├── auth/                     # Authentication utilities
@@ -112,19 +120,19 @@ makrx-ecosystem-unified/
 │   ├── keycloak/                 # SSO configuration
 │   ├── postgres/                 # Database setup
 │   └── nginx/                    # Reverse proxy config
-└── .github/                       # CI/CD workflows
+└── .github/                      # CI/CD workflows
 ```
 
-## Making Changes
+## Making changes
 
-### Branch Naming Convention
+### Branch naming convention
 
 - `feature/description-of-feature`
 - `bugfix/description-of-bug`
 - `hotfix/critical-fix`
 - `docs/documentation-update`
 
-### Commit Message Format
+### Commit message format
 
 Follow conventional commits:
 
@@ -144,7 +152,7 @@ Examples:
 
 ## Testing
 
-### Running Tests
+### Running tests
 
 ```bash
 # Run all tests
@@ -154,22 +162,22 @@ npm test
 cd apps/gateway-frontend
 npm test
 
-# Run backend tests
+# Run backend tests (Python 3.12)
 cd backends/makrcave
 python -m pytest
 
-# Run integration tests
-python final_integration_test.py
+# Run integration tests (if configured)
+npm run test:integration
 ```
 
-### Test Requirements
+### Test requirements
 
 - All new features must include tests
 - Bug fixes should include regression tests
 - Maintain test coverage above 70%
 - Integration tests must pass for all components
 
-### Manual Testing
+### Manual testing
 
 Before submitting:
 
@@ -179,9 +187,9 @@ Before submitting:
 4. Check responsive design on different screen sizes
 5. Test with different browsers (Chrome, Firefox, Safari)
 
-## Submitting Changes
+## Submitting changes
 
-### Pull Request Process
+### Pull request process
 
 1. **Update Documentation**: Update README.md or other docs if needed
 2. **Add Tests**: Ensure your changes include appropriate tests
@@ -189,7 +197,7 @@ Before submitting:
 4. **Rebase**: Rebase your branch on the latest main
 5. **Create PR**: Submit a detailed pull request
 
-### Pull Request Template
+### Pull request template
 
 ```markdown
 ## Description
@@ -218,14 +226,14 @@ Brief description of changes
 - [ ] No breaking changes (or documented)
 ```
 
-### Review Process
+### Review process
 
 1. All PRs require at least one review
 2. CI checks must pass
 3. Documentation must be updated for new features
 4. Breaking changes require special approval
 
-## Coding Standards
+## Coding standards
 
 ### JavaScript/TypeScript
 
@@ -234,14 +242,14 @@ Brief description of changes
 - Use **Prettier** for code formatting
 - Follow React best practices and hooks guidelines
 
-### Python (Backend APIs)
+### Python (backend APIs)
 
 - Follow **PEP 8** style guide
 - Use **type hints** for all functions
 - Use **Black** for code formatting
 - Follow **FastAPI** best practices
 
-### General Guidelines
+### General guidelines
 
 - Write self-documenting code with clear variable names
 - Add comments for complex business logic
@@ -249,16 +257,16 @@ Brief description of changes
 - Use consistent naming conventions
 - Handle errors gracefully with proper logging
 
-### File Organization
+### File organization
 
 - Keep related files together
 - Use index files for clean imports
 - Separate concerns (UI, logic, data)
 - Follow established folder structures
 
-## Getting Help
+## Getting help
 
-### Communication Channels
+### Communication channels
 
 - **GitHub Issues**: Bug reports, feature requests
 - **GitHub Discussions**: General questions, ideas
@@ -267,11 +275,11 @@ Brief description of changes
 ### Documentation
 
 - **README.md**: Project overview and setup
-- **Technical Docs**: In `/docs` folder (if available)
+- **Documentation index**: `docs/README.md`
 - **API Documentation**: Generated from code comments
-- **Architecture Diagrams**: In project wiki
+- **Architecture**: `docs/ai/ARCHITECTURE.md`
 
-### Common Issues
+### Common issues
 
 **Environment Setup Problems:**
 
@@ -283,7 +291,7 @@ Brief description of changes
 
 - Ensure PostgreSQL service is running: `docker-compose ps`
 - Check database credentials in `.env`
-- Verify port 5433 is available: `lsof -i :5433`
+- Verify port 5432 is available: `lsof -i :5432`
 
 **Frontend Build Issues:**
 

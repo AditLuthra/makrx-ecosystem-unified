@@ -46,7 +46,7 @@ from ..schemas.enhanced_bom import (
     BOMCostAnalysis,
 )
 
-router = APIRouter(prefix="/api/v1/enhanced-bom", tags=["enhanced-bom"])
+router = APIRouter(prefix="/enhanced-bom", tags=["enhanced-bom"])
 
 
 # BOM Templates
@@ -109,7 +109,7 @@ async def list_bom_templates(
 
     # If user is not authenticated, only show public templates
     if not current_user:
-        query = query.filter(BOMTemplate.is_public == True)
+        query = query.filter(BOMTemplate.is_public.is_(True))
 
     templates = query.order_by(desc(BOMTemplate.created_at)).all()
     return templates
@@ -721,7 +721,7 @@ async def get_bom_dashboard_stats(
 
         # Critical path items
         critical_path_items = base_query.filter(
-            EnhancedBOMItem.is_critical_path == True
+            EnhancedBOMItem.is_critical_path.is_(True)
         ).count()
 
         # Items needing procurement
@@ -737,7 +737,7 @@ async def get_bom_dashboard_stats(
 
         # Auto reorder items
         auto_reorder_items = base_query.filter(
-            EnhancedBOMItem.auto_reorder_enabled == True
+            EnhancedBOMItem.auto_reorder_enabled.is_(True)
         ).count()
 
         # Average lead time

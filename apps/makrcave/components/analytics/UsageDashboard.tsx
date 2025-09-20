@@ -1,33 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 import {
-  LineChart,
+  Activity,
+  Calendar,
+  Clock,
+  FolderPlus,
+  LogIn,
+  RefreshCw,
+  TrendingUp,
+  UserPlus,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  CartesianGrid,
+  Cell,
   Line,
-  BarChart,
-  Bar,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
-import {
-  Users,
-  Clock,
-  Calendar,
-  TrendingUp,
-  Activity,
-  LogIn,
-  UserPlus,
-  FolderPlus,
-  RefreshCw,
-} from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface UsageStats {
   period: string;
@@ -78,7 +75,7 @@ const UsageDashboard: React.FC = () => {
       }
 
       // Fetch recent events
-      const eventsResponse = await fetch('/api/analytics/events?limit=50', {
+      const eventsResponse = await fetch('/api/v1/analytics/events?limit=50', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',

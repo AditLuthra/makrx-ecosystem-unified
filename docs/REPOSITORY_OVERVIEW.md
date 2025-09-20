@@ -171,7 +171,7 @@ Quick path
 
 Prerequisites
 
-- Node.js 18+ (CI uses Node 20)
+- Node.js 20+ (CI uses Node 20)
 - Python 3.12 for backend venvs (recommended per Installation guide)
 - Docker & Docker Compose
 
@@ -215,7 +215,7 @@ Secret management policy
 
 Docker Compose
 
-- Development: `docker-compose up -d`
+- Development: `docker-compose up -d postgres redis keycloak minio`
 - Staging: `docker-compose -f docker-compose.staging.yml up -d`
 - Production: `docker-compose -f docker-compose.prod.yml up -d`
 
@@ -231,8 +231,8 @@ Kubernetes
 
 Monitoring
 
-- `monitoring/docker-compose.monitoring.yml` provides Prometheus, Grafana, Loki/Promtail, Jaeger, exporters.
-- Local dashboards: Grafana http://localhost:3005, Prometheus http://localhost:9090, Jaeger http://localhost:16686.
+- Staging compose includes Prometheus (exposed at 9091) for basic metrics; see `docker-compose.staging.yml`.
+- Additional monitoring (Grafana, Loki/Promtail, Jaeger) can be integrated; see `monitoring/` folder for configs if present.
 
 ## CI/CD
 

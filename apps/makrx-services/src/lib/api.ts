@@ -15,10 +15,34 @@ class ServicesAPI {
   private authHeaderBuilder?: AuthHeaderBuilder;
 
   constructor() {
-    this.baseUrl =
-      process.env.NEXT_PUBLIC_SERVICES_API_URL || "http://localhost:3005/api";
-    this.storeApiUrl =
-      process.env.NEXT_PUBLIC_STORE_API_URL || "http://localhost:3001/api";
+    // Initialize with safest defaults; actual value selected per-request via getters
+    this.baseUrl = "";
+    this.storeApiUrl = "";
+  }
+
+  private getBaseUrl(): string {
+    // In browser: default to same-origin path routed by Nginx; avoid container DNS leak
+    if (typeof window !== "undefined") {
+      return process.env.NEXT_PUBLIC_SERVICES_API_URL || "/api";
+    }
+    // On server (SSR/Route Handlers): prefer internal URL to backend service
+    return (
+      process.env.SERVICES_API_URL ||
+      process.env.NEXT_PUBLIC_SERVICES_API_URL ||
+      "http://localhost:8006/api"
+    );
+  }
+
+  private getStoreApiUrl(): string {
+    if (typeof window !== "undefined") {
+      // Prefer same-origin proxy path handled by Nginx; allow explicit public URL override if set
+      return process.env.NEXT_PUBLIC_STORE_API_URL || "/store-api";
+    }
+    return (
+      process.env.STORE_API_URL ||
+      process.env.NEXT_PUBLIC_STORE_API_URL ||
+      "http://localhost:8003/api"
+    );
   }
 
   setAuthHeaderBuilder(builder: AuthHeaderBuilder) {
@@ -38,7 +62,7 @@ class ServicesAPI {
       headers = await this.authHeaderBuilder(headers);
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(`${this.getBaseUrl()}${endpoint}`, {
       ...options,
       headers,
     });
@@ -64,7 +88,7 @@ class ServicesAPI {
       headers = await this.authHeaderBuilder(headers);
     }
 
-    const response = await fetch(`${this.storeApiUrl}${endpoint}`, {
+    const response = await fetch(`${this.getStoreApiUrl()}${endpoint}`, {
       ...options,
       headers,
     });
@@ -194,7 +218,7 @@ class ServicesAPI {
     if (this.authHeaderBuilder) {
       headers = await this.authHeaderBuilder({});
     }
-    const response = await fetch(`${this.baseUrl}/upload`, {
+    const response = await fetch(`${this.getBaseUrl()}/upload`, {
       method: "POST",
       headers,
       body: formData,
@@ -317,7 +341,9 @@ class ServicesAPI {
     onMessage: (message: any) => void
   ): WebSocket | null {
     try {
-      const wsUrl = this.baseUrl.replace("http", "ws").replace("/api", "/ws");
+      const wsUrl = this.getBaseUrl()
+        .replace("http", "ws")
+        .replace("/api", "/ws");
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {

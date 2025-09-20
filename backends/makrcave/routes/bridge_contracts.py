@@ -11,9 +11,11 @@ from datetime import datetime
 import httpx
 
 from ..database import get_db
-from ..models.project import Job, JobStatus
-from ..models.inventory import InventoryItem, InventoryTransaction
+from ..models.inventory import Job as CaveJob
+from ..models.job_management import JobStatus
+from ..models.inventory import InventoryItem as InventoryItemModel
 from ..utils.auth import verify_service_jwt
+from ..core.config import settings
 
 router = APIRouter()
 
@@ -82,13 +84,14 @@ async def receive_job_from_store(
         }
 
         # Create job record
-        job = Job(**job_data)
+        job = CaveJob(**job_data)
         db.add(job)
         db.commit()
         db.refresh(job)
 
         # Auto-route to provider based on capabilities and location
-        provider_assignment = await auto_route_job(job, db)
+        # Perform auto-routing (currently not used directly in response)
+        await auto_route_job(job, db)
 
         # Return exact response shape
         return JobCreationResponse(
@@ -104,7 +107,7 @@ async def receive_job_from_store(
         )
 
 
-async def auto_route_job(job: Job, db: Session) -> Dict[str, Any]:
+async def auto_route_job(job: CaveJob, db: Session) -> Dict[str, Any]:
     """
     Auto-assign job based on:
     - Material capabilities
@@ -115,10 +118,6 @@ async def auto_route_job(job: Job, db: Session) -> Dict[str, Any]:
     try:
         # Mock sophisticated routing logic
         # In production: query provider capabilities, location, queue
-
-        delivery = job.delivery_requirements or {}
-        city = delivery.get("city", "")
-        pincode = delivery.get("pincode", "")
 
         # Simple routing: return first available provider
         # Real implementation would check:
@@ -153,7 +152,7 @@ class JobStatusCallback(BaseModel):
 @router.post("/jobs/{job_id}/update-status")
 async def update_job_status_and_notify_store(
     job_id: int,
-    status: str,
+    new_status: str,
     notes: Optional[str] = None,
     provider_id: Optional[str] = None,
     db: Session = Depends(get_db),
@@ -164,12 +163,12 @@ async def update_job_status_and_notify_store(
     """
     try:
         # Update job in Cave database
-        job = db.query(Job).filter(Job.id == job_id).first()
+        job = db.query(CaveJob).filter(CaveJob.id == job_id).first()
         if not job:
             raise HTTPException(status_code=404, detail="Job not found")
 
         old_status = job.status
-        job.status = JobStatus(status)
+        job.status = JobStatus(new_status)
         job.updated_at = datetime.utcnow()
 
         if provider_id:
@@ -179,7 +178,7 @@ async def update_job_status_and_notify_store(
             job.provider_notes = notes
 
         # Mark completion timestamp
-        if status in ["COMPLETED", "SHIPPED"]:
+        if new_status in ["COMPLETED", "SHIPPED"]:
             job.completed_at = datetime.utcnow()
 
         db.commit()
@@ -187,10 +186,10 @@ async def update_job_status_and_notify_store(
         # Notify Store with exact callback shape
         callback_payload = JobStatusCallback(
             service_order_id=int(job.external_order_id),
-            status=status,
+            status=new_status,
             milestone={
                 "at": datetime.utcnow().isoformat(),
-                "note": notes or f"Status changed to {status}",
+                "note": notes or f"Status changed to {new_status}",
             },
         )
 
@@ -201,7 +200,7 @@ async def update_job_status_and_notify_store(
             "success": True,
             "job_id": job_id,
             "old_status": old_status.value if old_status else None,
-            "new_status": status,
+            "new_status": new_status,
             "store_notified": True,
         }
 
@@ -258,8 +257,8 @@ async def record_filament_consumption(
     try:
         # Validate inventory item exists
         item = (
-            db.query(InventoryItem)
-            .filter(InventoryItem.id == transaction.item_id)
+            db.query(InventoryItemModel)
+            .filter(InventoryItemModel.id == transaction.item_id)
             .first()
         )
 
@@ -279,27 +278,13 @@ async def record_filament_consumption(
                 detail="Insufficient quantity available",
             )
 
-        # Create transaction record
-        inv_transaction = InventoryTransaction(
-            item_id=transaction.item_id,
-            quantity_before=item.current_quantity,
-            quantity_after=item.current_quantity + transaction.delta_qty,
-            delta=transaction.delta_qty,
-            reason=transaction.reason,
-            reference_type=transaction.ref_type,
-            reference_id=transaction.ref_id,
-            created_at=datetime.utcnow(),
-        )
-
         # Update item quantity
-        item.current_quantity += transaction.delta_qty
-
-        db.add(inv_transaction)
+        item.current_quantity = item.current_quantity + transaction.delta_qty
         db.commit()
 
         return {
             "success": True,
-            "transaction_id": inv_transaction.id,
+            "transaction_id": f"{transaction.ref_type}-{transaction.ref_id}",
             "item_id": transaction.item_id,
             "delta_qty": transaction.delta_qty,
             "new_quantity": item.current_quantity,
@@ -318,7 +303,7 @@ async def record_filament_consumption(
 # ==========================================
 
 
-class InventoryItem(BaseModel):
+class StoreInventoryItem(BaseModel):
     """Inventory item for Store synchronization"""
 
     sku: str
@@ -333,7 +318,7 @@ class InventorySyncResponse(BaseModel):
     """Response for Store inventory sync"""
 
     success: bool
-    items: List[InventoryItem]
+    items: List[StoreInventoryItem]
     sync_timestamp: str
     total_items: int
 
@@ -350,17 +335,17 @@ async def provide_inventory_for_store_sync(
     try:
         # Get all inventory items with SKU mapping
         inventory_items = (
-            db.query(InventoryItem)
+            db.query(InventoryItemModel)
             .filter(
-                InventoryItem.sku.isnot(None)  # Only items with Store SKU mapping
-            )
+                InventoryItemModel.sku.isnot(None)
+            )  # Only items with Store SKU mapping
             .all()
         )
 
         sync_items = []
         for item in inventory_items:
             sync_items.append(
-                InventoryItem(
+                StoreInventoryItem(
                     sku=item.sku,
                     name=item.name,
                     available_quantity=item.current_quantity,
@@ -405,7 +390,7 @@ async def provider_accept_job(
     Triggers ACCEPTED status callback
     """
     try:
-        job = db.query(Job).filter(Job.id == job_id).first()
+        job = db.query(CaveJob).filter(CaveJob.id == job_id).first()
         if not job:
             raise HTTPException(status_code=404, detail="Job not found")
 

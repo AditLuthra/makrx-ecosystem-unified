@@ -2,15 +2,15 @@
 Health check endpoints for makrx-store backend
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from ..database import get_db
 from redis.asyncio import Redis as AsyncRedis
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
-from ..redis_utils import check_redis_connection
+# from ..redis_utils import check_redis_connection  # not used here
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -22,7 +22,7 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "makrx-store",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0",
     }
 
@@ -33,7 +33,7 @@ async def liveness_check():
     return {
         "status": "alive",
         "service": "makrx-store",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -44,7 +44,7 @@ async def detailed_health_check(db: AsyncSession = Depends(get_db)):
     health_status = {
         "status": "healthy",
         "service": "makrx-store",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "checks": {},
     }
 

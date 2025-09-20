@@ -1,0 +1,20 @@
+[flake8]
+# Keep line length aligned with Black's default
+max-line-length = 88
+
+# Ignore rules that conflict with Black formatting
+extend-ignore = E203, W503
+
+# Exclude common build/cache dirs and virtual environments
+exclude =
+    .git,
+    __pycache__,
+    .mypy_cache,
+    .pytest_cache,
+    node_modules,
+    dist,
+    build,
+    venv,
+    .venv,
+    backends/makrcave/venv,
+    backends/makrcave/.venv

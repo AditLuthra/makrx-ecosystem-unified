@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, field_validator
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -60,7 +61,7 @@ class BOMTemplateCreate(BaseModel):
 
     version: str = Field(default="1.0", max_length=20)
     is_public: bool = False
-    template_data: Dict[str, Any] = Field(..., min_items=1)
+    template_data: Dict[str, Any] = Field(..., min_length=1)
     estimated_cost: Optional[float] = Field(None, ge=0)
     complexity_level: str = Field(
         default="beginner", pattern="^(beginner|intermediate|advanced)$"
@@ -97,8 +98,7 @@ class BOMTemplateResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Enhanced BOM Item Schemas
@@ -312,8 +312,7 @@ class EnhancedBOMItemResponse(BaseModel):
     added_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Purchase Order Schemas
@@ -383,8 +382,7 @@ class BOMPurchaseOrderResponse(BaseModel):
     approved_by: Optional[str]
     approved_at: Optional[datetime]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Usage History Schemas
@@ -424,8 +422,7 @@ class BOMUsageHistoryResponse(BaseModel):
     used_by: str
     used_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Inventory Transaction Schemas
@@ -433,7 +430,7 @@ class BOMInventoryTransactionCreate(BaseModel):
     bom_item_id: str = Field(..., min_length=1)
 
     transaction_type: str = Field(..., max_length=50)
-    quantity_change: float = Field(..., ne=0)
+    quantity_change: float = Field(...)
     unit_cost: Optional[float] = Field(None, ge=0)
 
     reference_id: Optional[str] = Field(None, max_length=100)
@@ -444,6 +441,13 @@ class BOMInventoryTransactionCreate(BaseModel):
     expiry_date: Optional[datetime] = None
 
     notes: Optional[str] = None
+
+    @field_validator("quantity_change")
+    @classmethod
+    def validate_quantity_change(cls, v: float) -> float:
+        if v == 0:
+            raise ValueError("quantity_change must be non-zero")
+        return v
 
 
 class BOMInventoryTransactionResponse(BaseModel):
@@ -470,8 +474,7 @@ class BOMInventoryTransactionResponse(BaseModel):
     approved_by: Optional[str]
     transaction_date: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Analytics Schemas
@@ -503,8 +506,7 @@ class BOMAnalyticsResponse(BaseModel):
 
     generated_by: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Supplier Management Schemas
@@ -589,8 +591,7 @@ class SupplierManagementResponse(BaseModel):
     added_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Search and filtering

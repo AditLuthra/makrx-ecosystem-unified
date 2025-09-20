@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, status, Request
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
@@ -24,12 +25,38 @@ from .redis_utils import check_redis_connection
 configure_logging()
 log = structlog.get_logger(__name__)
 
+
 # Create FastAPI app
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: warm caches and verify dependencies
+    if os.getenv("ENVIRONMENT") == "test":
+        try:
+            reset_db()
+            log.info("test_db_reset_done")
+        except Exception as e:
+            log.warning("test_db_reset_failed", error=str(e))
+    try:
+        await get_keycloak_public_key(force=True)
+        log.info("keycloak_public_key_warmed")
+    except Exception as e:
+        log.warning("keycloak_public_key_warm_failed", error=str(e))
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        log.info("database_connectivity_ok")
+    except Exception as e:
+        log.error("database_connectivity_failed", error=str(e))
+    yield
+    # Shutdown: nothing special yet
+
+
 app = FastAPI(
     title="MakrCave API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # Sentry integration
@@ -40,25 +67,21 @@ try:
     if dsn:
         sentry_sdk.init(
             dsn=dsn,
-            traces_sample_rate=float(
-                os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")
-            ),
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
             environment=os.getenv("ENVIRONMENT", "development"),
         )
         log.info("sentry_initialized")
 except Exception as e:
     log.info(f"sentry_not_enabled: {e}")
 
-allowed_origins = [
+default_allowed_origins = [
     "https://makrx.org",
     "https://makrcave.com",
     "https://makrx.store",
-    "http://localhost:3000",  # gateway-frontend
-    "http://localhost:3001",  # gateway-frontend-hacker
-    "http://localhost:3002",  # makrcave
-    "http://localhost:3003",  # makrx-store
-    "http://localhost:3004",  # makrx-events
 ]
+
+# Start with defaults; add localhost origins only in dev
+allowed_origins = list(default_allowed_origins)
 
 # Allow override via CORS_ORIGINS (comma-separated)
 env_origins = os.getenv("CORS_ORIGINS")
@@ -76,10 +99,12 @@ if os.getenv("ENVIRONMENT") == "development":
             "http://localhost:3002",
             "http://localhost:3003",
             "http://localhost:3004",
+            "http://localhost:8001",
             "http://localhost:8000",
             "http://127.0.0.1:3000",
             "http://127.0.0.1:3001",
             "http://127.0.0.1:3002",
+            "http://127.0.0.1:8001",
             "http://127.0.0.1:8000",
         ]
     )
@@ -102,26 +127,26 @@ app.add_middleware(ErrorHandlingMiddleware)
 async def request_middleware(request: Request, call_next):
     # Check for incoming correlation ID, or generate a new one
     correlation_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
-    
+
     # Make it available to the application state
     request.state.request_id = correlation_id
 
     # Bind to structlog context for logging
     structlog.contextvars.bind_contextvars(request_id=correlation_id)
-    
+
     start_time = time.time()
-    
+
     response = await call_next(request)
-    
+
     process_time = (time.time() - start_time) * 1000
-    
+
     # Ensure the correlation ID is in the response headers
     response.headers["X-Request-ID"] = correlation_id
     response.headers["X-Response-Time"] = f"{process_time:.2f}ms"
-    
+
     # Clear context variables for the next request
     structlog.contextvars.clear_contextvars()
-    
+
     return response
 
 
@@ -169,27 +194,7 @@ async def readiness_check():
         )
 
 
-# Startup checks: warm Keycloak JWKS/public key and verify DB connection
-@app.on_event("startup")
-async def on_startup():
-    # In test environment, start with a clean database to avoid state leakage across runs
-    if os.getenv("ENVIRONMENT") == "test":
-        try:
-            reset_db()
-            log.info("test_db_reset_done")
-        except Exception as e:
-            log.warning("test_db_reset_failed", error=str(e))
-    try:
-        await get_keycloak_public_key(force=True)
-        log.info("keycloak_public_key_warmed")
-    except Exception as e:
-        log.warning("keycloak_public_key_warm_failed", error=str(e))
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        log.info("database_connectivity_ok")
-    except Exception as e:
-        log.error("database_connectivity_failed", error=str(e))
+# Startup handled via lifespan above
 
 
 # Include API routes
@@ -256,16 +261,12 @@ if __name__ == "__main__":
             },
         },
         "loggers": {
-            "uvicorn": {
-                "handlers": ["default"],
-                "level": "INFO",
-                "propagate": False
-            },
+            "uvicorn": {"handlers": ["default"], "level": "INFO", "propagate": False},
             "uvicorn.error": {"level": "INFO"},
             "uvicorn.access": {
                 "handlers": ["access"],
                 "level": "INFO",
-                "propagate": False
+                "propagate": False,
             },
         },
     }

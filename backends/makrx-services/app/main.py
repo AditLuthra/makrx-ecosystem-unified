@@ -17,6 +17,7 @@ import uvicorn
 import structlog
 from contextlib import asynccontextmanager
 from pathlib import Path
+from sqlalchemy import text
 
 from app.core.config import get_settings
 from app.core.database import engine, SessionLocal
@@ -103,14 +104,22 @@ if not settings.DEBUG:
     )
 
 # CORS middleware
+default_allowed_origins = [
+    "https://services.makrx.store",
+    "https://makrx.store",
+]
+
+allowed_origins = list(default_allowed_origins)
+
+env_origins = os.getenv("CORS_ORIGINS")
+if env_origins:
+    for o in [o.strip() for o in env_origins.split(",") if o.strip()]:
+        if o not in allowed_origins:
+            allowed_origins.append(o)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://services.makrx.store",
-        "https://makrx.store",
-        "http://localhost:3005",
-        "http://localhost:3001",
-    ] if not settings.DEBUG else ["*"],
+    allow_origins=["*"] if settings.DEBUG else allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Request-ID"],

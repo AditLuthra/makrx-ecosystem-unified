@@ -1,6 +1,7 @@
 import enum
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, field_validator
+from pydantic import ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -102,8 +103,7 @@ class ProjectCollaboratorResponse(BaseModel):
     last_activity_at: Optional[datetime] = None
     activity_score: int = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectBOMResponse(BaseModel):
@@ -125,8 +125,7 @@ class ProjectBOMResponse(BaseModel):
     added_by: str
     added_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectEquipmentReservationResponse(BaseModel):
@@ -142,8 +141,7 @@ class ProjectEquipmentReservationResponse(BaseModel):
     requested_by: str
     requested_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectFileResponse(BaseModel):
@@ -159,8 +157,7 @@ class ProjectFileResponse(BaseModel):
     uploaded_by: str
     uploaded_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectMilestoneResponse(BaseModel):
@@ -176,8 +173,7 @@ class ProjectMilestoneResponse(BaseModel):
     created_at: datetime
     completed_by: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectActivityLogResponse(BaseModel):
@@ -190,8 +186,7 @@ class ProjectActivityLogResponse(BaseModel):
     user_name: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectResponse(BaseModel):
@@ -224,8 +219,7 @@ class ProjectResponse(BaseModel):
     milestones: List[ProjectMilestoneResponse] = []
     activity_logs: List[ProjectActivityLogResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectSummaryResponse(BaseModel):
@@ -250,8 +244,7 @@ class ProjectSummaryResponse(BaseModel):
     milestones_count: int = 0
     completed_milestones_count: int = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Collaborator schemas
@@ -318,9 +311,11 @@ class EquipmentReservationCreate(BaseModel):
     requested_end: datetime
     usage_notes: Optional[str] = None
 
-    @validator("requested_end")
-    def end_after_start(cls, v, values):
-        if "requested_start" in values and v <= values["requested_start"]:
+    @field_validator("requested_end")
+    @classmethod
+    def end_after_start(cls, v, info):
+        rs = info.data.get("requested_start") if info and info.data else None
+        if rs and v <= rs:
             raise ValueError("End time must be after start time")
         return v
 
@@ -391,7 +386,7 @@ class ProjectStatusUpdate(BaseModel):
 
 
 class ProjectBulkDelete(BaseModel):
-    project_ids: List[str] = Field(..., min_items=1)
+    project_ids: List[str] = Field(..., min_length=1)
 
 
 # Analytics schemas
@@ -492,8 +487,7 @@ class ProjectForkResponse(BaseModel):
     modifications_planned: Optional[str] = None
     forked_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectLikeResponse(BaseModel):
@@ -502,8 +496,7 @@ class ProjectLikeResponse(BaseModel):
     user_id: str
     liked_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectCommentCreate(BaseModel):
@@ -528,8 +521,7 @@ class ProjectCommentResponse(BaseModel):
     updated_at: datetime
     replies: List["ProjectCommentResponse"] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Update to handle recursive comments
@@ -557,8 +549,7 @@ class BOMOrderResponse(BaseModel):
     ordered_by: str
     ordered_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProjectTeamRoleCreate(BaseModel):
@@ -579,8 +570,7 @@ class ProjectTeamRoleResponse(BaseModel):
     assigned_at: datetime
     is_active: bool = True
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ResourceSharingCreate(BaseModel):
@@ -605,8 +595,7 @@ class ResourceSharingResponse(BaseModel):
     shared_at: datetime
     approved_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PublicProjectsFilter(BaseModel):
@@ -638,5 +627,4 @@ class EnhancedProjectSummaryResponse(ProjectSummaryResponse):
     owner_name: Optional[str] = None
     owner_avatar: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

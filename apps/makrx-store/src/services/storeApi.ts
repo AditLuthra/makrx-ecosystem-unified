@@ -4,7 +4,7 @@
  */
 
 import { getToken } from '@/lib/auth';
-import type { Product, Category, ProductVariant } from '@/types';
+import type { Category, Product, ProductVariant } from '@/types';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
 
@@ -15,17 +15,14 @@ function normalizeVariantAttributes(attributes: any): Record<string, string | nu
     return {};
   }
 
-  return Object.entries(attributes).reduce<Record<string, string | number>>(
-    (acc, [key, value]) => {
-      if (typeof value === 'string' || typeof value === 'number') {
-        acc[key] = value;
-      } else if (value != null) {
-        acc[key] = String(value);
-      }
-      return acc;
-    },
-    {},
-  );
+  return Object.entries(attributes).reduce<Record<string, string | number>>((acc, [key, value]) => {
+    if (typeof value === 'string' || typeof value === 'number') {
+      acc[key] = value;
+    } else if (value != null) {
+      acc[key] = String(value);
+    }
+    return acc;
+  }, {});
 }
 
 function normalizeProductVariant(raw: any): ProductVariant {
@@ -135,16 +132,14 @@ function normalizeProduct(raw: any): Product {
       ? typeof raw.effective_price === 'number'
         ? raw.effective_price
         : Number(raw.effective_price)
-      : salePrice ?? price;
+      : (salePrice ?? price);
 
   const images = Array.isArray(raw.images)
     ? raw.images.filter((img: unknown) => isString(img) && img.length > 0)
     : [];
   const normalizedImages = images.length > 0 ? images : [PLACEHOLDER_IMAGE];
 
-  const compatibility = Array.isArray(raw.compatibility)
-    ? raw.compatibility.filter(isString)
-    : [];
+  const compatibility = Array.isArray(raw.compatibility) ? raw.compatibility.filter(isString) : [];
 
   const tags = Array.isArray(raw.tags) ? raw.tags.filter(isString) : [];
 
@@ -154,18 +149,14 @@ function normalizeProduct(raw: any): Product {
       : {};
 
   const specifications =
-    raw.specifications && typeof raw.specifications === 'object'
-      ? raw.specifications
-      : {};
+    raw.specifications && typeof raw.specifications === 'object' ? raw.specifications : {};
 
   const normalizedCategory =
     raw.category && typeof raw.category === 'object' && !Array.isArray(raw.category)
       ? normalizeCategory(raw.category)
       : raw.category;
 
-  const variants = Array.isArray(raw.variants)
-    ? raw.variants.map(normalizeProductVariant)
-    : [];
+  const variants = Array.isArray(raw.variants) ? raw.variants.map(normalizeProductVariant) : [];
 
   const rating =
     raw.rating && typeof raw.rating === 'object'
@@ -224,8 +215,7 @@ function normalizeProduct(raw: any): Product {
     is_featured: raw.is_featured ?? raw.isFeatured ?? undefined,
     is_digital: raw.is_digital ?? raw.isDigital ?? undefined,
     weight: typeof raw.weight === 'number' ? raw.weight : undefined,
-    dimensions:
-      raw.dimensions && typeof raw.dimensions === 'object' ? raw.dimensions : undefined,
+    dimensions: raw.dimensions && typeof raw.dimensions === 'object' ? raw.dimensions : undefined,
     created_at: raw.created_at ?? raw.createdAt ?? undefined,
     updated_at: raw.updated_at ?? raw.updatedAt ?? undefined,
     effective_price: effectivePrice,
@@ -240,7 +230,10 @@ function normalizeProduct(raw: any): Product {
 }
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  'http://localhost:8003';
 const SERVICES_BASE_URL = process.env.NEXT_PUBLIC_SERVICES_API_URL;
 const API_VERSION = 'v1';
 
@@ -262,7 +255,7 @@ export interface PaginatedResponse<T> {
   has_prev: boolean;
 }
 
-export type { Product, Category };
+export type { Category, Product };
 
 export interface Cart {
   id: string;
@@ -585,8 +578,7 @@ class StoreApiClient {
     const price = response.total_price ?? response.price ?? 0;
     const totalTimeHours = time.total_time_hours ?? time.estimated_time_hours;
 
-    const estimatedTimeHours =
-      typeof totalTimeHours === 'number' ? totalTimeHours : undefined;
+    const estimatedTimeHours = typeof totalTimeHours === 'number' ? totalTimeHours : undefined;
     const materialName = response.print_parameters?.material ?? response.material;
     const quantity = response.print_parameters?.quantity ?? response.quantity;
 
@@ -694,9 +686,7 @@ class StoreApiClient {
   }
 
   async getProductBySlug(slug: string) {
-    const product = await this.request<any>(
-      `/api/products/slug/${encodeURIComponent(slug)}`,
-    );
+    const product = await this.request<any>(`/api/products/slug/${encodeURIComponent(slug)}`);
     return normalizeProduct(product);
   }
 
@@ -762,9 +752,7 @@ class StoreApiClient {
 
   async getCategoryBySlug(slug: string) {
     // Not available on backend; fetch all categories and filter locally
-    const { categories = [] } = await this.request<{ categories?: any[] }>(
-      `/api/categories`,
-    );
+    const { categories = [] } = await this.request<{ categories?: any[] }>(`/api/categories`);
     const cat = categories.find((c: any) => c.slug === slug);
     if (!cat) throw new Error('Category not found');
     return normalizeCategory(cat);
@@ -1071,9 +1059,7 @@ class StoreApiClient {
     overrides: Record<string, any> = {},
   ) {
     const payload =
-      typeof quote === 'string'
-        ? { quote_id: quote, ...overrides }
-        : { ...quote, ...overrides };
+      typeof quote === 'string' ? { quote_id: quote, ...overrides } : { ...quote, ...overrides };
 
     if (!payload.quote_id) {
       throw new Error('quote_id is required to create a service order');

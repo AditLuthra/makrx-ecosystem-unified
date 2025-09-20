@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
+from pydantic import ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -25,15 +26,23 @@ class EnhancedReservationCreate(BaseModel):
     is_recurring: bool = False
     recurring_pattern: Optional[Dict[str, Any]] = None
 
-    @validator("requested_end")
-    def end_after_start(cls, v, values):
-        if "requested_start" in values and v <= values["requested_start"]:
+    @field_validator("requested_end")
+    @classmethod
+    def end_after_start(cls, v, info):
+        if (
+            hasattr(info, "data")
+            and info.data
+            and "requested_start" in info.data
+            and v <= info.data["requested_start"]
+        ):
             raise ValueError("End time must be after start time")
         return v
 
-    @validator("emergency_justification")
-    def emergency_requires_justification(cls, v, values):
-        if values.get("is_emergency") and not v:
+    @field_validator("emergency_justification")
+    @classmethod
+    def emergency_requires_justification(cls, v, info):
+        is_emergency = info.data.get("is_emergency") if info and info.data else None
+        if is_emergency and not v:
             raise ValueError("Emergency reservations require justification")
         return v
 
@@ -49,14 +58,11 @@ class EnhancedReservationUpdate(BaseModel):
     status: Optional[ReservationStatus] = None
     rejection_reason: Optional[str] = None
 
-    @validator("requested_end")
-    def end_after_start(cls, v, values):
-        if (
-            "requested_start" in values
-            and v
-            and values["requested_start"]
-            and v <= values["requested_start"]
-        ):
+    @field_validator("requested_end")
+    @classmethod
+    def end_after_start(cls, v, info):
+        rs = info.data.get("requested_start") if info and info.data else None
+        if rs and v and v <= rs:
             raise ValueError("End time must be after start time")
         return v
 
@@ -153,8 +159,7 @@ class EnhancedReservationResponse(BaseModel):
     cost_breakdown: List[CostBreakdownItem] = []
     skill_verifications: List[SkillVerificationItem] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Cost Rule Schemas
@@ -236,8 +241,7 @@ class CostRuleResponse(BaseModel):
     updated_at: datetime
     created_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Skill Gate Schemas
@@ -346,8 +350,7 @@ class SkillGateResponse(BaseModel):
     updated_at: datetime
     created_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Reservation workflow schemas
@@ -426,7 +429,7 @@ class AvailabilityResponse(BaseModel):
 # Bulk operations
 class BulkReservationAction(BaseModel):
     action: str = Field(..., pattern="^(approve|reject|cancel|update_status)$")
-    reservation_ids: List[str] = Field(..., min_items=1)
+    reservation_ids: List[str] = Field(..., min_length=1)
     reason: Optional[str] = None
     admin_notes: Optional[str] = None
     new_status: Optional[ReservationStatus] = None

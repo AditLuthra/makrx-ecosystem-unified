@@ -3,8 +3,8 @@ Pydantic schemas for 3D printing and service entities
 Request/response models for uploads, quotes, service orders
 """
 
-from pydantic import BaseModel, Field, validator, root_validator, ConfigDict
-from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import List, Optional, Dict, Any
 from decimal import Decimal
 from datetime import datetime
 from enum import Enum
@@ -79,12 +79,13 @@ class UploadRequest(BaseModel):
     content_type: str
     file_size: int = Field(..., gt=0, le=100 * 1024 * 1024)  # Max 100MB
 
-    @validator("filename")
+    @field_validator("filename")
     def validate_filename(cls, v):
         allowed_extensions = [".stl", ".obj", ".3mf", ".step", ".stp"]
         if not any(v.lower().endswith(ext) for ext in allowed_extensions):
             raise ValueError(
-                f"File type not supported. Allowed: {', '.join(allowed_extensions)}"
+                "File type not supported. Allowed: "
+                f"{', '.join(allowed_extensions)}"
             )
         return v
 
@@ -348,7 +349,7 @@ class ServiceOrderTracking(BaseModel):
 
 # Batch operations schemas
 class BatchQuoteRequest(BaseModel):
-    upload_ids: List[uuid.UUID] = Field(..., min_items=1, max_items=50)
+    upload_ids: List[uuid.UUID] = Field(..., min_length=1, max_items=50)
     material: PrintMaterial
     quality: PrintQuality
     color: str = "natural"

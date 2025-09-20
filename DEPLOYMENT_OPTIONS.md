@@ -1,9 +1,8 @@
 # 🚀 Deployment Options
 
-## Current Status
+## Current status
 
-✅ **CI/CD Pipeline**: 57/62 checks (92% success) - EXCELLENT!  
-❌ **kubectl**: Not installed (needed for Kubernetes deployment)
+- CI/CD pipelines are configured under `.github/workflows/`. See `docs/REPOSITORY_OVERVIEW.md` for details.
 
 ## Option 1: Install kubectl for Kubernetes Deployment
 
@@ -28,31 +27,22 @@ sudo snap install kubectl --classic
 sudo apt-get update && sudo apt-get install -y kubectl
 ```
 
-## Option 2: Docker-Based Local Deployment (Recommended for Testing)
-
-I'll create a Docker-based deployment that simulates staging without Kubernetes:
+## Option 2: Docker-based local deployment (recommended for testing)
 
 ### 🎯 **Quick Docker Staging Test:**
 
 ```bash
-./deploy-docker-staging.sh
+docker-compose up -d postgres redis keycloak minio
+npm run dev
 ```
 
-## Option 3: Test CI/CD Features Without Deployment
+## Option 3: Test CI/CD features without deployment
 
 You can test other CI/CD features:
 
-### **Start Monitoring Stack:**
+### Monitoring (optional)
 
-```bash
-cd monitoring
-docker-compose -f docker-compose.monitoring.yml up -d
-
-# Access dashboards:
-# Grafana: http://localhost:3005 (admin/makrx_grafana_admin)
-# Prometheus: http://localhost:9090
-# Jaeger: http://localhost:16686
-```
+Staging compose includes Prometheus at http://localhost:9091. For full monitoring stacks (Grafana, Jaeger), add services as needed.
 
 ### **Test Docker Builds:**
 
@@ -61,7 +51,7 @@ docker-compose -f docker-compose.monitoring.yml up -d
 docker build -t makrx/gateway-frontend:test -f apps/gateway-frontend/Dockerfile .
 ```
 
-### **Run Performance Tests:**
+### Run performance tests
 
 ```bash
 # If k6 is installed
@@ -71,23 +61,19 @@ k6 run tests/performance/load-test.js
 for i in {1..100}; do curl -s http://localhost:3000 > /dev/null; done
 ```
 
-## Option 4: Full Development Environment
+## Option 4: Full development environment
 
 Start the complete ecosystem for local development:
 
 ```bash
-./setup_and_start.sh
+./scripts/unix/setup.sh
 ```
 
-This will give you a full running environment to test against.
+This sets up dependencies and env files; then start with `npm run dev`.
 
-## 🎯 **Recommended Next Steps:**
+## 🎯 Recommended next steps
 
-Given your excellent CI results, I recommend:
-
-1. **✅ DONE**: CI/CD Pipeline (92% success!)
-2. **🔄 NEXT**: Start monitoring stack
-3. **📊 THEN**: Install kubectl for Kubernetes features
-4. **🚀 FINALLY**: Deploy to staging
-
-Your CI/CD implementation is already a **huge success** - the deployment is just the cherry on top!
+1. Validate local dev flow: `npm run dev`
+2. Set up staging with `docker-compose.staging.yml` (Postgres at 5434, Redis at 6381, Keycloak at 8082)
+3. Add monitoring (Prometheus already included in staging compose)
+4. For Kubernetes, install kubectl and create environment overlays under `k8s/`

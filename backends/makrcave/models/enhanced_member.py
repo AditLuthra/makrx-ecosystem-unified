@@ -166,8 +166,10 @@ class Member(Base):
         "Notification", back_populates="recipient", cascade="all, delete-orphan"
     )
     notification_preferences = relationship(
-        "NotificationPreference", back_populates="user", uselist=False,
-        cascade="all, delete-orphan"
+        "NotificationPreference",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):

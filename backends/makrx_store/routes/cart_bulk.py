@@ -8,13 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from typing import List, Dict, Any, Optional
 import logging
-from uuid import UUID, uuid4
+from uuid import uuid4
 from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
 
 from ..database import get_db
 from ..models.commerce import Cart, CartItem, Product
-from ..schemas.commerce import CartResponse, CartItemResponse
+# from ..schemas.commerce import CartResponse, CartItemResponse  # Unused here
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class BulkCartRequest(BaseModel):
         ..., description="User email for cart identification"
     )
     items: List[BulkCartItem] = Field(
-        ..., min_items=1, description="Items to add to cart"
+        ..., min_length=1, description="Items to add to cart"
     )
     source: str = Field(
         default="api", description="Source system (makrcave_bom, manual, etc.)"
@@ -131,11 +131,14 @@ async def bulk_add_to_cart(
             results["updated_items"],
         )
 
-        cart_url = f"/cart"  # Frontend cart URL
+        cart_url = "/cart"  # Frontend cart URL
 
         return BulkCartResponse(
             success=results["added_items"] > 0 or results["updated_items"] > 0,
-            message=f"Added {results['added_items']} items, updated {results['updated_items']} items",
+            message=(
+                f"Added {results['added_items']} items, "
+                f"updated {results['updated_items']} items"
+            ),
             cart_id=str(cart.id),
             added_items=results["added_items"],
             updated_items=results["updated_items"],
@@ -227,7 +230,10 @@ async def validate_bulk_cart_items(
                         "sku": item.sku,
                         "quantity": item.quantity,
                         "min_quantity": product.min_order_quantity,
-                        "reason": f"Minimum order quantity is {product.min_order_quantity}",
+                        "reason": (
+                            "Minimum order quantity is "
+                            f"{product.min_order_quantity}"
+                        ),
                         "error_code": "BELOW_MIN_QUANTITY",
                     }
                 )
@@ -242,7 +248,10 @@ async def validate_bulk_cart_items(
                         "sku": item.sku,
                         "quantity": item.quantity,
                         "max_quantity": product.max_order_quantity,
-                        "reason": f"Maximum order quantity is {product.max_order_quantity}",
+                        "reason": (
+                            "Maximum order quantity is "
+                            f"{product.max_order_quantity}"
+                        ),
                         "error_code": "ABOVE_MAX_QUANTITY",
                     }
                 )
@@ -514,7 +523,8 @@ async def notify_bulk_cart_addition(
     try:
         logger.info(
             f"Bulk cart addition completed for {user_email}: "
-            f"Project '{project_name}' - {added_items} added, {updated_items} updated"
+            f"Project '{project_name}' - {added_items} added, "
+            f"{updated_items} updated"
         )
 
         # TODO: Integrate with notification service

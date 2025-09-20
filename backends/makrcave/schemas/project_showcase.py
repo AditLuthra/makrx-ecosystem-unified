@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
@@ -72,8 +73,7 @@ class ShowcaseProjectResponse(BaseModel):
     is_bookmarked: bool
     is_following_owner: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Featured maker for spotlight
@@ -108,9 +108,7 @@ class FeaturedMaker(BaseModel):
 
 class FeaturedMakerResponse(BaseModel):
     featured_maker: FeaturedMaker
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Project statistics
@@ -165,8 +163,7 @@ class TrendingProjectResponse(BaseModel):
     created_at: str
     is_featured: Optional[bool] = False
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Project interaction responses
@@ -238,8 +235,7 @@ class ProjectCommentResponse(BaseModel):
     likes: int
     replies_count: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Project collections/playlists
@@ -262,8 +258,7 @@ class ProjectCollectionResponse(BaseModel):
     updated_at: str
     thumbnail_projects: List[TrendingProjectResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Showcase dashboard for admins

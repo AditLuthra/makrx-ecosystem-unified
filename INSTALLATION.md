@@ -4,7 +4,7 @@ This guide provides detailed instructions for setting up the MakrX ecosystem on 
 
 ## 📋 System Requirements
 
-**IMPORTANT:** All Python backends require **Python 3.12**. Do NOT use Python 3.13 or higher for venvs or backend servers.
+IMPORTANT: All Python backends require Python 3.12. Do NOT use Python 3.13+ for venvs or backend servers.
 
 ### Minimum Requirements
 
@@ -15,7 +15,7 @@ This guide provides detailed instructions for setting up the MakrX ecosystem on 
 
 ### Required Software
 
-- **Node.js** 18.0+ ([Download](https://nodejs.org/))
+- Node.js 20+ (matches repo engines and CI)
 - **Docker** 20.0+ & Docker Compose ([Download](https://docs.docker.com/get-docker/))
 - **Git** 2.30+ ([Download](https://git-scm.com/))
 
@@ -28,7 +28,7 @@ This guide provides detailed instructions for setting up the MakrX ecosystem on 
 
 ### Option 1: Automated Setup (Recommended)
 
-#### For Unix/Linux/macOS:
+#### For Unix/Linux/macOS
 
 ```bash
 git clone https://github.com/your-org/makrx-ecosystem-unified.git
@@ -36,7 +36,7 @@ cd makrx-ecosystem-unified
 chmod +x scripts/unix/setup.sh
 ./scripts/unix/setup.sh
 
-# (NEW) Set up Python 3.12 virtual environments and install backend dependencies
+# Set up Python 3.12 virtual environments and install backend dependencies
 for d in backends/makrcave backends/makrx_store backends/makrx_events ; do
   cd $d
   python3.12 -m venv venv
@@ -48,14 +48,14 @@ for d in backends/makrcave backends/makrx_store backends/makrx_events ; do
 done
 ```
 
-#### For Windows:
+#### For Windows
 
 ```cmd
 git clone https://github.com/your-org/makrx-ecosystem-unified.git
 cd makrx-ecosystem-unified
 scripts\windows\setup.bat
 
-REM (NEW) Set up Python virtual environments and install backend dependencies
+REM Set up Python virtual environments and install backend dependencies
 FOR %%d IN (backends\makrcave backends\makrx_store backends\makrx_events) DO (
   cd %%d
   python -m venv venv
@@ -69,19 +69,19 @@ FOR %%d IN (backends\makrcave backends\makrx_store backends\makrx_events) DO (
 
 ### Option 2: Manual Installation
 
-#### Step 1: Clone the Repository
+#### Step 1: Clone the repository
 
 ```bash
 git clone https://github.com/your-org/makrx-ecosystem-unified.git
 cd makrx-ecosystem-unified
 ```
 
-#### Step 2: Install Dependencies
+#### Step 2: Install dependencies
 
 ```bash
 npm ci --legacy-peer-deps
 
-# (NEW) Set up Python 3.12 virtual environments and install backend dependencies
+# Set up Python 3.12 virtual environments and install backend dependencies
 for d in backends/makrcave backends/makrx_store backends/makrx_events; do
   cd $d
   python3.12 -m venv venv
@@ -93,7 +93,7 @@ for d in backends/makrcave backends/makrx_store backends/makrx_events; do
 done
 ```
 
-#### Step 3: Environment Setup
+#### Step 3: Environment setup
 
 ```bash
 # Copy environment template
@@ -107,7 +107,7 @@ cp apps/makrx-store/.env.example apps/makrx-store/.env.local
 cp apps/makrx-events/.env.example apps/makrx-events/.env.local
 ```
 
-#### Step 4: Configure Environment Variables
+#### Step 4: Configure environment variables
 
 Edit the `.env` file with your configuration:
 
@@ -141,13 +141,13 @@ NEXT_PUBLIC_KEYCLOAK_REALM=makrx
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=makrcave
 ```
 
-#### Step 5: Start Infrastructure Services
+#### Step 5: Start infrastructure services
 
 ```bash
 docker-compose up -d postgres redis keycloak minio
 ```
 
-#### Step 6: Wait for Services to Start
+#### Step 6: Wait for services to start
 
 ```bash
 # Check service status
@@ -157,7 +157,7 @@ docker-compose ps
 docker-compose logs -f keycloak
 ```
 
-#### Step 7: Initialize Database
+#### Step 7: Initialize database
 
 ```bash
 # Load environment variables so Alembic can connect to Postgres (update if you
@@ -175,19 +175,19 @@ npm run db:seed
 # environments in each backend contain dependencies.
 ```
 
-#### Step 8: Start Development Servers
+#### Step 8: Start development servers
 
 ```bash
 npm run dev
 ```
 
-This will start all infrastructure, frontend, and backend servers. No need to manually activate venvs for development: the script now does it for you.
+This will start infrastructure, frontends, and backends. No need to manually activate venvs for development: the scripts invoke the correct interpreters.
 
 ## 🔧 Platform-Specific Instructions
 
-### Windows Installation
+### Windows installation
 
-#### Prerequisites for Windows:
+#### Prerequisites for Windows
 
 1. **Install Node.js**: Download from [nodejs.org](https://nodejs.org/)
 2. **Install Docker Desktop**: Download from [docker.com](https://www.docker.com/products/docker-desktop)
@@ -212,9 +212,9 @@ scripts\windows\setup.bat
 - **Permission issues**: Run PowerShell/CMD as Administrator
 - **Docker issues**: Ensure Docker Desktop is running and WSL2 is enabled
 
-### macOS Installation
+### macOS installation
 
-#### Prerequisites for macOS:
+#### Prerequisites for macOS
 
 ```bash
 # Install Homebrew (if not already installed)
@@ -241,16 +241,16 @@ chmod +x scripts/unix/setup.sh
 ./scripts/unix/setup.sh
 ```
 
-### Ubuntu/Debian Installation
+### Ubuntu/Debian installation
 
-#### Prerequisites for Ubuntu/Debian:
+#### Prerequisites for Ubuntu/Debian
 
 ```bash
 # Update package index
 sudo apt update
 
-# Install Node.js 18
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# Install Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install Docker
@@ -272,13 +272,13 @@ chmod +x scripts/unix/setup.sh
 ./scripts/unix/setup.sh
 ```
 
-### CentOS/RHEL Installation
+### CentOS/RHEL installation
 
-#### Prerequisites for CentOS/RHEL:
+#### Prerequisites for CentOS/RHEL
 
 ```bash
-# Install Node.js 18
-curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+# Install Node.js 20
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
 sudo yum install -y nodejs
 
 # Install Docker
@@ -293,7 +293,7 @@ sudo systemctl enable docker
 sudo usermod -aG docker $USER
 ```
 
-## 🐳 Docker-Only Installation
+## 🐳 Docker-only installation
 
 If you prefer to run everything in Docker:
 
@@ -303,20 +303,20 @@ git clone https://github.com/your-org/makrx-ecosystem-unified.git
 cd makrx-ecosystem-unified
 
 # Start everything with Docker
-docker-compose up -d
+docker-compose up -d postgres redis keycloak minio
 
 # View logs
 docker-compose logs -f
 ```
 
-## 🧪 Verify Installation
+## 🧪 Verify installation
 
 ### Check All Services:
 
 ```bash
 # Check infrastructure services
-curl http://localhost:8081/auth/realms/makrx  # Keycloak
-curl http://localhost:9002/minio/health/ready  # MinIO
+curl http://localhost:8081/realms/makrx  # Keycloak (Keycloak 25 default path)
+curl http://localhost:9000/minio/health/ready  # MinIO API
 
 # Check applications
 curl http://localhost:3000  # Gateway Frontend
@@ -344,9 +344,9 @@ docker-compose ps
 npm run dev
 ```
 
-## 🛠️ IDE Setup
+## 🛠️ IDE setup
 
-### VS Code Setup
+### VS Code setup
 
 Install recommended extensions:
 
@@ -359,7 +359,7 @@ code --install-extension esbenp.prettier-vscode
 code --install-extension ms-python.python
 ```
 
-### Workspace Configuration
+### Workspace configuration
 
 Create `.vscode/settings.json`:
 
@@ -369,7 +369,7 @@ Create `.vscode/settings.json`:
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.workingDirectories": ["apps/*", "packages/*"],
-  "python.defaultInterpreterPath": "./backends/*/venv/bin/python"
+  "python.defaultInterpreterPath": "${workspaceFolder}/backends/makrcave/venv/bin/python"
 }
 ```
 
@@ -377,7 +377,7 @@ Create `.vscode/settings.json`:
 
 ### Common Issues:
 
-#### Port Already in Use:
+#### Port already in use
 
 ```bash
 # Find process using port
@@ -389,7 +389,7 @@ kill -9 <PID>  # Unix/macOS
 taskkill /PID <PID> /F  # Windows
 ```
 
-#### Docker Issues:
+#### Docker issues
 
 ```bash
 # Reset Docker
@@ -398,7 +398,7 @@ docker system prune -a
 docker-compose up -d
 ```
 
-#### Node.js Issues:
+#### Node.js issues
 
 ```bash
 # Clear npm cache
@@ -409,7 +409,7 @@ rm -rf node_modules package-lock.json
 npm ci --legacy-peer-deps
 ```
 
-#### Permission Issues (Unix):
+#### Permission issues (Unix)
 
 ```bash
 # Fix npm permissions
@@ -417,7 +417,7 @@ sudo chown -R $(whoami) ~/.npm
 sudo chown -R $(whoami) ./node_modules
 ```
 
-### Getting Help:
+### Getting help
 
 1. **Check logs**: `docker-compose logs <service-name>`
 2. **Restart services**: `docker-compose restart`
@@ -425,20 +425,18 @@ sudo chown -R $(whoami) ./node_modules
 4. **Review environment variables**: Verify all required variables are set
 5. **Check firewall**: Ensure ports are not blocked
 
-### Performance Optimization:
+### Performance optimization
 
-#### For Development:
+#### For development
 
 ```bash
 # Increase Node.js memory limit
 export NODE_OPTIONS="--max-old-space-size=4096"
 
-# Use faster package manager
-npm install -g pnpm
-pnpm install  # Instead of npm ci
+# Prefer npm (repo uses npm workspaces)
 ```
 
-#### For Docker:
+#### For Docker
 
 ```bash
 # Allocate more resources to Docker Desktop
@@ -447,7 +445,7 @@ pnpm install  # Instead of npm ci
 # - Disk: 50GB minimum
 ```
 
-## ✅ Next Steps
+## ✅ Next steps
 
 After successful installation:
 
@@ -457,13 +455,13 @@ After successful installation:
 4. **Read documentation**: Review API docs and architecture
 5. **Start developing**: Create your first feature!
 
-## 📚 Additional Resources
+## 📚 Additional resources
 
-- [Development Guide](docs/DEVELOPMENT.md)
-- [Architecture Overview](docs/ARCHITECTURE.md)
-- [API Documentation](docs/API.md)
+- Architecture Overview: docs/ai/ARCHITECTURE.md
+- Repository Overview: docs/REPOSITORY_OVERVIEW.md
+- Configuration Standards: docs/CONFIGURATION_STANDARDS.md
 - [Contributing Guide](CONTRIBUTING.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
+- Deployment Options: DEPLOYMENT_OPTIONS.md
 
 ---
 

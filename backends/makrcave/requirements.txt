@@ -5,7 +5,9 @@ python-multipart==0.0.9
 
 # Database
 sqlalchemy==2.0.32
-psycopg2==2.9.9
+# Prefer psycopg2 for Python <3.13; use psycopg (v3) for Python 3.13+ to avoid build issues
+psycopg2==2.9.9; python_version < "3.13"
+psycopg[binary]==3.2.10; python_version >= "3.13"
 alembic==1.13.2
 
 # Authentication & Security

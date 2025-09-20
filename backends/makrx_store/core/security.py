@@ -62,7 +62,7 @@ async def decode_token(token: str, request_id: Optional[str] = None) -> dict:
                     message="Invalid token",
                     code="invalid_token",
                     request_id=request_id,
-                ).model_dump(),
+                ).model_dump(mode="json"),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -82,7 +82,7 @@ async def decode_token(token: str, request_id: Optional[str] = None) -> dict:
                 message="Token expired",
                 code="token_expired",
                 request_id=request_id,
-            ).model_dump(),
+            ).model_dump(mode="json"),
             headers={"WWW-Authenticate": "Bearer"},
         )
     except (JWTClaimsError, JWTError) as exc:
@@ -94,7 +94,7 @@ async def decode_token(token: str, request_id: Optional[str] = None) -> dict:
                 message="Invalid token",
                 code="invalid_token",
                 request_id=request_id,
-            ).model_dump(),
+            ).model_dump(mode="json"),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -156,7 +156,7 @@ async def require_auth(
                 message="Authentication required",
                 code="authentication_required",
                 request_id=request_id,
-            ).model_dump(),
+            ).model_dump(mode="json"),
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
@@ -176,7 +176,7 @@ def require_role(required_roles: List[str]):
                     message=f"Insufficient permissions. Required: {required_roles}",
                     code="insufficient_permissions",
                     request_id=get_request_id(request),
-                ).model_dump(),
+                ).model_dump(mode="json"),
             )
         return user
 

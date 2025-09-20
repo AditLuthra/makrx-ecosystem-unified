@@ -1,22 +1,27 @@
 """
 Quick Reorder System API Routes
-Enables makerspaces and service providers to quickly reorder frequently used items
+Enables makerspaces and service providers to quickly reorder frequently used
+items
 """
 
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, or_, func
+from sqlalchemy import select, and_, func
 from typing import List, Optional, Dict, Any
 import logging
-import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from ..database import get_db
-from ..core.security import get_current_user
+from ..core.security import require_auth, AuthUser, get_current_user
 from ..models.commerce import Product, Order, OrderItem, Cart, CartItem
 from ..models.subscriptions import QuickReorder
 from pydantic import BaseModel, Field
+
+
+# Local helper to provide user_id string via dependency
+async def get_current_user_id(user: AuthUser = Depends(require_auth)) -> str:
+    return user.user_id
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +39,7 @@ class QuickReorderItem(BaseModel):
 class CreateQuickReorderRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
-    items: List[QuickReorderItem] = Field(..., min_items=1)
+    items: List[QuickReorderItem] = Field(..., min_length=1)
     makrcave_id: Optional[str] = None  # Link to makerspace
     auto_reorder: bool = False
     reorder_frequency: Optional[str] = Field(
@@ -93,7 +98,7 @@ class ReorderExecutionResponse(BaseModel):
 @router.post("/create", response_model=QuickReorderResponse)
 async def create_quick_reorder(
     request: CreateQuickReorderRequest,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -104,7 +109,7 @@ async def create_quick_reorder(
         product_ids = [item.product_id for item in request.items]
         res = await db.execute(
             select(Product).where(
-                and_(Product.id.in_(product_ids), Product.is_active == True)
+                and_(Product.id.in_(product_ids), Product.is_active.is_(True))
             )
         )
         products = res.scalars().all()
@@ -152,7 +157,7 @@ async def create_quick_reorder(
             auto_reorder=request.auto_reorder,
             reorder_frequency=request.reorder_frequency,
             reorder_threshold=request.reorder_threshold or {},
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
 
         db.add(quick_reorder)
@@ -190,18 +195,20 @@ async def create_quick_reorder(
 async def list_quick_reorders(
     makrcave_id: Optional[str] = None,
     include_inactive: bool = False,
-    user_id: str = Depends(get_current_user),
+    user: AuthUser = Depends(require_auth),
     db: AsyncSession = Depends(get_db),
 ):
     """
     List user's quick reorder templates
     """
     try:
-        stmt = select(QuickReorder).where(QuickReorder.user_id == user_id)
+        stmt = select(QuickReorder).where(
+            QuickReorder.user_id == user.user_id
+        )
         if makrcave_id:
             stmt = stmt.where(QuickReorder.makrcave_id == makrcave_id)
         if not include_inactive:
-            stmt = stmt.where(QuickReorder.is_active == True)
+            stmt = stmt.where(QuickReorder.is_active.is_(True))
         stmt = stmt.order_by(QuickReorder.created_at.desc())
         reorders = (await db.execute(stmt)).scalars().all()
 
@@ -237,7 +244,7 @@ async def list_quick_reorders(
 @router.get("/{reorder_id}", response_model=QuickReorderResponse)
 async def get_quick_reorder(
     reorder_id: str,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -317,7 +324,7 @@ async def get_quick_reorder(
 async def update_quick_reorder(
     reorder_id: str,
     request: UpdateQuickReorderRequest,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -360,7 +367,8 @@ async def update_quick_reorder(
             pres = await db.execute(
                 select(Product).where(
                     and_(
-                        Product.id.in_(product_ids), Product.is_active == True
+                        Product.id.in_(product_ids),
+                        Product.is_active.is_(True),
                     )
                 )
             )
@@ -371,7 +379,10 @@ async def update_quick_reorder(
                 missing_ids = set(product_ids) - found_ids
                 raise HTTPException(
                     status_code=400,
-                    detail=f"Products not found or inactive: {list(missing_ids)}",
+                    detail=(
+                        "Products not found or inactive: "
+                        f"{list(missing_ids)}"
+                    ),
                 )
 
             # Calculate new totals
@@ -400,7 +411,7 @@ async def update_quick_reorder(
             reorder.total_items = len(validated_items)
             reorder.estimated_total = estimated_total
 
-        reorder.updated_at = datetime.utcnow()
+        reorder.updated_at = datetime.now(timezone.utc)
         await db.commit()
         await db.refresh(reorder)
 
@@ -434,7 +445,7 @@ async def update_quick_reorder(
 async def execute_quick_reorder(
     request: ReorderExecutionRequest,
     background_tasks: BackgroundTasks,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -446,7 +457,7 @@ async def execute_quick_reorder(
                 and_(
                     QuickReorder.id == request.reorder_id,
                     QuickReorder.user_id == user_id,
-                    QuickReorder.is_active == True,
+                    QuickReorder.is_active.is_(True),
                 )
             )
         )
@@ -468,7 +479,7 @@ async def execute_quick_reorder(
                 cart = Cart(
                     id=uuid4(),
                     user_id=user_id,
-                    expires_at=datetime.utcnow() + timedelta(days=7),
+                    expires_at=datetime.now(timezone.utc) + timedelta(days=7),
                 )
                 db.add(cart)
                 await db.commit()
@@ -513,7 +524,11 @@ async def execute_quick_reorder(
                     {
                         "product_id": item["product_id"],
                         "product_name": product.name,
-                        "reason": f"Insufficient stock: {product.stock_qty} available, {final_quantity} requested",
+                        "reason": (
+                            "Insufficient stock: "
+                            f"{product.stock_qty} available, "
+                            f"{final_quantity} requested"
+                        ),
                         "available_quantity": product.stock_qty,
                         "requested_quantity": final_quantity,
                     }
@@ -523,7 +538,10 @@ async def execute_quick_reorder(
             # Add stock warning if needed
             if product.stock_qty < final_quantity:
                 warnings.append(
-                    f"{product.name}: Only {product.stock_qty} available, {final_quantity} requested"
+                    (
+                        f"{product.name}: Only {product.stock_qty} available, "
+                        f"{final_quantity} requested"
+                    )
                 )
                 final_quantity = product.stock_qty
 
@@ -547,7 +565,7 @@ async def execute_quick_reorder(
 
                 if existing_item:
                     existing_item.quantity += final_quantity
-                    existing_item.updated_at = datetime.utcnow()
+                    existing_item.updated_at = datetime.now(timezone.utc)
                 else:
                     cart_item = CartItem(
                         cart_id=cart.id,
@@ -566,11 +584,11 @@ async def execute_quick_reorder(
 
         # Update reorder usage stats
         reorder.times_used += 1
-        reorder.last_ordered = datetime.utcnow()
+        reorder.last_ordered = datetime.now(timezone.utc)
 
         # Update cart timestamp
         if cart:
-            cart.updated_at = datetime.utcnow()
+            cart.updated_at = datetime.now(timezone.utc)
 
         await db.commit()
 
@@ -603,7 +621,7 @@ async def execute_quick_reorder(
 @router.delete("/{reorder_id}")
 async def delete_quick_reorder(
     reorder_id: str,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -645,7 +663,7 @@ async def create_reorder_from_order(
     order_id: int,
     name: str,
     description: Optional[str] = None,
-    user_id: str = Depends(get_current_user),
+    user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -731,7 +749,8 @@ async def get_reorder_suggestions(
             select(Order).where(
                 and_(
                     Order.user_id == user_id,
-                    Order.created_at >= datetime.utcnow() - timedelta(days=90),
+                    Order.created_at >= datetime.now(timezone.utc)
+                    - timedelta(days=90),
                 )
             )
         )
@@ -794,12 +813,17 @@ async def get_reorder_suggestions(
 
 
 async def check_reorder_thresholds(user_id: str, reorder_id: str):
-    """Check if any products in the reorder are below threshold (background task)"""
+    """
+    Check if any products in the reorder are below threshold
+    (background task)
+    """
     try:
         # This would check MakrCave inventory levels and trigger notifications
         # For now, just log the check
         logger.info(
-            f"Checking reorder thresholds for user {user_id}, reorder {reorder_id}"
+            "Checking reorder thresholds for user %s, reorder %s",
+            user_id,
+            reorder_id,
         )
 
     except Exception as e:

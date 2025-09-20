@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
@@ -51,10 +51,12 @@ engine = create_engine(DATABASE_URL, **engine_kwargs)
 
 # When running with SQLite (e.g., tests), map PostgreSQL ARRAY columns to JSON
 if DATABASE_URL.startswith("sqlite"):
+
     @compiles(PG_ARRAY, "sqlite")
     def _compile_array_sqlite(type_, compiler, **kw):  # pragma: no cover
         # Use JSON storage for arrays in SQLite
         return "JSON"
+
 
 # Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

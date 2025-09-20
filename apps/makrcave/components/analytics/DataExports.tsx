@@ -1,26 +1,24 @@
+import {
+  Clock,
+  CreditCard,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  FolderOpen,
+  Package,
+  RefreshCw,
+  Table,
+  Users,
+  Wrench,
+} from 'lucide-react';
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
+import { useToast } from '../../hooks/use-toast';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import {
-  Download,
-  FileText,
-  Table,
-  FileSpreadsheet,
-  Calendar,
-  Users,
-  Package,
-  Wrench,
-  FolderOpen,
-  CreditCard,
-  CheckCircle,
-  Clock,
-  RefreshCw,
-} from 'lucide-react';
-import { useToast } from '../../hooks/use-toast';
 
 interface ExportItem {
   id: string;
@@ -384,7 +382,7 @@ const DataExports: React.FC = () => {
       },
     };
 
-    const response = await fetch('/api/analytics/reports/request', {
+    const response = await fetch('/api/v1/analytics/reports/request', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,

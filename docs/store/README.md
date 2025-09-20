@@ -10,7 +10,7 @@ Quick Start (Backend)
 
 - `cd backends/makrx-store`
 - `make install`
-- `export DATABASE_URL=postgresql://user:pass@localhost:5433/makrx_ecosystem`
+- `export DATABASE_URL=postgresql://user:pass@localhost:5432/makrx_ecosystem`
 - `make db-upgrade`
 - `make start-dev`
 

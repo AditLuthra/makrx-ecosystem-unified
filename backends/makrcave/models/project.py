@@ -103,13 +103,19 @@ class Project(Base):
     category = Column(String(100), nullable=True)
     subcategories = Column(JSON, nullable=True, default=list)
 
-    project_type = Column(Enum(ProjectType), nullable=False, default=ProjectType.INTERNAL, index=True)
+    project_type = Column(
+        Enum(ProjectType), nullable=False, default=ProjectType.INTERNAL, index=True
+    )
     owner_id = Column(String(100), nullable=True, index=True)
     creator_id = Column(String(100), nullable=False, index=True)
     makerspace_id = Column(String(100), nullable=True, index=True)
-    visibility = Column(Enum(ProjectVisibility), nullable=False, default=ProjectVisibility.PRIVATE)
+    visibility = Column(
+        Enum(ProjectVisibility), nullable=False, default=ProjectVisibility.PRIVATE
+    )
     status = Column(Enum(ProjectStatus), nullable=False, default=ProjectStatus.DRAFT)
-    priority = Column(Enum(ProjectPriority), nullable=False, default=ProjectPriority.MEDIUM)
+    priority = Column(
+        Enum(ProjectPriority), nullable=False, default=ProjectPriority.MEDIUM
+    )
 
     start_date = Column(DateTime(timezone=True), nullable=True)
     due_date = Column(DateTime(timezone=True), nullable=True)
@@ -170,7 +176,9 @@ class Project(Base):
     github_default_branch = Column(String(100), default="main")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     collaborators = relationship(
         "ProjectCollaborator",
@@ -240,10 +248,14 @@ class ProjectCollaborator(Base):
     __tablename__ = "project_collaborators"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     user_id = Column(String(100), nullable=False, index=True)
 
-    role = Column(Enum(CollaboratorRole), nullable=False, default=CollaboratorRole.VIEWER)
+    role = Column(
+        Enum(CollaboratorRole), nullable=False, default=CollaboratorRole.VIEWER
+    )
     invited_by = Column(String(100), nullable=False)
     invited_at = Column(DateTime(timezone=True), server_default=func.now())
     accepted_at = Column(DateTime(timezone=True), nullable=True)
@@ -269,7 +281,9 @@ class ProjectBOM(Base):
     __tablename__ = "project_bom"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     item_type = Column(String(50), nullable=False)
     item_id = Column(String(100), nullable=False)
@@ -311,7 +325,9 @@ class ProjectEquipmentReservation(Base):
     __tablename__ = "project_equipment_reservations"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     equipment_id = Column(String(100), nullable=False)
     reservation_id = Column(String(100), nullable=True)
 
@@ -337,7 +353,9 @@ class ProjectFile(Base):
     __tablename__ = "project_files"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     filename = Column(String(255), nullable=False)
     original_filename = Column(String(255), nullable=False)
@@ -363,7 +381,9 @@ class ProjectMilestone(Base):
     __tablename__ = "project_milestones"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
@@ -380,7 +400,9 @@ class ProjectMilestone(Base):
     created_by = Column(String(100), nullable=False)
     completed_by = Column(String(100), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     project = relationship(
         "Project",
@@ -393,7 +415,9 @@ class ProjectActivityLog(Base):
     __tablename__ = "project_activity_logs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     activity_type = Column(Enum(ActivityType), nullable=False)
     title = Column(String(200), nullable=False)
@@ -416,7 +440,9 @@ class ProjectTeamRole(Base):
     __tablename__ = "project_team_roles"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     user_id = Column(String(100), nullable=False, index=True)
 
     role_name = Column(String(100), nullable=False)
@@ -438,7 +464,9 @@ class ProjectTask(Base):
     __tablename__ = "project_tasks"
 
     id = Column(String(100), primary_key=True, default=_generate_id)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
@@ -456,7 +484,9 @@ class ProjectTask(Base):
 
     created_by = Column(String(100), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     project = relationship(
         "Project",
@@ -469,8 +499,12 @@ class ProjectFork(Base):
     __tablename__ = "project_forks"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    original_project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
-    forked_project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    original_project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
+    forked_project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     forked_by = Column(String(100), nullable=False, index=True)
     fork_reason = Column(Text, nullable=True)
@@ -485,7 +519,9 @@ class ProjectLike(Base):
     __tablename__ = "project_likes"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     user_id = Column(String(100), nullable=False, index=True)
     liked_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -494,7 +530,9 @@ class ProjectBookmark(Base):
     __tablename__ = "project_bookmarks"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     user_id = Column(String(100), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -505,7 +543,9 @@ class ProjectFollow(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     owner_id = Column(String(100), nullable=False, index=True)
     follower_id = Column(String(100), nullable=False, index=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -513,7 +553,9 @@ class ProjectBOMOrder(Base):
     __tablename__ = "project_bom_orders"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
     bom_item_id = Column(Integer, ForeignKey("project_bom.id"), nullable=False)
 
     makrx_order_id = Column(String(100), nullable=True)
@@ -537,8 +579,12 @@ class ProjectResourceSharing(Base):
     __tablename__ = "project_resource_sharing"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    source_project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
-    target_project_id = Column(String(100), ForeignKey("projects.project_id"), nullable=False, index=True)
+    source_project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
+    target_project_id = Column(
+        String(100), ForeignKey("projects.project_id"), nullable=False, index=True
+    )
 
     resource_type = Column(String(50), nullable=False)
     resource_id = Column(String(100), nullable=False)

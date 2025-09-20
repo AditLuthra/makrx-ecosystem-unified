@@ -6,16 +6,15 @@ from fastapi import (
     Query,
     BackgroundTasks,
     Request,
-    Response,
 )
 from fastapi.security import HTTPBearer
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
-import uuid
 import os
 import io
 from datetime import datetime, timedelta
+import logging
 
 from ..database import get_db
 from ..dependencies import get_current_user
@@ -40,12 +39,11 @@ from ..schemas.billing import (
     TransactionSort,
     ServiceBillingCreate,
     ServiceBillingResponse,
-    WebhookPayload,
-    BulkRefundRequest,
     CreditAdjustment,
 )
 from ..crud import billing as crud_billing
 from ..utils.payment_service import payment_service, calculate_service_charge
+
 # Optional heavy utilities: provide fallbacks if reportlab isn't installed
 try:  # pragma: no cover - import cost only
     from ..utils.invoice_generator import (
@@ -54,22 +52,25 @@ try:  # pragma: no cover - import cost only
         generate_invoice_filename,
     )
 except Exception:  # pragma: no cover - test env without reportlab
-    def generate_invoice_pdf(*_args, **_kwargs):
+
+    def generate_invoice_pdf(*_args, **_kwargs) -> bytes:
         raise RuntimeError(
             "Invoice generation requires optional dependency 'reportlab'."
         )
 
-    def save_invoice_to_file(*_args, **_kwargs):
-        raise RuntimeError(
-            "Invoice saving requires optional dependency 'reportlab'."
-        )
+    def save_invoice_to_file(*_args, **_kwargs) -> str:
+        raise RuntimeError("Invoice saving requires optional dependency 'reportlab'.")
 
-    def generate_invoice_filename(invoice_number: str, makerspace_id: str = None) -> str:
+    def generate_invoice_filename(
+        invoice_number: str, makerspace_id: Optional[str] = None
+    ) -> str:
         base = invoice_number or "invoice"
         return f"{base}.pdf"
 
+
 router = APIRouter()
 security = HTTPBearer()
+logger = logging.getLogger(__name__)
 
 
 # Usage by Category endpoint for Pie Chart
@@ -494,16 +495,6 @@ async def purchase_credits(
     """Purchase credits"""
     makerspace_id = _get_user_makerspace_id(current_user)
 
-    # Create transaction for credit purchase
-    transaction_data = TransactionCreate(
-        user_id=current_user["user_id"],
-        makerspace_id=makerspace_id,
-        amount=amount,
-        type="credit_purchase",
-        description=f"Purchase of {credits} credits",
-        credits_earned=credits,
-    )
-
     # Create checkout session
     checkout_data = CheckoutSessionCreate(
         user_id=current_user["user_id"],
@@ -633,7 +624,9 @@ async def download_invoice(
             io.BytesIO(pdf_bytes),
             media_type="application/pdf",
             headers={
-                "Content-Disposition": f"attachment; filename=invoice_{invoice.invoice_number}.pdf"
+                "Content-Disposition": (
+                    f"attachment; filename=invoice_{invoice.invoice_number}.pdf"
+                )
             },
         )
 
@@ -881,7 +874,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
 
 
 # Helper functions
-def _can_create_transactions(user: dict, target_user_id: str = None) -> bool:
+def _can_create_transactions(user: dict, target_user_id: Optional[str] = None) -> bool:
     """Check if user can create transactions"""
     if user.get("role") in ["super_admin", "makerspace_admin"]:
         return True

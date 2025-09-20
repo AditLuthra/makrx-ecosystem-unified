@@ -46,7 +46,10 @@ async def get_equipment(
             makerspace_id = _get_user_makerspace_id(current_user)
 
         # Super admins can view equipment from any makerspace, others are restricted
-        if current_user.role != "super_admin" and makerspace_id != _get_user_makerspace_id(current_user):
+        if (
+            current_user.role != "super_admin"
+            and makerspace_id != _get_user_makerspace_id(current_user)
+        ):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions to view equipment from another makerspace",
@@ -87,9 +90,11 @@ async def get_equipment_details(
         equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
         and current_user.role != "super_admin"
     ):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+        )
 
-    return EquipmentResponse.from_orm(equipment)
+    return EquipmentResponse.model_validate(equipment, from_attributes=True)
 
 
 @router.post("/", response_model=EquipmentResponse, status_code=status.HTTP_201_CREATED)
@@ -150,7 +155,9 @@ async def reserve_equipment(
             equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
             and current_user.role != "super_admin"
         ):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+            )
 
         if equipment.status != EquipmentStatus.AVAILABLE:
             raise HTTPException(
@@ -172,7 +179,9 @@ async def reserve_equipment(
         db.commit()
         db.refresh(reservation)
 
-        return EquipmentReservationResponse.from_orm(reservation)
+        return EquipmentReservationResponse.model_validate(
+            reservation, from_attributes=True
+        )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -183,7 +192,9 @@ async def reserve_equipment(
         )
 
 
-@router.get("/{equipment_id}/reservations", response_model=List[EquipmentReservationResponse])
+@router.get(
+    "/{equipment_id}/reservations", response_model=List[EquipmentReservationResponse]
+)
 async def get_equipment_reservations(
     equipment_id: str,
     current_user=Depends(get_current_user),
@@ -202,7 +213,9 @@ async def get_equipment_reservations(
         equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
         and current_user.role != "super_admin"
     ):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+        )
 
     reservations = (
         db.query(EquipmentReservation)
@@ -210,7 +223,10 @@ async def get_equipment_reservations(
         .all()
     )
 
-    return [EquipmentReservationResponse.from_orm(res) for res in reservations]
+    return [
+        EquipmentReservationResponse.model_validate(res, from_attributes=True)
+        for res in reservations
+    ]
 
 
 # Ratings endpoints used by frontend
@@ -232,7 +248,9 @@ async def list_equipment_ratings(
         equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
         and current_user.role != "super_admin"
     ):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+        )
 
     ratings = [r for r in (equipment.ratings or []) if r.is_approved]
     return ratings
@@ -262,7 +280,9 @@ async def create_equipment_rating(
         equipment.linked_makerspace_id != _get_user_makerspace_id(current_user)
         and current_user.role != "super_admin"
     ):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+        )
 
     # Ensure path/body alignment
     rating.equipment_id = equipment_id

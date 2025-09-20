@@ -18,16 +18,50 @@ cd apps/makrx-services
 ### Production Deployment
 
 ```bash
-# Deploy services subdomain
-sudo cp nginx/services-subdomain.conf /etc/nginx/sites-available/
-sudo ln -s /etc/nginx/sites-available/services-subdomain.conf /etc/nginx/sites-enabled/
+# Deploy services subdomain (nginx inside host)
+sudo cp services/nginx/conf.d/services-subdomain.conf /etc/nginx/sites-available/services.makrx.store
+sudo ln -s /etc/nginx/sites-available/services.makrx.store /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 
-# Start services
-npm run build && npm start
+# Start services frontend locally (port 3005 by default)
+cd apps/makrx-services && npm ci && npm run build && npm start
 ```
 
 ## Complete Deployment Process
+
+## Ports & routes at a glance
+
+This section summarizes the key ports and reverse-proxy routes for the Services subdomain. See the nginx config at `services/nginx/conf.d/services-subdomain.conf` for source of truth.
+
+### Public routes (via nginx on services.makrx.store)
+
+| Path / Component           | Public endpoint                          | Internal upstream | Port | Notes                                   |
+| -------------------------- | ---------------------------------------- | ----------------- | ---- | --------------------------------------- |
+| Frontend (Next.js)         | https://services.makrx.store/            | `services_app`    | 3005 | Main UI served by Next.js               |
+| API base                   | https://services.makrx.store/api/*       | `services_api`    | 8006 | REST API endpoints                      |
+| File upload                | https://services.makrx.store/api/upload  | `services_api`    | 8006 | 100MB limit (client_max_body_size 100M) |
+| WebSocket                  | wss://services.makrx.store/ws            | `services_api`    | 8006 | Real-time updates                       |
+| Store API proxy (optional) | https://services.makrx.store/store-api/* | `store_api`       | 8003 | Proxies to Store backend `/api/*`       |
+| Health (frontend)          | https://services.makrx.store/health      | —                 | —    | nginx returns 200 "healthy"             |
+| Health (API)               | https://services.makrx.store/api/health  | `services_api`    | 8006 | API health endpoint                     |
+
+### Local development ports
+
+| Component                   | Local port(s)              | Staging compose note                                          |
+| --------------------------- | -------------------------- | ------------------------------------------------------------- |
+| Services frontend (Next.js) | 3005                       | Same internally; public via nginx: 443                        |
+| Services backend (API)      | 8006                       | Same internally; public via nginx under `/api`                |
+| Store backend (API)         | 8003                       | Accessed directly in dev; proxied under `/store-api` in nginx |
+| PostgreSQL                  | 5432                       | Staging compose: 5434                                         |
+| Redis                       | 6380                       | Staging compose: 6381                                         |
+| Keycloak                    | 8081                       | Staging compose: 8082                                         |
+| MinIO                       | 9000 (API), 9001 (Console) | Same                                                          |
+
+Notes:
+
+- In production/staging, nginx terminates TLS on 443 and routes to the above internal upstreams.
+- The `/store-api/*` route is optional and maps to the Store backend by rewriting the prefix to `/api/` for the upstream.
+- WebSocket upgrades are enabled for `/ws` and API routes.
 
 ### 1. DNS Configuration
 
@@ -75,8 +109,8 @@ ssl_certificate_key /etc/ssl/private/wildcard.makrx.store.key;
 Deploy the services subdomain configuration:
 
 ```bash
-# Copy nginx configuration
-sudo cp nginx/services-subdomain.conf /etc/nginx/sites-available/services.makrx.store
+# Copy nginx configuration (from repo services/nginx)
+sudo cp services/nginx/conf.d/services-subdomain.conf /etc/nginx/sites-available/services.makrx.store
 
 # Enable the site
 sudo ln -s /etc/nginx/sites-available/services.makrx.store /etc/nginx/sites-enabled/

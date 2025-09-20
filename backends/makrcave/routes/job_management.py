@@ -60,7 +60,7 @@ from ..schemas.job_management import (
     ModelAnalysisResult,
 )
 
-router = APIRouter(prefix="/api/v1/jobs", tags=["job-management"])
+router = APIRouter(prefix="/jobs", tags=["job-management"])
 
 # Job Management Routes
 
@@ -672,7 +672,7 @@ async def list_status_updates(
         user_role not in ["super_admin", "makerspace_admin"]
         and job.customer_id == user_id
     ):
-        query = query.filter(JobStatusUpdate.is_customer_visible == True)
+        query = query.filter(JobStatusUpdate.is_customer_visible.is_(True))
 
     status_updates = query.order_by(desc(JobStatusUpdate.updated_at)).all()
 

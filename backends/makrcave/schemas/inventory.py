@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, field_validator
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -60,8 +61,7 @@ class InventoryUsageLog(InventoryUsageLogBase):
     inventory_item_id: str
     timestamp: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Inventory Item schemas
@@ -88,14 +88,19 @@ class InventoryItemBase(BaseModel):
     description: Optional[str] = None
     is_scanned: bool = False
 
-    @validator("product_code")
-    def validate_product_code(cls, v, values):
-        if values.get("supplier_type") == SupplierType.MAKRX and not v:
+    @field_validator("product_code")
+    @classmethod
+    def validate_product_code(cls, v: str | None, info):
+        supplier_type = None
+        if hasattr(info, "data") and info.data:
+            supplier_type = info.data.get("supplier_type")
+        if supplier_type == SupplierType.MAKRX and not v:
             raise ValueError("MakrX items must have a product code")
         return v
 
-    @validator("category")
-    def validate_category(cls, v):
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, v: str) -> str:
         valid_categories = [
             "filament",
             "resin",
@@ -146,8 +151,7 @@ class InventoryItem(InventoryItemBase):
     updated_by: Optional[str] = None
     usage_logs: List[InventoryUsageLog] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Bulk operation schemas
@@ -191,8 +195,7 @@ class BulkImportJobStatus(BaseModel):
     error_log: Optional[List[Dict[str, Any]]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Filter and search schemas
@@ -263,7 +266,8 @@ class LowStockAlert(BaseModel):
 
 # MakrX Store integration schemas
 class ReorderRequest(BaseModel):
-    items: List[Dict[str, Any]]  # [{item_id: str, quantity: int, product_code: str}]
+    # items: [{item_id: str, quantity: int, product_code: str}]
+    items: List[Dict[str, Any]]
     makerspace_id: str
     requested_by: str
 
@@ -308,7 +312,7 @@ class IssueItemRequest(BaseModel):
     job_id: Optional[str] = None
 
 
-class ReorderRequest(BaseModel):
+class InventoryReorderRequest(BaseModel):
     quantity: float = Field(..., gt=0)
     notes: Optional[str] = None
 

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, validator
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime, date
 from enum import Enum
@@ -84,8 +85,7 @@ class EnhancedUsageMetricsResponse(EnhancedUsageMetricsCreate):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Equipment Utilization Schemas
@@ -124,8 +124,7 @@ class EquipmentUtilizationMetricsResponse(EquipmentUtilizationMetricsCreate):
     makerspace_id: uuid.UUID
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Enhanced Revenue Analytics Schemas
@@ -174,8 +173,7 @@ class RevenueAnalyticsEnhancedResponse(RevenueAnalyticsEnhancedCreate):
     makerspace_id: uuid.UUID
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Member Engagement Schemas
@@ -229,8 +227,7 @@ class MemberEngagementMetricsResponse(MemberEngagementMetricsCreate):
     makerspace_id: uuid.UUID
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Analytics Alert Schemas
@@ -267,8 +264,7 @@ class AnalyticsAlertResponse(AnalyticsAlertCreate):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Performance Benchmark Schemas
@@ -298,8 +294,7 @@ class PerformanceBenchmarkResponse(PerformanceBenchmarkCreate):
     data_quality_score: Optional[float] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Analytics Report Schemas
@@ -336,8 +331,7 @@ class AnalyticsReportResponse(AnalyticsReportCreate):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Analytics Configuration Schemas
@@ -369,8 +363,7 @@ class AnalyticsConfigurationResponse(AnalyticsConfigurationCreate):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Comprehensive Dashboard Schemas
@@ -467,6 +460,8 @@ class ForecastResult(BaseModel):
     model_type: str
     forecast_quality: str  # excellent, good, fair, poor
     warnings: List[str] = []
+    # Allow fields that start with 'model_' by clearing protected namespaces
+    model_config = ConfigDict(protected_namespaces=())
 
 
 # Export and Import Schemas

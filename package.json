@@ -21,7 +21,7 @@
     "docker:down": "docker-compose down -v",
     "setup": "npm ci && npm run setup:env && npm run setup:infrastructure",
     "dev:apps": "concurrently \"npm run dev --workspace=apps/gateway-frontend\" \"npm run dev --workspace=apps/gateway-frontend-hacker\" \"npm run dev --workspace=apps/makrcave\" \"npm run dev --workspace=apps/makrx-store\" \"npm run dev --workspace=apps/makrx-events\"",
-  "dev:backends": "concurrently \"bash scripts/start-backend.sh backends/makrcave backends.makrcave.main:app 8001\" \"bash scripts/start-backend.sh backends/makrx_events backends.makrx_events.main:app 8002\" \"bash scripts/start-backend.sh backends/makrx_store backends.makrx_store.main:app 8003\"",
+    "dev:backends": "concurrently \"bash scripts/start-backend.sh backends/makrcave backends.makrcave.main:app 8001\" \"bash scripts/start-backend.sh backends/makrx_events backends.makrx_events.main:app 8002\" \"bash scripts/start-backend.sh backends/makrx_store backends.makrx_store.main:app 8003\"",
     "dev:infrastructure": "docker-compose up -d postgres redis keycloak minio",
     "build:apps": "npm run build --workspaces --if-present",
     "test:unit": "npm run test --workspaces --if-present",

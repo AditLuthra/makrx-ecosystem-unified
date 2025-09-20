@@ -1,38 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  RadialBarChart,
-  RadialBar,
-} from 'recharts';
-import {
-  Wrench,
-  Clock,
   Activity,
   AlertTriangle,
-  CheckCircle,
   Calendar,
-  Zap,
-  TrendingUp,
-  Settings,
-  RefreshCw,
+  CheckCircle,
+  Clock,
   Gauge,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Wrench,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { useToast } from '../../hooks/use-toast';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface EquipmentMetric {
   equipment_id: string;
@@ -64,7 +61,7 @@ const EquipmentMetrics: React.FC = () => {
   const fetchEquipmentMetrics = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/analytics/equipment', {
+      const response = await fetch('/api/v1/analytics/equipment', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',

@@ -10,6 +10,7 @@ import logging
 from ..database import get_db
 from ..models.enhanced_analytics import EquipmentUtilizationMetrics
 from ..models.enhanced_member import Member, MemberActivityLog
+
 try:
     from ..models.skill import MemberSkill
 except ImportError:  # Backward compatibility when MemberSkill model is absent

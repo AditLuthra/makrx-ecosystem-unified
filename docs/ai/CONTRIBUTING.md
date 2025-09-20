@@ -4,13 +4,13 @@ Thanks for helping improve the MakrX ecosystem! This guide covers how we work an
 
 ## Scope & Structure
 
-- Review the [architecture overview](docs/ARCHITECTURE.md) for how services fit together.
-- Each application maintains its own README with details:
-  - [Makrcave Backend](backends/makrcave/README.md)
-  - [MakrX Store Backend](makrx-store-backend/README.md)
-  - [MakrX Store Frontend](makrx-store-frontend/README.md)
-  - [Gateway Frontend](frontend/gateway-frontend/README.md)
-  - [Makrcave Frontend](frontend/makrcave-frontend/README.md)
+- Review the [architecture overview](ARCHITECTURE.md) for how services fit together.
+- Each application maintains its own docs/README where present; key locations:
+  - Makrcave Backend: `backends/makrcave/`
+  - MakrX Store Backend: `backends/makrx_store/`
+  - MakrX Store Frontend: `apps/makrx-store/`
+  - Gateway Frontend: `apps/gateway-frontend/`
+  - Makrcave Frontend: `apps/makrcave/`
 
 ## Experiments
 
@@ -31,7 +31,7 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
 ## Prerequisites
 
 - Node.js 20.x
-- Python 3.11
+- Python 3.12
 - Docker 20+
 - JavaScript package manager: `npm`
 - Environment template: `.env.production.template` in repo root (service-specific `.env.example` files live in each app)
@@ -41,13 +41,13 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
 | Gateway Frontend     | 20           | -              | `nvm use`          |
 | Makrcave Frontend    | 20           | -              | `nvm use`          |
 | MakrX Store Frontend | 20           | -              | `nvm use`          |
-| Makrcave Backend     | -            | 3.11           | `pyenv local 3.11` |
-| MakrX Store Backend  | -            | 3.11           | `pyenv local 3.11` |
+| Makrcave Backend     | -            | 3.12           | `pyenv local 3.12` |
+| MakrX Store Backend  | -            | 3.12           | `pyenv local 3.12` |
 
 ## Local Development
 
 1. `cp .env.production.template .env`
-2. `docker-compose up -d postgres keycloak`
+2. `docker-compose up -d postgres redis keycloak minio`
 3. Start a backend (example):
    ```bash
    cd backends/makrcave
@@ -56,7 +56,7 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
    ```
 4. Start a frontend (example):
    ```bash
-   cd frontend/gateway-frontend
+   cd apps/gateway-frontend
    npm install
    npm run dev
    ```
@@ -70,7 +70,7 @@ Never include the following in Docker build contexts:
 - secrets, environment files, or credentials
 - large media, test fixtures, or sample datasets
 
-`.dockerignore` files are audited quarterly to keep images lean. For how build contexts are used in automation, see the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline).
+`.dockerignore` files are audited quarterly to keep images lean. For how build contexts are used in automation, see the CI config under `.github/workflows/` and the [Repository Overview](../REPOSITORY_OVERVIEW.md).
 
 ## Branching Model
 
@@ -113,14 +113,14 @@ Include an entry under the **Unreleased** section for any user-facing change in 
 
 ## API Contracts
 
-- Canonical contract lives in [docs/API.md](docs/API.md)
+- Canonical contract lives in backend-specific OpenAPI docs (see each backend README) and the shared [Repository Overview](../REPOSITORY_OVERVIEW.md)
 - Each backend exposes `/openapi.json`
 - Version APIs using `/api/v{n}` and bump the major version for breaking changes
 
 ## Issue Triage & Security
 
 - Triage issues with labels (`bug`, `feature`, `docs`, etc.)
-- Report security concerns per [SECURITY.md](docs/SECURITY.md)
-- Architectural decisions: record ADRs under [docs/adr/](docs/adr/README.md) using `YYYYMMDD-short-title.md`
+- Report security concerns per [SECURITY.md](../../SECURITY.md)
+- Architectural decisions: capture rationale in PR descriptions and reference in docs where applicable
 
 Happy hacking!

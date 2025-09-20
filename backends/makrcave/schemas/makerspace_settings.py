@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
+from pydantic import ConfigDict
 from typing import Optional, Dict, List, Any
 from datetime import datetime
 from enum import Enum
@@ -115,13 +116,15 @@ class MakerspaceSettingsBase(BaseModel):
     enable_rfid_access: bool = False
     enable_camera_monitoring: bool = False
 
-    @validator("contact_email")
-    def validate_email(cls, v):
+    @field_validator("contact_email")
+    @classmethod
+    def validate_email(cls, v: str | None):
         if v and "@" not in v:
             raise ValueError("Invalid email address")
         return v
 
-    @validator("operating_hours")
+    @field_validator("operating_hours")
+    @classmethod
     def validate_operating_hours(cls, v):
         if v:
             for day, hours in v.dict().items():
@@ -210,8 +213,7 @@ class MakerspaceSettingsResponse(MakerspaceSettingsBase):
     updated_at: datetime
     updated_by: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MakerspaceSettingsPublic(BaseModel):

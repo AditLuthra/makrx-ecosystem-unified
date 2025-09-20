@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr, validator, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import ConfigDict
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 from enum import Enum
@@ -94,8 +95,7 @@ class TransactionResponse(TransactionBase):
     updated_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Invoice schemas
@@ -162,8 +162,7 @@ class InvoiceResponse(InvoiceBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Credit Wallet schemas
@@ -184,8 +183,7 @@ class CreditWalletResponse(BaseModel):
     updated_at: Optional[datetime] = None
     last_transaction_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreditWalletUpdate(BaseModel):
@@ -222,8 +220,7 @@ class CreditTransactionResponse(BaseModel):
     processed_by: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Refund schemas
@@ -251,8 +248,7 @@ class RefundResponse(BaseModel):
     created_at: datetime
     processed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Payment Method schemas
@@ -290,8 +286,7 @@ class PaymentMethodResponse(BaseModel):
     created_at: datetime
     last_used_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Checkout schemas
@@ -353,8 +348,9 @@ class TransactionSort(BaseModel):
     field: str = "created_at"
     direction: str = "desc"
 
-    @validator("field")
-    def validate_field(cls, v):
+    @field_validator("field")
+    @classmethod
+    def validate_field(cls, v: str) -> str:
         allowed_fields = [
             "created_at",
             "updated_at",
@@ -368,8 +364,9 @@ class TransactionSort(BaseModel):
             raise ValueError(f"Sort field must be one of: {allowed_fields}")
         return v
 
-    @validator("direction")
-    def validate_direction(cls, v):
+    @field_validator("direction")
+    @classmethod
+    def validate_direction(cls, v: str) -> str:
         if v.lower() not in ["asc", "desc"]:
             raise ValueError('Sort direction must be "asc" or "desc"')
         return v.lower()

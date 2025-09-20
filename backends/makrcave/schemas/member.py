@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, validator, Field
+from pydantic import BaseModel, EmailStr, Field
+from pydantic import field_validator
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -59,8 +61,7 @@ class MembershipPlanResponse(MembershipPlanBase):
     updated_at: Optional[datetime]
     member_count: Optional[int] = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Member schemas
@@ -127,8 +128,7 @@ class MemberResponse(MemberBase):
     join_date: datetime
     makerspace_id: uuid.UUID
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MemberSummaryResponse(BaseModel):
@@ -144,8 +144,7 @@ class MemberSummaryResponse(BaseModel):
     projects_count: int
     reservations_count: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Member invite schemas
@@ -182,8 +181,7 @@ class MemberInviteResponse(MemberInviteBase):
     makerspace_id: str
     membership_plan_name: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Activity log schemas
@@ -208,8 +206,7 @@ class MemberActivityLogResponse(BaseModel):
     session_id: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Transaction schemas
@@ -250,8 +247,7 @@ class MembershipTransactionResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Utility schemas
@@ -268,8 +264,9 @@ class MemberSort(BaseModel):
     field: str = "created_at"
     direction: str = "desc"
 
-    @validator("field")
-    def validate_field(cls, v):
+    @field_validator("field")
+    @classmethod
+    def validate_field(cls, v: str) -> str:
         allowed_fields = [
             "created_at",
             "updated_at",
@@ -285,8 +282,9 @@ class MemberSort(BaseModel):
             raise ValueError(f"Sort field must be one of: {allowed_fields}")
         return v
 
-    @validator("direction")
-    def validate_direction(cls, v):
+    @field_validator("direction")
+    @classmethod
+    def validate_direction(cls, v: str) -> str:
         if v.lower() not in ["asc", "desc"]:
             raise ValueError('Sort direction must be "asc" or "desc"')
         return v.lower()

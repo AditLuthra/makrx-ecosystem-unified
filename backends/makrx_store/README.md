@@ -15,7 +15,7 @@ Key Features
 Environment Variables
 
 - Core:
-  - `DATABASE_URL` (sync driver for Alembic), e.g. `postgresql://user:pass@localhost:5433/makrx_ecosystem`
+  - `DATABASE_URL` (sync driver for Alembic), e.g. `postgresql://user:pass@localhost:5432/makrx_ecosystem`
   - `ENVIRONMENT` = `development` | `staging` | `production`
   - `REDIS_URL` e.g. `redis://localhost:6379/0`
 - Auth (Keycloak):
@@ -34,7 +34,7 @@ Environment Variables
 Install & Run (Development)
 
 - `make install`
-- `export DATABASE_URL=postgresql://user:pass@localhost:5433/makrx_ecosystem`
+- `export DATABASE_URL=postgresql://user:pass@localhost:5432/makrx_ecosystem`
 - `make db-upgrade`
 - `make start-dev` (serves at `:8000`, docs at `/docs`)
 

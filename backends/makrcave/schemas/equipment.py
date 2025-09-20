@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -88,8 +89,7 @@ class EquipmentRatingResponse(EquipmentRatingBase):
     is_featured: bool
     admin_response: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Equipment Maintenance schemas
@@ -144,8 +144,7 @@ class MaintenanceLogResponse(MaintenanceLogBase):
     certification_valid: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Equipment Reservation schemas
@@ -157,9 +156,15 @@ class ReservationBase(BaseModel):
     project_name: Optional[str] = None
     user_notes: Optional[str] = None
 
-    @validator("end_time")
-    def end_time_after_start_time(cls, v, values):
-        if "start_time" in values and v <= values["start_time"]:
+    @field_validator("end_time")
+    @classmethod
+    def end_time_after_start_time(
+        cls,
+        v: datetime,
+        info: ValidationInfo,
+    ) -> datetime:
+        start_time = info.data.get("start_time")
+        if start_time is not None and v is not None and v <= start_time:
             raise ValueError("End time must be after start time")
         return v
 
@@ -201,8 +206,7 @@ class ReservationResponse(ReservationBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Backward-compatible aliases for routes expecting legacy names
@@ -289,8 +293,7 @@ class EquipmentResponse(EquipmentBase):
     reservations: List[ReservationResponse] = []
     ratings: List[EquipmentRatingResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Usage session schemas
@@ -300,7 +303,10 @@ class UsageSessionBase(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, pattern="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(
+        None,
+        pattern="^(excellent|good|fair|poor)$",
+    )
     issues_encountered: Optional[str] = None
     notes: Optional[str] = None
 
@@ -316,7 +322,10 @@ class UsageSessionUpdate(BaseModel):
     materials_used: Optional[List[Dict[str, Any]]] = None
     settings_used: Optional[Dict[str, Any]] = None
     job_successful: Optional[bool] = None
-    output_quality: Optional[str] = Field(None, pattern="^(excellent|good|fair|poor)$")
+    output_quality: Optional[str] = Field(
+        None,
+        pattern="^(excellent|good|fair|poor)$",
+    )
     issues_encountered: Optional[str] = None
     power_consumed_kwh: Optional[float] = Field(None, ge=0)
     material_consumed: Optional[List[Dict[str, Any]]] = None
@@ -338,8 +347,7 @@ class UsageSessionResponse(UsageSessionBase):
     cost_incurred: Optional[float] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Filter and analytics schemas

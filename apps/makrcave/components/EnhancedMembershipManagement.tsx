@@ -1,40 +1,31 @@
-import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Checkbox } from './ui/checkbox';
 import {
-  Users,
-  Shield,
-  Settings,
   Activity,
-  Lock,
-  Unlock,
-  Eye,
-  EyeOff,
-  Plus,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  UserPlus,
-  UserMinus,
-  Key,
   AlertTriangle,
-  CheckCircle,
-  Clock,
   Calendar,
+  CheckCircle,
   Database,
-  FileText,
-  BarChart3,
+  Edit,
+  Key,
+  Lock,
+  Plus,
+  Search,
+  Settings,
+  Shield,
+  Trash2,
+  Unlock,
+  UserPlus,
+  Users,
 } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Checkbox } from './ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Input } from './ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface Role {
   id: string;
@@ -155,7 +146,9 @@ const EnhancedMembershipManagement: React.FC = () => {
   const loadMembers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/access-control/users/', { headers: await getHeaders() });
+      const response = await fetch('/api/v1/access-control/users/', {
+        headers: await getHeaders(),
+      });
       if (response.ok) {
         const data = await response.json();
         setMembers(data);
@@ -169,7 +162,9 @@ const EnhancedMembershipManagement: React.FC = () => {
 
   const loadRoles = useCallback(async () => {
     try {
-      const response = await fetch('/api/access-control/roles/', { headers: await getHeaders() });
+      const response = await fetch('/api/v1/access-control/roles/', {
+        headers: await getHeaders(),
+      });
       if (response.ok) {
         const data = await response.json();
         setRoles(data);
@@ -181,7 +176,7 @@ const EnhancedMembershipManagement: React.FC = () => {
 
   const loadPermissions = useCallback(async () => {
     try {
-      const response = await fetch('/api/access-control/permissions/', {
+      const response = await fetch('/api/v1/access-control/permissions/', {
         headers: await getHeaders(),
       });
       if (response.ok) {
@@ -195,7 +190,7 @@ const EnhancedMembershipManagement: React.FC = () => {
 
   const loadStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/access-control/analytics/access-control', {
+      const response = await fetch('/api/v1/access-control/analytics/access-control', {
         headers: await getHeaders(),
       });
       if (response.ok) {
@@ -209,7 +204,7 @@ const EnhancedMembershipManagement: React.FC = () => {
 
   const loadSecurityAlerts = useCallback(async () => {
     try {
-      const response = await fetch('/api/access-control/security-alerts/?resolved=false', {
+      const response = await fetch('/api/v1/access-control/security-alerts/?resolved=false', {
         headers: await getHeaders(),
       });
       if (response.ok) {

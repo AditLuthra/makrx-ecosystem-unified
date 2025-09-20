@@ -1,37 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  FolderOpen,
+  Package,
+  RefreshCw,
+  ShoppingCart,
+  Target,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  ScatterChart,
-  Scatter,
-  LineChart,
-  Line,
 } from 'recharts';
-import {
-  FolderOpen,
-  Users,
-  ShoppingCart,
-  DollarSign,
-  CheckCircle,
-  RefreshCw,
-  TrendingUp,
-  Package,
-  Clock,
-  Target,
-} from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface ProjectAnalytics {
   total_projects: number;
@@ -71,7 +68,7 @@ const ProjectAnalytics: React.FC = () => {
   const fetchProjectAnalytics = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/analytics/projects', {
+      const response = await fetch('/api/v1/analytics/projects', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',

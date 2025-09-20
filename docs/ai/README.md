@@ -60,7 +60,7 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 ### Prerequisites
 
 - Docker & Docker Compose
-- Node.js 18+
+- Node.js 20+
 - Git
 
 ### Local Development Setup
@@ -82,7 +82,7 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 3. **Start the ecosystem**
 
    ```bash
-   docker-compose up -d
+   docker-compose up -d postgres redis keycloak minio
    npm install
    npm run dev
    ```
@@ -91,7 +91,7 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
    - Gateway: `http://localhost:5173`
    - MakrCave: `http://localhost:5174`
    - Store: `http://localhost:5175`
-   - API Documentation: `http://localhost:8000/docs`
+   - API Documentation: see each backend at `http://localhost:8001/docs`, `:8002/docs`, `:8003/docs`
 
 ## 👥 User Roles & Permissions
 
@@ -222,7 +222,7 @@ Services in `experimental/` are archived and not part of the production deployme
 ## Deployment & Security
 
 - **Server Requirements**: Ubuntu 20.04+, 4GB RAM (8GB recommended), 2 CPU cores, 50GB SSD
-- **Software**: Docker 20+, Docker Compose 2+, Node.js 18+, Python 3.9+, PostgreSQL 13+, Nginx 1.18+
+- **Software**: Docker 20+, Docker Compose 2+, Node.js 20+, Python 3.12+, PostgreSQL 13+, Nginx 1.18+
 - **Configuration**: all secrets in `.env.production`, authentication handled via Keycloak, CORS restricted to trusted origins, rate limiting and security headers applied
 - **Network**: open ports 80/443/8000, secure HTTPS with SSL certificates
 - **Protection**: enable UFW firewall and Fail2Ban to limit intrusion attempts
@@ -235,15 +235,12 @@ Services in `experimental/` are archived and not part of the production deployme
 
 ## 📚 Documentation
 
-- [**System Architecture**](docs/ARCHITECTURE.md) - Detailed technical architecture
-- [**API Documentation**](docs/API.md) - Complete API reference
-- [**Frontend Guide**](docs/FRONTEND.md) - Frontend development guide
-- [**Backend Guide**](docs/BACKEND.md) - Backend development guide
-- [**Deployment Guide**](docs/DEPLOYMENT.md) - Production deployment
-- [**Security Guide**](docs/SECURITY.md) - Security implementation
-- [**Authentication Policy**](docs/auth-policy.md) - Token lifetimes and session management
-- [**Auth Provisioning Runbook**](docs/auth-provisioning.md) - User onboarding and access revocation
-- [**Contributing**](docs/CONTRIBUTING.md) - Contribution guidelines
+- [**System Architecture**](ARCHITECTURE.md) - Detailed technical architecture
+- See backend READMEs for OpenAPI docs (`/docs`)
+- [**Repository Overview**](../REPOSITORY_OVERVIEW.md)
+- [**Deployment Options**](../../DEPLOYMENT_OPTIONS.md)
+- [**Security**](../../SECURITY.md)
+- [**Contributing**](CONTRIBUTING.md)
 
 ## 🤝 Contributing
 

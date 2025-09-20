@@ -10,11 +10,9 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime, timedelta
-import csv
-import io
+from datetime import datetime
 import uuid
-import multipart  # noqa: F401 - ensure python-multipart is installed for file uploads
+import multipart  # noqa: F401 - ensure python-multipart is installed
 
 from ..schemas.inventory import (
     InventoryItemResponse,
@@ -26,23 +24,28 @@ from ..schemas.inventory import (
     InventoryStatsResponse,
     LowStockAlertResponse,
 )
-from ..models.inventory import InventoryItem, InventoryUsageLog, InventoryAlert
+
+# Models used via CRUD operations; direct imports not required here
 from ..database import get_db
+from ..crud.inventory import InventoryCRUD
 from ..dependencies import get_current_user, check_permission
 
 # Router without local prefix; mounted under '/inventory'
 router = APIRouter(tags=["inventory"])
 
-# Placeholder to avoid undefined-name during static checks; real CRUD is created
-# per-request in handlers when needed.
-inventory_crud = None  # noqa: F401
+# Placeholder to avoid undefined-name during static checks.
+# Real CRUD is created per-request in handlers when needed.
 
+
+def get_inventory_crud(db: Session = Depends(get_db)) -> InventoryCRUD:
+    return InventoryCRUD(db)
 
 
 @router.get("/", response_model=List[InventoryItemResponse])
 async def list_inventory_items(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     category: Optional[str] = Query(None),
@@ -61,7 +64,24 @@ async def list_inventory_items(
     router-level dependencies enforce auth first. Keeping a minimal
     implementation avoids unnecessary dependencies during tests.
     """
-    return []
+    # Use CRUD with minimal filters; expand to full filter model later
+    from ..schemas.inventory import InventoryFilter
+
+    filters = InventoryFilter(
+        makerspace_id=current_user.makerspace_id,
+        skip=skip,
+        limit=limit,
+        category=category,
+        status=status,
+        supplier_type=supplier_type,
+        location=location,
+        low_stock_only=low_stock_only,
+        search=search,
+        sort_by=sort_by,
+        sort_order="desc" if sort_desc else "asc",
+    )
+    items, _total = crud.get_items(filters)
+    return items
 
 
 # No-trailing-slash alias so GET /api/v1/inventory returns auth error
@@ -73,6 +93,7 @@ async def list_inventory_items(
 async def list_inventory_items_no_slash(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     category: Optional[str] = Query(None),
@@ -88,6 +109,7 @@ async def list_inventory_items_no_slash(
     return await list_inventory_items(
         db=db,
         current_user=current_user,
+        crud=crud,
         skip=skip,
         limit=limit,
         category=category,
@@ -107,9 +129,10 @@ async def get_inventory_item(
     item_id: str,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get a single inventory item by ID"""
-    item = inventory_crud.get_item(db=db, item_id=item_id)
+    item = crud.get_item(item_id=item_id, makerspace_id=current_user.makerspace_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -128,6 +151,7 @@ async def create_inventory_item(
     item_data: InventoryItemCreate,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Create a new inventory item"""
     # Check permissions
@@ -138,12 +162,8 @@ async def create_inventory_item(
         # Set the makerspace_id to current user's makerspace
         item_data.linked_makerspace_id = current_user.makerspace_id
 
-        item = inventory_crud.create_item(
-            db=db,
-            item_data=item_data,
-            created_by_user_id=current_user.id,
-            created_by_user_name=current_user.name,
-        )
+        item_data.created_by = current_user.id
+        item = crud.create_item(item=item_data)
 
         return item
     except ValueError as e:
@@ -158,6 +178,7 @@ async def update_inventory_item(
     item_data: InventoryItemUpdate,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Update an existing inventory item"""
     # Check permissions
@@ -165,7 +186,9 @@ async def update_inventory_item(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -176,12 +199,11 @@ async def update_inventory_item(
         raise HTTPException(status_code=403, detail="Access denied")
 
     try:
-        item = inventory_crud.update_item(
-            db=db,
+        item_data.updated_by = current_user.id
+        item = crud.update_item(
             item_id=item_id,
-            item_data=item_data,
-            updated_by_user_id=current_user.id,
-            updated_by_user_name=current_user.name,
+            updates=item_data,
+            makerspace_id=current_user.makerspace_id,
         )
 
         return item
@@ -197,6 +219,7 @@ async def issue_inventory_item(
     issue_data: IssueItemRequest,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Issue/deduct quantity from inventory item"""
     # Check permissions
@@ -204,7 +227,9 @@ async def issue_inventory_item(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -215,8 +240,7 @@ async def issue_inventory_item(
         raise HTTPException(status_code=403, detail="Access denied")
 
     try:
-        result = inventory_crud.issue_item(
-            db=db,
+        result = crud.issue_item(
             item_id=item_id,
             quantity=issue_data.quantity,
             user_id=current_user.id,
@@ -225,7 +249,8 @@ async def issue_inventory_item(
             project_id=issue_data.project_id,
             job_id=issue_data.job_id,
         )
-
+        if not result:
+            raise HTTPException(status_code=400, detail="Insufficient stock")
         return {
             "message": "Item issued successfully",
             "remaining_quantity": result.quantity,
@@ -243,6 +268,7 @@ async def restock_inventory_item(
     reason: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Add quantity to inventory item"""
     # Check permissions
@@ -250,7 +276,9 @@ async def restock_inventory_item(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -261,15 +289,15 @@ async def restock_inventory_item(
         raise HTTPException(status_code=403, detail="Access denied")
 
     try:
-        result = inventory_crud.restock_item(
-            db=db,
+        result = crud.restock_item(
             item_id=item_id,
             quantity=quantity,
             user_id=current_user.id,
             user_name=current_user.name,
             reason=reason or "Manual restock",
         )
-
+        if not result:
+            raise HTTPException(status_code=404, detail="Item not found")
         return {
             "message": "Item restocked successfully",
             "new_quantity": result.quantity,
@@ -286,6 +314,7 @@ async def reorder_from_makrx(
     reorder_data: ReorderRequest,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Initiate reorder from MakrX Store"""
     # Check permissions
@@ -293,7 +322,9 @@ async def reorder_from_makrx(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -316,8 +347,7 @@ async def reorder_from_makrx(
 
     try:
         # Create reorder request - this would integrate with MakrX Store API
-        reorder_url = inventory_crud.create_reorder_request(
-            db=db,
+        reorder_url = crud.create_reorder_request(
             item_id=item_id,
             quantity=reorder_data.quantity,
             user_id=current_user.id,
@@ -339,10 +369,13 @@ async def get_item_usage_history(
     current_user=Depends(get_current_user),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get usage history for an inventory item"""
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -352,9 +385,7 @@ async def get_item_usage_history(
     ):
         raise HTTPException(status_code=403, detail="Access denied")
 
-    usage_logs = inventory_crud.get_usage_history(
-        db=db, item_id=item_id, skip=skip, limit=limit
-    )
+    usage_logs = crud.get_usage_history(item_id=item_id, skip=skip, limit=limit)
 
     return usage_logs
 
@@ -369,6 +400,7 @@ async def get_all_usage_logs(
     end_date: Optional[datetime] = Query(None),
     user_id: Optional[str] = Query(None),
     action: Optional[str] = Query(None),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get usage logs for all inventory items"""
     # Check permissions
@@ -385,8 +417,7 @@ async def get_all_usage_logs(
     if action:
         filters["action"] = action
 
-    usage_logs = inventory_crud.get_all_usage_logs(
-        db=db,
+    usage_logs = crud.get_all_usage_logs(
         makerspace_id=current_user.makerspace_id,
         skip=skip,
         limit=limit,
@@ -398,24 +429,24 @@ async def get_all_usage_logs(
 
 @router.get("/alerts/low-stock", response_model=List[LowStockAlertResponse])
 async def get_low_stock_alerts(
-    db: Session = Depends(get_db), current_user=Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get low stock alerts for the makerspace"""
-    alerts = inventory_crud.get_low_stock_alerts(
-        db=db, makerspace_id=current_user.makerspace_id
-    )
+    alerts = crud.get_low_stock_alerts(makerspace_id=current_user.makerspace_id)
 
     return alerts
 
 
 @router.get("/stats", response_model=InventoryStatsResponse)
 async def get_inventory_stats(
-    db: Session = Depends(get_db), current_user=Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get inventory statistics for the makerspace"""
-    stats = inventory_crud.get_inventory_stats(
-        db=db, makerspace_id=current_user.makerspace_id
-    )
+    stats = crud.get_inventory_stats(makerspace_id=current_user.makerspace_id)
 
     return stats
 
@@ -426,6 +457,7 @@ async def bulk_import_inventory(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Bulk import inventory items from CSV"""
     # Check permissions
@@ -444,8 +476,7 @@ async def bulk_import_inventory(
         job_id = str(uuid.uuid4())
 
         background_tasks.add_task(
-            inventory_crud.process_bulk_import,
-            db=db,
+            crud.process_bulk_import,
             csv_content=csv_content,
             job_id=job_id,
             makerspace_id=current_user.makerspace_id,
@@ -463,9 +494,10 @@ async def get_import_job_status(
     job_id: str,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get status of bulk import job"""
-    job_status = inventory_crud.get_import_job_status(db=db, job_id=job_id)
+    job_status = crud.get_import_job_status(job_id=job_id)
     if not job_status:
         raise HTTPException(status_code=404, detail="Import job not found")
 
@@ -478,6 +510,7 @@ async def export_inventory_csv(
     current_user=Depends(get_current_user),
     category: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Export inventory items as CSV"""
     # Check permissions
@@ -491,17 +524,15 @@ async def export_inventory_csv(
         if status:
             filters["status"] = status
 
-        csv_content = inventory_crud.export_to_csv(
-            db=db, makerspace_id=current_user.makerspace_id, filters=filters
+        csv_content = crud.export_to_csv(
+            makerspace_id=current_user.makerspace_id, filters=filters
         )
 
         return Response(
             content=csv_content,
             media_type="text/csv",
             headers={
-                "Content-Disposition": (
-                    "attachment; filename=" "inventory_export.csv"
-                )
+                "Content-Disposition": ("attachment; filename=" "inventory_export.csv")
             },
         )
     except Exception as e:
@@ -513,6 +544,7 @@ async def delete_inventory_item(
     item_id: str,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Delete an inventory item"""
     # Check permissions
@@ -520,7 +552,9 @@ async def delete_inventory_item(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     # Check if item exists and user has access
-    existing_item = inventory_crud.get_item(db=db, item_id=item_id)
+    existing_item = crud.get_item(
+        item_id=item_id, makerspace_id=current_user.makerspace_id
+    )
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
@@ -531,11 +565,9 @@ async def delete_inventory_item(
         raise HTTPException(status_code=403, detail="Access denied")
 
     try:
-        inventory_crud.delete_item(
-            db=db,
+        crud.delete_item(
             item_id=item_id,
-            deleted_by_user_id=current_user.id,
-            deleted_by_user_name=current_user.name,
+            deleted_by=current_user.id,
         )
 
         return {"message": "Item deleted successfully"}
@@ -548,6 +580,7 @@ async def bulk_delete_items(
     item_ids: List[str],
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Bulk delete inventory items"""
     # Check permissions
@@ -555,12 +588,10 @@ async def bulk_delete_items(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     try:
-        result = inventory_crud.bulk_delete_items(
-            db=db,
+        result = crud.bulk_delete_items(
             item_ids=item_ids,
             makerspace_id=current_user.makerspace_id,
-            deleted_by_user_id=current_user.id,
-            deleted_by_user_name=current_user.name,
+            deleted_by=current_user.id,
         )
 
         return {
@@ -576,6 +607,7 @@ async def generate_qr_codes(
     item_ids: List[str],
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Generate QR codes for inventory items"""
     # Check permissions
@@ -583,8 +615,8 @@ async def generate_qr_codes(
         raise HTTPException(status_code=403, detail="Insufficient permissions")
 
     try:
-        qr_data = inventory_crud.generate_qr_codes(
-            db=db, item_ids=item_ids, makerspace_id=current_user.makerspace_id
+        qr_data = crud.generate_qr_codes(
+            item_ids=item_ids, makerspace_id=current_user.makerspace_id
         )
 
         return {"qr_codes": qr_data}

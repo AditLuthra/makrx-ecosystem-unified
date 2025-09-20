@@ -6,9 +6,13 @@
 import Keycloak, { KeycloakInstance } from 'keycloak-js';
 
 // Configuration
-const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://auth.makrx.org';
+// Defaults align with local dev infrastructure (docker-compose):
+// - Keycloak at http://localhost:8081
+// - Realm "makrx"
+// - Client ID "makrcave" (matches backend KEYCLOAK_CLIENT_ID for audience checks)
+const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'http://localhost:8081';
 const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'makrx';
-const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrcave-frontend';
+const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrcave-api';
 
 export interface SecureUser {
   sub: string;

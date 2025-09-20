@@ -66,12 +66,16 @@ print_step "Running code quality checks..."
 			echo "Checking $backend" >>logs/quality.log
 			cd "$backend"
 			pip3 install -r requirements.txt >>/dev/null 2>&1
+			pip3 install ruff >>/dev/null 2>&1 || true
 
 			# Linting
 			flake8 . --count --statistics >>../logs/quality.log 2>&1 || echo "Flake8 issues in $backend" >>../logs/quality.log
 
 			# Formatting
 			black --check . >>../logs/quality.log 2>&1 || echo "Black formatting issues in $backend" >>../logs/quality.log
+
+			# Ruff (fast linter + formatter hints)
+			ruff check . >>../logs/quality.log 2>&1 || echo "Ruff issues in $backend" >>../logs/quality.log
 
 			# Type checking
 			mypy . >>../logs/quality.log 2>&1 || echo "MyPy type issues in $backend" >>../logs/quality.log

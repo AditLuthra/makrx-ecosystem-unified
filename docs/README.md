@@ -1,37 +1,34 @@
-# MakrX Documentation
+# MakrX Documentation Index
 
-This directory consolidates documentation migrated from prior repos and apps into the unified monorepo.
+This directory consolidates documentation migrated from prior repos and apps into the unified monorepo. Start here to find architecture, deployment, and feature-specific docs.
 
-## Collections
+## Table of contents
 
-- AI Docs: `docs/ai/`
-- Events Docs: `docs/events/`
-- Store (legacy/almost-final): `docs/almost-final/` and `docs/store/`
-- Gateway Hacker: `docs/gateway-hacker/`
-- MakrCave App: `docs/makrcave/`
-- Archive: `docs/archive/` (historical reports and migration notes)
+- Overview and navigation
+  - Repository overview: `docs/REPOSITORY_OVERVIEW.md`
+  - Configuration standards: `docs/CONFIGURATION_STANDARDS.md`
+  - Root README: `../README.md`
+- Architecture
+  - Legacy architecture overview: `ai/ARCHITECTURE.md`
+  - Agents overview: `ai/AGENTS.md`
+- Security
+  - Security policy: `../SECURITY.md`
+  - Critical security fixes (legacy): `ai/CRITICAL_SECURITY_FIXES.md`
+- Authentication and SSO
+  - SSO summary: `ai/SSO_IMPLEMENTATION_SUMMARY.md`
+  - GitHub integration: `ai/GITHUB_INTEGRATION_README.md`
+- Deployment & operations
+  - Deployment options: `../DEPLOYMENT_OPTIONS.md`
+  - Services deployment guide: `../SERVICES_DEPLOYMENT_GUIDE.md`
+  - Server maintenance (legacy): `almost-final/SERVER_MAINTENANCE_GUIDE.md`
+- Domain collections
+  - Events: `events/README.md`
+  - MakrCave app: `makrcave/README.md`
+  - Store (legacy): `store/README.md` and `almost-final/`
+  - Gateway Hacker: `gateway-hacker/VITE_TO_NEXT_MIGRATION.md`
 
-## Quick Links
+## Notes
 
-- Architecture: see `docs/ai/ARCHITECTURE.md` (legacy), plus root `README.md` Architecture Overview
-- Deployment: `docs/ai/DEPLOYMENT.md`, `docs/almost-final/SERVER_MAINTENANCE_GUIDE.md`, `DEPLOYMENT_OPTIONS.md`
-- Security: `SECURITY.md` (root), `CRITICAL_INFRASTRUCTURE_FIXES.md`, `CRITICAL_FIXES_SUMMARY.md`
-- SSO/Keycloak: `docs/ai/SSO_IMPLEMENTATION_SUMMARY.md`, `docs/ai/keycloak-runbook.md`, `docs/ai/idp-runbooks.md`
-- GitHub/CI: `docs/ai/GITHUB_INTEGRATION_README.md`, `.github/` workflows
-
-### Store Backend
-
-- Backend Guide: `backends/makrx-store/README.md`
-- Service Docs: `docs/store/README.md`
-- Makefile tasks: `backends/makrx-store/Makefile`
-- CI migration script: `backends/makrx-store/scripts/ci_migrate.sh`
-
-Getting Started (Backend)
-
-- `cd backends/makrx-store`
-- `make install`
-- `export DATABASE_URL=postgresql://user:pass@localhost:5433/makrx_ecosystem`
-- `make db-upgrade`
-- `make start-dev`
-
-If a link appears broken, the file may exist under a different collection; browse the folders above.
+- Some documents are legacy snapshots retained for reference (under `almost-final/`). When in doubt, prefer root-level guides and this index.
+- Postgres default port is 5432 (see `docker-compose.yml`).
+- If a link appears broken, try browsing the folder listed above; names may have changed during consolidation.

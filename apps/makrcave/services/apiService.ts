@@ -1,7 +1,8 @@
 // Centralized API client (browser-safe) that hits your backend.
-// Configure base URL via NEXT_PUBLIC_API_BASE_URL or use relative paths.
+// Configure base URL via NEXT_PUBLIC_API_BASE_URL (preferred) or NEXT_PUBLIC_API_URL (alias),
+// otherwise it will use relative paths.
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || '';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -93,16 +94,10 @@ async function request<T = any>(
 
 const api = {
   get: <T = any>(url: string, opts?: ApiRequestOptions) => request<T>('GET', url, undefined, opts),
-  post: <T = any>(
-    url: string,
-    body?: any,
-    opts?: ApiRequestOptions,
-  ) => request<T>('POST', url, body, opts),
-  put: <T = any>(
-    url: string,
-    body?: any,
-    opts?: ApiRequestOptions,
-  ) => request<T>('PUT', url, body, opts),
+  post: <T = any>(url: string, body?: any, opts?: ApiRequestOptions) =>
+    request<T>('POST', url, body, opts),
+  put: <T = any>(url: string, body?: any, opts?: ApiRequestOptions) =>
+    request<T>('PUT', url, body, opts),
   delete: <T = any>(url: string, opts?: ApiRequestOptions) =>
     request<T>('DELETE', url, undefined, opts),
   analytics: {

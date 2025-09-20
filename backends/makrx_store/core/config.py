@@ -83,7 +83,8 @@ class Settings(BaseSettings):
         description="Audience for service-to-service JWTs. Set to KEYCLOAK_CLIENT_ID if services share a client, or a dedicated audience if using separate service accounts.",
     )
 
-    # S3/MinIO Storage
+    # S3/MinIO/AWS Storage (with dual-name fallbacks)
+    # Canonical S3-style vars
     S3_ENDPOINT: str = Field(
         "http://localhost:9000", description="S3 or MinIO endpoint URL"
     )
@@ -95,6 +96,16 @@ class Settings(BaseSettings):
     S3_SECRET_KEY: Optional[str] = Field(None, description="S3 secret key")
     S3_REGION: str = Field("us-east-1", description="S3 region")
     S3_USE_SSL: bool = Field(True, description="Use SSL for S3 connections")
+
+    # AWS SDK style
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
+
+    # MinIO style (aliases)
+    MINIO_ENDPOINT: Optional[str] = None
+    MINIO_BUCKET: Optional[str] = None
+    MINIO_ACCESS_KEY: Optional[str] = None
+    MINIO_SECRET_KEY: Optional[str] = None
 
     # Payments
     STRIPE_SECRET_KEY: Optional[str] = Field(
@@ -212,6 +223,28 @@ class Settings(BaseSettings):
             self.KEYCLOAK_ISSUER = (
                 f"{self.KEYCLOAK_URL}/realms/{self.KEYCLOAK_REALM}"
             )
+
+        # Storage env fallbacks: prefer AWS_*, then S3_*, then MINIO_*
+        if not self.S3_ENDPOINT and self.MINIO_ENDPOINT:
+            self.S3_ENDPOINT = self.MINIO_ENDPOINT
+        if not self.S3_BUCKET and self.MINIO_BUCKET:
+            self.S3_BUCKET = self.MINIO_BUCKET
+
+        # Access keys
+        if not self.AWS_ACCESS_KEY_ID:
+            self.AWS_ACCESS_KEY_ID = (
+                self.S3_ACCESS_KEY or self.MINIO_ACCESS_KEY
+            )
+        if not self.AWS_SECRET_ACCESS_KEY:
+            self.AWS_SECRET_ACCESS_KEY = (
+                self.S3_SECRET_KEY or self.MINIO_SECRET_KEY
+            )
+
+        # Mirror canonical S3_* from AWS_* if provided
+        if self.AWS_ACCESS_KEY_ID and not self.S3_ACCESS_KEY:
+            self.S3_ACCESS_KEY = self.AWS_ACCESS_KEY_ID
+        if self.AWS_SECRET_ACCESS_KEY and not self.S3_SECRET_KEY:
+            self.S3_SECRET_KEY = self.AWS_SECRET_ACCESS_KEY
 
 
 # Global settings instance

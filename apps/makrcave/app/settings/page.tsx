@@ -1,33 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Badge } from '../../components/ui/badge';
-import {
-  Settings as SettingsIcon,
-  Building2,
-  Users,
-  Package,
-  CreditCard,
-  Store,
-  Save,
-  RefreshCw,
-  Download,
-  Upload,
-  CheckCircle,
-  AlertCircle,
-  Info,
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import GeneralSettingsForm from '../../components/settings/GeneralSettingsForm';
-import AccessControlSettings from '../../components/settings/AccessControlSettings';
-import InventorySettings from '../../components/settings/InventorySettings';
-import BillingConfig from '../../components/settings/BillingConfig';
-import ServiceModeToggle from '../../components/settings/ServiceModeToggle';
-import { useToast } from '../../hooks/use-toast';
 import { useAuthHeaders } from '@makrx/auth';
+import {
+  AlertCircle,
+  Building2,
+  CheckCircle,
+  CreditCard,
+  Download,
+  Info,
+  Package,
+  RefreshCw,
+  Save,
+  Settings as SettingsIcon,
+  Store,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import AccessControlSettings from '../../components/settings/AccessControlSettings';
+import BillingConfig from '../../components/settings/BillingConfig';
+import GeneralSettingsForm from '../../components/settings/GeneralSettingsForm';
+import InventorySettings from '../../components/settings/InventorySettings';
+import ServiceModeToggle from '../../components/settings/ServiceModeToggle';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../hooks/use-toast';
 
 interface MakerspaceSettings {
   id?: string;
@@ -104,7 +103,7 @@ const Settings: React.FC = () => {
     setLoading(true);
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch('/api/makerspace/settings/', { headers });
+      const response = await fetch('/api/v1/makerspace/settings/', { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -137,7 +136,7 @@ const Settings: React.FC = () => {
     setSaving(true);
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch('/api/makerspace/settings/update', {
+      const response = await fetch('/api/v1/makerspace/settings/update', {
         method: 'POST',
         headers,
         body: JSON.stringify(settings),
@@ -214,7 +213,7 @@ const Settings: React.FC = () => {
   const exportSettings = async () => {
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch('/api/makerspace/settings/export', { headers });
+      const response = await fetch('/api/v1/makerspace/settings/export', { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -262,7 +261,7 @@ const Settings: React.FC = () => {
     try {
       // First delete existing settings, then fetch defaults
       const headers = await getHeaders();
-      await fetch('/api/makerspace/settings/', {
+      await fetch('/api/v1/makerspace/settings/', {
         method: 'DELETE',
         headers,
       });

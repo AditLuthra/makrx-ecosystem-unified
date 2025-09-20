@@ -28,6 +28,7 @@ from .routes import (
     feature_flags,
     service_orders,
     notifications,
+    quick_reorder,
 )
 from .database_sync import create_tables, test_connection
 from .middleware.api_security import setup_api_security
@@ -171,6 +172,7 @@ app.include_router(
     tags=["Service Orders"],
 )
 app.include_router(notifications.router, prefix="/api", tags=["Notifications"])
+app.include_router(quick_reorder.router, tags=["Quick Reorder"])
 
 
 @app.on_event("startup")

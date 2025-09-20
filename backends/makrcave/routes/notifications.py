@@ -149,6 +149,7 @@ async def get_notifications(
     try:
         # In test environment without full notifications backend, return empty list
         import os
+
         if os.getenv("ENVIRONMENT") == "test":
             return []
         filters = NotificationFilter(

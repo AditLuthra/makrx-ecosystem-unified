@@ -29,6 +29,7 @@
 - ✅ Detailed INSTALLATION.md
 - ✅ Contributing guidelines
 - ✅ Architecture documentation
+- ✅ Documentation index at `docs/README.md` with reliable cross-links
 
 ## 🎯 Final Steps for GitHub
 
@@ -81,6 +82,8 @@ git clone <repo-url>
 cd makrx-ecosystem-unified
 ./scripts/unix/setup.sh  # or scripts\windows\setup.bat
 npm run dev
+
+See `docs/REPOSITORY_OVERVIEW.md` for service ports and `DEPLOYMENT_OPTIONS.md` for deployment paths.
 ```
 
 **🎉 The ecosystem is ready for the world!**

@@ -22,6 +22,19 @@ Set env vars:
   - Optional: `KEYCLOAK_VERIFY_AUD`, `KEYCLOAK_ISSUER`, `KEYCLOAK_PK_TTL_SECONDS`, `KEYCLOAK_USE_JWKS`
   - JWKS is used by default; token header `kid` selects the correct key; falls back to realm public key
 
+Roles and clients:
+
+- Realm roles expected by admin-gated endpoints: `admin`, `makerspace_admin`, `super_admin`.
+- Backend audience: `KEYCLOAK_CLIENT_ID=makrcave-api` (ensure tokens contain `aud=makrcave-api`).
+- Frontend default client ID is aligned to `makrcave-api`; set `NEXT_PUBLIC_KEYCLOAK_CLIENT_ID` if your client differs.
+
+Importing realm config (optional):
+
+- Dev: `services/keycloak/realm-config/makrx-realm.json`
+- Staging: `services/keycloak/realm-config/makrx-staging-realm.json`
+- Prod: `services/keycloak/realm-config/makrx-prod-realm.json`
+  Use Keycloak Admin Console → Realm Settings → Import, or `kcadm.sh` in automation.
+
 ## Migrations (Alembic)
 
 - Config lives in `backends/makrcave/alembic.ini`
@@ -41,12 +54,29 @@ To generate a comprehensive initial schema (canonical baseline):
 
 ```bash
 # Ensure DATABASE_URL points to an empty/fresh schema
-export DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem
+export DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5432/makrx_ecosystem
 
 # From repo root
 alembic -c backends/makrcave/alembic.ini revision --autogenerate -m "canonical initial schema"
 alembic -c backends/makrcave/alembic.ini upgrade head
 ```
+
+## Testing
+
+Use a virtual environment and run the MakrCave tests:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backends/makrcave/requirements.txt
+pip install -r backends/makrcave/requirements-dev.txt
+python -m pytest -q backends/makrcave/tests
+```
+
+Notes:
+
+- Tests default to sqlite (DATABASE_URL=sqlite:///./test.db) and set ENVIRONMENT=test.
+- Protected routes are exercised using dependency overrides; no Keycloak needed.
 
 Notes:
 
@@ -82,7 +112,7 @@ You can seed a minimal dataset (makerspace, basic plan, admin member), plus a sa
 
 ```bash
 # From repo root
-export DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5433/makrx_ecosystem
+export DATABASE_URL=postgresql://makrx:makrx_dev_password@localhost:5432/makrx_ecosystem
 python makrx-ecosystem-unified/backends/makrcave/seed.py
 
 # Or from backend folder

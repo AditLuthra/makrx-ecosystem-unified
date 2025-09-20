@@ -3,6 +3,22 @@
 from fastapi import APIRouter, Depends
 from ..dependencies import get_current_user, require_roles, require_scope
 
+# Import all route routers at top-level to satisfy linters
+from .member import router as member_router
+from .inventory import router as inventory_router
+from .equipment import router as equipment_router
+from .project import router as project_router
+from .enhanced_bom import router as enhanced_bom_router
+from .project_showcase import router as project_showcase_router
+from .equipment_reservations import router as reservations_router
+from .notifications import router as notifications_router
+from .analytics import router as analytics_router
+from .billing import router as billing_router
+from .makerspace_settings import router as makerspace_settings_router
+from .membership_plans import router as membership_plans_router
+from .machine_access import router as machine_access_router
+
+
 api_router = APIRouter()
 
 
@@ -13,16 +29,12 @@ async def health_check():
 
 
 # --- Core Routes ---
-from .member import router as member_router
-
 api_router.include_router(
     member_router,
     prefix="/members",
     tags=["members"],
     dependencies=[Depends(get_current_user)],
 )
-
-from .inventory import router as inventory_router
 
 api_router.include_router(
     inventory_router,
@@ -34,8 +46,6 @@ api_router.include_router(
     ],
 )
 
-from .equipment import router as equipment_router
-
 api_router.include_router(
     equipment_router,
     prefix="/equipment",
@@ -46,8 +56,6 @@ api_router.include_router(
     ],
 )
 
-from .project import router as project_router
-
 api_router.include_router(
     project_router,
     prefix="/projects",
@@ -55,17 +63,29 @@ api_router.include_router(
     dependencies=[Depends(get_current_user)],
 )
 
-# Equipment reservations routes
-from .equipment_reservations import router as reservations_router
+# Enhanced BOM (relative prefix)
+api_router.include_router(
+    enhanced_bom_router,
+    prefix="",
+    tags=["enhanced-bom"],
+    dependencies=[Depends(get_current_user)],
+)
 
+# Project Showcase (relative prefix)
+api_router.include_router(
+    project_showcase_router,
+    prefix="",
+    tags=["project-showcase"],
+    dependencies=[Depends(get_current_user)],
+)
+
+# Equipment reservations routes
 api_router.include_router(
     reservations_router,
     prefix="",
     tags=["reservations"],
     dependencies=[Depends(get_current_user)],
 )
-
-from .notifications import router as notifications_router
 
 api_router.include_router(
     notifications_router,
@@ -75,8 +95,6 @@ api_router.include_router(
 )
 
 # --- Admin Routes ---
-from .analytics import router as analytics_router
-
 api_router.include_router(
     analytics_router,
     prefix="/analytics",
@@ -86,8 +104,6 @@ api_router.include_router(
         Depends(require_roles(["admin", "makerspace_admin"])),
     ],
 )
-
-from .billing import router as billing_router
 
 api_router.include_router(
     billing_router,
@@ -100,8 +116,6 @@ api_router.include_router(
 )
 
 # Makerspace Settings (admin-only)
-from .makerspace_settings import router as makerspace_settings_router
-
 api_router.include_router(
     makerspace_settings_router,
     prefix="",
@@ -110,4 +124,21 @@ api_router.include_router(
         Depends(get_current_user),
         Depends(require_roles(["admin", "makerspace_admin"])),
     ],
+)
+
+# Membership Plans (admin-only create/update/delete; read requires auth)
+# The membership_plans_router already declares prefix="/membership-plans",
+# so include it without an extra prefix to avoid double-prefixing.
+api_router.include_router(
+    membership_plans_router,
+    tags=["membership-plans"],
+    dependencies=[Depends(get_current_user)],
+)
+
+# Machine Access (ensure inclusion under versioned mount)
+api_router.include_router(
+    machine_access_router,
+    prefix="",
+    tags=["machine-access"],
+    dependencies=[Depends(get_current_user)],
 )

@@ -52,7 +52,7 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 ### Prerequisites
 
 - Docker & Docker Compose
-- Node.js 18+
+- Node.js 20+
 - Git
 
 ### Local Development Setup
@@ -201,13 +201,12 @@ makrx-ecosystem/
 
 ## 📚 Documentation
 
-- [**System Architecture**](docs/ARCHITECTURE.md) - Detailed technical architecture
-- [**API Documentation**](docs/API.md) - Complete API reference
-- [**Frontend Guide**](docs/FRONTEND.md) - Frontend development guide
-- [**Backend Guide**](docs/BACKEND.md) - Backend development guide
-- [**Deployment Guide**](docs/DEPLOYMENT.md) - Production deployment
-- [**Security Guide**](docs/SECURITY.md) - Security implementation
-- [**Contributing**](docs/CONTRIBUTING.md) - Contribution guidelines
+- [**System Architecture**](../ai/ARCHITECTURE.md) - Technical architecture
+- See backend READMEs for OpenAPI docs (`/docs`)
+- [**Repository Overview**](../REPOSITORY_OVERVIEW.md)
+- [**Deployment Options**](../../DEPLOYMENT_OPTIONS.md)
+- [**Security**](../../SECURITY.md)
+- [**Contributing**](../ai/CONTRIBUTING.md)
 
 ## 🤝 Contributing
 

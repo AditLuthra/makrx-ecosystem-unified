@@ -5,25 +5,25 @@ Provider Network Routes - Manage service providers and job dispatch
 
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, or_, func
+from sqlalchemy import select
 from typing import List, Dict, Any, Optional
 import logging
-import json
-from uuid import UUID, uuid4
+from uuid import uuid4
 from datetime import datetime, timedelta
 from pydantic import BaseModel, Field, EmailStr
 from enum import Enum
 
 from ..database import get_db
 from ..security.input_validation import InputSanitizer
-from ..models.project import Project
-from ..models.equipment import Equipment
+# from ..models.project import Project
+# from ..models.equipment import Equipment
+from ..models.makerspace_settings import MakerspaceSettings
 
 # Remove Member import to avoid model duplication; use CRUD/services for data access
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/providers", tags=["Service Providers"])
+router = APIRouter(prefix="/providers", tags=["Service Providers"])
 
 
 # Enums
@@ -543,7 +543,10 @@ async def update_job_status(
         )
 
         logger.info(
-            f"Updated job {job_id} status: {old_status.value} -> {update_request.status.value}"
+            "Updated job %s status: %s -> %s",
+            job_id,
+            old_status.value,
+            update_request.status.value,
         )
 
         return {
@@ -640,7 +643,11 @@ async def notify_customer_job_update(
     """Notify customer of job status update"""
     try:
         logger.info(
-            f"Notifying customer {customer_email} of job {job_id} status change: {old_status} -> {new_status}"
+            "Notifying customer %s of job %s status change: %s -> %s",
+            customer_email,
+            job_id,
+            old_status,
+            new_status,
         )
 
         # TODO: Send notification to Store service

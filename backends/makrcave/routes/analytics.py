@@ -2,8 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 
 from ..database import get_db
@@ -13,13 +12,74 @@ from ..dependencies import (
     require_permission,
 )
 from ..services.real_analytics_service import get_real_analytics_service
-from ..utils.analytics_mock_data import AnalyticsMockData  # Fallback only
+from ..utils.analytics_mock_data import (
+    AnalyticsMockData,
+    get_mock_analytics_overview,
+    get_mock_usage_stats,
+    get_mock_revenue_analytics,
+    get_mock_equipment_metrics,
+)
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
 # Initialize fallback mock data generator
 mock_data = AnalyticsMockData()
+
+
+@router.get("/dashboard")
+async def get_analytics_dashboard(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+    makerspace=Depends(get_current_makerspace),
+    _: bool = Depends(require_permission("analytics:read")),
+):
+    """Dashboard aggregator endpoint (alias of overview with same shape)."""
+    try:
+        analytics_service = get_real_analytics_service(db)
+
+        makerspace_id = getattr(makerspace, "id", makerspace)
+        real_time_data = analytics_service.get_real_time_analytics(
+            makerspace_id, hours=24
+        )
+        usage_data = analytics_service.get_usage_analytics(makerspace_id, days=30)
+        revenue_data = analytics_service.get_revenue_analytics(makerspace_id, days=30)
+
+        overview = {
+            "makerspace_id": makerspace_id,
+            "generated_at": datetime.utcnow().isoformat(),
+            "real_time_metrics": real_time_data.get("metrics", {}),
+            "alerts": real_time_data.get("alerts", []),
+            "summary": {
+                "total_revenue": revenue_data.get("summary", {}).get(
+                    "total_revenue", 0
+                ),
+                "revenue_growth": revenue_data.get("summary", {}).get("growth_rate", 0),
+                "active_members": real_time_data.get("metrics", {}).get(
+                    "active_members", 0
+                ),
+                "equipment_utilization": real_time_data.get("metrics", {}).get(
+                    "equipment_utilization", 0
+                ),
+                "current_occupancy": real_time_data.get("metrics", {}).get(
+                    "current_occupancy", 0
+                ),
+                "safety_incidents": real_time_data.get("metrics", {}).get(
+                    "safety_incidents", 0
+                ),
+            },
+            "engagement_summary": usage_data.get("member_engagement", {}),
+            "peak_usage_hours": usage_data.get("peak_hours", [])[:5],
+        }
+
+        return {"success": True, "data": overview}
+    except Exception as e:
+        logger.error(f"Analytics dashboard error: {e}")
+        return {
+            "success": False,
+            "error": "Database unavailable, using mock data",
+            "data": get_mock_analytics_overview(),
+        }
 
 
 @router.get("/overview")
@@ -34,19 +94,20 @@ async def get_analytics_overview(
         analytics_service = get_real_analytics_service(db)
 
         # Get real-time analytics (last 24 hours)
+        makerspace_id = getattr(makerspace, "id", makerspace)
         real_time_data = analytics_service.get_real_time_analytics(
-            makerspace.id, hours=24
+            makerspace_id, hours=24
         )
 
         # Get usage analytics (last 30 days)
-        usage_data = analytics_service.get_usage_analytics(makerspace.id, days=30)
+        usage_data = analytics_service.get_usage_analytics(makerspace_id, days=30)
 
         # Get revenue analytics (last 30 days)
-        revenue_data = analytics_service.get_revenue_analytics(makerspace.id, days=30)
+        revenue_data = analytics_service.get_revenue_analytics(makerspace_id, days=30)
 
         # Combine into overview format
         overview = {
-            "makerspace_id": makerspace.id,
+            "makerspace_id": makerspace_id,
             "generated_at": datetime.utcnow().isoformat(),
             "real_time_metrics": real_time_data.get("metrics", {}),
             "alerts": real_time_data.get("alerts", []),
@@ -82,7 +143,7 @@ async def get_analytics_overview(
         return {
             "success": False,
             "error": "Database unavailable, using mock data",
-            "data": mock_data.get_analytics_overview(),
+            "data": get_mock_analytics_overview(),
         }
 
 
@@ -98,7 +159,8 @@ async def get_usage_analytics(
     """Get detailed usage analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        usage_data = analytics_service.get_usage_analytics(makerspace.id, days=days)
+        makerspace_id = getattr(makerspace, "id", makerspace)
+        usage_data = analytics_service.get_usage_analytics(makerspace_id, days=days)
 
         return {
             "success": True,
@@ -112,7 +174,7 @@ async def get_usage_analytics(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_usage_stats(period),
+            "data": get_mock_usage_stats(period),
         }
 
 
@@ -127,7 +189,8 @@ async def get_revenue_analytics(
     """Get revenue and financial analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        revenue_data = analytics_service.get_revenue_analytics(makerspace.id, days=days)
+        makerspace_id = getattr(makerspace, "id", makerspace)
+        revenue_data = analytics_service.get_revenue_analytics(makerspace_id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": revenue_data}
 
@@ -136,7 +199,7 @@ async def get_revenue_analytics(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_revenue_breakdown(),
+            "data": get_mock_revenue_analytics(),
         }
 
 
@@ -151,8 +214,9 @@ async def get_equipment_analytics(
     """Get equipment utilization and maintenance analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
+        makerspace_id = getattr(makerspace, "id", makerspace)
         equipment_data = analytics_service.get_equipment_analytics(
-            makerspace.id, days=days
+            makerspace_id, days=days
         )
 
         return {"success": True, "days_analyzed": days, "data": equipment_data}
@@ -162,7 +226,7 @@ async def get_equipment_analytics(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_equipment_utilization(),
+            "data": get_mock_equipment_metrics(),
         }
 
 
@@ -177,7 +241,8 @@ async def get_member_analytics(
     """Get member engagement and skill analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        member_data = analytics_service.get_member_analytics(makerspace.id, days=days)
+        makerspace_id = getattr(makerspace, "id", makerspace)
+        member_data = analytics_service.get_member_analytics(makerspace_id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": member_data}
 
@@ -186,7 +251,7 @@ async def get_member_analytics(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_member_engagement(),
+            "data": {"error": "Member analytics unavailable"},
         }
 
 
@@ -201,7 +266,8 @@ async def get_safety_analytics(
     """Get safety and incident analytics"""
     try:
         analytics_service = get_real_analytics_service(db)
-        safety_data = analytics_service.get_safety_analytics(makerspace.id, days=days)
+        makerspace_id = getattr(makerspace, "id", makerspace)
+        safety_data = analytics_service.get_safety_analytics(makerspace_id, days=days)
 
         return {"success": True, "days_analyzed": days, "data": safety_data}
 
@@ -225,8 +291,9 @@ async def get_realtime_analytics(
     """Get real-time analytics data"""
     try:
         analytics_service = get_real_analytics_service(db)
+        makerspace_id = getattr(makerspace, "id", makerspace)
         realtime_data = analytics_service.get_real_time_analytics(
-            makerspace.id, hours=hours
+            makerspace_id, hours=hours
         )
 
         return {
@@ -240,7 +307,7 @@ async def get_realtime_analytics(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_realtime_data(),
+            "data": {"error": "Realtime analytics unavailable"},
         }
 
 
@@ -259,15 +326,16 @@ async def get_trend_analysis(
     """Get trend analysis for specific metrics"""
     try:
         analytics_service = get_real_analytics_service(db)
+        makerspace_id = getattr(makerspace, "id", makerspace)
 
         if metric == "revenue":
-            data = analytics_service.get_revenue_analytics(makerspace.id, days=days)
+            data = analytics_service.get_revenue_analytics(makerspace_id, days=days)
             trend_data = data.get("daily_trends", [])
         elif metric == "usage":
-            data = analytics_service.get_usage_analytics(makerspace.id, days=days)
+            data = analytics_service.get_usage_analytics(makerspace_id, days=days)
             trend_data = data.get("daily_trends", [])
         elif metric == "members":
-            data = analytics_service.get_member_analytics(makerspace.id, days=days)
+            data = analytics_service.get_member_analytics(makerspace_id, days=days)
             trend_data = data.get("daily_trends", [])
         else:
             raise HTTPException(status_code=400, detail="Invalid metric")
@@ -313,7 +381,7 @@ async def get_trend_analysis(
         return {
             "success": False,
             "error": str(e),
-            "data": mock_data.get_trend_data(metric, period),
+            "data": {"error": "Trend analytics unavailable"},
         }
 
 
@@ -322,7 +390,9 @@ async def export_analytics(
     format: str = Query("json", description="Export format: json, csv"),
     metrics: str = Query(
         "all",
-        description="Metrics to export: all, revenue, usage, equipment, members, safety",
+        description=(
+            "Metrics to export: all, revenue, usage, equipment, members, " "safety"
+        ),
     ),
     days: int = Query(30, ge=1, le=365, description="Days to export"),
     db: Session = Depends(get_db),
@@ -335,33 +405,34 @@ async def export_analytics(
         analytics_service = get_real_analytics_service(db)
         export_data = {}
 
+        makerspace_id = getattr(makerspace, "id", makerspace)
         if metrics == "all" or "revenue" in metrics:
             export_data["revenue"] = analytics_service.get_revenue_analytics(
-                makerspace.id, days=days
+                makerspace_id, days=days
             )
 
         if metrics == "all" or "usage" in metrics:
             export_data["usage"] = analytics_service.get_usage_analytics(
-                makerspace.id, days=days
+                makerspace_id, days=days
             )
 
         if metrics == "all" or "equipment" in metrics:
             export_data["equipment"] = analytics_service.get_equipment_analytics(
-                makerspace.id, days=days
+                makerspace_id, days=days
             )
 
         if metrics == "all" or "members" in metrics:
             export_data["members"] = analytics_service.get_member_analytics(
-                makerspace.id, days=days
+                makerspace_id, days=days
             )
 
         if metrics == "all" or "safety" in metrics:
             export_data["safety"] = analytics_service.get_safety_analytics(
-                makerspace.id, days=days
+                makerspace_id, days=days
             )
 
         export_data["metadata"] = {
-            "makerspace_id": makerspace.id,
+            "makerspace_id": makerspace_id,
             "export_date": datetime.utcnow().isoformat(),
             "days_analyzed": days,
             "format": format,

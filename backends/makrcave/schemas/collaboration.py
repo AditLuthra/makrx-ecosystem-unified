@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
 from typing import Optional, Dict, List, Any
 from datetime import datetime
 
@@ -20,8 +21,7 @@ class MessageResponse(MessageBase):
     user_id: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Cursor and editing schemas
@@ -66,8 +66,7 @@ class DocumentVersionResponse(BaseModel):
     comment: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Whiteboard schemas
@@ -85,8 +84,7 @@ class WhiteboardActionResponse(BaseModel):
     action_data: Dict[str, Any]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # User presence schemas
@@ -109,8 +107,7 @@ class UserPresenceResponse(BaseModel):
     cursor_position: Optional[Dict[str, Any]] = None
     last_seen: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Collaboration session schemas
@@ -132,8 +129,7 @@ class CollaborationSessionResponse(BaseModel):
     started_at: datetime
     ended_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Comment schemas
@@ -163,8 +159,7 @@ class ProjectCommentResponse(BaseModel):
     updated_at: datetime
     child_comments: List["ProjectCommentResponse"] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # File sharing schemas
@@ -204,8 +199,7 @@ class SharedFileResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Real-time editing schemas
@@ -228,8 +222,7 @@ class RealTimeEditResponse(BaseModel):
     edit_data: Optional[Dict[str, Any]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # WebSocket message schemas

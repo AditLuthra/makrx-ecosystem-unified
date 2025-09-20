@@ -65,7 +65,7 @@ To graduate an experiment, complete the [promotion checklist](experimental/PROMO
 
 ## Docker Build Contexts
 
-Each service builds its Docker image from its own folder. The files sent to `docker build` are limited by the `.dockerignore` in that directory, keeping bulky artifacts and secrets out of the build context. See the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline) for how these images are constructed in automation.
+Each service builds its Docker image from its own folder. The files sent to `docker build` are limited by the `.dockerignore` in that directory, keeping bulky artifacts and secrets out of the build context. See the repository overview at `../REPOSITORY_OVERVIEW.md` for CI/CD and build notes.
 
 ## Authentication Flows
 
@@ -86,15 +86,15 @@ Each service builds its Docker image from its own folder. The files sent to `doc
 
 ## Data Contracts (MVP)
 
-| Entity                   | Key Fields                                                                    | Reference                           |
-| ------------------------ | ----------------------------------------------------------------------------- | ----------------------------------- |
-| **UserProfile**          | `id`, `email`, `name`, `roles`, `makerspaces[]`                               | [API docs](docs/API.md)             |
-| **Makerspace**           | `id`, `name`, `description`, `location`, `member_count`                       | [API docs](docs/API.md#makerspaces) |
-| **InventoryItem**        | `id`, `name`, `category`, `quantity`, `location`, `status`                    | MakrCave API inventory              |
-| **FilamentRoll**         | `id`, `makerspace_id`, `material`, `color`, `current_weight_g`, `status`      | MakrCave filament tracking          |
-| **Quote**                | `quote_id`, `file_info`, `options[]`, `total_price`, `expires_at`             | Store API quotes                    |
-| **Job**                  | `job_id`, `external_order_id`, `status`, `requirements`, `provider_id`        | MakrCave jobs API                   |
-| **EquipmentReservation** | `id`, `equipment_id`, `user_id`, `requested_start`, `requested_end`, `status` | MakrCave reservations API           |
+| Entity                   | Key Fields                                                                    | Reference                  |
+| ------------------------ | ----------------------------------------------------------------------------- | -------------------------- |
+| **UserProfile**          | `id`, `email`, `name`, `roles`, `makerspaces[]`                               | see backend READMEs        |
+| **Makerspace**           | `id`, `name`, `description`, `location`, `member_count`                       | see backend READMEs        |
+| **InventoryItem**        | `id`, `name`, `category`, `quantity`, `location`, `status`                    | MakrCave API inventory     |
+| **FilamentRoll**         | `id`, `makerspace_id`, `material`, `color`, `current_weight_g`, `status`      | MakrCave filament tracking |
+| **Quote**                | `quote_id`, `file_info`, `options[]`, `total_price`, `expires_at`             | Store API quotes           |
+| **Job**                  | `job_id`, `external_order_id`, `status`, `requirements`, `provider_id`        | MakrCave jobs API          |
+| **EquipmentReservation** | `id`, `equipment_id`, `user_id`, `requested_start`, `requested_end`, `status` | MakrCave reservations API  |
 
 ## Cross‑Cutting Concerns
 

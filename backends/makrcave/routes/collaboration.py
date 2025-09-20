@@ -32,7 +32,7 @@ from ..schemas.collaboration import (
 from ..dependencies import get_current_user
 from ..security.input_validation import InputSanitizer
 
-router = APIRouter(prefix="/api/v1/collaboration", tags=["collaboration"])
+router = APIRouter(prefix="/collaboration", tags=["collaboration"])
 
 
 # WebSocket connection manager for real-time collaboration

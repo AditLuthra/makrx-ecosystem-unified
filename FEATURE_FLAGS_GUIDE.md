@@ -225,21 +225,21 @@ python scripts/manage_features.py reset
 
 ```bash
 # Check feature availability
-curl "http://localhost:8006/api/v1/feature-flags/check/SERVICE_CNC"
+curl "http://localhost:8006/api/feature-flags/check/SERVICE_CNC"
 
 # Get available features for user
-curl "http://localhost:8006/api/v1/feature-flags/available?user_id=123"
+curl "http://localhost:8006/api/feature-flags/available?user_id=123"
 
 # Admin endpoints (require auth token)
 curl -H "Authorization: Bearer $TOKEN" \
-     "http://localhost:8006/api/v1/feature-flags/admin/all"
+  "http://localhost:8006/api/feature-flags/admin/all"
 
 # Create runtime override
 curl -X POST \
      -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      -d '"enabled"' \
-     "http://localhost:8006/api/v1/feature-flags/admin/SERVICE_CNC/override"
+  "http://localhost:8006/api/feature-flags/admin/SERVICE_CNC/override"
 ```
 
 ## Configuration

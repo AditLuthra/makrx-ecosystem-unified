@@ -19,6 +19,7 @@ from .payment_service import PaymentService
 try:  # pragma: no cover - exercised indirectly
     from .report_generator import ReportGenerator  # type: ignore
 except Exception as _e:  # noqa: F841
+
     class ReportGenerator:  # type: ignore
         def __init__(self, *_, **__):  # pragma: no cover
             raise ImportError(
@@ -26,15 +27,18 @@ except Exception as _e:  # noqa: F841
                 "Install them or avoid using report generation in this environment."
             )
 
+
 try:  # pragma: no cover
     from .invoice_generator import InvoiceGenerator  # type: ignore
 except Exception as _e:  # noqa: F841
+
     class InvoiceGenerator:  # type: ignore
         def __init__(self, *_, **__):  # pragma: no cover
             raise ImportError(
                 "InvoiceGenerator requires optional dependencies (reportlab). "
                 "Install them or avoid using invoice generation in this environment."
             )
+
 
 __all__ = [
     "EmailService",

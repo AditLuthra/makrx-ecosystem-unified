@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -7,7 +8,7 @@ from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, get_current_admin_user
 
 # Use enhanced member model
 from ..models.enhanced_member import Member
@@ -19,7 +20,8 @@ from ..models.membership_plans import (
 )
 from ..security.events import SecurityEventType, log_security_event
 
-router = APIRouter(prefix="/api/v1/membership-plans", tags=["Membership Plans"])
+# Use a relative prefix; mount centrally under api_router
+router = APIRouter(prefix="/membership-plans", tags=["Membership Plans"])
 
 
 class MembershipPlanCreate(BaseModel):
@@ -154,15 +156,26 @@ async def get_membership_plans(
             detail="No makerspace associated with current user",
         )
 
-    query = db.query(MembershipPlan).filter(
-        MembershipPlan.makerspace_id == makerspace_id
-    )
+    # Ensure UUID type for DB filter (handles SQLite and Postgres)
+    try:
+        ms_id = (
+            uuid.UUID(makerspace_id)
+            if isinstance(makerspace_id, str)
+            else makerspace_id
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid makerspace ID",
+        )
+
+    query = db.query(MembershipPlan).filter(MembershipPlan.makerspace_id == ms_id)
 
     if not include_inactive:
-        query = query.filter(MembershipPlan.is_active == True)
+        query = query.filter(MembershipPlan.is_active.is_(True))
 
     if public_only:
-        query = query.filter(MembershipPlan.is_public == True)
+        query = query.filter(MembershipPlan.is_public.is_(True))
 
     plans = query.order_by(MembershipPlan.display_order, MembershipPlan.price).all()
 
@@ -544,7 +557,7 @@ async def get_plan_members(
     query = db.query(Member).filter(Member.membership_plan_id == plan_id)
 
     if active_only:
-        query = query.filter(Member.is_active == True)
+        query = query.filter(Member.is_active.is_(True))
 
     members = query.all()
 

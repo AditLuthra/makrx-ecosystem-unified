@@ -6,7 +6,12 @@ import uuid
 from datetime import datetime
 
 from ..database import get_db
-from ..dependencies import get_current_user, require_roles, check_permission, CurrentUser
+from ..dependencies import (
+    get_current_user,
+    require_roles,
+    check_permission,
+    CurrentUser,
+)
 from ..models.project import (
     Project,
     ProjectTask,
@@ -42,7 +47,7 @@ async def get_projects(
         # Filter by visibility - show public projects or user's own projects
         user_id = current_user.user_id
         query = query.filter(
-            (Project.is_public == True)
+            (Project.is_public.is_(True))
             | (Project.creator_id == user_id)
             | (Project.assigned_members.contains([user_id]))
         )

@@ -36,14 +36,21 @@ def get_member(db: Session, member_id: str, user_id: str = None) -> Optional[Mem
     """Get a member by ID"""
     query = db.query(Member).options(joinedload(Member.membership_plan))
 
+    # Ensure UUID type for primary key comparisons
+    try:
+        member_pk = uuid.UUID(member_id) if isinstance(member_id, str) else member_id
+    except Exception:
+        # If invalid UUID, no member can match
+        return None
+
     if user_id:
         # Check if user has access to this member
-        member = query.filter(Member.id == member_id).first()
+        member = query.filter(Member.id == member_pk).first()
         if member and not _has_member_access(db, member, user_id):
             return None
         return member
 
-    return query.filter(Member.id == member_id).first()
+    return query.filter(Member.id == member_pk).first()
 
 
 def get_member_by_email(
@@ -54,7 +61,11 @@ def get_member_by_email(
 
     if makerspace_id:
         try:
-            ms_id = uuid.UUID(makerspace_id) if isinstance(makerspace_id, str) else makerspace_id
+            ms_id = (
+                uuid.UUID(makerspace_id)
+                if isinstance(makerspace_id, str)
+                else makerspace_id
+            )
         except Exception:
             ms_id = makerspace_id
         query = query.filter(Member.makerspace_id == ms_id)
@@ -361,11 +372,7 @@ def get_membership_plan(db: Session, plan_id: str) -> Optional[MembershipPlan]:
         # Invalid UUID string
         return None
 
-    return (
-        db.query(MembershipPlan)
-        .filter(MembershipPlan.id == coerced_id)
-        .first()
-    )
+    return db.query(MembershipPlan).filter(MembershipPlan.id == coerced_id).first()
 
 
 def get_membership_plans(

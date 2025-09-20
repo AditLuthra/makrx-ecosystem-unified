@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
+from pydantic import ConfigDict
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime, date
 from enum import Enum
@@ -60,8 +61,7 @@ class UsageEventResponse(BaseModel):
     metadata: Optional[Dict[str, Any]]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AnalyticsOverviewResponse(BaseModel):
@@ -136,8 +136,9 @@ class ReportRequestCreate(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
 
-    @validator("report_type")
-    def validate_report_type(cls, v):
+    @field_validator("report_type")
+    @classmethod
+    def validate_report_type(cls, v: str) -> str:
         allowed_types = [
             "inventory",
             "usage",
@@ -147,7 +148,7 @@ class ReportRequestCreate(BaseModel):
             "members",
         ]
         if v not in allowed_types:
-            raise ValueError(f"Report type must be one of: {', '.join(allowed_types)}")
+            raise ValueError("Report type must be one of: " + ", ".join(allowed_types))
         return v
 
 
@@ -162,8 +163,7 @@ class ReportRequestResponse(BaseModel):
     completed_at: Optional[datetime]
     expires_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AnalyticsFilters(BaseModel):
@@ -255,8 +255,9 @@ class RevenueAnalyticsCreate(BaseModel):
     tax_amount: Optional[float] = Field(None, ge=0)
     net_amount: Optional[float] = Field(None, ge=0)
 
-    @validator("revenue_type")
-    def validate_revenue_type(cls, v):
+    @field_validator("revenue_type")
+    @classmethod
+    def validate_revenue_type(cls, v: str) -> str:
         allowed_types = [
             "membership",
             "credits",
@@ -266,7 +267,7 @@ class RevenueAnalyticsCreate(BaseModel):
             "training",
         ]
         if v not in allowed_types:
-            raise ValueError(f"Revenue type must be one of: {', '.join(allowed_types)}")
+            raise ValueError("Revenue type must be one of: " + ", ".join(allowed_types))
         return v
 
 
@@ -288,5 +289,4 @@ class AnalyticsSnapshotResponse(BaseModel):
     data: Dict[str, Any]
     generated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

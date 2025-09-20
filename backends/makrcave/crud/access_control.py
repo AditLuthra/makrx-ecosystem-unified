@@ -316,7 +316,7 @@ def get_user_sessions(
     if user_id:
         query = query.filter(UserSession.user_id == user_id)
     if active_only:
-        query = query.filter(UserSession.is_active == True)
+        query = query.filter(UserSession.is_active.is_(True))
 
     return query.order_by(desc(UserSession.created_at)).offset(skip).limit(limit).all()
 
@@ -384,7 +384,7 @@ def get_password_policies(
     db: Session, makerspace_id: Optional[str] = None
 ) -> List[PasswordPolicy]:
     """Get password policies"""
-    query = db.query(PasswordPolicy).filter(PasswordPolicy.is_active == True)
+    query = db.query(PasswordPolicy).filter(PasswordPolicy.is_active.is_(True))
 
     if makerspace_id:
         query = query.filter(
@@ -407,7 +407,7 @@ def get_effective_password_policy(
         .filter(
             and_(
                 PasswordPolicy.makerspace_id == makerspace_id,
-                PasswordPolicy.is_active == True,
+                PasswordPolicy.is_active.is_(True),
             )
         )
         .first()
@@ -420,7 +420,7 @@ def get_effective_password_policy(
             .filter(
                 and_(
                     PasswordPolicy.makerspace_id.is_(None),
-                    PasswordPolicy.is_active == True,
+                    PasswordPolicy.is_active.is_(True),
                 )
             )
             .first()
@@ -501,16 +501,16 @@ def get_enhanced_members(
             query = query.filter(Member.makerspace_id == filters.makerspace_id)
         if filters.is_active is not None:
             query = query.filter(Member.is_active == filters.is_active)
-        if filters.has_active_session is not None:
-            if filters.has_active_session:
-                query = query.join(UserSession).filter(UserSession.is_active == True)
-            else:
-                query = query.outerjoin(UserSession).filter(
-                    or_(
-                        UserSession.id.is_(None),
-                        UserSession.is_active == False,
+            if filters.has_active_session is not None:
+                if filters.has_active_session:
+                    query = query.join(UserSession).filter(UserSession.is_active.is_(True))
+                else:
+                    query = query.outerjoin(UserSession).filter(
+                        or_(
+                            UserSession.id.is_(None),
+                            UserSession.is_active.is_(False),
+                        )
                     )
-                )
 
     return query.order_by(desc(Member.created_at)).offset(skip).limit(limit).all()
 
@@ -537,12 +537,12 @@ def get_access_control_stats(db: Session, makerspace_id: Optional[str] = None) -
 
     # User statistics
     total_users = user_query.count()
-    active_users = user_query.filter(Member.is_active == True).count()
-    locked_users = user_query.filter(Member.account_locked == True).count()
+    active_users = user_query.filter(Member.is_active.is_(True)).count()
+    locked_users = user_query.filter(Member.account_locked.is_(True)).count()
     users_requiring_password_change = user_query.filter(
-        Member.requires_password_change == True
+        Member.requires_password_change.is_(True)
     ).count()
-    users_with_2fa = user_query.filter(Member.two_factor_enabled == True).count()
+    users_with_2fa = user_query.filter(Member.two_factor_enabled.is_(True)).count()
 
     # Role statistics
     total_roles = role_query.count()
@@ -550,12 +550,10 @@ def get_access_control_stats(db: Session, makerspace_id: Optional[str] = None) -
     custom_roles = total_roles - system_roles
 
     # Permission statistics
-    total_permissions = (
-        db.query(Permission).filter(Permission.is_active == True).count()
-    )
+    total_permissions = db.query(Permission).filter(Permission.is_active.is_(True)).count()
 
     # Session statistics
-    active_sessions = session_query.filter(UserSession.is_active == True).count()
+    active_sessions = session_query.filter(UserSession.is_active.is_(True)).count()
 
     # Recent activity
     yesterday = datetime.utcnow() - timedelta(days=1)
@@ -570,7 +568,7 @@ def get_access_control_stats(db: Session, makerspace_id: Optional[str] = None) -
         .filter(
             and_(
                 AccessLog.action == "login",
-                AccessLog.success == False,
+                AccessLog.success.is_(False),
                 AccessLog.created_at >= yesterday,
             )
         )

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, validator
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -325,7 +326,7 @@ class JobTemplateCreate(BaseModel):
     description: Optional[str] = None
     job_type: JobType
 
-    default_settings: Dict[str, Any] = Field(..., min_items=1)
+    default_settings: Dict[str, Any] = Field(..., min_length=1)
     pricing_template: Optional[Dict[str, Any]] = None
     estimated_time_template: Optional[Dict[str, Any]] = None
 
@@ -366,8 +367,7 @@ class ServiceJobResponse(BaseModel):
 
     completion_percentage: int = 0
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ServiceJobFileResponse(BaseModel):
@@ -395,8 +395,7 @@ class ServiceJobFileResponse(BaseModel):
     uploaded_at: datetime
     processing_status: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class JobStatusUpdateResponse(BaseModel):
@@ -413,8 +412,7 @@ class JobStatusUpdateResponse(BaseModel):
     is_customer_visible: bool
     customer_notified: bool
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class JobMaterialUsageResponse(BaseModel):
@@ -438,8 +436,7 @@ class JobMaterialUsageResponse(BaseModel):
     recorded_by: str
     recorded_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ServiceProviderResponse(BaseModel):
@@ -468,8 +465,7 @@ class ServiceProviderResponse(BaseModel):
     created_at: datetime
     last_active_at: Optional[datetime]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class JobDashboardStats(BaseModel):

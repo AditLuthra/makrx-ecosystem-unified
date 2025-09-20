@@ -1,58 +1,36 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuthHeaders, useKeycloak } from '@makrx/auth';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
+import {
+  AlertCircle,
+  Bell,
+  Check,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Edit,
+  FileText,
+  Mail,
+  Megaphone,
+  MessageSquare,
+  Package,
+  Plus,
+  RefreshCw,
+  Search,
+  Settings,
+  Smartphone,
+  TestTube,
+  Trash2,
+  Wrench,
+  XCircle,
+} from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Switch } from './ui/switch';
-import { Textarea } from './ui/textarea';
-import {
-  Bell,
-  BellOff,
-  Settings,
-  Filter,
-  Search,
-  MoreVertical,
-  Check,
-  X,
-  Mail,
-  MessageSquare,
-  Smartphone,
-  Globe,
-  Zap,
-  AlertTriangle,
-  Clock,
-  User,
-  Users,
-  Wrench,
-  Package,
-  CreditCard,
-  FileText,
-  Eye,
-  EyeOff,
-  Trash2,
-  RefreshCw,
-  Send,
-  TestTube,
-  Download,
-  Volume2,
-  VolumeX,
-  Moon,
-  Sun,
-  Calendar,
-  Star,
-  Archive,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Info,
-  Megaphone,
-  Plus,
-  Edit,
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface Notification {
   id: string;
@@ -198,7 +176,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const loadPreferences = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/preferences/', {
+      const response = await fetch('/api/v1/notifications/preferences/', {
         headers: await getHeaders(),
       });
 
@@ -213,7 +191,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const loadStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/stats', { headers: await getHeaders() });
+      const response = await fetch('/api/v1/notifications/stats', { headers: await getHeaders() });
 
       if (response.ok) {
         const data = await response.json();
@@ -226,7 +204,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const loadTemplates = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/templates/', {
+      const response = await fetch('/api/v1/notifications/templates/', {
         headers: await getHeaders(),
       });
 
@@ -241,7 +219,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
 
   const loadRules = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications/rules/', { headers: await getHeaders() });
+      const response = await fetch('/api/v1/notifications/rules/', { headers: await getHeaders() });
 
       if (response.ok) {
         const data = await response.json();
@@ -360,7 +338,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const handleMarkAllAsRead = async () => {
     try {
       const headers = await getHeaders();
-      const response = await fetch('/api/notifications/mark-all-read', {
+      const response = await fetch('/api/v1/notifications/mark-all-read', {
         method: 'POST',
         headers,
       });
@@ -395,7 +373,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const handleUpdatePreferences = async (updates: Partial<NotificationPreferences>) => {
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch('/api/notifications/preferences/', {
+      const response = await fetch('/api/v1/notifications/preferences/', {
         method: 'PUT',
         headers,
         body: JSON.stringify(updates),

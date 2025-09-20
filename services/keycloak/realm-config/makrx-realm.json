@@ -39,6 +39,20 @@
         "containerId": "makrx"
       },
       {
+        "name": "makerspace_admin",
+        "description": "Makerspace administrator role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "super_admin",
+        "description": "Super administrator role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
         "name": "makerspace_owner",
         "description": "Makerspace owner role",
         "composite": false,
@@ -203,7 +217,7 @@
       "serviceAccountsEnabled": true
     }
   ],
-  
+
   "smtpServer": {},
   "loginTheme": "keycloak",
   "accountTheme": "keycloak.v2",

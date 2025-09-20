@@ -51,7 +51,7 @@ from ..schemas.machine_access import (
     CertificationRenewalAlert,
 )
 
-router = APIRouter(prefix="/api/v1/machine-access", tags=["machine-access"])
+router = APIRouter(prefix="/machine-access", tags=["machine-access"])
 
 
 # Machine Access Rules
@@ -267,7 +267,7 @@ async def request_machine_access(
         .filter(
             and_(
                 MachineAccessRule.equipment_id == access_request.equipment_id,
-                MachineAccessRule.is_active == True,
+                MachineAccessRule.is_active.is_(True),
             )
         )
         .order_by(asc(MachineAccessRule.priority))
@@ -558,10 +558,10 @@ async def list_badges(
     db: Session = Depends(get_db),
 ):
     """List available badges"""
-    query = db.query(Badge).filter(Badge.is_active == True)
+    query = db.query(Badge).filter(Badge.is_active.is_(True))
 
     if is_public:
-        query = query.filter(Badge.is_public == True)
+        query = query.filter(Badge.is_public.is_(True))
 
     if badge_type:
         query = query.filter(Badge.badge_type == badge_type)
@@ -673,7 +673,7 @@ async def get_user_badges(
     user_badges = (
         db.query(UserBadge)
         .options(selectinload(UserBadge.badge))
-        .filter(and_(UserBadge.user_id == user_id, UserBadge.is_public == True))
+        .filter(and_(UserBadge.user_id == user_id, UserBadge.is_public.is_(True)))
         .order_by(desc(UserBadge.awarded_at))
         .all()
     )
@@ -928,7 +928,7 @@ async def get_makerspace_access_dashboard(
     # Certification success rate (simplified)
     total_assessments = db.query(SkillAssessment).count()
     passed_assessments = (
-        db.query(SkillAssessment).filter(SkillAssessment.passed == True).count()
+        db.query(SkillAssessment).filter(SkillAssessment.passed.is_(True)).count()
     )
 
     success_rate = (

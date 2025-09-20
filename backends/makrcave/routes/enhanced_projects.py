@@ -51,7 +51,7 @@ async def get_public_projects(
     """Get public projects with enhanced filtering for discovery"""
     query = db.query(models.Project).filter(
         models.Project.visibility == models.ProjectVisibility.PUBLIC,
-        models.Project.is_approved == True,
+        models.Project.is_approved.is_(True),
     )
 
     # Apply filters
@@ -75,7 +75,7 @@ async def get_public_projects(
         query = query.filter(models.Project.like_count >= min_likes)
 
     if featured_only:
-        query = query.filter(models.Project.is_featured == True)
+        query = query.filter(models.Project.is_featured.is_(True))
 
     if has_bom is not None:
         if has_bom:
@@ -108,7 +108,9 @@ async def get_public_projects(
     # Convert to enhanced response format
     enhanced_projects = []
     for project in projects:
-        enhanced_project = EnhancedProjectSummaryResponse.from_orm(project)
+        enhanced_project = EnhancedProjectSummaryResponse.model_validate(
+            project, from_attributes=True
+        )
         enhanced_project.collaborator_count = len(project.collaborators)
         enhanced_project.bom_items_count = len(project.bom_items)
         enhanced_project.files_count = len(project.files)
@@ -414,7 +416,7 @@ async def get_comments(
         db.query(models.ProjectComment)
         .filter(
             models.ProjectComment.project_id == project_id,
-            models.ProjectComment.is_approved == True,
+            models.ProjectComment.is_approved.is_(True),
             models.ProjectComment.parent_comment_id.is_(
                 None
             ),  # Top-level comments only

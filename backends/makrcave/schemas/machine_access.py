@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, validator
+from pydantic import ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -148,8 +149,7 @@ class MachineAccessRuleResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # User Certification Schemas
@@ -214,8 +214,7 @@ class UserCertificationResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Badge Schemas
@@ -230,7 +229,7 @@ class BadgeCreate(BaseModel):
     icon_url: Optional[str] = Field(None, max_length=500)
     color_hex: str = Field(default="#4F46E5", pattern=r"^#[0-9A-Fa-f]{6}$")
 
-    criteria: Dict[str, Any] = Field(..., min_items=1)
+    criteria: Dict[str, Any] = Field(..., min_length=1)
     points_value: int = Field(default=10, ge=1, le=1000)
 
     skill_requirements: Optional[List[str]] = None
@@ -297,8 +296,7 @@ class BadgeResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # User Badge Schemas
@@ -342,8 +340,7 @@ class UserBadgeResponse(BaseModel):
     # Badge details (from relationship)
     badge: Optional[BadgeResponse] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Machine Access Schemas
@@ -389,8 +386,7 @@ class MachineAccessAttemptResponse(BaseModel):
     session_end: Optional[datetime]
     session_duration_minutes: Optional[int]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Safety Incident Schemas
@@ -467,8 +463,7 @@ class SafetyIncidentResponse(BaseModel):
     affects_certification: bool
     certification_action: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Skill Assessment Schemas
@@ -532,8 +527,7 @@ class SkillAssessmentResponse(BaseModel):
     recommendations: Optional[str]
     next_assessment_date: Optional[datetime]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Dashboard and Analytics Schemas

@@ -482,6 +482,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
             "/auth/",
             "/webhooks/",
             "/health",
+            "/quick-reorder/",
             "/metrics",
             "/docs",
             "/openapi.json",
@@ -612,8 +613,9 @@ def setup_api_security(app: FastAPI):
         "makrx.store",
         "3d.makrx.store",
     ]
-    if settings.ENVIRONMENT == "development":
-        trusted_hosts.extend(["localhost", "127.0.0.1"])
+    # Allow local development and test client hosts when not in production
+    if settings.ENVIRONMENT != "production":
+        trusted_hosts.extend(["localhost", "127.0.0.1", "testserver"])
 
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=trusted_hosts)
 

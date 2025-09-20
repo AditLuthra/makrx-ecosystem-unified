@@ -3,8 +3,8 @@ Pydantic schemas for admin and common entities
 Request/response models for coupons, audit logs, system config
 """
 
-from pydantic import BaseModel, Field, validator, ConfigDict
-from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field, ConfigDict, model_validator
+from typing import List, Optional, Dict, Any
 from decimal import Decimal
 from datetime import datetime
 from enum import Enum
@@ -63,19 +63,21 @@ class CouponBase(BaseModel):
     expires_at: Optional[datetime] = None
     is_active: bool = True
 
-    @validator("value")
-    def validate_value(cls, v, values):
-        coupon_type = values.get("type")
-        if coupon_type == CouponType.PERCENTAGE and v > 100:
+    @model_validator(mode="after")
+    def validate_coupon(self):
+        # Validate value based on coupon type
+        if self.type == CouponType.PERCENTAGE and self.value > 100:
             raise ValueError("Percentage discount cannot exceed 100%")
-        return v
 
-    @validator("expires_at")
-    def validate_dates(cls, v, values):
-        starts_at = values.get("starts_at")
-        if v and starts_at and v <= starts_at:
+        # Validate date ordering
+        if (
+            self.expires_at is not None
+            and self.starts_at is not None
+            and self.expires_at <= self.starts_at
+        ):
             raise ValueError("Expiry date must be after start date")
-        return v
+
+        return self
 
 
 class CouponCreate(CouponBase):

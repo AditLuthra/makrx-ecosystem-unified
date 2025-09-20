@@ -266,7 +266,9 @@ async def list_reservations(
         )
 
     if not include_recurring:
-        query = query.filter(models.EnhancedEquipmentReservation.is_recurring == False)
+        query = query.filter(
+            models.EnhancedEquipmentReservation.is_recurring.is_(False)
+        )
 
     # Order by creation date (newest first)
     query = query.order_by(models.EnhancedEquipmentReservation.created_at.desc())
@@ -498,7 +500,7 @@ async def list_cost_rules(
         query = query.filter(models.EquipmentCostRule.equipment_id == equipment_id)
 
     if active_only:
-        query = query.filter(models.EquipmentCostRule.is_active == True)
+        query = query.filter(models.EquipmentCostRule.is_active.is_(True))
 
     query = query.order_by(models.EquipmentCostRule.priority.desc())
 
@@ -586,7 +588,7 @@ async def list_skill_gates(
         query = query.filter(models.EquipmentSkillGate.equipment_id == equipment_id)
 
     if active_only:
-        query = query.filter(models.EquipmentSkillGate.is_active == True)
+        query = query.filter(models.EquipmentSkillGate.is_active.is_(True))
 
     return query.all()
 
@@ -708,7 +710,10 @@ async def check_availability(
     current_time = availability_request.start_date
 
     while current_time < availability_request.end_date:
-        slot_end = min(current_time + timedelta(hours=1), availability_request.end_date)
+        slot_end = min(
+            current_time + timedelta(hours=1),
+            availability_request.end_date,
+        )
 
         # Check for conflicts
         has_conflict = any(
@@ -721,9 +726,11 @@ async def check_availability(
                 {
                     "start_time": current_time,
                     "end_time": slot_end,
-                    "duration_hours": (slot_end - current_time).total_seconds() / 3600,
+                    "duration_hours": (
+                        (slot_end - current_time).total_seconds() / 3600
+                    ),
                     "is_available": True,
-                    "requires_skill_verification": len(skill_gate_blocking) > 0,
+                    "requires_skill_verification": (len(skill_gate_blocking) > 0),
                     "skill_gates_blocking": skill_gate_blocking,
                 }
             )
@@ -764,7 +771,10 @@ async def check_equipment_availability(
     )
 
     if conflicts:
-        return f"Conflicting reservation from {conflicts.requested_start} to {conflicts.requested_end}"
+        return (
+            f"Conflicting reservation from {conflicts.requested_start} "
+            f"to {conflicts.requested_end}"
+        )
 
     return None
 
@@ -777,14 +787,15 @@ async def verify_skill_gates(
         db.query(models.EquipmentSkillGate)
         .filter(
             models.EquipmentSkillGate.equipment_id == equipment_id,
-            models.EquipmentSkillGate.is_active == True,
+            models.EquipmentSkillGate.is_active.is_(True),
         )
         .all()
     )
 
     results = []
     for gate in skill_gates:
-        # Simplified skill verification - in production this would check against actual skill system
+        # Simplified skill verification - in production this would check
+        # against actual skill system
         passed = True  # Default to pass for mock
         notes = "Auto-verified"
 
@@ -826,7 +837,7 @@ async def calculate_reservation_cost(
         db.query(models.EquipmentCostRule)
         .filter(
             models.EquipmentCostRule.equipment_id == equipment.id,
-            models.EquipmentCostRule.is_active == True,
+            models.EquipmentCostRule.is_active.is_(True),
         )
         .order_by(models.EquipmentCostRule.priority.desc())
         .all()
@@ -861,7 +872,7 @@ async def calculate_reservation_cost(
                 discounts.append(
                     {
                         "cost_type": "discount",
-                        "description": f"Membership discount ({discount_percent}%)",
+                        "description": (f"Membership discount ({discount_percent}%)"),
                         "calculated_amount": -discount_amount,
                         "rule_applied": rule.rule_name,
                     }
@@ -889,7 +900,9 @@ async def calculate_reservation_cost(
         "items": [
             {
                 "cost_type": "base_rate",
-                "description": f"Equipment usage ({reservation.duration_hours:.1f} hours)",
+                "description": (
+                    f"Equipment usage ({reservation.duration_hours:.1f} hours)"
+                ),
                 "base_amount": base_cost,
                 "quantity": 1,
                 "calculated_amount": base_cost,

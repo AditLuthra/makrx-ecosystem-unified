@@ -1,6 +1,6 @@
 # MakrX Ecosystem Quick Start
 
-## 🚀 Fast Setup (Recommended)
+## 🚀 Fast setup (recommended)
 
 ```bash
 # 1. Check system status
@@ -16,16 +16,16 @@ npm run dev
 npm run stop
 ```
 
-## 📋 System Requirements
+## 📋 System requirements
 
-- **Node.js** 18+
-- **Python 3.8+** (for backend services)
-- **Docker** (for infrastructure)
-- **npm** 8+ (with workspace support)
+- Node.js 20+
+- Python 3.12 (for backend services)
+- Docker (for infrastructure)
+- npm 8+
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture overview
 
-### Frontend Applications (Ports 3000-3004)
+### Frontend applications (ports 3000-3004)
 
 - `gateway-frontend` (3000) - Main landing page
 - `gateway-frontend-hacker` (3001) - Alternative landing page
@@ -33,57 +33,57 @@ npm run stop
 - `makrx-store` (3003) - E-commerce platform
 - `makrx-events` (3004) - Event management
 
-### Backend Services (Ports 8001-8003)
+### Backend services (ports 8001-8003)
 
 - `makrcave-api` (8001) - FastAPI service
 - `makrx-events-api` (8002) - FastAPI service
 - `makrx-store-api` (8003) - FastAPI service
 
-### Infrastructure Services
+### Infrastructure services
 
-- PostgreSQL (5433)
+- PostgreSQL (5432)
 - Redis (6380)
 - Keycloak (8081)
-- MinIO (9002-9003)
+- MinIO (9000 API, 9001 Console)
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **"python not found"**
+1. "python not found"
 
    ```bash
-   # Already fixed in package.json to use python3
+   # Verify python3 is available
    which python3  # Should show path
    ```
 
-2. **Missing dependencies**
+2. Missing dependencies
 
    ```bash
    npm run fix-deps  # Installs all missing deps
    ```
 
-3. **Port conflicts**
+3. Port conflicts
 
    ```bash
    npm run diagnose  # Shows port usage
    # Kill conflicting processes if needed
    ```
 
-4. **Docker issues**
+4. Docker issues
    ```bash
    docker-compose down  # Stop all containers
    docker-compose up -d postgres redis keycloak minio  # Restart infrastructure
    ```
 
-## 🔧 Development Workflow
+## 🔧 Development workflow
 
 1. **Daily startup**: `npm run dev:simple`
 2. **Check status**: `npm run diagnose`
 3. **Stop services**: `npm run stop`
 4. **Full startup with auth**: `npm run dev`
 
-## 📁 Important Files
+## 📁 Important files
 
 - `package.json` - Root workspace configuration
 - `docker-compose.yml` - Infrastructure services
@@ -106,5 +106,5 @@ If you encounter issues:
 
 1. Run `npm run diagnose` for system status
 2. Check the logs in your terminal
-3. Try the individual test script: `npm run test-single`
+3. Try the individual test script: `npm run test-single` (see `_waste_archive/` helpers if needed)
 4. Restart infrastructure: `docker-compose restart`

@@ -64,25 +64,27 @@ async def create_member(
             db, member.email, member.makerspace_id
         )
         if existing_member:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Member with this email already exists",
-            )
+            # Treat as idempotent create: return existing member instead of 409
+            resp = MemberResponse.model_validate(existing_member)
+            if existing_member.membership_plan:
+                resp.membership_plan_name = existing_member.membership_plan.name
+            return resp
         # Also check by keycloak_user_id to avoid unique constraint violations
         existing_by_kc = crud_member.get_member_by_keycloak_id(
             db, member.keycloak_user_id
         )
         if existing_by_kc:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Member with this keycloak_user_id already exists",
-            )
+            # Treat as idempotent create: return existing member instead of 409
+            resp = MemberResponse.model_validate(existing_by_kc)
+            if existing_by_kc.membership_plan:
+                resp.membership_plan_name = existing_by_kc.membership_plan.name
+            return resp
 
         # Create member
         db_member = crud_member.create_member(db, member, current_user.user_id)
 
         # Prepare response using schema to ensure serialization correctness
-        response = MemberResponse.from_orm(db_member)
+        response = MemberResponse.model_validate(db_member)
         if db_member.membership_plan:
             response.membership_plan_name = db_member.membership_plan.name
 
@@ -101,11 +103,13 @@ async def create_member(
 
         return response
 
+    except (
+        HTTPException
+    ) as e:  # Let expected HTTP errors propagate (e.g., 409 conflict)
+        raise e
     except Exception as e:
         # Log underlying exception for diagnostics in test runs
-        logger.exception("create_member_failed", extra={
-            "error": str(e)
-        })
+        logger.exception("create_member_failed", extra={"error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create member: {str(e)}",
@@ -198,7 +202,7 @@ async def get_member(
         )
 
     # Add membership plan name
-    response = MemberResponse.from_orm(member)
+    response = MemberResponse.model_validate(member)
     if member.membership_plan:
         response.membership_plan_name = member.membership_plan.name
 
@@ -229,7 +233,7 @@ async def update_member(
         )
 
     # Add membership plan name
-    response = MemberResponse.from_orm(member)
+    response = MemberResponse.model_validate(member)
     if member.membership_plan:
         response.membership_plan_name = member.membership_plan.name
 
@@ -348,7 +352,7 @@ async def create_membership_plan(
     db_plan = crud_member.create_membership_plan(db, plan)
 
     # Add member count
-    response = MembershipPlanResponse.from_orm(db_plan)
+    response = MembershipPlanResponse.model_validate(db_plan)
     response.member_count = 0
 
     return response
@@ -367,7 +371,7 @@ async def get_membership_plans(
     # Add member counts
     response_plans = []
     for plan in plans:
-        response = MembershipPlanResponse.from_orm(plan)
+        response = MembershipPlanResponse.model_validate(plan)
         response.member_count = len(plan.members) if plan.members else 0
         response_plans.append(response)
 
@@ -397,7 +401,7 @@ async def update_membership_plan(
         )
 
     # Add member count
-    response = MembershipPlanResponse.from_orm(plan)
+    response = MembershipPlanResponse.model_validate(plan)
     response.member_count = len(plan.members) if plan.members else 0
 
     return response
@@ -471,7 +475,7 @@ async def create_member_invite(
         )
 
     # Add membership plan name
-    response = MemberInviteResponse.from_orm(db_invite)
+    response = MemberInviteResponse.model_validate(db_invite)
     if db_invite.membership_plan:
         response.membership_plan_name = db_invite.membership_plan.name
 
@@ -498,7 +502,7 @@ async def get_member_invites(
     # Add membership plan names
     response_invites = []
     for invite in invites:
-        response = MemberInviteResponse.from_orm(invite)
+        response = MemberInviteResponse.model_validate(invite)
         if invite.membership_plan:
             response.membership_plan_name = invite.membership_plan.name
         response_invites.append(response)
@@ -644,7 +648,9 @@ async def bulk_member_operations(
 # Helper functions
 def _can_view_members(user: CurrentUser) -> bool:
     """Check if user can view members"""
-    return any(role in user.roles for role in ["super_admin", "makerspace_admin", "admin"])
+    return any(
+        role in user.roles for role in ["super_admin", "makerspace_admin", "admin"]
+    )
 
 
 def _can_manage_members(user: CurrentUser) -> bool:

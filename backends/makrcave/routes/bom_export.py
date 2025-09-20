@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Configuration
 STORE_API_URL = os.getenv("STORE_API_URL", "http://makrx-store-backend:8000")
 
-router = APIRouter(prefix="/api/v1/projects", tags=["BOM Export"])
+router = APIRouter(prefix="/projects", tags=["BOM Export"])
 
 
 # Pydantic Models

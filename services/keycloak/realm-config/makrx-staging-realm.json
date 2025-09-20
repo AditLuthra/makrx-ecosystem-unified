@@ -39,6 +39,20 @@
         "containerId": "makrx"
       },
       {
+        "name": "makerspace_admin",
+        "description": "Makerspace administrator role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
+        "name": "super_admin",
+        "description": "Super administrator role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "makrx"
+      },
+      {
         "name": "makerspace_owner",
         "description": "Makerspace owner role",
         "composite": false,
@@ -154,7 +168,10 @@
       "clientId": "makrx-events",
       "name": "MakrX Events",
       "enabled": true,
-      "redirectUris": ["http://localhost:3004/*", "https://staging.makrx.events/*"],
+      "redirectUris": [
+        "http://localhost:3004/*",
+        "https://staging.makrx.events/*"
+      ],
       "webOrigins": ["http://localhost:3004", "https://staging.makrx.events"],
       "protocol": "openid-connect",
       "publicClient": true,
@@ -203,7 +220,7 @@
       "serviceAccountsEnabled": true
     }
   ],
-  
+
   "smtpServer": {},
   "loginTheme": "keycloak",
   "accountTheme": "keycloak.v2",

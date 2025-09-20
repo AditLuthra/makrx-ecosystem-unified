@@ -1,6 +1,6 @@
 # TypeScript Error Report and Guidance
 
-This document lists all current TypeScript errors in the repository, grouped by file, with basic guidance for fixing each issue. Last updated: September 13, 2025.
+This document lists current TypeScript errors in the repository, grouped by file, with guidance for fixing each issue. Last updated: September 13, 2025.
 
 ---
 
@@ -13,6 +13,7 @@ This document lists all current TypeScript errors in the repository, grouped by 
     - For incorrect arguments: Match function signatures as defined in the type declarations.
     - For use of unknown/any: Use type guards or assertions.
     - For property type mismatches: Align types between models and usage.
+    - Ensure local services are running (see `npm run dev` and docs/README) and ports align with compose (8001–8006, 3000–3005).
 
 ---
 
@@ -87,7 +88,7 @@ This document lists all current TypeScript errors in the repository, grouped by 
 
 ---
 
-This document should be updated as errors are fixed or new ones are found. Address the most critical errors (those that block builds or break core features) first.
+This document should be updated as errors are fixed or new ones are found. Address the most critical errors (those that block builds or break core features) first. For environment setup and service ports, see `docs/README.md` and `docs/REPOSITORY_OVERVIEW.md`.
 
 ---
 

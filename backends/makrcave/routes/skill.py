@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
 
 from ..database import get_db
-from ..dependencies import get_current_user, require_role
+from ..dependencies import get_current_user, require_roles
 from ..models.skill import SkillStatus, RequestStatus
 from ..schemas.skill import (
     Skill,
@@ -27,7 +27,7 @@ from ..schemas.skill import (
 )
 from ..crud import skill as skill_crud
 
-router = APIRouter(prefix="/api/v1/skills", tags=["skills"])
+router = APIRouter(prefix="/skills", tags=["skills"])
 
 # Skill Management Routes
 
@@ -36,7 +36,7 @@ router = APIRouter(prefix="/api/v1/skills", tags=["skills"])
 async def create_skill(
     skill: SkillCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Create a new skill (Admin only)"""
     return skill_crud.create_skill(db=db, skill=skill)
@@ -108,7 +108,7 @@ async def update_skill(
     skill_id: str,
     skill_update: SkillUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Update a skill (Admin only)"""
     skill = skill_crud.update_skill(db=db, skill_id=skill_id, skill_update=skill_update)
@@ -121,7 +121,7 @@ async def update_skill(
 async def delete_skill(
     skill_id: str,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Delete or disable a skill (Admin only)"""
     success = skill_crud.delete_skill(db=db, skill_id=skill_id)
@@ -137,7 +137,7 @@ async def delete_skill(
 async def grant_user_skill(
     user_skill: UserSkillCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Grant a skill to a user (Admin only)"""
     return skill_crud.create_user_skill(
@@ -196,7 +196,7 @@ async def update_user_skill(
     user_skill_id: str,
     user_skill_update: UserSkillUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Update a user's skill status (Admin only)"""
     user_skill = skill_crud.update_user_skill(
@@ -215,7 +215,7 @@ async def revoke_user_skill(
     user_skill_id: str,
     reason: Optional[str] = Query(None),
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Revoke a user's skill (Admin only)"""
     user_skill = skill_crud.revoke_user_skill(
@@ -291,7 +291,7 @@ async def update_skill_request(
     request_id: str,
     request_update: SkillRequestUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Approve or reject a skill request (Admin only)"""
     request = skill_crud.update_skill_request(
@@ -475,7 +475,7 @@ async def get_user_skill_summary(
 async def get_makerspace_skill_analytics(
     makerspace_id: str,
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Get skill analytics for a makerspace (Admin only)"""
     analytics = skill_crud.get_skill_analytics(db=db, makerspace_id=makerspace_id)
@@ -554,7 +554,7 @@ async def get_skill_audit_logs(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
     db: Session = Depends(get_db),
-    current_user=Depends(require_role(["super_admin", "makerspace_admin"])),
+    current_user=Depends(require_roles(["super_admin", "makerspace_admin"])),
 ):
     """Get skill audit logs (Admin only)"""
     return skill_crud.get_skill_audit_logs(

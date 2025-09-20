@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, validator, EmailStr
-from typing import Optional, List, Dict, Any, Set
+from pydantic import BaseModel, Field, EmailStr, field_validator
+from pydantic import ConfigDict
+from pydantic import ValidationInfo
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
@@ -90,8 +92,7 @@ class PermissionResponse(PermissionBase):
     updated_at: Optional[datetime] = None
     created_by: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Role schemas
@@ -155,8 +156,7 @@ class RoleResponse(RoleBase):
     user_count: int = 0
     effective_permissions: Optional[List[str]] = None  # Including inherited
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # User session schemas
@@ -189,8 +189,7 @@ class UserSessionResponse(BaseModel):
     ended_at: Optional[datetime] = None
     end_reason: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Access log schemas
@@ -233,8 +232,7 @@ class AccessLogResponse(BaseModel):
     security_flags: Optional[Dict[str, Any]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Role assignment schemas
@@ -265,8 +263,7 @@ class RoleAssignmentResponse(BaseModel):
     effective_date: Optional[datetime] = None
     expiry_date: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Password policy schemas
@@ -292,9 +289,12 @@ class PasswordPolicyBase(BaseModel):
     max_concurrent_sessions: int = Field(3, ge=1, le=20)
     force_logout_on_password_change: bool = True
 
-    @validator("max_length")
-    def max_length_must_be_greater_than_min(cls, v, values):
-        if "min_length" in values and v < values["min_length"]:
+    @field_validator("max_length")
+    @classmethod
+    def max_length_must_be_greater_than_min(cls, v: int, info: ValidationInfo) -> int:
+        # Access other field values via info.data in Pydantic v2
+        min_len = info.data.get("min_length") if info and info.data else None
+        if min_len is not None and v < min_len:
             raise ValueError("max_length must be greater than min_length")
         return v
 
@@ -334,8 +334,7 @@ class PasswordPolicyResponse(PasswordPolicyBase):
     updated_at: Optional[datetime] = None
     created_by: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Validation schemas
@@ -445,8 +444,7 @@ class EnhancedMemberResponse(BaseModel):
     failed_login_attempts: int = 0
     last_failed_login: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Import/Export schemas
@@ -494,5 +492,4 @@ class SecurityAlert(BaseModel):
     resolved_at: Optional[datetime] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

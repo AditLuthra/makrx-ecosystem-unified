@@ -1,61 +1,46 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useAuthHeaders } from '@makrx/auth';
 import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import {
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Users,
-  DollarSign,
-  Settings,
-  Zap,
   AlertTriangle,
-  CheckCircle,
+  BarChart3,
+  Bell,
   Clock,
+  Database,
   Download,
+  FileText,
+  Filter,
+  Gauge,
+  LineChart as LineChartIcon,
+  PieChart as PieChartIcon,
   RefreshCw,
   Target,
-  Award,
-  Calendar,
-  Filter,
-  Eye,
-  BarChart3,
-  PieChart as PieChartIcon,
-  LineChart as LineChartIcon,
-  Calendar as CalendarIcon,
-  Gauge,
-  Brain,
-  Lightbulb,
-  Shield,
-  Bell,
-  FileText,
-  Database,
-  Cpu,
-  Heart,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
 } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface KPIMetric {
   name: string;
@@ -189,7 +174,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const loadRealtimeMetrics = useCallback(async () => {
     try {
       const headers = await getHeaders();
-      const response = await fetch('/api/enhanced-analytics/realtime/metrics', { headers });
+      const response = await fetch('/api/v1/enhanced-analytics/realtime/metrics', { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -203,7 +188,7 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const loadBenchmarks = useCallback(async () => {
     try {
       const headers = await getHeaders();
-      const response = await fetch('/api/enhanced-analytics/benchmarks/', { headers });
+      const response = await fetch('/api/v1/enhanced-analytics/benchmarks/', { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -217,7 +202,9 @@ const ComprehensiveAnalyticsDashboard: React.FC = () => {
   const loadAlerts = useCallback(async () => {
     try {
       const headers = await getHeaders();
-      const response = await fetch('/api/enhanced-analytics/alerts/?is_active=true', { headers });
+      const response = await fetch('/api/v1/enhanced-analytics/alerts/?is_active=true', {
+        headers,
+      });
 
       if (response.ok) {
         const data = await response.json();

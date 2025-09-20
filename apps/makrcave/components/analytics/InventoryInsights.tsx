@@ -1,35 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Alert, AlertDescription } from '../ui/alert';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-} from 'recharts';
-import {
-  Package,
-  TrendingDown,
   AlertTriangle,
-  Zap,
   DollarSign,
+  Package,
   RefreshCw,
   ShoppingCart,
-  Warehouse,
   Target,
+  TrendingDown,
+  Warehouse,
+  Zap,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { useToast } from '../../hooks/use-toast';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface InventoryInsights {
   top_consumed_items: Array<{
@@ -69,7 +67,7 @@ const InventoryInsights: React.FC = () => {
   const fetchInventoryInsights = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/analytics/inventory', {
+      const response = await fetch('/api/v1/analytics/inventory', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',

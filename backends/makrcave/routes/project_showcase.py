@@ -26,7 +26,7 @@ from ..crud.project_social_async import (
     get_project_follow,
 )
 
-router = APIRouter(prefix="/api/v1/projects", tags=["project-showcase"])
+router = APIRouter(prefix="/projects", tags=["project-showcase"])
 
 
 @router.get("/showcase", response_model=List[ShowcaseProjectResponse])

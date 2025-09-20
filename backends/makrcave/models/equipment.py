@@ -121,7 +121,9 @@ class Equipment(Base):
     # Relationships
     reservations = relationship("EquipmentReservation", back_populates="equipment")
     maintenance_logs = relationship(
-        "EquipmentMaintenanceLog", back_populates="equipment", cascade="all, delete-orphan"
+        "EquipmentMaintenanceLog",
+        back_populates="equipment",
+        cascade="all, delete-orphan",
     )
     enhanced_reservations = relationship(
         "EnhancedEquipmentReservation",
@@ -209,7 +211,9 @@ class EquipmentMaintenanceLog(Base):
     __tablename__ = "equipment_maintenance_logs"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    equipment_id = Column(String, ForeignKey("equipment.id"), nullable=False, index=True)
+    equipment_id = Column(
+        String, ForeignKey("equipment.id"), nullable=False, index=True
+    )
 
     # Maintenance metadata
     maintenance_type = Column(Enum(MaintenanceType), nullable=False)
@@ -253,7 +257,9 @@ class EquipmentUsageSession(Base):
     __tablename__ = "equipment_usage_sessions"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    equipment_id = Column(String, ForeignKey("equipment.id"), nullable=False, index=True)
+    equipment_id = Column(
+        String, ForeignKey("equipment.id"), nullable=False, index=True
+    )
     reservation_id = Column(
         String, ForeignKey("equipment_reservations.id"), nullable=True, index=True
     )

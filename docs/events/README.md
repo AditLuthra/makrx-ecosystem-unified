@@ -63,7 +63,7 @@ A comprehensive, open-source event management platform designed for maker events
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - PostgreSQL database
 - Keycloak server (for authentication)
 
@@ -219,7 +219,7 @@ ws.send(
   JSON.stringify({
     type: "subscribe",
     data: { channel: "event:123" },
-  }),
+  })
 );
 
 // Receive real-time updates

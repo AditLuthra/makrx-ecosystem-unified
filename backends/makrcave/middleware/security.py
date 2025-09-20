@@ -25,7 +25,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self.clients = defaultdict(lambda: defaultdict(list))
+        # client_ip -> endpoint_category -> list[timestamps]
+        self.clients: dict[str, dict[str, list[float]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
         # Optional Redis client for distributed rate limiting
         self.redis_url = os.getenv("REDIS_URL")
         self.redis_client: Optional[redis.Redis] = None
@@ -84,8 +87,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             key_raw = f"rl:{client_ip}:{endpoint_category}:{window_start}"
             key = hashlib.sha256(key_raw.encode()).hexdigest()
             try:
-                current = self.redis_client.incr(key)
-                ttl = self.redis_client.ttl(key)
+                current_raw = self.redis_client.incr(key)
+                current: int = (
+                    int(current_raw)
+                    if not isinstance(current_raw, int)
+                    else current_raw
+                )
+                ttl_raw = self.redis_client.ttl(key)
+                ttl: int = int(ttl_raw) if not isinstance(ttl_raw, int) else ttl_raw
                 if ttl == -1:
                     self.redis_client.expire(key, period)
                 if current > calls_limit:

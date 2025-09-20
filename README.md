@@ -1,15 +1,41 @@
 # MakrX Ecosystem - Unified Monorepo
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com/)
 [![Contributors](https://img.shields.io/badge/Contributors-Welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A comprehensive ecosystem of interconnected applications and services built for modern event management, marketplace functionality, and community engagement.
 
 > Documentation: See the full Repository Overview at [docs/REPOSITORY_OVERVIEW.md](docs/REPOSITORY_OVERVIEW.md)
+>
+> Configuration Standards: Canonical envs and storage precedence are documented in [docs/CONFIGURATION_STANDARDS.md](docs/CONFIGURATION_STANDARDS.md)
+
+### 📚 Docs navigation
+
+- Documentation Index: [docs/README.md](docs/README.md)
+- Repository Overview: [docs/REPOSITORY_OVERVIEW.md](docs/REPOSITORY_OVERVIEW.md)
+- Deployment Options: [DEPLOYMENT_OPTIONS.md](DEPLOYMENT_OPTIONS.md)
+- Services Deployment (subdomain): [SERVICES_DEPLOYMENT_GUIDE.md](SERVICES_DEPLOYMENT_GUIDE.md)
+- Feature Flags Guide: [FEATURE_FLAGS_GUIDE.md](FEATURE_FLAGS_GUIDE.md)
+- Errors & Guidance: [ERRORS_AND_GUIDANCE.md](ERRORS_AND_GUIDANCE.md)
+
+### 🔐 Auth configuration (Keycloak)
+
+We use Keycloak for SSO across all apps/services. Unified env var names and local dev defaults are documented here:
+
+- Auth Contract: [docs/auth-contract.md](docs/auth-contract.md)
 
 ## 🏗️ Architecture Overview
+
+## Environment templates
+
+Sample environment files are provided under `examples/` for all frontends and backends (e.g. `.env.makrx-services.local`, `.env.makrx-services-backend`).
+
+- For Next.js apps, copy the relevant example to the app folder as `.env.local` and adjust values.
+- For Python backends, copy the example to the backend folder as `.env` (or export in your process manager) and adjust values.
+
+These templates follow the conventions documented in `docs/CONFIGURATION_STANDARDS.md`.
 
 ```mermaid
 graph TB
@@ -29,7 +55,7 @@ graph TB
 
     subgraph "Infrastructure"
         KC[Keycloak<br/>:8081]
-        PG[PostgreSQL<br/>:5433]
+    PG[PostgreSQL<br/>:5432]
         RD[Redis<br/>:6380]
         MN[MinIO<br/>:9002]
     end
@@ -67,9 +93,9 @@ graph TB
 
 ### Prerequisites
 
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **Docker** & Docker Compose ([Download](https://docs.docker.com/get-docker/))
-- **Git** ([Download](https://git-scm.com/))
+- Node.js 20+ (CI also uses Node 20)
+- Docker & Docker Compose
+- Git
 
 ### One-Command Setup
 
@@ -90,7 +116,7 @@ scripts\windows\setup.bat
 1. **Install Dependencies**
 
    ```bash
-   npm ci --legacy-peer-deps
+    npm ci --legacy-peer-deps
    ```
 
 2. **Environment Configuration (Secrets Policy)**
@@ -107,12 +133,12 @@ scripts\windows\setup.bat
 3. **Start Infrastructure**
 
    ```bash
-   docker-compose up -d
+    docker-compose up -d postgres redis keycloak minio
    ```
 
 4. **Start Development Servers**
    ```bash
-   npm run dev
+    npm run dev
    ```
 
 ## 🎯 Applications & Services
@@ -137,12 +163,12 @@ scripts\windows\setup.bat
 
 ### Infrastructure Services
 
-| Service        | Port | Description                    |
-| -------------- | ---- | ------------------------------ |
-| **Keycloak**   | 8081 | Authentication & Authorization |
-| **PostgreSQL** | 5433 | Primary database               |
-| **Redis**      | 6380 | Caching & sessions             |
-| **MinIO**      | 9002 | Object storage                 |
+| Service        | Port(s)    | Description                    |
+| -------------- | ---------- | ------------------------------ |
+| **Keycloak**   | 8081       | Authentication & Authorization |
+| **PostgreSQL** | 5432       | Primary database               |
+| **Redis**      | 6380       | Caching & sessions             |
+| **MinIO**      | 9000, 9001 | Object storage (API, Console)  |
 
 ## 🛠️ Development
 
@@ -178,8 +204,8 @@ npm run docker:prod    # Start production environment with Docker
 
 ### Tooling & Versions
 
-- Package manager: `npm` with workspaces (no pnpm).
-- Node.js: 18+ (CI uses Node 20).
+- Package manager: `npm` with workspaces.
+- Node.js: 20+ (CI uses Node 20).
 - Next.js: pinned to 14.2.32 across apps.
 - FastAPI across backends; see per-backend `requirements.txt` for exact pins.
 
@@ -246,7 +272,7 @@ The ecosystem uses a **shared PostgreSQL database** with service-specific schema
 ### Development
 
 ```bash
-docker-compose up -d
+docker-compose up -d postgres redis keycloak minio
 npm run dev
 ```
 
@@ -312,11 +338,9 @@ npm run test:load
 
 ## 📊 Monitoring
 
-Access monitoring dashboards:
-
-- **Grafana**: http://localhost:3005
-- **Prometheus**: http://localhost:9090
-- **Jaeger**: http://localhost:16686
+Monitoring stack is optional and not enabled by default in `docker-compose.yml`.
+If you enable monitoring, see `docs/REPOSITORY_OVERVIEW.md` for pointers and update
+ports accordingly.
 
 ## 🤝 Contributing
 
@@ -345,7 +369,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Database
-DATABASE_URL=postgresql://makrx:password@localhost:5433/makrx_ecosystem
+DATABASE_URL=postgresql://makrx:password@localhost:5432/makrx_ecosystem
 
 # Redis
 REDIS_URL=redis://localhost:6380
@@ -368,7 +392,7 @@ Some backends make internal API calls to others. For local runs started via scri
 MAKRCAVE_API_URL=http://localhost:8001
 ```
 
-When running inside Docker, services communicate via Docker DNS. No change needed; defaults resolve to:
+When running inside Docker, services communicate via Docker DNS. No change needed; defaults typically resolve to:
 
 ```text
 http://makrcave-backend:8000

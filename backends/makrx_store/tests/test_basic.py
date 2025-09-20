@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from main import app
+from backends.makrx_store.main import app
 
 client = TestClient(app)
 

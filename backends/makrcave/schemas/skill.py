@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from pydantic.config import ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -55,8 +56,7 @@ class Skill(SkillBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SkillWithRelations(Skill):
@@ -96,8 +96,7 @@ class UserSkill(UserSkillBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserSkillWithDetails(UserSkill):
@@ -135,8 +134,7 @@ class SkillRequest(SkillRequestBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SkillRequestWithDetails(SkillRequest):
@@ -228,8 +226,7 @@ class SkillAuditLog(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SkillAuditLogWithDetails(SkillAuditLog):

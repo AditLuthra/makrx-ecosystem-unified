@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import {
-  Download,
-  FileText,
-  Table,
-  FileSpreadsheet,
+  AlertCircle,
   Calendar,
   CheckCircle,
   Clock,
-  AlertCircle,
+  Download,
+  FileSpreadsheet,
+  FileText,
   RefreshCw,
+  Table,
   X,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useToast } from '../../hooks/use-toast';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface ReportRequest {
   id: string;
@@ -63,7 +63,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
   const fetchReportRequests = async () => {
     setLoadingRequests(true);
     try {
-      const response = await fetch('/api/analytics/reports', {
+      const response = await fetch('/api/v1/analytics/reports', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
         },
       };
 
-      const response = await fetch('/api/analytics/reports/request', {
+      const response = await fetch('/api/v1/analytics/reports/request', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,

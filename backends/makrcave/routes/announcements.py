@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, desc
 from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
-from uuid import UUID
+from datetime import datetime
+from pydantic import BaseModel, Field
+from ..security.input_validation import InputSanitizer
 
 from ..database import get_db
 from ..dependencies import get_current_user, get_current_admin_user
@@ -17,12 +18,7 @@ from ..models.announcements import (
 )
 from ..models.enhanced_member import Member
 
-router = APIRouter(prefix="/api/v1/announcements", tags=["Announcements"])
-
-# Pydantic models for requests/responses
-from pydantic import BaseModel, Field
-from ..security.input_validation import InputSanitizer
-from typing import Optional
+router = APIRouter(prefix="/announcements", tags=["Announcements"])
 
 
 class AnnouncementCreate(BaseModel):
@@ -162,7 +158,7 @@ async def get_announcements(
     query = db.query(Announcement).filter(Announcement.makerspace_id == makerspace_id)
 
     if published_only:
-        query = query.filter(Announcement.is_published == True)
+        query = query.filter(Announcement.is_published.is_(True))
 
     if announcement_type:
         query = query.filter(Announcement.announcement_type == announcement_type)
@@ -171,7 +167,7 @@ async def get_announcements(
         query = query.filter(Announcement.priority == priority)
 
     if dashboard_only:
-        query = query.filter(Announcement.show_on_dashboard == True)
+        query = query.filter(Announcement.show_on_dashboard.is_(True))
 
     # Apply active filter if requested
     if active_only:
@@ -231,7 +227,7 @@ async def get_member_announcements(
     query = db.query(Announcement).filter(
         and_(
             Announcement.makerspace_id == member.makerspace_id,
-            Announcement.is_published == True,
+            Announcement.is_published,
             or_(
                 Announcement.publish_at.is_(None),
                 Announcement.publish_at <= current_time,
@@ -431,7 +427,10 @@ async def create_announcement(
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="maintenance_start and maintenance_end are required for maintenance announcements",
+                detail=(
+                    "maintenance_start and maintenance_end are required for "
+                    "maintenance announcements"
+                ),
             )
 
     # Create announcement
@@ -520,7 +519,10 @@ async def update_announcement(
         if not start or not end:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="maintenance_start and maintenance_end are required for maintenance announcements",
+                detail=(
+                    "maintenance_start and maintenance_end are required for "
+                    "maintenance announcements"
+                ),
             )
 
     # Sanitize update fields
@@ -769,7 +771,7 @@ async def get_announcement_stats(
             .filter(
                 and_(
                     Member.makerspace_id == announcement.makerspace_id,
-                    Member.is_active == True,
+                    Member.is_active.is_(True),
                 )
             )
             .count()

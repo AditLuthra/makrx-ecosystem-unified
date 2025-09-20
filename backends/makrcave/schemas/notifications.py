@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, validator, EmailStr
+from pydantic.config import ConfigDict
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 from enum import Enum
@@ -118,8 +119,7 @@ class NotificationResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Bulk notification operations
@@ -202,8 +202,7 @@ class NotificationTemplateResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Preference Schemas
@@ -215,7 +214,9 @@ class NotificationPreferenceCreate(BaseModel):
     timezone: str = "UTC"
     email_enabled: bool = True
     email_address: Optional[EmailStr] = None
-    email_frequency: str = Field("immediate", pattern="^(immediate|hourly|daily|weekly)$")
+    email_frequency: str = Field(
+        "immediate", pattern="^(immediate|hourly|daily|weekly)$"
+    )
     sms_enabled: bool = False
     sms_number: Optional[str] = Field(None, max_length=20)
     push_enabled: bool = True
@@ -289,8 +290,7 @@ class NotificationPreferenceResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Rule Schemas
@@ -305,7 +305,9 @@ class NotificationRuleCreate(BaseModel):
     throttle_duration_minutes: Optional[int] = Field(None, gt=0)
     max_notifications_per_day: Optional[int] = Field(None, gt=0)
     max_notifications_per_hour: Optional[int] = Field(None, gt=0)
-    recipient_type: str = Field(..., pattern="^(specific_users|role_based|all_members)$")
+    recipient_type: str = Field(
+        ..., pattern="^(specific_users|role_based|all_members)$"
+    )
     recipient_criteria: Optional[Dict[str, Any]] = None
     template_id: Optional[uuid.UUID] = None
     custom_content: Optional[Dict[str, Any]] = None
@@ -360,8 +362,7 @@ class NotificationRuleResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Analytics Schemas
@@ -393,8 +394,7 @@ class NotificationAnalyticsResponse(BaseModel):
     top_notification_types: Optional[Dict[str, int]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Utility Schemas

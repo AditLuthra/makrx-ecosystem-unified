@@ -1,6 +1,6 @@
 """
-Authentication and dependency injection for MakrCave Backend - Unified Ecosystem
-Integrates with Keycloak SSO system
+Authentication and dependency injection for MakrCave Backend - Unified
+Ecosystem. Integrates with Keycloak SSO system.
 """
 
 from fastapi import Depends, HTTPException, status
@@ -11,12 +11,15 @@ from typing import List, Optional
 import os
 import httpx
 import time
-from functools import wraps
+
+# from functools import wraps  # unused
 
 from .database import get_db
 from .models.enhanced_member import Member
 
 security = HTTPBearer()
+# Optional bearer that does not raise when header is missing
+security_optional = HTTPBearer(auto_error=False)
 
 # Keycloak configuration
 KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://localhost:8081")
@@ -37,12 +40,12 @@ KEYCLOAK_USE_JWKS = os.getenv("KEYCLOAK_USE_JWKS", "true").lower() in (
 # Cache for Keycloak public key with TTL
 _keycloak_public_key = None
 _keycloak_public_key_ts = 0.0
-_jwks_cache = {}
+_jwks_cache: dict[str, str] = {}
 _jwks_ts = 0.0
 
 
 def _pem_from_x5c(x5c_entry: str) -> str:
-    return f"-----BEGIN CERTIFICATE-----\n{x5c_entry}\n-----END CERTIFICATE-----"
+    return "-----BEGIN CERTIFICATE-----\n" f"{x5c_entry}\n" "-----END CERTIFICATE-----"
 
 
 async def get_jwks_pem(kid: str) -> Optional[str]:
@@ -97,7 +100,11 @@ async def get_keycloak_public_key(force: bool = False):
                 response = await client.get(url)
                 response.raise_for_status()
                 realm_info = response.json()
-                _keycloak_public_key = f"-----BEGIN PUBLIC KEY-----\n{realm_info['public_key']}\n-----END PUBLIC KEY-----"
+                _keycloak_public_key = (
+                    "-----BEGIN PUBLIC KEY-----\n"
+                    f"{realm_info['public_key']}\n"
+                    "-----END PUBLIC KEY-----"
+                )
                 _keycloak_public_key_ts = now
                 return _keycloak_public_key
         except Exception:
@@ -148,8 +155,8 @@ async def get_current_user(
         payload = jwt.decode(token, key_to_use, **decode_kwargs)
 
         # Extract user information
-        keycloak_user_id: str = payload.get("sub")
-        email: str = payload.get("email")
+        keycloak_user_id = payload.get("sub")
+        email = payload.get("email")
 
         if keycloak_user_id is None or email is None:
             raise credentials_exception
@@ -157,7 +164,7 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    # Get or create user in database (best-effort; do not block response context)
+    # Get or create user in DB (best-effort; do not block response context)
     db_user = (
         db.query(Member).filter(Member.keycloak_user_id == keycloak_user_id).first()
     )
@@ -174,7 +181,8 @@ async def get_current_user(
             db.commit()
             db.refresh(db_user)
         except Exception:
-            # If creation fails due to schema constraints, continue with token context
+            # If creation fails due to schema constraints, continue with token
+            # context
             db.rollback()
             db_user = None
 
@@ -182,14 +190,22 @@ async def get_current_user(
     roles = payload.get("realm_access", {}).get("roles", []) + payload.get(
         "resource_access", {}
     ).get(KEYCLOAK_CLIENT_ID, {}).get("roles", [])
+    # Normalize makerspace_id to string when present
+    ms_id = (
+        str(db_user.makerspace_id)
+        if db_user and getattr(db_user, "makerspace_id", None) is not None
+        else (
+            payload.get("makerspace_id")
+            if isinstance(payload.get("makerspace_id"), str)
+            else None
+        )
+    )
     ctx = CurrentUser(
         user_id=keycloak_user_id,
         email=email,
         first_name=payload.get("given_name"),
         last_name=payload.get("family_name"),
-        makerspace_id=(
-            db_user.makerspace_id if db_user else payload.get("makerspace_id")
-        ),
+        makerspace_id=ms_id,
         roles=roles,
         model=db_user,
     )
@@ -204,7 +220,8 @@ def require_roles(allowed_roles: List[str]):
     def role_checker(
         current_user: CurrentUser = Depends(get_current_user),
     ):
-        # Ensure current_user is not None (should be handled by get_current_user, but for safety)
+        # Ensure current_user is not None (get_current_user should handle, but
+        # keep for safety)
         if current_user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -230,7 +247,7 @@ def require_permission(permission: str):
     def permission_checker(
         current_user: "CurrentUser" = Depends(get_current_user),
     ) -> bool:
-        # Accept all requests by default while the permission system is rebuilt.
+        # Accept all requests by default while permissions are rebuilt.
         # Keeps the dependency pipeline intact for routes that expect it.
         return True
 
@@ -240,7 +257,7 @@ def require_permission(permission: str):
 def get_current_makerspace(
     current_user: "CurrentUser" = Depends(get_current_user),
 ) -> str:
-    """Convenience dependency that returns the makerspace identifier for the user."""
+    """Return makerspace identifier for the current user."""
 
     return getattr(current_user, "makerspace_id", "default")
 
@@ -256,7 +273,7 @@ def require_scope(required_scope: str):
         # In test mode, bypass scope checks to keep smoke tests lightweight
         if os.getenv("ENVIRONMENT") == "test":
             return True
-        # Ensure current_user is not None (should be handled by get_current_user, but for safety)
+        # Ensure current_user not None (get_current_user should handle)
         if current_user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -283,7 +300,7 @@ def require_scope(required_scope: str):
 
 # Optional dependencies for performance
 async def get_current_user_optional(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_optional),
     db: Session = Depends(get_db),
 ) -> Optional["CurrentUser"]:
     """

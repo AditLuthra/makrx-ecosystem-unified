@@ -10,27 +10,23 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, desc
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
-from uuid import UUID
-import json
+from pydantic import BaseModel, Field
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, get_current_admin_user
 from ..models.filament_tracking import (
     FilamentRoll,
     FilamentUsageLog,
     FilamentReorderRequest,
-    FilamentCompatibility,
     FilamentMaterial,
     FilamentBrand,
     FilamentRollStatus,
     DeductionMethod,
 )
 
-router = APIRouter(prefix="/api/v1/filament", tags=["Filament Tracking"])
+router = APIRouter(prefix="/filament", tags=["Filament Tracking"])
 
 # Pydantic models for requests/responses
-from pydantic import BaseModel, Field
-from typing import Optional
 
 
 class FilamentRollCreate(BaseModel):
@@ -139,7 +135,9 @@ class FilamentCompatibilityCreate(BaseModel):
 
 @router.get("/rolls", response_model=List[Dict[str, Any]])
 async def get_filament_rolls(
-    status: Optional[FilamentRollStatus] = Query(None, description="Filter by status"),
+    roll_status: Optional[FilamentRollStatus] = Query(
+        None, description="Filter by status"
+    ),
     material: Optional[FilamentMaterial] = Query(
         None, description="Filter by material"
     ),
@@ -170,8 +168,8 @@ async def get_filament_rolls(
 
     query = db.query(FilamentRoll).filter(FilamentRoll.makerspace_id == makerspace_id)
 
-    if status:
-        query = query.filter(FilamentRoll.status == status)
+    if roll_status:
+        query = query.filter(FilamentRoll.status == roll_status)
 
     if material:
         query = query.filter(FilamentRoll.material == material)
@@ -378,7 +376,10 @@ async def record_filament_usage(
     if usage_data.weight_used_g > roll.remaining_weight_g:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot use {usage_data.weight_used_g}g - only {roll.remaining_weight_g}g remaining",
+            detail=(
+                f"Cannot use {usage_data.weight_used_g}g - only "
+                f"{roll.remaining_weight_g}g remaining"
+            ),
         )
 
     # Record current state before usage
@@ -654,9 +655,9 @@ async def get_filament_statistics(
                 "total_weight_g": 0,
             }
         stats["material_breakdown"][material]["count"] += 1
-        stats["material_breakdown"][material]["total_weight_g"] += (
-            roll.remaining_weight_g
-        )
+        stats["material_breakdown"][material][
+            "total_weight_g"
+        ] += roll.remaining_weight_g
 
         if brand not in stats["brand_breakdown"]:
             stats["brand_breakdown"][brand] = {"count": 0, "total_weight_g": 0}
@@ -740,7 +741,10 @@ def analyze_gcode_content(
 def generate_makrx_order_url(roll: FilamentRoll) -> str:
     """Generate MakrX Store order URL for reordering"""
     if roll.makrx_product_code:
-        return f"https://store.makrx.org/product/{roll.makrx_product_code}?utm_source=makrcave&utm_medium=reorder"
+        return (
+            f"https://store.makrx.org/product/{roll.makrx_product_code}"
+            "?utm_source=makrcave&utm_medium=reorder"
+        )
     else:
         # Search URL based on material and brand
         search_query = (
@@ -748,7 +752,10 @@ def generate_makrx_order_url(roll: FilamentRoll) -> str:
                 " ", "+"
             )
         )
-        return f"https://store.makrx.org/search?q={search_query}&utm_source=makrcave&utm_medium=reorder"
+        return (
+            "https://store.makrx.org/search"
+            f"?q={search_query}&utm_source=makrcave&utm_medium=reorder"
+        )
 
 
 def calculate_estimated_cost(roll: FilamentRoll, quantity: int) -> float:

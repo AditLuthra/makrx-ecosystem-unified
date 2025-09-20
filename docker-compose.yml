@@ -279,7 +279,6 @@ services:
     environment:
       NODE_ENV: production
       SERVICES_API_URL: http://makrx-services-backend:8006/api
-      NEXT_PUBLIC_SERVICES_API_URL: http://makrx-services-backend:8006/api
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/makrx
       NEXT_PUBLIC_KEYCLOAK_URL: http://keycloak:8080
       NEXT_PUBLIC_KEYCLOAK_REALM: makrx

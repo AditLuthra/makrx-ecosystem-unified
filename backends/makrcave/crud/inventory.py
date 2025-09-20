@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, func, desc, asc
+from sqlalchemy import or_, func, desc, asc
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timedelta
+import csv
+import io
 
 from ..models.inventory import (
     InventoryItem,
@@ -18,7 +20,6 @@ from ..schemas.inventory import (
     InventoryItemCreate,
     InventoryItemUpdate,
     InventoryFilter,
-    InventoryUsageLogCreate,
     BulkUpdateRequest,
     BulkIssueRequest,
 )
@@ -315,9 +316,7 @@ class InventoryCRUD:
                     "item_id": item_id,
                     "success": result is not None,
                     "new_quantity": result.quantity if result else None,
-                    "error": (
-                        None if result else "Insufficient stock or item not found"
-                    ),
+                    "error": (None if result else "Insufficient stock or not found"),
                 }
             )
 
@@ -565,7 +564,7 @@ class InventoryCRUD:
                 .filter(
                     InventoryAlert.inventory_item_id == item.id,
                     InventoryAlert.alert_type == "low_stock",
-                    InventoryAlert.is_resolved == False,
+                    InventoryAlert.is_resolved.is_(False),
                 )
                 .first()
             )
@@ -577,7 +576,308 @@ class InventoryCRUD:
                     alert_type="low_stock",
                     threshold_value=item.min_threshold,
                     current_value=item.quantity,
-                    message=f"{item.name} is running low (Qty: {item.quantity}, Min: {item.min_threshold})",
+                    message=(
+                        f"{item.name} is running low (Qty: {item.quantity}, "
+                        f"Min: {item.min_threshold})"
+                    ),
                 )
                 self.db.add(alert)
                 self.db.commit()
+
+    # --- Additional methods used by routes ---
+    def get_usage_history(
+        self, item_id: str, skip: int = 0, limit: int = 50
+    ) -> List[InventoryUsageLog]:
+        """Return usage logs for a specific item with pagination."""
+        return (
+            self.db.query(InventoryUsageLog)
+            .filter(InventoryUsageLog.inventory_item_id == item_id)
+            .order_by(desc(InventoryUsageLog.timestamp))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_all_usage_logs(
+        self,
+        makerspace_id: str,
+        skip: int = 0,
+        limit: int = 100,
+        filters: Optional[Dict[str, Any]] = None,
+    ) -> List[InventoryUsageLog]:
+        """Return usage logs across items in a makerspace with filters."""
+        query = (
+            self.db.query(InventoryUsageLog)
+            .join(
+                InventoryItem,
+                InventoryItem.id == InventoryUsageLog.inventory_item_id,
+            )
+            .filter(InventoryItem.linked_makerspace_id == makerspace_id)
+        )
+
+        if filters:
+            if filters.get("start_date"):
+                query = query.filter(
+                    InventoryUsageLog.timestamp >= filters["start_date"]
+                )
+            if filters.get("end_date"):
+                query = query.filter(InventoryUsageLog.timestamp <= filters["end_date"])
+            if filters.get("user_id"):
+                query = query.filter(InventoryUsageLog.user_id == filters["user_id"])
+            if filters.get("action"):
+                query = query.filter(InventoryUsageLog.action == filters["action"])
+
+        return (
+            query.order_by(desc(InventoryUsageLog.timestamp))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def create_reorder_request(
+        self,
+        item_id: str,
+        quantity: float,
+        user_id: str,
+        notes: Optional[str] = None,
+    ) -> str:
+        """Create a MakrX Store reorder request URL placeholder."""
+        item = self.get_item(item_id)
+        if not item:
+            raise ValueError("Item not found")
+        if item.supplier_type != SupplierType.MAKRX:
+            raise ValueError("Item is not a MakrX store item")
+        if not item.product_code:
+            raise ValueError("Item has no product code")
+
+        # Placeholder URL to MakrX store; integrate real API later
+        base_url = "https://store.makrx.com/cart/add"
+        qty = int(quantity) if quantity and quantity > 0 else 1
+        return f"{base_url}?sku={item.product_code}&qty={qty}"
+
+    def process_bulk_import(
+        self,
+        csv_content: str,
+        job_id: str,
+        makerspace_id: str,
+        user_id: str,
+        user_name: str,
+    ) -> None:
+        """Process CSV content and create/update a BulkImportJob."""
+        # Parse CSV
+        reader = csv.DictReader(io.StringIO(csv_content))
+        rows = list(reader)
+
+        # Create or fetch job with provided job_id
+        job = self.db.query(BulkImportJob).filter(BulkImportJob.id == job_id).first()
+        if not job:
+            job = BulkImportJob(
+                id=job_id,
+                filename="upload.csv",
+                total_rows=len(rows),
+                created_by=user_id,
+                makerspace_id=makerspace_id,
+                status="processing",
+                processed_rows=0,
+                successful_rows=0,
+                failed_rows=0,
+            )
+            self.db.add(job)
+            self.db.commit()
+
+        processed = 0
+        successful = 0
+        failed = 0
+        errors: List[Dict[str, Any]] = []
+
+        for idx, row in enumerate(rows, start=1):
+            processed += 1
+            try:
+                # Map minimal required fields with reasonable defaults
+                # Parse optional price safely
+                price_val = None
+                price_raw = row.get("price")
+                if price_raw is not None and str(price_raw).strip() != "":
+                    try:
+                        price_val = float(price_raw)
+                    except Exception:
+                        price_val = None
+
+                item_data = InventoryItemCreate(
+                    name=(
+                        row.get("name")
+                        or row.get("item_name")
+                        or f"Imported Item {idx}"
+                    ),
+                    category=row.get("category") or "consumables",
+                    subcategory=row.get("subcategory") or None,
+                    quantity=float(row.get("quantity") or 0),
+                    unit=row.get("unit") or "pcs",
+                    min_threshold=int(row.get("min_threshold") or 0),
+                    location=row.get("location") or "storage",
+                    status=(
+                        ItemStatus[row.get("status", "ACTIVE").upper()]
+                        if isinstance(row.get("status"), str)
+                        else ItemStatus.ACTIVE
+                    ),
+                    supplier_type=(
+                        SupplierType[row.get("supplier_type", "external").upper()]
+                        if isinstance(row.get("supplier_type"), str)
+                        else SupplierType.EXTERNAL
+                    ),
+                    product_code=row.get("product_code") or None,
+                    linked_makerspace_id=makerspace_id,
+                    image_url=row.get("image_url") or None,
+                    notes=row.get("notes") or None,
+                    owner_user_id=row.get("owner_user_id") or None,
+                    restricted_access_level=(
+                        AccessLevel[row.get("restricted_access_level", "basic").upper()]
+                        if isinstance(row.get("restricted_access_level"), str)
+                        else AccessLevel.BASIC
+                    ),
+                    price=price_val,
+                    supplier=row.get("supplier") or None,
+                    description=row.get("description") or None,
+                    is_scanned=False,
+                    created_by=user_id,
+                )
+
+                self.create_item(item_data)
+                successful += 1
+            except Exception as e:
+                failed += 1
+                errors.append({"row": idx, "error": str(e), "data": row})
+
+            # Periodically update job progress
+            if processed % 10 == 0 or processed == len(rows):
+                self.update_import_job_progress(
+                    job_id=job_id,
+                    processed=processed,
+                    successful=successful,
+                    failed=failed,
+                    # keep last 50 errors to limit payload
+                    errors=errors[-50:],
+                )
+
+        # Final update
+        self.update_import_job_progress(
+            job_id=job_id,
+            processed=processed,
+            successful=successful,
+            failed=failed,
+            errors=errors,
+        )
+
+    def get_import_job_status(self, job_id: str) -> Optional[BulkImportJob]:
+        """Return bulk import job status by id."""
+        return self.db.query(BulkImportJob).filter(BulkImportJob.id == job_id).first()
+
+    def export_to_csv(
+        self, makerspace_id: str, filters: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """Export inventory items to CSV string."""
+        query = self.db.query(InventoryItem).filter(
+            InventoryItem.linked_makerspace_id == makerspace_id
+        )
+        if filters:
+            if filters.get("category"):
+                query = query.filter(InventoryItem.category == filters["category"])
+            if filters.get("status"):
+                query = query.filter(InventoryItem.status == filters["status"])
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(
+            [
+                "id",
+                "name",
+                "category",
+                "subcategory",
+                "quantity",
+                "unit",
+                "min_threshold",
+                "location",
+                "status",
+                "supplier_type",
+                "product_code",
+                "price",
+                "supplier",
+                "description",
+                "linked_makerspace_id",
+                "created_at",
+                "updated_at",
+            ]
+        )
+        for item in query.all():
+            writer.writerow(
+                [
+                    item.id,
+                    item.name,
+                    item.category,
+                    item.subcategory or "",
+                    item.quantity,
+                    item.unit,
+                    item.min_threshold,
+                    item.location,
+                    (
+                        item.status.value
+                        if hasattr(item.status, "value")
+                        else str(item.status)
+                    ),
+                    (
+                        item.supplier_type.value
+                        if hasattr(item.supplier_type, "value")
+                        else str(item.supplier_type)
+                    ),
+                    item.product_code or "",
+                    item.price or "",
+                    item.supplier or "",
+                    item.description or "",
+                    item.linked_makerspace_id,
+                    item.created_at.isoformat() if item.created_at else "",
+                    item.updated_at.isoformat() if item.updated_at else "",
+                ]
+            )
+        return output.getvalue()
+
+    def bulk_delete_items(
+        self,
+        item_ids: List[str],
+        makerspace_id: str,
+        deleted_by: str,
+    ) -> Dict[str, Any]:
+        """Delete multiple items; returns count and any errors."""
+        deleted = 0
+        errors: List[Dict[str, Any]] = []
+        for item_id in item_ids:
+            try:
+                ok = self.delete_item(
+                    item_id=item_id,
+                    deleted_by=deleted_by,
+                    makerspace_id=makerspace_id,
+                )
+                if ok:
+                    deleted += 1
+                else:
+                    errors.append({"item_id": item_id, "error": "Item not found"})
+            except Exception as e:
+                errors.append({"item_id": item_id, "error": str(e)})
+        return {"deleted_count": deleted, "errors": errors}
+
+    def generate_qr_codes(
+        self, item_ids: List[str], makerspace_id: str
+    ) -> List[Dict[str, str]]:
+        """
+        Generate placeholder QR payloads for items (to be replaced
+        with real image generation).
+        """
+        # Return a simple data payload that a frontend can turn into QR codes
+        results: List[Dict[str, str]] = []
+        for item_id in item_ids:
+            item = self.get_item(item_id=item_id, makerspace_id=makerspace_id)
+            if not item:
+                results.append({"item_id": item_id, "error": "not_found"})
+                continue
+            payload = f"makrcave://inventory/{item_id}"
+            results.append({"item_id": item_id, "payload": payload})
+        return results

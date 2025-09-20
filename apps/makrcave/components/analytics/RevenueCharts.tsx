@@ -1,39 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Alert, AlertDescription } from '../ui/alert';
 import {
-  LineChart,
-  Line,
-  BarChart,
+  ArrowDownRight,
+  ArrowUpRight,
+  Calendar,
+  CreditCard,
+  DollarSign,
+  RefreshCw,
+  Store,
+  Target,
+  TrendingUp,
+  Users,
+  Wallet,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Area,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Line,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  ComposedChart,
 } from 'recharts';
-import {
-  DollarSign,
-  TrendingUp,
-  CreditCard,
-  Users,
-  Store,
-  Wallet,
-  RefreshCw,
-  Calendar,
-  Target,
-  ArrowUpRight,
-  ArrowDownRight,
-} from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface RevenueAnalytics {
   total_revenue: number;
@@ -66,7 +64,7 @@ const RevenueCharts: React.FC = () => {
   const fetchRevenueAnalytics = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/analytics/revenue', {
+      const response = await fetch('/api/v1/analytics/revenue', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
