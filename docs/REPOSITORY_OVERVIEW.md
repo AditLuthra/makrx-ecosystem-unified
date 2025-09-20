@@ -23,9 +23,9 @@ graph TB
   end
 
   subgraph "Shared Packages"
-    AU[@makrx/auth]
-    UI[@makrx/shared-ui]
-    TY[@makrx/types]
+    AU["@makrx/auth"]
+    UI["@makrx/shared-ui"]
+    TY["@makrx/types"]
   end
 
   subgraph "Infrastructure"

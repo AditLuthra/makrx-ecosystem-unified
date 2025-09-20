@@ -4,6 +4,7 @@
  */
 
 import { getToken } from '@/lib/auth';
+import { providerApi } from '@/services/providerApi';
 import type { Category, Product, ProductVariant } from '@/types';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
@@ -1270,40 +1271,31 @@ class StoreApiClient {
 
   // Provider Dashboard APIs (MakrX Services backend)
   async getProviderDashboard() {
-    return this.requestService<any>('/api/provider/dashboard');
+    return providerApi.getDashboard();
   }
 
   async getAvailableJobs() {
-    return this.requestService<any>('/api/provider/jobs/available');
+    return providerApi.getAvailableJobs();
   }
 
   async acceptJob(orderId: string) {
-    return this.requestService<any>(`/api/provider/jobs/${orderId}/accept`, { method: 'POST' });
+    return providerApi.acceptJob(orderId);
   }
 
   async getProviderJobs(status?: string) {
-    const endpoint = status
-      ? `/api/provider/jobs?status=${encodeURIComponent(status)}`
-      : '/api/provider/jobs';
-    return this.requestService<any>(endpoint);
+    return providerApi.getJobs(status);
   }
 
   async updateJobStatus(jobId: string, status: string, notes?: string) {
-    return this.requestService<any>(`/api/provider/jobs/${jobId}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status, message: notes }),
-    });
+    return providerApi.updateJobStatus(jobId, status, notes);
   }
 
   async updateProviderInventory(materialId: string, quantity: number, action: 'add' | 'subtract') {
-    return this.requestService<any>(`/api/provider/inventory/${encodeURIComponent(materialId)}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ quantity, action }),
-    });
+    return providerApi.updateInventory(materialId, quantity, action);
   }
 
   async getProviderInventory() {
-    return this.requestService<any>('/api/provider/inventory');
+    return providerApi.getInventory();
   }
 }
 

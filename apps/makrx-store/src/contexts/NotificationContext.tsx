@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { storeApi } from '@/services/storeApi';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 
 export interface Notification {
@@ -30,6 +30,8 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { user, isAuthenticated } = useAuth();
+  const notificationsEnabled =
+    (process.env.NEXT_PUBLIC_NOTIFICATIONS_ENABLED || '').toLowerCase() === 'true';
 
   const removeNotification = React.useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -46,18 +48,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
       setNotifications((prev) => [newNotification, ...prev]);
 
-    // Show browser notification if permission granted
-    if (
-      typeof window !== 'undefined' &&
-      'Notification' in window &&
-      Notification.permission === 'granted'
-    ) {
-      new Notification(notification.title, {
-        body: notification.message,
-        icon: '/favicon.ico',
-        tag: newNotification.id,
-      });
-    }
+      // Show browser notification if permission granted
+      if (
+        typeof window !== 'undefined' &&
+        'Notification' in window &&
+        Notification.permission === 'granted'
+      ) {
+        new Notification(notification.title, {
+          body: notification.message,
+          icon: '/favicon.ico',
+          tag: newNotification.id,
+        });
+      }
 
       // Auto-remove success notifications after 5 seconds
       if (notification.type === 'success') {
@@ -95,7 +97,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   // Real-time connection setup
   useEffect(() => {
-    if (!isAuthenticated || !user) return;
+    if (!notificationsEnabled || !isAuthenticated || !user) return;
 
     let ws: WebSocket;
     let reconnectTimeout: NodeJS.Timeout;
@@ -148,11 +150,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         clearTimeout(reconnectTimeout);
       }
     };
-  }, [addNotification, isAuthenticated, user]);
+  }, [addNotification, isAuthenticated, user, notificationsEnabled]);
 
   // Polling for notifications fallback
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!notificationsEnabled || !isAuthenticated) return;
 
     const pollNotifications = async () => {
       try {
@@ -176,7 +178,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(pollNotifications, 30000);
 
     return () => clearInterval(interval);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, notificationsEnabled]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
