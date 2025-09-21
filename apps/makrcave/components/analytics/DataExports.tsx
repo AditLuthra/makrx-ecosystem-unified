@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useToast } from '../../hooks/use-toast';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -371,6 +372,8 @@ const DataExports: React.FC = () => {
     generateCSV(headers, data, `${exportItem.id}_export_${new Date().toISOString().split('T')[0]}`);
   };
 
+  const authHeaders = useAuthHeaders();
+
   const exportAnalyticsData = async (exportItem: ExportItem) => {
     // Use the backend analytics API for report generation
     const reportData = {
@@ -385,7 +388,7 @@ const DataExports: React.FC = () => {
     const response = await fetch('/api/v1/analytics/reports/request', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        ...authHeaders,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(reportData),

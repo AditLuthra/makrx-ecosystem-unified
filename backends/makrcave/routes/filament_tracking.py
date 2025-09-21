@@ -821,4 +821,6 @@ async def trigger_auto_reorder(db: Session, roll_id: str, user_id: str):
         db.commit()
 
     except Exception as e:
-        print(f"Auto-reorder failed for roll {roll_id}: {str(e)}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Auto-reorder failed for roll {roll_id}: {str(e)}")

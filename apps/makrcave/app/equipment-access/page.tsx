@@ -1,5 +1,26 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useAuthHeaders } from '@makrx/auth';
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Key,
+  Lock,
+  QrCode,
+  Shield,
+  Target,
+  Unlock,
+  Users,
+  XCircle,
+  Zap,
+} from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import BadgeSystem from '../../components/BadgeSystem';
+import MachineAccessDashboard from '../../components/MachineAccessDashboard';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
 import {
   Card,
   CardContent,
@@ -7,34 +28,9 @@ import {
   CardHeader,
   CardTitle,
 } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/use-toast';
-import { useAuthHeaders } from '@makrx/auth';
-import MachineAccessDashboard from '../../components/MachineAccessDashboard';
-import BadgeSystem from '../../components/BadgeSystem';
-import {
-  Shield,
-  Lock,
-  Unlock,
-  Key,
-  QrCode,
-  Smartphone,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Trophy,
-  Award,
-  Users,
-  Settings,
-  BarChart3,
-  Activity,
-  Zap,
-  Target,
-} from 'lucide-react';
 
 // Types
 interface Equipment {
@@ -101,8 +97,8 @@ const EquipmentAccess: React.FC = () => {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
       const [eqRes, certRes, statsRes] = await Promise.all([
         fetch('/api/v1/equipment', { headers }),
-        fetch('/api/v1/skills/user-certifications', { headers }),
-        fetch('/api/v1/machine-access/stats', { headers }),
+        fetch('/api/v1/skills/user-skills', { headers }),
+        fetch('/api/v1/machine-access/dashboard/makerspace', { headers }),
       ]);
 
       setEquipment(eqRes.ok ? await eqRes.json() : []);

@@ -7,6 +7,12 @@ from fastapi.testclient import TestClient
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test.db")
 os.environ.setdefault("ENVIRONMENT", "test")
 
+# Set dummy SMTP credentials for testing
+os.environ.setdefault("SMTP_USERNAME", "testuser@example.com")
+os.environ.setdefault("SMTP_PASSWORD", "testpassword")
+os.environ.setdefault("FROM_EMAIL", "testuser@example.com")
+os.environ.setdefault("FROM_NAME", "MakrCave Test")
+
 from backends.makrcave.database import get_db_session, init_db
 from backends.makrcave.dependencies import CurrentUser, get_current_user
 from backends.makrcave.main import app
@@ -24,10 +30,12 @@ def client():
     return TestClient(app)
 
 
+import uuid
+
 @pytest.fixture()
 def fake_admin_user():
     return CurrentUser(
-        user_id="test-admin",
+        user_id=str(uuid.uuid4()),
         email="admin@example.com",
         first_name="Admin",
         last_name="User",

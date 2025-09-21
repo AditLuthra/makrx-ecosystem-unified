@@ -72,7 +72,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512m
+          memory: 2g
     volumes:
       - ./services/keycloak/realm-config:/opt/keycloak/data/import
     command: ["start-dev", "--import-realm"]

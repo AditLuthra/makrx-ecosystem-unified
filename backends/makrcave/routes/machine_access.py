@@ -935,3 +935,12 @@ async def get_makerspace_access_dashboard(
         safety_incident_rate=incident_rate,
         certification_success_rate=success_rate,
     )
+
+
+# Compatibility alias: legacy frontend expects /api/v1/machine-access/stats
+@router.get("/stats", response_model=MakerspaceAccessDashboard)
+async def get_makerspace_access_stats_alias(
+    current_user=Depends(get_current_user), db: Session = Depends(get_db)
+):
+    """Alias for /dashboard/makerspace to support older frontend calls."""
+    return await get_makerspace_access_dashboard(current_user=current_user, db=db)

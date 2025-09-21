@@ -22,6 +22,7 @@ import {
   YAxis,
 } from 'recharts';
 import { useToast } from '../../hooks/use-toast';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -58,13 +59,14 @@ const UsageDashboard: React.FC = () => {
     fetchUsageData();
   }, [selectedPeriod]);
 
+  const authHeaders = useAuthHeaders();
   const fetchUsageData = async () => {
     setLoading(true);
     try {
       // Fetch usage statistics
       const statsResponse = await fetch(`/api/analytics/usage?period=${selectedPeriod}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });
@@ -77,7 +79,7 @@ const UsageDashboard: React.FC = () => {
       // Fetch recent events
       const eventsResponse = await fetch('/api/v1/analytics/events?limit=50', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });

@@ -28,6 +28,7 @@ import {
   YAxis,
 } from 'recharts';
 import { useToast } from '../../hooks/use-toast';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -61,12 +62,13 @@ const RevenueCharts: React.FC = () => {
     fetchRevenueAnalytics();
   }, []);
 
+  const authHeaders = useAuthHeaders();
   const fetchRevenueAnalytics = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/v1/analytics/revenue', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });

@@ -1,9 +1,10 @@
-from typing import List, Optional
 
+
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-
 from ..crud import skill as skill_crud
+from ..crud.equipment import get_equipment
 from ..database import get_db
 from ..dependencies import get_current_user, require_roles
 from ..models.skill import RequestStatus, SkillStatus
@@ -29,6 +30,23 @@ from ..schemas.skill import (
 )
 
 router = APIRouter(prefix="/skills", tags=["skills"])
+
+
+# --- Compat alias for legacy frontend endpoint ---
+
+@router.get("/skills/user-certifications", response_model=List[UserSkillWithDetails])
+async def compat_user_certifications(
+    user_id: Optional[str] = Query(None),
+    skill_id: Optional[str] = Query(None),
+    status: Optional[SkillStatus] = Query(None),
+    makerspace_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """Compat: Alias for /api/v1/skills/user-certifications to user-skills."""
+    return await get_user_skills(
+        user_id, skill_id, status, makerspace_id, db, current_user
+    )
 
 # Skill Management Routes
 
@@ -336,15 +354,12 @@ async def check_bulk_equipment_access(
     current_user=Depends(get_current_user),
 ):
     """Check user's access to all equipment"""
-    check_user_id = (
-        user_id
-        if user_id and current_user.role in ["super_admin", "makerspace_admin"]
-        else current_user.id
-    )
+    if user_id and current_user.role in ["super_admin", "makerspace_admin"]:
+        check_user_id = user_id
+    else:
+        check_user_id = current_user.id
 
     # Get all equipment in makerspace
-    from ..crud.equipment import get_equipment
-
     equipment_list = get_equipment(db=db, makerspace_id=makerspace_id)
 
     access_checks = []
@@ -371,14 +386,46 @@ async def check_bulk_equipment_access(
     )
 
 
-@router.get("/equipment-requirements", response_model=List[EquipmentSkillRequirements])
+# --- Compat alias for legacy frontend endpoint ---
+
+
+@router.get(
+    "/equipment/skill-requirements",
+    response_model=List[EquipmentSkillRequirements],
+)
+async def compat_equipment_skill_requirements(
+    makerspace_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """
+    Compat: Alias for /api/v1/equipment/skill-requirements to
+    /api/v1/skills/equipment-requirements.
+    """
+    return await get_equipment_skill_requirements(makerspace_id, db, current_user)
+
+
+# Original endpoint
+
+@router.get(
+    "/equipment-requirements",
+    response_model=List[EquipmentSkillRequirements],
+)
 async def get_equipment_skill_requirements(
     makerspace_id: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    """Get skill requirements for all equipment"""
-    from ..crud.equipment import get_equipment
+    """
+    Get skill requirements for all equipment.
+    """
+    try:
+        from ..crud.equipment import get_equipment
+    except ImportError as e:
+        raise ImportError(
+            "Could not import get_equipment from ..crud.equipment. "
+            "Please ensure it exists and is correctly implemented."
+        ) from e
 
     equipment_list = get_equipment(db=db, makerspace_id=makerspace_id)
 
@@ -392,7 +439,6 @@ async def get_equipment_skill_requirements(
                         "skill_id": skill.id,
                         "skill_name": skill.name,
                         "skill_level": skill.level,
-                        # Could be different if equipment requires higher level
                         "required_level": skill.level,
                         "category": skill.category,
                         "is_required": True,
@@ -502,7 +548,9 @@ async def get_makerspace_skill_analytics(
 
         # Individual skill analytics
         user_skills = skill_crud.get_user_skills(db=db, skill_id=skill.id)
-        requests = skill_crud.get_skill_requests(db=db, skill_id=skill.id)
+        # get_skill_requests does not accept skill_id, so filter manually
+        all_requests = skill_crud.get_skill_requests(db=db, makerspace_id=makerspace_id)
+        requests = [r for r in all_requests if r.skill_id == skill.id]
 
         total_requests = len(requests)
         pending_requests = len(

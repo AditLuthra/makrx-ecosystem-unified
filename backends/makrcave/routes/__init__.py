@@ -17,6 +17,8 @@ from .member import router as member_router
 from .membership_plans import router as membership_plans_router
 from .notifications import router as notifications_router
 from .project import router as project_router
+from .skill import router as skill_router
+from .enhanced_projects import router as enhanced_projects_router
 from .project_showcase import router as project_showcase_router
 from .providers import router as providers_router
 
@@ -61,6 +63,21 @@ api_router.include_router(
     project_router,
     prefix="/projects",
     tags=["projects"],
+    dependencies=[Depends(get_current_user)],
+)
+
+# Skills routes (router already declares prefix="/skills")
+api_router.include_router(
+    skill_router,
+    tags=["skills"],
+    dependencies=[Depends(get_current_user)],
+)
+
+# Enhanced projects routes (mounted under /enhanced-projects)
+api_router.include_router(
+    enhanced_projects_router,
+    prefix="/enhanced-projects",
+    tags=["enhanced-projects"],
     dependencies=[Depends(get_current_user)],
 )
 

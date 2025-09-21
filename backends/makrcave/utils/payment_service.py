@@ -1,14 +1,13 @@
-import hashlib
-import hmac
-import logging
 import os
+import hmac
+import hashlib
 from datetime import datetime
-from typing import Any, Dict, Tuple
-
+from typing import Any, Dict, Tuple, Optional
+import structlog
 import razorpay
 import requests
 
-logger = logging.getLogger(__name__)
+log = structlog.get_logger(__name__)
 
 
 class PaymentGatewayError(Exception):
@@ -26,27 +25,36 @@ class RazorpayService:
         self.webhook_secret = os.getenv("RAZORPAY_WEBHOOK_SECRET")
         self.base_url = "https://api.razorpay.com/v1"
 
-        if self.key_id and self.key_secret:
-            self.client = razorpay.Client(auth=(self.key_id, self.key_secret))
-        else:
+        try:
+            if not self.key_id or not self.key_secret:
+                log.error(
+                    "RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET env vars must be set."
+                )
+                self.client = None
+            else:
+                self.client = razorpay.Client(auth=(self.key_id, self.key_secret))
+        except ImportError:
+            log.error("razorpay module is not installed.")
             self.client = None
-            logger.warning("Razorpay credentials not configured")
 
     def create_order(
         self,
         amount: float,
         currency: str = "INR",
-        receipt: str = None,
-        notes: Dict[str, str] = None,
+        receipt: Optional[str] = None,
+        notes: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Create a Razorpay order"""
         try:
             data = {
                 "amount": int(amount * 100),  # Amount in paise
                 "currency": currency,
-                "receipt": receipt
-                or f"rcpt_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-                "notes": notes or {},
+                "receipt": (
+                    receipt
+                    if receipt
+                    else f"rcpt_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                ),
+                "notes": notes if notes is not None else {},
             }
 
             if not self.client:
@@ -54,9 +62,17 @@ class RazorpayService:
 
             return self.client.order.create(data=data)
 
+        except razorpay.errors.BadRequestError as e:
+            error_msg = f"Razorpay BadRequestError: {str(e)}"
+            log.error(error_msg)
+            raise PaymentGatewayError(error_msg)
+        except razorpay.errors.ServerError as e:
+            error_msg = f"Razorpay ServerError: {str(e)}"
+            log.error(error_msg)
+            raise PaymentGatewayError(error_msg)
         except Exception as e:
-            error_msg = f"Razorpay API request failed: {str(e)}"
-            logger.error(error_msg)
+            error_msg = f"Unexpected Razorpay API error: {str(e)}"
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def verify_payment_signature(
@@ -68,6 +84,9 @@ class RazorpayService:
         """Verify Razorpay payment signature"""
         try:
             message = f"{razorpay_order_id}|{razorpay_payment_id}"
+            if not self.key_secret:
+                log.error("RAZORPAY_KEY_SECRET is not set.")
+                return False
             expected_signature = hmac.new(
                 self.key_secret.encode("utf-8"),
                 message.encode("utf-8"),
@@ -76,8 +95,11 @@ class RazorpayService:
 
             return hmac.compare_digest(expected_signature, razorpay_signature)
 
+        except (TypeError, AttributeError) as e:
+            log.error(f"Signature verification failed: {str(e)}")
+            return False
         except Exception as e:
-            logger.error(f"Signature verification failed: {str(e)}")
+            log.error(f"Unexpected error in signature verification: {str(e)}")
             return False
 
     def get_payment(self, payment_id: str) -> Dict[str, Any]:
@@ -88,16 +110,24 @@ class RazorpayService:
 
             return self.client.payment.fetch(payment_id)
 
+        except razorpay.errors.BadRequestError as e:
+            error_msg = f"Razorpay BadRequestError: {str(e)}"
+            log.error(error_msg)
+            raise PaymentGatewayError(error_msg)
+        except razorpay.errors.ServerError as e:
+            error_msg = f"Razorpay ServerError: {str(e)}"
+            log.error(error_msg)
+            raise PaymentGatewayError(error_msg)
         except Exception as e:
-            error_msg = f"Razorpay API request failed: {str(e)}"
-            logger.error(error_msg)
+            error_msg = f"Unexpected Razorpay API error: {str(e)}"
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def create_refund(
         self,
         payment_id: str,
-        amount: float = None,
-        notes: Dict[str, str] = None,
+        amount: Optional[float] = None,
+        notes: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Create a refund for a payment"""
         try:
@@ -105,19 +135,24 @@ class RazorpayService:
                 raise PaymentGatewayError("Razorpay client not configured")
 
             data = {"notes": notes or {}}
-            if amount:
-                data["amount"] = int(amount * 100)  # Amount in paise
+            if amount is not None:
+                # Razorpay expects 'amount' as int, not as Dict[str, str]
+                # Place 'amount' as a top-level key, not inside 'notes'
+                data = {"amount": int(amount * 100), "notes": notes or {}}
 
             return self.client.payment.refund(payment_id, data)
 
         except Exception as e:
             error_msg = f"Razorpay API request failed: {str(e)}"
-            logger.error(error_msg)
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def verify_webhook_signature(self, payload: str, signature: str) -> bool:
         """Verify Razorpay webhook signature"""
         try:
+            if not self.webhook_secret:
+                log.error("RAZORPAY_WEBHOOK_SECRET is not set.")
+                return False
             expected_signature = hmac.new(
                 self.webhook_secret.encode("utf-8"),
                 payload.encode("utf-8"),
@@ -127,7 +162,7 @@ class RazorpayService:
             return hmac.compare_digest(expected_signature, signature)
 
         except Exception as e:
-            logger.error(f"Webhook signature verification failed: {str(e)}")
+            log.error(f"Webhook signature verification failed: {str(e)}")
             return False
 
 
@@ -141,13 +176,13 @@ class StripeService:
         self.base_url = "https://api.stripe.com/v1"
 
         if not self.secret_key:
-            logger.warning("Stripe credentials not configured")
+            log.warning("Stripe credentials not configured")
 
     def create_payment_intent(
         self,
         amount: float,
         currency: str = "usd",
-        metadata: Dict[str, str] = None,
+        metadata: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Create a Stripe payment intent"""
         try:
@@ -172,12 +207,12 @@ class StripeService:
                 return response.json()
             else:
                 error_msg = f"Stripe payment intent creation failed: {response.text}"
-                logger.error(error_msg)
+                log.error(error_msg)
                 raise PaymentGatewayError(error_msg)
 
         except requests.RequestException as e:
             error_msg = f"Stripe API request failed: {str(e)}"
-            logger.error(error_msg)
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def confirm_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
@@ -197,19 +232,19 @@ class StripeService:
                 return response.json()
             else:
                 error_msg = f"Stripe payment confirmation failed: {response.text}"
-                logger.error(error_msg)
+                log.error(error_msg)
                 raise PaymentGatewayError(error_msg)
 
         except requests.RequestException as e:
             error_msg = f"Stripe API request failed: {str(e)}"
-            logger.error(error_msg)
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def create_refund(
         self,
         payment_intent_id: str,
-        amount: float = None,
-        metadata: Dict[str, str] = None,
+        amount: Optional[float] = None,
+        metadata: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Create a refund for a payment"""
         try:
@@ -236,12 +271,12 @@ class StripeService:
                 return response.json()
             else:
                 error_msg = f"Stripe refund failed: {response.text}"
-                logger.error(error_msg)
+                log.error(error_msg)
                 raise PaymentGatewayError(error_msg)
 
         except requests.RequestException as e:
             error_msg = f"Stripe API request failed: {str(e)}"
-            logger.error(error_msg)
+            log.error(error_msg)
             raise PaymentGatewayError(error_msg)
 
     def verify_webhook_signature(
@@ -269,6 +304,9 @@ class StripeService:
 
             # Verify signature
             signed_payload = f"{webhook_timestamp}.{payload}"
+            if not self.webhook_secret:
+                log.error("STRIPE_WEBHOOK_SECRET is not set.")
+                return False
             expected_signature = hmac.new(
                 self.webhook_secret.encode("utf-8"),
                 signed_payload.encode("utf-8"),
@@ -278,7 +316,7 @@ class StripeService:
             return hmac.compare_digest(expected_signature, signature_dict["v1"])
 
         except Exception as e:
-            logger.error(f"Stripe webhook signature verification failed: {str(e)}")
+            log.error(f"Stripe webhook signature verification failed: {str(e)}")
             return False
 
 
@@ -294,16 +332,30 @@ class PaymentService:
         gateway: str,
         amount: float,
         currency: str = "INR",
-        transaction_id: str = None,
-        user_id: str = None,
-        metadata: Dict[str, Any] = None,
+        transaction_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Tuple[str, Dict[str, Any]]:
         """Create a checkout session for the specified gateway"""
 
         if gateway.lower() == "razorpay":
-            notes = {"transaction_id": transaction_id, "user_id": user_id}
+            # Only include non-None values and ensure all values are str
+            notes = {
+                k: str(v)
+                for k, v in {
+                    "transaction_id": transaction_id,
+                    "user_id": user_id,
+                }.items()
+                if v is not None
+            }
             if metadata:
-                notes.update({k: str(v) for k, v in metadata.items()})
+                notes.update(
+                    {
+                        k: str(v)
+                        for k, v in metadata.items()
+                        if v is not None
+                    }
+                )
 
             order = self.razorpay.create_order(
                 amount=amount,
@@ -322,11 +374,21 @@ class PaymentService:
 
         elif gateway.lower() == "stripe":
             metadata_dict = {
-                "transaction_id": transaction_id,
-                "user_id": user_id,
+                k: str(v)
+                for k, v in {
+                    "transaction_id": transaction_id,
+                    "user_id": user_id,
+                }.items()
+                if v is not None
             }
             if metadata:
-                metadata_dict.update({k: str(v) for k, v in metadata.items()})
+                metadata_dict.update(
+                    {
+                        k: str(v)
+                        for k, v in metadata.items()
+                        if v is not None
+                    }
+                )
 
             intent = self.stripe.create_payment_intent(
                 amount=amount, currency=currency, metadata=metadata_dict
@@ -396,19 +458,22 @@ class PaymentService:
         self,
         gateway: str,
         gateway_transaction_id: str,
-        amount: float = None,
-        reason: str = None,
+        amount: Optional[float] = None,
+        reason: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a refund through the specified gateway"""
 
         if gateway.lower() == "razorpay":
             notes = {"reason": reason} if reason else {}
+            # Only include str values
+            notes = {k: str(v) for k, v in notes.items() if v is not None}
             return self.razorpay.create_refund(
                 payment_id=gateway_transaction_id, amount=amount, notes=notes
             )
 
         elif gateway.lower() == "stripe":
             metadata = {"reason": reason} if reason else {}
+            metadata = {k: str(v) for k, v in metadata.items() if v is not None}
             return self.stripe.create_refund(
                 payment_intent_id=gateway_transaction_id,
                 amount=amount,
@@ -419,7 +484,11 @@ class PaymentService:
             raise PaymentGatewayError(f"Unsupported payment gateway: {gateway}")
 
     def verify_webhook(
-        self, gateway: str, payload: str, signature: str, timestamp: str = None
+        self,
+        gateway: str,
+        payload: str,
+        signature: str,
+        timestamp: Optional[str] = None,
     ) -> bool:
         """Verify webhook signature from the specified gateway"""
 
@@ -427,6 +496,10 @@ class PaymentService:
             return self.razorpay.verify_webhook_signature(payload, signature)
 
         elif gateway.lower() == "stripe":
+            # Stripe expects timestamp as str, ensure not None
+            if timestamp is None:
+                log.error("Timestamp is required for Stripe webhook verification.")
+                return False
             return self.stripe.verify_webhook_signature(payload, signature, timestamp)
 
         else:
@@ -461,9 +534,10 @@ def calculate_service_charge(
     gateway_fee = 0
     if gateway in gateway_charges:
         gateway_config = gateway_charges[gateway]
-        gateway_fee = (amount * gateway_config["percentage"] / 100) + gateway_config[
-            "fixed"
-        ]
+        gateway_fee = (
+            (amount * gateway_config["percentage"] / 100)
+            + gateway_config["fixed"]
+        )
 
     service_fee = service_charges.get(service_type, 0)
 

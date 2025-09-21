@@ -19,6 +19,8 @@ class EmailService:
         self.smtp_password = os.getenv("SMTP_PASSWORD")
         self.from_email = os.getenv("FROM_EMAIL", self.smtp_username)
         self.from_name = os.getenv("FROM_NAME", "MakrCave")
+        if not self.smtp_username or not self.smtp_password:
+            raise ValueError("SMTP_USERNAME and SMTP_PASSWORD environment variables must be set.")
 
     def send_email(
         self,
@@ -63,14 +65,20 @@ class EmailService:
             # Send email
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
-                server.login(self.smtp_username, self.smtp_password)
+                server.login(str(self.smtp_username), str(self.smtp_password))
                 server.send_message(msg)
 
             logger.info(f"Email sent successfully to {to_email}")
             return True
 
+        except smtplib.SMTPException as e:
+            logger.error(f"SMTP error sending email to {to_email}: {str(e)}")
+            return False
+        except FileNotFoundError as e:
+            logger.error(f"Attachment file not found: {str(e)}")
+            return False
         except Exception as e:
-            logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            logger.error(f"Unexpected error sending email to {to_email}: {str(e)}")
             return False
 
 

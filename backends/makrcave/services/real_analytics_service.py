@@ -1,6 +1,7 @@
 """Real analytics service replacing mock data with actual database queries"""
 
 import logging
+from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
@@ -11,11 +12,6 @@ from sqlalchemy.sql import case
 from ..database import get_db
 from ..models.enhanced_analytics import EquipmentUtilizationMetrics
 from ..models.enhanced_member import Member, MemberActivityLog
-
-try:
-    from ..models.skill import MemberSkill
-except ImportError:  # Backward compatibility when MemberSkill model is absent
-    MemberSkill = None
 from ..models.billing import CreditTransaction, Transaction
 from ..models.equipment import Equipment, EquipmentReservation
 from ..models.machine_access import SafetyIncident, UserCertification
@@ -134,8 +130,22 @@ class RealAnalyticsService:
                 "alerts": self._get_current_alerts(makerspace_id),
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Real-time analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {
+                "error": str(e),
+                "timestamp": datetime.utcnow().isoformat(),
+            }
         except Exception as e:
-            logger.error(f"Real-time analytics error: {e}")
+            logger.error(
+                "Real-time analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {
                 "error": str(e),
                 "timestamp": datetime.utcnow().isoformat(),
@@ -279,8 +289,19 @@ class RealAnalyticsService:
                 },
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Usage analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Usage analytics error: {e}")
+            logger.error(
+                "Usage analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {"error": str(e)}
 
     def get_revenue_analytics(
@@ -454,8 +475,19 @@ class RealAnalyticsService:
                 },
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Revenue analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Revenue analytics error: {e}")
+            logger.error(
+                "Revenue analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {"error": str(e)}
 
     def get_equipment_analytics(
@@ -633,8 +665,19 @@ class RealAnalyticsService:
                 },
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Equipment analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Equipment analytics error: {e}")
+            logger.error(
+                "Equipment analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {"error": str(e)}
 
     def get_member_analytics(
@@ -668,20 +711,8 @@ class RealAnalyticsService:
             )
 
             # Skills and certifications
-            if MemberSkill is not None:
-                skills_distribution = (
-                    self.db.query(
-                        MemberSkill.skill_name,
-                        MemberSkill.skill_level,
-                        func.count(MemberSkill.id).label("member_count"),
-                    )
-                    .join(Member, MemberSkill.member_id == Member.id)
-                    .filter(Member.makerspace_id == makerspace_id)
-                    .group_by(MemberSkill.skill_name, MemberSkill.skill_level)
-                    .all()
-                )
-            else:
-                skills_distribution = []
+            # TODO: Implement skills_distribution using UserSkill if needed
+            skills_distribution = []
 
             # Recent certifications
             recent_certifications = (
@@ -767,8 +798,19 @@ class RealAnalyticsService:
                 },
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Member analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Member analytics error: {e}")
+            logger.error(
+                "Member analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {"error": str(e)}
 
     def get_safety_analytics(
@@ -877,8 +919,19 @@ class RealAnalyticsService:
                 ],
             }
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Safety analytics DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            return {"error": str(e)}
         except Exception as e:
-            logger.error(f"Safety analytics error: {e}")
+            logger.error(
+                "Safety analytics unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             return {"error": str(e)}
 
     def _get_current_alerts(self, makerspace_id: str) -> List[Dict[str, Any]]:
@@ -962,8 +1015,26 @@ class RealAnalyticsService:
                     }
                 )
 
+        except SQLAlchemyError as e:
+            logger.error(
+                "Alert generation DB error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id}
+            )
+            alerts.append(
+                {
+                    "type": "system",
+                    "severity": "low",
+                    "message": "Unable to check system alerts",
+                    "error": str(e),
+                }
+            )
         except Exception as e:
-            logger.error(f"Alert generation error: {e}")
+            logger.error(
+                "Alert generation unexpected error",
+                exc_info=True,
+                extra={"makerspace_id": makerspace_id, "error_type": type(e).__name__}
+            )
             alerts.append(
                 {
                     "type": "system",

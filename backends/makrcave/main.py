@@ -21,9 +21,78 @@ from .redis_utils import check_redis_connection
 from .routes import api_router
 from .routes.health import router as health_router
 
+
+# --- CENTRALIZED CONFIG/ENV VALIDATION ---
+def validate_config():
+    required_secrets = [
+        "RAZORPAY_KEY_ID",
+        "RAZORPAY_KEY_SECRET",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_PUBLISHABLE_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "DATABASE_URL",
+        "KEYCLOAK_URL",
+        "KEYCLOAK_REALM",
+        "KEYCLOAK_CLIENT_ID",
+    ]
+    missing = [k for k in required_secrets if not os.getenv(k)]
+    if missing and os.getenv("ENVIRONMENT") == "production":
+        raise RuntimeError(
+            "Missing required secrets in production: {}".format(
+                ", ".join(missing)
+            )
+        )
+    import structlog
+    log = structlog.get_logger(__name__)
+    if missing:
+        log.warning(
+            "Missing secrets (not production)", missing=missing
+        )
+    # CORS safety: warn if any localhost/127.0.0.1 in production
+    cors = os.getenv("CORS_ORIGINS", "")
+    if os.getenv("ENVIRONMENT") == "production" and (
+        "localhost" in cors or "127.0.0.1" in cors
+    ):
+        log.warning("Unsafe CORS_ORIGINS includes localhost/127.0.0.1 in production!")
+    # DB URL safety: warn if using dev/test DB in production
+    db_url = os.getenv("DATABASE_URL", "")
+    if os.getenv("ENVIRONMENT") == "production" and (
+        "localhost" in db_url or "dev_password" in db_url
+    ):
+        log.warning("DATABASE_URL appears unsafe for production!")
+
+
+# --- ENVIRONMENT VALIDATION FOR SECRETS ---
+def validate_env_secrets():
+    required_secrets = [
+        "RAZORPAY_KEY_ID",
+        "RAZORPAY_KEY_SECRET",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_PUBLISHABLE_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "DATABASE_URL",
+        "KEYCLOAK_URL",
+        "KEYCLOAK_REALM",
+        "KEYCLOAK_CLIENT_ID",
+    ]
+    missing = [k for k in required_secrets if not os.getenv(k)]
+    if missing and os.getenv("ENVIRONMENT") == "production":
+        raise RuntimeError(
+            "Missing required secrets in production: {}".format(
+                ", ".join(missing)
+            )
+        )
+    elif missing:
+        log.warning("Missing secrets (not production)", missing=missing)
+
+
+
 # Configure logging early
 configure_logging()
 log = structlog.get_logger(__name__)
+
+# Validate environment secrets
+validate_env_secrets()
 
 
 # Create FastAPI app
@@ -34,19 +103,25 @@ async def lifespan(app: FastAPI):
         try:
             reset_db()
             log.info("test_db_reset_done")
-        except Exception as e:
+        except RuntimeError as e:
             log.warning("test_db_reset_failed", error=str(e))
+        except Exception as e:
+            log.error("unexpected_test_db_reset_error", error=str(e))
     try:
         await get_keycloak_public_key(force=True)
         log.info("keycloak_public_key_warmed")
-    except Exception as e:
+    except ValueError as e:
         log.warning("keycloak_public_key_warm_failed", error=str(e))
+    except Exception as e:
+        log.error("unexpected_keycloak_public_key_error", error=str(e))
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         log.info("database_connectivity_ok")
-    except Exception as e:
+    except ConnectionError as e:
         log.error("database_connectivity_failed", error=str(e))
+    except Exception as e:
+        log.error("unexpected_database_connectivity_error", error=str(e))
     yield
     # Shutdown: nothing special yet
 
@@ -71,8 +146,10 @@ try:
             environment=os.getenv("ENVIRONMENT", "development"),
         )
         log.info("sentry_initialized")
-except Exception as e:
+except ImportError as e:
     log.info(f"sentry_not_enabled: {e}")
+except Exception as e:
+    log.error("unexpected_sentry_error", error=str(e))
 
 default_allowed_origins = [
     "https://makrx.org",

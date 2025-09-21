@@ -366,6 +366,64 @@ async def get_featured_projects(
     return showcase_projects
 
 
+# Compatibility alias for frontend expecting a featured maker endpoint
+@router.get("/showcase/featured-maker")
+async def get_featured_maker_alias(
+    current_user=Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    """Return a featured maker-like structure using a top featured project.
+
+    Shape is compatible with the frontend MakerSpotlight component minimal needs.
+    """
+    # Reuse featured projects list and adapt a minimal response
+    projects = await get_featured_projects(current_user=current_user, db=db)
+    if not projects:
+        return {
+            "user_id": "",
+            "name": "",
+            "project_count": 0,
+            "total_likes": 0,
+            "total_views": 0,
+            "total_forks": 0,
+            "follower_count": 0,
+            "top_skills": [],
+            "achievements": [],
+            "is_verified": False,
+            "is_staff_pick": False,
+            "member_since": None,
+            "featured_project": None,
+        }
+    p = projects[0]
+    return {
+        "user_id": getattr(p, "owner_id", ""),
+        "name": getattr(p, "owner_name", "Featured Maker"),
+        "project_count": 1,
+        "total_likes": getattr(p, "like_count", 0),
+        "total_views": getattr(p, "view_count", 0),
+        "total_forks": getattr(p, "fork_count", 0),
+        "follower_count": 0,
+        "top_skills": getattr(p, "tags", []) or [],
+        "achievements": [
+            {
+                "type": "featured",
+                "name": "Featured Project",
+                "icon": "⭐",
+                "description": "Staff pick",
+            }
+        ],
+        "is_verified": False,
+        "is_staff_pick": True,
+        "member_since": getattr(p, "created_at", None),
+        "featured_project": {
+            "project_id": getattr(p, "project_id", ""),
+            "name": getattr(p, "name", "Project"),
+            "thumbnail_url": getattr(p, "thumbnail_url", None),
+            "like_count": getattr(p, "like_count", 0),
+            "view_count": getattr(p, "view_count", 0),
+        },
+    }
+
+
 @router.get("/showcase/trending", response_model=List[ShowcaseProjectResponse])
 async def get_trending_projects(
     limit: int = Query(10, ge=1, le=20),

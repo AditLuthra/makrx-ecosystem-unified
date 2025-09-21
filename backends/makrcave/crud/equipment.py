@@ -1,3 +1,5 @@
+
+
 import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
@@ -23,6 +25,17 @@ from ..schemas.equipment import (
     ReservationCreate,
     ReservationUpdate,
 )
+
+
+def get_equipment(db: Session, makerspace_id: Optional[str] = None):
+    """
+    Return all equipment for a makerspace.
+    Used by routes/skill.py compat endpoints.
+    """
+    query = db.query(Equipment)
+    if makerspace_id:
+        query = query.filter(Equipment.linked_makerspace_id == makerspace_id)
+    return query.all()
 
 
 class EquipmentCRUD:
@@ -125,7 +138,8 @@ class EquipmentCRUD:
             for day_slots in equipment_data.available_slots.values():
                 for slot in day_slots:
                     if "start_time" in slot and "end_time" in slot:
-                        # Simple calculation - would need proper time parsing in production
+                        # Simple calculation - would need proper time parsing
+                        # in production
                         duration_hours += 8  # Default 8 hours per slot
 
         db_equipment = Equipment(
@@ -218,7 +232,7 @@ class EquipmentCRUD:
         reservation_data: ReservationCreate,
         user_id: str,
         user_name: str,
-        user_email: str = None,
+        user_email: Optional[str] = None,
     ) -> EquipmentReservation:
         """Create equipment reservation"""
 
@@ -339,7 +353,7 @@ class EquipmentCRUD:
         db: Session,
         reservation_id: str,
         approved_by: str,
-        admin_notes: str = None,
+        admin_notes: Optional[str] = None,
     ) -> EquipmentReservation:
         """Approve or reject reservation"""
         db_reservation = (
@@ -364,11 +378,11 @@ class EquipmentCRUD:
     def get_reservations(
         self,
         db: Session,
-        equipment_id: str = None,
-        user_id: str = None,
-        start_date: datetime = None,
-        end_date: datetime = None,
-        status: ReservationStatus = None,
+        equipment_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        status: Optional[ReservationStatus] = None,
     ) -> List[EquipmentReservation]:
         """Get reservations with filters"""
         query = db.query(EquipmentReservation)
@@ -478,7 +492,11 @@ class EquipmentCRUD:
         return db_maintenance
 
     def set_maintenance_mode(
-        self, db: Session, equipment_id: str, enable: bool, reason: str = None
+        self,
+        db: Session,
+        equipment_id: str,
+        enable: bool,
+        reason: Optional[str] = None,
     ) -> Equipment:
         """Set equipment maintenance mode"""
         equipment = self.get_equipment_by_id(db, equipment_id)
@@ -556,7 +574,9 @@ class EquipmentCRUD:
         return db_rating
 
     def get_equipment_stats(
-        self, db: Session, makerspace_id: str = None
+        self,
+        db: Session,
+        makerspace_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Get equipment statistics"""
         query = db.query(Equipment)

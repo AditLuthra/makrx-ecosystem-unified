@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface EventMessage {
   type: 'event' | 'subscription_confirmed' | 'unsubscription_confirmed';
@@ -33,6 +33,12 @@ export function useRealTimeUpdates(options: UseRealTimeUpdatesOptions = {}) {
   const { autoConnect = true, reconnectInterval = 5000, maxReconnectAttempts = 10 } = options;
 
   const { user, isAuthenticated } = useAuth();
+  // Try to get token from Keycloak context if available
+  // @ts-ignore: Keycloak may expose token property
+  const keycloakToken =
+    (user && (user as any).token) ||
+    (typeof window !== 'undefined' && (window as any).kc?.token) ||
+    null;
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -44,7 +50,13 @@ export function useRealTimeUpdates(options: UseRealTimeUpdatesOptions = {}) {
   >('disconnected');
   const [lastEvent, setLastEvent] = useState<RealTimeEvent | null>(null);
 
-  const eventServiceUrl = process.env.NEXT_PUBLIC_EVENT_SERVICE_URL || 'ws://localhost:8004';
+  // Prefer backend API base URL for notifications
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_WS_URL || '';
+  const wsBase = apiBase.replace(/^http/, 'ws');
+  // Fallback to legacy event service if not set
+  const eventServiceUrl =
+    wsBase || process.env.NEXT_PUBLIC_EVENT_SERVICE_URL || 'ws://localhost:8004';
 
   const connect = useCallback(() => {
     if (!isAuthenticated || !user || wsRef.current) {
@@ -54,7 +66,12 @@ export function useRealTimeUpdates(options: UseRealTimeUpdatesOptions = {}) {
     setConnectionStatus('connecting');
 
     try {
-      const wsUrl = `${eventServiceUrl}/ws/${user.id}`;
+      // Use new MakrCave notifications endpoint if available
+      let wsUrl = `${eventServiceUrl}/api/v1/notifications/ws/${user.id}`;
+      // Pass token as query param if available
+      if (keycloakToken) {
+        wsUrl += `?token=${encodeURIComponent(keycloakToken)}`;
+      }
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {

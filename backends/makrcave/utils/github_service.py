@@ -3,7 +3,9 @@ import re
 from datetime import datetime
 from typing import Dict, List, Optional
 
+
 import requests
+import structlog  # type: ignore
 
 from ..schemas.project import (
     GitHubActivity,
@@ -14,49 +16,39 @@ from ..schemas.project import (
 
 
 class GitHubService:
+    log = structlog.get_logger(__name__)
+
     def __init__(self, access_token: Optional[str] = None):
         self.access_token = access_token
         self.base_url = "https://api.github.com"
         self.headers = {
+            "Authorization": (
+                f"token {self.access_token}" if self.access_token else None
+            ),
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "MakrCave-Project-Manager",
         }
-        if access_token:
-            self.headers["Authorization"] = f"token {access_token}"
 
     def parse_repo_url(self, repo_url: str) -> Optional[Dict[str, str]]:
-        """Parse GitHub repository URL to extract owner and repo name"""
-        # Support various GitHub URL formats
+        """Parse a GitHub repo URL into owner/repo."""
         patterns = [
-            r"github\.com/([^/]+)/([^/]+)/?$",
-            r"github\.com/([^/]+)/([^/]+)\.git$",
-            r"github\.com/([^/]+)/([^/]+)/.*$",
+            r"github.com[:/](?P<owner>[^/]+)/(?P<repo>[^/]+?)(?:\.git)?$",
+            r"https://github.com/(?P<owner>[^/]+)/(?P<repo>[^/]+?)(?:\.git)?$",
         ]
-
         for pattern in patterns:
             match = re.search(pattern, repo_url)
             if match:
-                owner, repo = match.groups()
-                # Remove .git suffix if present
-                repo = repo.replace(".git", "")
-                return {
-                    "owner": owner,
-                    "repo": repo,
-                    "full_name": f"{owner}/{repo}",
-                }
-
+                owner = match.group("owner")
+                repo = match.group("repo")
+                return {"owner": owner, "repo": repo, "full_name": f"{owner}/{repo}"}
         return None
 
     def get_repository_info(self, repo_url: str) -> Optional[GitHubRepoInfo]:
-        """Get repository information from GitHub API"""
         try:
             repo_info = self.parse_repo_url(repo_url)
             if not repo_info:
                 return None
-
             url = f"{self.base_url}/repos/{repo_info['full_name']}"
             response = requests.get(url, headers=self.headers)
-
             if response.status_code == 200:
                 data = response.json()
                 return GitHubRepoInfo(
@@ -80,10 +72,20 @@ class GitHubService:
                         data["pushed_at"].replace("Z", "+00:00")
                     ),
                 )
-
+            return None
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching repository info",
+                error=str(e),
+                repo_url=repo_url,
+            )
             return None
         except Exception as e:
-            print(f"Error fetching repository info: {e}")
+            self.log.error(
+                "Unknown error validating access",
+                error=str(e),
+                repo_url=repo_url,
+            )
             return None
 
     def get_repository_files(
@@ -126,8 +128,14 @@ class GitHubService:
                 return files
 
             return []
-        except Exception as e:
-            print(f"Error fetching repository files: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching repository files",
+                error=str(e),
+                repo_url=repo_url,
+                path=path,
+                branch=branch,
+            )
             return []
 
     def get_file_content(
@@ -150,8 +158,14 @@ class GitHubService:
                     return content
 
             return None
-        except Exception as e:
-            print(f"Error fetching file content: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching file content",
+                error=str(e),
+                repo_url=repo_url,
+                file_path=file_path,
+                branch=branch,
+            )
             return None
 
     def get_commits(
@@ -207,8 +221,15 @@ class GitHubService:
                 return commits
 
             return []
-        except Exception as e:
-            print(f"Error fetching commits: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching commits",
+                error=str(e),
+                repo_url=repo_url,
+                branch=branch,
+                per_page=per_page,
+                page=page,
+            )
             return []
 
     def get_commit_details(
@@ -257,8 +278,13 @@ class GitHubService:
                 "modified_files": [],
                 "removed_files": [],
             }
-        except Exception as e:
-            print(f"Error fetching commit details: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching commit details",
+                error=str(e),
+                repo_url=repo_url,
+                commit_sha=commit_sha,
+            )
             return {
                 "added_files": [],
                 "modified_files": [],
@@ -306,8 +332,14 @@ class GitHubService:
                 return activities
 
             return []
-        except Exception as e:
-            print(f"Error fetching pull requests: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching pull requests",
+                error=str(e),
+                repo_url=repo_url,
+                state=state,
+                per_page=per_page,
+            )
             return []
 
     def get_issues(
@@ -359,8 +391,14 @@ class GitHubService:
                 return activities
 
             return []
-        except Exception as e:
-            print(f"Error fetching issues: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching issues",
+                error=str(e),
+                repo_url=repo_url,
+                state=state,
+                per_page=per_page,
+            )
             return []
 
     def get_releases(self, repo_url: str, per_page: int = 10) -> List[GitHubActivity]:
@@ -402,8 +440,13 @@ class GitHubService:
                 return activities
 
             return []
-        except Exception as e:
-            print(f"Error fetching releases: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error fetching releases",
+                error=str(e),
+                repo_url=repo_url,
+                per_page=per_page,
+            )
             return []
 
     def validate_access(self, repo_url: str) -> bool:
@@ -411,7 +454,26 @@ class GitHubService:
         try:
             repo_info = self.get_repository_info(repo_url)
             return repo_info is not None
-        except Exception:
+        except requests.RequestException as e:
+            self.log.error(
+                "Request error validating access",
+                error=str(e),
+                repo_url=repo_url,
+            )
+            return False
+        except ValueError as e:
+            self.log.error(
+                "Value error validating access",
+                error=str(e),
+                repo_url=repo_url,
+            )
+            return False
+        except Exception as e:
+            self.log.error(
+                "Unknown error validating access",
+                error=str(e),
+                repo_url=repo_url,
+            )
             return False
 
     def create_file(
@@ -440,8 +502,14 @@ class GitHubService:
 
             response = requests.put(url, headers=self.headers, json=data)
             return response.status_code == 201
-        except Exception as e:
-            print(f"Error creating file: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error creating file",
+                error=str(e),
+                repo_url=repo_url,
+                file_path=file_path,
+                branch=branch,
+            )
             return False
 
     def update_file(
@@ -472,6 +540,12 @@ class GitHubService:
 
             response = requests.put(url, headers=self.headers, json=data)
             return response.status_code == 200
-        except Exception as e:
-            print(f"Error updating file: {e}")
+        except requests.RequestException as e:
+            self.log.error(
+                "Error updating file",
+                error=str(e),
+                repo_url=repo_url,
+                file_path=file_path,
+                branch=branch,
+            )
             return False

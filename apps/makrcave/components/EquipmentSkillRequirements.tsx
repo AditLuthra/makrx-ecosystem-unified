@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { useAuthHeaders } from '@makrx/auth';
 import {
+  AlertTriangle,
+  BookOpen,
+  CheckCircle,
   GraduationCap,
+  Package,
+  Search,
+  Settings,
   Shield,
   Star,
-  Search,
-  Filter,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Users,
   Wrench,
-  Package,
+  XCircle,
   Zap,
-  Settings,
-  BookOpen,
 } from 'lucide-react';
-import { useSkills } from '../contexts/SkillContext';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSkills } from '../contexts/SkillContext';
 import { useToast } from '../hooks/use-toast';
-import { useAuthHeaders } from '@makrx/auth';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
 
 interface SkillRequirement {
   skill_id: string;
@@ -60,7 +58,7 @@ const EquipmentSkillRequirements: React.FC = () => {
     setLoading(true);
     try {
       const headers = await getHeaders({ 'Content-Type': 'application/json' });
-      const response = await fetch('/api/v1/equipment/skill-requirements', { headers });
+      const response = await fetch('/api/v1/skills/equipment-requirements', { headers });
 
       if (response.ok) {
         const data = await response.json();

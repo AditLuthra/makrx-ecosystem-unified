@@ -20,6 +20,8 @@ A comprehensive ecosystem of interconnected applications and services built for 
 - Feature Flags Guide: [FEATURE_FLAGS_GUIDE.md](FEATURE_FLAGS_GUIDE.md)
 - Errors & Guidance: [ERRORS_AND_GUIDANCE.md](ERRORS_AND_GUIDANCE.md)
 
+Tip: Compatibility aliases for MakrCave API and preferred endpoints are tracked in [docs/CHANGELOG.md](docs/CHANGELOG.md) under Unreleased.
+
 ### 🔐 Auth configuration (Keycloak)
 
 We use Keycloak for SSO across all apps/services. Unified env var names and local dev defaults are documented here:

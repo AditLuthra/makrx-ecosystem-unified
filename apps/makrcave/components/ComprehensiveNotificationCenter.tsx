@@ -155,7 +155,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
       if (filterStatus !== 'all') params.append('statuses', filterStatus);
       if (filterPriority !== 'all') params.append('priorities', filterPriority);
 
-      const response = await fetch(`/api/notifications/?${params}`, {
+      const response = await fetch(`/api/v1/notifications/?${params}`, {
         headers: await getHeaders(),
       });
 
@@ -235,7 +235,12 @@ const ComprehensiveNotificationCenter: React.FC = () => {
     const userId = user?.id;
     if (!userId) return;
 
-    const wsUrl = `ws://localhost:8000/api/notifications/ws/${userId}`;
+    // Derive WS URL from the current origin or env var; ensure versioned path
+    const baseWs =
+      (typeof window !== 'undefined' && window.location.origin.replace(/^http/, 'ws')) ||
+      process.env.NEXT_PUBLIC_BACKEND_WS_URL ||
+      'ws://localhost:8001';
+    const wsUrl = `${baseWs}/api/v1/notifications/ws/${userId}`;
     wsRef.current = new WebSocket(wsUrl);
 
     wsRef.current.onopen = () => {
@@ -315,7 +320,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       const headers = await getHeaders();
-      const response = await fetch(`/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`/api/v1/notifications/${notificationId}/read`, {
         method: 'POST',
         headers,
       });
@@ -357,7 +362,7 @@ const ComprehensiveNotificationCenter: React.FC = () => {
   const handleDeleteNotification = async (notificationId: string) => {
     try {
       const headers = await getHeaders();
-      const response = await fetch(`/api/notifications/${notificationId}`, {
+      const response = await fetch(`/api/v1/notifications/${notificationId}`, {
         method: 'DELETE',
         headers,
       });

@@ -3,14 +3,25 @@ import io
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
-import qrcode
+try:
+    import qrcode
+    from qrcode.constants import ERROR_CORRECT_L  # noqa: F401
+except ImportError:
+    qrcode = None
 
 
 def generate_qr_code(data: str) -> str:
     """Generate QR code image as base64 string"""
+    if not qrcode:
+        raise ImportError("qrcode library is not installed.")
+    # Use fallback error correction if import failed
+    if 'ERROR_CORRECT_L' in globals() and globals()['ERROR_CORRECT_L'] is not None:
+        error_correction = globals()['ERROR_CORRECT_L']
+    else:
+        error_correction = 1
     qr = qrcode.QRCode(
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        error_correction=error_correction,
         box_size=10,
         border=4,
     )
@@ -21,7 +32,12 @@ def generate_qr_code(data: str) -> str:
 
     # Convert to base64
     buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
+    # Some qrcode versions return PIL.Image, some return their own wrapper.
+    # Get the underlying image if needed.
+    pil_img = img
+    if hasattr(img, 'get_image'):
+        pil_img = img.get_image()
+    pil_img.save(buffer, "PNG")
     buffer.seek(0)
 
     img_str = base64.b64encode(buffer.getvalue()).decode()
@@ -30,6 +46,8 @@ def generate_qr_code(data: str) -> str:
 
 def parse_makrx_qr(qr_code: str) -> Optional[Dict[str, str]]:
     """Parse MakrX QR code format: MKX-CATEGORY-SUBCATEGORY-PRODUCTCODE"""
+    import logging
+    logger = logging.getLogger(__name__)
     try:
         parts = qr_code.split("-")
         if len(parts) >= 4 and parts[0] == "MKX":
@@ -39,8 +57,8 @@ def parse_makrx_qr(qr_code: str) -> Optional[Dict[str, str]]:
                 "product_code": "-".join(parts[3:]),
                 "supplier_type": "makrx",
             }
-    except Exception:
-        pass
+    except (AttributeError, IndexError) as e:
+        logger.error(f"Failed to parse QR code: {qr_code}", exc_info=e)
     return None
 
 
@@ -122,7 +140,7 @@ def process_csv_row(row: Dict[str, str], row_number: int) -> Dict[str, Any]:
     }
 
 
-def calculate_inventory_value(items: List[Dict[str, Any]]) -> Dict[str, float]:
+def calculate_inventory_value(items: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Calculate total inventory value by category"""
     category_values = {}
     total_value = 0
@@ -310,6 +328,9 @@ async def sync_with_makrx_catalog(product_codes: List[str]) -> Dict[str, Any]:
                 "description": f"Official MakrX component {code}",
             }
         except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to sync item with code {code}", exc_info=e)
             failed_items.append({"code": code, "error": str(e)})
 
     return {

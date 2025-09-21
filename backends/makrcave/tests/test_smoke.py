@@ -40,9 +40,10 @@ def test_happy_path_with_override(monkeypatch):
     # Override dependency to bypass auth for a simple GET route that touches DB lightly
     from backends.makrcave.dependencies import get_current_user
 
+    import uuid
     def _fake_user():
         return CurrentUser(
-            user_id="test-user",
+            user_id=str(uuid.uuid4()),
             email="u@example.com",
             first_name="T",
             last_name="U",

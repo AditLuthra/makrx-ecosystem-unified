@@ -24,7 +24,9 @@ from ..schemas.equipment import (
     EquipmentReservationCreate,
     EquipmentReservationResponse,
     EquipmentResponse,
+    EquipmentFilter,
 )
+from ..schemas.skill import EquipmentSkillRequirements
 
 router = APIRouter()
 security = HTTPBearer()
@@ -53,16 +55,24 @@ async def get_equipment(
         ):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions to view equipment from another makerspace",
+                detail=(
+                    "Insufficient permissions to view equipment from another "
+                    "makerspace"
+                ),
             )
 
         equipment_crud = get_equipment_crud(db)
-        equipment_list = equipment_crud.get_equipment_list(
-            makerspace_id=makerspace_id,
+        filters = EquipmentFilter(
             category=category,
             status=status,
             skip=skip,
             limit=limit,
+        )
+        equipment_list = equipment_crud.get_equipment_list(
+            db=db,
+            makerspace_id=makerspace_id or "",
+            filters=filters,
+            user_role=getattr(current_user, "role", "user"),
         )
         return equipment_list
     except Exception as e:
@@ -96,6 +106,63 @@ async def get_equipment_details(
         )
 
     return EquipmentResponse.model_validate(equipment, from_attributes=True)
+
+
+@router.get("/skill-requirements", response_model=list[EquipmentSkillRequirements])
+async def get_equipment_skill_requirements_compat(
+    makerspace_id: Optional[str] = Query(None),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Compatibility alias for older frontend call:
+    GET /api/v1/equipment/skill-requirements → /api/v1/skills/equipment-requirements
+
+    Mirrors the implementation in skills router to avoid breaking older clients.
+    """
+    # Resolve makerspace scope (default to user's makerspace when not provided)
+    ms_id = makerspace_id or (
+        getattr(current_user, "makerspace_id", None)
+        if hasattr(current_user, "makerspace_id")
+        else None
+    )
+
+    equipment_crud = get_equipment_crud(db)
+    filters = EquipmentFilter(
+        makerspace_id=ms_id,
+        skip=0,
+        limit=1000,
+    )
+    equipment_list = equipment_crud.get_equipment_list(
+        db=db,
+        makerspace_id=ms_id or "",
+        filters=filters,
+        user_role=getattr(current_user, "role", "user"),
+    )
+
+    result: list[EquipmentSkillRequirements] = []
+    for eq in equipment_list:
+        if hasattr(eq, "required_skills") and eq.required_skills:
+            skill_requirements = []
+            for skill in eq.required_skills:
+                skill_requirements.append(
+                    {
+                        "skill_id": skill.id,
+                        "skill_name": skill.name,
+                        "skill_level": skill.level,
+                        "required_level": skill.level,
+                        "category": skill.category,
+                        "is_required": True,
+                    }
+                )
+            result.append(
+                EquipmentSkillRequirements(
+                    equipment_id=eq.id,
+                    equipment_name=eq.name,
+                    required_skills=skill_requirements,
+                )
+            )
+
+    return result
 
 
 @router.post("/", response_model=EquipmentResponse, status_code=status.HTTP_201_CREATED)

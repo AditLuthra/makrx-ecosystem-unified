@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from 'react';
 import { useAuthHeaders } from '@makrx/auth';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { formatDistanceToNow } from 'date-fns';
 import {
-  Star,
-  MapPin,
-  Award,
-  Users,
-  Sparkles,
-  ExternalLink,
-  Heart,
-  Eye,
-  GitFork,
   Calendar,
   ChevronRight,
-  Trophy,
-  Zap,
   Crown,
+  ExternalLink,
+  Eye,
+  Heart,
+  MapPin,
+  Sparkles,
+  Star,
+  Users,
+  Zap,
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface FeaturedMaker {
   user_id: string;
@@ -76,7 +73,7 @@ const MakerSpotlight: React.FC = () => {
     try {
       setLoading(true);
       const headers = await getHeaders();
-      const response = await fetch('/api/v1/showcase/featured-maker', { headers });
+      const response = await fetch('/api/v1/projects/showcase/featured-maker', { headers });
 
       if (response.ok) {
         const data = await response.json();
