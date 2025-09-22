@@ -1,5 +1,7 @@
 # Makrx Store - MakrX Ecosystem
 
+[➡️ See full feature documentation](./FEATURES.md)
+
 ## 🚀 Quick Start
 
 ### Environment Setup
