@@ -21,19 +21,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function CreateEvent() {
-  // SSR/SSG or mock mode: return static fallback UI
-  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <h1 className="text-3xl font-bold mb-4">Create Event (Static Export)</h1>
-        <p className="text-lg text-gray-600 mb-8">
-          This is a static fallback. Event creation is disabled in static export.
-        </p>
-      </div>
-    );
-  }
-
+function CreateEventContent() {
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -299,4 +287,20 @@ export default function CreateEvent() {
       <Footer />
     </div>
   );
+}
+
+export default function CreateEvent() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">Create Event (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. Event creation is disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
+  return <CreateEventContent />;
 }

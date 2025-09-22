@@ -11,6 +11,7 @@ export function EnhancedNavigation() {
   const pathname = usePathname();
   // Local theme handling without provider
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(
+    // eslint-disable-next-line no-restricted-syntax
     () => (typeof window !== 'undefined' && (localStorage.getItem('makrx-theme') as any)) || 'dark',
   );
   const toggleTheme = () =>

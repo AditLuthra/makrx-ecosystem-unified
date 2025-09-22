@@ -265,10 +265,9 @@ const MakerspaceFormModal: React.FC<MakerspaceFormModalProps> = ({
 
       const response = await fetch(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        headers: await getHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify(formData),
       });
 
