@@ -1,15 +1,6 @@
 {
-  "extends": ["eslint:recommended"],
+  "extends": "next/core-web-vitals",
   "rules": {
-    "no-unused-vars": "off",
-    "no-undef": "off",
-    "prefer-const": "off",
-    "no-var": "off"
-  },
-  "ignorePatterns": ["dist/", "node_modules/", "*.config.js", "*.config.ts"],
-  "env": {
-    "browser": true,
-    "es2022": true,
-    "node": true
+    "react/no-unescaped-entities": "off"
   }
 }

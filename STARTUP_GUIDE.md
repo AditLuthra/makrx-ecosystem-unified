@@ -42,6 +42,7 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
    npm ci --legacy-peer-deps
    ```
 3. **Copy and edit environment files:**
+
    ```bash
    cp .env.example .env
    # Edit .env as needed
@@ -62,7 +63,7 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
   ```bash
   npm run dev
   # or
-  ./start-dev.sh
+  ./scripts/start-dev.sh
   ```
 - **What it does:**
   - Starts Postgres, Redis, Keycloak, MinIO via Docker
@@ -79,7 +80,7 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
   ```bash
   npm run dev:simple
   # or
-  ./start-simple.sh
+  ./scripts/start-simple.sh
   ```
 - **What it does:**
   - Starts core infrastructure
@@ -89,13 +90,13 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
 ### Full Ecosystem Mode
 
 - **Purpose:** Local integration, pre-prod testing, all services
-- **Script:** `start-full-ecosystem.sh` or `start.sh`
+- **Script:** `scripts/start-full-ecosystem.sh` or `scripts/start.sh`
 - **Docker Compose:** `docker-compose.yml`
 - **How to Start:**
   ```bash
-  ./start-full-ecosystem.sh
+  ./scripts/start-full-ecosystem.sh
   # or
-  ./start.sh
+  ./scripts/start.sh
   ```
 - **What it does:**
   - Runs all infrastructure and apps
@@ -136,7 +137,7 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
 - **Docker Compose:** `docker-compose.ci.yml`
 - **How to Start:**
   ```bash
-  ./start-for-ci.sh
+  ./scripts/start-for-ci.sh
   # or
   docker-compose -f docker-compose.ci.yml up -d
   ```
@@ -150,7 +151,7 @@ This guide covers all supported ways to start the MakrX Ecosystem in **developme
 - **Script:** `setup_and_start.sh`
 - **How to Start:**
   ```bash
-  ./setup_and_start.sh
+  ./scripts/setup_and_start.sh
   ```
 - **What it does:**
   - Checks all prerequisites, installs dependencies, starts infrastructure and apps

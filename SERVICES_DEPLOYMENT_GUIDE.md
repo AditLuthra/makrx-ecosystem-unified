@@ -9,10 +9,10 @@
 cd apps/makrx-services
 
 # Start with backend (recommended)
-./start.sh --with-backend
+./scripts/start.sh --with-backend
 
 # Or start frontend only
-./start.sh
+./scripts/start.sh
 ```
 
 ### Production Deployment
@@ -358,7 +358,7 @@ find /var/www/makrx-services -type f -exec chmod 644 {} \;
 find /var/www/makrx-services -type d -exec chmod 755 {} \;
 
 # Make scripts executable
-chmod +x /var/www/makrx-services/apps/makrx-services/start.sh
+chmod +x /var/www/makrx-services/apps/makrx-services/scripts/start.sh
 chmod +x /usr/local/bin/check-services.sh
 ```
 

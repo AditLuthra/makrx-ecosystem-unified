@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev:infrastructure\" \"npm run dev:apps\" \"npm run dev:backends\"",
-    "dev:simple": "./start-simple-dev.sh",
-    "stop": "./stop.sh",
-    "diagnose": "./diagnose.sh",
+    "dev:simple": "./scripts/start-simple-dev.sh",
+    "stop": "./scripts/stop.sh",
+    "diagnose": "./scripts/diagnose.sh",
     "build": "npm run build:apps",
     "test": "npm run test:unit && npm run test:integration",
     "lint": "npm run lint --workspaces --if-present",

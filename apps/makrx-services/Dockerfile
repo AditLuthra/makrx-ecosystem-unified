@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps apps
 COPY packages packages
+COPY tsconfig.base.json ./
 RUN npm ci --legacy-peer-deps
 RUN npm run build --workspace=apps/makrx-services
 

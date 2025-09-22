@@ -78,7 +78,11 @@ echo -e "${GREEN}✅ Docker is running${NC}"
 
 # Apply critical fixes first
 echo -e "${BLUE}🔧 Applying Critical Fixes${NC}"
-python3.12 fix_all_critical_issues.py
+if [ -f "scripts/fix_all_critical_issues.py" ]; then
+	python3.12 scripts/fix_all_critical_issues.py
+else
+	echo "(Skipping: scripts/fix_all_critical_issues.py not found)"
+fi
 
 # Install dependencies if needed
 if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ]; then

@@ -135,8 +135,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
@@ -166,8 +165,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
       interval: 30s
@@ -197,8 +195,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3002/api/health"]
       interval: 30s
@@ -232,8 +229,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"]
       interval: 30s
@@ -263,8 +259,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3004/api/health"]
       interval: 30s
@@ -295,8 +290,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 512m
-    profiles:
-      - production
+    # No profile so it runs by default in all modes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3005/api/health"]
       interval: 30s

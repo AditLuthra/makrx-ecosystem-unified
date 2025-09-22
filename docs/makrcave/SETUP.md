@@ -20,13 +20,13 @@ cd MakrCave-AI-main
 chmod +x start.sh stop.sh cleanup_vite.sh
 
 # Clean up Vite configuration conflicts
-./cleanup_vite.sh
+./scripts/cleanup_vite.sh
 ```
 
 2. **Start the application**
 
 ```bash
-./start.sh
+./scripts/start.sh
 ```
 
 This will:
@@ -45,7 +45,7 @@ This will:
 4. **Stop the application**
 
 ```bash
-./stop.sh
+./scripts/stop.sh
 ```
 
 ## Manual Setup (Alternative)
@@ -147,7 +147,7 @@ lsof -i :5000
 lsof -i :8000
 
 # Kill processes if needed
-./stop.sh
+./scripts/stop.sh
 ```
 
 ### Python Environment Issues
@@ -177,10 +177,10 @@ python init_db.py  # Reinitialize database
 
 ## Development Workflow
 
-1. **Start development**: `./start.sh`
+1. **Start development**: `./scripts/start.sh`
 2. **Make changes** to frontend or backend code
 3. **Hot reload** is enabled for both services
-4. **Stop development**: `./stop.sh` or Ctrl+C
+4. **Stop development**: `./scripts/stop.sh` or Ctrl+C
 
 ## Production Deployment
 

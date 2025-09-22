@@ -85,10 +85,7 @@ npm run stop
 
 ## 📁 Important files
 
-- `package.json` - Root workspace configuration
-- `docker-compose.yml` - Infrastructure services
-- `apps/*/package.json` - Individual app configurations
-- `start.sh` - Advanced startup script with GUI terminals
+`scripts/start.sh` - Advanced startup script with GUI terminals
 
 ## 🌐 Access URLs
 

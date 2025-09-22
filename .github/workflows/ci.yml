@@ -342,7 +342,7 @@ jobs:
       - name: Deploy to staging
         run: |
           echo "Deploying to staging environment..."
-          ./deploy.sh --environment staging
+          ./scripts/deploy.sh --environment staging
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -358,6 +358,6 @@ jobs:
       - name: Deploy to production
         run: |
           echo "Deploying to production environment..."
-          ./deploy.sh --environment production
+          ./scripts/deploy.sh --environment production
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
