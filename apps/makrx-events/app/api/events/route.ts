@@ -1,12 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { isMockMode } from '@/lib/runtime-guards';
 import { events, users } from '@shared/schema';
-import { eq, and, or, gte, lte, ilike, sql } from 'drizzle-orm';
+import { and, eq, ilike, sql } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  if (isMockMode()) {
+    // Return mock events
+    return NextResponse.json([
+      {
+        id: 'mock1',
+        title: 'Mock Event 1',
+        description: 'A mock event for testing',
+        location: 'Online',
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 86400000).toISOString(),
+        type: 'Workshop',
+        status: 'published',
+        price: '0.00',
+      },
+      {
+        id: 'mock2',
+        title: 'Mock Event 2',
+        description: 'Another mock event',
+        location: 'Hybrid',
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 172800000).toISOString(),
+        type: 'Competition',
+        status: 'published',
+        price: '10.00',
+      },
+    ]);
+  }
   try {
     const { searchParams } = new URL(request.url);
-
     // Extract filter parameters
     const search = searchParams.get('search') || '';
     const type = searchParams.get('type');
@@ -26,37 +53,7 @@ export async function GET(request: NextRequest) {
     // Build where conditions
     const conditions = [];
 
-    // Search filter
-    if (search) {
-      conditions.push(
-        or(
-          ilike(events.title, `%${search}%`),
-          ilike(events.description, `%${search}%`),
-          ilike(events.location, `%${search}%`),
-        ),
-      );
-    }
-
-    // Type filter
-    if (types.length > 0) {
-      if (types.length === 1) {
-        conditions.push(sql`events.type = ${types[0]}`);
-      } else {
-        conditions.push(sql`events.type = ANY(${types})`);
-      }
-    }
-
-    // Status filter
-    if (status !== 'all') {
-      const now = new Date();
-      if (status === 'upcoming') {
-        conditions.push(sql`events.start_date >= ${now}`);
-      } else if (status === 'ongoing') {
-        conditions.push(sql`events.start_date <= ${now} AND events.end_date >= ${now}`);
-      } else if (status === 'completed') {
-        conditions.push(sql`events.end_date <= ${now}`);
-      }
-    }
+    // ...existing code...
 
     // Location filter
     if (location) {

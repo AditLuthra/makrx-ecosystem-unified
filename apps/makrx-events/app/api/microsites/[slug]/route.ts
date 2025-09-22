@@ -1,24 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/lib/db';
+import { isMockMode, safeDbCall } from '@/lib/runtime-guards';
 import { InsertMicrosite, insertMicrositeSchema, microsites } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // GET /api/microsites/[slug] - Get microsite by slug
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+  if (isMockMode()) {
+    // Return mock microsite
+    return NextResponse.json({
+      id: 'mock-id',
+      slug: params.slug,
+      title: 'Mock Microsite',
+      description: 'This is a mock microsite for development.',
+      status: 'published',
+    });
+  }
   try {
     const { slug } = await params;
-
-    const [microsite] = await db
-      .select()
-      .from(microsites)
-      .where(eq(microsites.slug, slug))
-      .limit(1);
-
+    const [microsite] = await safeDbCall(
+      () => db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1),
+      [],
+    );
     if (!microsite) {
       return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
     }
-
     return NextResponse.json(microsite);
   } catch (error) {
     console.error('Error fetching microsite:', error);
@@ -34,11 +41,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
 
     const updates = insertMicrositeSchema.partial().parse(body) as Partial<InsertMicrosite>;
 
-    const [existing] = await db
-      .select()
-      .from(microsites)
-      .where(eq(microsites.slug, slug))
-      .limit(1);
+    const [existing] = await db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1);
 
     if (!existing) {
       return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });

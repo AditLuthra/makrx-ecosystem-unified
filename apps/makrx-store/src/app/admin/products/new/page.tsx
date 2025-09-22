@@ -21,14 +21,15 @@ interface ProductFormErrors {
   stock?: string;
   sku?: string;
 }
+
 ('use client');
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import AdminAuth, { isAdminAuthenticated } from '@/components/AdminAuth';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
-import AdminAuth, { isAdminAuthenticated } from '@/components/AdminAuth';
-import { Save, ArrowLeft, Upload, X, Plus, Minus, Eye, AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Eye, Plus, Save, Upload, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function AddProductPage() {
   const router = useRouter();

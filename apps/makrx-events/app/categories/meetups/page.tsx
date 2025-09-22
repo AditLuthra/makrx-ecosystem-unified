@@ -1,11 +1,23 @@
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Header from '@/components/header';
-import { Calendar, MapPin, Users, Coffee, Clock } from 'lucide-react';
+import { Calendar, Coffee, MapPin, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MeetupsPage() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">Meetups (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. Dynamic event data is disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
   const meetups = [
     {
       id: 'maker-networking-sf',

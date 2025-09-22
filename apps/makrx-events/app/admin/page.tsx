@@ -1,13 +1,25 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { Plus, Calendar, Users, MapPin } from 'lucide-react';
+import Header from '@/components/header';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, MapPin, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">Admin Dashboard (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. Admin dashboard and dynamic data are disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
   const router = useRouter();
 
   // Mock admin data - would come from API in real implementation

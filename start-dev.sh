@@ -5,48 +5,6 @@ echo "🚀 Starting MakrX Unified Ecosystem - Development Mode"
 echo "====================================================="
 
 # Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-# Load environment variables
-if [ -f .env ]; then
-	source .env
-fi
-
-# Function to check if port is available
-check_port() {
-	local port=$1
-	if lsof -i :$port >/dev/null 2>&1; then
-		echo -e "${YELLOW}⚠️  Port $port is already in use${NC}"
-		return 1
-	fi
-	return 0
-}
-
-# Function to wait for service
-wait_for_service() {
-	local service_name=$1
-	local url=$2
-	local max_attempts=30
-	local attempt=0
-
-	echo -e "${BLUE}⏳ Waiting for $service_name to be ready...${NC}"
-
-	while [ $attempt -lt $max_attempts ]; do
-		if curl -f -s "$url" >/dev/null 2>&1; then
-			echo -e "${GREEN}✅ $service_name is ready${NC}"
-			return 0
-		fi
-
-		attempt=$((attempt + 1))
-		echo -e "${YELLOW}   Attempt $attempt/$max_attempts...${NC}"
-		sleep 2
-	done
-
-	echo -e "${RED}❌ $service_name failed to start${NC}"
 	return 1
 }
 
@@ -75,41 +33,53 @@ sleep 10
 postgres_status=$(docker inspect makrx-unified-postgres --format='{{.State.Status}}' 2>/dev/null || echo "not found")
 redis_status=$(docker inspect makrx-unified-redis --format='{{.State.Status}}' 2>/dev/null || echo "not found")
 keycloak_status=$(docker inspect makrx-unified-keycloak --format='{{.State.Status}}' 2>/dev/null || echo "not found")
-minio_status=$(docker inspect makrx-unified-minio --format='{{.State.Status}}' 2>/dev/null || echo "not found")
 
-echo -e "${BLUE}Container Status:${NC}"
-echo "  PostgreSQL: $postgres_status"
-echo "  Redis: $redis_status"
-echo "  Keycloak: $keycloak_status"
-echo "  MinIO: $minio_status"
+# Dynamically detect and start all apps in apps/
+APPS_DIR="apps"
+START_PORT=3000
+PIDS=()
 
-# Function to install dependencies
-install_deps() {
-	if command -v pnpm &>/dev/null; then
-		echo -e "${BLUE}📦 Installing dependencies with pnpm...${NC}"
-		pnpm install
-	else
-		echo -e "${BLUE}📦 Installing dependencies with npm...${NC}"
-		npm install
-	fi
-}
-
-# Install dependencies if needed
-if [ ! -d "node_modules" ]; then
-	install_deps
+if [ ! -d "$APPS_DIR" ]; then
+	echo -e "${RED}❌ No apps/ directory found!${NC}"
+	exit 1
 fi
 
-# Array of apps to start
-declare -A APPS
-APPS[gateway - frontend]=3000
-APPS[gateway - frontend - hacker]=3001
-APPS[makrcave]=3002
-APPS[makrx - store]=3003
-APPS[makrx - events]=3004
+PORT=$START_PORT
+for app_path in "$APPS_DIR"/*; do
+	if [ -d "$app_path" ]; then
+		app_name=$(basename "$app_path")
+		echo -e "${GREEN}   Starting $app_name on port $PORT...${NC}"
+		# Try to detect package manager and start script
+		if [ -f "$app_path/package.json" ]; then
+			(cd "$app_path" && PORT=$PORT npm run dev >"../../logs/${app_name}.log" 2>&1 &)
+			pid=$!
+			echo $pid >".${app_name}.pid"
+			PIDS+=("$pid")
+		elif [ -f "$app_path/manage.py" ]; then
+			(cd "$app_path" && PORT=$PORT python manage.py runserver 0.0.0.0:$PORT >"../../logs/${app_name}.log" 2>&1 &)
+			pid=$!
+			echo $pid >".${app_name}.pid"
+			PIDS+=("$pid")
+		else
+			echo -e "${YELLOW}   Skipping $app_name (no recognized start script)${NC}"
+		fi
+		PORT=$((PORT+1))
+	fi
+	# else skip non-directory
+done
+
 
 # Start applications
 echo -e "${BLUE}🚀 Starting applications...${NC}"
 
+PORT=$START_PORT
+for app_path in "$APPS_DIR"/*; do
+	if [ -d "$app_path" ]; then
+		app_name=$(basename "$app_path")
+		echo "   $app_name: http://localhost:$PORT"
+		PORT=$((PORT+1))
+	fi
+done
 PIDS=()
 
 for app in "${!APPS[@]}"; do
@@ -129,6 +99,31 @@ for app in "${!APPS[@]}"; do
 		# Store PID for cleanup
 		echo $pid >".${app}.pid"
 		sleep 2
+
+cleanup() {
+	echo ""
+	echo -e "${YELLOW}🛑 Shutting down MakrX Ecosystem...${NC}"
+	for app_path in "$APPS_DIR"/*; do
+		if [ -d "$app_path" ]; then
+			app_name=$(basename "$app_path")
+			if [ -f ".${app_name}.pid" ]; then
+				pid=$(cat ".${app_name}.pid")
+				if kill -0 $pid 2>/dev/null; then
+					echo -e "${BLUE}   Stopping $app_name...${NC}"
+					kill $pid
+				fi
+				rm -f ".${app_name}.pid"
+			fi
+		fi
+	done
+	echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
+	docker-compose down
+	echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
+	exit 0
+}
+
+trap cleanup SIGINT SIGTERM
+wait
 	else
 		echo -e "${YELLOW}   Skipping $app (not found in apps/ directory)${NC}"
 	fi

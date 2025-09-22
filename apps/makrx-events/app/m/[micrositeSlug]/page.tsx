@@ -1,6 +1,7 @@
 import SectionRenderer from '@/components/microsites/SectionRenderer';
 import { Button } from '@/components/ui/button';
 import { db } from '@/lib/db';
+import { isMockMode, safeDbCall } from '@/lib/runtime-guards';
 import { micrositeSections, microsites } from '@shared/schema';
 import { asc, eq } from 'drizzle-orm';
 import Link from 'next/link';
@@ -15,21 +16,58 @@ interface MicrositePageProps {
 export default async function MicrositePage({ params }: MicrositePageProps) {
   const { micrositeSlug } = await params;
 
-  const [microsite] = await db
-    .select()
-    .from(microsites)
-    .where(eq(microsites.slug, micrositeSlug))
-    .limit(1);
+  // Mock mode: return mock microsite and sections
+  if (isMockMode()) {
+    const microsite = {
+      id: 'mock-id',
+      slug: micrositeSlug,
+      title: 'Mock Microsite',
+      description: 'This is a mock microsite for development.',
+    };
+    const rawSections = [
+      {
+        id: 'section-1',
+        type: 'hero',
+        order: 1,
+        contentJson: { title: 'Welcome to the Mock Microsite!' },
+        variant: 'default',
+      },
+    ];
+    // ...existing code for mapping and rendering...
+    const sections = rawSections.map((section) => ({
+      id: section.id,
+      type: section.type,
+      order: section.order ?? 0,
+      contentJson: section.contentJson,
+      variant: (section as any).variant,
+    }));
+    return (
+      <div>
+        <h1>{microsite.title}</h1>
+        <SectionRenderer sections={sections} micrositeSlug={micrositeSlug} />
+      </div>
+    );
+  }
+
+  // Real DB mode
+  const [microsite] = await safeDbCall(
+    () => db.select().from(microsites).where(eq(microsites.slug, micrositeSlug)).limit(1),
+    [],
+  );
 
   if (!microsite) {
     notFound();
   }
 
-  const rawSections = await db
-    .select()
-    .from(micrositeSections)
-    .where(eq(micrositeSections.micrositeId, microsite.id))
-    .orderBy(asc(micrositeSections.order), asc(micrositeSections.createdAt));
+  const rawSections = await safeDbCall(
+    () =>
+      db
+        .select()
+        .from(micrositeSections)
+        .where(eq(micrositeSections.micrositeId, microsite.id))
+        .orderBy(asc(micrositeSections.order), asc(micrositeSections.createdAt)),
+    [],
+  );
 
   // Map DB rows to SectionRenderer PageSection type
   const sections = rawSections.map((section) => ({

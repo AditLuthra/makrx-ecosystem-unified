@@ -1,39 +1,77 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { db } from '@/lib/db';
+import { isMockMode, safeDbCall } from '@/lib/runtime-guards';
 import {
+  InsertMicrositeSection,
   insertPageSectionSchema,
   micrositeSections,
   microsites,
-  InsertMicrositeSection,
 } from '@shared/schema';
 import { asc, eq, sql } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const ensureMicrosite = async (slug: string) => {
-  const [record] = await db
-    .select({ id: microsites.id })
-    .from(microsites)
-    .where(eq(microsites.slug, slug))
-    .limit(1);
+  if (isMockMode()) {
+    return { id: 'mock-microsite-id' };
+  }
+  const [record] = await safeDbCall(
+    () =>
+      db.select({ id: microsites.id }).from(microsites).where(eq(microsites.slug, slug)).limit(1),
+    [],
+  );
   return record;
 };
 
 // GET /api/microsites/[slug]/sections - Get all sections for a microsite
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+  const { slug } = await params;
+  const microsite = await ensureMicrosite(slug);
+
+  if (!microsite) {
+    return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
+  }
+
+  // Mock data for sections
+  const mockSections = [
+    {
+      id: 'mock-section-1',
+      micrositeId: microsite.id,
+      type: 'hero',
+      order: 1,
+      isVisible: true,
+      contentJson: { title: 'Welcome to the Mock Microsite!' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 'mock-section-2',
+      micrositeId: microsite.id,
+      type: 'about',
+      order: 2,
+      isVisible: true,
+      contentJson: { description: 'This is a mock About section.' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
+
+  if (isMockMode()) {
+    return NextResponse.json({
+      data: mockSections,
+      count: mockSections.length,
+    });
+  }
+
   try {
-    const { slug } = await params;
-    const microsite = await ensureMicrosite(slug);
-
-    if (!microsite) {
-      return NextResponse.json({ error: 'Microsite not found' }, { status: 404 });
-    }
-
-    const sections = await db
-      .select()
-      .from(micrositeSections)
-      .where(eq(micrositeSections.micrositeId, microsite.id))
-      .orderBy(asc(micrositeSections.order), asc(micrositeSections.createdAt));
-
+    const sections = await safeDbCall(
+      () =>
+        db
+          .select()
+          .from(micrositeSections)
+          .where(eq(micrositeSections.micrositeId, microsite.id))
+          .orderBy(asc(micrositeSections.order), asc(micrositeSections.createdAt)),
+      mockSections,
+    );
     return NextResponse.json({
       data: sections,
       count: sections.length,

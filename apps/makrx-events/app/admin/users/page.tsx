@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 // Using div-based table for now - will be replaced with proper table component
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -15,10 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Users, UserCheck, UserX, Search, Filter, Shield, Crown, User } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
+import { useQueryClient } from '@tanstack/react-query';
+import { Crown, Filter, Search, Shield, User, UserCheck, Users, UserX } from 'lucide-react';
 
 interface User {
   id: string;
@@ -38,7 +37,19 @@ interface UserStats {
   eventAdmins: number;
 }
 
-export default function UserManagement() {
+export default function AdminUsersPage() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">Admin Users (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. User management and dynamic data are disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');

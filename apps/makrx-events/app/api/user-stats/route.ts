@@ -1,24 +1,35 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { events, users, registrations } from '@shared/schema';
-import { eq, count, sql } from 'drizzle-orm';
+import { isMockMode, safeDbCall } from '@/lib/runtime-guards';
+import { events, users } from '@shared/schema';
+import { count } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
+  if (isMockMode()) {
+    return NextResponse.json({
+      platform: {
+        totalEvents: 10,
+        totalUsers: 100,
+      },
+      user: {
+        eventsAttended: 2,
+        eventsCreated: 1,
+        totalSpent: 85,
+        upcomingEvents: 2,
+      },
+    });
+  }
   try {
     // Get event counts
-    const [eventStats] = await db
-      .select({
-        totalEvents: count(),
-      })
-      .from(events);
-
+    const [eventStats] = await safeDbCall(
+      () => db.select({ totalEvents: count() }).from(events),
+      [{ totalEvents: 0 }],
+    );
     // Get user count
-    const [userStats] = await db
-      .select({
-        totalUsers: count(),
-      })
-      .from(users);
-
+    const [userStats] = await safeDbCall(
+      () => db.select({ totalUsers: count() }).from(users),
+      [{ totalUsers: 0 }],
+    );
     // Mock some user-specific stats since we don't have auth
     const mockUserStats = {
       eventsAttended: 2,
@@ -26,7 +37,6 @@ export async function GET() {
       totalSpent: 85,
       upcomingEvents: 2,
     };
-
     return NextResponse.json({
       platform: {
         totalEvents: eventStats.totalEvents,

@@ -1,13 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import Footer from '@/components/footer';
+import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
-import { CalendarDays, MapPin, Plus, Users, Trophy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, MapPin, Plus, Users } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Home() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">MakrX.events (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. Dynamic event data is disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Hero carousel data

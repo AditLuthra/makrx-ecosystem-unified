@@ -1,35 +1,52 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { events, eventRegistrations, users } from '@shared/schema';
-import { sql, count } from 'drizzle-orm';
+import { isMockMode, safeDbCall } from '@/lib/runtime-guards';
+import { eventRegistrations, events, users } from '@shared/schema';
+import { count, sql } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
+  if (isMockMode()) {
+    return NextResponse.json({
+      activeEvents: 10,
+      globalCities: 5,
+      registeredMakers: 100,
+      totalWorkshops: 20,
+    });
+  }
   try {
-    // Get platform statistics
     const [eventsCount, usersCount, registrationsCount, citiesCount] = await Promise.all([
-      // Active events count
-      db
-        .select({ count: count() })
-        .from(events)
-        .where(sql`status = 'published' AND start_date >= NOW()`),
-
-      // Registered users count
-      db
-        .select({ count: count() })
-        .from(users)
-        .where(sql`status = 'active'`),
-
-      // Total registrations count
-      db
-        .select({ count: count() })
-        .from(eventRegistrations)
-        .where(sql`status IN ('confirmed', 'pending')`),
-
-      // Unique cities count (approximate)
-      db
-        .select({ count: sql<number>`COUNT(DISTINCT location)` })
-        .from(events)
-        .where(sql`location IS NOT NULL AND location != ''`),
+      safeDbCall(
+        () =>
+          db
+            .select({ count: count() })
+            .from(events)
+            .where(sql`status = 'published' AND start_date >= NOW()`),
+        [{ count: 0 }],
+      ),
+      safeDbCall(
+        () =>
+          db
+            .select({ count: count() })
+            .from(users)
+            .where(sql`status = 'active'`),
+        [{ count: 0 }],
+      ),
+      safeDbCall(
+        () =>
+          db
+            .select({ count: count() })
+            .from(eventRegistrations)
+            .where(sql`status IN ('confirmed', 'pending')`),
+        [{ count: 0 }],
+      ),
+      safeDbCall(
+        () =>
+          db
+            .select({ count: sql<number>`COUNT(DISTINCT location)` })
+            .from(events)
+            .where(sql`location IS NOT NULL AND location != ''`),
+        [{ count: 0 }],
+      ),
     ]);
 
     const stats = {
@@ -56,13 +73,6 @@ export async function GET() {
     return NextResponse.json(formattedStats);
   } catch (error) {
     console.error('Error fetching platform stats:', error);
-
-    // Return fallback stats if database query fails
-    return NextResponse.json({
-      activeEvents: '150+',
-      globalCities: '25',
-      registeredMakers: '5K+',
-      totalWorkshops: '800+',
-    });
+    return NextResponse.json({ error: 'Failed to fetch platform stats' }, { status: 500 });
   }
 }
