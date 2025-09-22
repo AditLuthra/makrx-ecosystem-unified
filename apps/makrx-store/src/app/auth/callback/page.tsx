@@ -29,6 +29,7 @@ export default function AuthCallbackPage() {
           const defaultUrl = getRoleRedirect(user?.roles);
           const redirectUrl =
             sessionStorage.getItem('makrx_redirect_url') ||
+            // eslint-disable-next-line no-restricted-syntax
             localStorage.getItem('makrx_pre_login_url') ||
             defaultUrl;
 

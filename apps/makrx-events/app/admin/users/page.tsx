@@ -37,19 +37,7 @@ interface UserStats {
   eventAdmins: number;
 }
 
-export default function AdminUsersPage() {
-  // SSR/SSG or mock mode: return static fallback UI
-  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <h1 className="text-3xl font-bold mb-4">Admin Users (Static Export)</h1>
-        <p className="text-lg text-gray-600 mb-8">
-          This is a static fallback. User management and dynamic data are disabled in static export.
-        </p>
-      </div>
-    );
-  }
-
+function AdminUsersPageContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -335,4 +323,20 @@ export default function AdminUsersPage() {
       </Card>
     </div>
   );
+}
+
+export default function AdminUsersPage() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-3xl font-bold mb-4">Admin Users (Static Export)</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          This is a static fallback. User management and dynamic data are disabled in static export.
+        </p>
+      </div>
+    );
+  }
+
+  return <AdminUsersPageContent />;
 }

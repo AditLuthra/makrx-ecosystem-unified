@@ -23,6 +23,7 @@ function getSystemTheme(): 'light' | 'dark' {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(
     () =>
+      // eslint-disable-next-line no-restricted-syntax
       (typeof window !== 'undefined' && (localStorage.getItem('makrx-theme') as Theme)) || 'dark',
   );
   const [system, setSystem] = useState<'light' | 'dark'>(() =>

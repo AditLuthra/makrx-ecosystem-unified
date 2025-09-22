@@ -14,7 +14,7 @@
     "diagnose": "./scripts/diagnose.sh",
     "build": "npm run build:apps",
     "test": "npm run test:unit && npm run test:integration",
-    "lint": "npm run lint --workspaces --if-present",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "npm run clean --workspaces --if-present && rimraf node_modules/.cache",
     "docker:dev": "docker-compose up --build",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up --build -d",

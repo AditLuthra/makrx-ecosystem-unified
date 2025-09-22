@@ -11,6 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import { useToast } from '../../hooks/use-toast';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -46,6 +47,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
   const [submitting, setSubmitting] = useState(false);
   const [reportRequests, setReportRequests] = useState<ReportRequest[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
+  const authHeaders = useAuthHeaders();
 
   useEffect(() => {
     if (isOpen) {
@@ -65,7 +67,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
     try {
       const response = await fetch('/api/v1/analytics/reports', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });
@@ -105,7 +107,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
       const response = await fetch('/api/v1/analytics/reports/request', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
@@ -148,7 +150,7 @@ const DownloadReportModal: React.FC<DownloadReportModalProps> = ({ isOpen, onClo
     try {
       const response = await fetch(`/api/analytics/reports/${requestId}/download`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
         },
       });
 

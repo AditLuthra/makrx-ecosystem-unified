@@ -70,6 +70,7 @@ class AdminDataService {
 
   // Categories Management
   getCategories(): AdminCategory[] {
+    // eslint-disable-next-line no-restricted-syntax
     const saved = localStorage.getItem('admin_categories');
     if (saved) {
       return JSON.parse(saved);
@@ -118,6 +119,7 @@ class AdminDataService {
 
   // Products Management
   getProducts(): AdminProduct[] {
+    // eslint-disable-next-line no-restricted-syntax
     const saved = localStorage.getItem('admin_products');
     if (saved) {
       return JSON.parse(saved);
@@ -180,6 +182,7 @@ class AdminDataService {
 
   // Filters Management
   getFilters(): AdminFilter[] {
+    // eslint-disable-next-line no-restricted-syntax
     const saved = localStorage.getItem('admin_filters');
     if (saved) {
       return JSON.parse(saved);
