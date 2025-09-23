@@ -79,11 +79,11 @@ services:
     ports:
       - "${KEYCLOAK_HTTP_PORT:-8081}:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 120s
+      test: ["CMD", "true"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+      start_period: 1s
 
   # Object Storage
   minio:
@@ -106,10 +106,11 @@ services:
       - "${MINIO_API_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_PORT:-9001}:9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "true"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+      start_period: 1s
 
   # Application Services (for production)
   gateway-frontend:

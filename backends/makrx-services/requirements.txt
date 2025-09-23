@@ -26,3 +26,6 @@ structlog==23.2.0
 
 # Feature Flags System Dependencies
 # (All already included above, no additional packages needed)
+
+# Production server
+gunicorn==21.2.0

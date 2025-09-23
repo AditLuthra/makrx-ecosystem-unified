@@ -1,3 +1,5 @@
+'use client';
+
 interface ProductFormData {
   name: string;
   description: string;
@@ -21,8 +23,6 @@ interface ProductFormErrors {
   stock?: string;
   sku?: string;
 }
-
-('use client');
 
 import AdminAuth, { isAdminAuthenticated } from '@/components/AdminAuth';
 import Layout from '@/components/layout/Layout';

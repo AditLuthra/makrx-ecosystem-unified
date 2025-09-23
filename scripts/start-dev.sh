@@ -4,9 +4,10 @@ set -e
 echo "🚀 Starting MakrX Unified Ecosystem - Development Mode"
 echo "====================================================="
 
-# Color codes
-	return 1
-}
+
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 # Check required ports
 echo -e "${BLUE}🔍 Checking ports...${NC}"
@@ -100,26 +101,14 @@ for app in "${!APPS[@]}"; do
 		echo $pid >".${app}.pid"
 		sleep 2
 
+
+# Use shared cleanup_apps for app shutdown
 cleanup() {
-	echo ""
-	echo -e "${YELLOW}🛑 Shutting down MakrX Ecosystem...${NC}"
-	for app_path in "$APPS_DIR"/*; do
-		if [ -d "$app_path" ]; then
-			app_name=$(basename "$app_path")
-			if [ -f ".${app_name}.pid" ]; then
-				pid=$(cat ".${app_name}.pid")
-				if kill -0 $pid 2>/dev/null; then
-					echo -e "${BLUE}   Stopping $app_name...${NC}"
-					kill $pid
-				fi
-				rm -f ".${app_name}.pid"
-			fi
-		fi
-	done
-	echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
-	docker-compose down
-	echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
-	exit 0
+    cleanup_apps "$APPS_DIR"
+    echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
+    docker-compose down
+    echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
+    exit 0
 }
 
 trap cleanup SIGINT SIGTERM

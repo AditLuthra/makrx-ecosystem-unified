@@ -7,34 +7,10 @@ cd "$(dirname "$0")"
 echo "🚀 MakrX Ecosystem - Complete Setup and Start"
 echo "============================================="
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-NC='\033[0m'
 
-# Function to print colored output
-print_status() {
-	echo -e "${BLUE}$1${NC}"
-}
-
-print_success() {
-	echo -e "${GREEN}✅ $1${NC}"
-}
-
-print_warning() {
-	echo -e "${YELLOW}⚠️  $1${NC}"
-}
-
-print_error() {
-	echo -e "${RED}❌ $1${NC}"
-}
-
-print_step() {
-	echo -e "${PURPLE}🔧 $1${NC}"
-}
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 # Check prerequisites
 print_status "Checking Prerequisites..."
@@ -144,24 +120,7 @@ docker-compose up -d
 # Wait for infrastructure services
 print_step "Waiting for infrastructure services to be ready..."
 
-wait_for_service() {
-	local url=$1
-	local service_name=$2
-	local max_attempts=30
-	local attempt=1
 
-	while [ $attempt -le $max_attempts ]; do
-		if curl -s "$url" &>/dev/null; then
-			print_success "$service_name is ready"
-			return 0
-		fi
-		sleep 2
-		attempt=$((attempt + 1))
-	done
-
-	print_warning "$service_name not ready within timeout"
-	return 1
-}
 
 # Wait for services with better error handling
 wait_for_service "http://localhost:8081/health/ready" "Keycloak" || print_warning "Keycloak may still be starting"

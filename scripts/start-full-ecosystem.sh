@@ -7,12 +7,10 @@ cd "$(dirname "$0")"
 echo "🚀 Starting MakrX Full Ecosystem"
 echo "================================="
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 # Function to check if a command exists
 command_exists() {
@@ -24,29 +22,7 @@ port_in_use() {
 	lsof -ti:$1 >/dev/null 2>&1
 }
 
-# Function to wait for service
-wait_for_service() {
-	local url=$1
-	local service_name=$2
-	local max_attempts=30
-	local attempt=1
 
-	echo "⏳ Waiting for $service_name to be ready..."
-
-	while [ $attempt -le $max_attempts ]; do
-		if curl -s "$url" >/dev/null 2>&1; then
-			echo -e "${GREEN}✅ $service_name is ready!${NC}"
-			return 0
-		fi
-
-		echo "   Attempt $attempt/$max_attempts..."
-		sleep 2
-		attempt=$((attempt + 1))
-	done
-
-	echo -e "${RED}❌ $service_name failed to start within timeout${NC}"
-	return 1
-}
 
 echo -e "${BLUE}📋 Pre-flight Checks${NC}"
 

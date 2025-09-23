@@ -4,12 +4,10 @@ set -e
 echo "🚀 Starting MakrX Unified Ecosystem - Simple Mode"
 echo "================================================="
 
-# Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 # Load environment variables
 if [ -f .env ]; then
@@ -94,28 +92,14 @@ echo -e "${YELLOW}🛑 Press Ctrl+C to stop all services${NC}"
 echo "============================="
 
 # Function to cleanup on exit
+
+# Use shared cleanup_apps for app shutdown
 cleanup() {
-	echo ""
-	echo -e "${YELLOW}🛑 Shutting down MakrX Ecosystem...${NC}"
-
-	# Kill application processes
-	for app in "${!APPS[@]}"; do
-		if [ -f ".${app}.pid" ]; then
-			pid=$(cat ".${app}.pid")
-			if kill -0 $pid 2>/dev/null; then
-				echo -e "${BLUE}   Stopping $app...${NC}"
-				kill $pid
-			fi
-			rm -f ".${app}.pid"
-		fi
-	done
-
-	# Stop Docker services
-	echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
-	docker-compose down
-
-	echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
-	exit 0
+    cleanup_apps "apps"
+    echo -e "${BLUE}🐳 Stopping Docker services...${NC}"
+    docker-compose down
+    echo -e "${GREEN}👋 MakrX Ecosystem stopped successfully${NC}"
+    exit 0
 }
 
 # Set up signal handlers
