@@ -40,6 +40,19 @@ htmlcov/
 .env.production.local
 .env.*.local
 
+# Ignore example env files and templates
+examples/*.env*
+.env.example
+
+# Ignore new docs and scripts subfolders
+docs/guides/
+docs/api/
+docs/architecture/
+scripts/deployment/
+scripts/setup/
+scripts/utils/
+scripts/ci/
+
 # Logs
 logs/
 *.log

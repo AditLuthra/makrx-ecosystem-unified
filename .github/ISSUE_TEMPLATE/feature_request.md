@@ -33,6 +33,14 @@ A clear and concise description of any alternative solutions or features you've 
 
 Add any other context or screenshots about the feature request here.
 
-## Implementation Details (if applicable)
 
 If you have technical details about how this could be implemented, please share them.
+
+## Related Docs/Links
+
+Add links to relevant documentation, code, or previous issues if applicable.
+
+## Checklist
+- [ ] I have searched for duplicate or related feature requests
+- [ ] I have provided a clear problem statement and solution
+- [ ] I have included relevant context or screenshots

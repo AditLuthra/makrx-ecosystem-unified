@@ -1,6 +1,11 @@
+
 ## Description
 
 Brief description of what this PR does.
+
+## Related Issues
+
+Closes/Fixes #[issue_number] (if applicable)
 
 ## Type of Change
 
@@ -30,12 +35,13 @@ Brief description of what this PR does.
 - [ ] E2E tests pass
 - [ ] Manual testing completed
 
-## Checklist
 
+## Checklist
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
+- [ ] Docs updated if code/config changed
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes

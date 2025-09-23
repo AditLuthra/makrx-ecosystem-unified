@@ -36,6 +36,16 @@ If applicable, add screenshots to help explain your problem.
 - Browser: [e.g. Chrome 118, Firefox 119]
 - Application: [e.g. MakrCave, Gateway Frontend]
 
+
+## Related Docs/Links
+
+Add links to relevant documentation, code, or previous issues if applicable.
+
+## Checklist
+- [ ] I have searched for duplicate or related issues
+- [ ] I have provided all necessary environment and reproduction details
+- [ ] I have included screenshots or logs if relevant
+
 ## Additional Context
 
 Add any other context about the problem here.

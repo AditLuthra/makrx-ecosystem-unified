@@ -1,5 +1,7 @@
 # MakrX Ecosystem - Unified Monorepo
 
+[![CI](https://github.com/AditLuthra/makrx-ecosystem-unified/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AditLuthra/makrx-ecosystem-unified/actions/workflows/ci.yml)
+
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com/)
@@ -33,6 +35,8 @@ We use Keycloak for SSO across all apps/services. Unified env var names and loca
 ## Environment templates
 
 Sample environment files are provided under `examples/` for all frontends and backends (e.g. `.env.makrx-services.local`, `.env.makrx-services-backend`).
+
+A canonical template for the entire ecosystem is provided as `.env.example` in the repo root. **Copy `.env.example` to `.env` and update values for your local setup.**
 
 - For Next.js apps, copy the relevant example to the app folder as `.env.local` and adjust values.
 - For Python backends, copy the example to the backend folder as `.env` (or export in your process manager) and adjust values.

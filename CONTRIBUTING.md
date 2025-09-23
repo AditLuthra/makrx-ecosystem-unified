@@ -39,6 +39,31 @@ This project adheres to a Code of Conduct. By participating, you are expected to
 
 ### Initial setup
 
+#### Using the Makefile (Recommended)
+
+For most common developer tasks, you can use the top-level `Makefile`:
+
+```bash
+# Install all dependencies (Node, Python, etc.)
+make setup
+# or
+make install
+
+# Run all tests (Node + Python)
+make test
+
+# Run all linters (Node + Python)
+make lint
+
+# Format all code (Node + Python)
+make format
+
+# Clean build artifacts and caches
+make clean
+```
+
+See the `Makefile` for more available targets.
+
 ```bash
 # Clone your fork
 git clone https://github.com/YOUR_USERNAME/makrx-ecosystem-unified.git
@@ -276,6 +301,7 @@ Brief description of changes
 
 - **README.md**: Project overview and setup
 - **Documentation index**: `docs/README.md`
+- **Internal docs (for maintainers)**: `docs/internal/README.md`
 - **API Documentation**: Generated from code comments
 - **Architecture**: `docs/ai/ARCHITECTURE.md`
 

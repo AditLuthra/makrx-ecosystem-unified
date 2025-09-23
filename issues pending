@@ -1,43 +1,6 @@
-[MakrCave Backend Audit Issues - 2025-09-21]
+## Pending Issues
 
-1. **Exception Handling**
-   - Many places (e.g., `github_service.py`, `real_analytics_service.py`, `redis_utils.py`, etc.) catch broad `Exception` and only log or print errors. This can hide bugs and make debugging harder. Use more specific exception types and always log with context.
-   - Some utility code (e.g., `github_service.py`) uses `print()` for error reporting instead of proper logging. Replace with structured logging.
-
-2. **Secrets and Sensitive Data**
-   - Hardcoded default secrets (e.g., `STORE_API_KEY`, `CLIENT_SECRET`, etc.) in config files. These should be loaded from environment variables only, never defaulted to production-like values.
-   - Sensitive values (API keys, SMTP credentials) are sometimes defaulted to empty strings or weak defaults. Add validation to fail fast if not set in production.
-
-3. **Configuration Management**
-   - Some configuration values (e.g., CORS origins, DB URLs) are not validated for production safety. Add stricter validation and warnings for unsafe defaults.
-   - Consider centralizing all config/environment validation in one place (e.g., a startup check).
-
-4. **Notification CRUD**
-   - `crud/notifications.py` is a stub that raises at runtime. This is a major functional gap. Implement or remove endpoints that depend on notifications to avoid runtime errors.
-
-5. **Logging**
-   - Some modules use `print()` instead of logging (e.g., `github_service.py`). Ensure all error and info output uses the project logger.
-   - Logging configuration is present, but not all modules use structured logging. Standardize logging usage across all modules.
-
-6. **Database and ORM**
-   - No explicit DB connection error handling in some places (e.g., `main.py` readiness check is good, but other DB access may not be robust to failures).
-   - Consider adding retry logic or circuit breakers for DB and Redis connectivity in production.
-
-7. **Security**
-   - JWT and service-to-service keys are sometimes defaulted or weak. Enforce strong, random secrets in all environments except local dev.
-   - Keycloak integration: ensure all tokens are validated for audience and issuer. Add tests for token validation edge cases.
-
-8. **Testing and Stubs**
-   - Some legacy or placeholder code (e.g., notification CRUD) is not covered by tests. Add tests or remove unused code.
-   - No evidence of security or integration tests for critical flows (auth, payments, analytics). Add tests for these.
-
-9. **General Code Quality**
-   - Some files are very large and could be refactored for maintainability (e.g., `real_analytics_service.py`, `github_service.py`).
-   - Use more type hints and docstrings for public APIs.
-   - Remove unused imports and dead code.
-
-10. **Environment and Deployment**
-    - Docker and environment files should be reviewed for secrets exposure and safe defaults.
+This file tracks pending backend audit issues. For details, see docs/REPOSITORY_OVERVIEW.md and docs/ERRORS_AND_GUIDANCE.md.
     - Ensure `.env` and other sensitive files are gitignored and not present in production images.
 
 11. **Other**

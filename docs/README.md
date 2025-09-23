@@ -2,6 +2,7 @@
 
 This directory consolidates documentation migrated from prior repos and apps into the unified monorepo. Start here to find architecture, deployment, and feature-specific docs.
 
+
 ## Table of contents
 
 - Overview and navigation
@@ -25,7 +26,13 @@ This directory consolidates documentation migrated from prior repos and apps int
   - Events: `events/README.md`
   - MakrCave app: `makrcave/README.md`
   - Store (legacy): `store/README.md` and `almost-final/`
+
   - Gateway Hacker: `gateway-hacker/VITE_TO_NEXT_MIGRATION.md`
+
+- Internal & Maintainer Docs
+  - Internal docs index: `internal/README.md`
+  - TypeScript error guidance: `internal/ERRORS_AND_GUIDANCE.md`
+  - (Add more as needed)
 
 ## Notes
 
