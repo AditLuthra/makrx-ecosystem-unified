@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["next"],
+  extends: ["next/core-web-vitals"],
   rules: {
     "@next/next/no-html-link-for-pages": "off",
     "react/no-unescaped-entities": "off",
@@ -15,15 +15,15 @@ module.exports = {
       },
       {
         selector:
-          "CallExpression[callee.object.name='localStorage'][callee.property.name='getItem'][arguments.0.value='auth_token']",
+          "CallExpression[callee.object.name='localStorage'][callee.property.name='getItem']",
         message:
-          "Avoid direct localStorage auth_token usage inline. Prefer a centralized helper (e.g., getAuthHeaders).",
+          "Do not read auth tokens from localStorage; use useAuthHeaders() from @makrx/auth. Avoid direct localStorage usage.",
       },
     ],
   },
   settings: {
     next: {
-      rootDir: ["apps/*/"],
+      rootDir: ["apps/*/", "packages/*/"],
     },
   },
   ignorePatterns: [
@@ -34,5 +34,12 @@ module.exports = {
     "coverage/",
     "**/*.config.js",
     "**/*.config.ts",
+    "backends/",
+    "services/",
+    "k8s/",
+    "monitoring/",
+    "scripts/",
+    "ci/",
+    "docs/"
   ],
 };

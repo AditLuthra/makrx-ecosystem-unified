@@ -11,6 +11,7 @@ import {
   Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import {
   Bar,
   BarChart,
@@ -60,6 +61,7 @@ const ProjectAnalytics: React.FC = () => {
   const [bomSizeData, setBomSizeData] = useState<any[]>([]);
   const [collaborationData, setCollaborationData] = useState<any[]>([]);
   const [sourceData, setSourceData] = useState<any[]>([]);
+  const authHeaders = useAuthHeaders();
 
   useEffect(() => {
     fetchProjectAnalytics();
@@ -70,7 +72,7 @@ const ProjectAnalytics: React.FC = () => {
     try {
       const response = await fetch('/api/v1/analytics/projects', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });

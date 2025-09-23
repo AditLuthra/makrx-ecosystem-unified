@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useAuthHeaders } from '@makrx/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Switch } from '../ui/switch';
 import { useToast } from '../../hooks/use-toast';
@@ -89,6 +89,7 @@ const MODULE_CONFIG = {
 const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({ makerspace, onUpdate }) => {
   const { toast } = useToast();
   const [updatingModules, setUpdatingModules] = useState<Set<string>>(new Set());
+  const getHeaders = useAuthHeaders();
 
   const handleModuleToggle = async (moduleKey: string, enabled: boolean) => {
     setUpdatingModules((prev) => new Set([...prev, moduleKey]));
@@ -96,10 +97,9 @@ const ModuleToggleCard: React.FC<ModuleToggleCardProps> = ({ makerspace, onUpdat
     try {
       const response = await fetch(`/api/v1/makerspaces/${makerspace.id}/toggle-module`, {
         method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        headers: await getHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify({
           moduleKey,
           enabled,

@@ -248,6 +248,7 @@ Always ensure proper ventilation when printing with ABS or resins. Use appropria
 
   useEffect(() => {
     // Load user notes for current lesson
+    // eslint-disable-next-line no-restricted-syntax
     const savedNotes = localStorage.getItem(`notes-${activeLesson.id}`);
     setUserNotes(savedNotes || '');
   }, [activeLesson.id]);

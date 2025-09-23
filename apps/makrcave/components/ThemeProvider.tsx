@@ -24,6 +24,7 @@ function getSystemTheme(): 'light' | 'dark' {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(
     () =>
+      // eslint-disable-next-line no-restricted-syntax
       (typeof window !== 'undefined' ? (localStorage.getItem('makrcave-theme') as Theme) : null) ||
       'dark',
   );

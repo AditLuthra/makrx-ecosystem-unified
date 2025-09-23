@@ -11,6 +11,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useAuthHeaders } from '../../hooks/useAuthHeaders';
 import {
   Bar,
   BarChart,
@@ -53,6 +54,7 @@ const EquipmentMetrics: React.FC = () => {
   const [usageData, setUsageData] = useState<any[]>([]);
   const [uptimeData, setUptimeData] = useState<any[]>([]);
   const [maintenanceData, setMaintenanceData] = useState<any[]>([]);
+  const authHeaders = useAuthHeaders();
 
   useEffect(() => {
     fetchEquipmentMetrics();
@@ -63,7 +65,7 @@ const EquipmentMetrics: React.FC = () => {
     try {
       const response = await fetch('/api/v1/analytics/equipment', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          ...authHeaders,
           'Content-Type': 'application/json',
         },
       });

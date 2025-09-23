@@ -27,6 +27,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Initialize theme from localStorage after mount
   useEffect(() => {
     setMounted(true);
+    // eslint-disable-next-line no-restricted-syntax
     const stored = localStorage.getItem('makrx-theme') as Theme;
     if (stored && ['light', 'dark', 'system'].includes(stored)) {
       setTheme(stored);

@@ -16,31 +16,7 @@ const authConfig = {
   clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'makrx-events',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // SSR/SSG or mock mode: return static fallback UI
-  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    return (
-      <html lang="en">
-        <head>
-          <title>MakrX.events - Global Maker Event Platform</title>
-          <meta
-            name="description"
-            content="Discover and create maker events, workshops, competitions, and exhibitions worldwide"
-          />
-        </head>
-        <body className={inter.className}>
-          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-            <h1 className="text-3xl font-bold mb-4">MakrX.events (Static Export)</h1>
-            <p className="text-lg text-gray-600 mb-8">
-              This is a static fallback. Auth and dynamic data are disabled in static export.
-            </p>
-            {children}
-          </div>
-        </body>
-      </html>
-    );
-  }
-
+function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const getAuthHeaders = useAuthHeaders();
   const [queryClient] = useState(
     () =>
@@ -94,4 +70,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <html lang="en">
+        <head>
+          <title>MakrX.events - Global Maker Event Platform</title>
+          <meta
+            name="description"
+            content="Discover and create maker events, workshops, competitions, and exhibitions worldwide"
+          />
+        </head>
+        <body className={inter.className}>
+          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+            <h1 className="text-3xl font-bold mb-4">MakrX.events (Static Export)</h1>
+            <p className="text-lg text-gray-600 mb-8">
+              This is a static fallback. Auth and dynamic data are disabled in static export.
+            </p>
+            {children}
+          </div>
+        </body>
+      </html>
+    );
+  }
+
+  return <RootLayoutContent>{children}</RootLayoutContent>;
 }

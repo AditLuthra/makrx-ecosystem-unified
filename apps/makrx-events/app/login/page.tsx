@@ -6,36 +6,7 @@ import { ArrowLeft, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export default function LoginPage() {
-  // SSR/SSG or mock mode: return static fallback UI
-  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full space-y-8 px-4">
-          <div className="text-center">
-            <Button variant="ghost" size="sm" asChild className="mb-8">
-              <Link href="/">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
-              </Link>
-            </Button>
-            <Card>
-              <CardHeader>
-                <CardTitle>Login</CardTitle>
-                <CardDescription>Sign in to access your dashboard</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full" disabled>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Login (Auth disabled in static export)
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+function LoginPageContent() {
   const router = useRouter();
 
   return (
@@ -84,4 +55,37 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+export default function LoginPage() {
+  // SSR/SSG or mock mode: return static fallback UI
+  if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full space-y-8 px-4">
+          <div className="text-center">
+            <Button variant="ghost" size="sm" asChild className="mb-8">
+              <Link href="/">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+              </Link>
+            </Button>
+            <Card>
+              <CardHeader>
+                <CardTitle>Login</CardTitle>
+                <CardDescription>Sign in to access your dashboard</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" disabled>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Login (Auth disabled in static export)
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <LoginPageContent />;
 }
