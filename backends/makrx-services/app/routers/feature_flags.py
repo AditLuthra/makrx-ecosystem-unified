@@ -2,6 +2,7 @@
 API endpoints for feature flag management and access.
 """
 
+import logging
 from typing import Dict, List, Optional, Set, Any
 from fastapi import APIRouter, HTTPException, Request, Query, Body
 from pydantic import BaseModel, Field
@@ -13,7 +14,10 @@ from ..features import (
 )
 
 
+from backends.utils import error_detail
+
 router = APIRouter(prefix="/api/v1/feature-flags", tags=["Feature Flags"])
+logger = logging.getLogger(__name__)
 
 
 # Request/Response Models
@@ -228,7 +232,10 @@ async def get_feature_flag_details(feature_key: str, request: Request):
     
     flag = feature_manager.get_effective_flag(feature_key)
     if not flag:
-        raise HTTPException(status_code=404, detail="Feature flag not found")
+        raise HTTPException(
+            status_code=404,
+            detail=error_detail("FEATURE_NOT_FOUND", "Feature flag not found"),
+        )
     
     return {
         "flag": flag.dict(),
@@ -259,8 +266,14 @@ async def create_feature_flag(request: Request, flag_data: FeatureFlagCreateRequ
         
         return {"message": "Feature flag created successfully", "flag": flag.dict()}
         
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid feature flag create request", extra={"error": str(exc)}
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
 
 
 @router.put("/admin/{feature_key}")
@@ -282,8 +295,14 @@ async def update_feature_flag(
         
         return {"message": "Feature flag updated successfully", "flag": updated_flag.dict()}
         
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Feature flag update failed for %s", feature_key, extra={"error": str(exc)}
+        )
+        raise HTTPException(
+            status_code=404,
+            detail=error_detail("FEATURE_NOT_FOUND", str(exc)),
+        ) from exc
 
 
 @router.post("/admin/bulk-update")
@@ -302,8 +321,23 @@ async def bulk_update_feature_flags(request: Request, bulk_update: BulkUpdateReq
             "updated_flags": updated_flags
         }
         
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Bulk feature flag update validation failed", extra={"error": str(exc)}
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception("Unexpected error during bulk feature flag update")
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while updating feature flags.",
+            ),
+        ) from exc
 
 
 @router.post("/admin/{feature_key}/override")
@@ -318,7 +352,10 @@ async def create_runtime_override(
     
     base_flag = feature_flags.get_flag(feature_key)
     if not base_flag:
-        raise HTTPException(status_code=404, detail="Base feature flag not found")
+        raise HTTPException(
+            status_code=404,
+            detail=error_detail("FEATURE_NOT_FOUND", "Base feature flag not found"),
+        )
     
     # Create override flag with new access level
     override_flag = FeatureFlag(

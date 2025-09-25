@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime
 from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+
+from backends.utils import error_detail
 
 from ..crud.makerspace_settings import get_makerspace_settings_crud
 from ..database import get_db
@@ -23,6 +26,7 @@ from ..schemas.makerspace_settings import (
 )
 
 router = APIRouter(prefix="/makerspace/settings", tags=["Makerspace Settings"])
+logger = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=MakerspaceSettingsResponse)
@@ -47,7 +51,10 @@ async def get_makerspace_settings(
     if not makerspace_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No makerspace associated with current user",
+            detail=error_detail(
+                "MAKERSPACE_NOT_FOUND",
+                "No makerspace associated with current user",
+            ),
         )
 
     settings = crud.get_by_makerspace_id(str(makerspace_id))
@@ -92,7 +99,10 @@ async def update_makerspace_settings(
     if not makerspace_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No makerspace associated with current user",
+            detail=error_detail(
+                "MAKERSPACE_NOT_FOUND",
+                "No makerspace associated with current user",
+            ),
         )
 
     settings = crud.update(
@@ -150,7 +160,10 @@ async def update_settings_section(
     if section not in valid_sections:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid section. Must be one of: {', '.join(valid_sections)}",
+            detail=error_detail(
+                "INVALID_SECTION",
+                f"Invalid section. Must be one of: {', '.join(valid_sections)}",
+            ),
         )
 
     try:
@@ -168,13 +181,23 @@ async def update_settings_section(
         if not settings:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Makerspace settings not found",
+                detail=error_detail(
+                    "SETTINGS_NOT_FOUND", "Makerspace settings not found"
+                ),
             )
 
         return settings
 
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid makerspace settings section update for %s",
+            makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
 
 
 @router.patch("/toggle-feature/{feature}", response_model=MakerspaceSettingsResponse)
@@ -222,13 +245,23 @@ async def toggle_feature(
         if not settings:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Makerspace settings not found",
+                detail=error_detail(
+                    "SETTINGS_NOT_FOUND", "Makerspace settings not found"
+                ),
             )
 
         return settings
 
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid feature toggle for makerspace %s",
+            makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
 
 
 @router.get("/public/{makerspace_id}", response_model=MakerspaceSettingsPublic)

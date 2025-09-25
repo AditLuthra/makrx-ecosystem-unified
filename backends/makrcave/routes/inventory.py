@@ -1,6 +1,7 @@
+import logging
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import multipart  # noqa: F401 - ensure python-multipart is installed
 from fastapi import (
@@ -14,6 +15,8 @@ from fastapi import (
     UploadFile,
 )
 from sqlalchemy.orm import Session
+
+from backends.utils import error_detail
 
 from ..crud.inventory import InventoryCRUD
 
@@ -33,6 +36,62 @@ from ..schemas.inventory import (
 
 # Router without local prefix; mounted under '/inventory'
 router = APIRouter(tags=["inventory"])
+
+
+logger = logging.getLogger(__name__)
+
+
+def _fetch_makerspace_item(
+    *,
+    crud: InventoryCRUD,
+    item_id: str,
+    current_user,
+) -> Any:
+    """Load an inventory item with consistent error handling and access checks."""
+    try:
+        item = crud.get_item(
+            item_id=item_id, makerspace_id=current_user.makerspace_id
+        )
+    except ValueError as exc:
+        logger.warning(
+            "Invalid inventory item lookup %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail(
+                "INVALID_INPUT", "Invalid inventory item identifier provided."
+            ),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while retrieving inventory item %s", item_id
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while retrieving the inventory item.",
+            ),
+        ) from exc
+
+    if not item:
+        raise HTTPException(
+            status_code=404,
+            detail=error_detail("ITEM_NOT_FOUND", "Item not found"),
+        )
+
+    if (
+        item.linked_makerspace_id != current_user.makerspace_id
+        and current_user.role != "super_admin"
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("ACCESS_DENIED", "Access denied"),
+        )
+
+    return item
 
 # Placeholder to avoid undefined-name during static checks.
 # Real CRUD is created per-request in handlers when needed.
@@ -81,7 +140,31 @@ async def list_inventory_items(
         sort_by=sort_by,
         sort_order="desc" if sort_desc else "asc",
     )
-    items, _total = crud.get_items(filters)
+    try:
+        items, _total = crud.get_items(filters)
+    except ValueError as exc:
+        logger.warning(
+            "Invalid inventory filter parameters for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", "Invalid inventory filters supplied."),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while listing inventory items for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching inventory items.",
+            ),
+        ) from exc
+
     return items
 
 
@@ -133,16 +216,9 @@ async def get_inventory_item(
     crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get a single inventory item by ID"""
-    item = crud.get_item(item_id=item_id, makerspace_id=current_user.makerspace_id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    # Check if user has access to this makerspace's inventory
-    if (
-        item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
+    item = _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
+    )
 
     return item
 
@@ -157,7 +233,10 @@ async def create_inventory_item(
     """Create a new inventory item"""
     # Check permissions
     if not check_permission(current_user.role, "add_edit_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     try:
         # Set the makerspace_id to current user's makerspace
@@ -167,10 +246,28 @@ async def create_inventory_item(
         item = crud.create_item(item=item_data)
 
         return item
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid inventory item payload for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while creating inventory item for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while creating the inventory item.",
+            ),
+        ) from exc
 
 
 @router.put("/{item_id}", response_model=InventoryItemResponse)
@@ -184,20 +281,15 @@ async def update_inventory_item(
     """Update an existing inventory item"""
     # Check permissions
     if not check_permission(current_user.role, "add_edit_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
 
     try:
         item_data.updated_by = current_user.id
@@ -208,10 +300,28 @@ async def update_inventory_item(
         )
 
         return item
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid inventory update request for item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while updating inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while updating the inventory item.",
+            ),
+        ) from exc
 
 
 @router.post("/{item_id}/issue")
@@ -225,20 +335,15 @@ async def issue_inventory_item(
     """Issue/deduct quantity from inventory item"""
     # Check permissions
     if not check_permission(current_user.role, "issue_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
 
     try:
         result = crud.issue_item(
@@ -251,15 +356,38 @@ async def issue_inventory_item(
             job_id=issue_data.job_id,
         )
         if not result:
-            raise HTTPException(status_code=400, detail="Insufficient stock")
+            raise HTTPException(
+                status_code=400,
+                detail=error_detail(
+                    "INSUFFICIENT_STOCK", "Insufficient stock available"
+                ),
+            )
         return {
             "message": "Item issued successfully",
             "remaining_quantity": result.quantity,
         }
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid issue request for inventory item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while issuing inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while issuing the inventory item.",
+            ),
+        ) from exc
 
 
 @router.post("/{item_id}/restock")
@@ -274,20 +402,15 @@ async def restock_inventory_item(
     """Add quantity to inventory item"""
     # Check permissions
     if not check_permission(current_user.role, "add_edit_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
 
     try:
         result = crud.restock_item(
@@ -298,15 +421,36 @@ async def restock_inventory_item(
             reason=reason or "Manual restock",
         )
         if not result:
-            raise HTTPException(status_code=404, detail="Item not found")
+            raise HTTPException(
+                status_code=404,
+                detail=error_detail("ITEM_NOT_FOUND", "Item not found"),
+            )
         return {
             "message": "Item restocked successfully",
             "new_quantity": result.quantity,
         }
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid restock request for inventory item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while restocking inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while restocking the inventory item.",
+            ),
+        ) from exc
 
 
 @router.post("/{item_id}/reorder")
@@ -320,32 +464,32 @@ async def reorder_from_makrx(
     """Initiate reorder from MakrX Store"""
     # Check permissions
     if not check_permission(current_user.role, "reorder_from_store"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    existing_item = _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
 
     if existing_item.supplier_type != "makrx":
         raise HTTPException(
             status_code=400,
-            detail=("Item is not from " "MakrX Store"),
+            detail=error_detail(
+                "INVALID_SUPPLIER", "Item is not from MakrX Store",
+            ),
         )
 
     if not existing_item.product_code:
         raise HTTPException(
-            status_code=400, detail="Item has no product code for reordering"
+            status_code=400,
+            detail=error_detail(
+                "MISSING_PRODUCT_CODE",
+                "Item has no product code for reordering",
+            ),
         )
-
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
-
     try:
         # Create reorder request - this would integrate with MakrX Store API
         reorder_url = crud.create_reorder_request(
@@ -359,8 +503,28 @@ async def reorder_from_makrx(
             "message": "Reorder request created",
             "reorder_url": reorder_url,
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid reorder request for inventory item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", "Invalid reorder request supplied."),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while creating reorder for inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while creating the reorder request.",
+            ),
+        ) from exc
 
 
 @router.get("/{item_id}/usage", response_model=List[InventoryUsageLogResponse])
@@ -374,19 +538,37 @@ async def get_item_usage_history(
 ):
     """Get usage history for an inventory item"""
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    existing_item = _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
 
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
-
-    usage_logs = crud.get_usage_history(item_id=item_id, skip=skip, limit=limit)
+    try:
+        usage_logs = crud.get_usage_history(item_id=item_id, skip=skip, limit=limit)
+    except ValueError as exc:
+        logger.warning(
+            "Invalid usage history request for item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail(
+                "INVALID_INPUT",
+                "Invalid usage history parameters supplied.",
+            ),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while fetching usage history for inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching usage history.",
+            ),
+        ) from exc
 
     return usage_logs
 
@@ -406,7 +588,10 @@ async def get_all_usage_logs(
     """Get usage logs for all inventory items"""
     # Check permissions
     if not check_permission(current_user.role, "view_usage_logs"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     filters = {}
     if start_date:
@@ -418,12 +603,37 @@ async def get_all_usage_logs(
     if action:
         filters["action"] = action
 
-    usage_logs = crud.get_all_usage_logs(
-        makerspace_id=current_user.makerspace_id,
-        skip=skip,
-        limit=limit,
-        filters=filters,
-    )
+    try:
+        usage_logs = crud.get_all_usage_logs(
+            makerspace_id=current_user.makerspace_id,
+            skip=skip,
+            limit=limit,
+            filters=filters,
+        )
+    except ValueError as exc:
+        logger.warning(
+            "Invalid usage log filters for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail(
+                "INVALID_INPUT", "Invalid usage log filters supplied."
+            ),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while fetching usage logs for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching usage logs.",
+            ),
+        ) from exc
 
     return usage_logs
 
@@ -435,7 +645,22 @@ async def get_low_stock_alerts(
     crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get low stock alerts for the makerspace"""
-    alerts = crud.get_low_stock_alerts(makerspace_id=current_user.makerspace_id)
+    try:
+        alerts = crud.get_low_stock_alerts(
+            makerspace_id=current_user.makerspace_id
+        )
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while fetching low stock alerts for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching low stock alerts.",
+            ),
+        ) from exc
 
     return alerts
 
@@ -447,7 +672,22 @@ async def get_inventory_stats(
     crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get inventory statistics for the makerspace"""
-    stats = crud.get_inventory_stats(makerspace_id=current_user.makerspace_id)
+    try:
+        stats = crud.get_inventory_stats(
+            makerspace_id=current_user.makerspace_id
+        )
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while fetching inventory stats for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching inventory statistics.",
+            ),
+        ) from exc
 
     return stats
 
@@ -463,10 +703,16 @@ async def bulk_import_inventory(
     """Bulk import inventory items from CSV"""
     # Check permissions
     if not check_permission(current_user.role, "add_edit_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="File must be a CSV")
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_FILE_TYPE", "File must be a CSV"),
+        )
 
     try:
         # Read CSV content
@@ -486,8 +732,18 @@ async def bulk_import_inventory(
         )
 
         return {"message": "Import job started", "job_id": job_id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while processing bulk import for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while starting the import job.",
+            ),
+        ) from exc
 
 
 @router.get("/bulk/import/{job_id}")
@@ -498,9 +754,34 @@ async def get_import_job_status(
     crud: InventoryCRUD = Depends(get_inventory_crud),
 ):
     """Get status of bulk import job"""
-    job_status = crud.get_import_job_status(job_id=job_id)
+    try:
+        job_status = crud.get_import_job_status(job_id=job_id)
+    except ValueError as exc:
+        logger.warning(
+            "Invalid import job status request for %s",
+            job_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", "Invalid import job identifier."),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while fetching import job %s", job_id
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while fetching the import job status.",
+            ),
+        ) from exc
     if not job_status:
-        raise HTTPException(status_code=404, detail="Import job not found")
+        raise HTTPException(
+            status_code=404,
+            detail=error_detail("IMPORT_JOB_NOT_FOUND", "Import job not found"),
+        )
 
     return job_status
 
@@ -516,7 +797,10 @@ async def export_inventory_csv(
     """Export inventory items as CSV"""
     # Check permissions
     if not check_permission(current_user.role, "view_inventory"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     try:
         filters = {}
@@ -536,8 +820,28 @@ async def export_inventory_csv(
                 "Content-Disposition": ("attachment; filename=" "inventory_export.csv")
             },
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid export filters for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", "Invalid export filters supplied."),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while exporting inventory CSV for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while exporting the inventory.",
+            ),
+        ) from exc
 
 
 @router.delete("/{item_id}")
@@ -550,20 +854,15 @@ async def delete_inventory_item(
     """Delete an inventory item"""
     # Check permissions
     if not check_permission(current_user.role, "delete_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     # Check if item exists and user has access
-    existing_item = crud.get_item(
-        item_id=item_id, makerspace_id=current_user.makerspace_id
+    _fetch_makerspace_item(
+        crud=crud, item_id=item_id, current_user=current_user
     )
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-
-    if (
-        existing_item.linked_makerspace_id != current_user.makerspace_id
-        and current_user.role != "super_admin"
-    ):
-        raise HTTPException(status_code=403, detail="Access denied")
 
     try:
         crud.delete_item(
@@ -572,8 +871,28 @@ async def delete_inventory_item(
         )
 
         return {"message": "Item deleted successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid delete request for inventory item %s",
+            item_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", "Invalid delete request supplied."),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while deleting inventory item %s",
+            item_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while deleting the inventory item.",
+            ),
+        ) from exc
 
 
 @router.post("/bulk/delete")
@@ -586,7 +905,10 @@ async def bulk_delete_items(
     """Bulk delete inventory items"""
     # Check permissions
     if not check_permission(current_user.role, "delete_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     try:
         result = crud.bulk_delete_items(
@@ -599,8 +921,30 @@ async def bulk_delete_items(
             "message": f"Deleted {result['deleted_count']} items",
             "errors": result.get("errors", []),
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid bulk delete request for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail(
+                "INVALID_INPUT", "Invalid bulk delete payload supplied."
+            ),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error during bulk delete for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while deleting inventory items.",
+            ),
+        ) from exc
 
 
 @router.post("/qr/generate")
@@ -613,7 +957,10 @@ async def generate_qr_codes(
     """Generate QR codes for inventory items"""
     # Check permissions
     if not check_permission(current_user.role, "add_edit_items"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+        raise HTTPException(
+            status_code=403,
+            detail=error_detail("PERMISSION_DENIED", "Insufficient permissions"),
+        )
 
     try:
         qr_data = crud.generate_qr_codes(
@@ -621,5 +968,27 @@ async def generate_qr_codes(
         )
 
         return {"qr_codes": qr_data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid QR code generation request for makerspace %s",
+            current_user.makerspace_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail(
+                "INVALID_INPUT", "Invalid QR code generation payload supplied."
+            ),
+        ) from exc
+    except Exception as exc:
+        logger.exception(
+            "Unexpected error while generating QR codes for makerspace %s",
+            current_user.makerspace_id,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while generating QR codes.",
+            ),
+        ) from exc

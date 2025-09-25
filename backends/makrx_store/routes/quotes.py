@@ -1,5 +1,7 @@
 """Quote API routes for 3D printing services"""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional, Any
@@ -7,6 +9,8 @@ from datetime import datetime, timedelta
 import math
 import json
 import uuid
+from backends.utils import error_detail
+
 from ..schemas.admin import MessageResponse
 from ..database import get_db
 from ..core.security import get_current_user
@@ -14,6 +18,7 @@ from ..models.services import Quote, ServiceOrder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 # Quote calculation models
@@ -495,12 +500,23 @@ async def create_quote(
             file_analysis=file_analysis,
         )
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Quote calculation failed: {str(e)}"
+    except ValueError as exc:
+        logger.warning(
+            "Invalid quote calculation payload", extra={"error": str(exc)}
         )
+        raise HTTPException(
+            status_code=400,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception("Unexpected error during quote calculation")
+        raise HTTPException(
+            status_code=500,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while calculating the quote.",
+            ),
+        ) from exc
 
 
 @router.get("/{quote_id}")

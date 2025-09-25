@@ -10,8 +10,6 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    // Ignore deprecations introduced up to TS 5.0 to keep typecheck noise low on TS 5.3
-    "ignoreDeprecations": "5.0",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

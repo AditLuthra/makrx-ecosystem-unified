@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ def get_project_like(
 
 def add_project_like(db: Session, project_id: str, user_id: str) -> ProjectLike:
     like = ProjectLike(
-        project_id=project_id, user_id=user_id, created_at=datetime.utcnow()
+        project_id=project_id, user_id=user_id, created_at=datetime.now(UTC)
     )
     db.add(like)
     db.commit()

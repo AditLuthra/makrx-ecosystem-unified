@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import and_, asc, desc, func, or_
@@ -29,7 +29,7 @@ from ..schemas.member import (
 
 
 # Member CRUD operations
-def get_member(db: Session, member_id: str, user_id: str = None) -> Optional[Member]:
+def get_member(db: Session, member_id: str, user_id: Optional[str] = None) -> Optional[Member]:
     """Get a member by ID"""
     query = db.query(Member).options(joinedload(Member.membership_plan))
 
@@ -51,7 +51,7 @@ def get_member(db: Session, member_id: str, user_id: str = None) -> Optional[Mem
 
 
 def get_member_by_email(
-    db: Session, email: str, makerspace_id: str = None
+    db: Session, email: str, makerspace_id: Optional[str] = None
 ) -> Optional[Member]:
     """Get a member by email"""
     query = db.query(Member).options(joinedload(Member.membership_plan))
@@ -142,7 +142,7 @@ def get_members(
 def create_member(db: Session, member: MemberCreate, created_by: str) -> Member:
     """Create a new member"""
     # Set start and end dates if not provided
-    start_date = member.start_date or datetime.utcnow()
+    start_date = member.start_date or datetime.now(UTC)
 
     # Get membership plan to calculate end date
     plan = get_membership_plan(db, member.membership_plan_id)
@@ -571,11 +571,11 @@ def log_member_activity(
     db: Session,
     member_id: str,
     activity_type: str,
-    description: str = None,
-    metadata: Dict[str, Any] = None,
-    ip_address: str = None,
-    user_agent: str = None,
-    session_id: str = None,
+    description: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+    ip_address: Optional[str] = None,
+    user_agent: Optional[str] = None,
+    session_id: Optional[str] = None,
 ):
     """Log member activity"""
     # Note: SQLAlchemy's declarative Base uses `metadata` internally, so the
@@ -737,7 +737,7 @@ def _get_user_makerspace_id(db: Session, user_id: str) -> Optional[str]:
 
 
 def update_member_login(
-    db: Session, member_id: str, ip_address: str = None, user_agent: str = None
+    db: Session, member_id: str, ip_address: Optional[str] = None, user_agent: Optional[str] = None
 ):
     """Update member login information"""
     db_member = get_member(db, member_id)

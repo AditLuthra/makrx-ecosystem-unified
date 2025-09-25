@@ -17,6 +17,8 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 
+from backends.utils import error_detail
+
 from ..crud import billing as crud_billing
 from ..database import get_db
 from ..dependencies import get_current_user
@@ -520,7 +522,9 @@ async def adjust_credits(
     if not _can_manage_billing(current_user):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient permissions",
+            detail=error_detail(
+                "PERMISSION_DENIED", "Insufficient permissions to adjust credits"
+            ),
         )
 
     try:
@@ -534,8 +538,25 @@ async def adjust_credits(
             current_user["user_id"],
         )
         return credit_transaction
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid credit adjustment for makerspace %s",
+            _get_user_makerspace_id(current_user),
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception("Unexpected error during credit adjustment")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while adjusting credits.",
+            ),
+        ) from exc
 
 
 # Invoice routes
@@ -737,11 +758,15 @@ async def charge_for_service(
             checkout_url=f"/billing/checkout/{gateway_order_id}",
         )
 
-    except Exception as e:
+    except Exception as exc:
+        logger.exception("Unexpected error during service billing")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Service billing failed: {str(e)}",
-        )
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while processing service billing.",
+            ),
+        ) from exc
 
 
 # Refund routes
@@ -755,7 +780,9 @@ async def create_refund(
     if not _can_manage_billing(current_user):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient permissions",
+            detail=error_detail(
+                "PERMISSION_DENIED", "Insufficient permissions to manage refunds"
+            ),
         )
 
     try:
@@ -776,12 +803,31 @@ async def create_refund(
                 )
 
                 crud_billing.process_refund(db, db_refund.id, gateway_refund.get("id"))
-            except Exception as e:
-                logger.warning(f"Gateway refund failed: {str(e)}")
+            except Exception as exc:
+                logger.warning(
+                    "Gateway refund failed for refund %s", db_refund.id, extra={"error": str(exc)}
+                )
 
         return db_refund
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except ValueError as exc:
+        logger.warning(
+            "Invalid refund request for transaction %s",
+            refund.original_transaction_id,
+            extra={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_detail("INVALID_INPUT", str(exc)),
+        ) from exc
+    except Exception as exc:
+        logger.exception("Unexpected error while creating refund")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_detail(
+                "INTERNAL_ERROR",
+                "An unexpected error occurred while creating the refund.",
+            ),
+        ) from exc
 
 
 # Analytics routes

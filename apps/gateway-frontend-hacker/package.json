@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@makrx/auth": "file:../../packages/auth",
-  "@makrx/shared": "file:../../packages/shared",
+    "@makrx/shared": "file:../../packages/shared",
     "@radix-ui/react-slot": "^1.1.0",
-    "keycloak-js": "^25.0.0",
+    "keycloak-js": "18.2.0",
     "lucide-react": "^0.462.0",
     "next": "14.2.32",
     "react": "18.2.0",

@@ -3,7 +3,8 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.security import HTTPBearer
+import structlog
+from ..security.input_validation import InputSanitizer
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -17,10 +18,13 @@ from ..models.project import (
     ProjectStatus,
     ProjectTask,
 )
-from ..security.input_validation import InputSanitizer
 
 router = APIRouter()
-security = HTTPBearer()
+logger = structlog.get_logger()
+
+
+
+logger = structlog.get_logger()
 
 
 @router.get("/", response_model=List[dict])
@@ -34,47 +38,45 @@ async def get_projects(
     """Get projects with optional filtering"""
     try:
         query = db.query(Project)
-
         if makerspace_id:
             query = query.filter(Project.makerspace_id == makerspace_id)
-        if status:
-            query = query.filter(Project.status == status)
-        if creator_id:
-            query = query.filter(Project.creator_id == creator_id)
+        if not project:
+            logger.warning("Project not found for task creation", project_id=project_id)
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"code": "PROJECT_NOT_FOUND", "message": "Project not found"},
+            )
 
-        # Filter by visibility - show public projects or user's own projects
-        user_id = current_user.user_id
-        query = query.filter(
-            (Project.is_public.is_(True))
-            | (Project.creator_id == user_id)
-            | (Project.assigned_members.contains([user_id]))
-        )
-
-        projects = query.all()
-
-        return [
-            {
-                "id": project.id,
-                "project_id": project.project_id,
-                "name": project.name,
-                "description": project.description,
-                "status": project.status.value,
-                "priority": project.priority.value,
-                "progress_percentage": project.progress_percentage,
-                "start_date": project.start_date,
-                "due_date": project.due_date,
-                "creator_id": project.creator_id,
-                "makerspace_id": project.makerspace_id,
-                "is_public": project.is_public,
-                "created_at": project.created_at,
-                "updated_at": project.updated_at,
-            }
-            for project in projects
-        ]
+        try:
+            new_task = ProjectTask(
+                project_id=project_id,
+                title=task_data["title"],
+                description=task_data.get("description"),
+                assigned_to=task_data.get("assigned_to"),
+                priority=ProjectPriority(task_data.get("priority", "medium")),
+                due_date=(
+                    datetime.fromisoformat(task_data["due_date"])
+                    if task_data.get("due_date")
+                    else None
+                ),
+                estimated_hours=task_data.get("estimated_hours"),
+                created_by=current_user.user_id,
+            )
+            db.add(new_task)
+            db.commit()
+            return {"message": "Task created successfully", "task_id": new_task.id}
+        except Exception as e:
+            db.rollback()
+            logger.error("Failed to create project task", error=str(e), project_id=project_id)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={"code": "TASK_CREATION_FAILED", "message": "Failed to create task"},
+            )
     except Exception as e:
+        logger.error("Failed to retrieve projects", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve projects: {str(e)}",
+            detail={"code": "PROJECTS_FETCH_FAILED", "message": "Failed to retrieve projects"},
         )
 
 
@@ -88,8 +90,10 @@ async def get_project_details(
     project = db.query(Project).filter(Project.id == project_id).first()
 
     if not project:
+        logger.warning("Project not found", project_id=project_id)
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"code": "PROJECT_NOT_FOUND", "message": "Project not found"},
         )
 
     # Check access permissions
@@ -99,8 +103,10 @@ async def get_project_details(
         or project.creator_id == user_id
         or (project.assigned_members and user_id in project.assigned_members)
     ):
+        logger.warning("Access denied to project", project_id=project_id, user_id=user_id)
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ACCESS_DENIED", "message": "Access denied"},
         )
 
     # Get tasks and milestones
@@ -263,6 +269,27 @@ async def update_project(
             status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
         )
 
+    if not project:
+        logger.warning("Project not found for update", project_id=project_id)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"code": "PROJECT_NOT_FOUND", "message": "Project not found"},
+        )
+
+    # Check permissions - only creator or assigned members can update
+    user_id = current_user.user_id
+    if not (
+        project.creator_id == user_id
+        or (project.assigned_members and user_id in project.assigned_members)
+    ):
+        logger.warning(
+            "Access denied for project update", project_id=project_id, user_id=user_id
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "ACCESS_DENIED", "message": "Access denied"},
+        )
+
     try:
         # Update fields
         for field, value in project_data.items():
@@ -270,32 +297,19 @@ async def update_project(
                 "id",
                 "project_id",
                 "creator_id",
-                "created_at",
             ]:
-                if field in ["start_date", "due_date", "completion_date"] and value:
-                    value = datetime.fromisoformat(value)
-                elif field in ["status", "priority"]:
-                    value = getattr(
-                        (ProjectStatus if field == "status" else ProjectPriority),
-                        value.upper(),
-                    )
-                elif field in ["name", "objectives", "category"] and value:
-                    value = InputSanitizer.sanitize_text(value)
-                elif field in ["description"] and value:
-                    value = InputSanitizer.sanitize_html(value)
-                elif field in ["tags"] and value:
-                    value = [InputSanitizer.sanitize_text(t) for t in value]
                 setattr(project, field, value)
-
         project.updated_at = datetime.utcnow()
         db.commit()
-
         return {"message": "Project updated successfully"}
     except Exception as e:
         db.rollback()
+        logger.error(
+            "Failed to update project", error=str(e), project_id=project_id
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update project: {str(e)}",
+            detail={"code": "PROJECT_UPDATE_FAILED", "message": "Failed to update project"},
         )
 
 
@@ -310,8 +324,10 @@ async def create_project_task(
     project = db.query(Project).filter(Project.id == project_id).first()
 
     if not project:
+        logger.warning("Project not found for task creation", project_id=project_id)
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"code": "PROJECT_NOT_FOUND", "message": "Project not found"},
         )
 
     try:
@@ -329,14 +345,15 @@ async def create_project_task(
             estimated_hours=task_data.get("estimated_hours"),
             created_by=current_user.user_id,
         )
-
         db.add(new_task)
         db.commit()
-
         return {"message": "Task created successfully", "task_id": new_task.id}
     except Exception as e:
         db.rollback()
+        logger.error(
+            "Failed to create project task", error=str(e), project_id=project_id
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create task: {str(e)}",
+            detail={"code": "TASK_CREATION_FAILED", "message": "Failed to create task"},
         )

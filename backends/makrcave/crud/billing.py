@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import and_, asc, desc, extract, func
@@ -141,7 +141,8 @@ def update_transaction(
     for field, value in update_data.items():
         setattr(db_transaction, field, value)
 
-    db_transaction.updated_at = datetime.utcnow()
+    from datetime import UTC
+    db_transaction.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(db_transaction)
     return db_transaction
@@ -163,8 +164,8 @@ def complete_transaction(
     db_transaction.gateway_transaction_id = gateway_transaction_id
     db_transaction.gateway_payment_id = gateway_payment_id
     db_transaction.gateway_signature = gateway_signature
-    db_transaction.completed_at = datetime.utcnow()
-    db_transaction.updated_at = datetime.utcnow()
+    db_transaction.completed_at = datetime.now(UTC)
+    db_transaction.updated_at = datetime.now(UTC)
 
     db.commit()
     db.refresh(db_transaction)
@@ -189,7 +190,7 @@ def fail_transaction(
         db_transaction.notes = (
             f"{db_transaction.notes or ''}\nFailure reason: {reason}".strip()
         )
-    db_transaction.updated_at = datetime.utcnow()
+    db_transaction.updated_at = datetime.now(UTC)
 
     db.commit()
     db.refresh(db_transaction)

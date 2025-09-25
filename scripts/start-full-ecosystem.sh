@@ -1,8 +1,7 @@
 #!/bin/bash
 
-set -e
 
-cd "$(dirname "$0")"
+set -e
 
 echo "🚀 Starting MakrX Full Ecosystem"
 echo "================================="
